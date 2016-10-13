@@ -1,0 +1,5 @@
+database:
+  driverClass: com.microsoft.sqlserver.jdbc.SQLServerDriver
+  user: ${ANET_DB_USERNAME}
+  password: ${ANET_DB_PASSWORD}
+  url: jdbc:sqlserver://${ANET_DB_SERVER};databaseName=${ANET_DB_NAME}

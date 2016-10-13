@@ -3,10 +3,29 @@
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
-# Package Files #
-*.jar
-*.war
-*.ear
-
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+# Gradle generated files
+bin/
+
+# Local configuration file used for proj. specific settings (sdk paths, etc)
+local.properties
+
+# Ignore Eclipse project files
+.classpath
+.project
+.settings
+
+# Ignore Intellij project files and idea directory
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Gradle related files and caches
+.gradletasknamecache
+.gradle/
+build/
+bin/
+localSettings.gradle
