@@ -1,8 +1,10 @@
 package mil.dds.anet.beans;
 
-public abstract class Person {
+public class Person {
 
 	public static enum Status { ACTIVE, INACTIVE }
+	
+	private int id;
 	
 	private String firstName; 
 	private String lastName;
@@ -15,6 +17,12 @@ public abstract class Person {
 	private String biography;
 	
 	
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
 	public String getFirstName() {
 		return firstName;
 	}
@@ -57,7 +65,5 @@ public abstract class Person {
 	public void setBiography(String biography) {
 		this.biography = biography;
 	}
-	
-	
 	
 }

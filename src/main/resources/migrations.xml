@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="1" author="hpitelka">
+        <createTable tableName="people">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="firstName" type="varchar(255)" />
+            <column name="lastName" type="varchar(255)" />
+			<column name="status" type="varchar(100)" />
+			<column name="emailAddress" type="varchar(255)" />
+			<column name="phoneNumber" type="varchar(100)" />
+			<column name="rank" type="varchar(255)" />
+			<column name="biography" type="text" />
+        </createTable>
+
+		<createTable tableName="groups">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+			<column name="groupName" type="varchar(512)" />
+		</createTable>
+
+		<createTable tableName="groupMemberships">
+			<column name="groupId" type="int" />
+			<column name="personId" type="int" />
+		</createTable>
+
+		<createTable tableName="advisorOrganizations">
+			<column name="id" type="int" autoIncrement="true" >
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="name" type="varchar(255)" />
+
+			<!-- ID of the group that contains the members of this Advising Organization -->
+			<column name="memberGroupId" type="int" />
+		</createTable>
+
+		<createTable tableName="poams" >
+			<column name="id" type="int" autoIncrement="true" >
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			
+			<!-- the 1-2 character version (ie EF-5, or B) -->
+			<column name="shortName" type="varchar(100)" /> 
+			
+			<!-- The Longer text ie (Rule of Law) or (Get the MoI to handle hiring of people) -->
+			<column name="longName" type="varchar(255)" /> 
+			
+			<!-- What type of POAM this is EF, Sub-EF, Milestone, Action, Sub-Action -->
+			<column name="category" type="varchar(255)" />
+
+			<!-- the POAM id of the parent of this POAM. null for top level (ie EF/DA) -->
+			<column name="parentPoamId" type="int" />
+		</createTable>
+
+		<createTable tableName="tashkils">
+			<column name="id" type="int" autoIncrement="true" >
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="code" type="varchar(100)" />
+			<column name="name" type="varchar(512)" />
+		</createTable>
+
+		<createTable tableName="tashkilPrincipals">
+			<column name="tashkilId" type="int" />
+			<column name="principalId" type="int" />
+		</createTable>
+
+    </changeSet>
+</databaseChangeLog>
