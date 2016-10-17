@@ -48,10 +48,8 @@ public class AnetApplication extends Application<AnetConfiguration> {
 		final DBIFactory factory = new DBIFactory();
 		final DBI jdbi = factory.build(environment, configuration.getDataSourceFactory(), "mssql");
 		
-		
 		final TestingDao dao = jdbi.onDemand(TestingDao.class);
 		final PersonDao personDao = jdbi.onDemand(PersonDao.class);
-		
 		
 		TestingResource test = new TestingResource(dao); 
 		PersonResource personResource = new PersonResource(personDao);

@@ -1,9 +1,13 @@
 package mil.dds.anet.database;
 
 import java.util.List;
+import java.util.Map;
 
+import org.skife.jdbi.v2.GeneratedKeys;
 import org.skife.jdbi.v2.Handle;
+import org.skife.jdbi.v2.PreparedBatch;
 import org.skife.jdbi.v2.Query;
+import org.skife.jdbi.v2.Update;
 
 import mil.dds.anet.beans.Group;
 import mil.dds.anet.beans.Person;
@@ -37,8 +41,32 @@ public class GroupDao {
 		return g;		
 	}
 	
-	public void updateGroup(Group g) { 
+	public Group createNewGroup(Group g) { 
+		GeneratedKeys<Map<String, Object>> keys = dbHandle.createStatement(
+				"INSERT into groups (name) VALUES (:name)")
+			.bind("name",g.getName())
+			.executeAndReturnGeneratedKeys();
 		
+		g.setId(((Integer)keys.first().get("id")).intValue());
+		
+		
+		if (g.getMembers() != null && g.getMembers().size() > 0 ) { 
+			PreparedBatch memberInsertBatch = dbHandle.prepareBatch("INSERT INTO groupMemberships (groupId, personId) VALUES (:groupId, :personId)");
+			memberInsertBatch.bind("groupId",g.getId());
+			for (Person p : g.getMembers()) { 
+				memberInsertBatch.add().bind("personId", p.getId());
+			}
+			memberInsertBatch.execute();
+		}
+		
+		return g;
+	}
+	
+	public void updateGroupName(Group g) { 
+		dbHandle.createStatement("UPDATE groups SET name = :name where id = :id")
+			.bind("name", g.getName())
+			.bind("id", g.getId())
+			.execute();
 	}
 	
 	public void addPersonToGroup(Group g, Person p) {
