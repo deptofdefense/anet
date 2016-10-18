@@ -11,8 +11,10 @@ import io.dropwizard.migrations.MigrationsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import mil.dds.anet.config.AnetConfiguration;
+import mil.dds.anet.database.GroupDao;
 import mil.dds.anet.database.PersonDao;
 import mil.dds.anet.database.TestingDao;
+import mil.dds.anet.resources.GroupResource;
 import mil.dds.anet.resources.PersonResource;
 import mil.dds.anet.resources.TestingResource;
 
@@ -50,11 +52,15 @@ public class AnetApplication extends Application<AnetConfiguration> {
 		
 		final TestingDao dao = jdbi.onDemand(TestingDao.class);
 		final PersonDao personDao = jdbi.onDemand(PersonDao.class);
+		final GroupDao groupDao = new GroupDao(jdbi.open());
 		
 		TestingResource test = new TestingResource(dao); 
 		PersonResource personResource = new PersonResource(personDao);
+		GroupResource groupResource = new GroupResource(groupDao);
 		environment.jersey().register(test);
 		environment.jersey().register(personResource);
+		environment.jersey().register(groupResource);
+		
 	}
 
 }

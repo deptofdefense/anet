@@ -15,3 +15,15 @@ server:
   adminConnectors:
     - type: http
       port: 8081
+
+logging:
+  level: INFO
+  loggers:
+    "io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper" : DEBUG
+    "org.skife.jdbi.v2.DBI" : TRACE
+    "org.skife.jdbi.v2" : TRACE
+    "org.sqlite.JDBC" : TRACE
+  appenders: 
+    - type: console
+      threshold: TRACE
+      target: stdout

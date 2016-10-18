@@ -24,7 +24,7 @@
             <column name="id" type="int" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-			<column name="groupName" type="varchar(512)" />
+			<column name="name" type="varchar(512)" />
 		</createTable>
 
 		<createTable tableName="groupMemberships">

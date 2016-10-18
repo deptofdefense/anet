@@ -7,7 +7,6 @@ import org.skife.jdbi.v2.GeneratedKeys;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.PreparedBatch;
 import org.skife.jdbi.v2.Query;
-import org.skife.jdbi.v2.Update;
 
 import mil.dds.anet.beans.Group;
 import mil.dds.anet.beans.Person;
@@ -29,7 +28,7 @@ public class GroupDao {
 		if (groups.size() == 0) { return null; } 
 		Group g = groups.get(0);
 		
-		Query<Person> membersQuery = dbHandle.createQuery("SELECT people.id, people.lastName, people.firstName " + 
+		Query<Person> membersQuery = dbHandle.createQuery("SELECT people.* " + 
 				"FROM people, groupMemberships " + 
 				"WHERE groupMemberships.groupId = :groupId " +
 				"AND groupMemberships.personId = people.id")
@@ -47,14 +46,15 @@ public class GroupDao {
 			.bind("name",g.getName())
 			.executeAndReturnGeneratedKeys();
 		
-		g.setId(((Integer)keys.first().get("id")).intValue());
+		g.setId(((Integer)keys.first().get("last_insert_rowid()")).intValue());
 		
 		
 		if (g.getMembers() != null && g.getMembers().size() > 0 ) { 
 			PreparedBatch memberInsertBatch = dbHandle.prepareBatch("INSERT INTO groupMemberships (groupId, personId) VALUES (:groupId, :personId)");
-			memberInsertBatch.bind("groupId",g.getId());
 			for (Person p : g.getMembers()) { 
-				memberInsertBatch.add().bind("personId", p.getId());
+				memberInsertBatch.add()
+					.bind("personId", p.getId())
+					.bind("groupId",g.getId());
 			}
 			memberInsertBatch.execute();
 		}
