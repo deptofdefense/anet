@@ -12,6 +12,9 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.eclipse.jetty.util.log.Log;
+import org.eclipse.jetty.util.log.Logger;
+
 import com.codahale.metrics.annotation.Timed;
 
 import mil.dds.anet.database.TestingDao;
@@ -21,6 +24,7 @@ import mil.dds.anet.database.TestingDao;
 public class TestingResource {
 
 	private TestingDao dao;
+	private static Logger log = Log.getLogger(TestingResource.class);
 	
 	public TestingResource(TestingDao dao) {
 		this.dao = dao;
@@ -56,6 +60,7 @@ public class TestingResource {
 		for (; headerNames.hasMoreElements(); ) {
 			String name = headerNames.nextElement();
 			headers.put(name, request.getHeader(name));
+			log.info("Header: {}: {}", name, request.getHeader(name));
 		}
 		return headers;
 	}

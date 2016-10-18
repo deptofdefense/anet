@@ -23,6 +23,13 @@ logging:
     "org.skife.jdbi.v2.DBI" : TRACE
     "org.skife.jdbi.v2" : TRACE
     "org.sqlite.JDBC" : TRACE
+    "mil.dds.anet.resources.TestingResource" :
+      level: INFO
+      appenders:
+        - type: file
+          currentLogFilename: ./logs/testingLogger.log
+          archivedLogFilenamePattern: ./logs/testingLogger-%d.log.gz
+          archivedFileCount: 2
   appenders: 
     - type: console
       threshold: TRACE
