@@ -1,9 +1,8 @@
 package mil.dds.anet.beans;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-
-import org.assertj.core.util.Lists;
 
 public class Group {
 
@@ -12,7 +11,7 @@ public class Group {
 	List<Person> members;
 	
 	public Group() { 
-		this.members = Lists.emptyList();
+		this.members = Collections.emptyList();
 	}
 	
 	public Integer getId() {
