@@ -7,7 +7,7 @@ import org.assertj.core.util.Lists;
 
 public class Group {
 
-	int id;
+	Integer id;
 	String name;
 	List<Person> members;
 	
@@ -15,10 +15,10 @@ public class Group {
 		this.members = Lists.emptyList();
 	}
 	
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 	public String getName() {

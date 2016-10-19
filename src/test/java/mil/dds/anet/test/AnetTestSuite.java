@@ -6,6 +6,7 @@ import org.junit.runners.Suite;
 
 import mil.dds.anet.test.beans.GroupTest;
 import mil.dds.anet.test.beans.PersonTest;
+import mil.dds.anet.test.beans.PoamTest;
 import mil.dds.anet.test.resources.GroupsResourceTest;
 import mil.dds.anet.test.resources.PersonResourceTest;
 
@@ -13,6 +14,7 @@ import mil.dds.anet.test.resources.PersonResourceTest;
 @Suite.SuiteClasses({
   GroupTest.class,
   PersonTest.class,
+  PoamTest.class,
   GroupsResourceTest.class,
   PersonResourceTest.class
 })

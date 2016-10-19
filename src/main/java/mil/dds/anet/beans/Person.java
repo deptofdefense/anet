@@ -2,13 +2,11 @@ package mil.dds.anet.beans;
 
 import java.util.Objects;
 
-import org.apache.commons.lang3.StringUtils;
-
 public class Person {
 
 	public static enum Status { ACTIVE, INACTIVE }
 	
-	private int id;
+	private Integer id;
 	
 	private String firstName; 
 	private String lastName;
@@ -21,10 +19,10 @@ public class Person {
 	private String biography;
 	
 	
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 	public String getFirstName() {
