@@ -8,13 +8,15 @@ import mil.dds.anet.beans.geo.Location;
 
 public class Report {
 
-	public static enum Vibe {POSITIVE, NEGATIVE }
+	public static enum Vibe { POSITIVE, NEGATIVE }
+	
+	int id;
 	
 	DateTime dtg;
 	Location location;
 	String intent;
 	
-	List<Principal> principals;
+	List<Person> principals;
 //	List<PoamTask> tasks;
 	
 	Vibe atmosphere;
@@ -22,8 +24,8 @@ public class Report {
 	String reportText;
 	String nextSteps;
 	
+	Person author;	
 	
-	Advisor author;
-	
+	List<Comment> comments;
 	
 }

@@ -1,8 +1,10 @@
 database:
-  driverClass: com.microsoft.sqlserver.jdbc.SQLServerDriver
+  #driverClass: com.microsoft.sqlserver.jdbc.SQLServerDriver
+  driverClass: org.sqlite.JDBC
   user: ${ANET_DB_USERNAME}
   password: ${ANET_DB_PASSWORD}
-  url: jdbc:sqlserver://${ANET_DB_SERVER};databaseName=${ANET_DB_NAME}
+  #url: jdbc:sqlserver://${ANET_DB_SERVER};databaseName=${ANET_DB_NAME}
+  url: jdbc:sqlite:development.db
 
 
 
@@ -13,3 +15,22 @@ server:
   adminConnectors:
     - type: http
       port: 8081
+
+logging:
+  level: INFO
+  loggers:
+    "io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper" : DEBUG
+    "org.skife.jdbi.v2.DBI" : TRACE
+    "org.skife.jdbi.v2" : TRACE
+    "org.sqlite.JDBC" : TRACE
+    "mil.dds.anet.resources.TestingResource" :
+      level: INFO
+      appenders:
+        - type: file
+          currentLogFilename: ./logs/testingLogger.log
+          archivedLogFilenamePattern: ./logs/testingLogger-%d.log.gz
+          archivedFileCount: 2
+  appenders: 
+    - type: console
+      threshold: TRACE
+      target: stdout

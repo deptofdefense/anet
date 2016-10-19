@@ -1,0 +1,8 @@
+{
+	"id" : null,
+	"name" : "Group Alpha",
+	"members" : [
+		{"id" : 1 },
+		{"id" : 2}
+	]
+}

@@ -1,8 +1,12 @@
 package mil.dds.anet.beans;
 
-public abstract class Person {
+import java.util.Objects;
+
+public class Person {
 
 	public static enum Status { ACTIVE, INACTIVE }
+	
+	private Integer id;
 	
 	private String firstName; 
 	private String lastName;
@@ -15,6 +19,12 @@ public abstract class Person {
 	private String biography;
 	
 	
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
 	public String getFirstName() {
 		return firstName;
 	}
@@ -57,7 +67,27 @@ public abstract class Person {
 	public void setBiography(String biography) {
 		this.biography = biography;
 	}
+
+	@Override
+	public boolean equals(Object o) { 
+		if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+		Person other = (Person) o;
+		return this.getId() == other.getId() && 
+			Objects.equals(other.getFirstName(), getFirstName()) &&
+			Objects.equals(other.getLastName(), this.getLastName()) &&
+			Objects.equals(other.getStatus(), this.getStatus()) && 
+			Objects.equals(other.getEmailAddress(), this.getEmailAddress()) && 
+			Objects.equals(other.getPhoneNumber(), this.getPhoneNumber()) && 
+			Objects.equals(other.getRank(), this.getRank()) && 
+			Objects.equals(other.getBiography(), this.getBiography()); 
+	}
 	
-	
+	@Override
+	public int hashCode() { 
+		return Objects.hash(id, firstName, lastName, status, emailAddress,
+			phoneNumber, rank, biography);
+	}
 	
 }
