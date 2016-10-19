@@ -7,6 +7,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import mil.dds.anet.beans.Group;
 import mil.dds.anet.database.GroupDao;
@@ -37,5 +39,16 @@ public class GroupResource {
 	@Path("/addMember")
 	public void addMemberToGroup(@QueryParam("groupId") int groupId, @QueryParam("personId") int personId) { 
 		dao.addPersonToGroup(groupId, personId);
+	}
+	
+	@POST
+	@Path("/rename")
+	public Response renameGroup(Group g) { 
+		int numRows = dao.updateGroupName(g);
+		if (numRows == 1) { 
+			return Response.ok().build();
+		} else { 
+			return Response.status(Status.NOT_FOUND).build();
+		}
 	}
 }

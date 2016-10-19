@@ -65,11 +65,16 @@ public class GroupsResourceTest {
 				.post(Entity.json(g), Group.class);
 		assertThat(created.getName()).isEqualTo(g.getName());
 		
-		g.setName("A Changed Name");
-		Response resp = client.target(String.format("http://localhost:%d/groups/update", RULE.getLocalPort()))
+		created.setName("A Changed Name");
+		Response resp = client.target(String.format("http://localhost:%d/groups/rename", RULE.getLocalPort()))
 				.request()
-				.post(Entity.json(g));
+				.post(Entity.json(created));
 		assertThat(resp.getStatus()).isEqualTo(200);
+		
+		Group returned = client.target(String.format("http://localhost:%d/groups/%d", RULE.getLocalPort(), created.getId()))
+				.request()
+				.get(Group.class);
+		assertThat(created).isEqualTo(returned);
 	}
 	
 	@Test

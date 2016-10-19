@@ -62,8 +62,11 @@ public class GroupDao {
 		return g;
 	}
 	
-	public void updateGroupName(Group g) { 
-		dbHandle.createStatement("UPDATE groups SET name = :name where id = :id")
+	/*
+	 * @return: the number of rows updated (should be 1
+	 */
+	public int updateGroupName(Group g) { 
+		return dbHandle.createStatement("UPDATE groups SET name = :name where id = :id")
 			.bind("name", g.getName())
 			.bind("id", g.getId())
 			.execute();
