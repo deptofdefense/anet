@@ -92,4 +92,18 @@ public class GroupDao {
 			.bind("personId", personId)
 			.execute();
 	}
+	
+	public void deleteGroup(Group g) { 
+		deleteGroup(g.getId());
+	}
+	
+	public void deleteGroup(int groupId) { 
+		dbHandle.createStatement("DELETE FROM groupMemberships WHERE groupId = :groupId")
+			.bind("groupId", groupId)
+			.execute();
+		
+		dbHandle.createStatement("DELETE FROM groups where id = :groupId")
+			.bind("groupId", groupId)
+			.execute();
+	}
 }
