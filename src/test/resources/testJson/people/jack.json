@@ -1,0 +1,9 @@
+{
+	"firstName" : "Jack",
+	"lastName" : "Jackson",
+	"status" : "ACTIVE",
+	"emailAddress" : "foobar@example.com",
+	"phoneNumber" : "123-456-78960",
+	"rank" : "OF-9",
+	"biography" : "this is a sample biography"
+}
