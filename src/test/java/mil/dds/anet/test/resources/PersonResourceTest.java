@@ -67,6 +67,9 @@ public class PersonResourceTest {
     	assertThat(retPerson.getId()).isEqualTo(createdPerson.getId());
     }
 	
+	//TODO: Assign Person to Advising Organiztion
+	//TODO: Assign Person to Tashkil
+	
 	@Test
 	public void testDeletePerson() { 
         Person jack = client.target(

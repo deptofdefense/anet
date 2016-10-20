@@ -1,21 +1,23 @@
 package mil.dds.anet.beans;
 
+import java.util.Objects;
+
 import org.joda.time.DateTime;
 
 public class Comment {
 
-	private int id;
+	private Integer id;
 	
 	private Person author;
 	private DateTime dtg;
 	
 	private String text;
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -44,5 +46,21 @@ public class Comment {
 	}
 	
 	
+	@Override
+	public boolean equals(Object o) { 
+		if (o == null || o.getClass() != Comment.class) { 
+			return false;
+		}
+		Comment c = (Comment) o;
+		return Objects.equals(c.getId(), id) &&
+				Objects.equals(c.getAuthor(), author) &&
+				Objects.equals(c.getText(), text) &&
+				Objects.equals(c.getDtg(), dtg);
+	}
+	
+	@Override
+	public int hashCode() { 
+		return Objects.hash(id, author, dtg, text);
+	}
 	
 }

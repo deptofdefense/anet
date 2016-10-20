@@ -13,7 +13,7 @@ import mil.dds.anet.beans.Person;
 public interface PersonDao {
 
 	@SqlQuery("select * from people where id = :id")
-	Person getPersonById(@Bind("id") int id);
+	Person getById(@Bind("id") int id);
 	
 	@SqlUpdate("INSERT INTO people " +
 			"(firstName, lastName, status, emailAddress, phoneNumber, rank, biography) " +
@@ -25,7 +25,7 @@ public interface PersonDao {
 			"SET firstName = :firstName, lastName = :lastName, status = :status, " + 
 			"phoneNumber = :phoneNumber, rank = :rank, biography = :biography" +
 			"WHERE id = :id")
-	void updatePerson(@BindBean Person p);
+	int updatePerson(@BindBean Person p);
 	
 	@SqlUpdate("DELETE FROM People WHERE id = :id")
 	void deletePersonById(@Bind("id") int id);

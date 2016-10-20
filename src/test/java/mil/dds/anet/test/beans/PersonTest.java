@@ -1,19 +1,11 @@
 package mil.dds.anet.test.beans;
 
-import static io.dropwizard.testing.FixtureHelpers.fixture;
-import static org.assertj.core.api.Assertions.assertThat;
-
 import org.junit.Test;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import io.dropwizard.jackson.Jackson;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Person.Status;
 
-public class PersonTest {
-
-	private static final ObjectMapper MAPPER = Jackson.newObjectMapper();
+public class PersonTest extends BeanTester<Person> {
 
 	public static Person getJackJackson() { 
 		final Person person = new Person();
@@ -26,18 +18,30 @@ public class PersonTest {
 		person.setBiography("this is a sample biography");
 		return person;
 	}
+
+	public static Person getSteveSteveson() {
+		Person person = new Person();
+		person.setFirstName("Steve");
+		person.setLastName("Steveson");
+		person.setEmailAddress("steve@example.com");
+		person.setPhoneNumber("+011-258-32895");
+		person.setRank("LtCol");
+		person.setStatus(Status.ACTIVE);
+		person.setBiography("this is a sample person who could be a Principal!");
+		return person;
+	}
 	
 	@Test
 	public void serializesToJSON() throws Exception {
-		Person person = getJackJackson();
-		final String expected = MAPPER.writeValueAsString(MAPPER.readValue(fixture("testJson/people/jack.json"), Person.class));
-
-		assertThat(MAPPER.writeValueAsString(person)).isEqualTo(expected);
+		serializesToJSON(getJackJackson(), "testJson/people/jack.json");
 	}
 	
 	@Test
     public void deserializesFromJSON() throws Exception {
-		Person person = getJackJackson();
-        assertThat(MAPPER.readValue(fixture("testJson/people/jack.json"), Person.class)).isEqualTo(person);
+		deserializesFromJSON(getJackJackson(), "testJson/people/jack.json");
     }
+
+	
+	
+
 }

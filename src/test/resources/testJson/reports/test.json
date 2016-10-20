@@ -1,0 +1,63 @@
+{
+	"id": null,
+	"dtg": 1453753380000,
+	"location": {
+		"id": null,
+		"name": "The Boat Dock",
+		"latLng": {
+			"lat": 32.456,
+			"lng": -123.4999
+		}
+	},
+	"intent": "Check up with Steve",
+	"principals": [{
+		"id": null,
+		"firstName": "Steve",
+		"lastName": "Steveson",
+		"status": "ACTIVE",
+		"emailAddress": "steve@example.com",
+		"phoneNumber": "+011-258-32895",
+		"rank": "LtCol",
+		"biography": "this is a sample person who could be a Principal!"
+	}],
+	"poams": [{
+		"id": null,
+		"shortName": "F-1",
+		"longName": "Run the bases",
+		"category": "Functional Area",
+		"parentPoamId": null
+	}, {
+		"id": null,
+		"shortName": "F-1",
+		"longName": "Run the bases",
+		"category": "Functional Area",
+		"parentPoamId": null
+	}],
+	"reportText": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+	"nextSteps": "Go for a boat ride with Steve tomorrow",
+	"author": {
+		"id": null,
+		"firstName": "Jack",
+		"lastName": "Jackson",
+		"status": "ACTIVE",
+		"emailAddress": "foobar@example.com",
+		"phoneNumber": "123-456-78960",
+		"rank": "OF-9",
+		"biography": "this is a sample biography"
+	},
+	"comments": [{
+		"id": null,
+		"author": {
+			"id": null,
+			"firstName": "Jack",
+			"lastName": "Jackson",
+			"status": "ACTIVE",
+			"emailAddress": "foobar@example.com",
+			"phoneNumber": "123-456-78960",
+			"rank": "OF-9",
+			"biography": "this is a sample biography"
+		},
+		"dtg": 1453815803000,
+		"text": "I really like this report, it's awesome!!!"
+	}]
+}

@@ -9,11 +9,7 @@ import javax.ws.rs.core.Response;
 import org.junit.ClassRule;
 import org.junit.Test;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import io.dropwizard.client.JerseyClientBuilder;
-import io.dropwizard.jackson.Jackson;
-import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import mil.dds.anet.AnetApplication;
 import mil.dds.anet.beans.Group;
@@ -24,8 +20,6 @@ public class GroupsResourceTest {
 	@ClassRule
     public static final DropwizardAppRule<AnetConfiguration> RULE =
             new DropwizardAppRule<AnetConfiguration>(AnetApplication.class, "anet.yml");
-
-	private static final ObjectMapper MAPPER = Jackson.newObjectMapper();
 	
 	public static Client client;
 	

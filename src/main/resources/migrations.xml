@@ -71,6 +71,7 @@
 		<createTable tableName="tashkilPrincipals">
 			<column name="tashkilId" type="int" />
 			<column name="principalId" type="int" />
+			<column name="dtg" type="datetime" />
 		</createTable>
 
     </changeSet>

@@ -27,7 +27,7 @@ public class PersonResource {
 	@GET
 	@Path("/{id}")
 	public Person getById(@PathParam("id") int id) { 
-		Person p = dao.getPersonById(id);
+		Person p = dao.getById(id);
 		if (p == null) { 
 			throw new WebApplicationException("No person by that ID", Status.NOT_FOUND);
 		}
@@ -40,6 +40,13 @@ public class PersonResource {
 		int id = dao.insertPerson(p);
 		p.setId(id);
 		return p;
+	}
+	
+	@POST
+	@Path("/update")
+	public Response updatePerson(Person p) { 
+		int numRows = dao.updatePerson(p);
+		return (numRows == 1) ? Response.ok().build() : Response.status(Status.NOT_FOUND).build();
 	}
 	
 	@DELETE
