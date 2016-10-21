@@ -1,5 +1,6 @@
 package mil.dds.anet.resources;
 
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -35,10 +36,18 @@ public class GroupResource {
 		return dao.createNewGroup(g);
 	}
 	
-	@POST
+	@GET
 	@Path("/addMember")
-	public void addMemberToGroup(@QueryParam("groupId") int groupId, @QueryParam("personId") int personId) { 
+	public Response addMemberToGroup(@QueryParam("groupId") int groupId, @QueryParam("personId") int personId) { 
 		dao.addPersonToGroup(groupId, personId);
+		return Response.ok().build(); //TODO: perhaps some error checking? 
+	}
+	
+	@GET
+	@Path("/removeMember")
+	public Response removeMemberFromGroup(@QueryParam("groupId") int groupId, @QueryParam("personId") int personId) { 
+		dao.removePersonFromGroup(groupId, personId);
+		return Response.ok().build(); //TODO: perhaps some error checking? 
 	}
 	
 	@POST
@@ -50,5 +59,12 @@ public class GroupResource {
 		} else { 
 			return Response.status(Status.NOT_FOUND).build();
 		}
+	}
+	
+	@DELETE
+	@Path("/{id}")
+	public Response deleteGroup(@PathParam("id") int id) { 
+		int numRows = dao.deleteGroup(id);
+		return (numRows == 1) ? Response.ok().build() : Response.status(Status.NOT_FOUND).build();
 	}
 }

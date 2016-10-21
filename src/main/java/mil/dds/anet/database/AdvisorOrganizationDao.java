@@ -15,6 +15,11 @@ public class AdvisorOrganizationDao {
 	Handle dbHandle;
 	GroupDao groupDao;
 	
+	public AdvisorOrganizationDao(Handle dbHandle, GroupDao groupDao) { 
+		this.dbHandle = dbHandle;
+		this.groupDao = groupDao;
+	}
+	
 	public AdvisorOrganization getAdvisorOrgById(int id) { 
 		Query<AdvisorOrganization> query = dbHandle.createQuery(
 				"Select * from advisorOrganizations where id = :id")
@@ -27,7 +32,7 @@ public class AdvisorOrganizationDao {
 	public AdvisorOrganization createNewAdvisorOrganization(AdvisorOrganization ao) {
 		Group g = new Group();
 		g.setName(ao.getName() + " Members");
-		groupDao.createNewGroup(g);
+		g = groupDao.createNewGroup(g);
 		
 		GeneratedKeys<Map<String,Object>> keys = dbHandle.createStatement(
 				"INSERT INTO advisorOrganizations (name, memberGroupId) VALUES (:name, :memberGroupId)")
@@ -36,14 +41,22 @@ public class AdvisorOrganizationDao {
 			.executeAndReturnGeneratedKeys();
 		
 		ao.setId(((Integer)keys.first().get("last_insert_rowid()")).intValue());
+		ao.setMemberGroupId(g.getId());
 		return ao;
 	}
 	
-	public void updateAdvisorOrganizationName(AdvisorOrganization ao) { 
-		dbHandle.createStatement("UPDATE advisorOrganizations SET name = :name where id = :id")
-		.bind("name", ao.getName())
-		.bind("id", ao.getId())
-		.execute();
+	public int updateAdvisorOrganizationName(AdvisorOrganization ao) { 
+		int numRows = dbHandle.createStatement("UPDATE advisorOrganizations SET name = :name where id = :id")
+				.bind("name", ao.getName())
+				.bind("id", ao.getId())
+				.execute();
+		
+		Group g = new Group();
+		g.setId(ao.getMemberGroupId());
+		g.setName(ao.getName() + " Members");
+		groupDao.updateGroupName(g);
+		
+		return numRows;
 	}
 	
 	public void deleteAdvisorOrganization(AdvisorOrganization ao) { 

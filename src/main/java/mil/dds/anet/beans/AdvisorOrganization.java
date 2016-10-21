@@ -28,6 +28,12 @@ public class AdvisorOrganization {
 		this.memberGroupId = memberGroupId;
 	}
 
+	public static AdvisorOrganization create(String name) { 
+		AdvisorOrganization ao = new AdvisorOrganization();
+		ao.setName(name);
+		return ao;
+	}
+	
 	@Override
 	public boolean equals(Object o) { 
 		if (o == null || o.getClass() != this.getClass()) { 

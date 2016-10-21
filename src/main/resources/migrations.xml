@@ -74,5 +74,45 @@
 			<column name="dtg" type="datetime" />
 		</createTable>
 
+		<createTable tableName="reports">
+			<column name="id" type="int" autoIncrement="true" >
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="dtg" type="datetime" />
+			<column name="locationId" type="int" />
+			<column name="intent" type="text" />
+			<column name="exsum" type="text" />
+			<column name="text" type="text" />
+			<column name="nextSteps" type="text" />
+			<column name="authorId" type="int" />
+		</createTable>
+
+		<createTable tableName="reportPrincipals" >
+			<column name="principalId" type="int" />
+			<column name="reportId" type="int" />
+		</createTable>
+		<createTable tableName="reportPoams" >
+			<column name="reportId" type="int" />
+			<column name="poamId" type="int" />
+		</createTable>
+
+		<createTable tableName="comments">
+			<column name="id" type="int" autoIncrement="true" >
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="authorId" type="int" />
+			<column name="reportId" type="int" />
+			<column name="dtg" type="datetime" />
+			<column name="text" type="text" />
+		</createTable>
+
+		<createTable tableName="locations">
+			<column name="id" type="int" autoIncrement="true" >
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="name" type="varchar(500)" />
+			<column name="lat" type="float" />
+			<column name="lng" type="float" />
+		</createTable>
     </changeSet>
 </databaseChangeLog>

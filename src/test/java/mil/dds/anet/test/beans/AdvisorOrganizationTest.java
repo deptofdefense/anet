@@ -9,7 +9,6 @@ public class AdvisorOrganizationTest extends BeanTester<AdvisorOrganization> {
 	public static AdvisorOrganization getTestAO() { 
 		AdvisorOrganization ao = new AdvisorOrganization();
 		ao.setName("The Best Advisors Ever");
-		ao.setMemberGroupId(4);
 		return ao;
 	}
 	

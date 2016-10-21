@@ -48,7 +48,6 @@ public class GroupDao {
 		
 		g.setId(((Integer)keys.first().get("last_insert_rowid()")).intValue());
 		
-		
 		if (g.getMembers() != null && g.getMembers().size() > 0 ) { 
 			PreparedBatch memberInsertBatch = dbHandle.prepareBatch("INSERT INTO groupMemberships (groupId, personId) VALUES (:groupId, :personId)");
 			for (Person p : g.getMembers()) { 
@@ -96,17 +95,18 @@ public class GroupDao {
 			.execute();
 	}
 	
-	public void deleteGroup(Group g) { 
-		deleteGroup(g.getId());
+	public int deleteGroup(Group g) { 
+		return deleteGroup(g.getId());
 	}
 	
-	public void deleteGroup(int groupId) { 
+	public int deleteGroup(int groupId) { 
 		dbHandle.createStatement("DELETE FROM groupMemberships WHERE groupId = :groupId")
 			.bind("groupId", groupId)
 			.execute();
 		
-		dbHandle.createStatement("DELETE FROM groups where id = :groupId")
+		int numRows = dbHandle.createStatement("DELETE FROM groups where id = :groupId")
 			.bind("groupId", groupId)
 			.execute();
+		return numRows;
 	}
 }

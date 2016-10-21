@@ -44,4 +44,10 @@ public class Location {
 		return Objects.hash(id, name, latLng);
 	}
 	
+	public static Location create(String name, LatLng latLng) { 
+		Location l = new Location();
+		l.setName(name);
+		l.setLatLng(latLng);
+		return l;
+	}
 }

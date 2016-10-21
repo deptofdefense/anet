@@ -51,7 +51,8 @@ public class PersonResource {
 	
 	@DELETE
 	@Path("/{id}")
-	public Response deletePerson(@PathParam("id") int id) { 
+	public Response deletePerson(@PathParam("id") int id) {
+		//TODO: should this operation be allowed? 
 		dao.deletePersonById(id);
 		return Response.ok().build();
 	}

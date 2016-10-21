@@ -1,9 +1,6 @@
 package mil.dds.anet.test.resources;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
-
-import java.io.InputStream;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
@@ -12,10 +9,7 @@ import javax.ws.rs.core.Response;
 import org.junit.ClassRule;
 import org.junit.Test;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import io.dropwizard.client.JerseyClientBuilder;
-import io.dropwizard.jackson.Jackson;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import mil.dds.anet.AnetApplication;
 import mil.dds.anet.beans.Person;
@@ -28,8 +22,6 @@ public class PersonResourceTest {
     public static final DropwizardAppRule<AnetConfiguration> RULE =
             new DropwizardAppRule<AnetConfiguration>(AnetApplication.class, "anet.yml");
 
-	private static final ObjectMapper MAPPER = Jackson.newObjectMapper();
-	
 	public static Client client;
 	
 	public PersonResourceTest() { 
@@ -42,29 +34,29 @@ public class PersonResourceTest {
 	public void testCreatePerson() {
         Person jack = PersonTest.getJackJackson();
         
-        Response response = client.target(
+        Person created = client.target(
                  String.format("http://localhost:%d/people/new", RULE.getLocalPort()))
                 .request()
-                .post(Entity.json(jack));
-        
-        assertThat(response.getStatus()).isEqualTo(200);
-        
-        Person createdPerson = null;
-        try { 
-        	createdPerson = MAPPER.readValue((InputStream) response.getEntity(), Person.class);        	
-        } catch (Exception e) {
-        	e.printStackTrace();
-        	fail("Error deserializing Person from HTTP Request");
-        }
-    	assertThat(createdPerson.getFirstName()).isEqualTo(jack.getFirstName());
+                .post(Entity.json(jack), Person.class);
+        assertThat(created.getFirstName()).isEqualTo(jack.getFirstName());
     	
-    	Person retPerson = client.target(
-    			String.format("http://localhost:%d/people/%d", RULE.getLocalPort(), createdPerson.getId()))
+    	Person retPerson = client.target(String.format("http://localhost:%d/people/%d", RULE.getLocalPort(), created.getId()))
     			.request()
     			.get(Person.class);
     	
-    	assertThat(retPerson).isEqualTo(createdPerson);
-    	assertThat(retPerson.getId()).isEqualTo(createdPerson.getId());
+    	assertThat(retPerson).isEqualTo(created);
+    	assertThat(retPerson.getId()).isEqualTo(created.getId());
+    	
+    	created.setFirstName("Roberto");
+    	Response resp = client.target(String.format("http://localhost:%d/person/update", RULE.getLocalPort()))
+    			.request()
+    			.post(Entity.json(created));
+    	assertThat(resp.getStatus()).isEqualTo(200);
+    	
+    	retPerson = client.target(String.format("http://localhost:%d/people/%d", RULE.getLocalPort(), created.getId()))
+    			.request()
+    			.get(Person.class);
+    	assertThat(retPerson.getFirstName()).isEqualTo(created.getFirstName());
     }
 	
 	//TODO: Assign Person to Advising Organiztion

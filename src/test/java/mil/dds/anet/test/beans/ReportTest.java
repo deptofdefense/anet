@@ -19,9 +19,7 @@ public class ReportTest extends BeanTester<Report> {
 		Report r = new Report();
 		r.setDtg(new DateTime(1453753380000L, ISOChronology.getInstanceUTC()));
 		
-		Location loc = new Location();
-		loc.setName("The Boat Dock");
-		loc.setLatLng(new LatLng(32.456,-123.4999));
+		Location loc = Location.create("The Boat Dock", new LatLng(32.456,-123.4999));
 		r.setLocation(loc);
 		r.setIntent("Check up with Steve");
 		

@@ -15,6 +15,7 @@ public class Report {
 	DateTime dtg;
 	Location location;
 	String intent;
+	String exsum; //can be null to autogenerate
 	
 	List<Person> principals;
 	List<Poam> poams;
@@ -52,6 +53,14 @@ public class Report {
 
 	public String getIntent() {
 		return intent;
+	}
+
+	public String getExsum() {
+		return exsum;
+	}
+
+	public void setExsum(String exsum) {
+		this.exsum = exsum;
 	}
 
 	public void setIntent(String intent) {
@@ -116,6 +125,7 @@ public class Report {
 				Objects.equals(r.getDtg(), dtg) &&
 				Objects.equals(r.getLocation(), location) &&
 				Objects.equals(r.getIntent(), intent) &&
+				Objects.equals(r.getExsum(), exsum) &&
 				Objects.equals(r.getPrincipals(), principals) &&
 				Objects.equals(r.getPoams(), poams) &&
 				Objects.equals(r.getReportText(), reportText) &&
@@ -126,7 +136,7 @@ public class Report {
 	
 	@Override
 	public int hashCode() { 
-		return Objects.hash(id, dtg, location, intent, principals, 
+		return Objects.hash(id, dtg, location, intent, exsum, principals, 
 			poams, reportText, nextSteps, author, comments);
 	}
 }

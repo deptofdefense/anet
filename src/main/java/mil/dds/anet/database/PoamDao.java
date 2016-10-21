@@ -17,7 +17,8 @@ public interface PoamDao {
 	@SqlQuery("SELECT * from poams where id = :id")
 	Poam getPoamById(@Bind("id") int id);
 	
-	@SqlUpdate("INSERT INTO poams (longName, shortName, category, parentPoamId")
+	@SqlUpdate("INSERT INTO poams (longName, shortName, category, parentPoamId) " + 
+			"VALUES (:longName, :shortName, :category, :parentPoamId)")
 	@GetGeneratedKeys
 	int insertPoam(@BindBean Poam p);
 	

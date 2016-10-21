@@ -43,6 +43,20 @@ public class Poam {
 		this.parentPoamId = parentPoamId;
 	}
 	
+	public static Poam create(String shortName, String longName, String category) { 
+		return create(shortName, longName, category, null);
+	}
+	
+	public static Poam create(String shortName, String longName, String category, Poam parent) { 
+		Poam p = new Poam();
+		p.setShortName(shortName);
+		p.setLongName(longName);
+		p.setCategory(category);
+		if (parent != null) { p.setParentPoamId(parent.getId()); }
+		return p;
+	}
+	
+	
 	@Override
 	public boolean equals(Object o) { 
 		if (o == null || o.getClass() != this.getClass()) { 
