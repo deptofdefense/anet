@@ -1,4 +1,4 @@
-package mil.dds.anet.database;
+package mil.dds.anet.database.mappers;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

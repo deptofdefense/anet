@@ -13,6 +13,8 @@ import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Tashkil;
+import mil.dds.anet.database.mappers.PersonMapper;
+import mil.dds.anet.database.mappers.TashkilMapper;
 
 @RegisterMapper(TashkilMapper.class)
 public interface TashkilDao {
@@ -36,10 +38,10 @@ public interface TashkilDao {
 	@SqlQuery("SELECT people.* FROM people, tashkilPrincipals " + 
 			"WHERE people.id = tashkilPrincipals.principalId " +
 			"AND tashkilPrincipals.tashkilId = :tashkilId " +
-			"ORDER BY tashkilPrincipals.dtg DESC LIMIT 1")
+			"ORDER BY tashkilPrincipals.createdAt DESC LIMIT 1")
 	@Mapper(PersonMapper.class)
 	Person getPrincipal(@Bind("tashkilId") int tashkilId);
 	
-	@SqlUpdate("INSERT INTO tashkilPrincipals (tashkilId, principalId, dtg) VALUES (:tashkilId, :principalId, :dtg)")
+	@SqlUpdate("INSERT INTO tashkilPrincipals (tashkilId, principalId, createdAt) VALUES (:tashkilId, :principalId, :dtg)")
 	int setPrincipal(@Bind("tashkilId") int tashkilId, @Bind("principalId") int principalId, @Bind("dtg") DateTime dtg);
 }

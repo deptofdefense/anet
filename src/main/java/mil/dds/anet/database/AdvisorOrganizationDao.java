@@ -9,6 +9,7 @@ import org.skife.jdbi.v2.Query;
 
 import mil.dds.anet.beans.AdvisorOrganization;
 import mil.dds.anet.beans.Group;
+import mil.dds.anet.database.mappers.AdvisorOrganizationMapper;
 
 public class AdvisorOrganizationDao {
 

@@ -11,6 +11,7 @@ import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
 import mil.dds.anet.beans.geo.LatLng;
 import mil.dds.anet.beans.geo.Location;
+import mil.dds.anet.database.mappers.LocationMapper;
 
 @RegisterMapper(LocationMapper.class)
 public interface LocationDao {

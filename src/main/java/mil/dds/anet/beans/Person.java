@@ -74,7 +74,7 @@ public class Person {
             return false;
         }
 		Person other = (Person) o;
-		return this.getId() == other.getId() && 
+		return Objects.equals(id, other.getId()) && 
 			Objects.equals(other.getFirstName(), getFirstName()) &&
 			Objects.equals(other.getLastName(), this.getLastName()) &&
 			Objects.equals(other.getStatus(), this.getStatus()) && 

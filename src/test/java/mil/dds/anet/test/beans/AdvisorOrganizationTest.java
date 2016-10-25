@@ -23,3 +23,4 @@ public class AdvisorOrganizationTest extends BeanTester<AdvisorOrganization> {
     }
 	
 }
+

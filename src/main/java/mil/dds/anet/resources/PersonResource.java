@@ -1,11 +1,13 @@
 package mil.dds.anet.resources;
 
-import javax.ws.rs.DELETE;
+import java.util.List;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -49,11 +51,18 @@ public class PersonResource {
 		return (numRows == 1) ? Response.ok().build() : Response.status(Status.NOT_FOUND).build();
 	}
 	
-	@DELETE
-	@Path("/{id}")
-	public Response deletePerson(@PathParam("id") int id) {
-		//TODO: should this operation be allowed? 
-		dao.deletePersonById(id);
-		return Response.ok().build();
+//	@DELETE
+//	@Path("/{id}")
+//	public Response deletePerson(@PathParam("id") int id) {
+//		//TODO: should this operation be allowed?
+		//TODO: no, this should soft delete! 
+//		dao.deletePersonById(id);
+//		return Response.ok().build();
+//	}
+	
+	@GET
+	@Path("/search")
+	public List<Person> searchByName(@QueryParam("q") String query) {
+		return dao.searchByName(query);
 	}
 }

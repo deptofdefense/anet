@@ -71,14 +71,15 @@
 		<createTable tableName="tashkilPrincipals">
 			<column name="tashkilId" type="int" />
 			<column name="principalId" type="int" />
-			<column name="dtg" type="datetime" />
+			<column name="createdAt" type="datetime" />
 		</createTable>
 
 		<createTable tableName="reports">
 			<column name="id" type="int" autoIncrement="true" >
 				<constraints primaryKey="true" nullable="false" />
 			</column>
-			<column name="dtg" type="datetime" />
+			<column name="createdAt" type="datetime" />
+			<column name="updatedAt" type="datetime" />
 			<column name="locationId" type="int" />
 			<column name="intent" type="text" />
 			<column name="exsum" type="text" />
@@ -102,7 +103,7 @@
 			</column>
 			<column name="authorId" type="int" />
 			<column name="reportId" type="int" />
-			<column name="dtg" type="datetime" />
+			<column name="createdAt" type="datetime" />
 			<column name="text" type="text" />
 		</createTable>
 
@@ -115,4 +116,46 @@
 			<column name="lng" type="float" />
 		</createTable>
     </changeSet>
+
+	<changeSet id="2" author="hpitelka">
+		<addColumn tableName="reports">
+			<column name="approvalStepId" type="int" />
+		</addColumn>
+		<addColumn tableName="reports">
+			<column name="state" type="int" />
+		</addColumn>
+
+		<createTable tableName="approvalSteps">
+			<column name="id" type="int" autoIncrement="true" >
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="approverGroupId" type="int" />
+			<column name="nextStepId" type="int" />
+			<column name="advisorOrganizationId" type="int" />
+		</createTable>
+
+		<createTable tableName="approvalActions">
+			<column name="approvalStepId" type="int" />
+			<column name="personId" type="int" />
+			<column name="reportId" type="int" />
+			<column name="createdAt" type="datetime" />
+			<column name="type" type="int" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="3" author="hpitelka" >
+		<createTable tableName="billets">
+			<column name="id" type="int" autoIncrement="true" >
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="name" type="varchar(500)" />
+			<column name="advisorOrganizationId" type="int" />
+		</createTable>
+
+		<createTable tableName="billetAdvisors" >
+			<column name="billetId" type="int" />
+			<column name="advisorId" type="int" />
+			<column name="createdAt" type="datetime" />
+		</createTable>
+	</changeSet>
 </databaseChangeLog>

@@ -12,6 +12,8 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import mil.dds.anet.config.AnetConfiguration;
 import mil.dds.anet.database.AdvisorOrganizationDao;
+import mil.dds.anet.database.ApprovalStepDao;
+import mil.dds.anet.database.BilletDao;
 import mil.dds.anet.database.GroupDao;
 import mil.dds.anet.database.LocationDao;
 import mil.dds.anet.database.PersonDao;
@@ -19,6 +21,8 @@ import mil.dds.anet.database.PoamDao;
 import mil.dds.anet.database.TashkilDao;
 import mil.dds.anet.database.TestingDao;
 import mil.dds.anet.resources.AdvisorOrganizationResource;
+import mil.dds.anet.resources.ApprovalStepResource;
+import mil.dds.anet.resources.BilletResource;
 import mil.dds.anet.resources.GroupResource;
 import mil.dds.anet.resources.LocationResource;
 import mil.dds.anet.resources.PersonResource;
@@ -65,6 +69,8 @@ public class AnetApplication extends Application<AnetConfiguration> {
 		final PoamDao poamDao = jdbi.onDemand(PoamDao.class);
 		final LocationDao locationDao =  jdbi.onDemand(LocationDao.class);
 		final AdvisorOrganizationDao aoDao = new AdvisorOrganizationDao(jdbi.open(), groupDao);
+		final BilletDao billetDao = new BilletDao(jdbi.open());
+		final ApprovalStepDao asDao = new ApprovalStepDao(jdbi.open());
 		
 		TestingResource test = new TestingResource(dao); 
 		PersonResource personResource = new PersonResource(personDao);
@@ -73,6 +79,8 @@ public class AnetApplication extends Application<AnetConfiguration> {
 		PoamResource poamResource =  new PoamResource(poamDao);
 		LocationResource locationResource = new LocationResource(locationDao);
 		AdvisorOrganizationResource aoResource = new AdvisorOrganizationResource(aoDao);
+		BilletResource billetResource = new BilletResource(billetDao);
+		ApprovalStepResource asResource = new ApprovalStepResource(asDao);
 		
 		environment.jersey().register(test);
 		environment.jersey().register(personResource);
@@ -81,6 +89,8 @@ public class AnetApplication extends Application<AnetConfiguration> {
 		environment.jersey().register(poamResource);
 		environment.jersey().register(locationResource);
 		environment.jersey().register(aoResource);
+		environment.jersey().register(billetResource);
+		environment.jersey().register(asResource);
 		
 	}
 

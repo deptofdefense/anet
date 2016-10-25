@@ -10,6 +10,7 @@ import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
 import mil.dds.anet.beans.Poam;
+import mil.dds.anet.database.mappers.PoamMapper;
 
 @RegisterMapper(PoamMapper.class)
 public interface PoamDao {

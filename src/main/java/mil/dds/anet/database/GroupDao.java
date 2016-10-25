@@ -10,6 +10,8 @@ import org.skife.jdbi.v2.Query;
 
 import mil.dds.anet.beans.Group;
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.database.mappers.GroupMapper;
+import mil.dds.anet.database.mappers.PersonMapper;
 
 public class GroupDao {
 
