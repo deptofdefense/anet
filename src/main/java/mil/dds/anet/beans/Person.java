@@ -1,8 +1,11 @@
 package mil.dds.anet.beans;
 
+import java.security.Principal;
 import java.util.Objects;
 
-public class Person {
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+public class Person implements Principal {
 
 	public static enum Status { ACTIVE, INACTIVE }
 	
@@ -18,6 +21,11 @@ public class Person {
 	private String rank;
 	private String biography;
 	
+	@Override
+	@JsonIgnore
+	public String getName() {
+		return String.format("%s %s (%s)", firstName, lastName, emailAddress);
+	}
 	
 	public Integer getId() {
 		return id;

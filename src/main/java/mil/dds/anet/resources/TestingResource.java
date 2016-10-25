@@ -14,7 +14,9 @@ import javax.ws.rs.core.MediaType;
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;
 
+import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
+import mil.dds.anet.beans.Person;
 
 @Path("/testing")
 @Produces(MediaType.APPLICATION_JSON)
@@ -23,6 +25,12 @@ public class TestingResource {
 	private static Logger log = Log.getLogger(TestingResource.class);
 	
 	public TestingResource(AnetObjectEngine engine) {}
+	
+	@GET
+	@Path("/whoami")
+	public Person whoAmI(@Auth Person me) { 
+		return me;
+	}
 	
 	
 	@GET

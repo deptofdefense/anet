@@ -3,6 +3,9 @@ package mil.dds.anet;
 import org.skife.jdbi.v2.DBI;
 
 import io.dropwizard.Application;
+import io.dropwizard.auth.AuthDynamicFeature;
+import io.dropwizard.auth.AuthValueFactoryProvider;
+import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.db.DataSourceFactory;
@@ -10,6 +13,7 @@ import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.migrations.MigrationsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import mil.dds.anet.beans.Person;
 import mil.dds.anet.config.AnetConfiguration;
 import mil.dds.anet.resources.AdvisorOrganizationResource;
 import mil.dds.anet.resources.ApprovalStepResource;
@@ -53,8 +57,18 @@ public class AnetApplication extends Application<AnetConfiguration> {
 		System.out.println(configuration.getDataSourceFactory().getUrl());
 		final DBIFactory factory = new DBIFactory();
 		final DBI jdbi = factory.build(environment, configuration.getDataSourceFactory(), "mssql");
-		
+
 		final AnetObjectEngine engine = new AnetObjectEngine(jdbi);
+		
+		environment.jersey().register(new AuthDynamicFeature(
+	            new BasicCredentialAuthFilter.Builder<Person>()
+	                .setAuthenticator(new AnetAuthenticator(engine))
+//	                .setAuthorizer(new ExampleAuthorizer())
+	                .setRealm("ANET")
+	                .buildAuthFilter()));
+//	    environment.jersey().register(RolesAllowedDynamicFeature.class);
+	    //If you want to use @Auth to inject a custom Principal type into your resource
+	    environment.jersey().register(new AuthValueFactoryProvider.Binder<>(Person.class));
 		
 		TestingResource test = new TestingResource(engine); 
 		PersonResource personResource = new PersonResource(engine);
