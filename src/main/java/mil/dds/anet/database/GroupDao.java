@@ -7,12 +7,14 @@ import org.skife.jdbi.v2.GeneratedKeys;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.PreparedBatch;
 import org.skife.jdbi.v2.Query;
+import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
 import mil.dds.anet.beans.Group;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.database.mappers.GroupMapper;
 import mil.dds.anet.database.mappers.PersonMapper;
 
+@RegisterMapper(GroupMapper.class)
 public class GroupDao {
 
 	Handle dbHandle;

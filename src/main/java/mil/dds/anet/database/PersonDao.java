@@ -9,7 +9,9 @@ import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
+import mil.dds.anet.beans.AdvisorOrganization;
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.database.mappers.AdvisorOrganizationMapper;
 import mil.dds.anet.database.mappers.PersonMapper;
 
 @RegisterMapper(PersonMapper.class)
@@ -32,4 +34,11 @@ public interface PersonDao {
 	
 	@SqlQuery("SELECT * from people WHERE firstName LIKE :query || '%' OR lastName LIKE :query || '%'")
 	List<Person> searchByName(@Bind("query") String query);
+	
+	@SqlQuery("SELECT advisorOrganizations.* from advisorOrganizations, billets, billetAdvisors WHERE " + 
+		"billetAdvisors.advisorId = :personId AND billetAdvisors.billetId = billets.id " + 
+		"AND billets.advisorOrganizationId = advisorOrganizations.id")
+	@RegisterMapper(AdvisorOrganizationMapper.class)
+	AdvisorOrganization getAdvisorOrganizationForPerson(@Bind("personId") int personId);
+	
 }

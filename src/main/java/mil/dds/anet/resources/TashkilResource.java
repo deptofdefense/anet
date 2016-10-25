@@ -14,6 +14,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.joda.time.DateTime;
 
+import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Tashkil;
 import mil.dds.anet.database.TashkilDao;
@@ -24,8 +25,8 @@ public class TashkilResource {
 
 	TashkilDao dao;
 	
-	public TashkilResource(TashkilDao dao) { 
-		this.dao = dao;
+	public TashkilResource(AnetObjectEngine engine) { 
+		this.dao = engine.getTashkilDao();
 	}
 	
 	@POST

@@ -9,6 +9,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Billet;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.database.BilletDao;
@@ -19,8 +20,8 @@ public class BilletResource {
 
 	BilletDao dao;
 	
-	public BilletResource(BilletDao dao) { 
-		this.dao = dao;
+	public BilletResource(AnetObjectEngine engine) { 
+		this.dao = engine.getBilletDao();
 	}
 	
 	@GET

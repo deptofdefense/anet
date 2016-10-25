@@ -90,4 +90,10 @@ public class Person {
 			phoneNumber, rank, biography);
 	}
 	
+	public static Person createWithId(int id) { 
+		Person p = new Person();
+		p.setId(id);
+		return p;
+	}
+	
 }

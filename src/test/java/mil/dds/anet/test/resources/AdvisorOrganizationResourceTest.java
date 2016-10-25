@@ -1,7 +1,6 @@
 package mil.dds.anet.test.resources;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;

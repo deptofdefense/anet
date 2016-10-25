@@ -13,17 +13,18 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.database.PoamDao;
 
-@Path("/poam")
+@Path("/poams")
 @Produces(MediaType.APPLICATION_JSON)
 public class PoamResource {
 
 	PoamDao dao;
 	
-	public PoamResource(PoamDao dao) {
-		this.dao = dao;
+	public PoamResource(AnetObjectEngine engine) {
+		this.dao = engine.getPoamDao();
 	}
 	
 	@GET

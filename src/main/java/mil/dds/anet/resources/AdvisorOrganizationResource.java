@@ -9,6 +9,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.AdvisorOrganization;
 import mil.dds.anet.database.AdvisorOrganizationDao;
 
@@ -18,8 +19,8 @@ public class AdvisorOrganizationResource {
 
 	private AdvisorOrganizationDao dao;
 	
-	public AdvisorOrganizationResource(AdvisorOrganizationDao dao) {
-		this.dao = dao; 
+	public AdvisorOrganizationResource(AnetObjectEngine engine) {
+		this.dao = engine.getAdvisorOrganizationDao(); 
 	}
 	
 	

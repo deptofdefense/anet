@@ -50,4 +50,9 @@ public class Group {
 		return Objects.hash(id, name, members);
 	}
 	
+	public static Group create(String name) { 
+		Group g = new Group();
+		g.setName(name);
+		return g;
+	}
 }

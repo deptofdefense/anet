@@ -99,7 +99,7 @@ public class PersonResourceTest {
 		List<Person> people = new ArrayList<Person>();
 		try { 
 			List<Person> peopleStubs = MAPPER.readValue(fixture("testJson/people/fakeNames.json"), new TypeReference<List<Person>>() {});
-			for (Person p : peopleStubs) { 
+			for (Person p : (peopleStubs.subList(0, 10))) { 
 				Person created = client.target(String.format("http://localhost:%d/people/new", RULE.getLocalPort()))
 					.request()
 					.post(Entity.json(p), Person.class);
@@ -112,7 +112,7 @@ public class PersonResourceTest {
 		
 		//Search for some of them.
 		Random rand = new Random();
-		for (int i=0;i<10;i++) { 
+		for (int i=0;i<5;i++) { 
 			Person p = people.get(rand.nextInt(people.size()));
 			String query = p.getFirstName().substring(0, 2 + (rand.nextInt(p.getFirstName().length() - 2)));
 			List<Person> searchResults = client.target(String.format("http://localhost:%d/people/search?q=%s", RULE.getLocalPort(), query))
@@ -122,7 +122,7 @@ public class PersonResourceTest {
 			assertThat(searchResults).contains(p);
 		}
 		
-		for (int i=0;i<10;i++) { 
+		for (int i=0;i<5;i++) { 
 			Person p = people.get(rand.nextInt(people.size()));
 			String query = p.getLastName().substring(0, 2 + (rand.nextInt(p.getLastName().length() - 2)));
 			List<Person> searchResults = client.target(String.format("http://localhost:%d/people/search?q=%s", RULE.getLocalPort(), query))

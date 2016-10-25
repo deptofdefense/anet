@@ -4,15 +4,20 @@ import java.util.List;
 import java.util.Objects;
 
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeField;
 
 import mil.dds.anet.beans.geo.Location;
 
 public class Report {
 
-	Integer id;
+	public enum ReportState { DRAFT, PENDING_APPROVAL, RELEASED }
+
 	
-	DateTime dtg;
+	Integer id;
+	Integer approvalStepId;
+	ReportState state;
+	
+	DateTime createdAt;
+	DateTime updatedAt;
 	Location location;
 	String intent;
 	String exsum; //can be null to autogenerate
@@ -35,12 +40,36 @@ public class Report {
 		this.id = id;
 	}
 
-	public DateTime getDtg() {
-		return dtg;
+	public Integer getApprovalStepId() {
+		return approvalStepId;
 	}
 
-	public void setDtg(DateTime dtg) {
-		this.dtg = dtg;
+	public void setApprovalStepId(Integer approvalStepId) {
+		this.approvalStepId = approvalStepId;
+	}
+
+	public ReportState getState() {
+		return state;
+	}
+
+	public void setState(ReportState state) {
+		this.state = state;
+	}
+
+	public DateTime getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(DateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public DateTime getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(DateTime updatedAt) {
+		this.updatedAt = updatedAt;
 	}
 
 	public Location getLocation() {
@@ -122,7 +151,10 @@ public class Report {
 		}
 		Report r = (Report) other;
 		return Objects.equals(r.getId(), id) &&
-				Objects.equals(r.getDtg(), dtg) &&
+				Objects.equals(r.getState(), state) &&
+				Objects.equals(r.getApprovalStepId(), approvalStepId) &&
+				Objects.equals(r.getCreatedAt(), createdAt) &&
+				Objects.equals(r.getUpdatedAt(), updatedAt) &&
 				Objects.equals(r.getLocation(), location) &&
 				Objects.equals(r.getIntent(), intent) &&
 				Objects.equals(r.getExsum(), exsum) &&
@@ -136,7 +168,8 @@ public class Report {
 	
 	@Override
 	public int hashCode() { 
-		return Objects.hash(id, dtg, location, intent, exsum, principals, 
-			poams, reportText, nextSteps, author, comments);
+		return Objects.hash(id, state, approvalStepId, createdAt, updatedAt, 
+			location, intent, exsum, principals, poams, reportText, 
+			nextSteps, author, comments);
 	}
 }

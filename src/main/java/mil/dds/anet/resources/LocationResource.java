@@ -12,6 +12,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.database.LocationDao;
 
@@ -21,8 +22,8 @@ public class LocationResource {
 
 	private LocationDao dao;
 	
-	public LocationResource(LocationDao dao) { 
-		this.dao = dao;
+	public LocationResource(AnetObjectEngine engine) { 
+		this.dao = engine.getLocationDao();
 	}
 	
 	@GET

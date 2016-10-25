@@ -1,9 +1,6 @@
 package mil.dds.anet.resources;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -16,6 +13,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import mil.dds.anet.AnetObjectEngine;
+import mil.dds.anet.beans.AdvisorOrganization;
 import mil.dds.anet.beans.ApprovalStep;
 import mil.dds.anet.database.ApprovalStepDao;
 
@@ -23,30 +22,20 @@ import mil.dds.anet.database.ApprovalStepDao;
 @Produces(MediaType.APPLICATION_JSON)
 public class ApprovalStepResource {
 
+	AnetObjectEngine engine;
 	ApprovalStepDao dao;
 	
-	public ApprovalStepResource(ApprovalStepDao dao) { 
-		this.dao = dao;
+	public ApprovalStepResource(AnetObjectEngine engine) {
+		this.engine = engine;
+		this.dao = engine.getApprovalStepDao();
 	}
 	
 	@GET
 	@Path("/byAdvisorOrganization")
-	public List<ApprovalStep> getStepsForOrg(@QueryParam("id") int id) { 
-		Collection<ApprovalStep> unordered = dao.getByAdvisorOrganizationId(id);
-		
-		int numSteps = unordered.size();
-		ArrayList<ApprovalStep> ordered = new ArrayList<ApprovalStep>(numSteps);
-		Integer nextStep = null;
-		for (int i=0;i<numSteps;i++) { 
-			for (ApprovalStep as : unordered) { 
-				if (Objects.equals(as.getNextStepId(), nextStep)) { 
-					ordered.add(0, as);
-					nextStep = as.getId();
-					break;
-				}
-			}
-		}
-		return ordered;
+	public List<ApprovalStep> getStepsForOrg(@QueryParam("id") int id) {
+		AdvisorOrganization ao = new AdvisorOrganization();
+		ao.setId(id);
+		return engine.getApprovalStepsForOrg(ao);
 	}
 	
 	@POST

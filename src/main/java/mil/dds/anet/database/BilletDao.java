@@ -7,12 +7,14 @@ import org.joda.time.DateTime;
 import org.skife.jdbi.v2.GeneratedKeys;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.Query;
+import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
 import mil.dds.anet.beans.Billet;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.database.mappers.BilletMapper;
 import mil.dds.anet.database.mappers.PersonMapper;
 
+@RegisterMapper(BilletMapper.class)
 public class BilletDao {
 
 	Handle dbHandle;

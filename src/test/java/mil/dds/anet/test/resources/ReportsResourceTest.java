@@ -1,12 +1,12 @@
 package mil.dds.anet.test.resources;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
 
+import org.apache.http.conn.EofSensorInputStream;
 import org.junit.ClassRule;
 import org.junit.Test;
 
@@ -14,11 +14,16 @@ import com.google.common.collect.Lists;
 
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.testing.junit.DropwizardAppRule;
+import liquibase.util.StreamUtil;
 import mil.dds.anet.AnetApplication;
 import mil.dds.anet.beans.AdvisorOrganization;
+import mil.dds.anet.beans.ApprovalStep;
+import mil.dds.anet.beans.Billet;
+import mil.dds.anet.beans.Group;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.Report;
+import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.geo.LatLng;
 import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.config.AnetConfiguration;
@@ -41,7 +46,6 @@ public class ReportsResourceTest {
 	
 	@Test
 	public void createReport() {
-		
 		//Create a report writer
 		Person author = client.target(String.format("http://localhost:%d/people/new", RULE.getLocalPort()))
 				.request()
@@ -70,11 +74,33 @@ public class ReportsResourceTest {
 		approver1 = client.target(String.format("http://localhost:%d/people/new", RULE.getLocalPort()))
 				.request()
 				.post(Entity.json(approver1), Person.class);
-		//Create Approval workflow for Advising Organization
-		fail("Implement me!");
 		
-		//Create a POAM structure for the AO
-		fail("No way to assign a POAM to an AO");
+		//Create a billet for the author
+		Billet authorBillet = new Billet();
+		authorBillet.setName("A report writer");
+		authorBillet.setAdvisorOrganizationId(ao.getId());
+		authorBillet = client.target(String.format("http://localhost:%d/billets/new", RULE.getLocalPort()))
+				.request()
+				.post(Entity.json(authorBillet), Billet.class);
+		assertThat(authorBillet.getId()).isNotNull();
+		//Set this author in this billet
+		resp = client.target(String.format("http://localhost:%d/billets/%d/advisor", RULE.getLocalPort(), authorBillet.getId()))
+				.request()
+				.post(Entity.json(author));
+		assertThat(resp.getStatus()).isEqualTo(200);
+		
+		//Create Approval workflow for Advising Organization
+		Group approvingGroup = client.target(String.format("http://localhost:%d/groups/new", RULE.getLocalPort()))
+				.request()
+				.post(Entity.json(Group.create("Test Group of approvers")), Group.class);
+		resp = client.target(String.format("http://localhost:%d/groups/addMember?groupId=%d&personId=%d", RULE.getLocalPort(), approvingGroup.getId(), approver1.getId()))
+				.request().get();
+		ApprovalStep approval = client.target(String.format("http://localhost:%d/approvalSteps/new", RULE.getLocalPort()))
+				.request()
+				.post(Entity.json(ApprovalStep.create(null, approvingGroup.getId(), null, ao.getId())), ApprovalStep.class);
+		
+		//TODO: Create a POAM structure for the AO
+//		fail("No way to assign a POAM to an AO");
 		Poam top = client.target(String.format("http://localhost:%d/poams/new", RULE.getLocalPort()))
 				.request()
 				.post(Entity.json(Poam.create("test-1", "Test Top Poam", "TOP")), Poam.class);
@@ -100,11 +126,34 @@ public class ReportsResourceTest {
 		Report created = client.target(String.format("http://localhost:%d/reports/new", RULE.getLocalPort()))
 				.request()
 				.post(Entity.json(r), Report.class);
+		assertThat(created.getId()).isNotNull();
+		assertThat(created.getState()).isEqualTo(ReportState.DRAFT);
 		
+		//Have the author submit the report
+		resp = client.target(String.format("http://localhost:%d/reports/%d/submit", RULE.getLocalPort(), created.getId()))
+			.request()
+			.get();
+		assertThat(resp.getStatus()).isEqualTo(200);
 		
-		//Check on Report status for who needs to approve	
+		Report returned = client.target(String.format("http://localhost:%d/reports/%d", RULE.getLocalPort(), created.getId()))
+			.request()
+			.get(Report.class);
+		assertThat(returned.getState()).isEqualTo(ReportState.PENDING_APPROVAL);
+		assertThat(returned.getApprovalStepId()).isEqualTo(approval.getId());
+		
+		//TODO: Check on Report status for who needs to approve
+		
 		//Approve the report
+		resp = client.target(String.format("http://localhost:%d/reports/%d/approve", RULE.getLocalPort(), created.getId()))
+			.request()
+			.get();
+		
 		//Check on Report status to verify it got moved forward
+		returned = client.target(String.format("http://localhost:%d/reports/%d", RULE.getLocalPort(), created.getId()))
+				.request()
+				.get(Report.class);
+		assertThat(returned.getState()).isEqualTo(ReportState.RELEASED);
+		assertThat(returned.getApprovalStepId()).isNull();
 		
 		//Post a comment on the report because it's awesome
 		

@@ -11,6 +11,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Group;
 import mil.dds.anet.database.GroupDao;
 
@@ -20,8 +21,8 @@ public class GroupResource {
 
 	private GroupDao dao;
 	
-	public GroupResource(GroupDao dao) { 
-		this.dao = dao;
+	public GroupResource(AnetObjectEngine engine) { 
+		this.dao = engine.getGroupDao();
 	}
 	
 	@GET

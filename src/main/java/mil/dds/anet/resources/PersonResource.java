@@ -13,6 +13,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.database.PersonDao;
 
@@ -22,8 +23,8 @@ public class PersonResource {
 
 	private PersonDao dao;
 	
-	public PersonResource(PersonDao dao) { 
-		this.dao = dao;
+	public PersonResource(AnetObjectEngine engine) { 
+		this.dao = engine.getPersonDao();
 	}
 	
 	@GET

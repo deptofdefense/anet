@@ -1,6 +1,9 @@
 {
 	"id": null,
-	"dtg": 1453753380000,
+	"approvalStepId" : null,
+	"state" : "DRAFT",
+	"createdAt": 1453753380000,
+	"updatedAt": 1453753380000,
 	"location": {
 		"id": null,
 		"name": "The Boat Dock",

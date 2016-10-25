@@ -11,15 +11,6 @@ import io.dropwizard.migrations.MigrationsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import mil.dds.anet.config.AnetConfiguration;
-import mil.dds.anet.database.AdvisorOrganizationDao;
-import mil.dds.anet.database.ApprovalStepDao;
-import mil.dds.anet.database.BilletDao;
-import mil.dds.anet.database.GroupDao;
-import mil.dds.anet.database.LocationDao;
-import mil.dds.anet.database.PersonDao;
-import mil.dds.anet.database.PoamDao;
-import mil.dds.anet.database.TashkilDao;
-import mil.dds.anet.database.TestingDao;
 import mil.dds.anet.resources.AdvisorOrganizationResource;
 import mil.dds.anet.resources.ApprovalStepResource;
 import mil.dds.anet.resources.BilletResource;
@@ -27,6 +18,7 @@ import mil.dds.anet.resources.GroupResource;
 import mil.dds.anet.resources.LocationResource;
 import mil.dds.anet.resources.PersonResource;
 import mil.dds.anet.resources.PoamResource;
+import mil.dds.anet.resources.ReportResource;
 import mil.dds.anet.resources.TashkilResource;
 import mil.dds.anet.resources.TestingResource;
 
@@ -62,25 +54,18 @@ public class AnetApplication extends Application<AnetConfiguration> {
 		final DBIFactory factory = new DBIFactory();
 		final DBI jdbi = factory.build(environment, configuration.getDataSourceFactory(), "mssql");
 		
-		final TestingDao dao = jdbi.onDemand(TestingDao.class);
-		final PersonDao personDao = jdbi.onDemand(PersonDao.class);
-		final GroupDao groupDao = new GroupDao(jdbi.open());
-		final TashkilDao tashkilDao = jdbi.onDemand(TashkilDao.class);
-		final PoamDao poamDao = jdbi.onDemand(PoamDao.class);
-		final LocationDao locationDao =  jdbi.onDemand(LocationDao.class);
-		final AdvisorOrganizationDao aoDao = new AdvisorOrganizationDao(jdbi.open(), groupDao);
-		final BilletDao billetDao = new BilletDao(jdbi.open());
-		final ApprovalStepDao asDao = new ApprovalStepDao(jdbi.open());
+		final AnetObjectEngine engine = new AnetObjectEngine(jdbi);
 		
-		TestingResource test = new TestingResource(dao); 
-		PersonResource personResource = new PersonResource(personDao);
-		GroupResource groupResource = new GroupResource(groupDao);
-		TashkilResource tashkilResource = new TashkilResource(tashkilDao);
-		PoamResource poamResource =  new PoamResource(poamDao);
-		LocationResource locationResource = new LocationResource(locationDao);
-		AdvisorOrganizationResource aoResource = new AdvisorOrganizationResource(aoDao);
-		BilletResource billetResource = new BilletResource(billetDao);
-		ApprovalStepResource asResource = new ApprovalStepResource(asDao);
+		TestingResource test = new TestingResource(engine); 
+		PersonResource personResource = new PersonResource(engine);
+		GroupResource groupResource = new GroupResource(engine);
+		TashkilResource tashkilResource = new TashkilResource(engine);
+		PoamResource poamResource =  new PoamResource(engine);
+		LocationResource locationResource = new LocationResource(engine);
+		AdvisorOrganizationResource aoResource = new AdvisorOrganizationResource(engine);
+		BilletResource billetResource = new BilletResource(engine);
+		ApprovalStepResource asResource = new ApprovalStepResource(engine);
+		ReportResource reportResource = new ReportResource(engine);
 		
 		environment.jersey().register(test);
 		environment.jersey().register(personResource);
@@ -91,6 +76,7 @@ public class AnetApplication extends Application<AnetConfiguration> {
 		environment.jersey().register(aoResource);
 		environment.jersey().register(billetResource);
 		environment.jersey().register(asResource);
+		environment.jersey().register(reportResource);
 		
 	}
 

@@ -10,6 +10,7 @@ import mil.dds.anet.beans.Comment;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.Report;
+import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.geo.LatLng;
 import mil.dds.anet.beans.geo.Location;
 
@@ -17,7 +18,9 @@ public class ReportTest extends BeanTester<Report> {
 
 	public static Report getTestReport() { 
 		Report r = new Report();
-		r.setDtg(new DateTime(1453753380000L, ISOChronology.getInstanceUTC()));
+		r.setCreatedAt(new DateTime(1453753380000L, ISOChronology.getInstanceUTC()));
+		r.setUpdatedAt(new DateTime(1453753380000L, ISOChronology.getInstanceUTC()));
+		r.setState(ReportState.DRAFT);
 		
 		Location loc = Location.create("The Boat Dock", new LatLng(32.456,-123.4999));
 		r.setLocation(loc);

@@ -32,6 +32,7 @@ import mil.dds.anet.test.resources.TashkilResourceTest;
   AdvisorOrganizationTest.class,
   BilletTest.class,
   ApprovalStepTest.class,
+  ReportTest.class,
   GroupsResourceTest.class,
   PersonResourceTest.class,
   PoamResourceTest.class,
