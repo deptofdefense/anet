@@ -14,6 +14,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import mil.dds.anet.AnetObjectEngine;
+import io.dropwizard.views.View;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.database.PersonDao;
 
@@ -29,12 +30,23 @@ public class PersonResource {
 	
 	@GET
 	@Path("/{id}")
-	public Person getById(@PathParam("id") int id) { 
+	public Person getJSONById(@PathParam("id") int id) { 
 		Person p = dao.getById(id);
 		if (p == null) { 
 			throw new WebApplicationException("No person by that ID", Status.NOT_FOUND);
 		}
 		return p;
+	}
+	
+	@GET
+	@Path("/{id}")
+	@Produces(MediaType.TEXT_HTML)
+	public PersonView getViewById(@PathParam("id") int id) { 
+		Person p = dao.getById(id);
+		if (p == null) { 
+			throw new WebApplicationException("No person by that ID", Status.NOT_FOUND);
+		}
+		return new PersonView(p);
 	}
 	
 	@POST
@@ -65,5 +77,18 @@ public class PersonResource {
 	@Path("/search")
 	public List<Person> searchByName(@QueryParam("q") String query) {
 		return dao.searchByName(query);
+	}
+	
+	public class PersonView extends View {
+	    private final Person person;
+
+	    public PersonView(Person person) {
+	        super("person.ftl");
+	        this.person = person;
+	    }
+
+	    public Person getPerson() {
+	        return person;
+	    }
 	}
 }
