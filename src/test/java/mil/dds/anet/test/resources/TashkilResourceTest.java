@@ -2,29 +2,18 @@ package mil.dds.anet.test.resources;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
 
-import org.junit.ClassRule;
 import org.junit.Test;
 
 import io.dropwizard.client.JerseyClientBuilder;
-import io.dropwizard.testing.junit.DropwizardAppRule;
-import mil.dds.anet.AnetApplication;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Tashkil;
-import mil.dds.anet.config.AnetConfiguration;
 import mil.dds.anet.test.beans.PersonTest;
 import mil.dds.anet.test.beans.TashkilTest;
 
-public class TashkilResourceTest {
-
-	@ClassRule
-    public static final DropwizardAppRule<AnetConfiguration> RULE =
-            new DropwizardAppRule<AnetConfiguration>(AnetApplication.class, "anet.yml");
-	
-	public static Client client;
+public class TashkilResourceTest extends AbstractResourceTest {
 	
 	public TashkilResourceTest() { 
 		if (client == null) { 
@@ -37,9 +26,7 @@ public class TashkilResourceTest {
 		//Create Tashkil
 		Tashkil t = TashkilTest.getTestTashkil();
 		
-		Tashkil created = client.target(String.format("http://localhost:%d/tashkils/new", RULE.getLocalPort()))
-				.request()
-				.post(Entity.json(t), Tashkil.class);
+		Tashkil created = httpQuery("/tashkils/new").post(Entity.json(t), Tashkil.class);
 		assertThat(created.getName()).isEqualTo(t.getName());
 		assertThat(created.getCode()).isEqualTo(t.getCode());
 		assertThat(created.getId()).isNotNull();

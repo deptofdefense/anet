@@ -1,13 +1,17 @@
 package mil.dds.anet.resources;
 
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
+import org.joda.time.DateTime;
 
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Billet;
@@ -47,10 +51,12 @@ public class BilletResource {
 	
 	@GET
 	@Path("/{id}/advisor")
-	public Person getAdvisorInBillet(@PathParam("id") int billetId) {
+	public Person getAdvisorInBillet(@PathParam("id") int billetId, @QueryParam("atTime") Long atTimeMillis) {
 		Billet b = new Billet();
 		b.setId(billetId);
-		return dao.getPersonInBillet(b);
+		
+		DateTime dtg = (atTimeMillis == null) ? DateTime.now() : new DateTime(atTimeMillis);
+		return dao.getPersonInBillet(b, dtg);
 	}
 	
 	@POST
@@ -59,6 +65,13 @@ public class BilletResource {
 		Billet b = new Billet();
 		b.setId(billetId);
 		dao.setPersonInBillet(p, b);
+		return Response.ok().build();
+	}
+	
+	@DELETE
+	@Path("/{id}/advisor")
+	public Response deleteAdvisorFromBillet(@PathParam("id") int id) { 
+		dao.removePersonFromBillet(Billet.createWithId(id));
 		return Response.ok().build();
 	}
 }

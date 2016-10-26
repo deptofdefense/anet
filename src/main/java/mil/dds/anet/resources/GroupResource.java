@@ -38,15 +38,15 @@ public class GroupResource {
 	}
 	
 	@GET
-	@Path("/addMember")
-	public Response addMemberToGroup(@QueryParam("groupId") int groupId, @QueryParam("personId") int personId) { 
+	@Path("/{id}/addMember")
+	public Response addMemberToGroup(@PathParam("id") int groupId, @QueryParam("personId") int personId) { 
 		dao.addPersonToGroup(groupId, personId);
 		return Response.ok().build(); //TODO: perhaps some error checking? 
 	}
 	
 	@GET
-	@Path("/removeMember")
-	public Response removeMemberFromGroup(@QueryParam("groupId") int groupId, @QueryParam("personId") int personId) { 
+	@Path("/{id}/removeMember")
+	public Response removeMemberFromGroup(@PathParam("id") int groupId, @QueryParam("personId") int personId) { 
 		dao.removePersonFromGroup(groupId, personId);
 		return Response.ok().build(); //TODO: perhaps some error checking? 
 	}

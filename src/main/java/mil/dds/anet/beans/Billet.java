@@ -8,6 +8,12 @@ public class Billet {
 	String name;
 	Integer advisorOrganizationId;
 
+	public static Billet createWithId(Integer id) { 
+		Billet b = new Billet();
+		b.setId(id);
+		return b;
+	}
+	
 	public Integer getId() {
 		return id;
 	}

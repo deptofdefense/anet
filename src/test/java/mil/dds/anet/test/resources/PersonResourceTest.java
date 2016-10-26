@@ -8,12 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 
-import org.junit.ClassRule;
 import org.junit.Test;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -21,20 +19,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.jackson.Jackson;
-import io.dropwizard.testing.junit.DropwizardAppRule;
-import mil.dds.anet.AnetApplication;
 import mil.dds.anet.beans.Person;
-import mil.dds.anet.config.AnetConfiguration;
 import mil.dds.anet.test.beans.PersonTest;
 
-public class PersonResourceTest {
-	
-	@ClassRule
-    public static final DropwizardAppRule<AnetConfiguration> RULE =
-            new DropwizardAppRule<AnetConfiguration>(AnetApplication.class, "anet.yml");
-
-	public static Client client;
-	
+public class PersonResourceTest extends AbstractResourceTest {
+		
 	public PersonResourceTest() { 
 		if (client == null) { 
 			client = new JerseyClientBuilder(RULE.getEnvironment()).build("test client");
@@ -70,7 +59,7 @@ public class PersonResourceTest {
     	assertThat(retPerson.getFirstName()).isEqualTo(created.getFirstName());
     }
 	
-	//TODO: Assign Person to Advising Organiztion
+
 	//TODO: Assign Person to Tashkil
 	
 //	@Test
@@ -100,9 +89,7 @@ public class PersonResourceTest {
 		try { 
 			List<Person> peopleStubs = MAPPER.readValue(fixture("testJson/people/fakeNames.json"), new TypeReference<List<Person>>() {});
 			for (Person p : (peopleStubs.subList(0, 10))) { 
-				Person created = client.target(String.format("http://localhost:%d/people/new", RULE.getLocalPort()))
-					.request()
-					.post(Entity.json(p), Person.class);
+				Person created = httpQuery("/people/new").post(Entity.json(p), Person.class);
 				people.add(created);
 			}
 		} catch (Exception e) { 

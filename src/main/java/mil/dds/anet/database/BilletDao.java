@@ -65,10 +65,34 @@ public class BilletDao {
 			.execute();
 	}
 	
-	public Person getPersonInBillet(Billet b) { 
-		Query<Person> query = dbHandle.createQuery("SELECT people.* FROM people, billetAdvisors " +
-				"WHERE billetAdvisors.billetId = :billetId ORDER BY createdAt DESC LIMIT 1")
+	public void removePersonFromBillet(Billet b) {
+		dbHandle.createStatement("INSERT INTO billetAdvisors (billetId, advisorId, createdAt) " + 
+			"VALUES(null, " +
+				"(SELECT advisorId FROM billetAdvisors WHERE billetId = :billetId ORDER BY createdAt DESC LIMIT 1), " +
+			":createdAt)")
 			.bind("billetId", b.getId())
+			.bind("createdAt", DateTime.now())
+			.execute();
+	
+		dbHandle.createStatement("INSERT INTO billetAdvisors (billetId, advisorId, createdAt) " + 
+				"VALUES (:billetId, null, :createdAt)")
+			.bind("billetId", b.getId())
+			.bind("createdAt", DateTime.now())
+			.execute();
+	}
+	
+	public Person getPersonInBilletNow(Billet b) { 
+		return getPersonInBillet(b, DateTime.now());
+	}
+	
+	public Person getPersonInBillet(Billet b, DateTime dtg) { 
+		Query<Person> query = dbHandle.createQuery("SELECT people.* FROM billetAdvisors " +
+				" LEFT JOIN people ON people.id = billetAdvisors.advisorId " +
+				"WHERE billetAdvisors.billetId = :billetId " +
+				"AND billetAdvisors.createdAt < :dtg " + 
+				"ORDER BY createdAt DESC LIMIT 1")
+			.bind("billetId", b.getId())
+			.bind("dtg", dtg)
 			.map(new PersonMapper());
 		List<Person> results = query.list();
 		if (results.size() == 0 ) { return null; }

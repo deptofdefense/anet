@@ -6,29 +6,18 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
 
-import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 
-import org.junit.ClassRule;
 import org.junit.Test;
 
 import io.dropwizard.client.JerseyClientBuilder;
-import io.dropwizard.testing.junit.DropwizardAppRule;
-import mil.dds.anet.AnetApplication;
 import mil.dds.anet.beans.geo.LatLng;
 import mil.dds.anet.beans.geo.Location;
-import mil.dds.anet.config.AnetConfiguration;
 
-public class LocationResourceTest {
+public class LocationResourceTest extends AbstractResourceTest {
 
-	@ClassRule
-    public static final DropwizardAppRule<AnetConfiguration> RULE =
-            new DropwizardAppRule<AnetConfiguration>(AnetApplication.class, "anet.yml");
-
-	public static Client client;
-	
 	public LocationResourceTest() { 
 		if (client == null) { 
 			client = new JerseyClientBuilder(RULE.getEnvironment()).build("test client");
@@ -40,30 +29,26 @@ public class LocationResourceTest {
 	public void locationTest() throws UnsupportedEncodingException { 
 		Location l = Location.create("The Boat Dock", new LatLng(12.34,-56.78));
 		
-		Location created = client.target(String.format("http://localhost:%d/locations/new", RULE.getLocalPort()))
-				.request()
+		Location created = httpQuery("/locations/new")
 				.post(Entity.json(l), Location.class);
 		assertThat(created.getName()).isEqualTo(l.getName());
 		assertThat(created).isNotEqualTo(l);
 		
 		//Search
-		List<Location> results = client.target(String.format("http://localhost:%d/locations/search?name=%s", 
-				RULE.getLocalPort(), URLEncoder.encode(l.getName(), "UTF-8")))
-				.request()
+		List<Location> results = httpQuery(String.format("/locations/search?name=%s", 
+				URLEncoder.encode(l.getName(), "UTF-8")))
 				.get(new GenericType<List<Location>>() {});
 		assertThat(results.size()).isGreaterThan(0);
 		assertThat(results).contains(created);
 		
+		//TODO: fuzzy searching
+		
 		//Update
 		created.setName("Down by the Bay");
-		Response resp = client.target(String.format("http://localhost:%d/locations/update", RULE.getLocalPort()))
-			.request()
-			.post(Entity.json(created));
+		Response resp = httpQuery("/locations/update").post(Entity.json(created));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
-		Location returned = client.target(String.format("http://localhost:%d/locations/%d", RULE.getLocalPort(), created.getId()))
-				.request()
-				.get(Location.class);
+		Location returned = httpQuery(String.format("/locations/%d", created.getId())).get(Location.class);
 		assertThat(returned.getName()).isEqualTo(created.getName());
 	}
 	

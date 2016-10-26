@@ -13,6 +13,9 @@ public class PersonMapper implements ResultSetMapper<Person> {
 
 	@Override
 	public Person map(int index, ResultSet r, StatementContext ctx) throws SQLException {
+		//This hits when we do a join but there's no Person record. 
+		if (r.getObject("id") == null) { return null; } 
+		
 		Person a = new Person();
 		a.setId(r.getInt("id"));
 		a.setFirstName(r.getString("firstName"));

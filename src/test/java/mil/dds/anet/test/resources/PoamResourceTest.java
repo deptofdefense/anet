@@ -3,7 +3,7 @@ package mil.dds.anet.test.resources;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
-public class PoamResourceTest {
+public class PoamResourceTest extends AbstractResourceTest {
 
 	@Test
 	public void implementMe() { 

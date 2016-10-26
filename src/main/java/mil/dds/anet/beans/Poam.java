@@ -2,8 +2,6 @@ package mil.dds.anet.beans;
 
 import java.util.Objects;
 
-import javax.validation.constraints.Null;
-
 public class Poam {
 
 	Integer id;

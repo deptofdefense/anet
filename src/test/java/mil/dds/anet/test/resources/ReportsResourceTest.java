@@ -2,20 +2,14 @@ package mil.dds.anet.test.resources;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
 
-import org.apache.http.conn.EofSensorInputStream;
-import org.junit.ClassRule;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
 
 import io.dropwizard.client.JerseyClientBuilder;
-import io.dropwizard.testing.junit.DropwizardAppRule;
-import liquibase.util.StreamUtil;
-import mil.dds.anet.AnetApplication;
 import mil.dds.anet.beans.AdvisorOrganization;
 import mil.dds.anet.beans.ApprovalStep;
 import mil.dds.anet.beans.Billet;
@@ -26,18 +20,11 @@ import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.geo.LatLng;
 import mil.dds.anet.beans.geo.Location;
-import mil.dds.anet.config.AnetConfiguration;
 import mil.dds.anet.test.beans.AdvisorOrganizationTest;
 import mil.dds.anet.test.beans.PersonTest;
 
-public class ReportsResourceTest {
+public class ReportsResourceTest extends AbstractResourceTest {
 
-	@ClassRule
-    public static final DropwizardAppRule<AnetConfiguration> RULE =
-            new DropwizardAppRule<AnetConfiguration>(AnetApplication.class, "anet.yml");
-	
-	public static Client client;
-	
 	public ReportsResourceTest() { 
 		if (client == null) { 
 			client = new JerseyClientBuilder(RULE.getEnvironment()).build("reports test client");
@@ -47,9 +34,7 @@ public class ReportsResourceTest {
 	@Test
 	public void createReport() {
 		//Create a report writer
-		Person author = client.target(String.format("http://localhost:%d/people/new", RULE.getLocalPort()))
-				.request()
-				.post(Entity.json(PersonTest.getJackJackson()), Person.class);
+		Person author = httpQuery("/people/new").post(Entity.json(PersonTest.getJackJackson()), Person.class);
 		
 		//Create a principal for the report
 		Person principal = client.target(String.format("http://localhost:%d/people/new", RULE.getLocalPort()))
@@ -61,9 +46,8 @@ public class ReportsResourceTest {
 				.request()
 				.post(Entity.json(AdvisorOrganizationTest.getTestAO()), AdvisorOrganization.class);
 		//Add advisor into Advising Organization
-		Response resp = client.target(String.format("http://localhost:%d/groups/addMember?groupId=%d&personId=%d", 
-				RULE.getLocalPort(), ao.getMemberGroupId(), author.getId()))
-				.request()
+		Response resp = httpQuery(String.format("/groups/%d/addMember?personId=%d", 
+				ao.getMemberGroupId(), author.getId()))
 				.get();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
