@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import org.joda.time.DateTime;
 import org.skife.jdbi.v2.GeneratedKeys;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.Query;
@@ -29,6 +30,14 @@ public class PersonDao {
 		this.dbHandle = h;
 	}
 	
+	public List<Person> getAllPeople(int pageNum, int pageSize) {
+		Query<Person> query = dbHandle.createQuery("SELECT * from people ORDER BY createdAt ASC LIMIT :limit OFFSET :offset")
+			.bind("limit", pageSize)
+			.bind("offset", pageSize * pageNum)
+			.map(new PersonMapper());
+		return query.list();
+	}
+	
 	public Person getById(int id) { 
 		Query<Person> query = dbHandle.createQuery("select * from people where id = :id")
 				.bind("id",  id)
@@ -38,16 +47,20 @@ public class PersonDao {
 		return rs.get(0);
 	}
 	
-	public int insertPerson(@BindBean Person p){ 
+	public int insertPerson(@BindBean Person p){
+		p.setCreatedAt(DateTime.now());
+		p.setUpdatedAt(DateTime.now());
 		GeneratedKeys<Map<String, Object>> keys = dbHandle.createStatement("INSERT INTO people " +
-				"(firstName, lastName, status, emailAddress, phoneNumber, rank, biography) " +
-				"VALUES (:firstName, :lastName, :status, :emailAddress, :phoneNumber, :rank, :biography);")
+				"(firstName, lastName, status, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt) " +
+				"VALUES (:firstName, :lastName, :status, :emailAddress, :phoneNumber, :rank, :biography, :createdAt, :updatedAt);")
 			.bindFromProperties(p)
+			.bind("status", (p.getStatus() != null ) ? p.getStatus().ordinal() : null)
 			.executeAndReturnGeneratedKeys();
 		return (Integer)keys.first().get("last_insert_rowid()");
 	}
 	
-	public int updatePerson(@BindBean Person p){ 
+	public int updatePerson(@BindBean Person p){
+		p.setUpdatedAt(DateTime.now());
 		return dbHandle.createStatement("UPDATE people " + 
 				"SET firstName = :firstName, lastName = :lastName, status = :status, " + 
 				"phoneNumber = :phoneNumber, rank = :rank, biography = :biography " +

@@ -3,6 +3,8 @@ package mil.dds.anet.beans;
 import java.security.Principal;
 import java.util.Objects;
 
+import org.joda.time.DateTime;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class Person implements Principal {
@@ -20,6 +22,9 @@ public class Person implements Principal {
 	
 	private String rank;
 	private String biography;
+	
+	private DateTime createdAt;
+	private DateTime updatedAt;
 	
 	@Override
 	@JsonIgnore
@@ -76,26 +81,54 @@ public class Person implements Principal {
 		this.biography = biography;
 	}
 
+	public DateTime getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(DateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public DateTime getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(DateTime updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
 	@Override
 	public boolean equals(Object o) { 
 		if (o == null || getClass() != o.getClass()) {
             return false;
         }
 		Person other = (Person) o;
-		return Objects.equals(id, other.getId()) && 
+		boolean b = Objects.equals(id, other.getId()) && 
 			Objects.equals(other.getFirstName(), getFirstName()) &&
 			Objects.equals(other.getLastName(), this.getLastName()) &&
 			Objects.equals(other.getStatus(), this.getStatus()) && 
 			Objects.equals(other.getEmailAddress(), this.getEmailAddress()) && 
 			Objects.equals(other.getPhoneNumber(), this.getPhoneNumber()) && 
 			Objects.equals(other.getRank(), this.getRank()) && 
-			Objects.equals(other.getBiography(), this.getBiography()); 
-	}
+			Objects.equals(other.getBiography(), this.getBiography()) &&
+			Objects.equals(other.getCreatedAt(), createdAt) &&
+			Objects.equals(other.getUpdatedAt(), updatedAt);
+		if ( b == false) { 
+			System.out.println("boo");
+		}
+		System.out.println(String.format("%b - %s  || %s", b, other.toString(), this.toString()));
+		return b;
+ 	}
 	
 	@Override
 	public int hashCode() { 
 		return Objects.hash(id, firstName, lastName, status, emailAddress,
-			phoneNumber, rank, biography);
+			phoneNumber, rank, biography, createdAt, updatedAt);
+	}
+	
+	@Override
+	public String toString() { 
+		return String.format("%s %s (%s)", firstName, lastName, emailAddress);
 	}
 	
 	public static Person createWithId(int id) { 

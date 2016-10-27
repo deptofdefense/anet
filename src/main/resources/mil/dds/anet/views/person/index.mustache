@@ -1,0 +1,16 @@
+<html>
+<body>
+<h1>Listing People</h1>
+<table>
+<tr><th>first</th><th>last</th><th>email</th><th>Status</th><th>Rank</th></tr>
+{{#people}}
+	<tr>
+	<td>{{firstName}}</td>
+	<td>{{lastName}}</td>
+	<td>{{emailAddress}}</td>
+	<td>{{status}}</td>
+	<td>{{rank}}</td>
+{{/people}}
+</table>
+</body>
+</html>

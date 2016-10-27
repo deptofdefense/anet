@@ -90,7 +90,7 @@ public class BilletDao {
 				" LEFT JOIN people ON people.id = billetAdvisors.advisorId " +
 				"WHERE billetAdvisors.billetId = :billetId " +
 				"AND billetAdvisors.createdAt < :dtg " + 
-				"ORDER BY createdAt DESC LIMIT 1")
+				"ORDER BY billetAdvisors.createdAt DESC LIMIT 1")
 			.bind("billetId", b.getId())
 			.bind("dtg", dtg)
 			.map(new PersonMapper());

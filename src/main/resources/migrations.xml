@@ -13,11 +13,13 @@
             </column>
             <column name="firstName" type="varchar(255)" />
             <column name="lastName" type="varchar(255)" />
-			<column name="status" type="varchar(100)" />
+			<column name="status" type="int" />
 			<column name="emailAddress" type="varchar(255)" />
 			<column name="phoneNumber" type="varchar(100)" />
 			<column name="rank" type="varchar(255)" />
 			<column name="biography" type="text" />
+			<column name="createdAt" type="datetime" />
+			<column name="updatedAt" type="datetime" />
         </createTable>
 
 		<createTable tableName="groups">
@@ -25,6 +27,7 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
 			<column name="name" type="varchar(512)" />
+			<column name="createdAt" type="datetime" />
 		</createTable>
 
 		<createTable tableName="groupMemberships">
@@ -40,6 +43,8 @@
 
 			<!-- ID of the group that contains the members of this Advising Organization -->
 			<column name="memberGroupId" type="int" />
+			<column name="createdAt" type="datetime" />
+			<column name="updatedAt" type="datetime" />
 		</createTable>
 
 		<createTable tableName="poams" >
@@ -58,6 +63,8 @@
 
 			<!-- the POAM id of the parent of this POAM. null for top level (ie EF/DA) -->
 			<column name="parentPoamId" type="int" />
+			<column name="createdAt" type="datetime" />
+			<column name="updatedAt" type="datetime" />
 		</createTable>
 
 		<createTable tableName="tashkils">
@@ -66,6 +73,8 @@
 			</column>
 			<column name="code" type="varchar(100)" />
 			<column name="name" type="varchar(512)" />
+			<column name="createdAt" type="datetime" />
+			<column name="updatedAt" type="datetime" />
 		</createTable>
 
 		<createTable tableName="tashkilPrincipals">
@@ -114,6 +123,8 @@
 			<column name="name" type="varchar(500)" />
 			<column name="lat" type="float" />
 			<column name="lng" type="float" />
+			<column name="createdAt" type="datetime" />
+			<column name="updatedAt" type="datetime" />
 		</createTable>
     </changeSet>
 
@@ -150,6 +161,8 @@
 			</column>
 			<column name="name" type="varchar(500)" />
 			<column name="advisorOrganizationId" type="int" />
+			<column name="createdAt" type="datetime" />
+			<column name="updatedAt" type="datetime" />
 		</createTable>
 
 		<createTable tableName="billetAdvisors" >

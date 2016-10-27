@@ -2,6 +2,7 @@ package mil.dds.anet.resources;
 
 import java.util.List;
 
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -14,9 +15,11 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import mil.dds.anet.AnetObjectEngine;
-import io.dropwizard.views.View;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.database.PersonDao;
+import mil.dds.anet.views.person.PersonForm;
+import mil.dds.anet.views.person.PersonListView;
+import mil.dds.anet.views.person.PersonView;
 
 @Path("/people")
 @Produces(MediaType.APPLICATION_JSON)
@@ -26,6 +29,19 @@ public class PersonResource {
 	
 	public PersonResource(AnetObjectEngine engine) { 
 		this.dao = engine.getPersonDao();
+	}
+	
+	@GET
+	@Path("/")
+	public List<Person> getAllPeople(@QueryParam("pageNum") int pageNum, @QueryParam("pageSize") int pageSize) {
+		return dao.getAllPeople(pageNum, pageSize);
+	}
+	
+	@GET
+	@Path("/")
+	@Produces(MediaType.TEXT_HTML)
+	public PersonListView getAllPeopleView(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
+		return new PersonListView(dao.getAllPeople(pageNum, pageSize));
 	}
 	
 	@GET
@@ -47,6 +63,13 @@ public class PersonResource {
 			throw new WebApplicationException("No person by that ID", Status.NOT_FOUND);
 		}
 		return new PersonView(p);
+	}
+	
+	@GET
+	@Path("/new")
+	@Produces(MediaType.TEXT_HTML)
+	public PersonForm getPersonForm() { 
+		return new PersonForm(null);
 	}
 	
 	@POST
@@ -77,18 +100,5 @@ public class PersonResource {
 	@Path("/search")
 	public List<Person> searchByName(@QueryParam("q") String query) {
 		return dao.searchByName(query);
-	}
-	
-	public class PersonView extends View {
-	    private final Person person;
-
-	    public PersonView(Person person) {
-	        super("person.ftl");
-	        this.person = person;
-	    }
-
-	    public Person getPerson() {
-	        return person;
-	    }
 	}
 }

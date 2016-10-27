@@ -3,6 +3,7 @@ package mil.dds.anet.database.mappers;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.joda.time.DateTime;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
@@ -20,11 +21,13 @@ public class PersonMapper implements ResultSetMapper<Person> {
 		a.setId(r.getInt("id"));
 		a.setFirstName(r.getString("firstName"));
 		a.setLastName(r.getString("lastName"));
-		a.setStatus(Status.valueOf(r.getString("status")));
+		a.setStatus(MapperUtils.getEnumIdx(r, "status", Status.class));
 		a.setEmailAddress(r.getString("emailAddress"));
 		a.setPhoneNumber(r.getString("phoneNumber"));
 		a.setRank(r.getString("rank"));
 		a.setBiography(r.getString("biography"));
+		a.setCreatedAt(new DateTime(r.getLong("createdAt")));
+		a.setUpdatedAt(new DateTime(r.getLong("updatedAt")));
 		return a;
 	} 
 }

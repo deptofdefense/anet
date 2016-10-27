@@ -2,8 +2,6 @@ package mil.dds.anet;
 
 import org.skife.jdbi.v2.DBI;
 
-import com.google.common.collect.ImmutableList;
-
 import io.dropwizard.Application;
 import io.dropwizard.auth.AuthDynamicFeature;
 import io.dropwizard.auth.AuthValueFactoryProvider;
@@ -15,8 +13,8 @@ import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.migrations.MigrationsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import mil.dds.anet.beans.Person;
 import io.dropwizard.views.ViewBundle;
+import mil.dds.anet.beans.Person;
 import mil.dds.anet.config.AnetConfiguration;
 import mil.dds.anet.resources.AdvisorOrganizationResource;
 import mil.dds.anet.resources.ApprovalStepResource;
