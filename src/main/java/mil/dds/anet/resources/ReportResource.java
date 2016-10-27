@@ -21,6 +21,7 @@ import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.database.ReportDao;
 import mil.dds.anet.utils.ResponseUtils;
+import mil.dds.anet.views.report.ReportForm;
 
 @Path("/reports")
 @Produces(MediaType.APPLICATION_JSON)
@@ -40,6 +41,13 @@ public class ReportResource {
 		return dao.getById(id);
 	}
 	
+	@GET
+	@Path("/new")
+	@Produces(MediaType.TEXT_HTML)
+	public ReportForm createNewReportForm() { 
+		return new ReportForm(null);
+	}
+	
 	@POST
 	@Path("/new")
 	public Report createNewReport(Report r) { 
@@ -50,6 +58,13 @@ public class ReportResource {
 		return r;
 	}
 	
+	@GET
+	@Path("/{id}/edit")
+	@Produces(MediaType.TEXT_HTML)
+	public ReportForm editReportForm(@PathParam("id") int id) { 
+		Report r = dao.getById(id);
+		return new ReportForm(r);
+	}
 	
 	/* Submit a report for approval
 	 * Kicks a report from DRAFT to PENDING_APPROVAL and sets the approval step Id
