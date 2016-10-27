@@ -15,7 +15,6 @@ public class PersonListView extends View {
 	}
 	
 	public List<Person> getPeople() { 
-		System.out.println("yo, I'm " + people.size()  + " long");
 		return people;
 	}
 	 
