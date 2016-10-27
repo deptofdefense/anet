@@ -3,6 +3,7 @@ package mil.dds.anet;
 import org.skife.jdbi.v2.DBI;
 
 import io.dropwizard.Application;
+import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.auth.AuthDynamicFeature;
 import io.dropwizard.auth.AuthValueFactoryProvider;
 import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
@@ -43,7 +44,7 @@ public class AnetApplication extends Application<AnetConfiguration> {
 				new SubstitutingSourceProvider(
 						bootstrap.getConfigurationSourceProvider(),
 						new EnvironmentVariableSubstitutor(false)));
-		
+
 		bootstrap.addBundle(new MigrationsBundle<AnetConfiguration>() {
 	        @Override
 	        public DataSourceFactory getDataSourceFactory(AnetConfiguration configuration) {
@@ -51,8 +52,9 @@ public class AnetApplication extends Application<AnetConfiguration> {
 	            return configuration.getDataSourceFactory();
 	        }
 	    });
-		
+
 		bootstrap.addBundle(new ViewBundle<AnetConfiguration>());
+		bootstrap.addBundle(new AssetsBundle("/assets", "/", "index.html"));
 	}
 
 	@Override
@@ -62,7 +64,7 @@ public class AnetApplication extends Application<AnetConfiguration> {
 		final DBI jdbi = factory.build(environment, configuration.getDataSourceFactory(), "mssql");
 
 		final AnetObjectEngine engine = new AnetObjectEngine(jdbi);
-		
+
 		environment.jersey().register(new AuthDynamicFeature(
 	            new BasicCredentialAuthFilter.Builder<Person>()
 	                .setAuthenticator(new AnetAuthenticator(engine))
@@ -72,8 +74,8 @@ public class AnetApplication extends Application<AnetConfiguration> {
 //	    environment.jersey().register(RolesAllowedDynamicFeature.class);
 	    //If you want to use @Auth to inject a custom Principal type into your resource
 	    environment.jersey().register(new AuthValueFactoryProvider.Binder<>(Person.class));
-		
-		TestingResource test = new TestingResource(engine); 
+
+		TestingResource test = new TestingResource(engine);
 		PersonResource personResource = new PersonResource(engine);
 		GroupResource groupResource = new GroupResource(engine);
 		TashkilResource tashkilResource = new TashkilResource(engine);
@@ -83,7 +85,7 @@ public class AnetApplication extends Application<AnetConfiguration> {
 		BilletResource billetResource = new BilletResource(engine);
 		ApprovalStepResource asResource = new ApprovalStepResource(engine);
 		ReportResource reportResource = new ReportResource(engine);
-		
+
 		environment.jersey().register(test);
 		environment.jersey().register(personResource);
 		environment.jersey().register(groupResource);
@@ -94,7 +96,7 @@ public class AnetApplication extends Application<AnetConfiguration> {
 		environment.jersey().register(billetResource);
 		environment.jersey().register(asResource);
 		environment.jersey().register(reportResource);
-		
+
 	}
 
 }

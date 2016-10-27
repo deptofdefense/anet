@@ -29,6 +29,7 @@ dependencies {
 	compile group: 'io.dropwizard', name: 'dropwizard-migrations', version: '1.0.2'
 	compile group: 'io.dropwizard', name: 'dropwizard-auth', version: '1.0.2'
 	compile group: 'io.dropwizard', name: 'dropwizard-views-mustache', version: '1.0.2'
+	compile group: 'io.dropwizard', name: 'dropwizard-assets', version: '1.0.2'
 	compile 'org.xerial:sqlite-jdbc:3.14.2.1' //If using SQLite
 
 	compile files('lib/sqljdbc42.jar')
@@ -56,7 +57,7 @@ task dbMigrate(dependsOn: 'compileJava', type: JavaExec) {
 	args = ["db","migrate","anet.yml"]
 }
 
-task dbDrop(dependsOn: 'compileJava', type: JavaExec) { 
+task dbDrop(dependsOn: 'compileJava', type: JavaExec) {
 	classpath =  sourceSets.main.runtimeClasspath
 	environment(run.environment)
 	main = 'mil.dds.anet.AnetApplication'
