@@ -1,3 +1,17 @@
+html, body {
+    height: 100%;
+}
+
+html {
+    display: table;
+    margin: auto;
+}
+
+body {
+    display: table-cell;
+    vertical-align: middle;
+}
+
 .logo {
 	width: 200px;
 	img {
@@ -6,25 +20,34 @@
 	}
 }
 
-.top-search {
-	float:left;
-	clear: none;
+.usa-search {
+	width: 100%;
+	.top-search {
+		float:right;
+		clear: none;
+		padding-top:20px;
+	}
+
 }
 
-.user-submit {
-	float: left;
-	clear: none;
-}
+.anet-top-block {
+	width: 100%;
+	.user-submit {
+		float: left;
+		clear: none;
+		padding: 20px;
+	}
 
-.submit {
-	float: right;
-	clear: none;
-	padding: 20px;
+	.submit {
+		float: right;
+		clear: none;
+	}
 }
 
 .anet-top-block {
 	float: left;
 	clear: both;
+	padding-top:20px;
 }
 
 .anet-block {
@@ -50,20 +73,19 @@
 }
 
 .form-group {
-	float: left;
-	clear: both;
-	width: 50%;
+	// width: 50%;
 
 	label {
 		float: left;
-		// clear: both;
+		clear: both;
+		width: 100%;
 	}
 
 	input[type=text] {
 		background: #FFFFFF;
 		border: 1px solid #D6D7D9;
 		border-radius: 5px;
-		max-width: 50%;
+		// max-width: 50%;
 	}
 
 }
