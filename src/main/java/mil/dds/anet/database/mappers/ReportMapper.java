@@ -24,8 +24,7 @@ public class ReportMapper implements ResultSetMapper<Report> {
 		r.setCreatedAt(new DateTime(rs.getLong("createdAt")));
 		r.setUpdatedAt(new DateTime(rs.getLong("updatedAt")));
 		
-		Location l = new Location();
-		l.setId(MapperUtils.getInteger(rs, "locationId"));
+		Location l = Location.createWithId(MapperUtils.getInteger(rs, "locationId"));
 		r.setLocation(l);
 		
 		r.setIntent(rs.getString("intent"));
@@ -34,8 +33,7 @@ public class ReportMapper implements ResultSetMapper<Report> {
 		r.setReportText(rs.getString("text"));
 		r.setNextSteps(rs.getString("nextSteps"));
 		
-		Person p = new Person();
-		p.setId(MapperUtils.getInteger(rs, "authorId"));
+		Person p = Person.createWithId((MapperUtils.getInteger(rs, "authorId")));
 		r.setAuthor(p);
 		r.setLoadLevel(LoadLevel.PROPERTIES);
 		

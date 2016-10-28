@@ -132,6 +132,7 @@ public class Person extends AbstractAnetView<Person> implements Principal{
 	public static Person createWithId(int id) { 
 		Person p = new Person();
 		p.setId(id);
+		p.setLoadLevel(LoadLevel.ID_ONLY);
 		return p;
 	}
 	

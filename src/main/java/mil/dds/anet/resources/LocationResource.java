@@ -41,15 +41,14 @@ public class LocationResource {
 	@POST
 	@Path("/new")
 	public Location createNewLocation(Location l) { 
-		int id = dao.insertLocation(l, l.getLatLng());
-		l.setId(id);
-		return l;
+		return dao.insert(l);
+		
 	}
 	
 	@POST
 	@Path("/update")
 	public Response updateLocation(Location l) {
-		int numRows = dao.updateLocation(l, l.getLatLng());
+		int numRows = dao.update(l);
 		return (numRows == 1) ? Response.ok().build() : Response.status(Status.NOT_FOUND).build();
 	}
 	

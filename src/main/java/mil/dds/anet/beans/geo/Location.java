@@ -2,19 +2,17 @@ package mil.dds.anet.beans.geo;
 
 import java.util.Objects;
 
-public class Location {
+import org.joda.time.DateTime;
 
-	Integer id;
-	
+import mil.dds.anet.views.AbstractAnetView;
+
+public class Location extends AbstractAnetView<Location> {
+
 	private String name;
 	private LatLng latLng;
 	
-	public Integer getId() {
-		return id;
-	}
-	public void setId(Integer id) {
-		this.id = id;
-	}
+	private DateTime createdAt;
+	
 	public String getName() {
 		return name;
 	}
@@ -28,6 +26,13 @@ public class Location {
 		this.latLng = latLng;
 	}
 	
+	public DateTime getCreatedAt() {
+		return createdAt;
+	}
+	public void setCreatedAt(DateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+	
 	@Override
 	public boolean equals(Object o) { 
 		if (o == null || o.getClass() != Location.class) { 
@@ -36,18 +41,26 @@ public class Location {
 		Location l = (Location) o;
 		return Objects.equals(l.getId(), id) &&
 				Objects.equals(l.getName(), name) &&
-				Objects.equals(l.getLatLng(), latLng);
+				Objects.equals(l.getLatLng(), latLng) &&
+				Objects.equals(l.getCreatedAt(), createdAt);
 	}
 	
 	@Override
 	public int hashCode() { 
-		return Objects.hash(id, name, latLng);
+		return Objects.hash(id, name, latLng, createdAt);
 	}
 	
 	public static Location create(String name, LatLng latLng) { 
 		Location l = new Location();
 		l.setName(name);
 		l.setLatLng(latLng);
+		return l;
+	}
+	
+	public static Location createWithId(Integer id) {
+		Location l = new Location();
+		l.setId(id);
+		l.setLoadLevel(LoadLevel.ID_ONLY);
 		return l;
 	}
 }

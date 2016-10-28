@@ -2,11 +2,13 @@ package mil.dds.anet.resources;
 
 import java.util.List;
 
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -21,6 +23,7 @@ import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.database.ReportDao;
 import mil.dds.anet.utils.ResponseUtils;
+import mil.dds.anet.views.billet.ReportListView;
 import mil.dds.anet.views.report.ReportForm;
 
 @Path("/reports")
@@ -36,9 +39,17 @@ public class ReportResource {
 	}
 	
 	@GET
+	@Path("/")
+	@Produces(MediaType.TEXT_HTML)
+	public ReportListView getAllReportsView(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
+		return new ReportListView(dao.getAll(pageNum, pageSize));
+	}
+	
+	@GET
 	@Path("/{id}")
+	@Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON})
 	public Report getById(@PathParam("id") int id) { 
-		return dao.getById(id);
+		return dao.getById(id).render("show.mustache");
 	}
 	
 	@GET

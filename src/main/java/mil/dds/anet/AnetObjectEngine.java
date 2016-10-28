@@ -11,12 +11,14 @@ import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 
 import mil.dds.anet.beans.AdvisorOrganization;
-import mil.dds.anet.beans.ApprovalAction;
 import mil.dds.anet.beans.ApprovalStep;
 import mil.dds.anet.beans.Billet;
 import mil.dds.anet.beans.Group;
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.Report;
+import mil.dds.anet.beans.Tashkil;
+import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.database.AdvisorOrganizationDao;
 import mil.dds.anet.database.ApprovalActionDao;
 import mil.dds.anet.database.ApprovalStepDao;
@@ -58,7 +60,7 @@ public class AnetObjectEngine {
 		groupDao = new GroupDao(dbHandle);
 		tashkilDao = jdbi.onDemand(TashkilDao.class);
 		poamDao = jdbi.onDemand(PoamDao.class);
-		locationDao =  jdbi.onDemand(LocationDao.class);
+		locationDao =  new LocationDao(dbHandle);
 		aoDao = new AdvisorOrganizationDao(dbHandle, groupDao);
 		billetDao = new BilletDao(dbHandle);
 		asDao = new ApprovalStepDao(dbHandle);
@@ -68,8 +70,11 @@ public class AnetObjectEngine {
 		daoMap = new HashMap<Class<? extends AbstractAnetView<?>>, IAnetDao<?>>();
 		daoMap.put(Person.class, personDao);
 		daoMap.put(Group.class, groupDao);
+		daoMap.put(Location.class, locationDao);
 		daoMap.put(AdvisorOrganization.class, aoDao);
 		daoMap.put(Billet.class, billetDao);
+//		daoMap.put(Poam.class, poamDao);
+//		daoMap.put(Tashkil.class, tashkilDao);
 //		daoMap.put(ApprovalStep.class, asDao);
 //		daoMap.put(ApprovalAction.class, approvalActionDao);
 		daoMap.put(Report.class, reportDao);

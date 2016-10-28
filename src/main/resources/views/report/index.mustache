@@ -1,0 +1,21 @@
+{{> ../template/header}}
+<h1>Listing Reports</h1>
+
+<table>
+<tr><th>id</th><th>summary</th></tr>
+{{#reports}}
+	<tr>
+		<td><a href="/reports/{{id}}">{{id}}</a></td>
+		<td>
+		{{#exsum}}
+			{{exsum}}	
+		{{/exsum}}
+		{{^exsum}}
+			{{author.name}} met with [PRINCIPAL NAME] at {{location.name}} on {{createdAt}} to discuss [POAM NAME]. 
+		{{/exsum}}
+		</td>
+	</tr>
+{{/reports}}
+</table>
+
+{{> ../template/footer}}

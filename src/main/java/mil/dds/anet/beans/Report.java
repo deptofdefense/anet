@@ -5,6 +5,10 @@ import java.util.Objects;
 
 import org.joda.time.DateTime;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSetter;
+
 import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.views.AbstractAnetView;
 
@@ -73,12 +77,24 @@ public class Report extends AbstractAnetView<Report> {
 		this.updatedAt = updatedAt;
 	}
 
+	@JsonIgnore
 	public Location getLocation() {
+		if (location == null ) { return null; } 
+		if (location.getLoadLevel() == null) { return location; } 
+		if (location.getLoadLevel().contains(LoadLevel.PROPERTIES) == false) { 
+			this.location = getBeanAtLoadLevel(location, LoadLevel.PROPERTIES);
+		}
 		return location;
 	}
 
+	@JsonSetter("location")
 	public void setLocation(Location location) {
 		this.location = location;
+	}
+	
+	@JsonGetter("location")
+	public Location getLocationJson() { 
+		return location;
 	}
 
 	public String getIntent() {
@@ -129,12 +145,24 @@ public class Report extends AbstractAnetView<Report> {
 		this.nextSteps = nextSteps;
 	}
 
+	@JsonIgnore
 	public Person getAuthor() {
+		if (author == null ) { return null; } 
+		if (author.getLoadLevel() == null) { return author; } 
+		if (author.getLoadLevel().contains(LoadLevel.PROPERTIES) == false) { 
+			this.author = getBeanAtLoadLevel(author, LoadLevel.PROPERTIES);
+		}
 		return author;
 	}
 
+	@JsonSetter("author")
 	public void setAuthor(Person author) {
 		this.author = author;
+	}
+	
+	@JsonGetter("author")
+	public Person getAuthorJson() { 
+		return author;
 	}
 
 	public List<Comment> getComments() {
