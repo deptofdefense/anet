@@ -53,7 +53,7 @@ public class AnetApplication extends Application<AnetConfiguration> {
 	        }
 	    });
 
-		bootstrap.addBundle(new AssetsBundle("/assets"));
+		bootstrap.addBundle(new AssetsBundle("/assets", "/assets", "index.html"));
 		bootstrap.addBundle(new ViewBundle<AnetConfiguration>());
 	}
 

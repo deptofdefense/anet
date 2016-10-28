@@ -23,6 +23,8 @@ logging:
     "org.skife.jdbi.v2.DBI" : TRACE
     "org.skife.jdbi.v2" : TRACE
     "org.sqlite.JDBC" : TRACE
+    "io.dropwizard.assets.AssetsBundle" : TRACE
+    "io.dropwizard.assets.*" : TRACE
     "mil.dds.anet.resources.TestingResource" :
       level: INFO
       appenders:
