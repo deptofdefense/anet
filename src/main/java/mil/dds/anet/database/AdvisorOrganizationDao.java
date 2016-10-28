@@ -11,7 +11,7 @@ import mil.dds.anet.beans.AdvisorOrganization;
 import mil.dds.anet.beans.Group;
 import mil.dds.anet.database.mappers.AdvisorOrganizationMapper;
 
-public class AdvisorOrganizationDao {
+public class AdvisorOrganizationDao implements IAnetDao<AdvisorOrganization> {
 
 	Handle dbHandle;
 	GroupDao groupDao;
@@ -21,7 +21,15 @@ public class AdvisorOrganizationDao {
 		this.groupDao = groupDao;
 	}
 	
-	public AdvisorOrganization getAdvisorOrgById(int id) { 
+	public List<AdvisorOrganization> getAll(int pageNum, int pageSize) {
+		Query<AdvisorOrganization> query = dbHandle.createQuery("SELECT * from advisorOrganizations ORDER BY createdAt ASC LIMIT :limit OFFSET :offset")
+			.bind("limit", pageSize)
+			.bind("offset", pageSize * pageNum)
+			.map(new AdvisorOrganizationMapper());
+		return query.list();
+	}
+	
+	public AdvisorOrganization getById(int id) { 
 		Query<AdvisorOrganization> query = dbHandle.createQuery(
 				"Select * from advisorOrganizations where id = :id")
 			.bind("id",id)
@@ -30,10 +38,10 @@ public class AdvisorOrganizationDao {
 		return (results.size() == 0) ? null : results.get(0);
 	}
 	
-	public AdvisorOrganization createNewAdvisorOrganization(AdvisorOrganization ao) {
+	public AdvisorOrganization insert(AdvisorOrganization ao) {
 		Group g = new Group();
 		g.setName(ao.getName() + " Members");
-		g = groupDao.createNewGroup(g);
+		g = groupDao.insert(g);
 		
 		GeneratedKeys<Map<String,Object>> keys = dbHandle.createStatement(
 				"INSERT INTO advisorOrganizations (name, memberGroupId) VALUES (:name, :memberGroupId)")
@@ -46,7 +54,7 @@ public class AdvisorOrganizationDao {
 		return ao;
 	}
 	
-	public int updateAdvisorOrganizationName(AdvisorOrganization ao) { 
+	public int update(AdvisorOrganization ao) { 
 		int numRows = dbHandle.createStatement("UPDATE advisorOrganizations SET name = :name where id = :id")
 				.bind("name", ao.getName())
 				.bind("id", ao.getId())
@@ -55,7 +63,7 @@ public class AdvisorOrganizationDao {
 		Group g = new Group();
 		g.setId(ao.getMemberGroupId());
 		g.setName(ao.getName() + " Members");
-		groupDao.updateGroupName(g);
+		groupDao.update(g);
 		
 		return numRows;
 	}

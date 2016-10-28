@@ -27,19 +27,19 @@ public class AdvisorOrganizationResource {
 	@POST
 	@Path("/new")
 	public AdvisorOrganization createNewAdvisorOrganization(AdvisorOrganization ao) {
-		return dao.createNewAdvisorOrganization(ao);
+		return dao.insert(ao);
 	}
 	
 	@GET
 	@Path("/{id}")
 	public AdvisorOrganization getById(@PathParam("id") int id) {
-		return dao.getAdvisorOrgById(id);
+		return dao.getById(id);
 	}
 	
 	@POST
 	@Path("/update")
 	public Response updateAdvisorOrganizationName(AdvisorOrganization ao) { 
-		int numRows = dao.updateAdvisorOrganizationName(ao);
+		int numRows = dao.update(ao);
 		return (numRows == 1) ? Response.ok().build() : Response.status(Status.NOT_FOUND).build();
 	}
 }

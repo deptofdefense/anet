@@ -4,22 +4,20 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class Group {
+import org.joda.time.DateTime;
 
-	Integer id;
+import mil.dds.anet.views.AbstractAnetView;
+
+public class Group extends AbstractAnetView<Group> {
+
 	String name;
 	List<Person> members;
+	DateTime createdAt;
 	
 	public Group() { 
 		this.members = Collections.emptyList();
 	}
 	
-	public Integer getId() {
-		return id;
-	}
-	public void setId(Integer id) {
-		this.id = id;
-	}
 	public String getName() {
 		return name;
 	}
@@ -34,6 +32,14 @@ public class Group {
 		this.members = members;
 	}
 	
+	public DateTime getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(DateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+
 	@Override
 	public boolean equals(Object o) { 
 		if (o == null || o.getClass() != this.getClass()) { 
@@ -42,12 +48,13 @@ public class Group {
 		Group other = (Group) o;
 		return Objects.equals(other.getId(), id) &&
 				Objects.equals(other.getName(), name) &&
-				Objects.equals(other.getMembers(), members);
+				Objects.equals(other.getMembers(), members) &&
+				Objects.equals(other.getCreatedAt(), createdAt);
 	}
 	
 	@Override
 	public int hashCode() { 
-		return Objects.hash(id, name, members);
+		return Objects.hash(id, name, members, createdAt);
 	}
 	
 	public static Group create(String name) { 

@@ -30,6 +30,7 @@ public class ApprovalActionMapper implements ResultSetMapper<ApprovalAction> {
 		
 		aa.setCreatedAt(new DateTime(rs.getLong("createdAt")));
 		aa.setType(ApprovalType.values()[rs.getInt("type")]);
+//		aa.setLoadLevel(LoadLevel.PROPERTIES);
 	
 		return aa;
 	}

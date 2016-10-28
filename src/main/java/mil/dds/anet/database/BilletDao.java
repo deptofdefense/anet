@@ -15,7 +15,7 @@ import mil.dds.anet.database.mappers.BilletMapper;
 import mil.dds.anet.database.mappers.PersonMapper;
 
 @RegisterMapper(BilletMapper.class)
-public class BilletDao {
+public class BilletDao implements IAnetDao<Billet> {
 
 	Handle dbHandle;
 	
@@ -23,20 +23,30 @@ public class BilletDao {
 		this.dbHandle = h;
 	}
 	
-	/*
-	 * @return: ID of new billet created
-	 */
-	public int createNewBillet(Billet b) { 
-		GeneratedKeys<Map<String,Object>> keys = dbHandle.createStatement(
-				"INSERT INTO billets (name, advisorOrganizationId) " +
-				"VALUES (:name, :advisorOrganizationId)")
-			.bind("name", b.getName())
-			.bind("advisorOrganizationId", b.getAdvisorOrganizationId())
-			.executeAndReturnGeneratedKeys();
-		return (Integer) (keys.first().get("last_insert_rowid()"));
+	public List<Billet> getAll(int pageNum, int pageSize) {
+		Query<Billet> query = dbHandle.createQuery("SELECT * from billets ORDER BY createdAt ASC LIMIT :limit OFFSET :offset")
+			.bind("limit", pageSize)
+			.bind("offset", pageSize * pageNum)
+			.map(new BilletMapper());
+		return query.list();
 	}
 	
-	public Billet getBilletById(int id) { 
+	public Billet insert(Billet b) { 
+		b.setCreatedAt(DateTime.now());
+		b.setUpdatedAt(DateTime.now());
+		GeneratedKeys<Map<String,Object>> keys = dbHandle.createStatement(
+				"INSERT INTO billets (name, advisorOrganizationId, createdAt, updatedAt) " +
+				"VALUES (:name, :advisorOrganizationId, :createdAt, :updatedAt)")
+			.bind("name", b.getName())
+			.bind("advisorOrganizationId", getAoId(b))
+			.bind("createdAt", b.getCreatedAt())
+			.bind("updatedAt", b.getUpdatedAt())
+			.executeAndReturnGeneratedKeys();
+		b.setId((Integer) (keys.first().get("last_insert_rowid()")));
+		return b;
+	}
+	
+	public Billet getById(int id) { 
 		Query<Billet> query = dbHandle.createQuery("SELECT * FROM billets WHERE id = :id")
 			.bind("id", id)
 			.map(new BilletMapper());
@@ -48,10 +58,12 @@ public class BilletDao {
 	/*
 	 * @return: number of rows updated. 
 	 */
-	public int updateBillet(Billet b) { 
-		return dbHandle.createStatement("UPDATE billets SET name = :name, advisorOrganizationId = :advisorOrganizationId WHERE id = :id")
+	public int update(Billet b) { 
+		b.setUpdatedAt(DateTime.now());
+		return dbHandle.createStatement("UPDATE billets SET name = :name, advisorOrganizationId = :advisorOrganizationId, updatedAt = :updatedAt WHERE id = :id")
 			.bind("name", b.getName())
-			.bind("advisorOrganizationId", b.getAdvisorOrganizationId())
+			.bind("advisorOrganizationId", getAoId(b))
+			.bind("updatedAt", b.getUpdatedAt())
 			.bind("id", b.getId())
 			.execute();
 	}
@@ -97,5 +109,18 @@ public class BilletDao {
 		List<Person> results = query.list();
 		if (results.size() == 0 ) { return null; }
 		return results.get(0);
+	}
+
+	public List<Billet> getAllBillets(int pageNum, int pageSize) {
+		Query<Billet> query = dbHandle.createQuery("SELECT * from billets ORDER BY createdAt ASC LIMIT :limit OFFSET :offset")
+				.bind("limit", pageSize)
+				.bind("offset", pageSize * pageNum)
+				.map(new BilletMapper());
+			return query.list();
+	}
+	
+	private Integer getAoId(Billet b) { 
+		if (b.getAdvisorOrganizationJson() == null) { return null; }
+		return b.getAdvisorOrganizationJson().getId();
 	}
 }

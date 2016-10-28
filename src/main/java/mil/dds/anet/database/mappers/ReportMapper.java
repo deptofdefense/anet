@@ -11,6 +11,7 @@ import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.geo.Location;
+import mil.dds.anet.views.AbstractAnetView.LoadLevel;
 
 public class ReportMapper implements ResultSetMapper<Report> {
 
@@ -36,6 +37,7 @@ public class ReportMapper implements ResultSetMapper<Report> {
 		Person p = new Person();
 		p.setId(MapperUtils.getInteger(rs, "authorId"));
 		r.setAuthor(p);
+		r.setLoadLevel(LoadLevel.PROPERTIES);
 		
 		return r;
 	}

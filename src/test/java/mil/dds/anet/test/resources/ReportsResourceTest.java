@@ -62,7 +62,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		//Create a billet for the author
 		Billet authorBillet = new Billet();
 		authorBillet.setName("A report writer");
-		authorBillet.setAdvisorOrganizationId(ao.getId());
+		authorBillet.setAdvisorOrganization(ao);
 		authorBillet = client.target(String.format("http://localhost:%d/billets/new", RULE.getLocalPort()))
 				.request()
 				.post(Entity.json(authorBillet), Billet.class);

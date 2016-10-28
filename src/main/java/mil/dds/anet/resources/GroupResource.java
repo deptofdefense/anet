@@ -28,13 +28,13 @@ public class GroupResource {
 	@GET
 	@Path("/{id}")
 	public Group getById(@PathParam("id") int id) { 
-		return dao.getGroupByid(id);
+		return dao.getById(id);
 	}
 	
 	@POST
 	@Path("/new")
 	public Group createNewGroup(Group g) { 
-		return dao.createNewGroup(g);
+		return dao.insert(g);
 	}
 	
 	@GET
@@ -54,7 +54,7 @@ public class GroupResource {
 	@POST
 	@Path("/rename")
 	public Response renameGroup(Group g) { 
-		int numRows = dao.updateGroupName(g);
+		int numRows = dao.update(g);
 		if (numRows == 1) { 
 			return Response.ok().build();
 		} else { 

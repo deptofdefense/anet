@@ -22,7 +22,7 @@ import mil.dds.anet.database.mappers.AdvisorOrganizationMapper;
 import mil.dds.anet.database.mappers.PersonMapper;
 
 @RegisterMapper(PersonMapper.class)
-public class PersonDao {
+public class PersonDao implements IAnetDao<Person> {
 
 	Handle dbHandle;
 	
@@ -30,7 +30,7 @@ public class PersonDao {
 		this.dbHandle = h;
 	}
 	
-	public List<Person> getAllPeople(int pageNum, int pageSize) {
+	public List<Person> getAll(int pageNum, int pageSize) {
 		Query<Person> query = dbHandle.createQuery("SELECT * from people ORDER BY createdAt ASC LIMIT :limit OFFSET :offset")
 			.bind("limit", pageSize)
 			.bind("offset", pageSize * pageNum)
@@ -47,7 +47,7 @@ public class PersonDao {
 		return rs.get(0);
 	}
 	
-	public int insertPerson(@BindBean Person p){
+	public Person insert(@BindBean Person p){
 		p.setCreatedAt(DateTime.now());
 		p.setUpdatedAt(DateTime.now());
 		GeneratedKeys<Map<String, Object>> keys = dbHandle.createStatement("INSERT INTO people " +
@@ -56,10 +56,11 @@ public class PersonDao {
 			.bindFromProperties(p)
 			.bind("status", (p.getStatus() != null ) ? p.getStatus().ordinal() : null)
 			.executeAndReturnGeneratedKeys();
-		return (Integer)keys.first().get("last_insert_rowid()");
+		p.setId((Integer)keys.first().get("last_insert_rowid()"));
+		return p;
 	}
 	
-	public int updatePerson(@BindBean Person p){
+	public int update(@BindBean Person p){
 		p.setUpdatedAt(DateTime.now());
 		return dbHandle.createStatement("UPDATE people " + 
 				"SET firstName = :firstName, lastName = :lastName, status = :status, " + 

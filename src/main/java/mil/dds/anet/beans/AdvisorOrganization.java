@@ -2,19 +2,13 @@ package mil.dds.anet.beans;
 
 import java.util.Objects;
 
-public class AdvisorOrganization {
+import mil.dds.anet.views.AbstractAnetView;
 
-	Integer id;
+public class AdvisorOrganization extends AbstractAnetView<AdvisorOrganization> {
+
 	String name;
 	Integer memberGroupId;
-	
-	public Integer getId() {
-		return id;
-	}
-	public void setId(Integer id) {
-		this.id = id;
-	}
-	
+		
 	public String getName() {
 		return name;
 	}
@@ -31,6 +25,13 @@ public class AdvisorOrganization {
 	public static AdvisorOrganization create(String name) { 
 		AdvisorOrganization ao = new AdvisorOrganization();
 		ao.setName(name);
+		return ao;
+	}
+	
+	public static AdvisorOrganization createWithId(Integer id) { 
+		AdvisorOrganization ao = new AdvisorOrganization();
+		ao.setId(id);
+		ao.setLoadLevel(LoadLevel.ID_ONLY);
 		return ao;
 	}
 	

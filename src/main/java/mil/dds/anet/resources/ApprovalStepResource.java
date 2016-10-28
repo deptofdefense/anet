@@ -41,16 +41,14 @@ public class ApprovalStepResource {
 	@POST
 	@Path("/new")
 	public ApprovalStep createNewStep(ApprovalStep as) { 
-		int id = dao.createNewApprovalStep(as);
-		as.setId(id);
-		return as;
+		return dao.insert(as);
 	}
 	
 	@POST
 	@Path("/update")
 	public int updateSteps(List<ApprovalStep> as) {
 		for (ApprovalStep step : as) { 
-			dao.updateApprovalStep(step);
+			dao.update(step);
 		}
 		return as.size();
 	}

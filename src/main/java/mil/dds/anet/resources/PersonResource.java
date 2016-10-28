@@ -32,14 +32,14 @@ public class PersonResource {
 	@GET
 	@Path("/")
 	public List<Person> getAllPeople(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
-		return dao.getAllPeople(pageNum, pageSize);
+		return dao.getAll(pageNum, pageSize);
 	}
 	
 	@GET
 	@Path("/")
 	@Produces(MediaType.TEXT_HTML)
 	public PersonListView getAllPeopleView(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
-		return new PersonListView(dao.getAllPeople(pageNum, pageSize));
+		return new PersonListView(dao.getAll(pageNum, pageSize));
 	}
 	
 	@GET
@@ -73,9 +73,7 @@ public class PersonResource {
 	@POST
 	@Path("/new")
 	public Person createNewPerson(Person p) { 
-		int id = dao.insertPerson(p);
-		p.setId(id);
-		return p;
+		return dao.insert(p);
 	}
 	
 	@GET
@@ -89,7 +87,7 @@ public class PersonResource {
 	@POST
 	@Path("/update")
 	public Response updatePerson(Person p) { 
-		int numRows = dao.updatePerson(p);
+		int numRows = dao.update(p);
 		return (numRows == 1) ? Response.ok().build() : Response.status(Status.NOT_FOUND).build();
 	}
 	

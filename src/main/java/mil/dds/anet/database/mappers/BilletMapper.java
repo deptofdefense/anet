@@ -3,10 +3,13 @@ package mil.dds.anet.database.mappers;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.joda.time.DateTime;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
+import mil.dds.anet.beans.AdvisorOrganization;
 import mil.dds.anet.beans.Billet;
+import mil.dds.anet.views.AbstractAnetView.LoadLevel;
 
 public class BilletMapper implements ResultSetMapper<Billet> {
 
@@ -15,7 +18,9 @@ public class BilletMapper implements ResultSetMapper<Billet> {
 		Billet b = new Billet();
 		b.setId(r.getInt("id"));
 		b.setName(r.getString("name"));
-		b.setAdvisorOrganizationId(r.getInt("advisorOrganizationId"));
+		b.setAdvisorOrganization(AdvisorOrganization.createWithId(r.getInt("advisorOrganizationId")));
+		b.setCreatedAt(new DateTime(r.getLong("createdAt")));
+		b.setLoadLevel(LoadLevel.PROPERTIES);
 		return b;
 	}
 

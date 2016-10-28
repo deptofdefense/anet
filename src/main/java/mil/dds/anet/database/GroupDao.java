@@ -3,6 +3,7 @@ package mil.dds.anet.database;
 import java.util.List;
 import java.util.Map;
 
+import org.joda.time.DateTime;
 import org.skife.jdbi.v2.GeneratedKeys;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.PreparedBatch;
@@ -15,7 +16,7 @@ import mil.dds.anet.database.mappers.GroupMapper;
 import mil.dds.anet.database.mappers.PersonMapper;
 
 @RegisterMapper(GroupMapper.class)
-public class GroupDao {
+public class GroupDao implements IAnetDao<Group> {
 
 	Handle dbHandle;
 	
@@ -23,7 +24,16 @@ public class GroupDao {
 		this.dbHandle = h;
 	}
 	
-	public Group getGroupByid(int id) { 
+	@Override
+	public List<Group> getAll(int pageNum, int pageSize) {
+		Query<Group> query = dbHandle.createQuery("SELECT * from groups ORDER BY createdAt ASC LIMIT :limit OFFSET :offset")
+			.bind("limit", pageSize)
+			.bind("offset", pageSize * pageNum)
+			.map(new GroupMapper());
+		return query.list();
+	}
+	@Override
+	public Group getById(int id) { 
 		Query<Group> query = dbHandle.createQuery("select * from groups where id = :id")
 				.bind("id", id)
 				.map(new GroupMapper());
@@ -44,10 +54,13 @@ public class GroupDao {
 		return g;		
 	}
 	
-	public Group createNewGroup(Group g) { 
+	@Override
+	public Group insert(Group g) { 
+		g.setCreatedAt(DateTime.now());
 		GeneratedKeys<Map<String, Object>> keys = dbHandle.createStatement(
-				"INSERT into groups (name) VALUES (:name)")
+				"INSERT into groups (name, createdAt) VALUES (:name, :createdAt)")
 			.bind("name",g.getName())
+			.bind("createdAt", g.getCreatedAt())
 			.executeAndReturnGeneratedKeys();
 		
 		g.setId(((Integer)keys.first().get("last_insert_rowid()")).intValue());
@@ -68,7 +81,8 @@ public class GroupDao {
 	/*
 	 * @return: the number of rows updated (should be 1
 	 */
-	public int updateGroupName(Group g) { 
+	@Override
+	public int update(Group g) { 
 		return dbHandle.createStatement("UPDATE groups SET name = :name where id = :id")
 			.bind("name", g.getName())
 			.bind("id", g.getId())

@@ -1,12 +1,15 @@
 package mil.dds.anet.resources;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -17,6 +20,7 @@ import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Billet;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.database.BilletDao;
+import mil.dds.anet.views.billet.BilletListView;
 
 @Path("/billets")
 @Produces(MediaType.APPLICATION_JSON)
@@ -29,23 +33,29 @@ public class BilletResource {
 	}
 	
 	@GET
+	@Path("/")
+	@Produces(MediaType.TEXT_HTML)
+	public BilletListView getAllBilletsView(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
+		return new BilletListView(dao.getAllBillets(pageNum, pageSize));
+	}
+	
+	@GET
 	@Path("/{id}")
-	public Billet getBillet(@PathParam("id") int id) { 
-		return dao.getBilletById(id);
+	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	public Billet getBillet(@Context HttpServletRequest req, @PathParam("id") int id) { 
+		return (dao.getById(id)).render("show.mustache");
 	}
 	
 	@POST
 	@Path("/new")
 	public Billet createBillet(Billet b) {
-		int id = dao.createNewBillet(b);
-		b.setId(id);
-		return b;
+		return dao.insert(b);
 	}
 	
 	@POST
 	@Path("/update")
 	public Response updateBillet(Billet b) { 
-		int numRows = dao.updateBillet(b);
+		int numRows = dao.update(b);
 		return (numRows == 1) ? Response.ok().build() : Response.status(Status.NOT_FOUND).build();
 	}
 	

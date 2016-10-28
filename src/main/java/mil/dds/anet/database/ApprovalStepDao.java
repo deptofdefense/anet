@@ -10,12 +10,16 @@ import org.skife.jdbi.v2.Query;
 
 import mil.dds.anet.beans.ApprovalStep;
 
-public class ApprovalStepDao {
+public class ApprovalStepDao implements IAnetDao<ApprovalStep> {
 
 	Handle dbHandle;
 	
 	public ApprovalStepDao(Handle h) { 
 		this.dbHandle = h;
+	}
+	
+	public List<ApprovalStep> getAll(int pageNum, int pageSize) {
+		throw new UnsupportedOperationException();
 	}
 	
 	public Collection<ApprovalStep> getByAdvisorOrganizationId(int aoId) { 
@@ -25,6 +29,7 @@ public class ApprovalStepDao {
 		return query.list();
 	}
 	
+	@Override
 	public ApprovalStep getById(int id) { 
 		Query<ApprovalStep> query = dbHandle.createQuery("SELECT * from approvalSteps where id = :id")
 				.bind("id", id)
@@ -34,7 +39,8 @@ public class ApprovalStepDao {
 		return results.get(0);
 	}
 	
-	public int createNewApprovalStep(ApprovalStep as) { 
+	@Override
+	public ApprovalStep insert(ApprovalStep as) { 
 		GeneratedKeys<Map<String, Object>> keys = dbHandle.createStatement(
 				"INSERT into approvalSteps (approverGroupId, nextStepId, advisorOrganizationId) " + 
 				"VALUES (:approverGroupId, :nextStepId, :advisorOrganizationId)")
@@ -43,10 +49,11 @@ public class ApprovalStepDao {
 			.bind("advisorOrganizationId", as.getAdvisorOrganizationId())
 			.executeAndReturnGeneratedKeys();
 		
-		return (Integer)keys.first().get("last_insert_rowid()");
+		as.setId((Integer)keys.first().get("last_insert_rowid()"));
+		return as;
 	}
 	
-	public int updateApprovalStep(ApprovalStep as) { 
+	public int update(ApprovalStep as) { 
 		return dbHandle.createStatement("UPDATE approvalSteps SET approverGroupId = :approverGroupId, " +
 				"nextStepId = :nextStepId, advisorOrganizationId = :advisorOrganizationId " + 
 				"WHERE id = :id")

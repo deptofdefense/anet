@@ -53,9 +53,7 @@ public class ReportResource {
 	public Report createNewReport(Report r) { 
 		if (r.getState() == null) { r.setState(ReportState.DRAFT); }
 		//TODO: set the author to the person who submits this HTTP request. 
-		int id = dao.createNewReport(r);
-		r.setId(id);
-		return r;
+		return dao.insert(r);
 	}
 	
 	@GET
@@ -86,7 +84,7 @@ public class ReportResource {
 		//Push the report into the first step of this workflow
 		r.setApprovalStepId(steps.get(0).getId());
 		r.setState(ReportState.PENDING_APPROVAL);
-		int numRows = dao.updateReport(r);
+		int numRows = dao.update(r);
 		return (numRows == 1) ? Response.ok().build() : ResponseUtils.withMsg("No records updated", Status.BAD_REQUEST); 
 	}
 	
@@ -116,14 +114,14 @@ public class ReportResource {
 		approval.setStep(ApprovalStep.create(r.getApprovalStepId(), null, null, null));
 		approval.setPerson(Person.createWithId(userId));
 		approval.setType(ApprovalType.APPROVE);
-		engine.getApprovalActionDao().createAction(approval);
+		engine.getApprovalActionDao().insert(approval);
 		
 		//Update the report
 		r.setApprovalStepId(step.getNextStepId());
 		if (step.getNextStepId() == null) {
 			r.setState(ReportState.RELEASED);
 		}
-		int numRows = dao.updateReport(r);
+		dao.update(r);
 		//TODO: close the transaction. 
 		
 		return Response.ok().build();

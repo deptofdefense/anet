@@ -7,6 +7,7 @@ import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
 import mil.dds.anet.beans.AdvisorOrganization;
+import mil.dds.anet.views.AbstractAnetView.LoadLevel;
 
 public class AdvisorOrganizationMapper implements ResultSetMapper<AdvisorOrganization> {
 
@@ -16,6 +17,7 @@ public class AdvisorOrganizationMapper implements ResultSetMapper<AdvisorOrganiz
 		ao.setId(r.getInt("id"));
 		ao.setName(r.getString("name"));
 		ao.setMemberGroupId(r.getInt("memberGroupId"));
+		ao.setLoadLevel(LoadLevel.PROPERTIES);
 		return ao;
 	}
 

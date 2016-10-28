@@ -35,13 +35,13 @@ public class BilletResourceTest extends AbstractResourceTest {
 		//Assign to an AO
 		AdvisorOrganization ao = httpQuery("/advisorOrganizations/new")
 				.post(Entity.json(AdvisorOrganizationTest.getTestAO()), AdvisorOrganization.class);
-		created.setAdvisorOrganizationId(ao.getId());
+		created.setAdvisorOrganization(AdvisorOrganization.createWithId(ao.getId()));
 		
 		Response resp = httpQuery("/billets/update").post(Entity.json(created));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
 		Billet returned = httpQuery(String.format("/billets/%d",created.getId())).get(Billet.class);
-		assertThat(returned.getAdvisorOrganizationId()).isEqualTo(ao.getId());
+		assertThat(returned.getAdvisorOrganization().getId()).isEqualTo(ao.getId());
 		
 		//Assign a person into the billet
 		Person jack = httpQuery("/people/new").post(Entity.json(PersonTest.getJackJackson()), Person.class);

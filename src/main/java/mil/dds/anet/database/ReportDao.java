@@ -13,7 +13,7 @@ import mil.dds.anet.beans.Report;
 import mil.dds.anet.database.mappers.ReportMapper;
 
 @RegisterMapper(ReportMapper.class)
-public class ReportDao {
+public class ReportDao implements IAnetDao<Report> {
 
 	Handle dbHandle;
 	
@@ -21,7 +21,17 @@ public class ReportDao {
 		this.dbHandle = db;
 	}
 	
-	public int createNewReport(Report r) { 
+	public List<Report> getAll(int pageNum, int pageSize) {
+		Query<Report> query = dbHandle.createQuery("SELECT * from reports ORDER BY createdAt ASC LIMIT :limit OFFSET :offset")
+			.bind("limit", pageSize)
+			.bind("offset", pageSize * pageNum)
+			.map(new ReportMapper());
+		return query.list();
+	}
+	
+	public Report insert(Report r) {
+		r.setCreatedAt(DateTime.now());
+		r.setUpdatedAt(DateTime.now());
 		GeneratedKeys<Map<String, Object>> keys = dbHandle.createStatement(
 				"INSERT INTO reports " + 
 				"(state, createdAt, updatedAt, locationId, intent, exsum, " +
@@ -29,8 +39,8 @@ public class ReportDao {
 				"(:state, :createdAt, :updatedAt, :locationId, :intent, " +
 				":exsum, :text, :nextSteps, :authorId)")
 			.bind("state", r.getState().ordinal())
-			.bind("createdAt", DateTime.now())
-			.bind("updatedAt", DateTime.now())
+			.bind("createdAt", r.getCreatedAt())
+			.bind("updatedAt", r.getUpdatedAt())
 			.bind("locationId", r.getLocation().getId())
 			.bind("intent", r.getIntent())
 			.bind("exsum", r.getExsum())
@@ -38,7 +48,8 @@ public class ReportDao {
 			.bind("nextSteps", r.getNextSteps())
 			.bind("authorId", r.getAuthor().getId())
 			.executeAndReturnGeneratedKeys();
-		return (Integer) (keys.first().get("last_insert_rowid()"));
+		r.setId((Integer) (keys.first().get("last_insert_rowid()")));
+		return r;
 	}
 
 	public Report getById(int id) { 
@@ -50,7 +61,7 @@ public class ReportDao {
 		return results.get(0);
 	}
 	
-	public int updateReport(Report r) { 
+	public int update(Report r) { 
 		return dbHandle.createStatement("UPDATE reports SET " +
 				"state = :state, updatedAt = :updatedAt, locationId = :locationId, " + 
 				"intent = :intent, exsum = :exsum, text = :text, nextSteps = :nextSteps, " + 

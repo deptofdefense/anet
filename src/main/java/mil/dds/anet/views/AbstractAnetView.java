@@ -2,14 +2,20 @@ package mil.dds.anet.views;
 
 import javax.ws.rs.WebApplicationException;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import io.dropwizard.views.View;
+import mil.dds.anet.AnetObjectEngine;
 
 public abstract class AbstractAnetView<T extends AbstractAnetView<?>> extends View {
 
 	protected String templateName;
+	protected LoadLevel loadLevel;
+	protected Integer id;
 	
 	public AbstractAnetView() { 
 		super("");
+		id = null;
 	}
 	
 	@Override
@@ -36,5 +42,41 @@ public abstract class AbstractAnetView<T extends AbstractAnetView<?>> extends Vi
         className = Character.toLowerCase(className.charAt(0)) + className.substring(1);
         return String.format("/views/%s/%s", className, templateName);
     }
+	
+	
+	/******
+	 * These methods are related to the fact that these are Database Objects. this should be extracted out 
+	 */
+	public static enum LoadLevel { ID_ONLY, PROPERTIES, INCLUDE;
+		public boolean contains(LoadLevel other) { 
+			return other.ordinal() <= this.ordinal();
+		}
+	}
+	
+	@JsonIgnore
+	public LoadLevel getLoadLevel() { 
+		return loadLevel;
+	}
+	
+	public void setLoadLevel(LoadLevel ll) { 
+		this.loadLevel = ll;
+	}
+	
+	public Integer getId() { 
+		return id;
+	}
+	
+	public void setId(Integer id) { 
+		this.id = id;
+	}
+	
+	protected <B extends AbstractAnetView<?>> B getBeanAtLoadLevel(B bean, LoadLevel ll) {
+		if (bean.getLoadLevel().contains(ll)) { 
+			return bean;
+		}
+		@SuppressWarnings("unchecked")
+		B ret = (B) AnetObjectEngine.loadBeanTo(bean, ll);
+		return ret;
+	}
 	
 }

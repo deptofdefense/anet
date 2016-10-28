@@ -9,6 +9,7 @@ import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Person.Status;
+import mil.dds.anet.views.AbstractAnetView.LoadLevel;
 
 public class PersonMapper implements ResultSetMapper<Person> {
 
@@ -28,6 +29,7 @@ public class PersonMapper implements ResultSetMapper<Person> {
 		a.setBiography(r.getString("biography"));
 		a.setCreatedAt(new DateTime(r.getLong("createdAt")));
 		a.setUpdatedAt(new DateTime(r.getLong("updatedAt")));
+		a.setLoadLevel(LoadLevel.PROPERTIES);
 		return a;
 	} 
 }

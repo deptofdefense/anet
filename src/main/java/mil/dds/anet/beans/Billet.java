@@ -2,11 +2,21 @@ package mil.dds.anet.beans;
 
 import java.util.Objects;
 
-public class Billet {
+import org.joda.time.DateTime;
+
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSetter;
+
+import mil.dds.anet.views.AbstractAnetView;
+
+public class Billet extends AbstractAnetView<Billet> {
 
 	Integer id;
 	String name;
-	Integer advisorOrganizationId;
+	DateTime createdAt;
+	DateTime updatedAt;
+	AdvisorOrganization advisorOrganization;
 
 	public static Billet createWithId(Integer id) { 
 		Billet b = new Billet();
@@ -26,11 +36,43 @@ public class Billet {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public Integer getAdvisorOrganizationId() {
-		return advisorOrganizationId;
+	
+	public DateTime getCreatedAt() {
+		return createdAt;
 	}
-	public void setAdvisorOrganizationId(Integer advisingOrganizationId) {
-		this.advisorOrganizationId = advisingOrganizationId;
+
+	public void setCreatedAt(DateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public DateTime getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(DateTime updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+	@JsonIgnore
+	public AdvisorOrganization getAdvisorOrganization() {
+		if (advisorOrganization == null) { return null; } 
+		if (advisorOrganization.getLoadLevel() == null ) { 
+			return advisorOrganization; // just a bean, not a db object! 
+		}
+		if (advisorOrganization.getLoadLevel().contains(LoadLevel.PROPERTIES) == false) { 
+			this.advisorOrganization = getBeanAtLoadLevel(advisorOrganization, LoadLevel.PROPERTIES);
+		}
+		return advisorOrganization;
+	}
+	
+	@JsonSetter("advisorOrganization")
+	public void setAdvisorOrganization(AdvisorOrganization ao) {
+		this.advisorOrganization = ao;
+	}
+	
+	@JsonGetter("advisorOrganization")
+	public AdvisorOrganization getAdvisorOrganizationJson() { 
+		return advisorOrganization;
 	}
 	
 	@Override
@@ -41,12 +83,12 @@ public class Billet {
 		Billet other = (Billet) o;
 		return Objects.equals(id, other.getId()) &&
 			Objects.equals(name, other.getName()) &&
-			Objects.equals(advisorOrganizationId, other.getAdvisorOrganizationId());
+			Objects.equals(advisorOrganization, other.getAdvisorOrganization());
 	}
 	
 	@Override
 	public int hashCode() { 
-		return Objects.hash(id, name, advisorOrganizationId);
+		return Objects.hash(id, name, advisorOrganization);
 	}
 	
 }
