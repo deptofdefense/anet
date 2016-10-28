@@ -9,7 +9,7 @@
     <!-- Bootstrap -->
     <link href="assets/css/bootstrap.css" rel="stylesheet">
     <link href="assets/css/bootstrap-theme.css" rel="stylesheet">
-    <link href="assets/css/style.less" rel="stylesheet/less" type="text/css"  s>
+    <link href="assets/css/style.less" rel="stylesheet/less" type="text/css">
      <link rel="stylesheet" href="assets/css/uswds.css">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -22,233 +22,231 @@
   <body>
     <div class="container-fluid">
       <div class="row">
-      <div class="col-xs-6 col-md-4">
-      <ul class="usa-sidenav-list">
-        <div class="logo">
-          <img alt="ANET" src="assets/img/anet.png">
+        <div class="col-xs-6 col-md-4">
+          <ul class="usa-sidenav-list">
+            <div class="logo">
+              <img alt="ANET" src="assets/img/anet.png">
+            </div>
+            <li><a href="/search">ANET Search</a></li>
+            <li><a href="/search">Submit a Report</a></li>
+            <li><a href="/search">Your Reports &amp; Approvals</a></li>
+            <li><a href="/search">Report Analytics</a></li>
+            <hr>
+            <li><a href="/search">Advisor Analytics</a></li>
+            <hr>
+            <li><a href="/search">ANET Training</a></li>
+          </ul>
         </div>
-        <li><a href="/search">ANET Search</a></li>
-        <li><a href="/search">Submit a Report</a></li>
-        <li><a href="/search">Your Reports &amp; Approvals</a></li>
-        <li><a href="/search">Report Analytics</a></li>
-        <hr>
-        <li><a href="/search">Advisor Analytics</a></li>
-        <hr>
-        <li><a href="/search">ANET Training</a></li>
-      </ul>
-      </div>
       <div class="col-xs-6 col-md-8">
-      
-      <div class="container-fluid">
-      <div class="row">
+        <div class="row">
+              <form class="usa-search usa-search-small top-search">
+                <div role="search">
+                  <label class="usa-sr-only" for="search-field-small">Search small</label>
+                  <input id="search-field-small" type="search" name="search">
+                  <button type="submit">
+                    <span class="usa-sr-only">Search</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+            <div class="row">
+              <div class="anet-top-block">
+                <div class="user-submit">Submitting as {{currentUser.name}}</div>
+                <div class="submit"><input type="submit" value="Submit" class="btn btn-default pull-right"></div>
+              </div>
+            </div>
+            <div class="row">
+              <form>
+                <section class="anet-block">
+                  <div class="anet-block__title">
+                    Report Details
+                  </div>
 
-      <form class="usa-search usa-search-small top-search">
-        <div role="search">
-          <label class="usa-sr-only" for="search-field-small">Search small</label>
-          <input id="search-field-small" type="search" name="search">
-          <button type="submit">
-            <span class="usa-sr-only">Search</span>
-          </button>
+                  <div class="anet-block__body">
+                    <div class="form-group">
+                      <label for="engagementIntent">Intent of Engagement</label>
+                      <textarea id="engagementIntent"></textarea>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="afghanPrincipal">Afghan Principal Name (or TASHKIL)</label>
+                          <select id="afghanPrincipal"></select>
+                        </div>
+
+                        <div class="form-group">
+                          <label for="engagementDate">Engagement Date</label>
+                          <input id="engagementDate" type="date">
+                        </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="engagementLocation">Engagement Location</label>
+                          <input id="engagementLocation">
+                        </div>
+
+                        <div class="form-group">
+                          <label for="affectedOrgs">Affected Advising Orgs</label>
+                          <select id="affectedOrgs"></select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                <section class="anet-block">
+                  <div class="anet-block__title">
+                    Discussion
+                  </div>
+
+                  <div class="anet-block__body">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="engagementAtmosphere">Atmosphere of Engagement</label>
+                          <select id="engagementAtmosphere">
+                            <option>Positive</option>
+                            <option>Neutral</option>
+                            <option>Negative</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="engagementAtmosphereDetails">Atmospheric Details</label>
+                          <input id="engagementAtmosphereDetails">
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="engagementDetails">Describe the discussion in detail</label>
+                      <textarea id="engagementDetails"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="engagementNextSteps">Recommended next steps?</label>
+                      <textarea id="engagementNextSteps"></textarea>
+                    </div>
+                  </div>
+                </section>
+
+                <section class="anet-block">
+                  <div class="anet-block__title">
+                    Other Stakeholders
+                  </div>
+
+                  <div class="anet-block__body">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <form class="anet-attach-person">
+                          <div class="form-group">
+                            <label for="attachPersonName">Name of Individual</label>
+                            <input id="attachPersonName">
+                          </div>
+
+                          <div class="form-group">
+                            <input type="radio" value="advisor" name="attachPersonType" id="attachPersonTypeAdvisor">
+                            <label for="attachPersonTypeAdvisor">Advisor</label>
+                            <input type="radio" value="principal" name="attachPersonType" id="attachPersonTypePrincipal">
+                            <label for="attachPersonTypePrincipal">Afghan Principal</label>
+                            <input type="radio" value="other" name="attachPersonType" id="attachPersonTypeOther">
+                            <label for="attachPersonTypeOther">Other</label>
+                          </div>
+
+                          <div class="form-group">
+                            <label for="attachPersonGroup">Organizational Group</label>
+                            <select id="attachPersonGroup"></select>
+                          </div>
+
+                          <div class="form-group">
+                            <input type="submit" value="Add Person" class="btn btn-default pull-right">
+                          </div>
+                        </form>
+                      </div>
+
+                      <div class="col-md-6">
+                        <table>
+                          <tr>
+                            <th>Name</th>
+                            <th>Role</th>
+                            <th>Org</th>
+                          </tr>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                <section class="anet-block">
+                  <div class="anet-block__title">
+                    Essential Functions and Milestones
+                  </div>
+
+                  <div class="anet-block__body">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <form class="anet-attach-ef">
+                          <div class="form-group">
+                            <label for="attachEFName">Essential Function</label>
+                            <input id="attachEFName">
+                          </div>
+
+                          <div class="form-group">
+                            <label for="attachEFMilestones">Milestones</label>
+                            <select id="attachEFMilestones" multiple="multiple">
+                            </select>
+                          </div>
+
+                          <div class="form-group">
+                            <label for="attachEFActions">Actions</label>
+                            <select id="attachEFActions" multiple="multiple">
+                            </select>
+                          </div>
+
+                          <div class="form-group">
+                            <input type="submit" value="Add EF" class="btn btn-default pull-right">
+                          </div>
+                        </form>
+                      </div>
+
+                      <div class="col-md-6">
+                        <table>
+                          <tr>
+                            <th>Essential Function</th>
+                            <th>POAM</th>
+                            <th>Level</th>
+                          </tr>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                <section class="anet-block">
+                  <div class="anet-block__title">
+                    Summary
+                  </div>
+
+                  <div class="anet-block__body">
+                    <div class="form-group">
+                      <label for="engagementSummary">Executive Summary</label>
+                      <textarea id="engagementSummary"></textarea>
+                    </div>
+                  </div>
+                </section>
+
+                <input type="submit" value="Submit" class="btn btn-default pull-right">
+              </form>
+            </div>
+          </div>
         </div>
-      </form>
       </div>
-      <div class="row">
-    <div class="anet-top-block">
-      <div class="user-submit">Submitting as {{currentUser.name}}</div>
-      <div class="submit"><input type="submit" value="Submit" class="btn btn-default pull-right"></div>
     </div>
-    </div>
-    <div class="row">
-    <form>
-      <section class="anet-block">
-        <div class="anet-block__title">
-          Report Details
-        </div>
-
-        <div class="anet-block__body">
-          <div class="form-group">
-            <label for="engagementIntent">Intent of Engagement</label>
-            <textarea id="engagementIntent"></textarea>
-          </div>
-
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="afghanPrincipal">Afghan Principal Name (or TASHKIL)</label>
-                <select id="afghanPrincipal"></select>
-              </div>
-
-              <div class="form-group">
-                <label for="engagementDate">Engagement Date</label>
-                <input id="engagementDate" type="date">
-              </div>
-            </div>
-
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="engagementLocation">Engagement Location</label>
-                <input id="engagementLocation">
-              </div>
-
-              <div class="form-group">
-                <label for="affectedOrgs">Affected Advising Orgs</label>
-                <select id="affectedOrgs"></select>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="anet-block">
-        <div class="anet-block__title">
-          Discussion
-        </div>
-
-        <div class="anet-block__body">
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="engagementAtmosphere">Atmosphere of Engagement</label>
-                <select id="engagementAtmosphere">
-                  <option>Positive</option>
-                  <option>Neutral</option>
-                  <option>Negative</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="engagementAtmosphereDetails">Atmospheric Details</label>
-                <input id="engagementAtmosphereDetails">
-              </div>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="engagementDetails">Describe the discussion in detail</label>
-            <textarea id="engagementDetails"></textarea>
-          </div>
-
-          <div class="form-group">
-            <label for="engagementNextSteps">Recommended next steps?</label>
-            <textarea id="engagementNextSteps"></textarea>
-          </div>
-        </div>
-      </section>
-
-      <section class="anet-block">
-        <div class="anet-block__title">
-          Other Stakeholders
-        </div>
-
-        <div class="anet-block__body">
-          <div class="row">
-            <div class="col-md-6">
-              <form class="anet-attach-person">
-                <div class="form-group">
-                  <label for="attachPersonName">Name of Individual</label>
-                  <input id="attachPersonName">
-                </div>
-
-                <div class="form-group">
-                  <input type="radio" value="advisor" name="attachPersonType" id="attachPersonTypeAdvisor">
-                  <label for="attachPersonTypeAdvisor">Advisor</label>
-                  <input type="radio" value="principal" name="attachPersonType" id="attachPersonTypePrincipal">
-                  <label for="attachPersonTypePrincipal">Afghan Principal</label>
-                  <input type="radio" value="other" name="attachPersonType" id="attachPersonTypeOther">
-                  <label for="attachPersonTypeOther">Other</label>
-                </div>
-
-                <div class="form-group">
-                  <label for="attachPersonGroup">Organizational Group</label>
-                  <select id="attachPersonGroup"></select>
-                </div>
-
-                <div class="form-group">
-                  <input type="submit" value="Add Person" class="btn btn-default pull-right">
-                </div>
-              </form>
-            </div>
-
-            <div class="col-md-6">
-              <table>
-                <tr>
-                  <th>Name</th>
-                  <th>Role</th>
-                  <th>Org</th>
-                </tr>
-              </table>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="anet-block">
-        <div class="anet-block__title">
-          Essential Functions and Milestones
-        </div>
-
-        <div class="anet-block__body">
-          <div class="row">
-            <div class="col-md-6">
-              <form class="anet-attach-ef">
-                <div class="form-group">
-                  <label for="attachEFName">Essential Function</label>
-                  <input id="attachEFName">
-                </div>
-
-                <div class="form-group">
-                  <label for="attachEFMilestones">Milestones</label>
-                  <select id="attachEFMilestones" multiple="multiple">
-                  </select>
-                </div>
-
-                <div class="form-group">
-                  <label for="attachEFActions">Actions</label>
-                  <select id="attachEFActions" multiple="multiple">
-                  </select>
-                </div>
-
-                <div class="form-group">
-                  <input type="submit" value="Add EF" class="btn btn-default pull-right">
-                </div>
-              </form>
-            </div>
-
-            <div class="col-md-6">
-              <table>
-                <tr>
-                  <th>Essential Function</th>
-                  <th>POAM</th>
-                  <th>Level</th>
-                </tr>
-              </table>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="anet-block">
-        <div class="anet-block__title">
-          Summary
-        </div>
-
-        <div class="anet-block__body">
-          <div class="form-group">
-            <label for="engagementSummary">Executive Summary</label>
-            <textarea id="engagementSummary"></textarea>
-          </div>
-        </div>
-      </section>
-
-      <input type="submit" value="Submit" class="btn btn-default pull-right">
-    </form>
-    </div>
-    </div>
-    </div>
-    </div>
-    </div>
+  </div>
 
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
@@ -257,5 +255,8 @@
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="assets/js/bootstrap.min.js"></script>
     <script src="assets/js/less.min.js"></script>
+    <script type="text/javascript">
+      less.env = "development";
+    </script>
   </body>
 </html>
