@@ -6,8 +6,9 @@ import java.util.Objects;
 import org.joda.time.DateTime;
 
 import mil.dds.anet.beans.geo.Location;
+import mil.dds.anet.views.AbstractAnetView;
 
-public class Report {
+public class Report extends AbstractAnetView<Report> {
 
 	public enum ReportState { DRAFT, PENDING_APPROVAL, RELEASED }
 

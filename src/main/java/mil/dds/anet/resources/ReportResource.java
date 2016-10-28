@@ -44,8 +44,8 @@ public class ReportResource {
 	@GET
 	@Path("/new")
 	@Produces(MediaType.TEXT_HTML)
-	public ReportForm createNewReportForm() { 
-		return new ReportForm(null);
+	public Report createNewReportForm() { 
+		return (new Report()).render("form.mustache");
 	}
 	
 	@POST
