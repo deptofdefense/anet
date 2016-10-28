@@ -7,7 +7,9 @@ import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-public class Person implements Principal {
+import mil.dds.anet.views.AbstractAnetView;
+
+public class Person extends AbstractAnetView<Person> implements Principal{
 
 	public static enum Status { ACTIVE, INACTIVE }
 	
@@ -113,10 +115,6 @@ public class Person implements Principal {
 			Objects.equals(other.getBiography(), this.getBiography()) &&
 			Objects.equals(other.getCreatedAt(), createdAt) &&
 			Objects.equals(other.getUpdatedAt(), updatedAt);
-		if ( b == false) { 
-			System.out.println("boo");
-		}
-		System.out.println(String.format("%b - %s  || %s", b, other.toString(), this.toString()));
 		return b;
  	}
 	

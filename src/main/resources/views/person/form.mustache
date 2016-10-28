@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/assets/js/jquery.js" ></script>
+
+<h1>
+{{#id}}
+	Editing {{firstName}}
+{{/id}}
+{{^id}}
+	Create a new Person
+{{/id}}
+</h1>
+
+<form id="personForm" >
+First Name: <input type="text" name="firstName" value="{{firstName}}" /><br>
+Last Name: <input type="text" name="lastName" value="{{lastName}}"  /><br>
+Email Address: <input type="text" name="emailAddress" value="{{emailAddress}}" /><br>
+Phone Number: <input type="text" name="phoneNumber" value="{{phoneNumber}}" /><br>
+Rank: <input type="text" name="rank" value="{{rank}}" /><br>
+Bio: <textarea name="biography" >{{biography}}</textarea><br>
+</form>
+<input type="submit" value="Save" id="personSaveBtn" />
+
+<script type="text/javascript">
+$(document).ready(function() {
+	function jsonForm(formName) {
+		form = $("#" + formName).serializeArray();
+		out = {}
+		for (i in form) { 
+			out[form[i]["name"]] = form[i]["value"];
+		}
+		return JSON.stringify(out);
+	}
+
+	$("#personSaveBtn").on('click', function (event) { 
+		$.ajax({ url: '/people/new', 
+			method: 'POST',
+			contentType: 'application/json',
+			data: jsonForm("personForm")
+		}).done(function (response) { 
+			window.location = "/people/" + response.id;
+		});
+	});
+});
+</script>
+
+</body>
+</html>

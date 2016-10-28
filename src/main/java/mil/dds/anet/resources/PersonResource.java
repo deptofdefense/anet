@@ -17,9 +17,7 @@ import javax.ws.rs.core.Response.Status;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.database.PersonDao;
-import mil.dds.anet.views.person.PersonForm;
 import mil.dds.anet.views.person.PersonListView;
-import mil.dds.anet.views.person.PersonView;
 
 @Path("/people")
 @Produces(MediaType.APPLICATION_JSON)
@@ -33,7 +31,7 @@ public class PersonResource {
 	
 	@GET
 	@Path("/")
-	public List<Person> getAllPeople(@QueryParam("pageNum") int pageNum, @QueryParam("pageSize") int pageSize) {
+	public List<Person> getAllPeople(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
 		return dao.getAllPeople(pageNum, pageSize);
 	}
 	
@@ -57,19 +55,19 @@ public class PersonResource {
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.TEXT_HTML)
-	public PersonView getViewById(@PathParam("id") int id) { 
+	public Person getViewById(@PathParam("id") int id) { 
 		Person p = dao.getById(id);
 		if (p == null) { 
 			throw new WebApplicationException("No person by that ID", Status.NOT_FOUND);
 		}
-		return new PersonView(p);
+		return p.render("show.mustache");
 	}
 	
 	@GET
 	@Path("/new")
 	@Produces(MediaType.TEXT_HTML)
-	public PersonForm getPersonForm() { 
-		return new PersonForm(null);
+	public Person getPersonForm() { 
+		return (new Person()).render("form.mustache");
 	}
 	
 	@POST
@@ -78,6 +76,14 @@ public class PersonResource {
 		int id = dao.insertPerson(p);
 		p.setId(id);
 		return p;
+	}
+	
+	@GET
+	@Path("/{id}/edit")
+	@Produces(MediaType.TEXT_HTML)
+	public Person getPersonEditForm(@PathParam("id") int id) { 
+		Person p = dao.getById(id);
+		return p.render("form.mustache");
 	}
 	
 	@POST
@@ -100,5 +106,12 @@ public class PersonResource {
 	@Path("/search")
 	public List<Person> searchByName(@QueryParam("q") String query) {
 		return dao.searchByName(query);
+	}
+	
+	@GET
+	@Path("/search")
+	@Produces(MediaType.TEXT_HTML)
+	public Person getSearchPage() { 
+		return (new Person()).render("search.mustache");
 	}
 }
