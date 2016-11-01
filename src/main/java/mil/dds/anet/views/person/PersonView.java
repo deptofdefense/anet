@@ -8,7 +8,7 @@ public class PersonView extends View {
     private final Person person;
 
     public PersonView(Person person) {
-        super("show.mustache");
+        super("show.ftl");
         this.person = person;
     }
 

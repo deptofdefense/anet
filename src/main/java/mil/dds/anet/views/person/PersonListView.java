@@ -11,7 +11,7 @@ public class PersonListView extends AbstractAnetView<PersonListView> {
 	
 	public PersonListView(List<Person> people) {
 		this.people = people;
-		render("/views/person/index.mustache");
+		render("/views/person/index.ftl");
 	}
 	
 	public List<Person> getPeople() { 

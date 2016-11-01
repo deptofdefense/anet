@@ -58,7 +58,7 @@ public class ReportResource {
 	@Path("/{id}")
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	public Report getById(@PathParam("id") int id) { 
-		Report r =  dao.getById(id).render("show.mustache");
+		Report r =  dao.getById(id).render("show.ftl");
 		r.addToContext("hello", "world");
 		return r;
 	}
@@ -68,7 +68,7 @@ public class ReportResource {
 	@Produces(MediaType.TEXT_HTML)
 	public Report createNewReportForm() { 
 		List<Poam> milestones = engine.getPoamDao().getPoamsByCategory("Milestone");
-		Report r = (new Report()).render("form.mustache");
+		Report r = (new Report()).render("form.ftl");
 		r.addToContext("poams", milestones);
 		return r;
 	}

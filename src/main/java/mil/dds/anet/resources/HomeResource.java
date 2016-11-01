@@ -20,7 +20,7 @@ public class HomeResource {
 	private static class HomeView extends AbstractAnetView<HomeView> {
 
 		protected HomeView() {
-			render("/views/index.mustache");
+			render("/views/index.ftl");
 		} 
 		
 	}

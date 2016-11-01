@@ -8,7 +8,7 @@ public class PersonForm extends View {
 	Person person;
 	
 	public PersonForm(Person p ) { 
-		super("form.mustache");
+		super("form.ftl");
 		this.person = p;
 	}
 	

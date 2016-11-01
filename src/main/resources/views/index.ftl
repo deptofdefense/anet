@@ -1,3 +1,4 @@
+<#-- @ftlvariable name="" type="mil.dds.anet.resources.HomeResource.HomeView" -->
 <#include "template/header.ftl">
 <h1>Hello <strike>World</strike>ANET!</h1>
 <b>You are: ${context.currentUser}</b><br>

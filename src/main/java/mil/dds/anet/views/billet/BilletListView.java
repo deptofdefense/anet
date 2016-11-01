@@ -11,7 +11,7 @@ public class BilletListView extends AbstractAnetView<BilletListView> {
 	
 	public BilletListView(List<Billet> billets) { 
 		this.billets = billets;
-		render("/views/billet/index.mustache");
+		render("/views/billet/index.ftl");
 	}
 	
 	

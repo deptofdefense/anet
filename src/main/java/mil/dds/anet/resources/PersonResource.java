@@ -63,14 +63,14 @@ public class PersonResource {
 		if (p == null) { 
 			throw new WebApplicationException("No person by that ID", Status.NOT_FOUND);
 		}
-		return p.render("show.mustache");
+		return p.render("show.ftl");
 	}
 	
 	@GET
 	@Path("/new")
 	@Produces(MediaType.TEXT_HTML)
 	public Person getPersonForm() { 
-		return (new Person()).render("form.mustache");
+		return (new Person()).render("form.ftl");
 	}
 	
 	@POST
@@ -84,7 +84,7 @@ public class PersonResource {
 	@Produces(MediaType.TEXT_HTML)
 	public Person getPersonEditForm(@PathParam("id") int id) { 
 		Person p = dao.getById(id);
-		return p.render("form.mustache");
+		return p.render("form.ftl");
 	}
 	
 	@POST

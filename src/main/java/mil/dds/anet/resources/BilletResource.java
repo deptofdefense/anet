@@ -46,7 +46,7 @@ public class BilletResource {
 	@Path("/{id}")
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	public Billet getBillet(@Context HttpServletRequest req, @PathParam("id") int id) { 
-		return (dao.getById(id)).render("show.mustache");
+		return (dao.getById(id)).render("show.ftl");
 	}
 	
 	@POST
