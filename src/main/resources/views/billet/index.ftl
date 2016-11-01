@@ -2,14 +2,14 @@
 <h1>Listing Billets</h1>
 
 <table>
-<tr><th>id</th><th>name</th><th>aoId</th></tr>
+<tr><th>id</th><th>name</th><th>Advisor Organization</th></tr>
 <#list billets as billet>
 	<tr>
 		<td>${billet.id}</td>
 		<td>${billet.name}</td>
 		<td>
 			<#if billet.advisorOrganization?? >
-				${billet.advisorOrganization.name}
+				<a href="/advisorOrganizations/${billet.advisorOrganization.id}">${billet.advisorOrganization.name}</a>
 			</#if>
 		</td>
 		<td><a href="/billets/${billet.id}">[Edit]</a></td>

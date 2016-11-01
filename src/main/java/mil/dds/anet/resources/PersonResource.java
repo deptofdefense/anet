@@ -2,6 +2,7 @@ package mil.dds.anet.resources;
 
 import java.util.List;
 
+import javax.annotation.security.PermitAll;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -24,6 +25,7 @@ import mil.dds.anet.views.person.PersonListView;
 
 @Path("/people")
 @Produces(MediaType.APPLICATION_JSON)
+@PermitAll
 public class PersonResource {
 
 	private PersonDao dao;
@@ -47,17 +49,7 @@ public class PersonResource {
 	
 	@GET
 	@Path("/{id}")
-	public Person getJSONById(@PathParam("id") int id) { 
-		Person p = dao.getById(id);
-		if (p == null) { 
-			throw new WebApplicationException("No person by that ID", Status.NOT_FOUND);
-		}
-		return p;
-	}
-	
-	@GET
-	@Path("/{id}")
-	@Produces(MediaType.TEXT_HTML)
+	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	public Person getViewById(@PathParam("id") int id) { 
 		Person p = dao.getById(id);
 		if (p == null) { 

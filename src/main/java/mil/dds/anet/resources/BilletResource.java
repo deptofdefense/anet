@@ -2,6 +2,7 @@ package mil.dds.anet.resources;
 
 import java.util.List;
 
+import javax.annotation.security.PermitAll;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -27,6 +28,7 @@ import mil.dds.anet.views.billet.BilletListView;
 
 @Path("/billets")
 @Produces(MediaType.APPLICATION_JSON)
+@PermitAll
 public class BilletResource {
 
 	BilletDao dao;

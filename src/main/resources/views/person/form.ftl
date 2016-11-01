@@ -1,20 +1,19 @@
-{{> ../template/header.mustache }}
+<#include "../template/header.ftl">
 <h1>
-{{#id}}
-	Editing {{firstName}}
-{{/id}}
-{{^id}}
+<#if id?? >
+	Editing ${firstName}
+<#else>
 	Create a new Person
-{{/id}}
+</#if>
 </h1>
 
 <form id="personForm" >
-First Name: <input type="text" name="firstName" value="{{firstName}}" /><br>
-Last Name: <input type="text" name="lastName" value="{{lastName}}"  /><br>
-Email Address: <input type="text" name="emailAddress" value="{{emailAddress}}" /><br>
-Phone Number: <input type="text" name="phoneNumber" value="{{phoneNumber}}" /><br>
-Rank: <input type="text" name="rank" value="{{rank}}" /><br>
-Bio: <textarea name="biography" >{{biography}}</textarea><br>
+First Name: <input type="text" name="firstName" value="${firstName!}" /><br>
+Last Name: <input type="text" name="lastName" value="${lastName!}"  /><br>
+Email Address: <input type="text" name="emailAddress" value="${emailAddress!}" /><br>
+Phone Number: <input type="text" name="phoneNumber" value="${phoneNumber!}" /><br>
+Rank: <input type="text" name="rank" value="${rank!}" /><br>
+Bio: <textarea name="biography" >${biography!}</textarea><br>
 Status: <select name="status" >
 	<option value="ACTIVE">Active</option>
 	<option value="INACTIVE">Inactive</option>
@@ -24,20 +23,19 @@ Role: <select name="role">
 	<option value="ADVISOR">Advisor</option>
 	<option value="USER">User</option>
 </select><br>
-{{#id}}
-<input type="hidden" name="id" value="{{id}}" />
-{{/id}}
+<#if id??>
+<input type="hidden" name="id" value="${id}" />
+</#if>
 </form>
 <input type="submit" value="Save" id="personSaveBtn" />
 
 <script type="text/javascript">
 $(document).ready(function() {
-	{{#id}}
+	<#if id??>
 		var url = '/people/update'
-	{{/id}}
-	{{^id}}
+	<#else>
 		var url = '/people/new'
-	{{/id}}
+	</#if>
 
 	$("#personSaveBtn").on('click', function (event) { 
 		$.ajax({ 
@@ -46,15 +44,14 @@ $(document).ready(function() {
 			contentType: 'application/json',
 			data: jsonForm("personForm")
 		}).done(function (response) {
-			{{#id}}
-				window.location = "/people/{{id}}"
-			{{/id}}
-			{{^id}}
+			<#if id??>
+				window.location = "/people/${id}"
+			<#else>
 				window.location = "/people/" + response.id;
-			{{/id}}
+			</#if>
 		});
 	});
 });
 </script>
 
-{{> ../template/footer.mustache}}
+<#include "../template/footer.ftl">
