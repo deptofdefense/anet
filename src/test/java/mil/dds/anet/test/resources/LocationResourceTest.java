@@ -35,7 +35,7 @@ public class LocationResourceTest extends AbstractResourceTest {
 		assertThat(created).isNotEqualTo(l);
 		
 		//Search
-		List<Location> results = httpQuery(String.format("/locations/search?name=%s", 
+		List<Location> results = httpQuery(String.format("/locations/search?q=%s", 
 				URLEncoder.encode(l.getName(), "UTF-8")))
 				.get(new GenericType<List<Location>>() {});
 		assertThat(results.size()).isGreaterThan(0);

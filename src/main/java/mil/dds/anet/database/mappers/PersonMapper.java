@@ -8,6 +8,7 @@ import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.beans.Person.Status;
 import mil.dds.anet.views.AbstractAnetView.LoadLevel;
 
@@ -23,6 +24,7 @@ public class PersonMapper implements ResultSetMapper<Person> {
 		a.setFirstName(r.getString("firstName"));
 		a.setLastName(r.getString("lastName"));
 		a.setStatus(MapperUtils.getEnumIdx(r, "status", Status.class));
+		a.setRole(MapperUtils.getEnumIdx(r, "role", Role.class));
 		a.setEmailAddress(r.getString("emailAddress"));
 		a.setPhoneNumber(r.getString("phoneNumber"));
 		a.setRank(r.getString("rank"));

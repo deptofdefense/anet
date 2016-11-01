@@ -12,6 +12,7 @@ public class Location extends AbstractAnetView<Location> {
 	private LatLng latLng;
 	
 	private DateTime createdAt;
+	private DateTime updatedAt;
 	
 	public String getName() {
 		return name;
@@ -33,6 +34,12 @@ public class Location extends AbstractAnetView<Location> {
 		this.createdAt = createdAt;
 	}
 	
+	public DateTime getUpdatedAt() {
+		return updatedAt;
+	}
+	public void setUpdatedAt(DateTime updatedAt) {
+		this.updatedAt = updatedAt;
+	}
 	@Override
 	public boolean equals(Object o) { 
 		if (o == null || o.getClass() != Location.class) { 

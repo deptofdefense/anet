@@ -31,7 +31,9 @@ public class TashkilResource {
 	
 	@POST
 	@Path("/new")
-	public Tashkil createNewTashkil(Tashkil t) { 
+	public Tashkil createNewTashkil(Tashkil t) {
+		t.setCreatedAt(DateTime.now());
+		t.setUpdatedAt(DateTime.now());
 		int id = dao.insertTashkil(t);
 		t.setId(id);
 		return t;
@@ -46,7 +48,8 @@ public class TashkilResource {
 	
 	@POST
 	@Path("/update")
-	public Response updateTashkil(Tashkil t) { 
+	public Response updateTashkil(Tashkil t) {
+		t.setUpdatedAt(DateTime.now());
 		int numRows = dao.updateTashkil(t);
 		return (numRows == 1) ? Response.ok().build() : Response.status(Status.NOT_FOUND).build(); 
 	}

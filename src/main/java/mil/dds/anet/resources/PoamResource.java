@@ -30,22 +30,20 @@ public class PoamResource {
 	@GET
 	@Path("{id}")
 	public Poam getPoamById(@PathParam("id") int id) {
-		return dao.getPoamById(id);
+		return dao.getById(id);
 	}
 	
 	@POST
 	@Path("/new")
 	public Poam createNewPoam(Poam p) { 
-		int id = dao.insertPoam(p);
-		p.setId(id);
-		return p;
+		return dao.insert(p);
 	}
 	
 	/* Updates shortName, longName, category, and parentPoamId */
 	@POST
 	@Path("/update")
 	public Response updatePoam(Poam p) { 
-		int numRows = dao.updatePoam(p);
+		int numRows = dao.update(p);
 		if (numRows == 0) { 
 			throw new WebApplicationException("Couldn't process update", Status.NOT_FOUND);
 		}

@@ -8,7 +8,6 @@ import org.skife.jdbi.v2.GeneratedKeys;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.Query;
 import org.skife.jdbi.v2.sqlobject.Bind;
-import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
 import mil.dds.anet.beans.geo.Location;
@@ -44,12 +43,15 @@ public class LocationDao implements IAnetDao<Location> {
 	@Override
 	public Location insert(Location l) { 
 		l.setCreatedAt(DateTime.now());
+		l.setUpdatedAt(DateTime.now());
 		GeneratedKeys<Map<String,Object>> keys = dbHandle.createStatement(
-				"INSERT INTO locations (name, lat, lng) VALUES (:l.name, :latLng.lat, :latLng.lng)")
+				"INSERT INTO locations (name, lat, lng, createdAt, updatedAt) " + 
+				"VALUES (:name, :lat, :lng, :createdAt, :updatedAt)")
 			.bind("name", l.getName())
 			.bind("lat", l.getLatLng().getLat())
 			.bind("lng", l.getLatLng().getLng())
 			.bind("createdAt", l.getCreatedAt())
+			.bind("updatedAt", l.getUpdatedAt())
 			.executeAndReturnGeneratedKeys();
 		l.setId((Integer) (keys.first().get("last_insert_rowid()")));
 		return l;
@@ -58,15 +60,17 @@ public class LocationDao implements IAnetDao<Location> {
 	
 	@Override
 	public int update(Location l) {
-		return dbHandle.createStatement("UPDATE locations SET name = :l.name, lat = :latLng.lat, lng = :latLng.lng WHERE id = :l.id")
+		return dbHandle.createStatement("UPDATE locations SET name = :name, lat = :lat, lng = :lng, updatedAt = :updatedAt WHERE id = :id")
+				.bind("id", l.getId())
 				.bind("name", l.getName())
 				.bind("lat", l.getLatLng().getLat())
 				.bind("lng", l.getLatLng().getLng())
+				.bind("updatedAt", DateTime.now())
 				.execute();
 	}
 
-	public List<Location> searchByName(@Bind("name") String name) { 
-		Query<Location> query = dbHandle.createQuery("SELECT * FROM locations WHERE Name LIKE :name")
+	public List<Location> searchByName(String name) { 
+		Query<Location> query = dbHandle.createQuery("SELECT * FROM locations WHERE name LIKE '%' || :name || '%'")
 			.bind("name", name)
 			.map(new LocationMapper());
 		return query.list();

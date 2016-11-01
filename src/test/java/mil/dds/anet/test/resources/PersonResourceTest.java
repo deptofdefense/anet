@@ -26,7 +26,7 @@ public class PersonResourceTest extends AbstractResourceTest {
 		
 	public PersonResourceTest() { 
 		if (client == null) { 
-			client = new JerseyClientBuilder(RULE.getEnvironment()).build("test client");
+			client = new JerseyClientBuilder(RULE.getEnvironment()).build("person test client");
 		}
 	}
 	

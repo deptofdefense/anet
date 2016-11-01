@@ -171,4 +171,23 @@
 			<column name="createdAt" type="datetime" />
 		</createTable>
 	</changeSet>
+
+	<changeSet id="4" author="hpitelka" >
+		<createTable tableName="billetTashkils" >
+			<column name="billetId" type="int" />
+			<column name="tashkilId" type="int" />
+			<column name="createdAt" type="datetime" />
+			<column name="updatedAt" type="datetime" />
+			<column name="deleted" type="boolean" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="5" author="hpitelka" >
+		<addColumn tableName="people">
+			<column name="role" type="int" >
+                <constraints nullable="false"/>
+			</column>
+		</addColumn>
+	</changeSet>
+
 </databaseChangeLog>

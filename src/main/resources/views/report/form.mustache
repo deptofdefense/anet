@@ -39,7 +39,7 @@
               </div>
             </div>
             <div class="row">
-              <form>
+              <form id="reportForm" >
                 <section class="anet-block">
                   <div class="anet-block__title">
                     Report Details
@@ -48,14 +48,14 @@
                   <div class="anet-block__body">
                     <div class="form-group">
                       <label for="engagementIntent">Intent of Engagement</label>
-                      <textarea id="engagementIntent"></textarea>
+                      <textarea id="engagementIntent" name="intent" ></textarea>
                     </div>
 
                     <div class="row">
                       <div class="col-md-6">
                         <div class="form-group">
                           <label for="afghanPrincipal">Afghan Principal Name (or TASHKIL)</label>
-                          <select id="afghanPrincipal"></select>
+                          <select id="afghanPrincipal" name="principal_id" ></select>
                         </div>
 
                         <div class="form-group">
@@ -67,7 +67,7 @@
                       <div class="col-md-6">
                         <div class="form-group">
                           <label for="engagementLocation">Engagement Location</label>
-                          <input id="engagementLocation">
+                          <select id="engagementLocation" name="location_id" ></select>
                         </div>
 
                         <div class="form-group">
@@ -89,7 +89,7 @@
                       <div class="col-md-6">
                         <div class="form-group">
                           <label for="engagementAtmosphere">Atmosphere of Engagement</label>
-                          <select id="engagementAtmosphere">
+                          <select id="engagementAtmosphere" >
                             <option>Positive</option>
                             <option>Neutral</option>
                             <option>Negative</option>
@@ -107,12 +107,12 @@
 
                     <div class="form-group">
                       <label for="engagementDetails">Describe the discussion in detail</label>
-                      <textarea id="engagementDetails"></textarea>
+                      <textarea id="engagementDetails" name="reportText" ></textarea>
                     </div>
 
                     <div class="form-group">
                       <label for="engagementNextSteps">Recommended next steps?</label>
-                      <textarea id="engagementNextSteps"></textarea>
+                      <textarea id="engagementNextSteps" name="nextSteps" ></textarea>
                     </div>
                   </div>
                 </section>
@@ -181,6 +181,9 @@
                           <div class="form-group">
                             <label for="attachEFMilestones">Milestones</label>
                             <select id="attachEFMilestones" multiple="multiple">
+								{{#context.poams}}
+									<option value="{{id}}">{{shortName}} - {{longName}}</option>
+								{{/context.poams}}
                             </select>
                           </div>
 
@@ -222,8 +225,8 @@
                   </div>
                 </section>
 
-                <input type="submit" value="Submit" class="btn btn-default pull-right">
               </form>
+              <input type="submit" value="Submit" class="btn btn-default pull-right" id="reportSubmit" >
             </div>
           </div>
         </div>
@@ -233,14 +236,41 @@
 
 <script type="text/javascript">
 $(document).ready(function () { 
-	$("#afghanPrincipal").select2({
+	enablePersonSearch("#afghanPrincipal","PRINCIPAL");
+	enablePersonSearch("#attachPersonName","ADVISOR");
+	enableLocationSearch("#engagementLocation");
+
+	$("#reportSubmit").on("click", function(event) { 
+		var report = buildForm("reportForm");
+		if (report["principal_id"]) { 
+			report["principals"] = [{ id: report["principal_id"] }]
+			delete report["principal_id"];
+		}
+		if (report["location_id"]) { 
+			report["location"] = { id: report["location_id"] }
+			delete report["location_id"];
+		}
+
+		$.ajax({
+			url : '/reports/new',
+			method: "POST",
+			contentType: "application/json",
+			data: JSON.stringify(report)
+		}).done( function (response) { 
+			window.location = "/reports/" + response.id;
+		});
+	});
+});
+
+function enablePersonSearch(selectId, role) { 
+	$(selectId).select2({
 		ajax: {
 			url: "/people/search",
 			dataType: 'json',
 			delay: 250,
 			method: 'GET',
 			data: function(params) { 
-				return { q : params.term } 
+				return { q : params.term, role: role } 
 			},
 			processResults :  function(data, params) { 
 				var names = [];
@@ -255,7 +285,32 @@ $(document).ready(function () {
 		},
 		minimumInputLength : 2
 	});
-});
+};
+
+function enableLocationSearch(selectId) { 
+	$(selectId).select2({
+		ajax: {
+			url: "/locations/search",
+			dataType: 'json',
+			delay: 250,
+			method: 'GET',
+			data: function(params) { 
+				return { q : params.term } 
+			},
+			processResults :  function(data, params) {
+				var results =_.map(data, function (el) {
+					return { 
+						id: el["id"] ,
+						text: el["name"]
+					}
+				});
+				return { results: results };
+			}
+		},
+		minimumInputLength : 2
+	});
+};
+
 </script>
 
-{{< ../template/footer}
+{{>../template/footer}}

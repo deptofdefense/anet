@@ -17,6 +17,7 @@ import mil.dds.anet.beans.Group;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.Report;
+import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.geo.LatLng;
 import mil.dds.anet.beans.geo.Location;
@@ -55,6 +56,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		Person approver1 = new Person();
 		approver1.setFirstName("Approver");
 		approver1.setLastName("The first");
+		approver1.setRole(Role.USER);
 		approver1 = client.target(String.format("http://localhost:%d/people/new", RULE.getLocalPort()))
 				.request()
 				.post(Entity.json(approver1), Person.class);
@@ -74,28 +76,23 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
 		//Create Approval workflow for Advising Organization
-		Group approvingGroup = client.target(String.format("http://localhost:%d/groups/new", RULE.getLocalPort()))
-				.request()
+		Group approvingGroup = httpQuery("/groups/new")
 				.post(Entity.json(Group.create("Test Group of approvers")), Group.class);
-		resp = client.target(String.format("http://localhost:%d/groups/addMember?groupId=%d&personId=%d", RULE.getLocalPort(), approvingGroup.getId(), approver1.getId()))
-				.request().get();
-		ApprovalStep approval = client.target(String.format("http://localhost:%d/approvalSteps/new", RULE.getLocalPort()))
-				.request()
+		resp = httpQuery(String.format("/groups/addMember?groupId=%d&personId=%d", approvingGroup.getId(), approver1.getId()))
+				.get();
+		ApprovalStep approval = httpQuery("/approvalSteps/new")
 				.post(Entity.json(ApprovalStep.create(null, approvingGroup.getId(), null, ao.getId())), ApprovalStep.class);
 		
 		//TODO: Create a POAM structure for the AO
 //		fail("No way to assign a POAM to an AO");
-		Poam top = client.target(String.format("http://localhost:%d/poams/new", RULE.getLocalPort()))
-				.request()
+		Poam top = httpQuery("/poams/new")
 				.post(Entity.json(Poam.create("test-1", "Test Top Poam", "TOP")), Poam.class);
-		Poam action = client.target(String.format("http://localhost:%d/poams/new", RULE.getLocalPort()))
-				.request()
+		Poam action = httpQuery("/poams/new")
 				.post(Entity.json(Poam.create("test-1-1", "Test Poam Action", "Action", top)), Poam.class);
 				
 		
 		//Create a Location that this Report was written at
-		Location loc = client.target(String.format("http://localhost:%d/locations/new", RULE.getLocalPort()))
-				.request()
+		Location loc = httpQuery("/locations/new")
 				.post(Entity.json(Location.create("The Boat Dock", new LatLng(1.23,4.56))), Location.class);
 		
 		//Write a Report
@@ -114,28 +111,24 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		assertThat(created.getState()).isEqualTo(ReportState.DRAFT);
 		
 		//Have the author submit the report
-		resp = client.target(String.format("http://localhost:%d/reports/%d/submit", RULE.getLocalPort(), created.getId()))
-			.request()
-			.get();
+		resp = httpQuery(String.format("/reports/%d/submit", created.getId())).get();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
-		Report returned = client.target(String.format("http://localhost:%d/reports/%d", RULE.getLocalPort(), created.getId()))
-			.request()
-			.get(Report.class);
+		Report returned = httpQuery(String.format("/reports/%d", created.getId())).get(Report.class);
 		assertThat(returned.getState()).isEqualTo(ReportState.PENDING_APPROVAL);
 		assertThat(returned.getApprovalStepId()).isEqualTo(approval.getId());
+		
+		//TODO: verify the location on this report
+		//TODO: verify the principals on this report
+		//TODO: verify the poams on this report
 		
 		//TODO: Check on Report status for who needs to approve
 		
 		//Approve the report
-		resp = client.target(String.format("http://localhost:%d/reports/%d/approve", RULE.getLocalPort(), created.getId()))
-			.request()
-			.get();
+		resp = httpQuery(String.format("/reports/%d/approve", created.getId())).get();
 		
 		//Check on Report status to verify it got moved forward
-		returned = client.target(String.format("http://localhost:%d/reports/%d", RULE.getLocalPort(), created.getId()))
-				.request()
-				.get(Report.class);
+		returned = httpQuery(String.format("/reports/%d", created.getId())).get(Report.class);
 		assertThat(returned.getState()).isEqualTo(ReportState.RELEASED);
 		assertThat(returned.getApprovalStepId()).isNull();
 		

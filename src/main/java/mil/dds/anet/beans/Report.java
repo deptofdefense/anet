@@ -16,8 +16,6 @@ public class Report extends AbstractAnetView<Report> {
 
 	public enum ReportState { DRAFT, PENDING_APPROVAL, RELEASED }
 
-	
-	Integer id;
 	Integer approvalStepId;
 	ReportState state;
 	
@@ -36,14 +34,6 @@ public class Report extends AbstractAnetView<Report> {
 	Person author;	
 	
 	List<Comment> comments;
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
 
 	public Integer getApprovalStepId() {
 		return approvalStepId;

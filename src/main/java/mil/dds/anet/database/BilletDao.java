@@ -11,8 +11,10 @@ import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
 import mil.dds.anet.beans.Billet;
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.Tashkil;
 import mil.dds.anet.database.mappers.BilletMapper;
 import mil.dds.anet.database.mappers.PersonMapper;
+import mil.dds.anet.database.mappers.TashkilMapper;
 
 @RegisterMapper(BilletMapper.class)
 public class BilletDao implements IAnetDao<Billet> {
@@ -122,5 +124,38 @@ public class BilletDao implements IAnetDao<Billet> {
 	private Integer getAoId(Billet b) { 
 		if (b.getAdvisorOrganizationJson() == null) { return null; }
 		return b.getAdvisorOrganizationJson().getId();
+	}
+
+	public List<Tashkil> getAssociatedTashkils(Billet b) { 
+		Query<Tashkil> query = dbHandle.createQuery("SELECT tashkils.* FROM billetTashkils " + 
+				"LEFT JOIN tashkils ON tashkils.id = billetTashkils.tashkilId " + 
+				"WHERE billetTashkils.billetId = :billetId " + 
+				"AND billetTashkils.deleted = :deleted")
+			.bind("billetId", b.getId())
+			.bind("deleted", false)
+			.map(new TashkilMapper());
+		return query.list();
+	}
+
+	public void associateTashkil(Billet b, Tashkil t) {
+		dbHandle.createStatement("INSERT INTO billetTashkils (billetId, tashkilId, createdAt, updatedAt, deleted) " + 
+				"VALUES (:billetId, :tashkilId, :createdAt, :updatedAt, :deleted)")
+			.bind("billetId", b.getId())
+			.bind("tashkilId", t.getId())
+			.bind("createdAt", DateTime.now())
+			.bind("updatedAt", DateTime.now())
+			.bind("deleted", false)
+			.execute();
+	}
+
+	public int deleteTashkilAssociation(Billet b, Tashkil t) {
+		return dbHandle.createStatement("UPDATE billetTashkils SET deleted = :deleted, updatedAt = :updatedAt " + 
+				"WHERE billetId = :billetId AND tashkilId = :tashkilId")
+			.bind("deleted", true)
+			.bind("billetId", b.getId())
+			.bind("tashkilId", t.getId())
+			.bind("updatedAt", DateTime.now())
+			.execute();
+		
 	}
 }

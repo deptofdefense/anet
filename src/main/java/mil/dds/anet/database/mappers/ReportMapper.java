@@ -24,8 +24,11 @@ public class ReportMapper implements ResultSetMapper<Report> {
 		r.setCreatedAt(new DateTime(rs.getLong("createdAt")));
 		r.setUpdatedAt(new DateTime(rs.getLong("updatedAt")));
 		
-		Location l = Location.createWithId(MapperUtils.getInteger(rs, "locationId"));
-		r.setLocation(l);
+		Integer locationId = MapperUtils.getInteger(rs, "locationId");
+		if (locationId != null) { 
+			Location l = Location.createWithId(locationId);
+			r.setLocation(l);
+		}
 		
 		r.setIntent(rs.getString("intent"));
 		r.setExsum(rs.getString("exsum"));

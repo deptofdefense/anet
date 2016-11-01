@@ -2,20 +2,20 @@ package mil.dds.anet.beans;
 
 import java.util.Objects;
 
-public class Poam {
+import org.joda.time.DateTime;
 
-	Integer id;
+import mil.dds.anet.views.AbstractAnetView;
+
+public class Poam extends AbstractAnetView<Poam> {
+
 	String shortName;
 	String longName;
 	String category;
 	Integer parentPoamId;
-	
-	public Integer getId() {
-		return id;
-	}
-	public void setId(Integer id) {
-		this.id = id;
-	}
+
+	DateTime createdAt;
+	DateTime updatedAt;
+
 	public String getShortName() {
 		return shortName;
 	}
@@ -41,6 +41,18 @@ public class Poam {
 		this.parentPoamId = parentPoamId;
 	}
 	
+	public DateTime getCreatedAt() {
+		return createdAt;
+	}
+	public void setCreatedAt(DateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+	public DateTime getUpdatedAt() {
+		return updatedAt;
+	}
+	public void setUpdatedAt(DateTime updatedAt) {
+		this.updatedAt = updatedAt;
+	}
 	public static Poam create(String shortName, String longName, String category) { 
 		return create(shortName, longName, category, null);
 	}
@@ -54,6 +66,12 @@ public class Poam {
 		return p;
 	}
 	
+	public static Poam createWithId(Integer id) { 
+		Poam p = new Poam();
+		p.setId(id);
+		p.setLoadLevel(LoadLevel.ID_ONLY);
+		return p;
+	}
 	
 	@Override
 	public boolean equals(Object o) { 

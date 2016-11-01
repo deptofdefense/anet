@@ -1,5 +1,8 @@
 package mil.dds.anet.views;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.ws.rs.WebApplicationException;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -12,15 +15,18 @@ public abstract class AbstractAnetView<T extends AbstractAnetView<?>> extends Vi
 	protected String templateName;
 	protected LoadLevel loadLevel;
 	protected Integer id;
+	protected Map<String,Object> context; //To throw random properties on a view. 
 	
 	public AbstractAnetView() { 
 		super("");
 		id = null;
+		this.context = new HashMap<String,Object>();
 	}
 	
 	@Override
+	@JsonIgnore
 	public String getTemplateName() { 
-		if (templateName.equals("")) { 
+		if (templateName != null && templateName.equals("")) { 
 			throw new WebApplicationException("Tried to render an Anet View without defining the template");
 		}
 		return templateName;
@@ -43,6 +49,14 @@ public abstract class AbstractAnetView<T extends AbstractAnetView<?>> extends Vi
         return String.format("/views/%s/%s", className, templateName);
     }
 	
+	@JsonIgnore
+	public Map<String,Object> getContext() { 
+		return context;
+	}
+	
+	public void addToContext(String key, Object value) { 
+		this.context.put(key, value);
+	}
 	
 	/******
 	 * These methods are related to the fact that these are Database Objects. this should be extracted out 

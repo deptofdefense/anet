@@ -4,189 +4,217 @@
 		"lastName": "Berry",
 		"phoneNumber": "1-817-154-0865",
 		"emailAddress": "vulputate.lacus.Cras@turpisegestas.co.uk",
-		"status": "INACTIVE"
+		"status": "INACTIVE",
+		"role" : "ADVISOR"
 	},
 	{
 		"firstName": "Madison",
 		"lastName": "Joyner",
 		"phoneNumber": "1-730-907-0599",
 		"emailAddress": "ornare.Fusce@mauris.org",
-		"status": "ACTIVE"
+		"status": "ACTIVE",
+		"role" : "PRINCIPAL"
 	},
 	{
 		"firstName": "Zorita",
 		"lastName": "Calderon",
 		"phoneNumber": "1-552-681-0714",
 		"emailAddress": "felis.adipiscing.fringilla@acmattis.ca",
-		"status": "INACTIVE"
+		"status": "INACTIVE",
+		"role" : "ADVISOR"
 	},
 	{
 		"firstName": "Germane",
 		"lastName": "Hewitt",
 		"phoneNumber": "1-658-718-7020",
 		"emailAddress": "Quisque@ascelerisquesed.net",
-		"status": "ACTIVE"
+		"status": "ACTIVE",
+		"role" : "ADVISOR"
 	},
 	{
 		"firstName": "Stephen",
 		"lastName": "Hopper",
 		"phoneNumber": "248-9897",
 		"emailAddress": "vehicula.Pellentesque.tincidunt@duiquis.co.uk",
-		"status": "ACTIVE"
+		"status": "ACTIVE",
+		"role" : "PRINCIPAL"
 	},
 	{
 		"firstName": "Pandora",
 		"lastName": "Odonnell",
 		"phoneNumber": "479-8643",
 		"emailAddress": "purus.sapien.gravida@odioNam.co.uk",
-		"status": "INACTIVE"
+		"status": "INACTIVE",
+		"role" : "PRINCIPAL"
+
 	},
 	{
 		"firstName": "Fitzgerald",
 		"lastName": "Schneider",
 		"phoneNumber": "1-707-800-3816",
 		"emailAddress": "montes.nascetur.ridiculus@molestie.com",
-		"status": "INACTIVE"
+		"status": "INACTIVE",
+		"role" : "PRINCIPAL"
 	},
 	{
 		"firstName": "Hermione",
 		"lastName": "Dawson",
 		"phoneNumber": "883-1733",
 		"emailAddress": "turpis@Crassedleo.com",
-		"status": "INACTIVE"
+		"status": "INACTIVE",
+		"role" : "ADVISOR"
 	},
 	{
 		"firstName": "Sonya",
 		"lastName": "Allison",
 		"phoneNumber": "263-3368",
 		"emailAddress": "pharetra.Quisque.ac@odioapurus.ca",
-		"status": "INACTIVE"
+		"status": "INACTIVE",
+		"role" : "ADVISOR"
 	},
 	{
 		"firstName": "Yardley",
 		"lastName": "Carey",
 		"phoneNumber": "100-9366",
 		"emailAddress": "ante.dictum.mi@mattis.co.uk",
-		"status": "ACTIVE"
+		"status": "ACTIVE",
+		"role" : "ADVISOR"
 	},
 	{
 		"firstName": "Nyssa",
 		"lastName": "Lawson",
 		"phoneNumber": "739-4307",
 		"emailAddress": "sit.amet@Phasellus.org",
-		"status": "ACTIVE"
+		"status": "ACTIVE",
+		"role" : "PRINCIPAL"
 	},
 	{
 		"firstName": "Jelani",
 		"lastName": "Hale",
 		"phoneNumber": "497-3657",
 		"emailAddress": "felis@rutrumloremac.co.uk",
-		"status": "ACTIVE"
+		"status": "ACTIVE",
+		"role" : "ADVISOR"
 	},
 	{
 		"firstName": "Xanthus",
 		"lastName": "Gonzales",
 		"phoneNumber": "527-1514",
 		"emailAddress": "nibh.lacinia@diam.org",
-		"status": "ACTIVE"
+		"status": "ACTIVE",
+		"role" : "PRINCIPAL"
 	},
 	{
 		"firstName": "Lara",
 		"lastName": "Ellis",
 		"phoneNumber": "1-670-533-7510",
 		"emailAddress": "ipsum.primis@ProinvelitSed.edu",
-		"status": "ACTIVE"
+		"status": "ACTIVE",
+		"role" : "ADVISOR"
 	},
 	{
 		"firstName": "Boris",
 		"lastName": "Harding",
 		"phoneNumber": "1-819-102-4160",
 		"emailAddress": "faucibus@duinec.ca",
-		"status": "INACTIVE"
+		"status": "INACTIVE",
+		"role" : "ADVISOR"
 	},
 	{
 		"firstName": "Amanda",
 		"lastName": "Snider",
 		"phoneNumber": "649-8674",
 		"emailAddress": "volutpat@accumsanlaoreet.org",
-		"status": "INACTIVE"
+		"status": "INACTIVE",
+		"role" : "PRINCIPAL"
 	},
 	{
 		"firstName": "Erasmus",
 		"lastName": "Dominguez",
 		"phoneNumber": "121-5436",
 		"emailAddress": "rutrum@facilisislorem.com",
-		"status": "ACTIVE"
+		"status": "ACTIVE",
+		"role" : "ADVISOR"
 	},
 	{
 		"firstName": "Mira",
 		"lastName": "Fulton",
 		"phoneNumber": "1-333-698-0249",
 		"emailAddress": "Donec.at.arcu@variusultricesmauris.ca",
-		"status": "INACTIVE"
+		"status": "INACTIVE",
+		"role" : "PRINCIPAL"
 	},
 	{
 		"firstName": "Brenda",
 		"lastName": "Cameron",
 		"phoneNumber": "1-136-825-6534",
 		"emailAddress": "nisl.sem.consequat@mi.ca",
-		"status": "INACTIVE"
+		"status": "INACTIVE",
+		"role" : "ADVISOR"
 	},
 	{
 		"firstName": "Kendall",
 		"lastName": "Hayes",
 		"phoneNumber": "1-565-821-2908",
 		"emailAddress": "sagittis.augue@enimdiam.ca",
-		"status": "ACTIVE"
+		"status": "ACTIVE",
+		"role" : "PRINCIPAL"
 	},
 	{
 		"firstName": "Unity",
 		"lastName": "Sosa",
 		"phoneNumber": "482-3303",
 		"emailAddress": "libero@senectuset.co.uk",
-		"status": "INACTIVE"
+		"status": "INACTIVE",
+		"role" : "ADVISOR"
 	},
 	{
 		"firstName": "Lillian",
 		"lastName": "Hooper",
 		"phoneNumber": "1-590-957-1818",
 		"emailAddress": "lobortis.nisi.nibh@sapien.edu",
-		"status": "ACTIVE"
+		"status": "ACTIVE",
+		"role" : "PRINCIPAL"
 	},
 	{
 		"firstName": "Sybil",
 		"lastName": "Payne",
 		"phoneNumber": "435-6660",
 		"emailAddress": "ut@molestie.ca",
-		"status": "INACTIVE"
+		"status": "INACTIVE",
+		"role" : "ADVISOR"
 	},
 	{
 		"firstName": "Karly",
 		"lastName": "Hooper",
 		"phoneNumber": "1-568-399-2491",
 		"emailAddress": "Suspendisse.aliquet.molestie@Fuscealiquam.edu",
-		"status": "ACTIVE"
+		"status": "ACTIVE",
+		"role" : "ADVISOR"
 	},
 	{
 		"firstName": "Kyle",
 		"lastName": "Pierce",
 		"phoneNumber": "657-3030",
 		"emailAddress": "In.lorem@vel.co.uk",
-		"status": "ACTIVE"
+		"status": "ACTIVE",
+		"role" : "ADVISOR"
 	},
 	{
 		"firstName": "Jacqueline",
 		"lastName": "Flowers",
 		"phoneNumber": "1-520-357-3847",
 		"emailAddress": "libero.lacus@Sedauctor.org",
-		"status": "INACTIVE"
+		"status": "INACTIVE",
+		"role" : "USER"
 	},
 	{
 		"firstName": "Illana",
 		"lastName": "Petty",
 		"phoneNumber": "758-9160",
 		"emailAddress": "dignissim.pharetra@Donec.edu",
-		"status": "INACTIVE"
+		"status": "INACTIVE",
+		"role" :"USER"
 	},
 	{
 		"firstName": "Michael",

@@ -2,7 +2,10 @@ package mil.dds.anet.test.resources;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
+
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 
 import org.joda.time.DateTime;
@@ -12,9 +15,11 @@ import io.dropwizard.client.JerseyClientBuilder;
 import mil.dds.anet.beans.AdvisorOrganization;
 import mil.dds.anet.beans.Billet;
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.Tashkil;
 import mil.dds.anet.test.beans.AdvisorOrganizationTest;
 import mil.dds.anet.test.beans.BilletTest;
 import mil.dds.anet.test.beans.PersonTest;
+import mil.dds.anet.test.beans.TashkilTest;
 
 public class BilletResourceTest extends AbstractResourceTest {
 
@@ -76,7 +81,32 @@ public class BilletResourceTest extends AbstractResourceTest {
 				.get(Person.class);
 		assertThat(prev).isNotNull();
 		assertThat(prev.getId()).isEqualTo(jack.getId());
-
-	}
-	
+		
+		//Create a principal
+		Person principal = httpQuery("/people/new").post(Entity.json(PersonTest.getSteveSteveson()), Person.class);
+		assertThat(principal.getId()).isNotNull();
+		Tashkil t = httpQuery("/tashkils/new").post(Entity.json(TashkilTest.getTestTashkil()), Tashkil.class);
+		assertThat(t.getId()).isNotNull();
+		
+		//put them in a tashkil
+		resp = httpQuery(String.format("/tashkils/%d/principal", t.getId())).post(Entity.json(principal));
+		assertThat(resp.getStatus()).isEqualTo(200);
+		
+		//assign the tashkil to the billet
+		resp = httpQuery(String.format("/billets/%d/tashkils", created.getId())).post(Entity.json(t));
+		assertThat(resp.getStatus()).isEqualTo(200);
+		
+		//verify that we can pull the tashkil from the billet
+		List<Tashkil> retT = httpQuery(String.format("/billets/%d/tashkils", created.getId())).get(new GenericType<List<Tashkil>> () {});
+		assertThat(retT.size()).isEqualTo(1);
+		assertThat(retT).contains(t);
+		
+		//delete the tashkil from this billet
+		resp = httpQuery(String.format("/billets/%d/tashkils/%d", created.getId(), t.getId())).delete();
+		assertThat(resp.getStatus()).isEqualTo(200);
+		
+		//verify that it's now gone. 
+		retT = httpQuery(String.format("/billets/%d/tashkils", created.getId())).get(new GenericType<List<Tashkil>>() {});
+		assertThat(retT.size()).isEqualTo(0);
+	}	
 }

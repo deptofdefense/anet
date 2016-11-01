@@ -18,6 +18,7 @@ import com.google.common.collect.Sets;
 
 import mil.dds.anet.beans.AdvisorOrganization;
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.database.mappers.AdvisorOrganizationMapper;
 import mil.dds.anet.database.mappers.PersonMapper;
 
@@ -37,7 +38,7 @@ public class PersonDao implements IAnetDao<Person> {
 			.map(new PersonMapper());
 		return query.list();
 	}
-	
+
 	public Person getById(int id) { 
 		Query<Person> query = dbHandle.createQuery("select * from people where id = :id")
 				.bind("id",  id)
@@ -51,10 +52,11 @@ public class PersonDao implements IAnetDao<Person> {
 		p.setCreatedAt(DateTime.now());
 		p.setUpdatedAt(DateTime.now());
 		GeneratedKeys<Map<String, Object>> keys = dbHandle.createStatement("INSERT INTO people " +
-				"(firstName, lastName, status, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt) " +
-				"VALUES (:firstName, :lastName, :status, :emailAddress, :phoneNumber, :rank, :biography, :createdAt, :updatedAt);")
+				"(firstName, lastName, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt) " +
+				"VALUES (:firstName, :lastName, :status, :role, :emailAddress, :phoneNumber, :rank, :biography, :createdAt, :updatedAt);")
 			.bindFromProperties(p)
 			.bind("status", (p.getStatus() != null ) ? p.getStatus().ordinal() : null)
+			.bind("role", p.getRole().ordinal())
 			.executeAndReturnGeneratedKeys();
 		p.setId((Integer)keys.first().get("last_insert_rowid()"));
 		return p;
@@ -63,7 +65,7 @@ public class PersonDao implements IAnetDao<Person> {
 	public int update(@BindBean Person p){
 		p.setUpdatedAt(DateTime.now());
 		return dbHandle.createStatement("UPDATE people " + 
-				"SET firstName = :firstName, lastName = :lastName, status = :status, " + 
+				"SET firstName = :firstName, lastName = :lastName, status = :status, role = :role, " + 
 				"phoneNumber = :phoneNumber, rank = :rank, biography = :biography " +
 				"WHERE id = :id")
 			.bindFromProperties(p)
@@ -71,9 +73,14 @@ public class PersonDao implements IAnetDao<Person> {
 	}
 	
 	
-	public List<Person> searchByName(String searchQuery) { 
-		Query<Person> query = dbHandle.createQuery("SELECT * from people WHERE firstName LIKE :query || '%' OR lastName LIKE :query || '%'")
+	public List<Person> searchByName(String searchQuery, Role role) { 
+		String queryString = "SELECT * from people WHERE ( firstName LIKE :query || '%' OR lastName LIKE :query || '%')	";
+		if (role != null ) { 
+			queryString += " AND role = :role";
+		}
+		Query<Person> query = dbHandle.createQuery(queryString)
 			.bind("query", searchQuery)
+			.bind("role", (role != null) ? role.ordinal() : null)
 			.map(new PersonMapper());
 		return query.list();
 	}

@@ -1,5 +1,7 @@
 package mil.dds.anet.resources;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -19,6 +21,7 @@ import org.joda.time.DateTime;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Billet;
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.Tashkil;
 import mil.dds.anet.database.BilletDao;
 import mil.dds.anet.views.billet.BilletListView;
 
@@ -82,6 +85,31 @@ public class BilletResource {
 	@Path("/{id}/advisor")
 	public Response deleteAdvisorFromBillet(@PathParam("id") int id) { 
 		dao.removePersonFromBillet(Billet.createWithId(id));
+		return Response.ok().build();
+	}
+	
+	@GET
+	@Path("/{id}/tashkils")
+	public List<Tashkil> getAssociatedTashkils(@PathParam("id") int billetId) { 
+		Billet b = Billet.createWithId(billetId);
+		
+		return dao.getAssociatedTashkils(b);
+	}
+	
+	@POST
+	@Path("/{id}/tashkils")
+	public Response associateTashkil(@PathParam("id") int billetId, Tashkil t) { 
+		Billet b = Billet.createWithId(billetId);
+		dao.associateTashkil(b, t);
+		return Response.ok().build();
+	}
+	
+	@DELETE
+	@Path("/{id}/tashkils/{tashkilId}")
+	public Response deleteTashkilAssociation(@PathParam("id") int billetId, @PathParam("tashkilId") int tashkilId) { 
+		Billet b = Billet.createWithId(billetId);
+		Tashkil t = Tashkil.createWithId(tashkilId);
+		dao.deleteTashkilAssociation(b, t);
 		return Response.ok().build();
 	}
 }

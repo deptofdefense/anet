@@ -21,6 +21,7 @@ import mil.dds.anet.resources.AdvisorOrganizationResource;
 import mil.dds.anet.resources.ApprovalStepResource;
 import mil.dds.anet.resources.BilletResource;
 import mil.dds.anet.resources.GroupResource;
+import mil.dds.anet.resources.HomeResource;
 import mil.dds.anet.resources.LocationResource;
 import mil.dds.anet.resources.PersonResource;
 import mil.dds.anet.resources.PoamResource;
@@ -97,6 +98,7 @@ public class AnetApplication extends Application<AnetConfiguration> {
 		environment.jersey().register(billetResource);
 		environment.jersey().register(asResource);
 		environment.jersey().register(reportResource);
+		environment.jersey().register(new HomeResource());
 
 	}
 

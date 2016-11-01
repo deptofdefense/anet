@@ -22,11 +22,11 @@ public interface TashkilDao {
 	@SqlQuery("SELECT * from tashkils where id = :id")
 	Tashkil getById(@Bind("id") int id);
 	
-	@SqlUpdate("INSERT INTO tashkils (code, name) VALUES (:code, :name)")
+	@SqlUpdate("INSERT INTO tashkils (code, name, createdAt, updatedAt) VALUES (:code, :name, :createdAt, :updatedAt)")
 	@GetGeneratedKeys
 	int insertTashkil(@BindBean Tashkil t);
 	
-	@SqlUpdate("UPDATE tashkils SET name = :name, code = :code WHERE id = :id")
+	@SqlUpdate("UPDATE tashkils SET name = :name, code = :code, updatedAt = :updatedAt WHERE id = :id")
 	int updateTashkil(@BindBean Tashkil t);
 	
 	@SqlQuery("SELECT * from tashkils where code = :code")

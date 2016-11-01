@@ -3,10 +3,12 @@ package mil.dds.anet.database.mappers;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.joda.time.DateTime;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
 import mil.dds.anet.beans.Tashkil;
+import mil.dds.anet.views.AbstractAnetView.LoadLevel;
 
 public class TashkilMapper implements ResultSetMapper<Tashkil> {
 
@@ -16,6 +18,9 @@ public class TashkilMapper implements ResultSetMapper<Tashkil> {
 		t.setId(r.getInt("id"));
 		t.setCode(r.getString("code"));
 		t.setName(r.getString("name"));
+		t.setCreatedAt(new DateTime(r.getLong("createdAt")));
+		t.setUpdatedAt(new DateTime(r.getLong("updatedAt")));
+		t.setLoadLevel(LoadLevel.PROPERTIES);
 		return t;
 	}
 

@@ -12,7 +12,6 @@ import mil.dds.anet.views.AbstractAnetView;
 
 public class Billet extends AbstractAnetView<Billet> {
 
-	Integer id;
 	String name;
 	DateTime createdAt;
 	DateTime updatedAt;
@@ -24,12 +23,6 @@ public class Billet extends AbstractAnetView<Billet> {
 		return b;
 	}
 	
-	public Integer getId() {
-		return id;
-	}
-	public void setId(Integer id) {
-		this.id = id;
-	}
 	public String getName() {
 		return name;
 	}

@@ -34,7 +34,7 @@ public class LocationResource {
 	
 	@GET
 	@Path("/search")
-	public List<Location> search(@QueryParam("name") String name) {
+	public List<Location> search(@QueryParam("q") String name) {
 		return dao.searchByName(name);
 	}
 	

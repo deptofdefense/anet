@@ -3,6 +3,7 @@ package mil.dds.anet.test.beans;
 import org.junit.Test;
 
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.beans.Person.Status;
 
 public class PersonTest extends BeanTester<Person> {
@@ -15,6 +16,7 @@ public class PersonTest extends BeanTester<Person> {
 		person.setPhoneNumber("123-456-78960");
 		person.setRank("OF-9");
 		person.setStatus(Status.ACTIVE);
+		person.setRole(Role.ADVISOR);
 		person.setBiography("this is a sample biography");
 		return person;
 	}
@@ -27,6 +29,7 @@ public class PersonTest extends BeanTester<Person> {
 		person.setPhoneNumber("+011-258-32895");
 		person.setRank("LtCol");
 		person.setStatus(Status.ACTIVE);
+		person.setRole(Role.PRINCIPAL);
 		person.setBiography("this is a sample person who could be a Principal!");
 		return person;
 	}

@@ -12,12 +12,14 @@ import mil.dds.anet.views.AbstractAnetView;
 public class Person extends AbstractAnetView<Person> implements Principal{
 
 	public static enum Status { ACTIVE, INACTIVE }
+	public static enum Role { ADVISOR, PRINCIPAL, USER }
 	
 	private Integer id;
 	
 	private String firstName; 
 	private String lastName;
 	private Status status;
+	private Role role;
 	
 	private String emailAddress;
 	private String phoneNumber;
@@ -58,6 +60,14 @@ public class Person extends AbstractAnetView<Person> implements Principal{
 	public void setStatus(Status status) {
 		this.status = status;
 	}
+	public Role getRole() {
+		return role;
+	}
+
+	public void setRole(Role role) {
+		this.role = role;
+	}
+
 	public String getEmailAddress() {
 		return emailAddress;
 	}
@@ -109,6 +119,7 @@ public class Person extends AbstractAnetView<Person> implements Principal{
 			Objects.equals(other.getFirstName(), getFirstName()) &&
 			Objects.equals(other.getLastName(), this.getLastName()) &&
 			Objects.equals(other.getStatus(), this.getStatus()) && 
+			Objects.equals(other.getRole(), role) && 
 			Objects.equals(other.getEmailAddress(), this.getEmailAddress()) && 
 			Objects.equals(other.getPhoneNumber(), this.getPhoneNumber()) && 
 			Objects.equals(other.getRank(), this.getRank()) && 
@@ -120,7 +131,7 @@ public class Person extends AbstractAnetView<Person> implements Principal{
 	
 	@Override
 	public int hashCode() { 
-		return Objects.hash(id, firstName, lastName, status, emailAddress,
+		return Objects.hash(id, firstName, lastName, status, role, emailAddress,
 			phoneNumber, rank, biography, createdAt, updatedAt);
 	}
 	

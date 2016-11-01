@@ -2,6 +2,7 @@
 	"firstName" : "Jack",
 	"lastName" : "Jackson",
 	"status" : "ACTIVE",
+	"role" : "ADVISOR",
 	"emailAddress" : "foobar@example.com",
 	"phoneNumber" : "123-456-78960",
 	"rank" : "OF-9",

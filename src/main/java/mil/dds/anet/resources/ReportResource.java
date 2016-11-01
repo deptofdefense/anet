@@ -19,12 +19,13 @@ import mil.dds.anet.beans.ApprovalAction;
 import mil.dds.anet.beans.ApprovalAction.ApprovalType;
 import mil.dds.anet.beans.ApprovalStep;
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.database.ReportDao;
 import mil.dds.anet.utils.ResponseUtils;
-import mil.dds.anet.views.billet.ReportListView;
 import mil.dds.anet.views.report.ReportForm;
+import mil.dds.anet.views.report.ReportListView;
 
 @Path("/reports")
 @Produces(MediaType.APPLICATION_JSON)
@@ -47,16 +48,21 @@ public class ReportResource {
 	
 	@GET
 	@Path("/{id}")
-	@Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON})
+	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	public Report getById(@PathParam("id") int id) { 
-		return dao.getById(id).render("show.mustache");
+		Report r =  dao.getById(id).render("show.mustache");
+		r.addToContext("hello", "world");
+		return r;
 	}
 	
 	@GET
 	@Path("/new")
 	@Produces(MediaType.TEXT_HTML)
 	public Report createNewReportForm() { 
-		return (new Report()).render("form.mustache");
+		List<Poam> milestones = engine.getPoamDao().getPoamsByCategory("Milestone");
+		Report r = (new Report()).render("form.mustache");
+		r.addToContext("poams", milestones);
+		return r;
 	}
 	
 	@POST
@@ -64,6 +70,7 @@ public class ReportResource {
 	public Report createNewReport(Report r) { 
 		if (r.getState() == null) { r.setState(ReportState.DRAFT); }
 		//TODO: set the author to the person who submits this HTTP request. 
+		if (r.getAuthor() == null)  { r.setAuthor(Person.createWithId(1)); } 
 		return dao.insert(r);
 	}
 	

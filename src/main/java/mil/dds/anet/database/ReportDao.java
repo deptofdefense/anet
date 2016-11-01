@@ -9,6 +9,8 @@ import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.Query;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
+import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.database.mappers.ReportMapper;
 
@@ -41,7 +43,7 @@ public class ReportDao implements IAnetDao<Report> {
 			.bind("state", r.getState().ordinal())
 			.bind("createdAt", r.getCreatedAt())
 			.bind("updatedAt", r.getUpdatedAt())
-			.bind("locationId", r.getLocation().getId())
+			.bind("locationId", (r.getLocation() == null) ? null : r.getLocation().getId())
 			.bind("intent", r.getIntent())
 			.bind("exsum", r.getExsum())
 			.bind("text", r.getReportText())
@@ -49,6 +51,27 @@ public class ReportDao implements IAnetDao<Report> {
 			.bind("authorId", r.getAuthor().getId())
 			.executeAndReturnGeneratedKeys();
 		r.setId((Integer) (keys.first().get("last_insert_rowid()")));
+		
+		if (r.getPrincipals() != null) { 
+			for (Person p : r.getPrincipals()) { 
+				//TODO: batch this
+				dbHandle.createStatement("INSERT INTO reportPrincipals " + 
+						"(principalId, reportId) VALUES (:principalId, :reportId)")
+					.bind("principalId", p.getId())
+					.bind("reportId", r.getId())
+					.execute();
+			}
+		}
+		if (r.getPoams() != null) { 
+			for (Poam p : r.getPoams()) { 
+				//TODO: batch this. 
+				dbHandle.createStatement("INSERT INTO reportPoams " +
+						"(reportId, poamId) VALUES (:reportId, :poamId)")
+					.bind("reportId", r.getId())
+					.bind("poamId", p.getId())
+					.execute();
+			}
+		}
 		return r;
 	}
 

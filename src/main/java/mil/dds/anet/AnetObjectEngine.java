@@ -15,9 +15,7 @@ import mil.dds.anet.beans.ApprovalStep;
 import mil.dds.anet.beans.Billet;
 import mil.dds.anet.beans.Group;
 import mil.dds.anet.beans.Person;
-import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.Report;
-import mil.dds.anet.beans.Tashkil;
 import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.database.AdvisorOrganizationDao;
 import mil.dds.anet.database.ApprovalActionDao;
@@ -59,7 +57,7 @@ public class AnetObjectEngine {
 		personDao = new PersonDao(dbHandle);
 		groupDao = new GroupDao(dbHandle);
 		tashkilDao = jdbi.onDemand(TashkilDao.class);
-		poamDao = jdbi.onDemand(PoamDao.class);
+		poamDao = new PoamDao(dbHandle);
 		locationDao =  new LocationDao(dbHandle);
 		aoDao = new AdvisorOrganizationDao(dbHandle, groupDao);
 		billetDao = new BilletDao(dbHandle);

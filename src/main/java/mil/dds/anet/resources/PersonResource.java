@@ -16,6 +16,7 @@ import javax.ws.rs.core.Response.Status;
 
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.database.PersonDao;
 import mil.dds.anet.views.person.PersonListView;
 
@@ -100,10 +101,16 @@ public class PersonResource {
 //		return Response.ok().build();
 //	}
 	
+	/**
+	 * Searches people in the ANET database TODO: should be fuzzy searching
+	 * @param query : the search term
+	 * @param role : either PRINCIPAL, or ADVISOR will search people with that role. 
+	 * @return a list of people objects
+	 */
 	@GET
 	@Path("/search")
-	public List<Person> searchByName(@QueryParam("q") String query) {
-		return dao.searchByName(query);
+	public List<Person> searchByName(@QueryParam("q") String query, @QueryParam("role") Role role) {
+		return dao.searchByName(query, role);
 	}
 	
 	@GET
