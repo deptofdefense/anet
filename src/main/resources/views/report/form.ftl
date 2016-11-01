@@ -1,11 +1,4 @@
-{{>../template/header}}
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-xs-12 col-md-4">
-          {{>../template/navigation}}
-      </div>
-      <div class="col-xs-12 col-md-8">
-        <div class="row">
+<#include "template/header.ftl">
               <form class="usa-search usa-search-small top-search">
                 <div role="search">
                   <label class="usa-sr-only" for="search-field-small">Search small</label>
@@ -18,7 +11,7 @@
             </div>
             <div class="row">
               <div class="anet-top-block">
-                <div class="user-submit">Submitting as {{currentUser.name}}</div>
+                <div class="user-submit">Submitting as ${currentUser.name}</div>
                 <div class="submit"><input type="submit" value="Submit" class="btn btn-default pull-right"></div>
               </div>
             </div>
@@ -165,9 +158,9 @@
                           <div class="form-group">
                             <label for="attachEFMilestones">Milestones</label>
                             <select id="attachEFMilestones" multiple="multiple">
-								{{#context.poams}}
-									<option value="{{id}}">{{shortName}} - {{longName}}</option>
-								{{/context.poams}}
+								<#context.poams>
+									<option value="<#id#>"><#shortName> - <#longName></option>
+								</#context.poams>
                             </select>
                           </div>
 
@@ -215,8 +208,7 @@
           </div>
         </div>
       </div>
-    </div>
-  </div>
+<#include "template/footer.ftl">
 
 <script type="text/javascript">
 $(document).ready(function () { 
@@ -296,5 +288,3 @@ function enableLocationSearch(selectId) {
 };
 
 </script>
-
-{{>../template/footer}}
