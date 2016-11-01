@@ -14,7 +14,9 @@ public class BilletListView extends AbstractAnetView<BilletListView> {
 		render("/views/billet/index.ftl");
 	}
 	
-	
+	public List<Billet> getBillets() { 
+		return billets;
+	}
 	
 	
 }

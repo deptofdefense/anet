@@ -4,7 +4,7 @@
 <div class="navigation">
   <ul class="usa-sidenav-list">
     <li><a href="/search">ANET Search</a></li>
-    <li><a <!#if url.context == "reports/new">reports</#if> href="/search">Submit a Report</a>
+    <li><a <#if context.url == "reports/new">reports</#if> href="/search">Submit a Report</a>
       <ul class="usa-sidenav-sub_list">
         <li><a href="#">Your Details</a></li>
       </ul>

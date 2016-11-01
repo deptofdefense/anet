@@ -1,3 +1,4 @@
+<#-- @ftlvariable name="" type="mil.dds.anet.beans.Report" -->
 <#include "template/header.ftl">
               <form class="usa-search usa-search-small top-search">
                 <div role="search">
@@ -158,9 +159,9 @@
                           <div class="form-group">
                             <label for="attachEFMilestones">Milestones</label>
                             <select id="attachEFMilestones" multiple="multiple">
-								<#context.poams>
-									<option value="<#id#>"><#shortName> - <#longName></option>
-								</#context.poams>
+								<#list context.poams as poam>
+									<option value="${poam.id}>">${paom.shortName} - ${poam.longName}</option>
+								</#list>
                             </select>
                           </div>
 
