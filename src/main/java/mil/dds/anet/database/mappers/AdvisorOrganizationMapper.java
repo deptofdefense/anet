@@ -17,7 +17,6 @@ public class AdvisorOrganizationMapper implements ResultSetMapper<AdvisorOrganiz
 		AdvisorOrganization ao = new AdvisorOrganization();
 		ao.setId(r.getInt("id"));
 		ao.setName(r.getString("name"));
-		ao.setMemberGroupId(r.getInt("memberGroupId"));
 		ao.setCreatedAt(new DateTime(r.getLong("createdAt")));
 		ao.setUpdatedAt(new DateTime(r.getLong("updatedAt")));
 		ao.setLoadLevel(LoadLevel.PROPERTIES);

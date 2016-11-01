@@ -9,7 +9,6 @@ import mil.dds.anet.views.AbstractAnetView;
 public class AdvisorOrganization extends AbstractAnetView<AdvisorOrganization> {
 
 	String name;
-	Integer memberGroupId;
 	
 	DateTime createdAt;
 	DateTime updatedAt;
@@ -19,12 +18,6 @@ public class AdvisorOrganization extends AbstractAnetView<AdvisorOrganization> {
 	}
 	public void setName(String name) {
 		this.name = name;
-	}
-	public Integer getMemberGroupId() {
-		return memberGroupId;
-	}
-	public void setMemberGroupId(Integer memberGroupId) {
-		this.memberGroupId = memberGroupId;
 	}
 
 	public DateTime getCreatedAt() {
@@ -59,12 +52,11 @@ public class AdvisorOrganization extends AbstractAnetView<AdvisorOrganization> {
 		}
 		AdvisorOrganization other = (AdvisorOrganization) o;
 		return Objects.equals(other.getId(), id) &&
-				Objects.equals(other.getName(), name) &&
-				Objects.equals(other.getMemberGroupId(), memberGroupId);
+				Objects.equals(other.getName(), name);
 	}
 	
 	@Override
 	public int hashCode() { 
-		return Objects.hash(id, name, memberGroupId);
+		return Objects.hash(id, name, createdAt, updatedAt);
 	}
 }

@@ -15,8 +15,10 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import mil.dds.anet.AnetObjectEngine;
+import mil.dds.anet.beans.Billet;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Person.Role;
+import mil.dds.anet.beans.Tashkil;
 import mil.dds.anet.database.PersonDao;
 import mil.dds.anet.views.person.PersonListView;
 
@@ -118,5 +120,18 @@ public class PersonResource {
 	@Produces(MediaType.TEXT_HTML)
 	public Person getSearchPage() { 
 		return (new Person()).render("search.mustache");
+	}
+	
+	@GET
+	@Path("/{id}/billet")
+	public Billet getBilletForAdvisor(@PathParam("personId") int personId) { 
+		return dao.getBilletForAdvisor(personId);
+	}
+	
+	@GET
+	@Path("/{id}/tashkil")
+	public Tashkil getTashkilForPrincipal(@PathParam("personId") int personId) {
+		return null;
+//		return dao.getTashkilForPrincipal(personId);
 	}
 }

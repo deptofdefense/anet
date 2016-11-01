@@ -66,17 +66,22 @@ public class BilletResourceTest extends AbstractResourceTest {
 		resp = httpQuery(String.format("/billets/%d/advisor", returned.getId())).post(Entity.json(steve));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
+		//Verify that the new person is in the billet
 		curr = httpQuery(String.format("/billets/%d/advisor",returned.getId())).get(Person.class);
 		assertThat(curr.getId()).isEqualTo(steve.getId());
 		
+		//Verify that the previous person is now no longer in a billet
+		returned = httpQuery(String.format("/people/%d/billet", jack.getId())).get(Billet.class);
+		assertThat(returned).isEqualTo(null);		
+		
 		//delete the person from this billet
-		resp = httpQuery(String.format("/billets/%d/advisor", returned.getId())).delete();
+		resp = httpQuery(String.format("/billets/%d/advisor", created.getId())).delete();
 		assertThat(resp.getStatus()).isEqualTo(200);
-		curr = httpQuery(String.format("/billets/%d/advisor",returned.getId())).get(Person.class);
+		curr = httpQuery(String.format("/billets/%d/advisor",created.getId())).get(Person.class);
 		assertThat(curr).isNull();
 		
 		//pull for the advisor at a previous time. 
-		Person prev = httpQuery(String.format("/billets/%d/advisor?atTime=%d", returned.getId(), jacksTime.getMillis()))
+		Person prev = httpQuery(String.format("/billets/%d/advisor?atTime=%d", created.getId(), jacksTime.getMillis()))
 				.get(Person.class);
 		assertThat(prev).isNotNull();
 		assertThat(prev.getId()).isEqualTo(jack.getId());

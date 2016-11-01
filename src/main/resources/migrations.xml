@@ -41,8 +41,6 @@
 			</column>
 			<column name="name" type="varchar(255)" />
 
-			<!-- ID of the group that contains the members of this Advising Organization -->
-			<column name="memberGroupId" type="int" />
 			<column name="createdAt" type="datetime" />
 			<column name="updatedAt" type="datetime" />
 		</createTable>

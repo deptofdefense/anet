@@ -35,7 +35,7 @@ public class TashkilResourceTest extends AbstractResourceTest {
 		Response resp = httpQuery("/tashkils/update").post(Entity.json(created));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
-		Tashkil returned = httpQuery(String.format("http://localhost:%d/tashkils/%d",created.getId())).get(Tashkil.class);
+		Tashkil returned = httpQuery(String.format("/tashkils/%d",created.getId())).get(Tashkil.class);
 		assertThat(returned.getName()).isEqualTo(created.getName());
 		assertThat(returned.getCode()).isEqualTo(created.getCode());
 		

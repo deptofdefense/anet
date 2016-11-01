@@ -9,7 +9,6 @@ import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.Query;
 
 import mil.dds.anet.beans.AdvisorOrganization;
-import mil.dds.anet.beans.Group;
 import mil.dds.anet.database.mappers.AdvisorOrganizationMapper;
 
 public class AdvisorOrganizationDao implements IAnetDao<AdvisorOrganization> {
@@ -40,23 +39,18 @@ public class AdvisorOrganizationDao implements IAnetDao<AdvisorOrganization> {
 	}
 	
 	public AdvisorOrganization insert(AdvisorOrganization ao) {
-		Group g = new Group();
-		g.setName(ao.getName() + " Members");
-		g = groupDao.insert(g);
 		ao.setCreatedAt(DateTime.now());
 		ao.setUpdatedAt(ao.getCreatedAt());
 		
 		GeneratedKeys<Map<String,Object>> keys = dbHandle.createStatement(
-				"INSERT INTO advisorOrganizations (name, memberGroupId, createdAt, updatedAt) " + 
-				"VALUES (:name, :memberGroupId, :createdAt, :updatedAt)")
+				"INSERT INTO advisorOrganizations (name, createdAt, updatedAt) " + 
+				"VALUES (:name, :createdAt, :updatedAt)")
 			.bind("name", ao.getName())
-			.bind("memberGroupId", g.getId())
 			.bind("createdAt", ao.getCreatedAt())
 			.bind("updatedAt", ao.getUpdatedAt())
 			.executeAndReturnGeneratedKeys();
 		
 		ao.setId(((Integer)keys.first().get("last_insert_rowid()")).intValue());
-		ao.setMemberGroupId(g.getId());
 		return ao;
 	}
 	
@@ -67,18 +61,11 @@ public class AdvisorOrganizationDao implements IAnetDao<AdvisorOrganization> {
 				.bind("updatedAt", ao.getUpdatedAt())
 				.bind("id", ao.getId())
 				.execute();
-		
-		Group g = new Group();
-		g.setId(ao.getMemberGroupId());
-		g.setName(ao.getName() + " Members");
-		groupDao.update(g);
-		
+			
 		return numRows;
 	}
 	
 	public void deleteAdvisorOrganization(AdvisorOrganization ao) { 
-		groupDao.deleteGroup(ao.getMemberGroupId());
-		
 		dbHandle.createStatement("DELETE from advisorOrganizations where id = :id")
 			.bind("id", ao.getId())
 			.execute();

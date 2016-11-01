@@ -9,9 +9,9 @@ import org.junit.Test;
 
 import io.dropwizard.client.JerseyClientBuilder;
 import mil.dds.anet.beans.AdvisorOrganization;
-import mil.dds.anet.beans.Group;
-import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.Billet;
 import mil.dds.anet.test.beans.AdvisorOrganizationTest;
+import mil.dds.anet.test.beans.BilletTest;
 
 public class AdvisorOrganizationResourceTest extends AbstractResourceTest {
 
@@ -29,14 +29,6 @@ public class AdvisorOrganizationResourceTest extends AbstractResourceTest {
 		AdvisorOrganization created = httpQuery("/advisorOrganizations/new")
 			.post(Entity.json(ao), AdvisorOrganization.class);
 		assertThat(ao.getName()).isEqualTo(created.getName());
-		assertThat(created.getMemberGroupId()).isNotNull();
-		
-		System.out.println("AO id: " + created.getId());
-		System.out.println("Member Group Id : " + created.getMemberGroupId());
-		
-		//Find the Group it just created
-		Group aoGroup = httpQuery(String.format("/groups/%d", created.getMemberGroupId())).get(Group.class);
-		assertThat(aoGroup.getName()).startsWith(created.getName());
 		
 		//update name of the AO
 		created.setName("Ao McAoFace");
@@ -44,26 +36,26 @@ public class AdvisorOrganizationResourceTest extends AbstractResourceTest {
 				.post(Entity.json(created));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
-		//Verify the AO name and the Group name is updated. 
+		//Verify the AO name is updated. 
 		AdvisorOrganization updated = client.target(String.format("http://localhost:%d/advisorOrganizations/%d", RULE.getLocalPort(), created.getId()))
 				.request()
 				.get(AdvisorOrganization.class);
 		assertThat(updated.getName()).isEqualTo(created.getName());
 		
-		aoGroup = client.target(String.format("http://localhost:%d/groups/%d", RULE.getLocalPort(), updated.getMemberGroupId()))
-				.request()
-				.get(Group.class);
-		assertThat(aoGroup.getName()).startsWith(updated.getName());
+		//Create a billet and put then in this AO
+		Billet b1 = httpQuery("/billets/new").post(Entity.json(BilletTest.getTestBillet()), Billet.class);
+		assertThat(b1.getId()).isNotNull();
+		assertThat(b1.getAdvisorOrganization()).isNull();
 		
-		//Put some people in this AO
-		Person p1 = getJackJackson();
-		resp = client.target(String.format("http://localhost:%d/groups/%d/addMember?personId=%d", RULE.getLocalPort(), aoGroup.getId(), p1.getId()))
-			.request()
-			.get();
-		Person p2 = getSteveSteveson();
-		resp = client.target(String.format("http://localhost:%d/groups/%d/addMember?personId=%d", RULE.getLocalPort(), aoGroup.getId(), p2.getId()))
-				.request()
-				.get();
+		b1.setAdvisorOrganization(updated);
+		resp = httpQuery("/billets/update").post(Entity.json(b1));
+		assertThat(resp.getStatus()).isEqualTo(200);
+		
+		Billet ret = httpQuery(String.format("/billets/%d", b1.getId())).get(Billet.class);
+		assertThat(ret.getAdvisorOrganization()).isNotNull();
+		assertThat(ret.getAdvisorOrganization().getId()).isEqualTo(updated.getId());
+				
+		
 	}
 	
 }

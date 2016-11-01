@@ -70,28 +70,59 @@ public class BilletDao implements IAnetDao<Billet> {
 			.execute();
 	}
 	
-	public void setPersonInBillet(Person p, Billet b) { 
+	public void setPersonInBillet(Person p, Billet b) {
+		//TODO: this should be in a transaction. 
+		DateTime now = DateTime.now();
+		//If this person is in a billet already, we need to remove them. 
+		List<Map<String,Object>> billets = dbHandle.createQuery("SELECT billetId FROM billetAdvisors where advisorId = :advisorId ORDER BY createdAt DESC LIMIT 1")
+			.bind("advisorId", p.getId())
+			.list();
+		if (billets.size() > 0) { 
+			Integer billetId = (Integer) billets.get(0).get("billetId");
+			if (billetId != null) { 
+				dbHandle.createStatement("INSERT INTO billetAdvisors (billetId, advisorId, createdAt) VALUES (:billetId, null, :createdAt)")
+					.bind("billetId", billetId)
+					.bind("createdAt", now)
+					.execute();
+			}
+		}
+
+		//Whomever was previously in this billet, need to insert a record of them being removed. 
+		List<Map<String,Object>> advisors = dbHandle.createQuery("SELECT advisorId from billetAdvisors WHERE billetId = :billetId ORDER BY createdAt DESC LIMIT 1")
+				.bind("billetId", b.getId())
+				.list();
+		if (advisors.size() > 0) {
+			Integer advisorId = (Integer) advisors.get(0).get("advisorId");
+			if (advisorId != null) { 
+				dbHandle.createStatement("INSERT INTO billetAdvisors (billetId, advisorId, createdAt) VALUES (null, :advisorId, :createdAt)")
+					.bind("advisorId", advisorId)
+					.bind("createdAt", now)
+					.execute();
+			}
+		}
+			
 		dbHandle.createStatement("INSERT INTO billetAdvisors (billetId, advisorId, createdAt) " +
 				"VALUES (:billetId, :advisorId, :createdAt)")
 			.bind("billetId", b.getId())
 			.bind("advisorId", p.getId())
-			.bind("createdAt", DateTime.now())
+			.bind("createdAt", now)
 			.execute();
 	}
 	
 	public void removePersonFromBillet(Billet b) {
+		DateTime now = DateTime.now();
 		dbHandle.createStatement("INSERT INTO billetAdvisors (billetId, advisorId, createdAt) " + 
 			"VALUES(null, " +
 				"(SELECT advisorId FROM billetAdvisors WHERE billetId = :billetId ORDER BY createdAt DESC LIMIT 1), " +
 			":createdAt)")
 			.bind("billetId", b.getId())
-			.bind("createdAt", DateTime.now())
+			.bind("createdAt", now)
 			.execute();
 	
 		dbHandle.createStatement("INSERT INTO billetAdvisors (billetId, advisorId, createdAt) " + 
 				"VALUES (:billetId, null, :createdAt)")
 			.bind("billetId", b.getId())
-			.bind("createdAt", DateTime.now())
+			.bind("createdAt", now)
 			.execute();
 	}
 	
