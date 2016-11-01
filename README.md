@@ -9,10 +9,10 @@
 	- for MSSQL Server 
 		- create a local file called localSettings.gradle that looks like this:
 
-> run.environment("ANET_DB_USERNAME","username")
-> run.environment("ANET_DB_PASSWORD", "password")
-> run.environment("ANET_DB_SERVER", "db server hostname")
-> run.environment("ANET_DB_NAME","database name")
+	run.environment("ANET_DB_USERNAME","username")
+	run.environment("ANET_DB_PASSWORD", "password")
+	run.environment("ANET_DB_SERVER", "db server hostname")
+	run.environment("ANET_DB_NAME","database name")
 
 - Open anet.yml and make sure the port settings look good for you.  
 - Run `./gradlew build` to download all dependencies and build the project
@@ -35,10 +35,10 @@ This is an attempt to describe the complete start to finish of how a request mak
 1. When you boot up ANET, it will execute the mil.dds.anet.AnetApplication class.  All HTTP resources are initialized via the run() method here.  
 2. Each resource is annotated with a `@Path` annotation that will tell you the URL path that the class will serve.  
 3. On boot, the server will spit out all of the HTTP paths that it knows about in the form: 
-> GET     / (mil.dds.anet.resources.HomeResource)
-> POST    /advisorOrganizations/new (mil.dds.anet.resources.AdvisorOrganizationResource)
-> POST    /advisorOrganizations/update (mil.dds.anet.resources.AdvisorOrganizationResource)
-> GET     /advisorOrganizations/{id} (mil.dds.anet.resources.AdvisorOrganizationResource)
+	GET     / (mil.dds.anet.resources.HomeResource)
+	POST    /advisorOrganizations/new (mil.dds.anet.resources.AdvisorOrganizationResource)
+	POST    /advisorOrganizations/update (mil.dds.anet.resources.AdvisorOrganizationResource)
+	GET     /advisorOrganizations/{id} (mil.dds.anet.resources.AdvisorOrganizationResource)
 
 4. This tells you the URL, and then the class that will serve that URL. 
 5. Parameters into those methods are autowired in based on the HTTP request
@@ -56,12 +56,12 @@ This is an attempt to describe the complete start to finish of how a request mak
 	- Because these objects all inherit from the dropwizard `View` class, they can be rendered into HTML if returned by a method that `@Produces(MediaType.TEXT_HTML)`
 		- To get an object to render a particular view, call `.render(viewName)` on the object before returning it.  
 
-> @GET  
-> @Path("/{id}") 
-> @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML}) 
-> public Report getReportById(@PathParam("id") int id) {
-	> return dao.getById(id).render("show.ftl"); 
-> }
+	@GET  
+	@Path("/{id}") 
+	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML}) 
+	public Report getReportById(@PathParam("id") int id) {
+		return dao.getById(id).render("show.ftl"); 
+	}
 
 8. After a Resource method returns, any registered post filters will run
 	- Currently `mil.dds.anet.views.ViewResponseFilter` is the only filter.  This filter will attach the user principal as well as the current URL onto the view object if that's part of the response. 
