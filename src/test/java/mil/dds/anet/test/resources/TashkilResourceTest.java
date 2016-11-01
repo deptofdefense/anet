@@ -10,7 +10,6 @@ import org.junit.Test;
 import io.dropwizard.client.JerseyClientBuilder;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Tashkil;
-import mil.dds.anet.test.beans.PersonTest;
 import mil.dds.anet.test.beans.TashkilTest;
 
 public class TashkilResourceTest extends AbstractResourceTest {
@@ -33,30 +32,20 @@ public class TashkilResourceTest extends AbstractResourceTest {
 		
 		//Change Name/Code
 		created.setName("Deputy Chief of Donuts");
-		Response resp = client.target(String.format("http://localhost:%d/tashkils/update", RULE.getLocalPort()))
-				.request()
-				.post(Entity.json(created));
+		Response resp = httpQuery("/tashkils/update").post(Entity.json(created));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
-		Tashkil returned = client.target(String.format("http://localhost:%d/tashkils/%d", RULE.getLocalPort(), created.getId()))
-				.request()
-				.get(Tashkil.class);
+		Tashkil returned = httpQuery(String.format("http://localhost:%d/tashkils/%d",created.getId())).get(Tashkil.class);
 		assertThat(returned.getName()).isEqualTo(created.getName());
 		assertThat(returned.getCode()).isEqualTo(created.getCode());
 		
 		//Assign Principal
-		Person principal = client.target(String.format("http://localhost:%d/people/new", RULE.getLocalPort()))
-               .request()
-               .post(Entity.json(PersonTest.getJackJackson()), Person.class);
+		Person principal = getJackJackson();
 		
-		resp = client.target(String.format("http://localhost:%d/tashkils/%d/principal", RULE.getLocalPort(), created.getId()))
-				.request()
-				.post(Entity.json(principal));
+		resp = httpQuery(String.format("/tashkils/%d/principal",created.getId())).post(Entity.json(principal));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
-		Person returnedPrincipal = client.target(String.format("http://localhost:%d/tashkils/%d/principal", RULE.getLocalPort(), created.getId()))
-				.request()
-				.get(Person.class);
+		Person returnedPrincipal = httpQuery(String.format("/tashkils/%d/principal", created.getId())).get(Person.class);
 		assertThat(returnedPrincipal.getId()).isEqualTo(principal.getId());
 		
 		//TODO: Change the Principal

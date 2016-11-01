@@ -15,14 +15,13 @@ import mil.dds.anet.beans.ApprovalStep;
 import mil.dds.anet.beans.Billet;
 import mil.dds.anet.beans.Group;
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.Report;
-import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.geo.LatLng;
 import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.test.beans.AdvisorOrganizationTest;
-import mil.dds.anet.test.beans.PersonTest;
 
 public class ReportsResourceTest extends AbstractResourceTest {
 
@@ -35,12 +34,10 @@ public class ReportsResourceTest extends AbstractResourceTest {
 	@Test
 	public void createReport() {
 		//Create a report writer
-		Person author = httpQuery("/people/new").post(Entity.json(PersonTest.getJackJackson()), Person.class);
+		Person author = getJackJackson();
 		
 		//Create a principal for the report
-		Person principal = client.target(String.format("http://localhost:%d/people/new", RULE.getLocalPort()))
-				.request()
-				.post(Entity.json(PersonTest.getSteveSteveson()), Person.class);
+		Person principal = getSteveSteveson();
 		
 		//Create an Advising Organization for the report writer
 		AdvisorOrganization ao = client.target(String.format("http://localhost:%d/advisorOrganizations/new", RULE.getLocalPort()))
@@ -104,17 +101,16 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		r.setIntent("A testing report to test that reporting reports");
 		r.setReportText("Report Text goes here, asdfjk");
 		r.setNextSteps("This is the next steps on a report");
-		Report created = client.target(String.format("http://localhost:%d/reports/new", RULE.getLocalPort()))
-				.request()
+		Report created = httpQuery("/reports/new", author)
 				.post(Entity.json(r), Report.class);
 		assertThat(created.getId()).isNotNull();
 		assertThat(created.getState()).isEqualTo(ReportState.DRAFT);
 		
 		//Have the author submit the report
-		resp = httpQuery(String.format("/reports/%d/submit", created.getId())).get();
+		resp = httpQuery(String.format("/reports/%d/submit", created.getId()), author).get();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
-		Report returned = httpQuery(String.format("/reports/%d", created.getId())).get(Report.class);
+		Report returned = httpQuery(String.format("/reports/%d", created.getId()), author).get(Report.class);
 		assertThat(returned.getState()).isEqualTo(ReportState.PENDING_APPROVAL);
 		assertThat(returned.getApprovalStepId()).isEqualTo(approval.getId());
 		
@@ -125,10 +121,11 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		//TODO: Check on Report status for who needs to approve
 		
 		//Approve the report
-		resp = httpQuery(String.format("/reports/%d/approve", created.getId())).get();
+		resp = httpQuery(String.format("/reports/%d/approve", created.getId()), approver1).get();
+		assertThat(resp.getStatus()).isEqualTo(200);
 		
 		//Check on Report status to verify it got moved forward
-		returned = httpQuery(String.format("/reports/%d", created.getId())).get(Report.class);
+		returned = httpQuery(String.format("/reports/%d", created.getId()), author).get(Report.class);
 		assertThat(returned.getState()).isEqualTo(ReportState.RELEASED);
 		assertThat(returned.getApprovalStepId()).isNull();
 		

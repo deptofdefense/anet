@@ -1,13 +1,20 @@
 package mil.dds.anet.test.resources;
 
+import java.util.Base64;
+import java.util.List;
+
 import javax.ws.rs.client.Client;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation.Builder;
+import javax.ws.rs.core.GenericType;
 
 import org.junit.ClassRule;
 
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import mil.dds.anet.AnetApplication;
+import mil.dds.anet.beans.Person;
 import mil.dds.anet.config.AnetConfiguration;
+import mil.dds.anet.test.beans.PersonTest;
 
 public abstract class AbstractResourceTest {
 
@@ -21,6 +28,35 @@ public abstract class AbstractResourceTest {
 		if (path.startsWith("/") == false ) { path = "/" + path; } 
 		return client.target(String.format("http://localhost:%d%s", RULE.getLocalPort(), path))
 			.request();
+	}
+	
+	public Builder httpQuery(String path, Person authUser) { 
+		String authString = Base64.getEncoder().encodeToString(
+				(authUser.getFirstName() + ":" + authUser.getLastName()).getBytes());
+		return httpQuery(path)
+				.header("Authorization", "Basic " + authString);
+	}
+	
+	public Person findOrPutPersonInDb(Person stub) { 
+		List<Person> ret = httpQuery("/people/search?q=" + stub.getLastName()).get(new GenericType<List<Person>>() {});
+		for (Person p : ret) { 
+			if (p.getEmailAddress().equals(stub.getEmailAddress())) { return p; } 
+		}
 		
+		//Create Jack and insert into DB
+		Person newPerson = httpQuery("/people/new").post(Entity.json(stub), Person.class);
+		return newPerson;
+	}
+	
+	public Person getJackJackson() { 
+		return findOrPutPersonInDb(PersonTest.getJackJacksonStub());
+	}
+	
+	public Person getSteveSteveson() { 
+		return findOrPutPersonInDb(PersonTest.getSteveStevesonStub());
+	}
+	
+	public Person getRogerRogwell() { 
+		return findOrPutPersonInDb(PersonTest.getRogerRogwell());
 	}
 }

@@ -2,6 +2,7 @@ package mil.dds.anet.resources;
 
 import java.util.List;
 
+import javax.annotation.security.PermitAll;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -13,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.AdvisorOrganization;
 import mil.dds.anet.beans.ApprovalAction;
@@ -29,6 +31,7 @@ import mil.dds.anet.views.report.ReportListView;
 
 @Path("/reports")
 @Produces(MediaType.APPLICATION_JSON)
+@PermitAll
 public class ReportResource {
 
 	ReportDao dao;
@@ -67,10 +70,9 @@ public class ReportResource {
 	
 	@POST
 	@Path("/new")
-	public Report createNewReport(Report r) { 
+	public Report createNewReport(@Auth Person author, Report r) { 
 		if (r.getState() == null) { r.setState(ReportState.DRAFT); }
-		//TODO: set the author to the person who submits this HTTP request. 
-		if (r.getAuthor() == null)  { r.setAuthor(Person.createWithId(1)); } 
+		r.setAuthor(author);
 		return dao.insert(r);
 	}
 	
@@ -112,15 +114,13 @@ public class ReportResource {
 	 */
 	@GET
 	@Path("/{id}/approve")
-	public Response approveReport(@PathParam("id") int id) { 
+	public Response approveReport(@Auth Person approver, @PathParam("id") int id) { 
 		Report r = dao.getById(id);
 		ApprovalStep step = engine.getApprovalStepDao().getById(r.getApprovalStepId());
 		
 		//Verify that this user can approve for this step. 
-		int userId = 4;
-		//TODO: know who this user is! 
-//		boolean canApprove = engine.canUserApproveStep(userId, step.getId());
-		boolean canApprove = true;
+
+		boolean canApprove = engine.canUserApproveStep(approver.getId(), step.getId());
 		if (canApprove == false) {
 			return Response.status(Status.FORBIDDEN).build();
 		}
@@ -130,7 +130,7 @@ public class ReportResource {
 		ApprovalAction approval = new ApprovalAction();
 		approval.setReport(r);
 		approval.setStep(ApprovalStep.create(r.getApprovalStepId(), null, null, null));
-		approval.setPerson(Person.createWithId(userId));
+		approval.setPerson(approver);
 		approval.setType(ApprovalType.APPROVE);
 		engine.getApprovalActionDao().insert(approval);
 		

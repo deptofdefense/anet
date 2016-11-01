@@ -28,6 +28,7 @@ import mil.dds.anet.resources.PoamResource;
 import mil.dds.anet.resources.ReportResource;
 import mil.dds.anet.resources.TashkilResource;
 import mil.dds.anet.resources.TestingResource;
+import mil.dds.anet.views.ViewResponseFilter;
 
 public class AnetApplication extends Application<AnetConfiguration> {
 	public static void main(String[] args) throws Exception {
@@ -99,6 +100,7 @@ public class AnetApplication extends Application<AnetConfiguration> {
 		environment.jersey().register(asResource);
 		environment.jersey().register(reportResource);
 		environment.jersey().register(new HomeResource());
+		environment.jersey().register(new ViewResponseFilter());
 
 	}
 

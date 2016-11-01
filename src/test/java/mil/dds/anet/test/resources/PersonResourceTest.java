@@ -20,7 +20,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.jackson.Jackson;
 import mil.dds.anet.beans.Person;
-import mil.dds.anet.test.beans.PersonTest;
 
 public class PersonResourceTest extends AbstractResourceTest {
 		
@@ -29,38 +28,25 @@ public class PersonResourceTest extends AbstractResourceTest {
 			client = new JerseyClientBuilder(RULE.getEnvironment()).build("person test client");
 		}
 	}
-	
+
 	@Test
 	public void testCreatePerson() {
-		Person jack = PersonTest.getJackJackson();
+		Person jack = getJackJackson();
+		//Creation is handled by the parent class, which really does a search... :D. 
 
-		Person created = client.target(
-				String.format("http://localhost:%d/people/new", RULE.getLocalPort()))
-				.request()
-                .post(Entity.json(jack), Person.class);
-        assertThat(created.getFirstName()).isEqualTo(jack.getFirstName());
+		Person retPerson = httpQuery(String.format("/people/%d", jack.getId())).get(Person.class);
     	
-    	Person retPerson = client.target(String.format("http://localhost:%d/people/%d", RULE.getLocalPort(), created.getId()))
-    			.request()
-    			.get(Person.class);
+    	assertThat(retPerson).isEqualTo(jack);
+    	assertThat(retPerson.getId()).isEqualTo(jack.getId());
     	
-    	assertThat(retPerson).isEqualTo(created);
-    	assertThat(retPerson.getId()).isEqualTo(created.getId());
-    	
-    	created.setFirstName("Roberto");
-    	Response resp = client.target(String.format("http://localhost:%d/people/update", RULE.getLocalPort()))
-    			.request()
-    			.post(Entity.json(created));
+    	jack.setFirstName("Roberto");
+    	Response resp = httpQuery("/people/update")
+    			.post(Entity.json(jack));
     	assertThat(resp.getStatus()).isEqualTo(200);
     	
-    	retPerson = client.target(String.format("http://localhost:%d/people/%d", RULE.getLocalPort(), created.getId()))
-    			.request()
-    			.get(Person.class);
-    	assertThat(retPerson.getFirstName()).isEqualTo(created.getFirstName());
+    	retPerson = httpQuery(String.format("/people/%d", jack.getId())).get(Person.class);
+    	assertThat(retPerson.getFirstName()).isEqualTo(jack.getFirstName());
     }
-	
-
-	//TODO: Assign Person to Tashkil
 	
 //	@Test
 //	public void testDeletePerson() { 

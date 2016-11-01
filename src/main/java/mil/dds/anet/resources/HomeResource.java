@@ -1,11 +1,13 @@
 package mil.dds.anet.resources;
 
+import javax.annotation.security.PermitAll;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
-import io.dropwizard.views.View;
+import mil.dds.anet.views.AbstractAnetView;
 
 @Path("")
+@PermitAll
 public class HomeResource {
 
 	@GET
@@ -15,10 +17,10 @@ public class HomeResource {
 	}
 	
 	
-	private static class HomeView extends View {
+	private static class HomeView extends AbstractAnetView<HomeView> {
 
 		protected HomeView() {
-			super("/views/index.mustache");
+			render("/views/index.mustache");
 		} 
 		
 	}

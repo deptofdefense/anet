@@ -12,7 +12,6 @@ import mil.dds.anet.beans.AdvisorOrganization;
 import mil.dds.anet.beans.Group;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.test.beans.AdvisorOrganizationTest;
-import mil.dds.anet.test.beans.PersonTest;
 
 public class AdvisorOrganizationResourceTest extends AbstractResourceTest {
 
@@ -57,15 +56,11 @@ public class AdvisorOrganizationResourceTest extends AbstractResourceTest {
 		assertThat(aoGroup.getName()).startsWith(updated.getName());
 		
 		//Put some people in this AO
-		Person p1 = client.target(String.format("http://localhost:%d/people/new", RULE.getLocalPort()))
-				.request()
-				.post(Entity.json(PersonTest.getJackJackson()), Person.class);
+		Person p1 = getJackJackson();
 		resp = client.target(String.format("http://localhost:%d/groups/%d/addMember?personId=%d", RULE.getLocalPort(), aoGroup.getId(), p1.getId()))
 			.request()
 			.get();
-		Person p2 = client.target(String.format("http://localhost:%d/people/new", RULE.getLocalPort()))
-				.request()
-				.post(Entity.json(PersonTest.getSteveSteveson()), Person.class);
+		Person p2 = getSteveSteveson();
 		resp = client.target(String.format("http://localhost:%d/groups/%d/addMember?personId=%d", RULE.getLocalPort(), aoGroup.getId(), p2.getId()))
 				.request()
 				.get();

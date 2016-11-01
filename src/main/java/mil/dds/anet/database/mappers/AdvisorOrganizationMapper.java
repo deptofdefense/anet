@@ -3,6 +3,7 @@ package mil.dds.anet.database.mappers;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.joda.time.DateTime;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
@@ -17,6 +18,8 @@ public class AdvisorOrganizationMapper implements ResultSetMapper<AdvisorOrganiz
 		ao.setId(r.getInt("id"));
 		ao.setName(r.getString("name"));
 		ao.setMemberGroupId(r.getInt("memberGroupId"));
+		ao.setCreatedAt(new DateTime(r.getLong("createdAt")));
+		ao.setUpdatedAt(new DateTime(r.getLong("updatedAt")));
 		ao.setLoadLevel(LoadLevel.PROPERTIES);
 		return ao;
 	}

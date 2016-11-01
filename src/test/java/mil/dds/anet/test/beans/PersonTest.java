@@ -8,7 +8,7 @@ import mil.dds.anet.beans.Person.Status;
 
 public class PersonTest extends BeanTester<Person> {
 
-	public static Person getJackJackson() { 
+	public static Person getJackJacksonStub() { 
 		final Person person = new Person();
 		person.setFirstName("Jack");
 		person.setLastName("Jackson");
@@ -21,7 +21,7 @@ public class PersonTest extends BeanTester<Person> {
 		return person;
 	}
 
-	public static Person getSteveSteveson() {
+	public static Person getSteveStevesonStub() {
 		Person person = new Person();
 		person.setFirstName("Steve");
 		person.setLastName("Steveson");
@@ -36,13 +36,26 @@ public class PersonTest extends BeanTester<Person> {
 	
 	@Test
 	public void serializesToJSON() throws Exception {
-		serializesToJSON(getJackJackson(), "testJson/people/jack.json");
+		serializesToJSON(getJackJacksonStub(), "testJson/people/jack.json");
 	}
 	
 	@Test
     public void deserializesFromJSON() throws Exception {
-		deserializesFromJSON(getJackJackson(), "testJson/people/jack.json");
+		deserializesFromJSON(getJackJacksonStub(), "testJson/people/jack.json");
     }
+
+	public static Person getRogerRogwell() {
+		Person person = new Person();
+		person.setFirstName("Roger");
+		person.setLastName("Rogwell");
+		person.setEmailAddress("roger@example.com");
+		person.setPhoneNumber("+1-412-543-2839");
+		person.setRank("Maj");
+		person.setStatus(Status.ACTIVE);
+		person.setRole(Role.PRINCIPAL);
+		person.setBiography("roger is another test person that we have in the database. ");
+		return person;
+	}
 
 	
 	

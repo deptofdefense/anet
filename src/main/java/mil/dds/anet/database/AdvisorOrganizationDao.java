@@ -3,6 +3,7 @@ package mil.dds.anet.database;
 import java.util.List;
 import java.util.Map;
 
+import org.joda.time.DateTime;
 import org.skife.jdbi.v2.GeneratedKeys;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.Query;
@@ -42,11 +43,16 @@ public class AdvisorOrganizationDao implements IAnetDao<AdvisorOrganization> {
 		Group g = new Group();
 		g.setName(ao.getName() + " Members");
 		g = groupDao.insert(g);
+		ao.setCreatedAt(DateTime.now());
+		ao.setUpdatedAt(ao.getCreatedAt());
 		
 		GeneratedKeys<Map<String,Object>> keys = dbHandle.createStatement(
-				"INSERT INTO advisorOrganizations (name, memberGroupId) VALUES (:name, :memberGroupId)")
+				"INSERT INTO advisorOrganizations (name, memberGroupId, createdAt, updatedAt) " + 
+				"VALUES (:name, :memberGroupId, :createdAt, :updatedAt)")
 			.bind("name", ao.getName())
 			.bind("memberGroupId", g.getId())
+			.bind("createdAt", ao.getCreatedAt())
+			.bind("updatedAt", ao.getUpdatedAt())
 			.executeAndReturnGeneratedKeys();
 		
 		ao.setId(((Integer)keys.first().get("last_insert_rowid()")).intValue());
@@ -54,9 +60,11 @@ public class AdvisorOrganizationDao implements IAnetDao<AdvisorOrganization> {
 		return ao;
 	}
 	
-	public int update(AdvisorOrganization ao) { 
-		int numRows = dbHandle.createStatement("UPDATE advisorOrganizations SET name = :name where id = :id")
+	public int update(AdvisorOrganization ao) {
+		ao.setUpdatedAt(DateTime.now());
+		int numRows = dbHandle.createStatement("UPDATE advisorOrganizations SET name = :name, updatedAt = :updatedAt where id = :id")
 				.bind("name", ao.getName())
+				.bind("updatedAt", ao.getUpdatedAt())
 				.bind("id", ao.getId())
 				.execute();
 		

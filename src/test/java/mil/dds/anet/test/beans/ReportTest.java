@@ -26,7 +26,7 @@ public class ReportTest extends BeanTester<Report> {
 		r.setLocation(loc);
 		r.setIntent("Check up with Steve");
 		
-		r.setAuthor(PersonTest.getJackJackson());
+		r.setAuthor(PersonTest.getJackJacksonStub());
 		
 		LinkedList<Poam> poams = new LinkedList<Poam>();
 		poams.add(PoamTest.getTestPoam());
@@ -34,7 +34,7 @@ public class ReportTest extends BeanTester<Report> {
 		r.setPoams(poams);
 		
 		LinkedList<Person> principals = new LinkedList<Person>();
-		principals.add(PersonTest.getSteveSteveson());
+		principals.add(PersonTest.getSteveStevesonStub());
 		r.setPrincipals(principals);
 		
 		r.setReportText("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
@@ -43,7 +43,7 @@ public class ReportTest extends BeanTester<Report> {
 		LinkedList<Comment> comments = new LinkedList<Comment>();
 		Comment c = new Comment();
 		c.setDtg(new DateTime(1453815803000L, ISOChronology.getInstanceUTC()));
-		c.setAuthor(PersonTest.getJackJackson());
+		c.setAuthor(PersonTest.getJackJacksonStub());
 		c.setText("I really like this report, it's awesome!!!");
 		comments.add(c);
 		r.setComments(comments);

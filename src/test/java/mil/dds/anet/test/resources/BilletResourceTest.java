@@ -18,7 +18,6 @@ import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Tashkil;
 import mil.dds.anet.test.beans.AdvisorOrganizationTest;
 import mil.dds.anet.test.beans.BilletTest;
-import mil.dds.anet.test.beans.PersonTest;
 import mil.dds.anet.test.beans.TashkilTest;
 
 public class BilletResourceTest extends AbstractResourceTest {
@@ -49,7 +48,7 @@ public class BilletResourceTest extends AbstractResourceTest {
 		assertThat(returned.getAdvisorOrganization().getId()).isEqualTo(ao.getId());
 		
 		//Assign a person into the billet
-		Person jack = httpQuery("/people/new").post(Entity.json(PersonTest.getJackJackson()), Person.class);
+		Person jack = getJackJackson();
 		assertThat(jack.getId()).isNotNull();
 		resp = httpQuery(String.format("/billets/%d/advisor", created.getId())).post(Entity.json(jack));
 		assertThat(resp.getStatus()).isEqualTo(200);
@@ -63,7 +62,7 @@ public class BilletResourceTest extends AbstractResourceTest {
 		} catch (InterruptedException e) {}  
 		
 		//change the person in this billet
-		Person steve = httpQuery("/people/new").post(Entity.json(PersonTest.getSteveSteveson()), Person.class);
+		Person steve = getSteveSteveson();
 		resp = httpQuery(String.format("/billets/%d/advisor", returned.getId())).post(Entity.json(steve));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
@@ -83,7 +82,7 @@ public class BilletResourceTest extends AbstractResourceTest {
 		assertThat(prev.getId()).isEqualTo(jack.getId());
 		
 		//Create a principal
-		Person principal = httpQuery("/people/new").post(Entity.json(PersonTest.getSteveSteveson()), Person.class);
+		Person principal = getRogerRogwell();
 		assertThat(principal.getId()).isNotNull();
 		Tashkil t = httpQuery("/tashkils/new").post(Entity.json(TashkilTest.getTestTashkil()), Tashkil.class);
 		assertThat(t.getId()).isNotNull();

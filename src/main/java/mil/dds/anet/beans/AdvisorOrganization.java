@@ -2,12 +2,17 @@ package mil.dds.anet.beans;
 
 import java.util.Objects;
 
+import org.joda.time.DateTime;
+
 import mil.dds.anet.views.AbstractAnetView;
 
 public class AdvisorOrganization extends AbstractAnetView<AdvisorOrganization> {
 
 	String name;
 	Integer memberGroupId;
+	
+	DateTime createdAt;
+	DateTime updatedAt;
 		
 	public String getName() {
 		return name;
@@ -22,6 +27,18 @@ public class AdvisorOrganization extends AbstractAnetView<AdvisorOrganization> {
 		this.memberGroupId = memberGroupId;
 	}
 
+	public DateTime getCreatedAt() {
+		return createdAt;
+	}
+	public void setCreatedAt(DateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+	public DateTime getUpdatedAt() {
+		return updatedAt;
+	}
+	public void setUpdatedAt(DateTime updatedAt) {
+		this.updatedAt = updatedAt;
+	}
 	public static AdvisorOrganization create(String name) { 
 		AdvisorOrganization ao = new AdvisorOrganization();
 		ao.setName(name);

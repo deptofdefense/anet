@@ -10,7 +10,6 @@ import org.junit.Test;
 import io.dropwizard.client.JerseyClientBuilder;
 import mil.dds.anet.beans.Group;
 import mil.dds.anet.beans.Person;
-import mil.dds.anet.test.beans.PersonTest;
 
 public class GroupsResourceTest extends AbstractResourceTest {
 
@@ -32,8 +31,8 @@ public class GroupsResourceTest extends AbstractResourceTest {
 		assertThat(created).isEqualTo(returned);
 		
 		//Create a couple people and add them to the group
-		Person jack = httpQuery("/people/new").post(Entity.json(PersonTest.getJackJackson()), Person.class);
-		Person steve = httpQuery("/people/new").post(Entity.json(PersonTest.getSteveSteveson()), Person.class);
+		Person jack = getJackJackson();
+		Person steve = getSteveSteveson();
 		
 		Response resp = httpQuery(String.format("/groups/%d/addMember?personId=%d", returned.getId(), jack.getId()))
 				.get();
