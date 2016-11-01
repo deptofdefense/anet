@@ -33,7 +33,7 @@
 		<div class="container-fluid fixed security">
 			<div class="row">
 				<div class="col-xs-12">
-				Highest clearance: || {{context.currentUser}} || {{context.url}}
+				Highest clearance: || ${context.currentUser} || ${context.url}
 				</div>
 			</div>
 		</div>

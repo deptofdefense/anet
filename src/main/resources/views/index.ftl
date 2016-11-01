@@ -1,6 +1,6 @@
-{{> template/header.mustache }}
+<#include "template/header.ftl">
 <h1>Hello <strike>World</strike>ANET!</h1>
-<b>You are: {{context.currentUser}}</b><br>
+<b>You are: ${context.currentUser}</b><br>
 <b>Here are the things you can do:</b>
 <ul>
 	<li><a href="/reports/" >Reports</a></li>
@@ -12,4 +12,4 @@
 	<li><a href="/groups/" >Groups</a></li>
 </ul>
 
-{{> template/footer.mustache }}
+<#include "template/footer.ftl">
