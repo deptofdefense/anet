@@ -17,9 +17,11 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 
 import mil.dds.anet.beans.AdvisorOrganization;
+import mil.dds.anet.beans.Billet;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.database.mappers.AdvisorOrganizationMapper;
+import mil.dds.anet.database.mappers.BilletMapper;
 import mil.dds.anet.database.mappers.PersonMapper;
 
 @RegisterMapper(PersonMapper.class)
@@ -90,7 +92,8 @@ public class PersonDao implements IAnetDao<Person> {
 		Query<AdvisorOrganization> query = dbHandle.createQuery("SELECT advisorOrganizations.* " +
 				"FROM advisorOrganizations, billets, billetAdvisors WHERE " + 
 				"billetAdvisors.advisorId = :personId AND billetAdvisors.billetId = billets.id " + 
-				"AND billets.advisorOrganizationId = advisorOrganizations.id")
+				"AND billets.advisorOrganizationId = advisorOrganizations.id " + 
+				"ORDER BY billetAdvisors.createdAt DESC LIMIT 1")
 			.bind("personId", personId)
 			.map(new AdvisorOrganizationMapper());
 		List<AdvisorOrganization> rs = query.list();
@@ -114,6 +117,20 @@ public class PersonDao implements IAnetDao<Person> {
 			query.bind((i/2), strings[i+1]);
 		}
 		return query.map(new PersonMapper()).list();
+	}
+
+	public Billet getBilletForAdvisor(int personId) {
+		List<Billet> billets = dbHandle.createQuery("SELECT billets.* from billetAdvisors " +
+				"LEFT JOIN billets ON billetAdvisors.billetId = billets.id " +
+				"WHERE billetAdvisors.advisorId = :advisorId " +
+				"ORDER BY billetAdvisors.createdAt DESC LIMIT 1")
+			.bind("advisorId", personId)
+			.map(new BilletMapper())
+			.list();
+		if (billets.size() == 0) { return null; } 
+		return billets.get(0);
+		
+				
 	}
 	
 }

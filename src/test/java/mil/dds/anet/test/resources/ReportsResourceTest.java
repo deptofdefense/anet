@@ -15,7 +15,6 @@ import mil.dds.anet.beans.ApprovalStep;
 import mil.dds.anet.beans.Billet;
 import mil.dds.anet.beans.Group;
 import mil.dds.anet.beans.Person;
-import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
@@ -40,43 +39,30 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		Person principal = getSteveSteveson();
 		
 		//Create an Advising Organization for the report writer
-		AdvisorOrganization ao = client.target(String.format("http://localhost:%d/advisorOrganizations/new", RULE.getLocalPort()))
-				.request()
+		AdvisorOrganization ao = httpQuery("/advisorOrganizations/new")
 				.post(Entity.json(AdvisorOrganizationTest.getTestAO()), AdvisorOrganization.class);
-		//Add advisor into Advising Organization
-		Response resp = httpQuery(String.format("/groups/%d/addMember?personId=%d", 
-				ao.getMemberGroupId(), author.getId()))
-				.get();
-		assertThat(resp.getStatus()).isEqualTo(200);
 		
 		//Create leadership people in the AO who can approve this report
-		Person approver1 = new Person();
-		approver1.setFirstName("Approver");
-		approver1.setLastName("The first");
-		approver1.setRole(Role.USER);
-		approver1 = client.target(String.format("http://localhost:%d/people/new", RULE.getLocalPort()))
-				.request()
-				.post(Entity.json(approver1), Person.class);
+		Person approver1 = getRogerRogwell();
 		
 		//Create a billet for the author
 		Billet authorBillet = new Billet();
 		authorBillet.setName("A report writer");
 		authorBillet.setAdvisorOrganization(ao);
-		authorBillet = client.target(String.format("http://localhost:%d/billets/new", RULE.getLocalPort()))
-				.request()
-				.post(Entity.json(authorBillet), Billet.class);
+		authorBillet = httpQuery("/billets/new").post(Entity.json(authorBillet), Billet.class);
 		assertThat(authorBillet.getId()).isNotNull();
+		
 		//Set this author in this billet
-		resp = client.target(String.format("http://localhost:%d/billets/%d/advisor", RULE.getLocalPort(), authorBillet.getId()))
-				.request()
-				.post(Entity.json(author));
+		Response resp = httpQuery(String.format("/billets/%d/advisor", authorBillet.getId())).post(Entity.json(author));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
 		//Create Approval workflow for Advising Organization
 		Group approvingGroup = httpQuery("/groups/new")
 				.post(Entity.json(Group.create("Test Group of approvers")), Group.class);
-		resp = httpQuery(String.format("/groups/addMember?groupId=%d&personId=%d", approvingGroup.getId(), approver1.getId()))
+		resp = httpQuery(String.format("/groups/%d/addMember?personId=%d", approvingGroup.getId(), approver1.getId()))
 				.get();
+		assertThat(resp.getStatus()).isEqualTo(200);
+		
 		ApprovalStep approval = httpQuery("/approvalSteps/new")
 				.post(Entity.json(ApprovalStep.create(null, approvingGroup.getId(), null, ao.getId())), ApprovalStep.class);
 		

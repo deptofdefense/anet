@@ -14,6 +14,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.eclipse.jetty.util.log.Log;
+import org.eclipse.jetty.util.log.Logger;
+
 import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.AdvisorOrganization;
@@ -36,6 +39,8 @@ public class ReportResource {
 
 	ReportDao dao;
 	AnetObjectEngine engine;
+	
+	private static Logger log = Log.getLogger(ReportResource.class);
 	
 	public ReportResource(AnetObjectEngine engine) {
 		this.engine = engine;
@@ -93,7 +98,7 @@ public class ReportResource {
 		Report r = dao.getById(id);
 		
 		AdvisorOrganization ao = engine.getAdvisorOrganizationForPerson(r.getAuthor());
-		if (ao == null ) { 
+		if (ao == null ) {
 			return ResponseUtils.withMsg("Unable to find AO for Report Author", Status.BAD_REQUEST);
 		}
 		List<ApprovalStep> steps = engine.getApprovalStepsForOrg(ao);
@@ -122,6 +127,7 @@ public class ReportResource {
 
 		boolean canApprove = engine.canUserApproveStep(approver.getId(), step.getId());
 		if (canApprove == false) {
+			log.info("User ID {} cannot approve report ID {} for step ID {}",approver.getId(), r.getId(), step.getId());
 			return Response.status(Status.FORBIDDEN).build();
 		}
 		

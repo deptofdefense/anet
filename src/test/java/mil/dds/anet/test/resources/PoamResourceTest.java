@@ -41,8 +41,7 @@ public class PoamResourceTest extends AbstractResourceTest {
 				.post(Entity.json(Poam.create("M4", "Have the person go fishing without you", "Milestone")), Poam.class);
 		assertThat(d.getId()).isNotNull();
 		
-			
-		//TODO: Create an AO
+		
 		//TODO: Create POAMs
 		//TODO: modify the POAMs
 		//TODO: Assign the POAMs to the AO
