@@ -1,5 +1,5 @@
 <#-- @ftlvariable name="" type="mil.dds.anet.beans.Report" -->
-<#include "template/header.ftl">
+<#include "../template/header.ftl">
               <form class="usa-search usa-search-small top-search">
                 <div role="search">
                   <label class="usa-sr-only" for="search-field-small">Search small</label>
@@ -12,7 +12,7 @@
             </div>
             <div class="row">
               <div class="anet-top-block">
-                <div class="user-submit">Submitting as ${currentUser.name}</div>
+                <div class="user-submit">Submitting as ${context.currentUser.name}</div>
                 <div class="submit"><input type="submit" value="Submit" class="btn btn-default pull-right"></div>
               </div>
             </div>
@@ -209,7 +209,7 @@
           </div>
         </div>
       </div>
-<#include "template/footer.ftl">
+<#include "../template/footer.ftl">
 
 <script type="text/javascript">
 $(document).ready(function () { 

@@ -9,6 +9,7 @@ import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.Query;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
+import mil.dds.anet.beans.AdvisorOrganization;
 import mil.dds.anet.beans.Billet;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Tashkil;
@@ -205,6 +206,13 @@ public class BilletDao implements IAnetDao<Billet> {
 			.map(new BilletMapper())
 			.list();
 	
+	}
+
+	public List<Billet> getByAdvisorOrganization(AdvisorOrganization advisorOrganization) {
+		return dbHandle.createQuery("SELECT * from billets WHERE advisorOrganizationId = :aoId")
+			.bind("aoId", advisorOrganization.getId())
+			.map(new BilletMapper())
+			.list();
 	}
 
 }

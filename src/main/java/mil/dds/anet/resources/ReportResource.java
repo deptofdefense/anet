@@ -29,7 +29,6 @@ import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.database.ReportDao;
 import mil.dds.anet.utils.ResponseUtils;
-import mil.dds.anet.views.report.ReportForm;
 import mil.dds.anet.views.report.ReportListView;
 
 @Path("/reports")
@@ -84,9 +83,9 @@ public class ReportResource {
 	@GET
 	@Path("/{id}/edit")
 	@Produces(MediaType.TEXT_HTML)
-	public ReportForm editReportForm(@PathParam("id") int id) { 
+	public Report editReportForm(@PathParam("id") int id) { 
 		Report r = dao.getById(id);
-		return new ReportForm(r);
+		return r.render("form.ftl");
 	}
 	
 	/* Submit a report for approval

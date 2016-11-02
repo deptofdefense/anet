@@ -40,7 +40,7 @@ public class BilletResourceTest extends AbstractResourceTest {
 		assertThat(created.getName()).isEqualTo(test.getName());
 		
 		//Assign to an AO
-		AdvisorOrganization ao = httpQuery("/advisorOrganizations/new")
+		AdvisorOrganization ao = httpQuery("/advisorOrganizations/new", jack)
 				.post(Entity.json(AdvisorOrganizationTest.getTestAO()), AdvisorOrganization.class);
 		created.setAdvisorOrganization(AdvisorOrganization.createWithId(ao.getId()));
 		

@@ -28,9 +28,11 @@ import mil.dds.anet.views.person.PersonListView;
 public class PersonResource {
 
 	private PersonDao dao;
+	private AnetObjectEngine engine;
 	
 	public PersonResource(AnetObjectEngine engine) { 
 		this.dao = engine.getPersonDao();
+		this.engine = engine;
 	}
 	
 	@GET
@@ -52,7 +54,7 @@ public class PersonResource {
 	public Person getViewById(@PathParam("id") int id) { 
 		Person p = dao.getById(id);
 		p.addToContext("billet", dao.getBilletForAdvisor(p.getId()));
-		return p.render("show.ftl");
+		return p.render("show.ftl", engine);
 	}
 	
 	@GET

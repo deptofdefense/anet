@@ -39,7 +39,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		Person principal = getSteveSteveson();
 		
 		//Create an Advising Organization for the report writer
-		AdvisorOrganization ao = httpQuery("/advisorOrganizations/new")
+		AdvisorOrganization ao = httpQuery("/advisorOrganizations/new", author)
 				.post(Entity.json(AdvisorOrganizationTest.getTestAO()), AdvisorOrganization.class);
 		
 		//Create leadership people in the AO who can approve this report

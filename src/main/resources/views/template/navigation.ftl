@@ -1,5 +1,5 @@
 <div class="logo">
-    <img alt="ANET" src="/assets/img/anet.png">
+    <a href="/"><img alt="ANET" src="/assets/img/anet.png"></a>
 </div>
 <div class="navigation">
   <ul class="usa-sidenav-list">

@@ -1,8 +1,11 @@
 package mil.dds.anet.beans;
 
+import java.util.List;
 import java.util.Objects;
 
 import org.joda.time.DateTime;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import mil.dds.anet.views.AbstractAnetView;
 
@@ -12,7 +15,9 @@ public class AdvisorOrganization extends AbstractAnetView<AdvisorOrganization> {
 	
 	DateTime createdAt;
 	DateTime updatedAt;
-		
+	
+	List<Billet> billets; /*Billets in this AO, lazy loaded*/
+	
 	public String getName() {
 		return name;
 	}
@@ -32,6 +37,15 @@ public class AdvisorOrganization extends AbstractAnetView<AdvisorOrganization> {
 	public void setUpdatedAt(DateTime updatedAt) {
 		this.updatedAt = updatedAt;
 	}
+	
+	@JsonIgnore
+	public List<Billet> getBillets() {
+		if (billets == null && engine != null) {
+			billets = engine.getBilletDao().getByAdvisorOrganization(this);
+		}
+		return billets;
+	}
+	
 	public static AdvisorOrganization create(String name) { 
 		AdvisorOrganization ao = new AdvisorOrganization();
 		ao.setName(name);

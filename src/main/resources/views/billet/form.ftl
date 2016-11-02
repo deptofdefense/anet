@@ -9,7 +9,7 @@
 
 <form id="billetForm">
 Name: <input type="text" name="name" value="${name!}" /><br>
-Advisor Organization: <select name="ao" >
+Advisor Organization: <select name="ao" id="aoSelect" >
 <#if advisorOrganization??>
 	<option value="${advisorOrganization.id}" selected>${advisorOrganization.name}</select>
 </#if>
@@ -20,7 +20,13 @@ Advisor Organization: <select name="ao" >
 <#include "../template/footer.ftl">
 
 <script type="text/javascript">
-$(document).ready(function() { 
+$(document).ready(function() {
+	var aoData = [<#list context.aos as ao>
+	 	{id : ${ao.id}, text: "${ao.name}"},
+	 	</#list>];
+	$("#aoSelect").select2({
+		data: aoData
+	});
 	$("#saveBtn").on('click', function(event) { 
 		var billet = buildForm("billetForm");
 		if (billet["ao"]) { 

@@ -14,4 +14,5 @@
 	<td><a href="/people/${p.id}/edit">[Edit]</a></td>
 </#list>
 </table>
+<a href="/people/new">[Create new Person]</a>
 <#include "../template/footer.ftl">

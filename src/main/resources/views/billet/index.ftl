@@ -15,5 +15,6 @@
 	</tr>
 </#list>
 </table>
+<a href="/billets/new">[Create New Billet]</a>
 
 <#include "../template/footer.ftl">

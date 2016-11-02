@@ -28,19 +28,18 @@ public class AdvisorOrganizationResourceTest extends AbstractResourceTest {
 		Person steve = getSteveSteveson(); //get an authenticated user 
 		
 		//Create a new AO
-		AdvisorOrganization created = httpQuery("/advisorOrganizations/new")
+		AdvisorOrganization created = httpQuery("/advisorOrganizations/new", steve)
 			.post(Entity.json(ao), AdvisorOrganization.class);
 		assertThat(ao.getName()).isEqualTo(created.getName());
 		
 		//update name of the AO
 		created.setName("Ao McAoFace");
-		Response resp = httpQuery("/advisorOrganizations/update")
+		Response resp = httpQuery("/advisorOrganizations/update", steve)
 				.post(Entity.json(created));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
 		//Verify the AO name is updated. 
-		AdvisorOrganization updated = client.target(String.format("http://localhost:%d/advisorOrganizations/%d", RULE.getLocalPort(), created.getId()))
-				.request()
+		AdvisorOrganization updated = httpQuery(String.format("/advisorOrganizations/%d",created.getId()), steve)
 				.get(AdvisorOrganization.class);
 		assertThat(updated.getName()).isEqualTo(created.getName());
 		

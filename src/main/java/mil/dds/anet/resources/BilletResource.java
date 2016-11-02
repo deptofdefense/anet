@@ -32,9 +32,11 @@ import mil.dds.anet.views.billet.BilletListView;
 public class BilletResource {
 
 	BilletDao dao;
+	AnetObjectEngine engine;
 	
 	public BilletResource(AnetObjectEngine engine) { 
 		this.dao = engine.getBilletDao();
+		this.engine = engine;
 	}
 	
 	@GET
@@ -51,6 +53,15 @@ public class BilletResource {
 		Billet b = dao.getById(id);
 		b.addToContext("advisor", dao.getPersonInBilletNow(b));
 		return b.render("show.ftl");
+	}
+	
+	@GET
+	@Path("/new")
+	@Produces(MediaType.TEXT_HTML)
+	public Billet getBilletForm() { 
+		Billet b = (new Billet());
+		b.addToContext("aos", engine.getAdvisorOrganizationDao().getAll(0, Integer.MAX_VALUE));
+		return b.render("form.ftl");
 	}
 	
 	@POST
