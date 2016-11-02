@@ -38,13 +38,13 @@ public abstract class AbstractResourceTest {
 	}
 	
 	public Person findOrPutPersonInDb(Person stub) { 
-		List<Person> ret = httpQuery("/people/search?q=" + stub.getLastName()).get(new GenericType<List<Person>>() {});
+		List<Person> ret = httpQuery("/people/search?q=" + stub.getLastName(), PersonTest.getSteveStevesonStub()).get(new GenericType<List<Person>>() {});
 		for (Person p : ret) { 
 			if (p.getEmailAddress().equals(stub.getEmailAddress())) { return p; } 
 		}
 		
-		//Create Jack and insert into DB
-		Person newPerson = httpQuery("/people/new").post(Entity.json(stub), Person.class);
+		//Create insert into DB, Steve Steveson should AWAYS be in the database. 
+		Person newPerson = httpQuery("/people/new", PersonTest.getSteveStevesonStub()).post(Entity.json(stub), Person.class);
 		return newPerson;
 	}
 	

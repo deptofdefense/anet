@@ -10,6 +10,7 @@ import org.junit.Test;
 import io.dropwizard.client.JerseyClientBuilder;
 import mil.dds.anet.beans.AdvisorOrganization;
 import mil.dds.anet.beans.Billet;
+import mil.dds.anet.beans.Person;
 import mil.dds.anet.test.beans.AdvisorOrganizationTest;
 import mil.dds.anet.test.beans.BilletTest;
 
@@ -24,6 +25,7 @@ public class AdvisorOrganizationResourceTest extends AbstractResourceTest {
 	@Test
 	public void createAO() { 
 		AdvisorOrganization ao = AdvisorOrganizationTest.getTestAO();
+		Person steve = getSteveSteveson(); //get an authenticated user 
 		
 		//Create a new AO
 		AdvisorOrganization created = httpQuery("/advisorOrganizations/new")
@@ -43,15 +45,15 @@ public class AdvisorOrganizationResourceTest extends AbstractResourceTest {
 		assertThat(updated.getName()).isEqualTo(created.getName());
 		
 		//Create a billet and put then in this AO
-		Billet b1 = httpQuery("/billets/new").post(Entity.json(BilletTest.getTestBillet()), Billet.class);
+		Billet b1 = httpQuery("/billets/new", steve).post(Entity.json(BilletTest.getTestBillet()), Billet.class);
 		assertThat(b1.getId()).isNotNull();
 		assertThat(b1.getAdvisorOrganization()).isNull();
 		
 		b1.setAdvisorOrganization(updated);
-		resp = httpQuery("/billets/update").post(Entity.json(b1));
+		resp = httpQuery("/billets/update", steve).post(Entity.json(b1));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
-		Billet ret = httpQuery(String.format("/billets/%d", b1.getId())).get(Billet.class);
+		Billet ret = httpQuery(String.format("/billets/%d", b1.getId()), steve).get(Billet.class);
 		assertThat(ret.getAdvisorOrganization()).isNotNull();
 		assertThat(ret.getAdvisorOrganization().getId()).isEqualTo(updated.getId());
 				

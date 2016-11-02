@@ -4,7 +4,7 @@
 <tr><th>id</th><th>first</th><th>last</th><th>email</th><th>Status</th><th>Rank</th><th>Role</th></tr>
 <#list people as p>
 	<tr>
-	<td>${p.id}</td>
+	<td><a href="/people/${p.id}">${p.id}</a></td>
 	<td>${p.firstName}</td>
 	<td>${p.lastName}</td>
 	<td>${p.emailAddress!}</td>

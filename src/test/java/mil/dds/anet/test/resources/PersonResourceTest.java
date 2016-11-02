@@ -34,17 +34,17 @@ public class PersonResourceTest extends AbstractResourceTest {
 		Person jack = getJackJackson();
 		//Creation is handled by the parent class, which really does a search... :D. 
 
-		Person retPerson = httpQuery(String.format("/people/%d", jack.getId())).get(Person.class);
+		Person retPerson = httpQuery(String.format("/people/%d", jack.getId()), jack).get(Person.class);
     	
     	assertThat(retPerson).isEqualTo(jack);
     	assertThat(retPerson.getId()).isEqualTo(jack.getId());
     	
     	jack.setFirstName("Roberto");
-    	Response resp = httpQuery("/people/update")
+    	Response resp = httpQuery("/people/update", retPerson)
     			.post(Entity.json(jack));
     	assertThat(resp.getStatus()).isEqualTo(200);
     	
-    	retPerson = httpQuery(String.format("/people/%d", jack.getId())).get(Person.class);
+    	retPerson = httpQuery(String.format("/people/%d", jack.getId()), jack).get(Person.class);
     	assertThat(retPerson.getFirstName()).isEqualTo(jack.getFirstName());
     }
 	
@@ -69,13 +69,14 @@ public class PersonResourceTest extends AbstractResourceTest {
 	
 	@Test
 	public void testSearchPerson() { 
+		Person steve = getSteveSteveson();
 		//Create some people
 		final ObjectMapper MAPPER = Jackson.newObjectMapper();
 		List<Person> people = new ArrayList<Person>();
 		try { 
 			List<Person> peopleStubs = MAPPER.readValue(fixture("testJson/people/fakeNames.json"), new TypeReference<List<Person>>() {});
 			for (Person p : (peopleStubs.subList(0, 10))) { 
-				Person created = httpQuery("/people/new").post(Entity.json(p), Person.class);
+				Person created = httpQuery("/people/new", steve).post(Entity.json(p), Person.class);
 				people.add(created);
 			}
 		} catch (Exception e) { 
@@ -88,8 +89,7 @@ public class PersonResourceTest extends AbstractResourceTest {
 		for (int i=0;i<5;i++) { 
 			Person p = people.get(rand.nextInt(people.size()));
 			String query = p.getFirstName().substring(0, 2 + (rand.nextInt(p.getFirstName().length() - 2)));
-			List<Person> searchResults = client.target(String.format("http://localhost:%d/people/search?q=%s", RULE.getLocalPort(), query))
-					.request()
+			List<Person> searchResults = httpQuery("/people/search?q=" + query, steve)
 					.get(new GenericType<List<Person>>() {});
 			assertThat(searchResults.size()).isGreaterThan(0);
 			assertThat(searchResults).contains(p);
@@ -98,8 +98,7 @@ public class PersonResourceTest extends AbstractResourceTest {
 		for (int i=0;i<5;i++) { 
 			Person p = people.get(rand.nextInt(people.size()));
 			String query = p.getLastName().substring(0, 2 + (rand.nextInt(p.getLastName().length() - 2)));
-			List<Person> searchResults = client.target(String.format("http://localhost:%d/people/search?q=%s", RULE.getLocalPort(), query))
-					.request()
+			List<Person> searchResults = httpQuery("/people/search?q=" + query, steve)
 					.get(new GenericType<List<Person>>() {});
 			assertThat(searchResults.size()).isGreaterThan(0);
 			assertThat(searchResults).contains(p);

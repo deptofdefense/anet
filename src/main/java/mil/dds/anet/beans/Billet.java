@@ -16,6 +16,8 @@ public class Billet extends AbstractAnetView<Billet> {
 	DateTime createdAt;
 	DateTime updatedAt;
 	AdvisorOrganization advisorOrganization;
+	
+	Person advisor;
 
 	public static Billet createWithId(Integer id) { 
 		Billet b = new Billet();

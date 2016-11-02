@@ -47,14 +47,24 @@ public class BilletResource {
 	@GET
 	@Path("/{id}")
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
-	public Billet getBillet(@Context HttpServletRequest req, @PathParam("id") int id) { 
-		return (dao.getById(id)).render("show.ftl");
+	public Billet getBillet(@Context HttpServletRequest req, @PathParam("id") int id) {
+		Billet b = dao.getById(id);
+		b.addToContext("advisor", dao.getPersonInBilletNow(b));
+		return b.render("show.ftl");
 	}
 	
 	@POST
 	@Path("/new")
 	public Billet createBillet(Billet b) {
 		return dao.insert(b);
+	}
+	
+	@GET
+	@Path("/{id}/edit")
+	@Produces(MediaType.TEXT_HTML)
+	public Billet getBilletEditForm(@PathParam("id") int id) { 
+		Billet b = dao.getById(id);
+		return b.render("form.ftl");
 	}
 	
 	@POST
@@ -113,5 +123,11 @@ public class BilletResource {
 		Tashkil t = Tashkil.createWithId(tashkilId);
 		dao.deleteTashkilAssociation(b, t);
 		return Response.ok().build();
+	}
+	
+	@GET
+	@Path("/empty")
+	public List<Billet> getEmptyBillets() { 
+		return dao.getEmptyBillets();
 	}
 }

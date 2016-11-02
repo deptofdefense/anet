@@ -14,6 +14,9 @@ public class TashkilMapper implements ResultSetMapper<Tashkil> {
 
 	@Override
 	public Tashkil map(int index, ResultSet r, StatementContext ctx) throws SQLException {
+		//This hits when we do a join but there's no Tashkil record. 
+		if (r.getObject("id") == null) { return null; }
+		
 		Tashkil t = new Tashkil();
 		t.setId(r.getInt("id"));
 		t.setCode(r.getString("code"));

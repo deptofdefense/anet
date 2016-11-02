@@ -45,6 +45,14 @@ public class BilletDao implements IAnetDao<Billet> {
 			.bind("updatedAt", b.getUpdatedAt())
 			.executeAndReturnGeneratedKeys();
 		b.setId((Integer) (keys.first().get("last_insert_rowid()")));
+		
+		//TODO: this should be in a transaction.
+		dbHandle.createStatement("INSERT INTO billetAdvisors (billetId, advisorId, createdAt) VALUES (:billetId, :advisorId, :createdAt)")
+			.bind("billetId", b.getId())
+			.bind("advisorId", (Integer) null)
+			.bind("createdAt", b.getCreatedAt())
+			.execute();
+		
 		return b;
 	}
 	
@@ -189,4 +197,14 @@ public class BilletDao implements IAnetDao<Billet> {
 			.execute();
 		
 	}
+
+	public List<Billet> getEmptyBillets() {
+		return dbHandle.createQuery("SELECT billets.* FROM billets INNER JOIN " + 
+				"(SELECT billetId, advisorId, MAX(createdAt) FROM billetAdvisors GROUP BY billetId) emptyBillets " +
+				"ON billets.id = emptyBillets.billetId WHERE emptyBillets.advisorId is null")
+			.map(new BilletMapper())
+			.list();
+	
+	}
+
 }

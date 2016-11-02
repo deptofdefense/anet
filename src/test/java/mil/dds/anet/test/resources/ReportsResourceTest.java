@@ -49,33 +49,33 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		Billet authorBillet = new Billet();
 		authorBillet.setName("A report writer");
 		authorBillet.setAdvisorOrganization(ao);
-		authorBillet = httpQuery("/billets/new").post(Entity.json(authorBillet), Billet.class);
+		authorBillet = httpQuery("/billets/new", author).post(Entity.json(authorBillet), Billet.class);
 		assertThat(authorBillet.getId()).isNotNull();
 		
 		//Set this author in this billet
-		Response resp = httpQuery(String.format("/billets/%d/advisor", authorBillet.getId())).post(Entity.json(author));
+		Response resp = httpQuery(String.format("/billets/%d/advisor", authorBillet.getId()), author).post(Entity.json(author));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
 		//Create Approval workflow for Advising Organization
-		Group approvingGroup = httpQuery("/groups/new")
+		Group approvingGroup = httpQuery("/groups/new", author)
 				.post(Entity.json(Group.create("Test Group of approvers")), Group.class);
-		resp = httpQuery(String.format("/groups/%d/addMember?personId=%d", approvingGroup.getId(), approver1.getId()))
+		resp = httpQuery(String.format("/groups/%d/addMember?personId=%d", approvingGroup.getId(), approver1.getId()), author)
 				.get();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
-		ApprovalStep approval = httpQuery("/approvalSteps/new")
+		ApprovalStep approval = httpQuery("/approvalSteps/new", author)
 				.post(Entity.json(ApprovalStep.create(null, approvingGroup.getId(), null, ao.getId())), ApprovalStep.class);
 		
 		//TODO: Create a POAM structure for the AO
 //		fail("No way to assign a POAM to an AO");
-		Poam top = httpQuery("/poams/new")
+		Poam top = httpQuery("/poams/new", author)
 				.post(Entity.json(Poam.create("test-1", "Test Top Poam", "TOP")), Poam.class);
-		Poam action = httpQuery("/poams/new")
+		Poam action = httpQuery("/poams/new", author)
 				.post(Entity.json(Poam.create("test-1-1", "Test Poam Action", "Action", top)), Poam.class);
 				
 		
 		//Create a Location that this Report was written at
-		Location loc = httpQuery("/locations/new")
+		Location loc = httpQuery("/locations/new", author)
 				.post(Entity.json(Location.create("The Boat Dock", new LatLng(1.23,4.56))), Location.class);
 		
 		//Write a Report
