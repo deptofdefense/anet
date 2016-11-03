@@ -81,7 +81,7 @@ public class PoamDao implements IAnetDao<Poam> {
 		return dbHandle.createQuery("WITH RECURSIVE parent_poams(id, shortName, longName, category, parentPoamId, createdAt, updatedAt) AS (" + 
 					"SELECT * FROM poams WHERE id = :poamId " + 
 				"UNION ALL " + 
-					"SELECT p.* from parent_poams pp, poams p WHERE p.parenPoamId = pp.id " +
+					"SELECT p.* from parent_poams pp, poams p WHERE p.parentPoamId = pp.id " +
 				") SELECT * from parent_poams;")
 			.bind("poamId", poamId)
 			.map(new PoamMapper())

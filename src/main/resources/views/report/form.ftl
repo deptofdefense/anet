@@ -143,15 +143,17 @@
                         <form class="anet-attach-ef">
                           <div class="form-group">
                             <label for="attachEFName">Essential Function</label>
-                            <input id="attachEFName">
+                            <select id="attachEFName">
+                            	<option></option>
+							<#list context.efs as ef>
+								<option value="${ef.id}">${ef.shortName} - ${ef.longName}</option>
+							</#list>
+							</select>
                           </div>
 
                           <div class="form-group">
                             <label for="attachEFMilestones">Milestones</label>
-                            <select id="attachEFMilestones" multiple="multiple">
-								<#list context.poams as poam>
-									<option value="${poam.id}>">${poam.shortName} - ${poam.longName}</option>
-								</#list>
+                            <select id="attachEFMilestones" >
                             </select>
                           </div>
 
@@ -206,6 +208,50 @@ $(document).ready(function () {
 	enablePersonSearch("#afghanPrincipal","PRINCIPAL");
 	enablePersonSearch("#attachPersonName","ADVISOR");
 	enableLocationSearch("#engagementLocation");
+	
+	$("#attachEFName").select2({ 
+		dropdownParent: $(".mainbody"),
+		placeholder: 'Select an EF'
+	});
+	$("#attachEFName").on("select2:select", function (e) { 
+		var efId = $("#attachEFName").val();
+		$.ajax( { 
+			url: '/poams/' + efId + '/children?cat=Milestone',
+			method: "GET"
+		}).done(function(response) { 
+			var results = _.map(response, function(el) { 
+				return {
+					id : el.id,
+					text: el.shortName + " - " + el.longName
+				}
+			});
+			$("#attachEFMilestones").empty();
+			$("#attachEFMilestones").select2({
+				data: results,
+				dropdownParent: $(".mainbody")
+			});
+		}); 
+	});
+	
+	$("#attachEFMilestones").on("select2:select", function(e) { 
+		var milestoneId = $("#attachEFMilestones").val();
+		$.ajax({
+			url: '/poams/' + milestoneId + '/children?cat=Action',
+			method: 'GET'
+		}).done(function(response) { 
+		var results = _.map(response, function(el) { 
+				return {
+					id : el.id,
+					text: el.shortName + " - " + el.longName
+				}
+			});
+			$("#attachEFActions").empty();
+			$("#attachEFActions").select2({
+				data: results,
+				dropdownParent: $(".mainbody")
+			});
+		}); 
+	});	
 
 	$("#reportSubmit").on("click", function(event) { 
 		var report = buildForm("reportForm");

@@ -66,9 +66,9 @@ public class ReportResource {
 	@Path("/new")
 	@Produces(MediaType.TEXT_HTML)
 	public Report createNewReportForm() { 
-		List<Poam> milestones = engine.getPoamDao().getPoamsByCategory("Milestone");
+		List<Poam> milestones = engine.getPoamDao().getPoamsByCategory("EF");
 		Report r = (new Report()).render("form.ftl");
-		r.addToContext("poams", milestones);
+		r.addToContext("efs", milestones);
 		return r;
 	}
 	

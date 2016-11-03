@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.GET;
@@ -43,9 +44,20 @@ public class PoamResource {
 	}
 	
 	@GET
-	@Path("{id}")
+	@Path("/{id}")
 	public Poam getPoamById(@PathParam("id") int id) {
 		return dao.getById(id);
+	}
+	
+	@GET
+	@Path("/{id}/children")
+	public List<Poam> getChildren(@PathParam("id") int id, @QueryParam("cat") String category) {
+		List<Poam> p = dao.getPoamAndChildren(id);
+		if (category != null) { 
+			return p.stream().filter(el -> el.getCategory().equalsIgnoreCase(category))
+				.collect(Collectors.toList());
+		}
+		return p;
 	}
 	
 	@POST
