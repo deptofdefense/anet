@@ -20,7 +20,7 @@ import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.beans.Tashkil;
 import mil.dds.anet.database.PersonDao;
-import mil.dds.anet.views.person.PersonListView;
+import mil.dds.anet.views.ObjectListView;
 
 @Path("/people")
 @Produces(MediaType.APPLICATION_JSON)
@@ -28,11 +28,9 @@ import mil.dds.anet.views.person.PersonListView;
 public class PersonResource {
 
 	private PersonDao dao;
-	private AnetObjectEngine engine;
 	
 	public PersonResource(AnetObjectEngine engine) { 
 		this.dao = engine.getPersonDao();
-		this.engine = engine;
 	}
 	
 	@GET
@@ -44,8 +42,8 @@ public class PersonResource {
 	@GET
 	@Path("/")
 	@Produces(MediaType.TEXT_HTML)
-	public PersonListView getAllPeopleView(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
-		return new PersonListView(dao.getAll(pageNum, pageSize));
+	public ObjectListView<Person> getAllPeopleView(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
+		return new ObjectListView<Person>(dao.getAll(pageNum, pageSize), Person.class);
 	}
 	
 	@GET
@@ -54,7 +52,7 @@ public class PersonResource {
 	public Person getViewById(@PathParam("id") int id) { 
 		Person p = dao.getById(id);
 		p.addToContext("billet", dao.getBilletForAdvisor(p.getId()));
-		return p.render("show.ftl", engine);
+		return p.render("show.ftl");
 	}
 	
 	@GET

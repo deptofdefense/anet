@@ -3,6 +3,7 @@ package mil.dds.anet.database.mappers;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.joda.time.DateTime;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
@@ -17,7 +18,9 @@ public class PoamMapper implements ResultSetMapper<Poam> {
 		p.setLongName(r.getString("longName"));
 		p.setShortName(r.getString("shortName"));
 		p.setCategory(r.getString("category"));
-		p.setParentPoamId(r.getInt("parentPoamId"));
+		p.setParentPoam(Poam.createWithId(r.getInt("parentPoamId")));
+		p.setCreatedAt(new DateTime(r.getLong("createdAt")));
+		p.setUpdatedAt(new DateTime(r.getLong("updatedAt")));
 		return p;
 	}
 

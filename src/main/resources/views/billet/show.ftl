@@ -8,12 +8,12 @@
 </tr>
 <tr>
 	<td>Advisor Org</td>
-	<td><#if advisorOrganization??> ${advisorOrganization.name} </#if></td>
+	<td><#if advisorOrganization??><a href="/advisorOrganizations/${advisorOrganization.id}">${advisorOrganization.name}</a></#if></td>
 </tr>
 <tr>
 	<td colspan=2>
-		<#if context.advisor??>
-			Currently filled by: ${context.advisor}
+		<#if advisor??>
+			Currently filled by: ${advisor}
 		<#else>
 			No person currently in this billet<br>
 			<i style="font-size:12px" >(go to a person page to set the billet on a person.. )</i>

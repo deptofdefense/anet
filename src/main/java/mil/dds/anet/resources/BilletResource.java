@@ -3,7 +3,6 @@ package mil.dds.anet.resources;
 import java.util.List;
 
 import javax.annotation.security.PermitAll;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -12,7 +11,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -24,7 +22,7 @@ import mil.dds.anet.beans.Billet;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Tashkil;
 import mil.dds.anet.database.BilletDao;
-import mil.dds.anet.views.billet.BilletListView;
+import mil.dds.anet.views.ObjectListView;
 
 @Path("/billets")
 @Produces(MediaType.APPLICATION_JSON)
@@ -42,16 +40,15 @@ public class BilletResource {
 	@GET
 	@Path("/")
 	@Produces(MediaType.TEXT_HTML)
-	public BilletListView getAllBilletsView(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
-		return new BilletListView(dao.getAllBillets(pageNum, pageSize));
+	public ObjectListView<Billet> getAllBilletsView(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
+		return new ObjectListView<Billet>(dao.getAllBillets(pageNum, pageSize), Billet.class);
 	}
 	
 	@GET
 	@Path("/{id}")
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
-	public Billet getBillet(@Context HttpServletRequest req, @PathParam("id") int id) {
+	public Billet getBillet(@PathParam("id") int id) {
 		Billet b = dao.getById(id);
-		b.addToContext("advisor", dao.getPersonInBilletNow(b));
 		return b.render("show.ftl");
 	}
 	
@@ -75,6 +72,7 @@ public class BilletResource {
 	@Produces(MediaType.TEXT_HTML)
 	public Billet getBilletEditForm(@PathParam("id") int id) { 
 		Billet b = dao.getById(id);
+		b.addToContext("aos", engine.getAdvisorOrganizationDao().getAll(0, Integer.MAX_VALUE));
 		return b.render("form.ftl");
 	}
 	

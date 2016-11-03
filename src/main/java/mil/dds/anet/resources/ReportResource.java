@@ -29,7 +29,7 @@ import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.database.ReportDao;
 import mil.dds.anet.utils.ResponseUtils;
-import mil.dds.anet.views.report.ReportListView;
+import mil.dds.anet.views.ObjectListView;
 
 @Path("/reports")
 @Produces(MediaType.APPLICATION_JSON)
@@ -49,8 +49,8 @@ public class ReportResource {
 	@GET
 	@Path("/")
 	@Produces(MediaType.TEXT_HTML)
-	public ReportListView getAllReportsView(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
-		return new ReportListView(dao.getAll(pageNum, pageSize));
+	public ObjectListView<Report> getAllReportsView(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
+		return new ObjectListView<Report>(dao.getAll(pageNum, pageSize), Report.class);
 	}
 	
 	@GET

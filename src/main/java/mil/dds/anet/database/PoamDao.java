@@ -74,4 +74,22 @@ public class PoamDao implements IAnetDao<Poam> {
 			.map(new PoamMapper());
 		return query.list();
 	}
+	
+	/* Returns the poam and all poams under this one (to all depths) */
+	public List<Poam> getPoamAndChildren(int poamId) { 
+		return dbHandle.createQuery("WITH RECURSIVE parent_poams(id, shortName, longName, category, parentPoamId, createdAt, updatedAt) AS (" + 
+					"SELECT * FROM poams WHERE id = :poamId " + 
+				"UNION ALL " + 
+					"SELECT p.* from parent_poams pp, poams p WHERE p.parenPoamId = pp.id " +
+				") SELECT * from parent_poams;")
+			.bind("poamId", poamId)
+			.map(new PoamMapper())
+			.list();
+	}
+
+	public List<Poam> getTopLevelPoams() {
+		return dbHandle.createQuery("SELECT * FROM poams WHERE parentPoamId IS NULL")
+			.map(new PoamMapper())
+			.list();
+	}
 }

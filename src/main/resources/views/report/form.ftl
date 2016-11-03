@@ -160,7 +160,7 @@
                             <label for="attachEFMilestones">Milestones</label>
                             <select id="attachEFMilestones" multiple="multiple">
 								<#list context.poams as poam>
-									<option value="${poam.id}>">${paom.shortName} - ${poam.longName}</option>
+									<option value="${poam.id}>">${poam.shortName} - ${poam.longName}</option>
 								</#list>
                             </select>
                           </div>

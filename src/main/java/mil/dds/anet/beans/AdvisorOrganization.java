@@ -5,13 +5,16 @@ import java.util.Objects;
 
 import org.joda.time.DateTime;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.views.AbstractAnetView;
 
 public class AdvisorOrganization extends AbstractAnetView<AdvisorOrganization> {
 
 	String name;
+	AdvisorOrganization parentOrg;
 	
 	DateTime createdAt;
 	DateTime updatedAt;
@@ -25,6 +28,20 @@ public class AdvisorOrganization extends AbstractAnetView<AdvisorOrganization> {
 		this.name = name;
 	}
 
+	@JsonIgnore
+	public AdvisorOrganization getParentOrg() { 
+		//TODO: handle load levels for parent org. 
+		return null;
+	}
+	
+	@JsonGetter("parentOrg")
+	public AdvisorOrganization getParentOrgJson() {
+		return parentOrg;
+	}
+	
+	public void setParentOrg(AdvisorOrganization parentOrg) {
+		this.parentOrg = parentOrg;
+	}
 	public DateTime getCreatedAt() {
 		return createdAt;
 	}
@@ -40,8 +57,9 @@ public class AdvisorOrganization extends AbstractAnetView<AdvisorOrganization> {
 	
 	@JsonIgnore
 	public List<Billet> getBillets() {
-		if (billets == null && engine != null) {
-			billets = engine.getBilletDao().getByAdvisorOrganization(this);
+		if (billets == null) {
+			billets = AnetObjectEngine.getInstance()
+					.getBilletDao().getByAdvisorOrganization(this);
 		}
 		return billets;
 	}

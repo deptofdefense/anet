@@ -2,7 +2,7 @@
 <h1>Listing People</h1>
 <table>
 <tr><th>id</th><th>first</th><th>last</th><th>email</th><th>Status</th><th>Rank</th><th>Role</th></tr>
-<#list people as p>
+<#list list as p>
 	<tr>
 	<td><a href="/people/${p.id}">${p.id}</a></td>
 	<td>${p.firstName}</td>

@@ -6,7 +6,13 @@ An Advisor Organization
 <#if billets??>
 <ul> 
 <#list billets as billet>
-<li><a href="/billets/${billet.id}">${billet.name}</a> - Person name</li>
+<li><a href="/billets/${billet.id}">${billet.name}</a> - 
+	<#if billet.advisor??>
+		${billet.advisor}
+	<#else>
+		<i>No advisor assigned</i>
+	</#if>
+</li>
 </#list>
 </ul>
 <#else>

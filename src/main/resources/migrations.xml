@@ -40,6 +40,7 @@
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="name" type="varchar(255)" />
+			<column name="parentOrgId" type="int" />
 
 			<column name="createdAt" type="datetime" />
 			<column name="updatedAt" type="datetime" />

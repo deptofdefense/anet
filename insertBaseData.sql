@@ -25,3 +25,39 @@ UPDATE billets SET advisorOrganizationId = (SELECT id FROM advisorOrganizations 
 UPDATE billets SET advisorOrganizationId = (SELECT id FROM advisorOrganizations WHERE name ='EF2') WHERE name LIKE 'EF2%';
 UPDATE billets SET advisorOrganizationId = (SELECT id FROM advisorOrganizations WHERE name ='EF3') WHERE name LIKE 'EF3%';
 UPDATE billets SET advisorOrganizationId = (SELECT id FROM advisorOrganizations WHERE name ='EF4') WHERE name LIKE 'EF4%';
+
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt) 
+	VALUES ('EF1', '', 'EF', 1478098949000, 1478098949000);
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId) 
+	VALUES ('EF1.1', '', 'Sub-EF', 1478098949000, 1478098949000, (SELECT id from poams where shortName = 'EF1'));
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId) 
+	VALUES ('1.1.A', '', 'Milestone', 1478098949000, 1478098949000, (SELECT id from poams where shortName = 'EF1.1'));
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId) 
+	VALUES ('1.1.B', '', 'Milestone', 1478098949000, 1478098949000, (SELECT id from poams where shortName = 'EF1.1'));
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId) 
+	VALUES ('1.1.C', '', 'Milestone', 1478098949000, 1478098949000, (SELECT id from poams where shortName = 'EF1.1'));
+
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId) 
+	VALUES ('EF1.2', '', 'Sub-EF', 1478098949000, 1478098949000, (SELECT id from poams where shortName = 'EF1'));
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId) 
+	VALUES ('1.2.A', '', 'Milestone', 1478098949000, 1478098949000, (SELECT id from poams where shortName = 'EF1.2'));
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId) 
+	VALUES ('1.2.B', '', 'Milestone', 1478098949000, 1478098949000, (SELECT id from poams where shortName = 'EF1.2'));
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId) 
+	VALUES ('1.2.C', '', 'Milestone', 1478098949000, 1478098949000, (SELECT id from poams where shortName = 'EF1.2'));
+
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId) 
+	VALUES ('EF1.3', '', 'Sub-EF', 1478098949000, 1478098949000, (SELECT id from poams where shortName = 'EF1'));
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId) 
+	VALUES ('1.3.A', '', 'Milestone', 1478098949000, 1478098949000, (SELECT id from poams where shortName = 'EF1.3'));
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId) 
+	VALUES ('1.3.B', '', 'Milestone', 1478098949000, 1478098949000, (SELECT id from poams where shortName = 'EF1.3'));
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId) 
+	VALUES ('1.3.C', '', 'Milestone', 1478098949000, 1478098949000, (SELECT id from poams where shortName = 'EF1.3'));
+
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt) 
+	VALUES ('EF2', '', 'EF', 1478098949000, 1478098949000);
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt) 
+	VALUES ('EF3', '', 'EF', 1478098949000, 1478098949000);
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt) 
+	VALUES ('EF4', '', 'EF', 1478098949000, 1478098949000);

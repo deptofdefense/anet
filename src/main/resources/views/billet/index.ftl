@@ -3,7 +3,7 @@
 
 <table>
 <tr><th>id</th><th>name</th><th>Advisor Organization</th></tr>
-<#list billets as billet>
+<#list list as billet>
 	<tr>
 		<td><a href="/billets/${billet.id}">${billet.id}</a></td>
 		<td>${billet.name}</td>

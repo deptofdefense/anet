@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
+import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.views.AbstractAnetView;
 
 public class Billet extends AbstractAnetView<Billet> {
@@ -54,8 +55,9 @@ public class Billet extends AbstractAnetView<Billet> {
 		if (advisorOrganization.getLoadLevel() == null ) { 
 			return advisorOrganization; // just a bean, not a db object! 
 		}
-		if (advisorOrganization.getLoadLevel().contains(LoadLevel.PROPERTIES) == false) { 
-			this.advisorOrganization = getBeanAtLoadLevel(advisorOrganization, LoadLevel.PROPERTIES);
+		if (advisorOrganization.getLoadLevel().contains(LoadLevel.PROPERTIES) == false) {
+			this.advisorOrganization = AnetObjectEngine.getInstance()
+					.getAdvisorOrganizationDao().getById(advisorOrganization.getId());
 		}
 		return advisorOrganization;
 	}
@@ -68,6 +70,15 @@ public class Billet extends AbstractAnetView<Billet> {
 	@JsonGetter("advisorOrganization")
 	public AdvisorOrganization getAdvisorOrganizationJson() { 
 		return advisorOrganization;
+	}
+	
+	@JsonIgnore
+	public Person getAdvisor() { 
+		if (advisor == null) { 
+			advisor = AnetObjectEngine.getInstance()
+					.getBilletDao().getPersonInBilletNow(this);
+		}
+		return advisor;
 	}
 	
 	@Override

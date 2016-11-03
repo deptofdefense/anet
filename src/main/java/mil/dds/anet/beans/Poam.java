@@ -1,9 +1,14 @@
 package mil.dds.anet.beans;
 
+import java.util.List;
 import java.util.Objects;
 
 import org.joda.time.DateTime;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.views.AbstractAnetView;
 
 public class Poam extends AbstractAnetView<Poam> {
@@ -11,7 +16,8 @@ public class Poam extends AbstractAnetView<Poam> {
 	String shortName;
 	String longName;
 	String category;
-	Integer parentPoamId;
+	Poam parentPoam;
+	List<Poam> childrenPoams;
 
 	DateTime createdAt;
 	DateTime updatedAt;
@@ -34,11 +40,38 @@ public class Poam extends AbstractAnetView<Poam> {
 	public void setCategory(String category) {
 		this.category = category;
 	}
-	public Integer getParentPoamId() {
-		return parentPoamId;
+	
+	@JsonIgnore
+	public Poam getParentPoam() {
+		if (parentPoam == null) { return null; }
+		if (parentPoam.getLoadLevel() == null) { return parentPoam; } 
+		if (parentPoam.getLoadLevel().contains(LoadLevel.PROPERTIES) == false) { 
+			this.parentPoam = AnetObjectEngine.getInstance()
+					.getPoamDao().getById(parentPoam.getId());
+		}
+		return parentPoam;
 	}
-	public void setParentPoamId(Integer parentPoamId) {
-		this.parentPoamId = parentPoamId;
+	
+	@JsonGetter("parentPoam")
+	public void setParentPoam(Poam parent) {
+		this.parentPoam = parent;
+	}
+	
+	@JsonIgnore
+	public List<Poam> getChildrenPoams(){ 
+		if (childrenPoams == null) { 
+			childrenPoams = AnetObjectEngine.getInstance()
+					.getPoamDao().getPoamsByParentId(this.getId());
+		}
+		return childrenPoams;
+	}
+	
+	@JsonGetter("childrenPoams")
+	public List<Poam> getChildrenPoamsJson() { 
+		return childrenPoams;
+	}
+	public void setChildrenPoams(List<Poam> childrenPoams) { 
+		this.childrenPoams = childrenPoams;
 	}
 	
 	public DateTime getCreatedAt() {
@@ -62,7 +95,7 @@ public class Poam extends AbstractAnetView<Poam> {
 		p.setShortName(shortName);
 		p.setLongName(longName);
 		p.setCategory(category);
-		if (parent != null) { p.setParentPoamId(parent.getId()); }
+		p.setParentPoam(parent);
 		return p;
 	}
 	
@@ -83,12 +116,12 @@ public class Poam extends AbstractAnetView<Poam> {
 				Objects.equals(other.getShortName(), shortName) &&
 				Objects.equals(other.getLongName(), longName) &&
 				Objects.equals(other.getCategory(), category) &&
-				Objects.equals(other.getParentPoamId(), parentPoamId);
+				Objects.equals(other.getParentPoam(), parentPoam);
 	}
 	
 	@Override
 	public int hashCode() { 
-		return Objects.hash(id, shortName, longName, category, parentPoamId);
+		return Objects.hash(id, shortName, longName, category, parentPoam);
 	}
 	
 }

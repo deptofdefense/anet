@@ -23,10 +23,8 @@ import mil.dds.anet.views.ObjectListView;
 public class AdvisorOrganizationResource {
 
 	private AdvisorOrganizationDao dao;
-	private AnetObjectEngine engine; 
 	
 	public AdvisorOrganizationResource(AnetObjectEngine engine) {
-		this.engine = engine;
 		this.dao = engine.getAdvisorOrganizationDao(); 
 	}
 	
@@ -47,7 +45,7 @@ public class AdvisorOrganizationResource {
 	@Path("/{id}")
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	public AdvisorOrganization getById(@PathParam("id") int id) {
-		return dao.getById(id).render("show.ftl", engine);
+		return dao.getById(id).render("show.ftl");
 	}
 	
 	@POST

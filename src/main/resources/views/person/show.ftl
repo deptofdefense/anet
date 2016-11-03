@@ -12,7 +12,7 @@ Hello, ${firstName} ${lastName} (${emailAddress!})!<br>
 	<th>Phone:</th><td>${phoneNumber!}</td>
 </tr>
 <tr>
-	<th>Rank:</th><td>${rank}</td>
+	<th>Rank:</th><td>${rank!}</td>
 </tr>
 <tr>
 	<th>Status:</th><td>${status}</td>
@@ -21,7 +21,7 @@ Hello, ${firstName} ${lastName} (${emailAddress!})!<br>
 	<th>Role:</th><td>${role}</td>
 </tr>
 <tr>
-	<th>Bio:</th><td>${biography}</td>
+	<th>Bio:</th><td>${biography!}</td>
 </tr>
 <tr><td colspan=2><i>Created at: ${createdAt} , Updated at: ${updatedAt}</td></tr>
 </table>

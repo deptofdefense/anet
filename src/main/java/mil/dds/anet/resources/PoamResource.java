@@ -1,6 +1,9 @@
 package mil.dds.anet.resources;
 
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -16,6 +19,7 @@ import javax.ws.rs.core.Response.Status;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.database.PoamDao;
+import mil.dds.anet.views.ObjectListView;
 
 @Path("/poams")
 @Produces(MediaType.APPLICATION_JSON)
@@ -25,6 +29,15 @@ public class PoamResource {
 	
 	public PoamResource(AnetObjectEngine engine) {
 		this.dao = engine.getPoamDao();
+	}
+	
+	@GET
+	@Path("/")
+	@Produces(MediaType.TEXT_HTML)
+	public ObjectListView<Poam> index() { 
+		List<Poam> tree = getFullPoamTree();
+		ObjectListView<Poam> view = new ObjectListView<Poam>(tree, Poam.class);
+		return view;
 	}
 	
 	@GET
@@ -54,6 +67,28 @@ public class PoamResource {
 	@Path("/byParentId")
 	public List<Poam> getPoamsByParentId(@QueryParam("id") int parentId) { 
 		return dao.getPoamsByParentId(parentId);
+	}
+	
+	@GET
+	@Path("/tree")
+	public List<Poam> getFullPoamTree() { 
+		List<Poam> poams = dao.getAll(0, Integer.MAX_VALUE);
+		
+		Map<Integer,Poam> poamById = new HashMap<Integer,Poam>();
+		List<Poam> topPoams = new LinkedList<Poam>();
+		for (Poam p : poams) {
+			p.setChildrenPoams(new LinkedList<Poam>());
+			poamById.put(p.getId(), p);
+		}
+		for (Poam p : poams) { 
+			if (p.getParentPoam() != null) { 
+				Poam parent = poamById.get(p.getParentPoam().getId());
+				parent.getChildrenPoams().add(p);
+			} else { 
+				topPoams.add(p);
+			}
+		}
+		return topPoams;		
 	}
 	
 	//TODO: You should never be able to delete a POAM, right?  

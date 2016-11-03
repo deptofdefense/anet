@@ -47,7 +47,8 @@ public class AnetObjectEngine {
 	ApprovalActionDao approvalActionDao;
 	ReportDao reportDao;
 
-	private static Map<Class<? extends AbstractAnetView<?>>, IAnetDao<?>> daoMap; 
+	private static Map<Class<? extends AbstractAnetView<?>>, IAnetDao<?>> daoMap;
+	private static AnetObjectEngine instance; 
 	
 	Handle dbHandle;
 	
@@ -76,6 +77,8 @@ public class AnetObjectEngine {
 //		daoMap.put(ApprovalStep.class, asDao);
 //		daoMap.put(ApprovalAction.class, approvalActionDao);
 		daoMap.put(Report.class, reportDao);
+		
+		instance = this;
 	}
 	
 	public PersonDao getPersonDao() { 
@@ -153,6 +156,10 @@ public class AnetObjectEngine {
 		return false;
 	}
 
+	public static AnetObjectEngine getInstance() { 
+		return instance;
+	}
+	
 	public static AbstractAnetView<?> loadBeanTo(AbstractAnetView<?> bean, LoadLevel ll) {
 		@SuppressWarnings("unchecked")
 		IAnetDao<? extends AbstractAnetView<?>> dao = (IAnetDao<? extends AbstractAnetView<?>>) daoMap.get(bean.getClass());

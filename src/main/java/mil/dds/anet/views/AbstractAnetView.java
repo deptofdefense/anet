@@ -13,7 +13,6 @@ import mil.dds.anet.AnetObjectEngine;
 public abstract class AbstractAnetView<T extends AbstractAnetView<?>> extends View {
 
 	protected String templateName;
-	protected AnetObjectEngine engine;
 	
 	protected LoadLevel loadLevel;
 	protected Integer id;
@@ -34,15 +33,9 @@ public abstract class AbstractAnetView<T extends AbstractAnetView<?>> extends Vi
 		return templateName;
 	}
 	
-	/* Renders this view in a way that it cannot cause more DB loads to occur */
-	public T render(String templateName) { 
-		return this.render(templateName, null);
-	}
-	
 	@SuppressWarnings("unchecked")
-	public T render(String templateName, AnetObjectEngine engine) { 
+	public T render(String templateName) { 
 		this.templateName = resolveName(templateName);
-		this.engine = engine;
 		return (T) this;
 	}
 	
