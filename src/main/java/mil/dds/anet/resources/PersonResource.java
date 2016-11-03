@@ -110,7 +110,7 @@ public class PersonResource {
 	@Path("/search")
 	@Produces(MediaType.TEXT_HTML)
 	public Person getSearchPage() { 
-		return (new Person()).render("search.mustache");
+		return (new Person()).render("search.ftl");
 	}
 	
 	@GET
