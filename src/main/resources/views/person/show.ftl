@@ -1,53 +1,99 @@
 <#include "../template/header.ftl">
 
-Hello, ${firstName} ${lastName} (${emailAddress!})!<br>
-<table>
-<tr>
-	<th>Name:</th><td>${firstName} ${lastName}</td>
-</tr>
-<tr>
-	<th>Email:</th><td>${emailAddress!}</td>
-</tr>
-<tr>
-	<th>Phone:</th><td>${phoneNumber!}</td>
-</tr>
-<tr>
-	<th>Rank:</th><td>${rank}</td>
-</tr>
-<tr>
-	<th>Status:</th><td>${status}</td>
-</tr>
-<tr>
-	<th>Role:</th><td>${role}</td>
-</tr>
-<tr>
-	<th>Bio:</th><td>${biography}</td>
-</tr>
-<tr><td colspan=2><i>Created at: ${createdAt} , Updated at: ${updatedAt}</td></tr>
-</table>
-<#if context.billet??>
-Billet Info: 
-<ul>
-<li>Id: ${context.billet.id} </li>
-<li>Name: <a href="/billets/${context.billet.id}">${context.billet.name}</a></li>
-<li>AO: 
-	<#if context.billet.advisorOrganization?? >
-		${context.billet.advisorOrganization.name}
-	<#else>
-		<i>None</i>
-	</#if>
-</li>
-</ul>
-<#else>
-Not currently in a Billet.<br>
-</#if>
-Set Billet: <select id="billetSelect"></select><br>
-<input type="button" id="billetSetBtn" value="Save"></input>
+<section class="anet-block">
+  <div class="anet-block__title">
+    ${firstName} ${lastName}
+    <div class="pull-right">
+    	${role}
+    </div>
+  </div>
+
+  <div class="anet-block__body">
+    <div class="row">
+      <div class="col-md-6">
+       <div class="field">
+       	<div class="header">Email</div>
+       	<div class="content"><a href="mailto:${emailAddress}">${emailAddress}</a></div>
+	   </div>
+	   <div class="field">
+       	<div class="header">Phone</div>
+       	<div class="content"><a href="tel:${phoneNumber}">${phoneNumber}</a></div>
+	   </div>
+	   <div class="field">
+       	<div class="header">Rank</div>
+       	<div class="content">${rank}</div>
+	   </div>
+	   <div class="field">
+       	<div class="header">Status</div>
+       	<div class="content">${status}</div>
+	   </div>
+	  </div>
+      <div class="col-md-6">
+        <div class="field">
+        ${biography}
+        </div>
+        <div class="field">
+        <small>
+        Created at: ${createdAt} <br>Updated at: ${updatedAt}
+        </small>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="anet-block">
+  <div class="anet-block__title">
+    Billet Settings
+  </div>
+   <div class="anet-block__body">
+    <div class="row">
+      <div class="col-md-6">
+      <div class="field">
+
+		<#if context.billet??>
+		Billet Info: 
+		<ul>
+		<li>Id: ${context.billet.id} </li>
+		<li>Name: <a href="/billets/${context.billet.id}">${context.billet.name}</a></li>
+		<li>AO: 
+			<#if context.billet.advisorOrganization?? >
+				${context.billet.advisorOrganization.name}
+			<#else>
+				<i>None</i>
+			</#if>
+		</li>
+		</ul>
+		<#else>
+		Not currently in a Billet.<br>
+		</#if>
+		Set Billet: <select id="billetSelect"></select><br>
+		<input type="button" id="billetSetBtn" value="Save"></input>
+
+      </div>
+	  </div>
+      <div class="col-md-6">
+        <div class="field">
+   	  </div>
+   	</div>
+   </div>
+ </div>
+</section>
+
+
+
+
+
+
+
+
+
+
 <#include "../template/footer.ftl">
 
 <script type="text/javascript">
 $(document).ready(function() { 
-	$("#billetSelect").select2( { 
+	$("#billetSelect").select2( {
+	    dropdownParent: $(".mainbody"), 
 		ajax: {
 			url: "/billets/empty",
 			dataType: 'json',

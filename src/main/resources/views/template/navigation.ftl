@@ -9,8 +9,8 @@
         <li><a href="#">Your Details</a></li>
       </ul>
     </li>
-    <li><a href="/search">Your Reports &amp; Approvals</a></li>
-    <li><a href="/search">Analytics</a></li>
+    <li><a href="/">Your Reports &amp; Approvals</a></li>
+    <li><a href="/">Analytics</a></li>
     <li><a href="#">Advisor Organizations</a>
       <ul class="collapsed usa-sidenav-sub_list">
         <#assign seq = ["foo", "bar", "baz"]>
@@ -23,7 +23,7 @@
         </#list>
       </ul>
     </li>
-    <li><a href="/search">ANET Training</a></li>
-    <li><a href="/search">ANETRoadmap</a></li>
+    <li><a href="/">ANET Training</a></li>
+    <li><a href="/">ANETRoadmap</a></li>
   </ul>
 </div>
