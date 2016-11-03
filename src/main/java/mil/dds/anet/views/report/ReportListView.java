@@ -11,7 +11,7 @@ public class ReportListView extends AbstractAnetView<ReportListView> {
 	
 	public ReportListView(List<Report> reports) { 
 		this.reports = reports;
-		render("/views/report/index.mustache");
+		render("/views/report/index.ftl");
 	}
 	
 }
