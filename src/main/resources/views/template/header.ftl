@@ -8,26 +8,24 @@
 
 		<!-- Bootstrap -->
 		<link href="/assets/css/bootstrap.css" rel="stylesheet">
-		<link href="/assets/css/bootstrap-theme.css" rel="stylesheet">
-		<link href="/assets/css/style.less" rel="stylesheet/less" type="text/css">
-	<link href="/assets/css/select2.min.css" rel="stylesheet" />
+		<#-- <link href="/assets/css/bootstrap-theme.css" rel="stylesheet"> -->
 		 <link rel="stylesheet" href="/assets/css/uswds.css">
-
+		<link href="/assets/css/style.less" rel="stylesheet/less" type="text/css">
+		<link href="/assets/css/select2.min.css" rel="stylesheet" />
 		<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 		<!--[if lt IE 9]>
 			<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 		<![endif]-->
-		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-		<script src="/assets/js/jquery.js"></script>
-		<script src="/assets/js/underscore-min.js"></script>
-		<script src="/assets/js/uswds.js"></script>
-		<!-- Include all compiled plugins (below), or include individual files as needed -->
-		<script src="/assets/js/bootstrap.min.js"></script>
-		<script src="/assets/js/less.min.js"></script>
-		<script src="/assets/js/anet.js" ></script>
-
+			<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+	<script src="/assets/js/jquery.js"></script>
+	<script src="/assets/js/underscore-min.js"></script>
+	<script src="/assets/js/uswds.js"></script>
+	<!-- Include all compiled plugins (below), or include individual files as needed -->
+	<script src="/assets/js/bootstrap.min.js"></script>
+	<script src="/assets/js/less.min.js"></script>
+	<script src="/assets/js/anet.js" ></script>
 	</head>
 	<body>
 		<div class="container-fluid fixed security">
@@ -37,11 +35,21 @@
 				</div>
 			</div>
 		</div>
-		<div class="container-fluid">
+		<div class="container-fluid mainbody">
 		  <div class="row">
 		    <div class="col-xs-12 col-md-4">
 		      <#include "navigation.ftl">
 		  </div>
 		  <div class="col-xs-12 col-md-8">
-		    <div class="row">
+		    <#-- <div class="row"> -->
+			    <form class="usa-search usa-search-small top-search">
+	                <div role="search">
+	                  <label class="usa-sr-only" for="search-field-small">Search small</label>
+	                  <input id="search-field-small" type="search" name="search">
+	                  <button type="submit">
+	                    <span class="usa-sr-only">Search</span>
+	                  </button>
+                </div>
+              </form>
+            <#-- </div> -->
 

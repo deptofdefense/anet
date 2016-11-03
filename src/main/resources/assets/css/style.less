@@ -9,7 +9,13 @@ html {
 
 body {
     display: table-cell;
-    vertical-align: middle;
+    // vertical-align: middle;
+}
+
+.mainbody {
+	max-width:1024px;
+	width:1024px;
+	position: relative;
 }
 
 .security {
@@ -25,7 +31,7 @@ body {
 	font-size: 12px;
 
 	.row {
-		margin: 0 auto;
+		margin: 0px auto;
 		max-width: 1024px;
 	}
 }
@@ -93,7 +99,7 @@ body {
 th {
 	border-width: 0px 0px 1px 0px!important;
 }
-
+f
 .form-group {
 	// width: 50%;
 
@@ -111,3 +117,23 @@ th {
 	}
 
 }
+
+.field {
+	margin: 10px;
+	.header {
+		padding: 5px 5px 5px 0;
+		float:left;
+		clear: none;
+		width: 35%;
+	}
+
+	.content {
+		padding: 5px 5px 5px 0;
+		float:left;
+		clear: right;
+		width: 55%;
+	}
+
+}
+
+@import "nav.less";

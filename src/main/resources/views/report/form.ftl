@@ -1,15 +1,5 @@
 <#-- @ftlvariable name="" type="mil.dds.anet.beans.Report" -->
 <#include "../template/header.ftl">
-              <form class="usa-search usa-search-small top-search">
-                <div role="search">
-                  <label class="usa-sr-only" for="search-field-small">Search small</label>
-                  <input id="search-field-small" type="search" name="search">
-                  <button type="submit">
-                    <span class="usa-sr-only">Search</span>
-                  </button>
-                </div>
-              </form>
-            </div>
             <div class="row">
               <div class="anet-top-block">
                 <div class="user-submit">Submitting as ${context.currentUser.name}</div>
@@ -241,6 +231,7 @@ $(document).ready(function () {
 
 function enablePersonSearch(selectId, role) { 
 	$(selectId).select2({
+    dropdownParent: $(".mainbody"),
 		ajax: {
 			url: "/people/search",
 			dataType: 'json',
@@ -266,6 +257,7 @@ function enablePersonSearch(selectId, role) {
 
 function enableLocationSearch(selectId) { 
 	$(selectId).select2({
+    dropdownParent: $(".mainbody"),
 		ajax: {
 			url: "/locations/search",
 			dataType: 'json',

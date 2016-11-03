@@ -46,6 +46,7 @@ public class PoamDao implements IAnetDao<Poam> {
 		GeneratedKeys<Map<String, Object>> keys = dbHandle.createStatement("INSERT INTO poams (longName, shortName, category, parentPoamId) " + 
 				"VALUES (:longName, :shortName, :category, :parentPoamId)")
 			.bindFromProperties(p)
+			.bind("parentPoamId", (p.getParentPoam() == null) ? null : p.getParentPoam().getId())
 			.executeAndReturnGeneratedKeys();
 		p.setId((Integer)keys.first().get("last_insert_rowid()"));
 		return p;
