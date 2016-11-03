@@ -80,14 +80,6 @@
 </section>
 
 
-
-
-
-
-
-
-
-
 <#include "../template/footer.ftl">
 
 <script type="text/javascript">

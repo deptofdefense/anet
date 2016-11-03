@@ -24,6 +24,6 @@
       </ul>
     </li>
     <li><a href="/">ANET Training</a></li>
-    <li><a href="/">ANETRoadmap</a></li>
+    <li><a href="/assets/anet-roadmap.jpg">ANETRoadmap</a></li>
   </ul>
 </div>
