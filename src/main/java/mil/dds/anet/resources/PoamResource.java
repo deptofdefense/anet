@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.security.PermitAll;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -23,6 +24,7 @@ import mil.dds.anet.views.ObjectListView;
 
 @Path("/poams")
 @Produces(MediaType.APPLICATION_JSON)
+@PermitAll
 public class PoamResource {
 
 	PoamDao dao;
