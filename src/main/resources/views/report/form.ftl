@@ -149,9 +149,13 @@
                           <div class="form-group">
                             <label for="attachEFMilestones">Milestones</label>
                             <select id="attachEFMilestones" multiple="multiple">
-								<#list context.poams as poam>
-									<option value="${poam.id}>">${paom.shortName} - ${poam.longName}</option>
-								</#list>
+                            <#assign poams = ["foo", "bar", "baz"]>
+                            <!-- context.poams -->
+            								<#list poams as poam>
+            									<option value="${poam}>">${poam}</option>
+                              <#else>
+                              <h3>No AOs in Db</h3>
+            								</#list>
                             </select>
                           </div>
 
@@ -231,6 +235,7 @@ $(document).ready(function () {
 
 function enablePersonSearch(selectId, role) { 
 	$(selectId).select2({
+    dropdownParent: $(".mainbody"),
 		ajax: {
 			url: "/people/search",
 			dataType: 'json',
@@ -256,6 +261,7 @@ function enablePersonSearch(selectId, role) {
 
 function enableLocationSearch(selectId) { 
 	$(selectId).select2({
+    dropdownParent: $(".mainbody"),
 		ajax: {
 			url: "/locations/search",
 			dataType: 'json',

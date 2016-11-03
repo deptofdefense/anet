@@ -8,7 +8,7 @@
 
 		<!-- Bootstrap -->
 		<link href="/assets/css/bootstrap.css" rel="stylesheet">
-		<link href="/assets/css/bootstrap-theme.css" rel="stylesheet">
+		<#-- <link href="/assets/css/bootstrap-theme.css" rel="stylesheet"> -->
 		 <link rel="stylesheet" href="/assets/css/uswds.css">
 		<link href="/assets/css/style.less" rel="stylesheet/less" type="text/css">
 		<link href="/assets/css/select2.min.css" rel="stylesheet" />
