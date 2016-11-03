@@ -57,8 +57,6 @@ body {
 
 .anet-top-block {
 	width: 100%;
-	float: left;
-	clear: both;
 	padding-top:20px;
 	.user-submit {
 		float: left;
@@ -91,6 +89,7 @@ body {
 	}
 
 	.anet-block__body {
+		overflow:auto; // To capture contained floats
 		padding: 0 20px;
 
 	}
@@ -99,7 +98,7 @@ body {
 th {
 	border-width: 0px 0px 1px 0px!important;
 }
-f
+
 .form-group {
 	// width: 50%;
 
@@ -134,6 +133,23 @@ f
 		width: 55%;
 	}
 
+}
+
+.expanded-area {
+	width: 100%;
+	height:300px;
+	background: #eee;
+	height: 0;
+	overflow: hidden;
+	max-height: 0;
+	overflow: hidden;
+	-webkit-transition: max-height 0.8s;
+	-moz-transition: max-height 0.8s;
+	transition: max-height 0.8s;
+	&.show {
+		height: 200px;
+		max-height: 200px;
+	}
 }
 
 @import "nav.less";
