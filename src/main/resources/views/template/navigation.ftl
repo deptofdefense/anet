@@ -3,17 +3,27 @@
 </div>
 <div class="navigation">
   <ul class="usa-sidenav-list">
-    <li><a href="/search">ANET Search</a></li>
-    <li><a <#if context.url == "reports/new">reports</#if> href="/search">Submit a Report</a>
+    <li><a <#if context.url == "">class="usa-current" </#if> href="/">Home</a></li>
+    <li><a <#if context.url == "reports/new">class="usa-current" </#if> href="/reports/new">Submit a Report</a>
       <ul class="usa-sidenav-sub_list">
         <li><a href="#">Your Details</a></li>
       </ul>
     </li>
     <li><a href="/search">Your Reports &amp; Approvals</a></li>
-    <li><a href="/search">Report Analytics</a></li>
-    <hr>
-    <li><a href="/search">Advisor Analytics</a></li>
-    <hr>
+    <li><a href="/search">Analytics</a></li>
+    <li><a href="#">Advisor Organizations</a>
+      <ul class="collapsed usa-sidenav-sub_list">
+        <#assign seq = ["foo", "bar", "baz"]>
+        <#list seq as ao>
+          <li>
+            <a href="/ao/${ao}">${ao}</a>
+          </li>
+        <#else>
+          <li>No AOs in Db</li>
+        </#list>
+      </ul>
+    </li>
     <li><a href="/search">ANET Training</a></li>
+    <li><a href="/search">ANETRoadmap</a></li>
   </ul>
 </div>
