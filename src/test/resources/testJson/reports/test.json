@@ -1,6 +1,6 @@
 {
 	"id": null,
-	"approvalStepId" : null,
+	"approvalStep" : null,
 	"state" : "DRAFT",
 	"createdAt": 1453753380000,
 	"updatedAt": 1453753380000,

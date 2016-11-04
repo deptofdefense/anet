@@ -4,6 +4,13 @@ import java.util.Objects;
 
 import org.joda.time.DateTime;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSetter;
+
+import mil.dds.anet.AnetObjectEngine;
+import mil.dds.anet.views.AbstractAnetView.LoadLevel;
+
 public class ApprovalAction {
 
 	public enum ApprovalType {APPROVE, REJECT}
@@ -21,11 +28,23 @@ public class ApprovalAction {
 	public void setStep(ApprovalStep step) {
 		this.step = step;
 	}
-	public Person getPerson() {
+	
+	@JsonGetter("person")
+	public Person getPersonJson() {
 		return person;
 	}
+	@JsonSetter("person")
 	public void setPerson(Person person) {
 		this.person = person;
+	}
+	@JsonIgnore
+	public Person getPerson() { 
+		if (person == null || person.getLoadLevel() == null) { return person; } 
+		if (person.getLoadLevel().contains(LoadLevel.PROPERTIES) == false) { 
+			this.person = AnetObjectEngine.getInstance()
+				.getPersonDao().getById(person.getId());
+		}
+		return person;
 	}
 	public Report getReport() {
 		return report;

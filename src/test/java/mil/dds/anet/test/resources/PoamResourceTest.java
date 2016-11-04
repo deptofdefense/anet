@@ -8,6 +8,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 import io.dropwizard.client.JerseyClientBuilder;
+import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
 
 public class PoamResourceTest extends AbstractResourceTest {
@@ -25,19 +26,21 @@ public class PoamResourceTest extends AbstractResourceTest {
 	
 	@Test
 	public void poamTest() { 
-		Poam a = httpQuery("/poams/new")
+		Person steve = getSteveSteveson();
+		
+		Poam a = httpQuery("/poams/new", steve)
 			.post(Entity.json(Poam.create("M1", "Do a thing with a person", "Milestone")), Poam.class);
 		assertThat(a.getId()).isNotNull();
 				
-		Poam b = httpQuery("/poams/new")
+		Poam b = httpQuery("/poams/new", steve)
 				.post(Entity.json(Poam.create("M2", "Teach a person how to fish", "Milestone")), Poam.class);
 		assertThat(b.getId()).isNotNull();
 		
-		Poam c = httpQuery("/poams/new")
+		Poam c = httpQuery("/poams/new", steve)
 				.post(Entity.json(Poam.create("M3", "Watch the person fishing", "Milestone")), Poam.class);
 		assertThat(c.getId()).isNotNull();
 		
-		Poam d = httpQuery("/poams/new")
+		Poam d = httpQuery("/poams/new", steve)
 				.post(Entity.json(Poam.create("M4", "Have the person go fishing without you", "Milestone")), Poam.class);
 		assertThat(d.getId()).isNotNull();
 		

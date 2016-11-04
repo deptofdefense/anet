@@ -7,6 +7,7 @@ import org.joda.time.DateTime;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
+import mil.dds.anet.beans.ApprovalStep;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
@@ -19,7 +20,7 @@ public class ReportMapper implements ResultSetMapper<Report> {
 	public Report map(int index, ResultSet rs, StatementContext ctx) throws SQLException {
 		Report r = new Report();
 		r.setId(rs.getInt("id"));
-		r.setApprovalStepId(MapperUtils.getInteger(rs, "approvalStepId"));
+		
 		r.setState(MapperUtils.getEnumIdx(rs, "state", ReportState.class));
 		r.setCreatedAt(new DateTime(rs.getLong("createdAt")));
 		r.setUpdatedAt(new DateTime(rs.getLong("updatedAt")));
@@ -28,6 +29,11 @@ public class ReportMapper implements ResultSetMapper<Report> {
 		if (locationId != null) { 
 			Location l = Location.createWithId(locationId);
 			r.setLocation(l);
+		}
+		
+		Integer approvalStepId = MapperUtils.getInteger(rs, "approvalStepId");
+		if (approvalStepId != null) { 
+			r.setApprovalStep(ApprovalStep.createWithId(approvalStepId));
 		}
 		
 		r.setIntent(rs.getString("intent"));

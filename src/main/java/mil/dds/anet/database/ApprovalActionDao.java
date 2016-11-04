@@ -24,7 +24,7 @@ public class ApprovalActionDao implements IAnetDao<ApprovalAction> {
 				"(approvalStepId, personId, reportId, createdAt, type) " + 
 				"VALUES (:approvalStepId, :personId, :reportId, :createdAt, :type)")
 			.bind("approvalStepId", action.getStep().getId())
-			.bind("personId", action.getPerson().getId())
+			.bind("personId", action.getPersonJson().getId())
 			.bind("reportId", action.getReport().getId())
 			.bind("createdAt", action.getCreatedAt())
 			.bind("type", action.getType().ordinal())
@@ -40,6 +40,20 @@ public class ApprovalActionDao implements IAnetDao<ApprovalAction> {
 		return query.list();
 	}
 
+	/* Gets the approval actions for this report, but only returning the most recent
+	 * where there were multiple actions on the same step (ie a reject then an approval
+	 * will only return the approval) 
+	 */
+	public List<ApprovalAction> getFinalActionsForReport(int reportId) { 
+		//TODO: test this. I don't think it works.... 
+		return dbHandle.createQuery("SELECT * FROM approvalActions " + 
+				"WHERE reportId = :reportId GROUP BY approvalStepId " + 
+				"ORDER BY createdAt DESC")
+			.bind("reportId", reportId)
+			.map(new ApprovalActionMapper())
+			.list();
+	}
+	
 	@Override
 	public List<ApprovalAction> getAll(int pageNum, int pageSize) {
 		throw new UnsupportedOperationException();

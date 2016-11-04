@@ -1,6 +1,8 @@
 {
 	"id" : 42,
 	"advisorOrganizationId" : 22,
-	"approverGroupId" : 5,
+	"approverGroup" : {
+		"id" : 5
+	},
 	"nextStepId" : 9292
 }

@@ -42,7 +42,9 @@ public class GroupResource {
 	@Path("/{id}")
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	public Group getById(@PathParam("id") int id) { 
-		return dao.getById(id).render("show.ftl");
+		Group g = dao.getById(id);
+		if (g == null) { return null; }
+		return g.render("show.ftl");
 	}
 	
 	@GET

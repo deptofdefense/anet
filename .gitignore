@@ -2,6 +2,7 @@
 development.db
 logs/*
 *.sqp
+*.swp
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/

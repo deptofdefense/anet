@@ -13,6 +13,7 @@ import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.database.mappers.ReportMapper;
+import mil.dds.anet.utils.DaoUtils;
 
 @RegisterMapper(ReportMapper.class)
 public class ReportDao implements IAnetDao<Report> {
@@ -43,7 +44,7 @@ public class ReportDao implements IAnetDao<Report> {
 			.bind("state", r.getState().ordinal())
 			.bind("createdAt", r.getCreatedAt())
 			.bind("updatedAt", r.getUpdatedAt())
-			.bind("locationId", (r.getLocation() == null) ? null : r.getLocation().getId())
+			.bind("locationId", DaoUtils.getId(r.getLocation()))
 			.bind("intent", r.getIntent())
 			.bind("exsum", r.getExsum())
 			.bind("text", r.getReportText())
@@ -97,7 +98,7 @@ public class ReportDao implements IAnetDao<Report> {
 			.bind("text", r.getReportText())
 			.bind("nextSteps", r.getNextSteps())
 			.bind("authorId", r.getAuthor().getId())
-			.bind("approvalStepId", r.getApprovalStepId())
+			.bind("approvalStepId", DaoUtils.getId(r.getApprovalStepJson()))
 			.bind("reportId", r.getId())
 			.execute();
 	}

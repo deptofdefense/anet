@@ -98,7 +98,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		
 		Report returned = httpQuery(String.format("/reports/%d", created.getId()), author).get(Report.class);
 		assertThat(returned.getState()).isEqualTo(ReportState.PENDING_APPROVAL);
-		assertThat(returned.getApprovalStepId()).isEqualTo(approval.getId());
+		assertThat(returned.getApprovalStep().getId()).isEqualTo(approval.getId());
 		
 		//TODO: verify the location on this report
 		//TODO: verify the principals on this report
@@ -113,7 +113,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		//Check on Report status to verify it got moved forward
 		returned = httpQuery(String.format("/reports/%d", created.getId()), author).get(Report.class);
 		assertThat(returned.getState()).isEqualTo(ReportState.RELEASED);
-		assertThat(returned.getApprovalStepId()).isNull();
+		assertThat(returned.getApprovalStep()).isNull();
 		
 		//Post a comment on the report because it's awesome
 		

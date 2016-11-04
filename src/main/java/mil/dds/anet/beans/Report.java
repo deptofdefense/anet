@@ -1,7 +1,9 @@
 package mil.dds.anet.beans;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.joda.time.DateTime;
 
@@ -17,7 +19,7 @@ public class Report extends AbstractAnetView<Report> {
 
 	public enum ReportState { DRAFT, PENDING_APPROVAL, RELEASED }
 
-	Integer approvalStepId;
+	ApprovalStep approvalStep;
 	ReportState state;
 	
 	DateTime createdAt;
@@ -36,14 +38,26 @@ public class Report extends AbstractAnetView<Report> {
 	
 	List<Comment> comments;
 
-	public Integer getApprovalStepId() {
-		return approvalStepId;
+	@JsonGetter("approvalStep")
+	public ApprovalStep getApprovalStepJson() {
+		return approvalStep;
 	}
 
-	public void setApprovalStepId(Integer approvalStepId) {
-		this.approvalStepId = approvalStepId;
+	@JsonSetter("approvalStep")
+	public void setApprovalStep(ApprovalStep approvalStep) {
+		this.approvalStep = approvalStep;
 	}
 
+	@JsonIgnore
+	public ApprovalStep getApprovalStep() { 
+		if (approvalStep == null || approvalStep.getLoadLevel() == null) { return approvalStep; } 
+		if (approvalStep.getLoadLevel().contains(LoadLevel.PROPERTIES) == false) { 
+			this.approvalStep = AnetObjectEngine.getInstance()
+				.getApprovalStepDao().getById(approvalStep.getId());
+		}
+		return approvalStep;
+	}
+	
 	public ReportState getState() {
 		return state;
 	}
@@ -164,6 +178,37 @@ public class Report extends AbstractAnetView<Report> {
 		this.comments = comments;
 	}
 	
+	/*Returns a full list of the approval steps and statuses for this report
+	 * There will be an approval action for each approval step for this report
+	 * With information about the 
+	 */
+	@JsonIgnore
+	public List<ApprovalAction> getApprovalStatus() { 
+		AnetObjectEngine engine = AnetObjectEngine.getInstance();
+		AdvisorOrganization ao = engine.getAdvisorOrganizationForPerson(getAuthor());
+		List<ApprovalStep> steps = engine.getApprovalStepsForOrg(ao);
+		
+		List<ApprovalAction> actions = engine.getApprovalActionDao().getFinalActionsForReport(this.getId());
+		
+		List<ApprovalAction> workflow = new LinkedList<ApprovalAction>();
+		for (ApprovalStep step : steps) { 
+			//If there is an Action for this step, grab it and record this.
+			Optional<ApprovalAction> existing = actions.stream().filter(a -> 
+					a.getStep().getId().equals(step.getId())
+				).findFirst();
+			ApprovalAction action;
+			if (existing.isPresent()) { 
+				action = existing.get();
+			} else { 
+				//If not then create a new one and attach this step
+				action = new ApprovalAction();		
+			}
+			action.setStep(step);
+			workflow.add(action);
+		}
+		return workflow;
+	}
+	
 	@Override
 	public boolean equals(Object other) { 
 		if (other == null || other.getClass() != Report.class) { 
@@ -172,7 +217,7 @@ public class Report extends AbstractAnetView<Report> {
 		Report r = (Report) other;
 		return Objects.equals(r.getId(), id) &&
 				Objects.equals(r.getState(), state) &&
-				Objects.equals(r.getApprovalStepId(), approvalStepId) &&
+				Objects.equals(r.getApprovalStep(), approvalStep) &&
 				Objects.equals(r.getCreatedAt(), createdAt) &&
 				Objects.equals(r.getUpdatedAt(), updatedAt) &&
 				Objects.equals(r.getLocation(), location) &&
@@ -188,8 +233,15 @@ public class Report extends AbstractAnetView<Report> {
 	
 	@Override
 	public int hashCode() { 
-		return Objects.hash(id, state, approvalStepId, createdAt, updatedAt, 
+		return Objects.hash(id, state, approvalStep, createdAt, updatedAt, 
 			location, intent, exsum, principals, poams, reportText, 
 			nextSteps, author, comments);
+	}
+
+	public static Report createWithId(Integer id) {
+		Report r = new Report();
+		r.setId(id);
+		r.setLoadLevel(LoadLevel.ID_ONLY);
+		return r;
 	}
 }

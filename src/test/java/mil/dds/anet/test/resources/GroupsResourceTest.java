@@ -21,38 +21,36 @@ public class GroupsResourceTest extends AbstractResourceTest {
 	
 	@Test
 	public void createGroup() { 
+		Person steve = getSteveSteveson();
+		
 		Group g = new Group();
 		g.setName("A Test Group");
 		
-		Group created = httpQuery("/groups/new").post(Entity.json(g), Group.class);
+		Group created = httpQuery("/groups/new", steve).post(Entity.json(g), Group.class);
 		assertThat(created.getName()).isEqualTo(g.getName());
 		
-		Group returned = httpQuery(String.format("/groups/%d", created.getId())).get(Group.class);
+		Group returned = httpQuery(String.format("/groups/%d", created.getId()), steve).get(Group.class);
 		assertThat(created).isEqualTo(returned);
 		
 		//Create a couple people and add them to the group
 		Person jack = getJackJackson();
-		Person steve = getSteveSteveson();
 		
-		Response resp = httpQuery(String.format("/groups/%d/addMember?personId=%d", returned.getId(), jack.getId()))
+		Response resp = httpQuery(String.format("/groups/%d/addMember?personId=%d", returned.getId(), jack.getId()), steve)
 				.get();
 		assertThat(resp.getStatus()).isEqualTo(200);
-		resp = httpQuery(String.format("/groups/%d/addMember?personId=%d", returned.getId(), steve.getId())).get();
+		resp = httpQuery(String.format("/groups/%d/addMember?personId=%d", returned.getId(), steve.getId()), steve).get();
 		assertThat(resp.getStatus()).isEqualTo(200);
 				
 		//Verify that users are in the group
-		returned = client.target(String.format("http://localhost:%d/groups/%d", RULE.getLocalPort(), created.getId()))
-				.request()
+		returned = httpQuery(String.format("/groups/%d", created.getId()), steve)
 				.get(Group.class);
 		assertThat(returned.getMembers().size()).isEqualTo(2);
 		assertThat(returned.getMembers()).contains(steve, jack);
 		
 		//Remove a user from the group, verify they are no longer there
-		resp = httpQuery(String.format("/groups/%d/removeMember?personId=%d", returned.getId(), steve.getId())).get();
+		resp = httpQuery(String.format("/groups/%d/removeMember?personId=%d", returned.getId(), steve.getId()), steve).get();
 		assertThat(resp.getStatus()).isEqualTo(200);
-		returned = client.target(String.format("http://localhost:%d/groups/%d", RULE.getLocalPort(), created.getId()))
-				.request()
-				.get(Group.class);
+		returned = httpQuery(String.format("/groups/%d", created.getId()), steve).get(Group.class);
 		assertThat(returned.getMembers().size()).isEqualTo(1);
 		assertThat(returned.getMembers()).doesNotContain(steve);
 	}
@@ -62,19 +60,16 @@ public class GroupsResourceTest extends AbstractResourceTest {
 		Group g = new Group();
 		g.setName("A Test-Change Group");
 		
-		Group created = client.target(String.format("http://localhost:%d/groups/new", RULE.getLocalPort()))
-				.request()
-				.post(Entity.json(g), Group.class);
+		Person steve = getSteveSteveson();
+		
+		Group created = httpQuery("/groups/new", steve).post(Entity.json(g), Group.class);
 		assertThat(created.getName()).isEqualTo(g.getName());
 		
 		created.setName("A Changed Name");
-		Response resp = client.target(String.format("http://localhost:%d/groups/rename", RULE.getLocalPort()))
-				.request()
-				.post(Entity.json(created));
+		Response resp = httpQuery("/groups/rename", steve).post(Entity.json(created));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
-		Group returned = client.target(String.format("http://localhost:%d/groups/%d", RULE.getLocalPort(), created.getId()))
-				.request()
+		Group returned = httpQuery(String.format("/groups/%d", created.getId()), steve)
 				.get(Group.class);
 		assertThat(created).isEqualTo(returned);
 	}
@@ -83,20 +78,15 @@ public class GroupsResourceTest extends AbstractResourceTest {
 	public void deleteGroup() { 
 		Group g = new Group();
 		g.setName("A Group to Delete");
+		Person steve = getSteveSteveson();
 		
-		Group created = client.target(String.format("http://localhost:%d/groups/new", RULE.getLocalPort()))
-				.request()
-				.post(Entity.json(g), Group.class);
+		Group created = httpQuery("/groups/new", steve).post(Entity.json(g), Group.class);
 		assertThat(created.getName()).isEqualTo(g.getName());
 		
-		Response resp = client.target(String.format("http://localhost:%d/groups/%d", RULE.getLocalPort(), created.getId()))
-				.request()
-				.delete();
+		Response resp = httpQuery(String.format("/groups/%d", created.getId()), steve).delete();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
-		Group returned = client.target(String.format("http://localhost:%d/groups/%d", RULE.getLocalPort(), created.getId()))
-				.request()
-				.get(Group.class);
+		Group returned = httpQuery(String.format("/groups/%d", created.getId()), steve).get(Group.class);
 		assertThat(returned).isNull();
 	}
 }

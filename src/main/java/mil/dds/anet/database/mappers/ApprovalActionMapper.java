@@ -18,18 +18,12 @@ public class ApprovalActionMapper implements ResultSetMapper<ApprovalAction> {
 	@Override
 	public ApprovalAction map(int index, ResultSet rs, StatementContext ctx) throws SQLException {
 		ApprovalAction aa = new ApprovalAction();
-		aa.setPerson(Person.createWithId(rs.getInt("personId")));
-		
-		Report r = new Report();
-		r.setId(rs.getInt("reportId"));
-		aa.setReport(r);
-		
-		ApprovalStep step = new ApprovalStep();
-		step.setId(rs.getInt("approvalStepId"));
-		aa.setStep(step);
+		aa.setPerson(Person.createWithId(MapperUtils.getInteger(rs, "personId")));
+		aa.setReport(Report.createWithId(MapperUtils.getInteger(rs, "reportId")));
+		aa.setStep(ApprovalStep.createWithId(MapperUtils.getInteger(rs, "approvalStepId")));
 		
 		aa.setCreatedAt(new DateTime(rs.getLong("createdAt")));
-		aa.setType(ApprovalType.values()[rs.getInt("type")]);
+		aa.setType(MapperUtils.getEnumIdx(rs, "type", ApprovalType.class));
 //		aa.setLoadLevel(LoadLevel.PROPERTIES);
 	
 		return aa;

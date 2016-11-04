@@ -106,7 +106,7 @@ public class ReportResource {
 		}
 		
 		//Push the report into the first step of this workflow
-		r.setApprovalStepId(steps.get(0).getId());
+		r.setApprovalStep(steps.get(0));
 		r.setState(ReportState.PENDING_APPROVAL);
 		int numRows = dao.update(r);
 		return (numRows == 1) ? Response.ok().build() : ResponseUtils.withMsg("No records updated", Status.BAD_REQUEST); 
@@ -120,7 +120,7 @@ public class ReportResource {
 	@Path("/{id}/approve")
 	public Response approveReport(@Auth Person approver, @PathParam("id") int id) { 
 		Report r = dao.getById(id);
-		ApprovalStep step = engine.getApprovalStepDao().getById(r.getApprovalStepId());
+		ApprovalStep step = engine.getApprovalStepDao().getById(r.getApprovalStep().getId());
 		
 		//Verify that this user can approve for this step. 
 
@@ -134,13 +134,13 @@ public class ReportResource {
 		//TODO: this should be in a transaction.... 
 		ApprovalAction approval = new ApprovalAction();
 		approval.setReport(r);
-		approval.setStep(ApprovalStep.create(r.getApprovalStepId(), null, null, null));
+		approval.setStep(ApprovalStep.create(r.getApprovalStep().getId(), null, null, null));
 		approval.setPerson(approver);
 		approval.setType(ApprovalType.APPROVE);
 		engine.getApprovalActionDao().insert(approval);
 		
 		//Update the report
-		r.setApprovalStepId(step.getNextStepId());
+		r.setApprovalStep(ApprovalStep.createWithId(step.getNextStepId()));
 		if (step.getNextStepId() == null) {
 			r.setState(ReportState.RELEASED);
 		}

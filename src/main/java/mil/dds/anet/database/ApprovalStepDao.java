@@ -34,7 +34,7 @@ public class ApprovalStepDao implements IAnetDao<ApprovalStep> {
 	public ApprovalStep getById(int id) { 
 		Query<ApprovalStep> query = dbHandle.createQuery("SELECT * from approvalSteps where id = :id")
 				.bind("id", id)
-				.map(ApprovalStep.class);
+				.map(new ApprovalStepMapper());
 		List<ApprovalStep> results = query.list();
 		if (results.size() == 0) { return null; }
 		return results.get(0);
