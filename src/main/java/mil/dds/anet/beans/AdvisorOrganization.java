@@ -20,6 +20,7 @@ public class AdvisorOrganization extends AbstractAnetView<AdvisorOrganization> {
 	DateTime updatedAt;
 	
 	List<Billet> billets; /*Billets in this AO, lazy loaded*/
+	List<ApprovalStep> approvalSteps; /*Approval process for this AO, lazy loaded */
 	
 	public String getName() {
 		return name;
@@ -62,6 +63,15 @@ public class AdvisorOrganization extends AbstractAnetView<AdvisorOrganization> {
 					.getBilletDao().getByAdvisorOrganization(this);
 		}
 		return billets;
+	}
+	
+	@JsonIgnore
+	public List<ApprovalStep> getApprovalSteps() { 
+		if (approvalSteps == null) { 
+			approvalSteps = AnetObjectEngine.getInstance()
+					.getApprovalStepsForOrg(this);
+		}
+		return approvalSteps;
 	}
 	
 	public static AdvisorOrganization create(String name) { 

@@ -127,4 +127,11 @@ public class GroupDao implements IAnetDao<Group> {
 			.execute();
 		return numRows;
 	}
+
+	public List<Group> searchGroupName(String query) {
+		return dbHandle.createQuery("SELECT * FROM groups WHERE name LIKE '%' || :query || '%'")
+			.bind("query", query)
+			.map(new GroupMapper())
+			.list();
+	}
 }

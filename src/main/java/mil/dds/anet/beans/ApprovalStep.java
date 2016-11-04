@@ -2,33 +2,46 @@ package mil.dds.anet.beans;
 
 import java.util.Objects;
 
-public class ApprovalStep {
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSetter;
 
-	Integer id;
-	Integer approverGroupId;
+import mil.dds.anet.AnetObjectEngine;
+import mil.dds.anet.views.AbstractAnetView;
+
+public class ApprovalStep extends AbstractAnetView<ApprovalStep> {
+
+	Group approverGroup;
 	Integer nextStepId;
 	Integer advisorOrganizationId;
 	
-	public static ApprovalStep create(Integer id, Integer approverGroupId, Integer nextStepId, Integer aoId) { 
+	public static ApprovalStep create(Integer id, Group approverGroup, Integer nextStepId, Integer aoId) { 
 		ApprovalStep as = new ApprovalStep();
 		as.setId(id);
-		as.setApproverGroupId(approverGroupId);
+		as.setApproverGroup(approverGroup);
 		as.setAdvisorOrganizationId(aoId);
 		as.setNextStepId(nextStepId);
 		return as;
 	}
 	
-	public Integer getId() {
-		return id;
+	@JsonIgnore
+	public Group getApproverGroup() {
+		if (approverGroup == null || approverGroup.getLoadLevel() == null) { return approverGroup; }
+		if (approverGroup.getLoadLevel().contains(LoadLevel.PROPERTIES) == false) { 
+			this.approverGroup = AnetObjectEngine.getInstance()
+					.getGroupDao().getById(approverGroup.getId());
+		}
+		return approverGroup;
 	}
-	public void setId(Integer id) {
-		this.id = id;
+	
+	@JsonGetter("approverGroup")
+	public Group getApproverGroupJson() { 
+		return approverGroup;
 	}
-	public Integer getApproverGroupId() {
-		return approverGroupId;
-	}
-	public void setApproverGroupId(Integer approverGroupId) {
-		this.approverGroupId = approverGroupId;
+	
+	@JsonSetter
+	public void setApproverGroup(Group approverGroup) {
+		this.approverGroup = approverGroup;
 	}
 	public Integer getNextStepId() {
 		return nextStepId;
@@ -50,14 +63,14 @@ public class ApprovalStep {
 		}
 		ApprovalStep as = (ApprovalStep) o;
 		return Objects.equals(id, as.getId()) &&
-			Objects.equals(approverGroupId, as.getApproverGroupId()) &&
+			Objects.equals(approverGroup, as.getApproverGroup()) &&
 			Objects.equals(nextStepId, as.getNextStepId()) &&
 			Objects.equals(advisorOrganizationId, as.getAdvisorOrganizationId());
 	}
 	
 	@Override
 	public int hashCode() { 
-		return Objects.hash(id, approverGroupId, nextStepId, advisorOrganizationId);
+		return Objects.hash(id, approverGroup, nextStepId, advisorOrganizationId);
 	}
 	
 	

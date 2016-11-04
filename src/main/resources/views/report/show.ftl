@@ -1,8 +1,7 @@
-{{> ../template/header}}
-Report: {{id}} - {{dtg}}<br>
+<#include "../template/header.ftl">
+Report: ${id} - ${createdAt}<br>
 
-<p>{{reportText}}<p>
-<p><b>Next Steps: </b>{{nextSteps}}</p>
+<p>${reportText}<p>
+<p><b>Next Steps: </b>${nextSteps}</p>
 
-the thing: {{context.hello}}
-{{> ../template/footer}}
+<#include "../template/footer.ftl">

@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
+import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.views.AbstractAnetView;
 
@@ -69,10 +70,10 @@ public class Report extends AbstractAnetView<Report> {
 
 	@JsonIgnore
 	public Location getLocation() {
-		if (location == null ) { return null; } 
-		if (location.getLoadLevel() == null) { return location; } 
+		if (location == null || location.getLoadLevel() == null) { return location; } 
 		if (location.getLoadLevel().contains(LoadLevel.PROPERTIES) == false) { 
-			this.location = getBeanAtLoadLevel(location, LoadLevel.PROPERTIES);
+			this.location = AnetObjectEngine.getInstance()
+					.getLocationDao().getById(location.getId());
 		}
 		return location;
 	}

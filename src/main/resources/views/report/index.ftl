@@ -1,7 +1,8 @@
 <#include "../template/header.ftl">
+<#list list as report>
 <section class="anet-block">
   <div class="anet-block__title">
-    Report Date - Advisor Name with Principal Name
+    ${report.createdAt} - ${report.author.name} with Principal Name
     <div class="pull-right">
     	Approval Status
     </div>
@@ -11,17 +12,17 @@
     <div class="row">
       <div class="col-md-6">
        <div class="field">
-       	<div class="header">Label</div>
-       	<div class="content">Content</div>
+       	<div class="header">Status:</div>
+       	<div class="content">${report.state}</div>
 	   </div>
 	  </div>
       <div class="col-md-6">
         <div class="field">
-        Report Content
+        ${report.reportText}
         </div>
         <div class="field">
         <small>
-        Created at: CreatedAt <br>Updated at: UpdatedAt
+        Created at: ${report.createdAt} <br>Updated at: ${report.updatedAt}
         </small>
         </div>
       </div>
@@ -33,6 +34,9 @@
     <div class="expanded-area">
 	  <div class="row">
 	      <div class="col-md-6">
+	      	<#if context.currentUser.id == report.author.id && report.state == "DRAFT">
+	      		<button id="reportSubmitBtn" data-id="${report.id}" >Submit this report.</button> 
+	      	</#if>
 	      </div>
 	      <div class="col-md-6">
 	      </div>
@@ -40,7 +44,7 @@
   </div>
   </div>
 </section>
-
+</#list>
 <#include "../template/footer.ftl">
 
 <script type="text/javascript">
@@ -53,5 +57,15 @@ $(document).ready(function() {
 		target.addClass('show')
 	}
 	})
+	
+	$("#reportSubmitBtn").on("click", function(event) {
+		var id = $(event.currentTarget).attr("data-id"); 
+		$.ajax({
+			url: "/reports/" + id + "/submit",
+			method: "GET"
+		}).done(function(response) { 
+			location.reload();
+		});
+	});
 })
 </script>

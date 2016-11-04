@@ -1,6 +1,10 @@
 package mil.dds.anet.resources;
 
+import java.util.List;
+
+import javax.annotation.security.PermitAll;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -14,9 +18,11 @@ import javax.ws.rs.core.Response.Status;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Group;
 import mil.dds.anet.database.GroupDao;
+import mil.dds.anet.views.ObjectListView;
 
 @Path("/groups")
 @Produces(MediaType.APPLICATION_JSON)
+@PermitAll
 public class GroupResource {
 
 	private GroupDao dao;
@@ -26,9 +32,24 @@ public class GroupResource {
 	}
 	
 	@GET
+	@Path("/")
+	@Produces(MediaType.TEXT_HTML)
+	public ObjectListView<Group> getAllReportsView(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
+		return new ObjectListView<Group>(dao.getAll(pageNum, pageSize), Group.class);
+	}
+	
+	@GET
 	@Path("/{id}")
+	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	public Group getById(@PathParam("id") int id) { 
-		return dao.getById(id);
+		return dao.getById(id).render("show.ftl");
+	}
+	
+	@GET
+	@Path("/new")
+	@Produces(MediaType.TEXT_HTML)
+	public Group createNewGroupForm() { 
+		return new Group().render("form.ftl");
 	}
 	
 	@POST
@@ -60,6 +81,12 @@ public class GroupResource {
 		} else { 
 			return Response.status(Status.NOT_FOUND).build();
 		}
+	}
+	
+	@GET
+	@Path("/search")
+	public List<Group> search(@QueryParam("q") String query) { 
+		return dao.searchGroupName(query);
 	}
 	
 	@DELETE

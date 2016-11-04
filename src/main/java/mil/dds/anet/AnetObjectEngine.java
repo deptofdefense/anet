@@ -1,8 +1,8 @@
 package mil.dds.anet;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -133,12 +133,12 @@ public class AnetObjectEngine {
 		Collection<ApprovalStep> unordered = asDao.getByAdvisorOrganizationId(ao.getId());
 		
 		int numSteps = unordered.size();
-		ArrayList<ApprovalStep> ordered = new ArrayList<ApprovalStep>(numSteps);
+		LinkedList<ApprovalStep> ordered = new LinkedList<ApprovalStep>();
 		Integer nextStep = null;
 		for (int i=0;i<numSteps;i++) { 
 			for (ApprovalStep as : unordered) { 
 				if (Objects.equals(as.getNextStepId(), nextStep)) { 
-					ordered.add(0, as);
+					ordered.addFirst(as);
 					nextStep = as.getId();
 					break;
 				}
@@ -149,7 +149,7 @@ public class AnetObjectEngine {
 	
 	public boolean canUserApproveStep(int userId, int approvalStepId) { 
 		ApprovalStep as = asDao.getById(approvalStepId);
-		Group approvers = groupDao.getById(as.getApproverGroupId());
+		Group approvers = groupDao.getById(as.getApproverGroup().getId());
 		for (Person member : approvers.getMembers()) { 
 			if (member.getId() == userId) { return true; } 
 		}

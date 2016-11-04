@@ -3,6 +3,7 @@ package mil.dds.anet.test.beans;
 import org.junit.Test;
 
 import mil.dds.anet.beans.ApprovalStep;
+import mil.dds.anet.beans.Group;
 
 public class ApprovalStepTest extends BeanTester<ApprovalStep> {
 
@@ -12,7 +13,7 @@ public class ApprovalStepTest extends BeanTester<ApprovalStep> {
 		ApprovalStep as = new ApprovalStep();
 		as.setId(42);
 		as.setAdvisorOrganizationId(22);
-		as.setApproverGroupId(5);
+		as.setApproverGroup(Group.createWithId(5));
 		as.setNextStepId(9292);
 		return as;
 	}

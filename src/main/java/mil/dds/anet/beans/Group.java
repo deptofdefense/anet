@@ -62,4 +62,11 @@ public class Group extends AbstractAnetView<Group> {
 		g.setName(name);
 		return g;
 	}
+
+	public static Group createWithId(Integer id) {
+		Group g = new Group();
+		g.setId(id);
+		g.setLoadLevel(LoadLevel.ID_ONLY);
+		return g;
+	}
 }

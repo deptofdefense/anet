@@ -100,3 +100,13 @@ INSERT INTO poams (shortName, longName, category, createdAt, updatedAt) VALUES (
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt) VALUES ('TAAC-W', '', 'EF', 1478098949000, 1478098949000);
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt) VALUES ('TAAC-C', '', 'EF', 1478098949000, 1478098949000);
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt) VALUES ('TAAC Air', '', 'EF', 1478098949000, 1478098949000);
+
+INSERT INTO locations (name, lat, lng) VALUES("St Johns Airport", 47.613442, -52.740936);
+INSERT INTO locations (name, lat, lng) VALUES("Murray's Hotel", 47.561517, -52.708760);
+INSERT INTO locations (name, lat, lng) VALUES("Wishingwells Park", 47.560040, -52.736962);
+INSERT INTO locations (name, lat, lng) VALUES("General Hospital", 47.571772, -52.741935);
+INSERT INTO locations (name, lat, lng) VALUES("Portugal Cove Ferry Terminal", 47.626718, -52.857241);
+INSERT INTO locations (name, lat, lng) VALUES("Cabot Tower", 47.570010, -52.681770);
+INSERT INTO locations (name, lat, lng) VALUES("Fort Amherst", 47.563763, -52.680590);
+INSERT INTO locations (name, lat, lng) VALUES("Harbour Grace Police Station", 47.705133, -53.214422);
+INSERT INTO locations (name, lat, lng) VALUES("Conception Bay South Police Station", 47.526784, -52.954739);

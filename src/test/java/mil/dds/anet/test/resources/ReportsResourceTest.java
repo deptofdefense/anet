@@ -64,7 +64,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
 		ApprovalStep approval = httpQuery("/approvalSteps/new", author)
-				.post(Entity.json(ApprovalStep.create(null, approvingGroup.getId(), null, ao.getId())), ApprovalStep.class);
+				.post(Entity.json(ApprovalStep.create(null, approvingGroup, null, ao.getId())), ApprovalStep.class);
 		
 		//TODO: Create a POAM structure for the AO
 //		fail("No way to assign a POAM to an AO");

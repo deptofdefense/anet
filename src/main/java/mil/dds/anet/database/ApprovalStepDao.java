@@ -9,6 +9,7 @@ import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.Query;
 
 import mil.dds.anet.beans.ApprovalStep;
+import mil.dds.anet.database.mappers.ApprovalStepMapper;
 
 public class ApprovalStepDao implements IAnetDao<ApprovalStep> {
 
@@ -25,7 +26,7 @@ public class ApprovalStepDao implements IAnetDao<ApprovalStep> {
 	public Collection<ApprovalStep> getByAdvisorOrganizationId(int aoId) { 
 		Query<ApprovalStep> query = dbHandle.createQuery("SELECT * from approvalSteps WHERE advisorOrganizationId = :aoId")
 				.bind("aoId", aoId)
-				.map(ApprovalStep.class);
+				.map(new ApprovalStepMapper());
 		return query.list();
 	}
 	
@@ -44,12 +45,19 @@ public class ApprovalStepDao implements IAnetDao<ApprovalStep> {
 		GeneratedKeys<Map<String, Object>> keys = dbHandle.createStatement(
 				"INSERT into approvalSteps (approverGroupId, nextStepId, advisorOrganizationId) " + 
 				"VALUES (:approverGroupId, :nextStepId, :advisorOrganizationId)")
-			.bind("approverGroupId", as.getApproverGroupId())
+			.bind("approverGroupId", (as.getApproverGroup() == null) ? null : as.getApproverGroup().getId())
 			.bind("nextStepId", as.getNextStepId())
 			.bind("advisorOrganizationId", as.getAdvisorOrganizationId())
 			.executeAndReturnGeneratedKeys();
 		
 		as.setId((Integer)keys.first().get("last_insert_rowid()"));
+		
+		//Add this Step to the current org list. 
+		dbHandle.createStatement("UPDATE approvalSteps SET nextStepId = :id " + 
+				"WHERE advisorOrganizationId = :advisorOrganizationId "
+				+ "AND nextStepId IS NULL AND id != :id")
+			.bindFromProperties(as)
+			.execute();
 		return as;
 	}
 	
@@ -59,7 +67,7 @@ public class ApprovalStepDao implements IAnetDao<ApprovalStep> {
 				"WHERE id = :id")
 			.bind("nextStepId", as.getNextStepId())
 			.bind("advisorOrganizationId", as.getAdvisorOrganizationId())
-			.bind("approverGroupId", as.getApproverGroupId())
+			.bind("approverGroupId", (as.getApproverGroup() == null) ? null : as.getApproverGroup().getId())
 			.bind("id", as.getId())
 			.execute();
 				

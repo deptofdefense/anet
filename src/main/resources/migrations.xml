@@ -137,11 +137,15 @@
 
 		<createTable tableName="approvalSteps">
 			<column name="id" type="int" autoIncrement="true" >
-				<constraints primaryKey="true" nullable="false" />
+				<constraints nullable="false" />
 			</column>
-			<column name="approverGroupId" type="int" />
+			<column name="approverGroupId" type="int" >
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
 			<column name="nextStepId" type="int" />
-			<column name="advisorOrganizationId" type="int" />
+			<column name="advisorOrganizationId" type="int" >
+				<constraints nullable="false" />
+			</column>
 		</createTable>
 
 		<createTable tableName="approvalActions">
