@@ -89,7 +89,7 @@ public class Billet extends AbstractAnetView<Billet> {
 		Billet other = (Billet) o;
 		return Objects.equals(id, other.getId()) &&
 			Objects.equals(name, other.getName()) &&
-			Objects.equals(advisorOrganization, other.getAdvisorOrganization());
+			idEqual(advisorOrganization, other.getAdvisorOrganizationJson());
 	}
 	
 	@Override

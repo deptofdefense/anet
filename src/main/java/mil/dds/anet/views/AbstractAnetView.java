@@ -2,6 +2,7 @@ package mil.dds.anet.views;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.ws.rs.WebApplicationException;
 
@@ -94,4 +95,15 @@ public abstract class AbstractAnetView<T extends AbstractAnetView<?>> extends Vi
 		return ret;
 	}
 	
+	/*Determines if two beans are "id" equal. 
+	 * That is they have the same Id. (or are null)
+	 */
+	public static boolean idEqual(AbstractAnetView<?> a, AbstractAnetView<?> b) { 
+		if (a == null && b == null) { return true; }
+		if (a == null || b == null) { return false; }
+		if (a.getId() != null && b.getId() != null) { 
+			return Objects.equals(a.getId(), b.getId());
+		}
+		return a.equals(b);
+	}
 }

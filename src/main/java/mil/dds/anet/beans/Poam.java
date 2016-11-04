@@ -7,6 +7,7 @@ import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSetter;
 
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.views.AbstractAnetView;
@@ -52,9 +53,14 @@ public class Poam extends AbstractAnetView<Poam> {
 		return parentPoam;
 	}
 	
-	@JsonGetter("parentPoam")
+	@JsonSetter("parentPoam")
 	public void setParentPoam(Poam parent) {
 		this.parentPoam = parent;
+	}
+	
+	@JsonGetter("parentPoam")
+	public Poam getParentPoamJson() { 
+		return this.parentPoam;
 	}
 	
 	@JsonIgnore
@@ -116,7 +122,7 @@ public class Poam extends AbstractAnetView<Poam> {
 				Objects.equals(other.getShortName(), shortName) &&
 				Objects.equals(other.getLongName(), longName) &&
 				Objects.equals(other.getCategory(), category) &&
-				Objects.equals(other.getParentPoam(), parentPoam);
+				idEqual(other.getParentPoamJson(), parentPoam);
 	}
 	
 	@Override

@@ -24,28 +24,29 @@ public class TashkilResourceTest extends AbstractResourceTest {
 	public void tashkilTest() { 
 		//Create Tashkil
 		Tashkil t = TashkilTest.getTestTashkil();
+		Person steve = getSteveSteveson();
 		
-		Tashkil created = httpQuery("/tashkils/new").post(Entity.json(t), Tashkil.class);
+		Tashkil created = httpQuery("/tashkils/new", steve).post(Entity.json(t), Tashkil.class);
 		assertThat(created.getName()).isEqualTo(t.getName());
 		assertThat(created.getCode()).isEqualTo(t.getCode());
 		assertThat(created.getId()).isNotNull();
 		
 		//Change Name/Code
 		created.setName("Deputy Chief of Donuts");
-		Response resp = httpQuery("/tashkils/update").post(Entity.json(created));
+		Response resp = httpQuery("/tashkils/update", steve).post(Entity.json(created));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
-		Tashkil returned = httpQuery(String.format("/tashkils/%d",created.getId())).get(Tashkil.class);
+		Tashkil returned = httpQuery(String.format("/tashkils/%d",created.getId()), steve).get(Tashkil.class);
 		assertThat(returned.getName()).isEqualTo(created.getName());
 		assertThat(returned.getCode()).isEqualTo(created.getCode());
 		
 		//Assign Principal
 		Person principal = getJackJackson();
 		
-		resp = httpQuery(String.format("/tashkils/%d/principal",created.getId())).post(Entity.json(principal));
+		resp = httpQuery(String.format("/tashkils/%d/principal",created.getId()), steve).post(Entity.json(principal));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
-		Person returnedPrincipal = httpQuery(String.format("/tashkils/%d/principal", created.getId())).get(Person.class);
+		Person returnedPrincipal = httpQuery(String.format("/tashkils/%d/principal", created.getId()), steve).get(Person.class);
 		assertThat(returnedPrincipal.getId()).isEqualTo(principal.getId());
 		
 		//TODO: Change the Principal

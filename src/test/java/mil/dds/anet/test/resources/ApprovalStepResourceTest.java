@@ -16,6 +16,7 @@ import com.google.common.collect.Lists;
 import io.dropwizard.client.JerseyClientBuilder;
 import mil.dds.anet.beans.AdvisorOrganization;
 import mil.dds.anet.beans.ApprovalStep;
+import mil.dds.anet.beans.Group;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.test.beans.AdvisorOrganizationTest;
 
@@ -35,17 +36,22 @@ public class ApprovalStepResourceTest extends AbstractResourceTest {
 				.post(Entity.json(AdvisorOrganizationTest.getTestAO()), AdvisorOrganization.class);
 		assertThat(ao.getId()).isNotNull();
 		
+		//Create a group to do the approvals
+		Group g = httpQuery("/groups/new", steve)
+				.post(Entity.json(Group.create("Test Approval Group")), Group.class);
+		assertThat(g.getId()).isNotNull();
+		
 		//Create 3 steps in order for this AO
 		ApprovalStep as1 = httpQuery("/approvalSteps/new", steve)
-				.post(Entity.json(ApprovalStep.create(null, null, null, ao.getId())), ApprovalStep.class);
+				.post(Entity.json(ApprovalStep.create(null, g, null, ao.getId())), ApprovalStep.class);
 		assertThat(as1.getId()).isNotNull();
 		
 		ApprovalStep as2 = httpQuery("/approvalSteps/new", steve)
-				.post(Entity.json(ApprovalStep.create(null, null, null, ao.getId())), ApprovalStep.class);
+				.post(Entity.json(ApprovalStep.create(null, g, null, ao.getId())), ApprovalStep.class);
 		assertThat(as1.getId()).isNotNull();
 		
 		ApprovalStep as3 = httpQuery("/approvalSteps/new", steve)
-				.post(Entity.json(ApprovalStep.create(null, null, null, ao.getId())), ApprovalStep.class);
+				.post(Entity.json(ApprovalStep.create(null, g, null, ao.getId())), ApprovalStep.class);
 		assertThat(as1.getId()).isNotNull();
 		
 		as1.setNextStepId(as2.getId());
@@ -58,6 +64,8 @@ public class ApprovalStepResourceTest extends AbstractResourceTest {
 		List<ApprovalStep> returned = httpQuery(String.format("/approvalSteps/byAdvisorOrganization?id=%d", ao.getId()), steve)
 				.get(new GenericType<List<ApprovalStep>>() {});
 		assertThat(returned.size()).isEqualTo(3);
+		System.out.println(as1);
+		System.out.println(returned.get(0));
 		assertThat(returned).contains(as1, atIndex(0));
 		assertThat(returned).contains(as2, atIndex(1));
 		assertThat(returned).contains(as3, atIndex(2));
@@ -74,7 +82,7 @@ public class ApprovalStepResourceTest extends AbstractResourceTest {
 		
 		//Create a new step and put in the middle
 		ApprovalStep as4 = httpQuery("/approvalSteps/new", steve)
-				.post(Entity.json(ApprovalStep.create(null, null, null, ao.getId())), ApprovalStep.class);
+				.post(Entity.json(ApprovalStep.create(null, g, null, ao.getId())), ApprovalStep.class);
 		assertThat(as1.getId()).isNotNull();
 		as2.setNextStepId(as4.getId());
 		as4.setNextStepId(as3.getId());

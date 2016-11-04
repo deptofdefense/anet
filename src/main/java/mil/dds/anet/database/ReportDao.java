@@ -92,7 +92,7 @@ public class ReportDao implements IAnetDao<Report> {
 				"approvalStepId = :approvalStepId, authorId = :authorId WHERE id = :reportId")
 			.bind("state", r.getState().ordinal())
 			.bind("updatedAt", DateTime.now())
-			.bind("locationId", r.getLocation().getId())
+			.bind("locationId", DaoUtils.getId(r.getLocation()))
 			.bind("intent", r.getIntent())
 			.bind("exsum", r.getExsum())
 			.bind("text", r.getReportText())

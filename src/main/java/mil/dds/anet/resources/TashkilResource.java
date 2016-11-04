@@ -2,6 +2,7 @@ package mil.dds.anet.resources;
 
 import java.util.List;
 
+import javax.annotation.security.PermitAll;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -18,9 +19,11 @@ import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Tashkil;
 import mil.dds.anet.database.TashkilDao;
+import mil.dds.anet.views.ObjectListView;
 
 @Path("/tashkils")
 @Produces(MediaType.APPLICATION_JSON)
+@PermitAll
 public class TashkilResource {
 
 	TashkilDao dao;
@@ -29,28 +32,46 @@ public class TashkilResource {
 		this.dao = engine.getTashkilDao();
 	}
 	
+	@GET
+	@Path("/")
+	@Produces(MediaType.TEXT_HTML)
+	public ObjectListView<Tashkil> getTashkilIndex() { 
+		return new ObjectListView<Tashkil>(dao.getAll(0, Integer.MAX_VALUE), Tashkil.class);
+	}
+	
+	@GET
+	@Path("/new")
+	@Produces(MediaType.TEXT_HTML)
+	public Tashkil getTashkilForm() { 
+		return new Tashkil().render("form.ftl");
+	}
+	
 	@POST
 	@Path("/new")
 	public Tashkil createNewTashkil(Tashkil t) {
-		t.setCreatedAt(DateTime.now());
-		t.setUpdatedAt(DateTime.now());
-		int id = dao.insertTashkil(t);
-		t.setId(id);
-		return t;
+		return dao.insert(t);
 	}
 	
 	@GET
 	@Path("/{id}")
+	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	public Tashkil getById(@PathParam("id") int id) { 
 		Tashkil t = dao.getById(id);
-		return t;
+		return t.render("show.ftl");
+	}
+	
+	@GET
+	@Path("/{id}/edit")
+	@Produces(MediaType.TEXT_HTML)
+	public Tashkil getTashkilEditForm(@PathParam("id") int id) { 
+		return dao.getById(id).render("form.ftl");
 	}
 	
 	@POST
 	@Path("/update")
 	public Response updateTashkil(Tashkil t) {
 		t.setUpdatedAt(DateTime.now());
-		int numRows = dao.updateTashkil(t);
+		int numRows = dao.update(t);
 		return (numRows == 1) ? Response.ok().build() : Response.status(Status.NOT_FOUND).build(); 
 	}
 	

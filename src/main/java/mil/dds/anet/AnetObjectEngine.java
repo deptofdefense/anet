@@ -57,7 +57,7 @@ public class AnetObjectEngine {
 		
 		personDao = new PersonDao(dbHandle);
 		groupDao = new GroupDao(dbHandle);
-		tashkilDao = jdbi.onDemand(TashkilDao.class);
+		tashkilDao = new TashkilDao(dbHandle);
 		poamDao = new PoamDao(dbHandle);
 		locationDao =  new LocationDao(dbHandle);
 		aoDao = new AdvisorOrganizationDao(dbHandle, groupDao);

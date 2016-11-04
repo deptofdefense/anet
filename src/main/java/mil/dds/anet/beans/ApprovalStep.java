@@ -64,7 +64,7 @@ public class ApprovalStep extends AbstractAnetView<ApprovalStep> {
 		}
 		ApprovalStep as = (ApprovalStep) o;
 		return Objects.equals(id, as.getId()) &&
-			Objects.equals(approverGroup, as.getApproverGroupJson()) &&
+			idEqual(approverGroup, as.getApproverGroupJson()) &&
 			Objects.equals(nextStepId, as.getNextStepId()) &&
 			Objects.equals(advisorOrganizationId, as.getAdvisorOrganizationId());
 	}

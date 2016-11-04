@@ -110,3 +110,10 @@ INSERT INTO locations (name, lat, lng) VALUES("Cabot Tower", 47.570010, -52.6817
 INSERT INTO locations (name, lat, lng) VALUES("Fort Amherst", 47.563763, -52.680590);
 INSERT INTO locations (name, lat, lng) VALUES("Harbour Grace Police Station", 47.705133, -53.214422);
 INSERT INTO locations (name, lat, lng) VALUES("Conception Bay South Police Station", 47.526784, -52.954739);
+
+INSERT INTO tashkils (name, code) VALUES ("Minister of Donuts", "MOD-FO-00001");
+INSERT INTO tashkils (name, code) VALUES ("Chief of Staff - MoD", "MOD-FO-00002");
+INSERT INTO tashkils (name, code) VALUES ("Executive Assistant to the MoD", "MOD-FO-00003");
+INSERT INTO tashkils (name, code) VALUES ("Director of Budgeting - MoD", "MOD-Bud-00001");
+INSERT INTO tashkils (name, code) VALUES ("Writer of Expenses - MoD", "MOD-Bud-00002");
+INSERT INTO tashkils (name, code) VALUES ("Cost Adder - MoD", "MOD-Bud-00003");

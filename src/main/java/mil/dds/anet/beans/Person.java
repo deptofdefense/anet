@@ -14,8 +14,6 @@ public class Person extends AbstractAnetView<Person> implements Principal{
 	public static enum Status { ACTIVE, INACTIVE }
 	public static enum Role { ADVISOR, PRINCIPAL, USER }
 	
-	private Integer id;
-	
 	private String firstName; 
 	private String lastName;
 	private Status status;
@@ -36,12 +34,6 @@ public class Person extends AbstractAnetView<Person> implements Principal{
 		return String.format("%s %s (%s)", firstName, lastName, emailAddress);
 	}
 	
-	public Integer getId() {
-		return id;
-	}
-	public void setId(Integer id) {
-		this.id = id;
-	}
 	public String getFirstName() {
 		return firstName;
 	}

@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
 import mil.dds.anet.AnetObjectEngine;
+import mil.dds.anet.views.AbstractAnetView;
 import mil.dds.anet.views.AbstractAnetView.LoadLevel;
 
 public class ApprovalAction {
@@ -72,7 +73,7 @@ public class ApprovalAction {
 		}
 		ApprovalAction other = (ApprovalAction) o;
 		return Objects.equals(step, other.getStep()) &&
-				Objects.equals(person, other.getPerson()) &&
+				AbstractAnetView.idEqual(person, other.getPersonJson()) &&
 				Objects.equals(report, other.getReport()) &&
 				Objects.equals(createdAt, other.getCreatedAt()) &&
 				Objects.equals(type, other.getType());

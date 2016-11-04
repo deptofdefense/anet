@@ -57,6 +57,11 @@ public class Group extends AbstractAnetView<Group> {
 		return Objects.hash(id, name, members, createdAt);
 	}
 	
+	@Override
+	public String toString() { 
+		return String.format("Group: %d - %s", id, name);
+	}
+	
 	public static Group create(String name) { 
 		Group g = new Group();
 		g.setName(name);

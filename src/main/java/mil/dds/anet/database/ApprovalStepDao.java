@@ -10,6 +10,7 @@ import org.skife.jdbi.v2.Query;
 
 import mil.dds.anet.beans.ApprovalStep;
 import mil.dds.anet.database.mappers.ApprovalStepMapper;
+import mil.dds.anet.utils.DaoUtils;
 
 public class ApprovalStepDao implements IAnetDao<ApprovalStep> {
 
@@ -31,7 +32,7 @@ public class ApprovalStepDao implements IAnetDao<ApprovalStep> {
 	}
 	
 	@Override
-	public ApprovalStep getById(int id) { 
+	public ApprovalStep getById(int id) {
 		Query<ApprovalStep> query = dbHandle.createQuery("SELECT * from approvalSteps where id = :id")
 				.bind("id", id)
 				.map(new ApprovalStepMapper());
@@ -45,7 +46,7 @@ public class ApprovalStepDao implements IAnetDao<ApprovalStep> {
 		GeneratedKeys<Map<String, Object>> keys = dbHandle.createStatement(
 				"INSERT into approvalSteps (approverGroupId, nextStepId, advisorOrganizationId) " + 
 				"VALUES (:approverGroupId, :nextStepId, :advisorOrganizationId)")
-			.bind("approverGroupId", (as.getApproverGroup() == null) ? null : as.getApproverGroup().getId())
+			.bind("approverGroupId", DaoUtils.getId(as.getApproverGroup()))
 			.bind("nextStepId", as.getNextStepId())
 			.bind("advisorOrganizationId", as.getAdvisorOrganizationId())
 			.executeAndReturnGeneratedKeys();

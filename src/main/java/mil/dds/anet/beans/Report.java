@@ -217,17 +217,17 @@ public class Report extends AbstractAnetView<Report> {
 		Report r = (Report) other;
 		return Objects.equals(r.getId(), id) &&
 				Objects.equals(r.getState(), state) &&
-				Objects.equals(r.getApprovalStep(), approvalStep) &&
+				idEqual(r.getApprovalStepJson(), approvalStep) &&
 				Objects.equals(r.getCreatedAt(), createdAt) &&
 				Objects.equals(r.getUpdatedAt(), updatedAt) &&
-				Objects.equals(r.getLocation(), location) &&
+				idEqual(r.getLocationJson(), location) &&
 				Objects.equals(r.getIntent(), intent) &&
 				Objects.equals(r.getExsum(), exsum) &&
 				Objects.equals(r.getPrincipals(), principals) &&
 				Objects.equals(r.getPoams(), poams) &&
 				Objects.equals(r.getReportText(), reportText) &&
 				Objects.equals(r.getNextSteps(), nextSteps) &&
-				Objects.equals(r.getAuthor(), author) &&
+				idEqual(r.getAuthorJson(), author) &&
 				Objects.equals(r.getComments(), comments);
 	}
 	

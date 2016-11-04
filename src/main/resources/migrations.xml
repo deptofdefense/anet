@@ -137,10 +137,10 @@
 
 		<createTable tableName="approvalSteps">
 			<column name="id" type="int" autoIncrement="true" >
-				<constraints nullable="false" />
+				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="approverGroupId" type="int" >
-				<constraints primaryKey="true" nullable="false"/>
+				<constraints nullable="false"/>
 			</column>
 			<column name="nextStepId" type="int" />
 			<column name="advisorOrganizationId" type="int" >
