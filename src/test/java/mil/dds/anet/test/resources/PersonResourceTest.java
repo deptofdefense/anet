@@ -25,7 +25,7 @@ public class PersonResourceTest extends AbstractResourceTest {
 		
 	public PersonResourceTest() { 
 		if (client == null) { 
-			client = new JerseyClientBuilder(RULE.getEnvironment()).build("person test client");
+			client = new JerseyClientBuilder(RULE.getEnvironment()).using(config).build("person test client");
 		}
 	}
 
@@ -105,5 +105,28 @@ public class PersonResourceTest extends AbstractResourceTest {
 		}
 	}
     
-    
+	@Test
+	public void viewTest() { 
+		Person steve = getSteveSteveson();
+		Response resp = httpQuery("/people/", steve)
+			.header("Accept", "text/html").get();
+		assertThat(resp.getStatus()).isEqualTo(200);
+		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
+		
+		resp = httpQuery("/people/new", steve)
+				.header("Accept", "text/html").get();
+		assertThat(resp.getStatus()).isEqualTo(200);
+		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
+		
+		resp = httpQuery("/people/1", steve)
+				.header("Accept", "text/html").get();
+		assertThat(resp.getStatus()).isEqualTo(200);
+		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
+		
+		resp = httpQuery("/people/1/edit", steve)
+				.header("Accept", "text/html").get();
+		assertThat(resp.getStatus()).isEqualTo(200);
+		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
+	}
+	
 }

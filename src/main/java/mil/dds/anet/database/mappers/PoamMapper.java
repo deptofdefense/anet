@@ -18,7 +18,11 @@ public class PoamMapper implements ResultSetMapper<Poam> {
 		p.setLongName(r.getString("longName"));
 		p.setShortName(r.getString("shortName"));
 		p.setCategory(r.getString("category"));
-		p.setParentPoam(Poam.createWithId(r.getInt("parentPoamId")));
+		
+		Integer parentPoamId = MapperUtils.getInteger(r, "parentPoamId");
+		if (parentPoamId != null) { 
+			p.setParentPoam(Poam.createWithId(parentPoamId));
+		}
 		p.setCreatedAt(new DateTime(r.getLong("createdAt")));
 		p.setUpdatedAt(new DateTime(r.getLong("updatedAt")));
 		return p;

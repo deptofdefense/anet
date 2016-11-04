@@ -11,6 +11,7 @@ import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.database.mappers.PoamMapper;
+import mil.dds.anet.utils.DaoUtils;
 
 @RegisterMapper(PoamMapper.class)
 public class PoamDao implements IAnetDao<Poam> {
@@ -55,10 +56,11 @@ public class PoamDao implements IAnetDao<Poam> {
 	@Override
 	public int update(Poam p) { 
 		p.setUpdatedAt(DateTime.now());
-		return dbHandle.createStatement("UPDATE poams set longName = :longName, shortName = :shortName " + 
+		return dbHandle.createStatement("UPDATE poams set longName = :longName, shortName = :shortName, " + 
 				"category = :category, parentPoamId = :parentPoamId " + 
 				"WHERE id = :id")
 			.bindFromProperties(p)
+			.bind("parentPoamId", DaoUtils.getId(p.getParentPoamJson()))
 			.execute();
 	}
 	

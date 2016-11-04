@@ -7,6 +7,8 @@ import javax.ws.rs.core.Response;
 
 import org.junit.Test;
 
+import com.google.common.collect.Lists;
+
 import io.dropwizard.client.JerseyClientBuilder;
 import mil.dds.anet.beans.Group;
 import mil.dds.anet.beans.Person;
@@ -15,13 +17,14 @@ public class GroupsResourceTest extends AbstractResourceTest {
 
 	public GroupsResourceTest() { 
 		if (client == null) { 
-			client = new JerseyClientBuilder(RULE.getEnvironment()).build("groups test client");
+			client = new JerseyClientBuilder(RULE.getEnvironment()).using(config).build("groups test client");
 		}
 	}
 	
 	@Test
 	public void createGroup() { 
 		Person steve = getSteveSteveson();
+		Person roger = getRogerRogwell();
 		
 		Group g = new Group();
 		g.setName("A Test Group");
@@ -53,6 +56,16 @@ public class GroupsResourceTest extends AbstractResourceTest {
 		returned = httpQuery(String.format("/groups/%d", created.getId()), steve).get(Group.class);
 		assertThat(returned.getMembers().size()).isEqualTo(1);
 		assertThat(returned.getMembers()).doesNotContain(steve);
+		
+		g = new Group();
+		g.setName("A Test Group with  members already");
+		g.setMembers(Lists.newArrayList(steve, jack, roger));
+		created = httpQuery("/groups/new", steve).post(Entity.json(g), Group.class);
+		assertThat(created.getName()).isEqualTo(g.getName());
+		returned = httpQuery(String.format("/groups/%d", created.getId()), steve)
+				.get(Group.class);
+		assertThat(returned.getMembers().size()).isEqualTo(3);
+		assertThat(returned.getMembers()).contains(steve, jack, roger);
 	}
 	
 	@Test
@@ -88,5 +101,30 @@ public class GroupsResourceTest extends AbstractResourceTest {
 		
 		Group returned = httpQuery(String.format("/groups/%d", created.getId()), steve).get(Group.class);
 		assertThat(returned).isNull();
+	}
+	
+	@Test
+	public void viewTest() { 
+		Person steve = getSteveSteveson();
+		Response resp = httpQuery("/groups/", steve)
+			.header("Accept", "text/html").get();
+		assertThat(resp.getStatus()).isEqualTo(200);
+		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
+		
+		resp = httpQuery("/groups/new", steve)
+				.header("Accept", "text/html").get();
+		assertThat(resp.getStatus()).isEqualTo(200);
+		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
+		
+		resp = httpQuery("/groups/1", steve)
+				.header("Accept", "text/html").get();
+		assertThat(resp.getStatus()).isEqualTo(200);
+		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
+		
+		//TODO: build a group edit page?? 
+//		resp = httpQuery("/groups/1/edit", steve)
+//				.header("Accept", "text/html").get();
+//		assertThat(resp.getStatus()).isEqualTo(200);
+//		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
 	}
 }

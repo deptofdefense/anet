@@ -2,6 +2,8 @@ package mil.dds.anet.test.resources;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
+
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
 
@@ -11,6 +13,7 @@ import com.google.common.collect.Lists;
 
 import io.dropwizard.client.JerseyClientBuilder;
 import mil.dds.anet.beans.AdvisorOrganization;
+import mil.dds.anet.beans.ApprovalAction;
 import mil.dds.anet.beans.ApprovalStep;
 import mil.dds.anet.beans.Billet;
 import mil.dds.anet.beans.Group;
@@ -26,7 +29,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 
 	public ReportsResourceTest() { 
 		if (client == null) { 
-			client = new JerseyClientBuilder(RULE.getEnvironment()).build("reports test client");
+			client = new JerseyClientBuilder(RULE.getEnvironment()).using(config).build("reports test client");
 		}
 	}
 	
@@ -104,7 +107,13 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		//TODO: verify the principals on this report
 		//TODO: verify the poams on this report
 		
-		//TODO: Check on Report status for who needs to approve
+		//Check on Report status for who needs to approve
+		List<ApprovalAction> approvalStatus = returned.getApprovalStatus();
+		assertThat(approvalStatus.size()).isEqualTo(1);
+		ApprovalAction approvalAction = approvalStatus.get(0);
+		assertThat(approvalAction.getPersonJson()).isNull(); //Because this hasn't been approved yet. 
+		assertThat(approvalAction.getCreatedAt()).isNull();
+		assertThat(approvalAction.getStep()).isEqualTo(approval); //This is the one step we need to go through. 
 		
 		//Approve the report
 		resp = httpQuery(String.format("/reports/%d/approve", created.getId()), approver1).get();
@@ -114,6 +123,14 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		returned = httpQuery(String.format("/reports/%d", created.getId()), author).get(Report.class);
 		assertThat(returned.getState()).isEqualTo(ReportState.RELEASED);
 		assertThat(returned.getApprovalStep()).isNull();
+		
+		//check on report satus to see that it got approved. 
+		approvalStatus = returned.getApprovalStatus();
+		assertThat(approvalStatus.size()).isEqualTo(1);
+		approvalAction = approvalStatus.get(0);
+		assertThat(approvalAction.getPersonJson().getId()).isEqualTo(approver1.getId()); 
+		assertThat(approvalAction.getCreatedAt()).isNotNull();
+		assertThat(approvalAction.getStep()).isEqualTo(approval); //This is the one step we need to go through. 
 		
 		//Post a comment on the report because it's awesome
 		
@@ -125,5 +142,29 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		//Search for this report by keyword
 		//Search for this report by POAM (top level and bottom level)
 		
+	}
+	
+	@Test
+	public void viewTest() { 
+		Person steve = getSteveSteveson();
+		Response resp = httpQuery("/reports/", steve)
+			.header("Accept", "text/html").get();
+		assertThat(resp.getStatus()).isEqualTo(200);
+		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
+		
+		resp = httpQuery("/reports/new", steve)
+				.header("Accept", "text/html").get();
+		assertThat(resp.getStatus()).isEqualTo(200);
+		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
+		
+		resp = httpQuery("/reports/1", steve)
+				.header("Accept", "text/html").get();
+		assertThat(resp.getStatus()).isEqualTo(200);
+		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
+		
+		resp = httpQuery("/reports/1/edit", steve)
+				.header("Accept", "text/html").get();
+		assertThat(resp.getStatus()).isEqualTo(200);
+		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
 	}
 }

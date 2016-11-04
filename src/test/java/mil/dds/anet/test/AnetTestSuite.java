@@ -41,7 +41,8 @@ import mil.dds.anet.test.resources.TashkilResourceTest;
   AdvisorOrganizationResourceTest.class,
   BilletResourceTest.class,
   ApprovalStepResourceTest.class,
-  ReportsResourceTest.class
+  ReportsResourceTest.class,
+  RandomTests.class
 })
 
 public class AnetTestSuite {

@@ -24,7 +24,7 @@ public class ApprovalStepResourceTest extends AbstractResourceTest {
 
 	public ApprovalStepResourceTest() { 
 		if (client == null) { 
-			client = new JerseyClientBuilder(RULE.getEnvironment()).build("approval step test client");
+			client = new JerseyClientBuilder(RULE.getEnvironment()).using(config).build("approval step test client");
 		}
 	}
 	

@@ -16,7 +16,7 @@ public class TashkilResourceTest extends AbstractResourceTest {
 	
 	public TashkilResourceTest() { 
 		if (client == null) { 
-			client = new JerseyClientBuilder(RULE.getEnvironment()).build("groups test client");
+			client = new JerseyClientBuilder(RULE.getEnvironment()).using(config).build("groups test client");
 		}
 	}
 	
@@ -51,6 +51,30 @@ public class TashkilResourceTest extends AbstractResourceTest {
 		
 		//TODO: Change the Principal
 		
+	}
+	
+	@Test
+	public void viewTest() { 
+		Person steve = getSteveSteveson();
+		Response resp = httpQuery("/tashkils/", steve)
+			.header("Accept", "text/html").get();
+		assertThat(resp.getStatus()).isEqualTo(200);
+		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
+		
+		resp = httpQuery("/tashkils/new", steve)
+				.header("Accept", "text/html").get();
+		assertThat(resp.getStatus()).isEqualTo(200);
+		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
+		
+		resp = httpQuery("/tashkils/1", steve)
+				.header("Accept", "text/html").get();
+		assertThat(resp.getStatus()).isEqualTo(200);
+		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
+		
+		resp = httpQuery("/tashkils/1/edit", steve)
+				.header("Accept", "text/html").get();
+		assertThat(resp.getStatus()).isEqualTo(200);
+		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
 	}
 	
 }

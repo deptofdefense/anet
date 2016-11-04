@@ -1,5 +1,6 @@
 package mil.dds.anet.test.resources;
 
+import java.io.InputStream;
 import java.util.Base64;
 import java.util.List;
 
@@ -7,10 +8,14 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.Response;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.ClassRule;
 
+import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.util.Duration;
 import mil.dds.anet.AnetApplication;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.config.AnetConfiguration;
@@ -23,6 +28,10 @@ public abstract class AbstractResourceTest {
             new DropwizardAppRule<AnetConfiguration>(AnetApplication.class, "anet.yml");
 	
 	public static Client client;
+	public static JerseyClientConfiguration config = new JerseyClientConfiguration();
+	static { 
+		config.setConnectionTimeout(Duration.seconds(2));
+	}
 	
 	public Builder httpQuery(String path) { 
 		if (path.startsWith("/") == false ) { path = "/" + path; } 
@@ -58,5 +67,15 @@ public abstract class AbstractResourceTest {
 	
 	public Person getRogerRogwell() { 
 		return findOrPutPersonInDb(PersonTest.getRogerRogwell());
+	}
+	
+	public String getResponseBody(Response resp) {
+		try { 
+			InputStream is = (InputStream) resp.getEntity();
+			return IOUtils.toString(is);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 }

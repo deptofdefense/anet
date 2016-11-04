@@ -20,7 +20,7 @@ public class LocationResourceTest extends AbstractResourceTest {
 
 	public LocationResourceTest() { 
 		if (client == null) { 
-			client = new JerseyClientBuilder(RULE.getEnvironment()).build("test client");
+			client = new JerseyClientBuilder(RULE.getEnvironment()).using(config).build("test client");
 		}
 	}
 	

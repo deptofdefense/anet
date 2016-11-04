@@ -18,7 +18,7 @@ public class AdvisorOrganizationResourceTest extends AbstractResourceTest {
 
 	public AdvisorOrganizationResourceTest() { 
 		if (client == null) { 
-			client = new JerseyClientBuilder(RULE.getEnvironment()).build("ao test client");
+			client = new JerseyClientBuilder(RULE.getEnvironment()).using(config).build("ao test client");
 		}
 	}
 	

@@ -1,5 +1,6 @@
 package mil.dds.anet.test.beans;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import java.util.LinkedList;
 
 import org.joda.time.DateTime;
@@ -13,6 +14,7 @@ import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.geo.LatLng;
 import mil.dds.anet.beans.geo.Location;
+import mil.dds.anet.views.AbstractAnetView.LoadLevel;
 
 public class ReportTest extends BeanTester<Report> {
 
@@ -62,5 +64,16 @@ public class ReportTest extends BeanTester<Report> {
     public void deserializesFromJSON() throws Exception {
 		deserializesFromJSON(getTestReport(), "testJson/reports/test.json");
     }
+	
+	@Test
+	public void staticCreatorTest() { 
+		Report r = Report.createWithId(4);
+		assertThat(r.getId()).isEqualTo(4);
+		assertThat(r.getLoadLevel()).isEqualTo(LoadLevel.ID_ONLY);
+		assertThat(r.getReportText()).isNull();
+		assertThat(r.getApprovalStepJson()).isNull();
+		assertThat(r.getNextSteps()).isNull();
+		assertThat(r.getCreatedAt()).isNull();
+	}
 	
 }

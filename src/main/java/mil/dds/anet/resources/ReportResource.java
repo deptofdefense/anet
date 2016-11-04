@@ -85,6 +85,8 @@ public class ReportResource {
 	@Produces(MediaType.TEXT_HTML)
 	public Report editReportForm(@PathParam("id") int id) { 
 		Report r = dao.getById(id);
+		List<Poam> milestones = engine.getPoamDao().getPoamsByCategory("EF");
+		r.addToContext("efs", milestones);
 		return r.render("form.ftl");
 	}
 	

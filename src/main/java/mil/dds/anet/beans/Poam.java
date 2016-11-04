@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
 import mil.dds.anet.AnetObjectEngine;
+import mil.dds.anet.utils.DaoUtils;
 import mil.dds.anet.views.AbstractAnetView;
 
 public class Poam extends AbstractAnetView<Poam> {
@@ -76,6 +77,8 @@ public class Poam extends AbstractAnetView<Poam> {
 	public List<Poam> getChildrenPoamsJson() { 
 		return childrenPoams;
 	}
+	
+	@JsonSetter("childrenPoams")
 	public void setChildrenPoams(List<Poam> childrenPoams) { 
 		this.childrenPoams = childrenPoams;
 	}
@@ -128,6 +131,11 @@ public class Poam extends AbstractAnetView<Poam> {
 	@Override
 	public int hashCode() { 
 		return Objects.hash(id, shortName, longName, category, parentPoam);
+	}
+	
+	@Override
+	public String toString() { 
+		return String.format("%d - %s - %s - %s - %d", id, shortName, longName, category, DaoUtils.getId(parentPoam));
 	}
 	
 }
