@@ -10,8 +10,8 @@
 		<link href="/assets/css/bootstrap.css" rel="stylesheet">
 		<#-- <link href="/assets/css/bootstrap-theme.css" rel="stylesheet"> -->
 		 <link rel="stylesheet" href="/assets/css/uswds.css">
+		 <link href="/assets/css/select2.min.css" rel="stylesheet" />
 		<link href="/assets/css/style.less" rel="stylesheet/less" type="text/css">
-		<link href="/assets/css/select2.min.css" rel="stylesheet" />
 		<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 		<!--[if lt IE 9]>
@@ -52,4 +52,3 @@
                 </div>
               </form>
             <#-- </div> -->
-

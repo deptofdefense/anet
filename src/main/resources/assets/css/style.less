@@ -110,12 +110,64 @@ th {
 
 	input[type=text],.select2 {
 		background: #FFFFFF;
-		border: 1px solid #D6D7D9;
+		border: 1px solid #5b616b;
 		border-radius: 5px;
 		min-width: 300px;
 		// max-width: 50%;
 	}
 
+}
+
+.select2-container--default {
+  border: none;
+  font-size: 1.7rem;
+  padding: 1rem .3em;
+  margin: .2em 0;
+  height: auto;
+
+  .select2-selection {
+    border: none;
+  }
+
+  .select2-selection--multiple {
+    padding: 2px 0 0 0;
+  }
+
+  .select2-selection__rendered {
+    line-height: initial;
+  }
+
+  .select2-selection__arrow {
+    width: 32px;
+    height: 100%;
+    background-image: url("/assets/arrow-down.png");
+    background-image: url("/assets/arrow-down.svg");
+    background-position: right 1.3rem center;
+    background-repeat: no-repeat;
+    background-size: 1.3rem;
+
+    b {
+      display: none;
+    }
+  }
+
+  .select2-selection__clear {
+    font-size: 2.4rem;
+    color: #000;
+    float: none;
+    position: absolute;
+    top: 11px;
+    right: 38px;
+  }
+}
+
+.select2-dropdown {
+  max-height: 300px;
+  overflow-y: scroll;
+}
+
+.select2-results__options {
+  width: 100%;
 }
 
 .field {
