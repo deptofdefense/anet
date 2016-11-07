@@ -18,6 +18,7 @@
 - Run `./gradlew build` to download all dependencies and build the project
 - Run `./gradlew dbMigrate` to build and migrate the database
   - The database schema is stored in src/main/resources/migrations.xml
+- Run `sqlite3 development.db < insertBaseData.sql` to load the initial seed data
 - Run `./gradlew run` to run the server
 - You should now be able to go to `localhost:8080/` in your browser
 
