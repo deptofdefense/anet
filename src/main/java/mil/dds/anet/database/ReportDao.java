@@ -102,4 +102,15 @@ public class ReportDao implements IAnetDao<Report> {
 			.bind("reportId", r.getId())
 			.execute();
 	}
+	
+	/* Returns reports that the given person can currently approve */
+	public List<Report> getReportsForApproval(Person p) { 
+		return dbHandle.createQuery("SELECT reports.* FROM reports, groupMemberships, approvalSteps " + 
+				"WHERE groupMemberships.personId = :personId AND " + 
+				"groupMemberships.groupId = approvalSteps.approverGroupId AND " + 
+				"approvalSteps.id = reports.approvalStepId")
+			.bind("personId", p.getId())
+			.map(new ReportMapper())
+			.list();
+	}
 }

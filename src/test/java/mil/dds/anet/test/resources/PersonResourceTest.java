@@ -19,12 +19,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.jackson.Jackson;
+import io.dropwizard.util.Duration;
 import mil.dds.anet.beans.Person;
 
 public class PersonResourceTest extends AbstractResourceTest {
 		
 	public PersonResourceTest() { 
 		if (client == null) { 
+			config.setConnectionTimeout(Duration.seconds(10));
 			client = new JerseyClientBuilder(RULE.getEnvironment()).using(config).build("person test client");
 		}
 	}

@@ -18,6 +18,7 @@ public class Person extends AbstractAnetView<Person> implements Principal{
 	private String lastName;
 	private Status status;
 	private Role role;
+	private Boolean pendingVerification;
 	
 	private String emailAddress;
 	private String phoneNumber;
@@ -27,6 +28,10 @@ public class Person extends AbstractAnetView<Person> implements Principal{
 	
 	private DateTime createdAt;
 	private DateTime updatedAt;
+	
+	public Person() { 
+		this.pendingVerification = false; //Defaults 
+	}
 	
 	@Override
 	@JsonIgnore
@@ -58,6 +63,14 @@ public class Person extends AbstractAnetView<Person> implements Principal{
 
 	public void setRole(Role role) {
 		this.role = role;
+	}
+
+	public Boolean getPendingVerification() {
+		return pendingVerification;
+	}
+
+	public void setPendingVerification(Boolean pendingVerification) {
+		this.pendingVerification = pendingVerification;
 	}
 
 	public String getEmailAddress() {
@@ -116,6 +129,7 @@ public class Person extends AbstractAnetView<Person> implements Principal{
 			Objects.equals(other.getPhoneNumber(), this.getPhoneNumber()) && 
 			Objects.equals(other.getRank(), this.getRank()) && 
 			Objects.equals(other.getBiography(), this.getBiography()) &&
+			Objects.equals(other.getPendingVerification(), pendingVerification) &&
 			Objects.equals(other.getCreatedAt(), createdAt) &&
 			Objects.equals(other.getUpdatedAt(), updatedAt);
 		return b;
@@ -124,7 +138,7 @@ public class Person extends AbstractAnetView<Person> implements Principal{
 	@Override
 	public int hashCode() { 
 		return Objects.hash(id, firstName, lastName, status, role, emailAddress,
-			phoneNumber, rank, biography, createdAt, updatedAt);
+			phoneNumber, rank, biography, createdAt, updatedAt, pendingVerification);
 	}
 	
 	@Override

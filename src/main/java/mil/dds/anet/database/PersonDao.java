@@ -54,8 +54,8 @@ public class PersonDao implements IAnetDao<Person> {
 		p.setCreatedAt(DateTime.now());
 		p.setUpdatedAt(DateTime.now());
 		GeneratedKeys<Map<String, Object>> keys = dbHandle.createStatement("INSERT INTO people " +
-				"(firstName, lastName, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt) " +
-				"VALUES (:firstName, :lastName, :status, :role, :emailAddress, :phoneNumber, :rank, :biography, :createdAt, :updatedAt);")
+				"(firstName, lastName, status, role, emailAddress, phoneNumber, rank, pendingVerification, biography, createdAt, updatedAt) " +
+				"VALUES (:firstName, :lastName, :status, :role, :emailAddress, :phoneNumber, :rank, :pendingVerification, :biography, :createdAt, :updatedAt);")
 			.bindFromProperties(p)
 			.bind("status", (p.getStatus() != null ) ? p.getStatus().ordinal() : null)
 			.bind("role", p.getRole().ordinal())
@@ -68,8 +68,8 @@ public class PersonDao implements IAnetDao<Person> {
 		p.setUpdatedAt(DateTime.now());
 		return dbHandle.createStatement("UPDATE people " + 
 				"SET firstName = :firstName, lastName = :lastName, status = :status, role = :role, " + 
-				"phoneNumber = :phoneNumber, rank = :rank, biography = :biography " +
-				"WHERE id = :id")
+				"phoneNumber = :phoneNumber, rank = :rank, biography = :biography, " +
+				"pendingVerification = :pendingVerification WHERE id = :id")
 			.bindFromProperties(p)
 			.execute();
 	}

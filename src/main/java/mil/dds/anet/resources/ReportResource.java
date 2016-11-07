@@ -152,4 +152,9 @@ public class ReportResource {
 		return Response.ok().build();
 	}
 	
+	@GET
+	@Path("/pendingMyApproval")
+	public List<Report> getReportsPendingMyApproval(@Auth Person approver) { 
+		return dao.getReportsForApproval(approver);
+	}
 }

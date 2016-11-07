@@ -33,12 +33,21 @@ public class PersonResource {
 		this.dao = engine.getPersonDao();
 	}
 	
+	/**
+	 * Returns all people objects in the ANET system. Does no filtering on role/status/etc. 
+	 * @param pageNum 0 indexed page number of results to get. Defaults to 0. 
+	 * @param pageSize Defaults to 100
+	 * @return List of People objects in the system
+	 */
 	@GET
 	@Path("/")
 	public List<Person> getAllPeople(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
 		return dao.getAll(pageNum, pageSize);
 	}
 	
+	/**
+	 * same as {@link #getAllPeople(int, int)} but generates the HTML view (/person/view/index.ftl)
+	 */
 	@GET
 	@Path("/")
 	@Produces(MediaType.TEXT_HTML)
@@ -46,6 +55,10 @@ public class PersonResource {
 		return new ObjectListView<Person>(dao.getAll(pageNum, pageSize), Person.class);
 	}
 	
+	
+	/**
+	 * Returns a single person entry based on ID. 
+	 */
 	@GET
 	@Path("/{id}")
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
@@ -55,6 +68,7 @@ public class PersonResource {
 		return p.render("show.ftl");
 	}
 	
+	
 	@GET
 	@Path("/new")
 	@Produces(MediaType.TEXT_HTML)
@@ -62,11 +76,16 @@ public class PersonResource {
 		return (new Person()).render("form.ftl");
 	}
 	
+	/**
+	 * Creates a new {@link Person} object as supplied in http entity. 
+	 * @return the same Person object with the ID field filled in. 
+	 */
 	@POST
 	@Path("/new")
 	public Person createNewPerson(Person p) { 
 		return dao.insert(p);
 	}
+	
 	
 	@GET
 	@Path("/{id}/edit")
@@ -76,6 +95,10 @@ public class PersonResource {
 		return p.render("form.ftl");
 	}
 	
+	/**
+	 * Will update a person record with the {@link Person} entity provided in the http entity. All fields will be updated, so you must pass the complete Person object. 
+	 * @return HTTP/200 on success, HTTP/404 on any error. 
+	 */
 	@POST
 	@Path("/update")
 	public Response updatePerson(Person p) { 
@@ -94,8 +117,8 @@ public class PersonResource {
 	
 	/**
 	 * Searches people in the ANET database TODO: should be fuzzy searching
-	 * @param query : the search term
-	 * @param role : either PRINCIPAL, or ADVISOR will search people with that role. 
+	 * @param query the search term
+	 * @param role either PRINCIPAL, or ADVISOR will search people with that role. 
 	 * @return a list of people objects
 	 */
 	@GET
@@ -111,12 +134,20 @@ public class PersonResource {
 		return (new Person()).render("search.ftl");
 	}
 	
+	/**
+	 * Fetches the current billet that a given person (Advisor) is in. 
+	 * @param personId the ID number of the person whose billet you want to lookup
+	 */
 	@GET
 	@Path("/{id}/billet")
 	public Billet getBilletForAdvisor(@PathParam("personId") int personId) { 
 		return dao.getBilletForAdvisor(personId);
 	}
 	
+	/**
+	 * Fetches the current tashkil that a given person (Principal) is in. 
+	 * @param personId the ID number of the person whose tashkil you want to lookup
+	 */
 	@GET
 	@Path("/{id}/tashkil")
 	public Tashkil getTashkilForPrincipal(@PathParam("personId") int personId) {

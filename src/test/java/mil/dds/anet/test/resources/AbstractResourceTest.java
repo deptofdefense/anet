@@ -30,7 +30,7 @@ public abstract class AbstractResourceTest {
 	public static Client client;
 	public static JerseyClientConfiguration config = new JerseyClientConfiguration();
 	static { 
-		config.setConnectionTimeout(Duration.seconds(2));
+		config.setConnectionTimeout(Duration.seconds(10));
 	}
 	
 	public Builder httpQuery(String path) { 

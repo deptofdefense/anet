@@ -193,4 +193,10 @@
 		</addColumn>
 	</changeSet>
 
+	<changeSet id="6" author="hpitelka">
+		<addColumn tableName="people">
+			<column name="pendingVerification" type="boolean" defaultValue="false" />
+		</addColumn>
+	</changeSet>
+
 </databaseChangeLog>

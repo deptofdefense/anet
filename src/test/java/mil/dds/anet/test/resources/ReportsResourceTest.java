@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 
 import org.junit.Test;
@@ -106,6 +107,10 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		//TODO: verify the location on this report
 		//TODO: verify the principals on this report
 		//TODO: verify the poams on this report
+		
+		//Verify this shows up on the approvers list of pending documents
+		List<Report> pending = httpQuery("/reports/pendingMyApproval", approver1).get(new GenericType<List<Report>>() {});
+		assertThat(pending).contains(returned);
 		
 		//Check on Report status for who needs to approve
 		List<ApprovalAction> approvalStatus = returned.getApprovalStatus();
