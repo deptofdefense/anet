@@ -99,7 +99,7 @@
                             <select id="attachPersonName"></select>
                           </div>
 
-                          <div class="form-group">
+                          <div class="form-group hide" attach-person-type>
                             <input type="radio" value="advisor" name="attachPersonType" id="attachPersonTypeAdvisor">
                             <label for="attachPersonTypeAdvisor">Advisor</label>
                             <input type="radio" value="principal" name="attachPersonType" id="attachPersonTypePrincipal">
@@ -108,7 +108,7 @@
                             <label for="attachPersonTypeOther">Other</label>
                           </div>
 
-                          <div class="form-group">
+                          <div class="form-group hide" attach-person-group>
                             <label for="attachPersonGroup">Organizational Group</label>
                             <select id="attachPersonGroup"></select>
                           </div>
@@ -204,22 +204,22 @@
 <#include "../template/footer.ftl">
 
 <script type="text/javascript">
-$(document).ready(function () { 
+$(document).ready(function () {
 	enablePersonSearch("#afghanPrincipal","PRINCIPAL");
 	enablePersonSearch("#attachPersonName","ADVISOR");
 	enableLocationSearch("#engagementLocation");
-	
-	$("#attachEFName").select2({ 
+
+	$("#attachEFName").select2({
 		dropdownParent: $(".mainbody"),
 		placeholder: 'Select an EF'
 	});
-	$("#attachEFName").on("select2:select", function (e) { 
+	$("#attachEFName").on("select2:select", function (e) {
 		var efId = $("#attachEFName").val();
-		$.ajax( { 
+		$.ajax( {
 			url: '/poams/' + efId + '/children?cat=Milestone',
 			method: "GET"
-		}).done(function(response) { 
-			var results = _.map(response, function(el) { 
+		}).done(function(response) {
+			var results = _.map(response, function(el) {
 				return {
 					id : el.id,
 					text: el.shortName + " - " + el.longName
@@ -230,16 +230,16 @@ $(document).ready(function () {
 				data: results,
 				dropdownParent: $(".mainbody")
 			});
-		}); 
+		});
 	});
-	
-	$("#attachEFMilestones").on("select2:select", function(e) { 
+
+	$("#attachEFMilestones").on("select2:select", function(e) {
 		var milestoneId = $("#attachEFMilestones").val();
 		$.ajax({
 			url: '/poams/' + milestoneId + '/children?cat=Action',
 			method: 'GET'
-		}).done(function(response) { 
-		var results = _.map(response, function(el) { 
+		}).done(function(response) {
+		var results = _.map(response, function(el) {
 				return {
 					id : el.id,
 					text: el.shortName + " - " + el.longName
@@ -250,16 +250,16 @@ $(document).ready(function () {
 				data: results,
 				dropdownParent: $(".mainbody")
 			});
-		}); 
-	});	
+		});
+	});
 
-	$("#reportSubmit").on("click", function(event) { 
+	$("#reportSubmit").on("click", function(event) {
 		var report = buildForm("reportForm");
-		if (report["principal_id"]) { 
+		if (report["principal_id"]) {
 			report["principals"] = [{ id: report["principal_id"] }]
 			delete report["principal_id"];
 		}
-		if (report["location_id"]) { 
+		if (report["location_id"]) {
 			report["location"] = { id: report["location_id"] }
 			delete report["location_id"];
 		}
@@ -269,13 +269,13 @@ $(document).ready(function () {
 			method: "POST",
 			contentType: "application/json",
 			data: JSON.stringify(report)
-		}).done( function (response) { 
+		}).done( function (response) {
 			window.location = "/reports/" + response.id;
 		});
 	});
 });
 
-function enablePersonSearch(selectId, role) { 
+function enablePersonSearch(selectId, role) {
 	$(selectId).select2({
     dropdownParent: $(".mainbody"),
 		ajax: {
@@ -283,14 +283,14 @@ function enablePersonSearch(selectId, role) {
 			dataType: 'json',
 			delay: 250,
 			method: 'GET',
-			data: function(params) { 
-				return { q : params.term, role: role } 
+			data: function(params) {
+				return { q : params.term, role: role }
 			},
-			processResults :  function(data, params) { 
+			processResults :  function(data, params) {
 				var names = [];
-				for (i in data) { 
-					names.push({ 
-						id: data[i]["id"], 
+				for (i in data) {
+					names.push({
+						id: data[i]["id"],
 						text : data[i]["firstName"] + " " + data[i]["lastName"]
 					});
 				}
@@ -301,7 +301,7 @@ function enablePersonSearch(selectId, role) {
 	});
 };
 
-function enableLocationSearch(selectId) { 
+function enableLocationSearch(selectId) {
 	$(selectId).select2({
     dropdownParent: $(".mainbody"),
 		ajax: {
@@ -309,12 +309,12 @@ function enableLocationSearch(selectId) {
 			dataType: 'json',
 			delay: 250,
 			method: 'GET',
-			data: function(params) { 
-				return { q : params.term } 
+			data: function(params) {
+				return { q : params.term }
 			},
 			processResults :  function(data, params) {
 				var results =_.map(data, function (el) {
-					return { 
+					return {
 						id: el["id"] ,
 						text: el["name"]
 					}
