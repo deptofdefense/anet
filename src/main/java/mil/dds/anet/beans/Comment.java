@@ -4,21 +4,24 @@ import java.util.Objects;
 
 import org.joda.time.DateTime;
 
-public class Comment {
+import mil.dds.anet.views.AbstractAnetView;
 
-	private Integer id;
+public class Comment extends AbstractAnetView<Comment> {
+
+	private Integer reportId;
 	
 	private Person author;
-	private DateTime dtg;
+	private DateTime createdAt;
+	private DateTime updatedAt;
 	
 	private String text;
 
-	public Integer getId() {
-		return id;
+	public Integer getReportId() {
+		return reportId;
 	}
 
-	public void setId(Integer id) {
-		this.id = id;
+	public void setReportId(Integer reportId) {
+		this.reportId = reportId;
 	}
 
 	public Person getAuthor() {
@@ -29,12 +32,20 @@ public class Comment {
 		this.author = author;
 	}
 
-	public DateTime getDtg() {
-		return dtg;
+	public DateTime getCreatedAt() {
+		return createdAt;
 	}
 
-	public void setDtg(DateTime dtg) {
-		this.dtg = dtg;
+	public void setCreatedAt(DateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public DateTime getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(DateTime updatedAt) {
+		this.updatedAt = updatedAt;
 	}
 
 	public String getText() {
@@ -53,14 +64,21 @@ public class Comment {
 		}
 		Comment c = (Comment) o;
 		return Objects.equals(c.getId(), id) &&
-				Objects.equals(c.getAuthor(), author) &&
+				idEqual(c.getAuthor(), author) &&
 				Objects.equals(c.getText(), text) &&
-				Objects.equals(c.getDtg(), dtg);
+				Objects.equals(c.getReportId(), reportId) &&
+				Objects.equals(c.getUpdatedAt(), updatedAt) &&
+				Objects.equals(c.getCreatedAt(), createdAt);
 	}
 	
 	@Override
 	public int hashCode() { 
-		return Objects.hash(id, author, dtg, text);
+		return Objects.hash(id, author, createdAt, text, reportId, updatedAt);
+	}
+	
+	@Override
+	public String toString() { 
+		return String.format("[%d] - [Author:%d,Report:%d] - (%s)", id, author.getId(), reportId, text);
 	}
 	
 }

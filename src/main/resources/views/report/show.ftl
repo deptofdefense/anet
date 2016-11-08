@@ -39,8 +39,26 @@ Report: ${id} - ${createdAt}<br>
 	      </#if>
 	</#list> 
 </#if>
-<#include "../template/footer.ftl">
 
+<b>Comments:</b>
+<table>
+<#list comments as comment>
+	<tr>
+		<td>${comment.author} at ${comment.createdAt}</td>
+		<td>${comment.text}</td>
+		<#if context.currentUser.id == comment.author.id>
+			<td><a class="deleteComment" data-id="${comment.id}">[Delete]</td>
+		</#if>
+	</tr>
+</#list>
+</table>
+<div>
+Post a new comment on this report: 
+<textarea id="newCommentText"></textarea>
+<button id="newCommentBtn">Save!</button>
+</div>
+
+<#include "../template/footer.ftl">
 
 <script type="text/javascript">
 $(document).ready(function() { 
@@ -68,6 +86,27 @@ $(document).ready(function() {
 		$.ajax({
 			url: "/reports/" + id + "/reject",
 			method: "GET"
+		}).done(function(response) { 
+			location.reload();
+		});
+	});
+	
+	$("#newCommentBtn").on("click", function(event) {
+		var comment = {text: $("#newCommentText").val() }; 
+		$.ajax({
+			url: "/reports/${id}/comments",
+			contentType: "application/json",
+			method: "POST",
+			data: JSON.stringify(comment)
+		}).done(function(response) { 
+			location.reload();
+		});
+	});
+	$(".deleteComment").on("click", function(event) {
+		var id = $(event.currentTarget).attr("data-id");
+		$.ajax({
+			url: "/reports/${id}/comments/" + id,
+			method: "DELETE",
 		}).done(function(response) { 
 			location.reload();
 		});

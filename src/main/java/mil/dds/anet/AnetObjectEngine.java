@@ -13,6 +13,7 @@ import org.skife.jdbi.v2.Handle;
 import mil.dds.anet.beans.AdvisorOrganization;
 import mil.dds.anet.beans.ApprovalStep;
 import mil.dds.anet.beans.Billet;
+import mil.dds.anet.beans.Comment;
 import mil.dds.anet.beans.Group;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Report;
@@ -21,6 +22,7 @@ import mil.dds.anet.database.AdvisorOrganizationDao;
 import mil.dds.anet.database.ApprovalActionDao;
 import mil.dds.anet.database.ApprovalStepDao;
 import mil.dds.anet.database.BilletDao;
+import mil.dds.anet.database.CommentDao;
 import mil.dds.anet.database.GroupDao;
 import mil.dds.anet.database.IAnetDao;
 import mil.dds.anet.database.LocationDao;
@@ -46,6 +48,7 @@ public class AnetObjectEngine {
 	ApprovalStepDao asDao;
 	ApprovalActionDao approvalActionDao;
 	ReportDao reportDao;
+	CommentDao commentDao;
 
 	private static Map<Class<? extends AbstractAnetView<?>>, IAnetDao<?>> daoMap;
 	private static AnetObjectEngine instance; 
@@ -65,6 +68,7 @@ public class AnetObjectEngine {
 		asDao = new ApprovalStepDao(dbHandle);
 		approvalActionDao = new ApprovalActionDao(dbHandle);
 		reportDao = new ReportDao(dbHandle);
+		commentDao = new CommentDao(dbHandle);
 		
 		daoMap = new HashMap<Class<? extends AbstractAnetView<?>>, IAnetDao<?>>();
 		daoMap.put(Person.class, personDao);
@@ -77,6 +81,7 @@ public class AnetObjectEngine {
 //		daoMap.put(ApprovalStep.class, asDao);
 //		daoMap.put(ApprovalAction.class, approvalActionDao);
 		daoMap.put(Report.class, reportDao);
+		daoMap.put(Comment.class, commentDao);
 		
 		instance = this;
 	}
@@ -123,6 +128,10 @@ public class AnetObjectEngine {
 
 	public ReportDao getReportDao() {
 		return reportDao;
+	}
+	
+	public CommentDao getCommentDao() { 
+		return commentDao;
 	}
 	
 	public AdvisorOrganization getAdvisorOrganizationForPerson(Person p) { 

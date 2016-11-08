@@ -63,7 +63,9 @@
 			"rank": "OF-9",
 			"biography": "this is a sample biography"
 		},
-		"dtg": 1453815803000,
-		"text": "I really like this report, it's awesome!!!"
+		"createdAt": 1453815803000,
+		"updatedAt": null,
+		"text": "I really like this report, it's awesome!!!",
+		"reportId" : null
 	}]
 }

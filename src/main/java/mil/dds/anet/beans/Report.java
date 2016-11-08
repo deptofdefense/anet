@@ -170,12 +170,22 @@ public class Report extends AbstractAnetView<Report> {
 		return author;
 	}
 
+	@JsonIgnore
 	public List<Comment> getComments() {
+		if (comments == null) {  
+			comments = AnetObjectEngine.getInstance().getCommentDao().getCommentsForReport(this);
+		}
 		return comments;
 	}
 
+	@JsonSetter("comments")
 	public void setComments(List<Comment> comments) {
 		this.comments = comments;
+	}
+	
+	@JsonGetter("comments")
+	public List<Comment> getCommentsJson() { 
+		return comments;
 	}
 	
 	/*Returns a full list of the approval steps and statuses for this report
@@ -228,7 +238,7 @@ public class Report extends AbstractAnetView<Report> {
 				Objects.equals(r.getReportText(), reportText) &&
 				Objects.equals(r.getNextSteps(), nextSteps) &&
 				idEqual(r.getAuthorJson(), author) &&
-				Objects.equals(r.getComments(), comments);
+				Objects.equals(r.getCommentsJson(), comments);
 	}
 	
 	@Override

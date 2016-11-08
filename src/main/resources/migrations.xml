@@ -112,6 +112,7 @@
 			<column name="authorId" type="int" />
 			<column name="reportId" type="int" />
 			<column name="createdAt" type="datetime" />
+			<column name="updatedAt" type="datetime" />
 			<column name="text" type="text" />
 		</createTable>
 

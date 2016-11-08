@@ -44,9 +44,10 @@ public class ReportTest extends BeanTester<Report> {
 		
 		LinkedList<Comment> comments = new LinkedList<Comment>();
 		Comment c = new Comment();
-		c.setDtg(new DateTime(1453815803000L, ISOChronology.getInstanceUTC()));
+		c.setCreatedAt(new DateTime(1453815803000L, ISOChronology.getInstanceUTC()));
 		c.setAuthor(PersonTest.getJackJacksonStub());
 		c.setText("I really like this report, it's awesome!!!");
+		c.setReportId(null);
 		comments.add(c);
 		r.setComments(comments);
 		

@@ -17,6 +17,7 @@ import mil.dds.anet.beans.AdvisorOrganization;
 import mil.dds.anet.beans.ApprovalAction;
 import mil.dds.anet.beans.ApprovalStep;
 import mil.dds.anet.beans.Billet;
+import mil.dds.anet.beans.Comment;
 import mil.dds.anet.beans.Group;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
@@ -25,6 +26,7 @@ import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.geo.LatLng;
 import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.test.beans.AdvisorOrganizationTest;
+import mil.dds.anet.test.beans.CommentTest;
 
 public class ReportsResourceTest extends AbstractResourceTest {
 
@@ -138,7 +140,20 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		assertThat(approvalAction.getStep()).isEqualTo(approval); //This is the one step we need to go through. 
 		
 		//Post a comment on the report because it's awesome
+		Comment cOne = httpQuery(String.format("/reports/%d/comments", created.getId()), author)
+				.post(Entity.json(CommentTest.fromText("This is a test comment one")), Comment.class);
+		assertThat(cOne.getId()).isNotNull();
+		assertThat(cOne.getReportId()).isEqualTo(created.getId());
+		assertThat(cOne.getAuthor().getId()).isEqualTo(author.getId());
 		
+		Comment cTwo = httpQuery(String.format("/reports/%d/comments", created.getId()), approver1)
+				.post(Entity.json(CommentTest.fromText("This is a test comment two")), Comment.class);
+		assertThat(cTwo.getId()).isNotNull();
+		
+		List<Comment> commentsReturned = httpQuery(String.format("/reports/%d/comments", created.getId()), approver1)
+			.get(new GenericType<List<Comment>>() {});
+		assertThat(commentsReturned).hasSize(2);
+		assertThat(commentsReturned).containsExactly(cOne, cTwo); //Assert order of comments! 
 		
 		//Search for this report by Author
 		//Search for this report by Advisor

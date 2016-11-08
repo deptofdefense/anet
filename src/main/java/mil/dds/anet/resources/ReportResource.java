@@ -3,6 +3,7 @@ package mil.dds.anet.resources;
 import java.util.List;
 
 import javax.annotation.security.PermitAll;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -23,6 +24,7 @@ import mil.dds.anet.beans.AdvisorOrganization;
 import mil.dds.anet.beans.ApprovalAction;
 import mil.dds.anet.beans.ApprovalAction.ApprovalType;
 import mil.dds.anet.beans.ApprovalStep;
+import mil.dds.anet.beans.Comment;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.Report;
@@ -150,6 +152,28 @@ public class ReportResource {
 		//TODO: close the transaction. 
 		
 		return Response.ok().build();
+	}
+	
+	@POST
+	@Path("/{id}/comments")
+	public Comment postNewComment(@Auth Person author, @PathParam("id") int reportId, Comment comment) {
+		comment.setReportId(reportId);
+		comment.setAuthor(author);
+		return engine.getCommentDao().insert(comment);
+	}
+	
+	@GET
+	@Path("/{id}/comments")
+	public List<Comment> getCommentsForReport(@PathParam("id") int reportId) { 
+		return engine.getCommentDao().getCommentsForReport(Report.createWithId(reportId));
+	}
+	
+	@DELETE
+	@Path("/{id}/comments/{commentId}")
+	public Response deleteComment(@PathParam("commentId") int commentId) {
+		//TODO: user validation on /who/ is allowed to delete a comment. 
+		int numRows = engine.getCommentDao().delete(commentId);
+		return (numRows == 1) ? Response.ok().build() : ResponseUtils.withMsg("Unable to delete comment", Status.NOT_FOUND);
 	}
 	
 	@GET
