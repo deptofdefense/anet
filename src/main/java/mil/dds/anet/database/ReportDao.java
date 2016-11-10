@@ -126,5 +126,13 @@ public class ReportDao implements IAnetDao<Report> {
 			.map(new ReportPersonMapper())
 			.list();
 	}
+
+	public List<Report> search(String query) {
+		return dbHandle.createQuery("SELECT * FROM reports "
+				+ "WHERE text LIKE '%' || :query || '%';")
+			.bind("query", query)
+			.map(new ReportMapper())
+			.list();
+	}
 	
 }

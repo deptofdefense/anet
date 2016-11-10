@@ -42,10 +42,10 @@
 		  </div>
 		  <div class="col-xs-12 col-md-8 col-md-offset-1">
 		    <#-- <div class="row"> -->
-			    <form class="usa-search usa-search-small top-search">
+			    <form class="usa-search usa-search-small top-search" action="/reports/search" >
 	                <div role="search">
 	                  <label class="usa-sr-only" for="search-field-small">Search small</label>
-	                  <input id="search-field-small" type="search" name="search">
+	                  <input id="search-field-small" type="search" name="q">
 	                  <button type="submit">
 	                    <span class="usa-sr-only">Search</span>
 	                  </button>

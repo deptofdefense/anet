@@ -1,5 +1,6 @@
 package mil.dds.anet.resources;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.security.PermitAll;
@@ -238,4 +239,17 @@ public class ReportResource {
 	public List<Report> getReportsPendingMyApproval(@Auth Person approver) { 
 		return dao.getReportsForApproval(approver);
 	}
+	
+	@GET
+	@Path("/search")
+	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	public ObjectListView<Report> searchReports(@QueryParam("q") String query) {
+		List<Report> list = Collections.emptyList();
+		if (query != null && query.trim().length() > 0) { 
+			list = dao.search(query);
+		}
+		ObjectListView<Report> view = new ObjectListView<Report>(list, Report.class);
+		return view.render("/views/report/search.ftl");
+	}
+	
 }
