@@ -13,7 +13,7 @@
 		}
 	},
 	"intent": "Check up with Steve",
-	"principals": [{
+	"attendees": [{
 		"id": null,
 		"firstName": "Steve",
 		"lastName": "Steveson",
@@ -22,7 +22,8 @@
 		"emailAddress": "steve@example.com",
 		"phoneNumber": "+011-258-32895",
 		"rank": "LtCol",
-		"biography": "this is a sample person who could be a Principal!"
+		"biography": "this is a sample person who could be a Principal!",
+		"primary" : true
 	}],
 	"poams": [{
 		"id": null,

@@ -16,10 +16,12 @@ public class PersonMapper implements ResultSetMapper<Person> {
 
 	@Override
 	public Person map(int index, ResultSet r, StatementContext ctx) throws SQLException {
+		return fillInFields(new Person(), r);
+	} 
+	
+	public static <T extends Person> T fillInFields(T a, ResultSet r) throws SQLException {
 		//This hits when we do a join but there's no Person record. 
-		if (r.getObject("id") == null) { return null; } 
-		
-		Person a = new Person();
+		if (r.getObject("id") == null) { return null; }
 		a.setId(r.getInt("id"));
 		a.setFirstName(r.getString("firstName"));
 		a.setLastName(r.getString("lastName"));
@@ -34,5 +36,5 @@ public class PersonMapper implements ResultSetMapper<Person> {
 		a.setUpdatedAt(new DateTime(r.getLong("updatedAt")));
 		a.setLoadLevel(LoadLevel.PROPERTIES);
 		return a;
-	} 
+	}
 }

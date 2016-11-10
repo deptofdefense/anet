@@ -25,10 +25,12 @@ import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
+import mil.dds.anet.beans.ReportPerson;
 import mil.dds.anet.beans.geo.LatLng;
 import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.test.beans.AdvisorOrganizationTest;
 import mil.dds.anet.test.beans.CommentTest;
+import mil.dds.anet.test.beans.PersonTest;
 
 public class ReportsResourceTest extends AbstractResourceTest {
 
@@ -36,6 +38,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		if (client == null) { 
 			config.setConnectionRequestTimeout(Duration.seconds(30L));
 			config.setConnectionTimeout(Duration.seconds(30L));
+			config.setTimeout(Duration.seconds(30L));
 			client = new JerseyClientBuilder(RULE.getEnvironment()).using(config).build("reports test client");
 		}
 	}
@@ -46,7 +49,8 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		Person author = getJackJackson();
 		
 		//Create a principal for the report
-		Person principal = getSteveSteveson();
+		ReportPerson principal = PersonTest.personToReportPerson(getSteveSteveson());
+		principal.setPrimary(true);
 		
 		//Create an Advising Organization for the report writer
 		AdvisorOrganization ao = httpQuery("/advisorOrganizations/new", author)
@@ -97,8 +101,6 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		assertThat(steps.get(0).getNextStepId()).isEqualTo(releaseApproval.getId());
 		assertThat(steps.get(1).getId()).isEqualTo(releaseApproval.getId());
 		
-		
-		
 		//TODO: Create a POAM structure for the AO
 //		fail("No way to assign a POAM to an AO");
 		Poam top = httpQuery("/poams/new", author)
@@ -113,7 +115,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		//Write a Report
 		Report r = new Report();
 		r.setAuthor(author);
-		r.setPrincipals(Lists.newArrayList(principal));
+		r.setAttendees(Lists.newArrayList(principal));
 		r.setPoams(Lists.newArrayList(action));
 		r.setLocation(loc);
 		r.setIntent("A testing report to test that reporting reports");
@@ -134,6 +136,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		
 		//TODO: verify the location on this report
 		//TODO: verify the principals on this report
+		
 		//TODO: verify the poams on this report
 		
 		//Verify this shows up on the approvers list of pending documents

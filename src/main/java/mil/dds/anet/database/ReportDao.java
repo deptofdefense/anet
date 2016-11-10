@@ -9,11 +9,12 @@ import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.Query;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
-import mil.dds.anet.beans.Comment;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.Report;
+import mil.dds.anet.beans.ReportPerson;
 import mil.dds.anet.database.mappers.ReportMapper;
+import mil.dds.anet.database.mappers.ReportPersonMapper;
 import mil.dds.anet.utils.DaoUtils;
 
 @RegisterMapper(ReportMapper.class)
@@ -54,13 +55,14 @@ public class ReportDao implements IAnetDao<Report> {
 			.executeAndReturnGeneratedKeys();
 		r.setId((Integer) (keys.first().get("last_insert_rowid()")));
 		
-		if (r.getPrincipals() != null) { 
-			for (Person p : r.getPrincipals()) { 
+		if (r.getAttendeesJson() != null) { 
+			for (ReportPerson p : r.getAttendeesJson()) { 
 				//TODO: batch this
-				dbHandle.createStatement("INSERT INTO reportPrincipals " + 
-						"(principalId, reportId) VALUES (:principalId, :reportId)")
-					.bind("principalId", p.getId())
+				dbHandle.createStatement("INSERT INTO reportPeople " + 
+						"(personId, reportId, isPrimary) VALUES (:personId, :reportId, :isPrimary)")
+					.bind("personId", p.getId())
 					.bind("reportId", r.getId())
+					.bind("isPrimary", p.isPrimary())
 					.execute();
 			}
 		}
@@ -82,8 +84,9 @@ public class ReportDao implements IAnetDao<Report> {
 				.bind("id", id)
 				.map(new ReportMapper());
 		List<Report> results = query.list();
-		if (results.size() == 0) { return null; } 
-		return results.get(0);
+		if (results.size() == 0) { return null; }
+		Report r = results.get(0);		
+		return r;
 	}
 	
 	public int update(Report r) { 
@@ -114,4 +117,14 @@ public class ReportDao implements IAnetDao<Report> {
 			.map(new ReportMapper())
 			.list();
 	}
+	
+	public List<ReportPerson> getAttendeesForReport(int reportId) { 
+		return dbHandle.createQuery("SELECT * FROM reportPeople "
+				+ "LEFT JOIN people ON reportPeople.personId = people.id "
+				+ "WHERE reportPeople.reportId = :reportId")
+			.bind("reportId", reportId)
+			.map(new ReportPersonMapper())
+			.list();
+	}
+	
 }

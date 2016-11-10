@@ -96,9 +96,10 @@
 			<column name="authorId" type="int" />
 		</createTable>
 
-		<createTable tableName="reportPrincipals" >
-			<column name="principalId" type="int" />
+		<createTable tableName="reportPeople" >
+			<column name="personId" type="int" />
 			<column name="reportId" type="int" />
+			<column name="isPrimary" type="boolean" defaultValue="false" />
 		</createTable>
 		<createTable tableName="reportPoams" >
 			<column name="reportId" type="int" />

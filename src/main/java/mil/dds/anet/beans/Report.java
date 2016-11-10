@@ -28,7 +28,7 @@ public class Report extends AbstractAnetView<Report> {
 	String intent;
 	String exsum; //can be null to autogenerate
 	
-	List<Person> principals;
+	List<ReportPerson> attendees;
 	List<Poam> poams;
 	
 	String reportText;
@@ -118,12 +118,22 @@ public class Report extends AbstractAnetView<Report> {
 		this.intent = intent;
 	}
 
-	public List<Person> getPrincipals() {
-		return principals;
+	@JsonIgnore
+	public List<ReportPerson> getAttendees() { 
+		if (attendees == null) { 
+			attendees = AnetObjectEngine.getInstance().getReportDao().getAttendeesForReport(id);
+		}
+		return attendees;
+	}
+	
+	@JsonGetter("attendees")
+	public List<ReportPerson> getAttendeesJson() {
+		return attendees;
 	}
 
-	public void setPrincipals(List<Person> principals) {
-		this.principals = principals;
+	@JsonSetter("attendees")
+	public void setAttendees(List<ReportPerson> attendees) {
+		this.attendees = attendees;
 	}
 
 	public List<Poam> getPoams() {
@@ -233,7 +243,7 @@ public class Report extends AbstractAnetView<Report> {
 				idEqual(r.getLocationJson(), location) &&
 				Objects.equals(r.getIntent(), intent) &&
 				Objects.equals(r.getExsum(), exsum) &&
-				Objects.equals(r.getPrincipals(), principals) &&
+				Objects.equals(r.getAttendeesJson(), attendees) &&
 				Objects.equals(r.getPoams(), poams) &&
 				Objects.equals(r.getReportText(), reportText) &&
 				Objects.equals(r.getNextSteps(), nextSteps) &&
@@ -244,7 +254,7 @@ public class Report extends AbstractAnetView<Report> {
 	@Override
 	public int hashCode() { 
 		return Objects.hash(id, state, approvalStep, createdAt, updatedAt, 
-			location, intent, exsum, principals, poams, reportText, 
+			location, intent, exsum, attendees, poams, reportText, 
 			nextSteps, author, comments);
 	}
 

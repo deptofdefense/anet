@@ -5,6 +5,7 @@ import org.junit.Test;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.beans.Person.Status;
+import mil.dds.anet.beans.ReportPerson;
 
 public class PersonTest extends BeanTester<Person> {
 
@@ -68,6 +69,24 @@ public class PersonTest extends BeanTester<Person> {
 		person.setRole(Role.ADVISOR);
 		person.setBiography("elizabeth is another test person we have in the database");
 		return person;
+	}
+
+	public static ReportPerson personToReportPerson(Person p) {
+		ReportPerson rp = new ReportPerson();
+		rp.setFirstName(p.getFirstName());
+		rp.setLastName(p.getLastName());
+		rp.setId(p.getId());
+		rp.setPhoneNumber(p.getPhoneNumber());
+		rp.setEmailAddress(p.getEmailAddress());
+		rp.setBiography(p.getBiography());
+		rp.setLoadLevel(p.getLoadLevel());
+		rp.setCreatedAt(p.getCreatedAt());
+		rp.setUpdatedAt(p.getUpdatedAt());
+		rp.setRank(p.getRank());
+		rp.setRole(p.getRole());
+		rp.setPendingVerification(p.getPendingVerification());
+		rp.setStatus(p.getStatus());
+		return rp;
 	}
 
 	
