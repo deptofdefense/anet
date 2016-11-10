@@ -7,12 +7,14 @@ import java.util.List;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
 
 import io.dropwizard.client.JerseyClientBuilder;
+import io.dropwizard.util.Duration;
 import mil.dds.anet.beans.AdvisorOrganization;
 import mil.dds.anet.beans.ApprovalAction;
 import mil.dds.anet.beans.ApprovalStep;
@@ -32,6 +34,8 @@ public class ReportsResourceTest extends AbstractResourceTest {
 
 	public ReportsResourceTest() { 
 		if (client == null) { 
+			config.setConnectionRequestTimeout(Duration.seconds(30L));
+			config.setConnectionTimeout(Duration.seconds(30L));
 			client = new JerseyClientBuilder(RULE.getEnvironment()).using(config).build("reports test client");
 		}
 	}
@@ -50,6 +54,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		
 		//Create leadership people in the AO who can approve this report
 		Person approver1 = getRogerRogwell();
+		Person approver2 = getElizabethElizawell();
 		
 		//Create a billet for the author
 		Billet authorBillet = new Billet();
@@ -64,7 +69,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		
 		//Create Approval workflow for Advising Organization
 		Group approvingGroup = httpQuery("/groups/new", author)
-				.post(Entity.json(Group.create("Test Group of approvers")), Group.class);
+				.post(Entity.json(Group.create("Test Group of initial approvers")), Group.class);
 		resp = httpQuery(String.format("/groups/%d/addMember?personId=%d", approvingGroup.getId(), approver1.getId()), author)
 				.get();
 		assertThat(resp.getStatus()).isEqualTo(200);
@@ -72,13 +77,34 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		ApprovalStep approval = httpQuery("/approvalSteps/new", author)
 				.post(Entity.json(ApprovalStep.create(null, approvingGroup, null, ao.getId())), ApprovalStep.class);
 		
+		//Create Releasing approval step for AO. 
+		Group releasingGroup = httpQuery("/groups/new", author)
+				.post(Entity.json(Group.create("Test Group of releasers")), Group.class);
+		resp = httpQuery(String.format("/groups/%d/addMember?personId=%d", releasingGroup.getId(), approver2.getId()), author)
+				.get();
+		assertThat(resp.getStatus()).isEqualTo(200);
+		
+		//Adding a new approval step to an AO automatically puts it at the end of the approval process. 
+		ApprovalStep releaseApproval = httpQuery("/approvalSteps/new", author)
+				.post(Entity.json(ApprovalStep.create(null, releasingGroup, null, ao.getId())), ApprovalStep.class);
+		assertThat(releaseApproval.getId()).isNotNull();
+		
+		//Pull the approval workflow for this AO
+		List<ApprovalStep> steps = httpQuery("/approvalSteps/byAdvisorOrganization?id=" + ao.getId())
+				.get(new GenericType<List<ApprovalStep>>() {});
+		assertThat(steps.size()).isEqualTo(2);
+		assertThat(steps.get(0).getId()).isEqualTo(approval.getId());
+		assertThat(steps.get(0).getNextStepId()).isEqualTo(releaseApproval.getId());
+		assertThat(steps.get(1).getId()).isEqualTo(releaseApproval.getId());
+		
+		
+		
 		//TODO: Create a POAM structure for the AO
 //		fail("No way to assign a POAM to an AO");
 		Poam top = httpQuery("/poams/new", author)
 				.post(Entity.json(Poam.create("test-1", "Test Top Poam", "TOP")), Poam.class);
 		Poam action = httpQuery("/poams/new", author)
 				.post(Entity.json(Poam.create("test-1-1", "Test Poam Action", "Action", top)), Poam.class);
-				
 		
 		//Create a Location that this Report was written at
 		Location loc = httpQuery("/locations/new", author)
@@ -116,11 +142,27 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		
 		//Check on Report status for who needs to approve
 		List<ApprovalAction> approvalStatus = returned.getApprovalStatus();
-		assertThat(approvalStatus.size()).isEqualTo(1);
+		assertThat(approvalStatus.size()).isEqualTo(2);
 		ApprovalAction approvalAction = approvalStatus.get(0);
 		assertThat(approvalAction.getPersonJson()).isNull(); //Because this hasn't been approved yet. 
 		assertThat(approvalAction.getCreatedAt()).isNull();
-		assertThat(approvalAction.getStep()).isEqualTo(approval); //This is the one step we need to go through. 
+		assertThat(approvalAction.getStep()).isEqualTo(steps.get(0)); 
+		approvalAction = approvalStatus.get(1);
+		assertThat(approvalAction.getStep()).isEqualTo(steps.get(1)); 
+		
+		//Reject the report
+		resp = httpQuery(String.format("/reports/%d/reject", created.getId()), approver1)
+				.post(Entity.json(Comment.withText("a test rejection")));
+		assertThat(resp.getStatus()).isEqualTo(200);
+		
+		//Check on report status to verify it got put back to draft. 
+		returned = httpQuery(String.format("/reports/%d", created.getId()), author).get(Report.class);
+		assertThat(returned.getState()).isEqualTo(ReportState.DRAFT);
+		assertThat(returned.getApprovalStep()).isNull();
+		
+		//Author needs to re-submit
+		resp = httpQuery(String.format("/reports/%d/submit", created.getId()), author).get();
+		assertThat(resp.getStatus()).isEqualTo(200);
 		
 		//Approve the report
 		resp = httpQuery(String.format("/reports/%d/approve", created.getId()), approver1).get();
@@ -128,16 +170,31 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		
 		//Check on Report status to verify it got moved forward
 		returned = httpQuery(String.format("/reports/%d", created.getId()), author).get(Report.class);
+		assertThat(returned.getState()).isEqualTo(ReportState.PENDING_APPROVAL);
+		assertThat(returned.getApprovalStep().getId()).isEqualTo(releaseApproval.getId());
+		
+		//Verify that the wrong person cannot approve this report. 
+		resp = httpQuery(String.format("/reports/%d/approve", created.getId()), approver1).get();
+		assertThat(resp.getStatus()).isEqualTo(Status.FORBIDDEN.getStatusCode());
+		
+		//Approve the report
+		resp = httpQuery(String.format("/reports/%d/approve", created.getId()), approver2).get();
+		assertThat(resp.getStatus()).isEqualTo(200);
+		
+		//Check on Report status to verify it got moved forward
+		returned = httpQuery(String.format("/reports/%d", created.getId()), author).get(Report.class);
 		assertThat(returned.getState()).isEqualTo(ReportState.RELEASED);
 		assertThat(returned.getApprovalStep()).isNull();
 		
-		//check on report satus to see that it got approved. 
+		//check on report status to see that it got approved. 
 		approvalStatus = returned.getApprovalStatus();
-		assertThat(approvalStatus.size()).isEqualTo(1);
+		assertThat(approvalStatus.size()).isEqualTo(2);
 		approvalAction = approvalStatus.get(0);
 		assertThat(approvalAction.getPersonJson().getId()).isEqualTo(approver1.getId()); 
 		assertThat(approvalAction.getCreatedAt()).isNotNull();
-		assertThat(approvalAction.getStep()).isEqualTo(approval); //This is the one step we need to go through. 
+		assertThat(approvalAction.getStep()).isEqualTo(steps.get(0));  
+		approvalAction = approvalStatus.get(1);
+		assertThat(approvalAction.getStep()).isEqualTo(steps.get(1));
 		
 		//Post a comment on the report because it's awesome
 		Comment cOne = httpQuery(String.format("/reports/%d/comments", created.getId()), author)
@@ -152,8 +209,8 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		
 		List<Comment> commentsReturned = httpQuery(String.format("/reports/%d/comments", created.getId()), approver1)
 			.get(new GenericType<List<Comment>>() {});
-		assertThat(commentsReturned).hasSize(2);
-		assertThat(commentsReturned).containsExactly(cOne, cTwo); //Assert order of comments! 
+		assertThat(commentsReturned).hasSize(3); //the rejection comment will be there as well. 
+		assertThat(commentsReturned).containsSequence(cOne, cTwo); //Assert order of comments! 
 		
 		//Search for this report by Author
 		//Search for this report by Advisor

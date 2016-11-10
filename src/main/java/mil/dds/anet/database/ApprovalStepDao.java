@@ -96,5 +96,14 @@ public class ApprovalStepDao implements IAnetDao<ApprovalStep> {
 		dbHandle.commit();
 		return true;
 	}
+
+	public ApprovalStep getStepByNextStepId(Integer id) {
+		List<ApprovalStep> list = dbHandle.createQuery("SELECT * FROM approvalSteps WHERE nextStepId = :id")
+			.bind("id",id)
+			.map(new ApprovalStepMapper())
+			.list();
+		if (list.size() == 0) { return null; }
+		return list.get(0);
+	}
 	
 }

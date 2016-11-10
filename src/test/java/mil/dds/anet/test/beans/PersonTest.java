@@ -57,6 +57,19 @@ public class PersonTest extends BeanTester<Person> {
 		return person;
 	}
 
+	public static Person getElizabethElizawell() {
+		Person person = new Person();
+		person.setFirstName("Elizabeth");
+		person.setLastName("Elizawell");
+		person.setEmailAddress("liz@example.com");
+		person.setPhoneNumber("+1-777-7777");
+		person.setRank("Capt");
+		person.setStatus(Status.ACTIVE);
+		person.setRole(Role.ADVISOR);
+		person.setBiography("elizabeth is another test person we have in the database");
+		return person;
+	}
+
 	
 	
 

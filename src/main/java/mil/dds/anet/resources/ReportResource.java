@@ -124,6 +124,13 @@ public class ReportResource {
 	@Path("/{id}/approve")
 	public Response approveReport(@Auth Person approver, @PathParam("id") int id) { 
 		Report r = dao.getById(id);
+		if (r == null) { 
+			return Response.status(Status.NOT_FOUND).build();
+		}
+		if (r.getApprovalStep() == null) {
+			log.info("Report ID {} does not currently need an approval", r.getId());
+			return ResponseUtils.withMsg("No Approval Step Found", Status.BAD_REQUEST); 
+		}
 		ApprovalStep step = engine.getApprovalStepDao().getById(r.getApprovalStep().getId());
 		
 		//Verify that this user can approve for this step. 
@@ -150,6 +157,56 @@ public class ReportResource {
 		}
 		dao.update(r);
 		//TODO: close the transaction. 
+		
+		return Response.ok().build();
+	}
+	
+	/**
+	 * Rejects a report and moves it one step back in the approval process. 
+	 * @param id the Report ID to reject
+	 * @param reason : A @link Comment object which will be posted to the report with the reason why the report was rejected. 
+	 * @return 200 on a successful reject, 401 if you don't have privelages to reject this report. 
+	 */
+	@POST
+	@Path("/{id}/reject")
+	public Response rejectReport(@Auth Person approver, @PathParam("id") int id, Comment reason) { 
+		Report r = dao.getById(id);
+		ApprovalStep step = engine.getApprovalStepDao().getById(r.getApprovalStep().getId());
+		
+		//Verify that this user can reject for this step. 
+		boolean canApprove = engine.canUserApproveStep(approver.getId(), step.getId());
+		if (canApprove == false) {
+			log.info("User ID {} cannot reject report ID {} for step ID {}",approver.getId(), r.getId(), step.getId());
+			return Response.status(Status.FORBIDDEN).build();
+		}
+		
+		//Write the rejection
+		//TODO: This should be in a transaction
+		ApprovalAction approval = new ApprovalAction();
+		approval.setReport(r);
+		approval.setStep(ApprovalStep.create(r.getApprovalStep().getId(), null, null, null));
+		approval.setPerson(approver);
+		approval.setType(ApprovalType.REJECT);
+		engine.getApprovalActionDao().insert(approval);
+		
+		//Update the report
+		ApprovalStep prevStep = engine.getApprovalStepDao().getStepByNextStepId(step.getId());
+		if (prevStep == null) { 
+			r.setApprovalStep(null);
+			r.setState(ReportState.DRAFT);
+		} else { 
+			r.setApprovalStep(prevStep);
+		}
+		dao.update(r);
+		
+		//Add the comment
+		reason.setReportId(r.getId());
+		reason.setAuthor(approver);
+		engine.getCommentDao().insert(reason);
+		
+		//TODO: close the transaction. 
+				
+		
 		
 		return Response.ok().build();
 	}

@@ -80,5 +80,11 @@ public class Comment extends AbstractAnetView<Comment> {
 	public String toString() { 
 		return String.format("[%d] - [Author:%d,Report:%d] - (%s)", id, author.getId(), reportId, text);
 	}
+
+	public static Comment withText(String text) {
+		Comment c = new Comment();
+		c.setText(text);
+		return c;
+	}
 	
 }
