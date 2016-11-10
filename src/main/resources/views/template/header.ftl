@@ -37,10 +37,10 @@
 		</div>
 		<div class="container-fluid mainbody">
 		  <div class="row">
-		    <div class="col-xs-12 col-md-4">
+		    <div class="col-xs-12 col-md-3">
 		      <#include "navigation.ftl">
 		  </div>
-		  <div class="col-xs-12 col-md-8">
+		  <div class="col-xs-12 col-md-8 col-md-offset-1">
 		    <#-- <div class="row"> -->
 			    <form class="usa-search usa-search-small top-search">
 	                <div role="search">
