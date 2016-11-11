@@ -124,12 +124,12 @@
                           <tr>
                             <th>Name</th>
                             <th>Role</th>
-                            <th>Org</th>
+                            <th></th>
                           </tr>
                           <tr data-attached-person-prototype>
                             <td data-name></td>
                             <td data-role></td>
-                            <td data-org></td>
+                            <td data-remove-person><button type="button">x</button></td>
                           </tr>
                         </table>
                       </div>
@@ -352,6 +352,10 @@ $attachPersonSubmit.on('click', function() {
   $attachPersonSubmit.addClass('hide');
   $('#attachPersonName').val('').trigger('change');
   return false;
+});
+
+$(document.body).on('click', '[data-remove-person]', function(event) {
+  $(this).parent().remove();
 })
 
 function enableLocationSearch(selectId) {
