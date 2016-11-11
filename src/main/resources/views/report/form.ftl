@@ -99,7 +99,7 @@
                             <select id="attachPersonName"></select>
                           </div>
 
-                          <div class="form-group hide" attach-person-type>
+                          <div class="form-group hide" data-attach-person-type>
                             <input type="radio" value="advisor" name="attachPersonType" id="attachPersonTypeAdvisor">
                             <label for="attachPersonTypeAdvisor">Advisor</label>
                             <input type="radio" value="principal" name="attachPersonType" id="attachPersonTypePrincipal">
@@ -108,13 +108,13 @@
                             <label for="attachPersonTypeOther">Other</label>
                           </div>
 
-                          <div class="form-group hide" attach-person-group>
+                          <div class="form-group hide" data-attach-person-group>
                             <label for="attachPersonGroup">Organizational Group</label>
                             <select id="attachPersonGroup"></select>
                           </div>
 
                           <div class="form-group">
-                            <input type="submit" value="Add Person" class="btn btn-default pull-right">
+                            <button type="button" class="btn btn-default pull-right hide" data-attach-person-submit>Add Person</button>
                           </div>
                         </form>
                       </div>
@@ -125,6 +125,11 @@
                             <th>Name</th>
                             <th>Role</th>
                             <th>Org</th>
+                          </tr>
+                          <tr data-attached-person-prototype>
+                            <td data-name></td>
+                            <td data-role></td>
+                            <td data-org></td>
                           </tr>
                         </table>
                       </div>
@@ -275,6 +280,23 @@ $(document).ready(function () {
 	});
 });
 
+var $personRow = $('[data-attached-person-prototype]').removeAttr('data-attached-person-prototype');
+var $personTable = $personRow.parent();
+$personRow.remove();
+
+var $attachPersonType = $('[data-attach-person-type]');
+var $attachPersonGroup = $('[data-attach-person-group]');
+var $attachPersonSubmit = $('[data-attach-person-submit]');
+var addingPerson = {};
+
+function addPersonToTable(person) {
+  var $row = $personRow.clone();
+  $row.find('[data-name]').html(person.name);
+  $row.find('[data-role]').html(person.role);
+  $row.find('[data-org]').html(person.org);
+  $row.appendTo($personTable);
+}
+
 function enablePersonSearch(selectId, role) {
 	$(selectId).select2({
     dropdownParent: $(".mainbody"),
@@ -284,22 +306,53 @@ function enablePersonSearch(selectId, role) {
 			delay: 250,
 			method: 'GET',
 			data: function(params) {
-				return { q : params.term, role: role }
+				return {q: params.term, role: role}
 			},
-			processResults :  function(data, params) {
+			processResults: function(data, params) {
 				var names = [];
+        if (role !== 'PRINCIPAL') {
+          names.push({id:'-1', text: "Create new person named " + params.term, query: params.term});
+        }
 				for (i in data) {
+          var person = data[i];
+          person.name = person.firstName + " " + person.lastName;
 					names.push({
-						id: data[i]["id"],
-						text : data[i]["firstName"] + " " + data[i]["lastName"]
+						id: person.id,
+						text: person.name + " " + person.rank + " - " + person.role,
+            person: person
 					});
 				}
-				return { results: names };
+				return {results: names};
 			}
 		},
-		minimumInputLength : 2
-	});
+		minimumInputLength: 2
+	}).on('select2:close', function(data) {
+    var $this = $(this);
+    var result = $this.select2('data')[0];
+    if (result.person) {
+      var person = result.person;
+      addPersonToTable(person);
+      $('#attachPersonName').val('').trigger('change');
+    } else if (result.query) {
+      addingPerson = {name: result.query};
+      $attachPersonType.removeClass('hide');
+      $attachPersonGroup.removeClass('hide');
+      $attachPersonSubmit.removeClass('hide');
+    }
+  });
 };
+
+$attachPersonSubmit.on('click', function() {
+  var $checkedRole = $attachPersonType.find(':checked');
+  addingPerson.role = $checkedRole.val().toUpperCase();
+  addPersonToTable(addingPerson);
+  $checkedRole.val('');
+  $attachPersonType.addClass('hide');
+  $attachPersonGroup.addClass('hide');
+  $attachPersonSubmit.addClass('hide');
+  $('#attachPersonName').val('').trigger('change');
+  return false;
+})
 
 function enableLocationSearch(selectId) {
 	$(selectId).select2({
