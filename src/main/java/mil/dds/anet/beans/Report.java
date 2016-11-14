@@ -18,15 +18,19 @@ import mil.dds.anet.views.AbstractAnetView;
 public class Report extends AbstractAnetView<Report> {
 
 	public enum ReportState { DRAFT, PENDING_APPROVAL, RELEASED }
+	public enum Atmosphere { POSITIVE, NEUTRAL, NEGATIVE }
 
 	ApprovalStep approvalStep;
 	ReportState state;
 	
 	DateTime createdAt;
 	DateTime updatedAt;
+	DateTime engagementDate;
 	Location location;
 	String intent;
 	String exsum; //can be null to autogenerate
+	Atmosphere atmosphere;
+	String atmosphereDetails;
 	
 	List<ReportPerson> attendees;
 	List<Poam> poams;
@@ -82,6 +86,14 @@ public class Report extends AbstractAnetView<Report> {
 		this.updatedAt = updatedAt;
 	}
 
+	public DateTime getEngagementDate() {
+		return engagementDate;
+	}
+
+	public void setEngagementDate(DateTime engagementDate) {
+		this.engagementDate = engagementDate;
+	}
+
 	@JsonIgnore
 	public Location getLocation() {
 		if (location == null || location.getLoadLevel() == null) { return location; } 
@@ -112,6 +124,22 @@ public class Report extends AbstractAnetView<Report> {
 
 	public void setExsum(String exsum) {
 		this.exsum = exsum;
+	}
+
+	public Atmosphere getAtmosphere() {
+		return atmosphere;
+	}
+
+	public void setAtmosphere(Atmosphere atmosphere) {
+		this.atmosphere = atmosphere;
+	}
+
+	public String getAtmosphereDetails() {
+		return atmosphereDetails;
+	}
+
+	public void setAtmosphereDetails(String atmosphereDetails) {
+		this.atmosphereDetails = atmosphereDetails;
 	}
 
 	public void setIntent(String intent) {
@@ -240,9 +268,12 @@ public class Report extends AbstractAnetView<Report> {
 				idEqual(r.getApprovalStepJson(), approvalStep) &&
 				Objects.equals(r.getCreatedAt(), createdAt) &&
 				Objects.equals(r.getUpdatedAt(), updatedAt) &&
+				Objects.equals(r.getEngagementDate(), engagementDate) &&
 				idEqual(r.getLocationJson(), location) &&
 				Objects.equals(r.getIntent(), intent) &&
 				Objects.equals(r.getExsum(), exsum) &&
+				Objects.equals(r.getAtmosphere(), atmosphere) &&
+				Objects.equals(r.getAtmosphereDetails(), atmosphereDetails) &&
 				Objects.equals(r.getAttendeesJson(), attendees) &&
 				Objects.equals(r.getPoams(), poams) &&
 				Objects.equals(r.getReportText(), reportText) &&
@@ -255,7 +286,7 @@ public class Report extends AbstractAnetView<Report> {
 	public int hashCode() { 
 		return Objects.hash(id, state, approvalStep, createdAt, updatedAt, 
 			location, intent, exsum, attendees, poams, reportText, 
-			nextSteps, author, comments);
+			nextSteps, author, comments, atmosphere, atmosphereDetails, engagementDate);
 	}
 
 	public static Report createWithId(Integer id) {

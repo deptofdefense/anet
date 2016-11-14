@@ -24,6 +24,7 @@ import mil.dds.anet.beans.Group;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.Report;
+import mil.dds.anet.beans.Report.Atmosphere;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
 import mil.dds.anet.beans.geo.LatLng;
@@ -118,6 +119,8 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		r.setAttendees(Lists.newArrayList(principal));
 		r.setPoams(Lists.newArrayList(action));
 		r.setLocation(loc);
+		r.setAtmosphere(Atmosphere.POSITIVE);
+		r.setAtmosphereDetails("Eerybody was super nice!");
 		r.setIntent("A testing report to test that reporting reports");
 		r.setReportText("Report Text goes here, asdfjk");
 		r.setNextSteps("This is the next steps on a report");

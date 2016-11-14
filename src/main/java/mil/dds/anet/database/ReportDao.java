@@ -40,17 +40,16 @@ public class ReportDao implements IAnetDao<Report> {
 		GeneratedKeys<Map<String, Object>> keys = dbHandle.createStatement(
 				"INSERT INTO reports " + 
 				"(state, createdAt, updatedAt, locationId, intent, exsum, " +
-				"text, nextSteps, authorId) VALUES " +
+				"text, nextSteps, authorId, engagementDate, atmosphere, " + 
+				"atmosphereDetails) VALUES " +
 				"(:state, :createdAt, :updatedAt, :locationId, :intent, " +
-				":exsum, :text, :nextSteps, :authorId)")
-			.bind("state", r.getState().ordinal())
-			.bind("createdAt", r.getCreatedAt())
-			.bind("updatedAt", r.getUpdatedAt())
+				":exsum, :text, :nextSteps, :authorId, :engagementDate, " + 
+				":atmosphere, :atmosphereDetails)")
+			.bindFromProperties(r)
+			.bind("state", DaoUtils.getEnumId(r.getState()))
+			.bind("atmosphere", DaoUtils.getEnumId(r.getAtmosphere()))
 			.bind("locationId", DaoUtils.getId(r.getLocation()))
-			.bind("intent", r.getIntent())
-			.bind("exsum", r.getExsum())
 			.bind("text", r.getReportText())
-			.bind("nextSteps", r.getNextSteps())
 			.bind("authorId", r.getAuthor().getId())
 			.executeAndReturnGeneratedKeys();
 		r.setId((Integer) (keys.first().get("last_insert_rowid()")));
@@ -93,14 +92,12 @@ public class ReportDao implements IAnetDao<Report> {
 		return dbHandle.createStatement("UPDATE reports SET " +
 				"state = :state, updatedAt = :updatedAt, locationId = :locationId, " + 
 				"intent = :intent, exsum = :exsum, text = :text, nextSteps = :nextSteps, " + 
-				"approvalStepId = :approvalStepId, authorId = :authorId WHERE id = :reportId")
+				"approvalStepId = :approvalStepId, authorId = :authorId, engagementDate = :engagementDate, " +
+				"atmosphere = :atmosphere, atmosphereDetails = :atmosphereDetails WHERE id = :reportId")
+			.bindFromProperties(r)
 			.bind("state", r.getState().ordinal())
-			.bind("updatedAt", DateTime.now())
 			.bind("locationId", DaoUtils.getId(r.getLocation()))
-			.bind("intent", r.getIntent())
-			.bind("exsum", r.getExsum())
 			.bind("text", r.getReportText())
-			.bind("nextSteps", r.getNextSteps())
 			.bind("authorId", r.getAuthor().getId())
 			.bind("approvalStepId", DaoUtils.getId(r.getApprovalStepJson()))
 			.bind("reportId", r.getId())

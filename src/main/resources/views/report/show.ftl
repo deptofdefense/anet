@@ -1,6 +1,11 @@
 <#include "../template/header.ftl">
 Report: ${id} - ${createdAt}<br>
 
+<ul>
+<li>Location: <#if location??>${location.name}</#if></li>
+<li>Atmospherics: </li>
+<li>Attendees: <#list attendees as p>${p.firstName} ${p.lastName} (${p.rank}) - ${p.role}, </#list></li>
+</ul>
 <p>${reportText}<p>
 <p><b>Next Steps: </b>${nextSteps}</p>
 

@@ -9,4 +9,9 @@ public class DaoUtils {
 		return obj.getId();
 	}
 	
+	public static Integer getEnumId(Enum<?> o) { 
+		if (o == null) { return null; } 
+		return o.ordinal();
+	}
+	
 }

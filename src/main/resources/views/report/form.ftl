@@ -15,87 +15,30 @@
 
                   <div class="anet-block__body">
                     <div class="form-group">
-                      <label for="engagementIntent">Intent of Engagement</label>
-                      <textarea id="engagementIntent" name="intent" ></textarea>
+                      <label for="engagementIntent">Summary</label>
+                      <input id="engagementIntent" name="intent" />
                     </div>
 
                     <div class="row">
                       <div class="col-md-6">
                         <div class="form-group">
-                          <label for="afghanPrincipal">Afghan Principal Name (or TASHKIL)</label>
-                          <select id="afghanPrincipal" name="principal_id" ></select>
-                        </div>
-
-                        <div class="form-group">
                           <label for="engagementDate">Engagement Date</label>
-                          <input id="engagementDate" type="date">
+                          <input id="engagementDate" type="date" name="engagementDate" >
                         </div>
                       </div>
-
                       <div class="col-md-6">
-                        <div class="form-group">
+						<div class="form-group">
                           <label for="engagementLocation">Engagement Location</label>
                           <select id="engagementLocation" name="location_id" ></select>
                         </div>
-
-                        <div class="form-group">
-                          <label for="affectedOrgs">Affected Advising Orgs</label>
-                          <select id="affectedOrgs"></select>
-                        </div>
                       </div>
                     </div>
-                  </div>
-                </section>
-
-                <section class="anet-block">
-                  <div class="anet-block__title">
-                    Discussion
-                  </div>
-
-                  <div class="anet-block__body">
-                    <div class="row">
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label for="engagementAtmosphere">Atmosphere of Engagement</label>
-                          <select id="engagementAtmosphere" >
-                            <option>Positive</option>
-                            <option>Neutral</option>
-                            <option>Negative</option>
-                          </select>
-                        </div>
-                      </div>
-
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label for="engagementAtmosphereDetails">Atmospheric Details</label>
-                          <input id="engagementAtmosphereDetails">
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="form-group">
-                      <label for="engagementDetails">Describe the discussion in detail</label>
-                      <textarea id="engagementDetails" name="reportText" ></textarea>
-                    </div>
-
-                    <div class="form-group">
-                      <label for="engagementNextSteps">Recommended next steps?</label>
-                      <textarea id="engagementNextSteps" name="nextSteps" ></textarea>
-                    </div>
-                  </div>
-                </section>
-
-                <section class="anet-block">
-                  <div class="anet-block__title">
-                    Other Stakeholders
-                  </div>
-
-                  <div class="anet-block__body">
+                    
                     <div class="row">
                       <div class="col-md-6">
                         <form class="anet-attach-person">
                           <div class="form-group">
-                            <label for="attachPersonName">Name of Individual</label>
+                            <label for="attachPersonName">Who was Present?</label>
                             <select id="attachPersonName"></select>
                           </div>
 
@@ -126,13 +69,51 @@
                             <th>Role</th>
                             <th></th>
                           </tr>
-                          <tr data-attached-person-prototype>
+                          <tr data-attached-person-prototype class="attendeeRow" >
                             <td data-name></td>
                             <td data-role></td>
                             <td data-remove-person><button type="button">x</button></td>
                           </tr>
                         </table>
                       </div>
+                    </div>
+                  </div>
+                </section>
+
+                <section class="anet-block">
+                  <div class="anet-block__title">
+                    Discussion
+                  </div>
+
+                  <div class="anet-block__body">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="engagementAtmosphere">Atmosphere of Engagement</label>
+                          <select id="engagementAtmosphere" name="atmosphere" >
+                            <option>Positive</option>
+                            <option>Neutral</option>
+                            <option>Negative</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="engagementAtmosphereDetails">Atmospheric Details</label>
+                          <input id="engagementAtmosphereDetails" name="atmosphereDetails" >
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="engagementDetails">Describe the discussion in detail</label>
+                      <textarea id="engagementDetails" name="reportText" ></textarea>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="engagementNextSteps">Recommended next steps?</label>
+                      <textarea id="engagementNextSteps" name="nextSteps" ></textarea>
                     </div>
                   </div>
                 </section>
@@ -163,12 +144,6 @@
                           </div>
 
                           <div class="form-group">
-                            <label for="attachEFActions">Actions</label>
-                            <select id="attachEFActions" multiple="multiple">
-                            </select>
-                          </div>
-
-                          <div class="form-group">
                             <input type="submit" value="Add EF" class="btn btn-default pull-right">
                           </div>
                         </form>
@@ -186,20 +161,6 @@
                     </div>
                   </div>
                 </section>
-
-                <section class="anet-block">
-                  <div class="anet-block__title">
-                    Summary
-                  </div>
-
-                  <div class="anet-block__body">
-                    <div class="form-group">
-                      <label for="engagementSummary">Executive Summary</label>
-                      <textarea id="engagementSummary"></textarea>
-                    </div>
-                  </div>
-                </section>
-
               </form>
               <input type="submit" value="Submit" class="btn btn-default pull-right" id="reportSubmit" >
             </div>
@@ -211,7 +172,7 @@
 <script type="text/javascript">
 $(document).ready(function () {
 	enablePersonSearch("#afghanPrincipal","PRINCIPAL");
-	enablePersonSearch("#attachPersonName","ADVISOR");
+	enablePersonSearch("#attachPersonName","");
 	enableLocationSearch("#engagementLocation");
 
 	$("#attachEFName").select2({
@@ -261,14 +222,26 @@ $(document).ready(function () {
 	$("#reportSubmit").on("click", function(event) {
 		var report = buildForm("reportForm");
 		if (report["principal_id"]) {
-			report["principals"] = [{ id: report["principal_id"] }]
+			report["attendees"] = [{ id: report["principal_id"] }]
 			delete report["principal_id"];
 		}
 		if (report["location_id"]) {
 			report["location"] = { id: report["location_id"] }
 			delete report["location_id"];
 		}
-
+		
+		report["attendees"] = $.map($personTable.find("tr.attendeeRow"), function (el) {
+			var id = $(el).attr("data-id"); 
+			//TODO: the UI should have some clue as to who is the 'primary' principal... 
+			return { "id" : id, "primary" : false };
+		});
+		
+		//TODO: @nickjs: for some reason the <form id="reportForm> is missing like half the elements, can you investigate?  
+		report['atmosphere'] = $("[name=atmosphere]").val();
+		report['atmosphereDetails'] = $("[name=atmosphereDetails]").val();
+		report['reportText'] = $("[name=reportText]").val();
+		report['nextSteps'] = $("[name=nextSteps]").val(); 
+		
 		$.ajax({
 			url : '/reports/new',
 			method: "POST",
@@ -294,6 +267,7 @@ function addPersonToTable(person) {
   $row.find('[data-name]').html(person.name);
   $row.find('[data-role]').html(person.role);
   $row.find('[data-org]').html(person.org);
+  $row.attr("data-id",person.id);
   $row.appendTo($personTable);
 }
 

@@ -201,4 +201,15 @@
 		</addColumn>
 	</changeSet>
 
+	<changeSet id="7" author="hpitelka">
+		<addColumn tableName="reports">
+			<column name="engagementDate" type="datetime"/>
+		</addColumn>
+		<addColumn tableName="reports">
+			<column name="atmosphere" type="int"/>
+		</addColumn>
+		<addColumn tableName="reports">
+			<column name="atmosphereDetails" type="text" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

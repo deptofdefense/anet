@@ -11,6 +11,7 @@ import org.junit.Test;
 import mil.dds.anet.beans.Comment;
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.Report;
+import mil.dds.anet.beans.Report.Atmosphere;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
 import mil.dds.anet.beans.geo.LatLng;
@@ -28,6 +29,9 @@ public class ReportTest extends BeanTester<Report> {
 		Location loc = Location.create("The Boat Dock", new LatLng(32.456,-123.4999));
 		r.setLocation(loc);
 		r.setIntent("Check up with Steve");
+		r.setAtmosphere(Atmosphere.POSITIVE);
+		r.setAtmosphereDetails("This was a great meeting!!!");
+		r.setEngagementDate(new DateTime(1453753380000L, ISOChronology.getInstanceUTC()));
 		
 		r.setAuthor(PersonTest.getJackJacksonStub());
 		

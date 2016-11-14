@@ -4,6 +4,7 @@
 	"state" : "DRAFT",
 	"createdAt": 1453753380000,
 	"updatedAt": 1453753380000,
+	"engagementDate" : 1453753380000,
 	"location": {
 		"id": null,
 		"name": "The Boat Dock",
@@ -38,6 +39,8 @@
 		"category": "Functional Area",
 		"parentPoam": null
 	}],
+	"atmosphere" : "POSITIVE",
+	"atmosphereDetails" : "This was a great meeting!!!",
 	"reportText": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
 	"nextSteps": "Go for a boat ride with Steve tomorrow",
 	"author": {
