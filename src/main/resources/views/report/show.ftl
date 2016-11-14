@@ -1,13 +1,15 @@
 <#include "../template/header.ftl">
-Report: ${id} - ${createdAt}<br>
+Report: ${id} - ${engagementDate}<br>
 
 <ul>
 <li>Location: <#if location??>${location.name}</#if></li>
-<li>Atmospherics: </li>
+<li>Atmospherics: ${atmosphere} - ${atmosphereDetails!}</li>
 <li>Attendees: <#list attendees as p>${p.firstName} ${p.lastName} (${p.rank}) - ${p.role}, </#list></li>
 </ul>
 <p>${reportText}<p>
 <p><b>Next Steps: </b>${nextSteps}</p>
+
+<i>Created at: ${createdAt} - Updated at: ${updatedAt} </i><br>
 
 
 <#if context.currentUser.id == author.id>
@@ -45,18 +47,24 @@ Report: ${id} - ${createdAt}<br>
 	</#list> 
 </#if>
 
-<b>Comments:</b>
-<table>
-<#list comments as comment>
-	<tr>
-		<td>${comment.author} at ${comment.createdAt}</td>
-		<td>${comment.text}</td>
-		<#if context.currentUser.id == comment.author.id>
-			<td><a class="deleteComment" data-id="${comment.id}">[Delete]</td>
-		</#if>
-	</tr>
+<h5>Comments:</h5>
+
+<#list comments>
+	<table>
+	<#items as comment>
+		<tr>
+			<td>${comment.author} at ${comment.createdAt}</td>
+			<td>${comment.text}</td>
+			<#if context.currentUser.id == comment.author.id>
+				<td><a class="deleteComment" data-id="${comment.id}">[Delete]</td>
+			</#if>
+		</tr>
+	</#items>
+	</table>
+<#else>
+	<i>No comments</i>
 </#list>
-</table>
+
 <div>
 Post a new comment on this report: 
 <textarea id="newCommentText"></textarea>

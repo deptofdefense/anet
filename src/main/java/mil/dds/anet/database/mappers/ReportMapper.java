@@ -10,6 +10,7 @@ import org.skife.jdbi.v2.tweak.ResultSetMapper;
 import mil.dds.anet.beans.ApprovalStep;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Report;
+import mil.dds.anet.beans.Report.Atmosphere;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.views.AbstractAnetView.LoadLevel;
@@ -43,6 +44,8 @@ public class ReportMapper implements ResultSetMapper<Report> {
 		
 		r.setIntent(rs.getString("intent"));
 		r.setExsum(rs.getString("exsum"));
+		r.setAtmosphere(MapperUtils.getEnumIdx(rs, "atmosphere", Atmosphere.class));
+		r.setAtmosphereDetails(rs.getString("atmosphereDetails"));
 		
 		r.setReportText(rs.getString("text"));
 		r.setNextSteps(rs.getString("nextSteps"));
