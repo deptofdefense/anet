@@ -153,6 +153,18 @@ public class BilletDao implements IAnetDao<Billet> {
 		return results.get(0);
 	}
 
+	public Billet getBilletForAdvisor(Person p) {
+		List<Billet> billets = dbHandle.createQuery("SELECT billets.* from billetAdvisors " +
+				"LEFT JOIN billets ON billetAdvisors.billetId = billets.id " +
+				"WHERE billetAdvisors.advisorId = :advisorId " +
+				"ORDER BY billetAdvisors.createdAt DESC LIMIT 1")
+			.bind("advisorId", p.getId())
+			.map(new BilletMapper())
+			.list();
+		if (billets.size() == 0) { return null; } 
+		return billets.get(0);		
+	}
+	
 	public List<Billet> getAllBillets(int pageNum, int pageSize) {
 		Query<Billet> query = dbHandle.createQuery("SELECT * from billets ORDER BY createdAt ASC LIMIT :limit OFFSET :offset")
 				.bind("limit", pageSize)
@@ -205,7 +217,6 @@ public class BilletDao implements IAnetDao<Billet> {
 				"ON billets.id = emptyBillets.billetId WHERE emptyBillets.advisorId is null")
 			.map(new BilletMapper())
 			.list();
-	
 	}
 
 	public List<Billet> getByAdvisorOrganization(AdvisorOrganization advisorOrganization) {

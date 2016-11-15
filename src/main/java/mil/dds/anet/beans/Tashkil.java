@@ -4,6 +4,9 @@ import java.util.Objects;
 
 import org.joda.time.DateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.views.AbstractAnetView;
 
 public class Tashkil extends AbstractAnetView<Tashkil> {
@@ -13,6 +16,8 @@ public class Tashkil extends AbstractAnetView<Tashkil> {
 	
 	DateTime createdAt;
 	DateTime updatedAt;
+	
+	Person principal;
 	
 	public String getCode() {
 		return code;
@@ -38,6 +43,15 @@ public class Tashkil extends AbstractAnetView<Tashkil> {
 	}
 	public void setUpdatedAt(DateTime updatedAt) {
 		this.updatedAt = updatedAt;
+	}
+	
+	@JsonIgnore
+	public Person getPrincipal() {
+		if (principal == null) { 
+			principal = AnetObjectEngine.getInstance()
+				.getTashkilDao().getPrincipalInTashkilNow(this);
+		}
+		return principal;
 	}
 	
 	@Override

@@ -89,10 +89,11 @@ public class ReportDao implements IAnetDao<Report> {
 	}
 	
 	public int update(Report r) { 
+		r.setUpdatedAt(DateTime.now());
 		return dbHandle.createStatement("UPDATE reports SET " +
 				"state = :state, updatedAt = :updatedAt, locationId = :locationId, " + 
 				"intent = :intent, exsum = :exsum, text = :text, nextSteps = :nextSteps, " + 
-				"approvalStepId = :approvalStepId, authorId = :authorId, engagementDate = :engagementDate, " +
+				"approvalStepId = :approvalStepId, engagementDate = :engagementDate, " +
 				"atmosphere = :atmosphere, atmosphereDetails = :atmosphereDetails WHERE id = :reportId")
 			.bindFromProperties(r)
 			.bind("state", r.getState().ordinal())
@@ -101,6 +102,22 @@ public class ReportDao implements IAnetDao<Report> {
 			.bind("authorId", r.getAuthor().getId())
 			.bind("approvalStepId", DaoUtils.getId(r.getApprovalStepJson()))
 			.bind("reportId", r.getId())
+			.execute();
+	}
+	
+	public int addAttendeeToReport(ReportPerson rp, Report r) { 
+		return dbHandle.createStatement("INSERT INTO reportPeople " + 
+				"(personId, reportId, isPrimary) VALUES (:personId, :reportId, :isPrimary)")
+			.bind("personId", rp.getId())
+			.bind("reportId", r.getId())
+			.bind("isPrimary", rp.isPrimary())
+			.execute();
+	}
+	
+	public int removeAttendeeFromReport(int personId, Report r) { 
+		return dbHandle.createStatement("DELETE FROM reportPeople WHERE reportId = :reportId AND personId = :personId")
+			.bind("reportId", r.getId())
+			.bind("personId", personId)
 			.execute();
 	}
 	

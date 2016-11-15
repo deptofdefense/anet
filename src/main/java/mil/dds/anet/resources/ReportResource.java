@@ -2,6 +2,7 @@ package mil.dds.anet.resources;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.DELETE;
@@ -31,6 +32,7 @@ import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
+import mil.dds.anet.beans.ReportPerson;
 import mil.dds.anet.database.ReportDao;
 import mil.dds.anet.utils.ResponseUtils;
 import mil.dds.anet.views.ObjectListView;
@@ -94,6 +96,60 @@ public class ReportResource {
 		List<Poam> milestones = engine.getPoamDao().getPoamsByCategory("EF");
 		r.addToContext("efs", milestones);
 		return r.render("form.ftl");
+	}
+	
+	@POST
+	@Path("/{id}/edit")
+	public Response editReport(@Auth Person editor, Report r) { 
+		//Verify this person has access to edit this report
+		//Either they are the author, or an approver for the current step. 
+		Report existing = dao.getById(r.getId());
+		r.setState(existing.getState());
+		r.setApprovalStep(existing.getApprovalStepJson());
+		switch (existing.getState()) {
+		case DRAFT:
+			//Must be the author
+			if (existing.getAuthorJson().getId() != editor.getId()) { 
+				throw new WebApplicationException("Not the Author", Status.FORBIDDEN);
+			}
+			break;
+		case PENDING_APPROVAL:
+			//Either the author, or the approver
+			if (existing.getAuthorJson().getId() == editor.getId()) { 
+				//This is okay, but move it back to draft
+				r.setState(ReportState.DRAFT);
+				r.setApprovalStep(null);
+			} else { 
+				boolean canApprove = engine.canUserApproveStep(editor.getId(), existing.getApprovalStepJson().getId());
+				if (!canApprove) { 
+					throw new WebApplicationException("Not the Approver", Status.FORBIDDEN);
+				}
+			}
+			break;
+		case RELEASED:
+			throw new WebApplicationException("Cannot edit a released report", Status.FORBIDDEN);
+		}
+		r.setAuthor(existing.getAuthorJson());
+		dao.update(r);
+		//Fetch the people associated with this report
+		List<ReportPerson> existingPeople = dao.getAttendeesForReport(r.getId());
+		List<Integer> existingPplIds = existingPeople.stream().map( rp -> rp.getId()).collect(Collectors.toList());
+		//Find any differences and fix them. 
+		for (ReportPerson rp : r.getAttendees()) {
+			int idx = existingPplIds.indexOf(rp.getId());
+			if (idx == -1) { 
+				//Add this person s
+				dao.addAttendeeToReport(rp, r);
+			} else { 
+				//This person already is in the DB
+				existingPplIds.remove(idx);
+			}
+		}
+		//Any ids left in existingPplIds needs to be removed.
+		for (Integer id : existingPplIds) { 
+			dao.removeAttendeeFromReport(id, r);
+		}
+		return Response.ok().build();
 	}
 	
 	/* Submit a report for approval

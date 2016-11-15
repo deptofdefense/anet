@@ -148,7 +148,7 @@ public class Report extends AbstractAnetView<Report> {
 
 	@JsonIgnore
 	public List<ReportPerson> getAttendees() { 
-		if (attendees == null) { 
+		if (attendees == null && id != null) {
 			attendees = AnetObjectEngine.getInstance().getReportDao().getAttendeesForReport(id);
 		}
 		return attendees;

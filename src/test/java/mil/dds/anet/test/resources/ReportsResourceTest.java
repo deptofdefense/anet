@@ -170,6 +170,8 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		resp = httpQuery(String.format("/reports/%d/submit", created.getId()), author).get();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
+		//TODO: Approver modify the report *specifically change the attendees!* 
+		
 		//Approve the report
 		resp = httpQuery(String.format("/reports/%d/approve", created.getId()), approver1).get();
 		assertThat(resp.getStatus()).isEqualTo(200);

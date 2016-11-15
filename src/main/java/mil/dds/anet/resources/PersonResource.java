@@ -64,7 +64,11 @@ public class PersonResource {
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	public Person getViewById(@PathParam("id") int id) { 
 		Person p = dao.getById(id);
-		p.addToContext("billet", dao.getBilletForAdvisor(p.getId()));
+		if (p.getRole() == Role.PRINCIPAL) {
+			p.addToContext("position", AnetObjectEngine.getInstance().getTashkilDao().getTashkilForPrincipal(p));
+		} else { 
+			p.addToContext("position", AnetObjectEngine.getInstance().getBilletDao().getBilletForAdvisor(p));
+		}
 		return p.render("show.ftl");
 	}
 	
@@ -141,7 +145,7 @@ public class PersonResource {
 	@GET
 	@Path("/{id}/billet")
 	public Billet getBilletForAdvisor(@PathParam("personId") int personId) { 
-		return dao.getBilletForAdvisor(personId);
+		return AnetObjectEngine.getInstance().getBilletDao().getBilletForAdvisor(Person.createWithId(personId));
 	}
 	
 	/**
@@ -151,7 +155,6 @@ public class PersonResource {
 	@GET
 	@Path("/{id}/tashkil")
 	public Tashkil getTashkilForPrincipal(@PathParam("personId") int personId) {
-		return null;
-//		return dao.getTashkilForPrincipal(personId);
+		return AnetObjectEngine.getInstance().getTashkilDao().getTashkilForPrincipal(Person.createWithId(personId));
 	}
 }

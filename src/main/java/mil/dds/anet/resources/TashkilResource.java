@@ -16,6 +16,7 @@ import javax.ws.rs.core.Response.Status;
 import org.joda.time.DateTime;
 
 import mil.dds.anet.AnetObjectEngine;
+import mil.dds.anet.beans.Billet;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Tashkil;
 import mil.dds.anet.database.TashkilDao;
@@ -94,8 +95,16 @@ public class TashkilResource {
 	
 	@GET
 	@Path("/{id}/principal")
-	public Person getPrincipal(@QueryParam("id") int tashkilId) { 
-		return dao.getPrincipal(tashkilId);
+	public Person getPrincipal(@QueryParam("id") int tashkilId, @QueryParam("atTime") Long atTimeMillis) {
+		DateTime dtg = (atTimeMillis == null) ? DateTime.now() : new DateTime(atTimeMillis);
+		
+		return dao.getPrincipalInTashkil(Tashkil.createWithId(tashkilId), dtg);
+	}
+	
+	@GET
+	@Path("/empty")
+	public List<Tashkil> getEmptyTashkils() { 
+		return dao.getEmptyTashkils();
 	}
 	
 }

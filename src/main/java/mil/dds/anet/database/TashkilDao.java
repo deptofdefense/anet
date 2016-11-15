@@ -10,8 +10,10 @@ import org.skife.jdbi.v2.Query;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
+import mil.dds.anet.beans.Billet;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Tashkil;
+import mil.dds.anet.database.mappers.BilletMapper;
 import mil.dds.anet.database.mappers.PersonMapper;
 import mil.dds.anet.database.mappers.TashkilMapper;
 
@@ -70,22 +72,40 @@ public class TashkilDao implements IAnetDao<Tashkil>  {
 	}
 	
 	public List<Tashkil> getByCodePrefix(@Bind("code") String code) { 
-		return dbHandle.createQuery("SELECT * from tashkils where code LIKE :code")
+		return dbHandle.createQuery("SELECT * from tashkils where code LIKE :code || '%'")
 				.bind("code", code)
 				.map(new TashkilMapper())
 				.list();
 		}
 	
-	public Person getPrincipal(int tashkilId) { 
-		List<Person> results = dbHandle.createQuery("SELECT people.* FROM people, tashkilPrincipals " + 
-					"WHERE people.id = tashkilPrincipals.principalId " +
-					"AND tashkilPrincipals.tashkilId = :tashkilId " +
+	public Person getPrincipalInTashkilNow(Tashkil t) { 
+		return getPrincipalInTashkil(t, DateTime.now());
+	}
+	
+	public Person getPrincipalInTashkil(Tashkil t, DateTime dtg) { 
+		List<Person> results = dbHandle.createQuery("SELECT people.* FROM tashkilPrincipals " + 
+					"LEFT JOIN people ON people.id = tashkilPrincipals.principalId " + 
+					"WHERE tashkilPrincipals.tashkilId = :tashkilId " +
+					"AND tashkilPrincipals.createdAt < :dtg " + 
 					"ORDER BY tashkilPrincipals.createdAt DESC LIMIT 1")
-				.bind("tashkilId", tashkilId)
+				.bind("tashkilId", t.getId())
+				.bind("dtg", dtg)
 				.map(new PersonMapper())
 				.list();
 		if (results.size() == 0) { return null; } 
 		return results.get(0);
+	}
+	
+	public Tashkil getTashkilForPrincipal(Person p) {
+		List<Tashkil> tashkils = dbHandle.createQuery("SELECT tashkils.* from tashkilPrincipals " +
+				"LEFT JOIN tashkils ON tashkilPrincipals.tashkilId = tashkils.id " +
+				"WHERE tashkilPrincipals.principalId = :principalsId " +
+				"ORDER BY tashkilPrincipals.createdAt DESC LIMIT 1")
+			.bind("principalsId", p.getId())
+			.map(new TashkilMapper())
+			.list();
+		if (tashkils.size() == 0) { return null; } 
+		return tashkils.get(0);		
 	}
 	
 	public int setPrincipal(int tashkilId, int principalId, DateTime dtg) { 
@@ -94,6 +114,14 @@ public class TashkilDao implements IAnetDao<Tashkil>  {
 				.bind("principalId", principalId)
 				.bind("dtg", dtg)
 				.execute();
+	}
+	
+	public List<Tashkil> getEmptyTashkils() {
+		return dbHandle.createQuery("SELECT tashkils.* FROM tashkils INNER JOIN " + 
+				"(SELECT tashkilId, principalId, MAX(createdAt) FROM tashkilPrincipals GROUP BY tashkilId) emptyTashkils " +
+				"ON tashkils.id = emptyTashkils.tashkilId WHERE emptyTashkils.principalId is null")
+			.map(new TashkilMapper())
+			.list();
 	}
 
 }

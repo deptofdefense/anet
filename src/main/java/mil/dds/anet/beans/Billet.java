@@ -1,5 +1,6 @@
 package mil.dds.anet.beans;
 
+import java.util.List;
 import java.util.Objects;
 
 import org.joda.time.DateTime;
@@ -18,7 +19,9 @@ public class Billet extends AbstractAnetView<Billet> {
 	DateTime updatedAt;
 	AdvisorOrganization advisorOrganization;
 	
+	//Lazy Loaded
 	Person advisor;
+	List<Tashkil> tashkils;
 
 	public static Billet createWithId(Integer id) { 
 		Billet b = new Billet();
@@ -79,6 +82,15 @@ public class Billet extends AbstractAnetView<Billet> {
 					.getBilletDao().getPersonInBilletNow(this);
 		}
 		return advisor;
+	}
+	
+	@JsonIgnore
+	public List<Tashkil> getTashkils() { 
+		if (tashkils == null) { 
+			tashkils = AnetObjectEngine.getInstance()
+				.getBilletDao().getAssociatedTashkils(this);
+		}
+		return tashkils;
 	}
 	
 	@Override

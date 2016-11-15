@@ -2,6 +2,7 @@
 Report: ${id} - ${engagementDate}<br>
 
 <ul>
+<li>Author: <a href="/people/${author.id}">${author.name}</a></li>
 <li>Location: <#if location??>${location.name}</#if></li>
 <li>Atmospherics: ${atmosphere} - ${atmosphereDetails!}</li>
 <li>Attendees: <#list attendees as p>${p.firstName} ${p.lastName} (${p.rank}) - ${p.role}, </#list></li>
@@ -15,6 +16,7 @@ Report: ${id} - ${engagementDate}<br>
 <#if context.currentUser.id == author.id>
 	<#if state == "DRAFT" >
 		<button class="reportSubmitBtn" data-id="${id}" >Submit this report.</button> 
+		<button class="reportEditBtn" >Edit</button>
 	<#else>
 		<#if state == "PENDING_APPROVAL">
 			Your report is in for review and here is the progress:
@@ -35,14 +37,16 @@ Report: ${id} - ${engagementDate}<br>
 	      		</tr>
 	      	</#list>
 	      </table>
+	      <button class="reportEditBtn">Edit Report</button>
 	</#if>	
 <#elseif state == "PENDING_APPROVAL" >
 	<#--  check if this user can approve this TODO: make this suck less.  -->
 	<#list approvalStep.approverGroup.members as m>
 		<#if m.id == context.currentUser.id>
 			You can approve this report! 
-	      	<button data-id="${id}" class="reportApproveBtn" >Approve</button> - 
-	      	<button data-id="${id}" class="reportRejectBtn" >Reject</button>
+	      	<button data-id="${id}" class="reportRejectBtn btn btn-danger" >Reject</button>
+	      	<button data-id="${id}" class="reportEditBtn btn btn-primary">Edit</button>
+	      	<button data-id="${id}" class="reportApproveBtn btn btn-primary" >Approve</button>
 	      </#if>
 	</#list> 
 </#if>
@@ -102,6 +106,9 @@ $(document).ready(function() {
 		}).done(function(response) { 
 			location.reload();
 		});
+	});
+	$(".reportEditBtn").on("click", function(event) { 
+		window.location = "/reports/${id}/edit"
 	});
 	
 	$("#newCommentBtn").on("click", function(event) {

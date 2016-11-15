@@ -41,33 +41,47 @@
     </div>
   </div>
 </section>
+<#if role == "PRINCIPAL">
+	<#assign positionName = "Tashkil">
+	<#assign positionUrl = "/tashkils" >
+	<#assign roleName = "principal" >
+<#else>
+	<#assign positionName = "Billet">
+	<#assign positionUrl = "/billets" >
+	<#assign roleName = "advisor" >
+</#if>
 <section class="anet-block">
   <div class="anet-block__title">
-    Billet Settings
+    ${positionName} Settings
   </div>
    <div class="anet-block__body">
     <div class="row">
       <div class="col-md-6">
       <div class="field">
 
-		<#if context.billet??>
-		Billet Info: 
+		<#if context.position??>
+		${positionName} Info: 
 		<ul>
-		<li>Id: ${context.billet.id} </li>
-		<li>Name: <a href="/billets/${context.billet.id}">${context.billet.name}</a></li>
-		<li>AO: 
-			<#if context.billet.advisorOrganization?? >
-				${context.billet.advisorOrganization.name}
+		<li>Id: ${context.position.id} </li>
+		<li>Name: <a href="${positionUrl}/${context.position.id}">${context.position.name}</a></li>
+		<li>
+		<#if role == "PRINCIPAL">
+			Code: ${context.position.code}
+		<#else>
+			AO: 
+			<#if context.position.advisorOrganization?? >
+				${context.position.advisorOrganization.name}
 			<#else>
 				<i>None</i>
 			</#if>
+		</#if>
 		</li>
 		</ul>
 		<#else>
-		Not currently in a Billet.<br>
+		Not currently in a ${positionName}.<br>
 		</#if>
-		Set Billet: <select id="billetSelect"></select><br>
-		<input type="button" id="billetSetBtn" value="Save"></input>
+		Set ${positionName}: <select id="positionSelect" style="width:100%" ></select><br>
+		<input type="button" id="positionSetBtn" value="Save"></input>
 
       </div>
 	  </div>
@@ -84,10 +98,10 @@
 
 <script type="text/javascript">
 $(document).ready(function() { 
-	$("#billetSelect").select2( {
+	$("#positionSelect").select2( {
 	    dropdownParent: $(".mainbody"), 
 		ajax: {
-			url: "/billets/empty",
+			url: "${positionUrl}/empty",
 			dataType: 'json',
 			delay: 250,
 			method: 'GET',
@@ -103,12 +117,12 @@ $(document).ready(function() {
 			}
 		},
 		minimumInputLength: 0,
-		placeholder: "Begin typing to search for available billets"
+		placeholder: "Begin typing to search"
 	});
 	
-	$("#billetSetBtn").on('click', function(event) { 
-		var billetId = $("#billetSelect").val();
-		$.ajax({ url: '/billets/' + billetId + '/advisor',
+	$("#positionSetBtn").on('click', function(event) { 
+		var positionId = $("#positionSelect").val();
+		$.ajax({ url: '${positionUrl}/' + positionId + '/${roleName}',
 			method: "POST",
 			contentType: 'application/json',
 			data: JSON.stringify({ id: ${id} })

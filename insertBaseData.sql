@@ -30,6 +30,9 @@ INSERT INTO billetAdvisors (billetId, advisorId, createdAt) VALUES ((SELECT id f
 INSERT INTO billets (name, createdAt, updatedAt) VALUES ('EF4 Advisor 3', 1478098949000, 1478098949000);
 INSERT INTO billetAdvisors (billetId, advisorId, createdAt) VALUES ((SELECT id from billets where name ='EF4 Advisor 3'), null, 1478098949000);
 
+INSERT INTO billetAdvisors (billetId, advisorId, createdAt) VALUES 
+	((SELECT id from billets where name = 'EF1 Advisor 04532'), (SELECT id from people where emailAddress = 'bob@example.com'), 1478098949010);
+
 INSERT INTO advisorOrganizations (name, createdAt, updatedAt) VALUES ('EF1', 1478098949000, 1478098949000);
 INSERT INTO advisorOrganizations (name, createdAt, updatedAt) VALUES ('EF2', 1478098949000, 1478098949000);
 INSERT INTO advisorOrganizations (name, createdAt, updatedAt) VALUES ('EF3', 1478098949000, 1478098949000);
@@ -50,6 +53,13 @@ UPDATE billets SET advisorOrganizationId = (SELECT id FROM advisorOrganizations 
 UPDATE billets SET advisorOrganizationId = (SELECT id FROM advisorOrganizations WHERE name ='EF2') WHERE name LIKE 'EF2%';
 UPDATE billets SET advisorOrganizationId = (SELECT id FROM advisorOrganizations WHERE name ='EF3') WHERE name LIKE 'EF3%';
 UPDATE billets SET advisorOrganizationId = (SELECT id FROM advisorOrganizations WHERE name ='EF4') WHERE name LIKE 'EF4%';
+
+INSERT INTO groups ('name', 'createdAt') VALUES ('EF1 Approvers', 1478098949000);
+INSERT INTO approvalSteps ('approverGroupId', 'advisorOrganizationId') VALUES 
+	((SELECT id from groups WHERE name = 'EF1 Approvers'), (SELECT id from advisorOrganizations where name='EF1'));
+INSERT INTO groupMemberships (groupId, personId) VALUES 
+	((SELECT id from groups WHERE name='EF1 Approvers'), (SELECT id from people where emailAddress = 'henry@example.com'));
+
 
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt)	VALUES ('EF1', 'Budget and Planning', 'EF', 1478098949000, 1478098949000);
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId) 

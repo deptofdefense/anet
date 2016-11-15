@@ -2,12 +2,14 @@
 <#include "../template/header.ftl">
             <div class="row">
               <div class="anet-top-block">
-                <div class="user-submit">Submitting as ${context.currentUser.name}</div>
-                <div class="submit"><input type="submit" value="Submit" class="btn btn-default pull-right"></div>
+                <div class="user-submit"><#if id??>Editing<#else>Submitting</#if> as ${context.currentUser.name}</div>
+                <div class="user-submit"><#if author??>Report Author: ${author.name}</#if></div>
+                <div class="submit"><input type="submit" value="Save" class="btn btn-default pull-right reportSave"></div>
               </div>
             </div>
             <div class="row">
               <form id="reportForm" >
+              	<input type="hidden" name="id" value="${id}" />
                 <section class="anet-block">
                   <div class="anet-block__title">
                     Report Details
@@ -16,20 +18,24 @@
                   <div class="anet-block__body">
                     <div class="form-group">
                       <label for="engagementIntent">Summary</label>
-                      <input id="engagementIntent" name="intent" />
+                      <input id="engagementIntent" name="intent" value="${intent!}" />
                     </div>
 
                     <div class="row">
                       <div class="col-md-6">
                         <div class="form-group">
                           <label for="engagementDate">Engagement Date</label>
-                          <input id="engagementDate" type="date" name="engagementDate" >
+                          <input id="engagementDate" type="date" name="engagementDate" value="${engagementDate!}" >
                         </div>
                       </div>
                       <div class="col-md-6">
 						<div class="form-group">
                           <label for="engagementLocation">Engagement Location</label>
-                          <select id="engagementLocation" name="location_id" ></select>
+                          <select id="engagementLocation" name="location_id" >
+                          	<#if location??>
+                          		<option value="${location.id}">${location.name}</option>
+                          	</#if>
+                          </select>
                         </div>
                       </div>
                     </div>
@@ -69,6 +75,15 @@
                             <th>Role</th>
                             <th></th>
                           </tr>
+                          <#if attendees??>
+                          	<#list attendees as a>
+                          		<tr class="attendeeRow" data-id="${a.id}">
+                          			<td data-name>${a.firstName} ${a.lastName}</td>
+                          			<td data-role>${a.role}</td>
+                          			<td data-remove-person><button type="button">x</button></td>
+                          		</tr>
+                          	</#list>
+                          </#if>
                           <tr data-attached-person-prototype class="attendeeRow" >
                             <td data-name></td>
                             <td data-role></td>
@@ -101,19 +116,19 @@
                       <div class="col-md-6">
                         <div class="form-group">
                           <label for="engagementAtmosphereDetails">Atmospheric Details</label>
-                          <input id="engagementAtmosphereDetails" name="atmosphereDetails" >
+                          <input id="engagementAtmosphereDetails" name="atmosphereDetails" value="${atmosphereDetails!}" >
                         </div>
                       </div>
                     </div>
 
                     <div class="form-group">
                       <label for="engagementDetails">Describe the discussion in detail</label>
-                      <textarea id="engagementDetails" name="reportText" ></textarea>
+                      <textarea id="engagementDetails" name="reportText" >${reportText!}</textarea>
                     </div>
 
                     <div class="form-group">
                       <label for="engagementNextSteps">Recommended next steps?</label>
-                      <textarea id="engagementNextSteps" name="nextSteps" ></textarea>
+                      <textarea id="engagementNextSteps" name="nextSteps" >${nextSteps!}</textarea>
                     </div>
                   </div>
                 </section>
@@ -162,7 +177,7 @@
                   </div>
                 </section>
               </form>
-              <input type="submit" value="Submit" class="btn btn-default pull-right" id="reportSubmit" >
+              <input type="submit" value="Save" class="btn btn-default pull-right reportSave" >
             </div>
           </div>
         </div>
@@ -219,7 +234,7 @@ $(document).ready(function () {
 		});
 	});
 
-	$("#reportSubmit").on("click", function(event) {
+	$(".reportSave").on("click", function(event) {
 		var report = buildForm("reportForm");
 		if (report["principal_id"]) {
 			report["attendees"] = [{ id: report["principal_id"] }]
@@ -243,12 +258,16 @@ $(document).ready(function () {
 		report['nextSteps'] = $("[name=nextSteps]").val(); 
 		
 		$.ajax({
-			url : '/reports/new',
+			<#if id??>
+				url: '/reports/${id}/edit',
+			<#else>
+				url : '/reports/new',
+			</#if>
 			method: "POST",
 			contentType: "application/json",
 			data: JSON.stringify(report)
 		}).done( function (response) {
-			window.location = "/reports/" + response.id;
+			window.location = "/reports/" + ${id!"response.id"};
 		});
 	});
 });

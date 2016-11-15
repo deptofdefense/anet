@@ -20,9 +20,11 @@ import mil.dds.anet.beans.AdvisorOrganization;
 import mil.dds.anet.beans.Billet;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Person.Role;
+import mil.dds.anet.beans.Tashkil;
 import mil.dds.anet.database.mappers.AdvisorOrganizationMapper;
 import mil.dds.anet.database.mappers.BilletMapper;
 import mil.dds.anet.database.mappers.PersonMapper;
+import mil.dds.anet.database.mappers.TashkilMapper;
 
 @RegisterMapper(PersonMapper.class)
 public class PersonDao implements IAnetDao<Person> {
@@ -119,18 +121,4 @@ public class PersonDao implements IAnetDao<Person> {
 		return query.map(new PersonMapper()).list();
 	}
 
-	public Billet getBilletForAdvisor(int personId) {
-		List<Billet> billets = dbHandle.createQuery("SELECT billets.* from billetAdvisors " +
-				"LEFT JOIN billets ON billetAdvisors.billetId = billets.id " +
-				"WHERE billetAdvisors.advisorId = :advisorId " +
-				"ORDER BY billetAdvisors.createdAt DESC LIMIT 1")
-			.bind("advisorId", personId)
-			.map(new BilletMapper())
-			.list();
-		if (billets.size() == 0) { return null; } 
-		return billets.get(0);
-		
-				
-	}
-	
 }
