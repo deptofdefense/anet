@@ -39,7 +39,7 @@
                         </div>
                       </div>
                     </div>
-                    
+
                     <div class="row">
                       <div class="col-md-6">
                         <form class="anet-attach-person">
@@ -244,19 +244,19 @@ $(document).ready(function () {
 			report["location"] = { id: report["location_id"] }
 			delete report["location_id"];
 		}
-		
+
 		report["attendees"] = $.map($personTable.find("tr.attendeeRow"), function (el) {
-			var id = $(el).attr("data-id"); 
-			//TODO: the UI should have some clue as to who is the 'primary' principal... 
+			var id = $(el).attr("data-id");
+			//TODO: the UI should have some clue as to who is the 'primary' principal...
 			return { "id" : id, "primary" : false };
 		});
-		
-		//TODO: @nickjs: for some reason the <form id="reportForm> is missing like half the elements, can you investigate?  
+
+		//TODO: @nickjs: for some reason the <form id="reportForm> is missing like half the elements, can you investigate?
 		report['atmosphere'] = $("[name=atmosphere]").val();
 		report['atmosphereDetails'] = $("[name=atmosphereDetails]").val();
 		report['reportText'] = $("[name=reportText]").val();
-		report['nextSteps'] = $("[name=nextSteps]").val(); 
-		
+		report['nextSteps'] = $("[name=nextSteps]").val();
+
 		$.ajax({
 			<#if id??>
 				url: '/reports/${id}/edit',
@@ -322,6 +322,8 @@ function enablePersonSearch(selectId, role) {
 	}).on('select2:close', function(data) {
     var $this = $(this);
     var result = $this.select2('data')[0];
+    if (!result) return;
+
     if (result.person) {
       var person = result.person;
       addPersonToTable(person);
