@@ -69,5 +69,5 @@ public class AdvisorOrganizationDao implements IAnetDao<AdvisorOrganization> {
 		dbHandle.createStatement("DELETE from advisorOrganizations where id = :id")
 			.bind("id", ao.getId())
 			.execute();
-	}
+	} 
 }

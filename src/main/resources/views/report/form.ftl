@@ -9,7 +9,7 @@
             </div>
             <div class="row">
               <form id="reportForm" >
-              	<input type="hidden" name="id" value="${id}" />
+              	<input type="hidden" name="id" value="${id!}" />
                 <section class="anet-block">
                   <div class="anet-block__title">
                     Report Details

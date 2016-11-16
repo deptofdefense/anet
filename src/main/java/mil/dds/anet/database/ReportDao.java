@@ -12,6 +12,7 @@ import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.Report;
+import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
 import mil.dds.anet.database.mappers.ReportMapper;
 import mil.dds.anet.database.mappers.ReportPersonMapper;
@@ -122,12 +123,21 @@ public class ReportDao implements IAnetDao<Report> {
 	}
 	
 	/* Returns reports that the given person can currently approve */
-	public List<Report> getReportsForApproval(Person p) { 
+	public List<Report> getReportsForMyApproval(Person p) { 
 		return dbHandle.createQuery("SELECT reports.* FROM reports, groupMemberships, approvalSteps " + 
 				"WHERE groupMemberships.personId = :personId AND " + 
 				"groupMemberships.groupId = approvalSteps.approverGroupId AND " + 
 				"approvalSteps.id = reports.approvalStepId")
 			.bind("personId", p.getId())
+			.map(new ReportMapper())
+			.list();
+	}
+	
+	public List<Report> getMyReportsPendingApproval(Person p) { 
+		return dbHandle.createQuery("SELECT * from reports WHERE authorId = :authorId "
+				+ "AND state = :state ORDER BY createdAt DESC")
+			.bind("authorId", p.getId())
+			.bind("state", ReportState.PENDING_APPROVAL.ordinal())
 			.map(new ReportMapper())
 			.list();
 	}

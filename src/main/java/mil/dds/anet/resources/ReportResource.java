@@ -296,8 +296,9 @@ public class ReportResource {
 	@GET
 	@Path("/pendingMyApproval")
 	public List<Report> getReportsPendingMyApproval(@Auth Person approver) { 
-		return dao.getReportsForApproval(approver);
+		return dao.getReportsForMyApproval(approver);
 	}
+	
 	
 	@GET
 	@Path("/search")
