@@ -4,9 +4,9 @@ An Advisor Organization
 
 <h3>Billets in this AO:</h3>
 <#if billets??>
-<ul> 
+<ul>
 <#list billets as billet>
-<li><a href="/billets/${billet.id}">${billet.name}</a> - 
+<li><a href="/billets/${billet.id}">${billet.name}</a> -
 	<#if billet.advisor??>
 		${billet.advisor}
 	<#else>
@@ -24,59 +24,61 @@ An Advisor Organization
 <li>Poam Name </li>
 </ul>
 
-<h3>Approval workflow for this AO:</h3> 
+<h3>Approval workflow for this AO:</h3>
 <ul>
 <#list approvalSteps as step>
 <li>Step #${step?index + 1} - ${step.approverGroup.name}</li>
 <#else>
-	No approval steps identified for this AO yet! 
+	No approval steps identified for this AO yet!
 </#list>
 </ul>
-Add a new approval step: <select id="newApprovalGroupSelect" style="width:200px"></select> 
-<button id="newApprovalStepBtn" >Create!</button><br>
+Add a new approval step:
+<div class="form-group">
+	<select id="newApprovalGroupSelect" style="width:200px"></select>
+	<button id="newApprovalStepBtn" >Create!</button>
+</div>
 
 
 <#include "../template/footer.ftl">
 
 <script type="text/javascript">
-$(document).ready(function() { 
-	$("#newApprovalGroupSelect").select2({ 
+$(document).ready(function() {
+	$("#newApprovalGroupSelect").select2({
 		dropdownParent: $(".mainbody"),
-		ajax: { 
+		ajax: {
 			url : "/groups/search",
 			delay: 250,
 			method: 'GET',
-			data: function(params) { 
+			data: function(params) {
 				return  { q: params.term}
 			},
-			processResults : function(data, params) { 
-				var results = _.map(data, function(el) { 
-					return { 
+			processResults : function(data, params) {
+				var results = _.map(data, function(el) {
+					return {
 						id: el["id"],
 						text: el["name"]
 					}
-				});	
+				});
 				return { results: results };
 			}
 		},
 		minimumInputLength: 2
 	});
 
-	$("#newApprovalStepBtn").on("click", function(event) { 
+	$("#newApprovalStepBtn").on("click", function(event) {
 		var groupId = $("#newApprovalGroupSelect").val();
-		$.ajax({ 
+		$.ajax({
 			url: "/approvalSteps/new",
 			method: "POST",
 			contentType: "application/json",
-			data: JSON.stringify({ 
+			data: JSON.stringify({
 				approverGroup: { id: groupId },
 				advisorOrganizationId: ${id}
 			})
-		}).done(function(response) { 
+		}).done(function(response) {
 			location.reload();
 		});
 	});
 });
 
 </script>
-
