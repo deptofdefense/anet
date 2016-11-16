@@ -1,4 +1,89 @@
 <#include "../template/header.ftl">
+
+	<div class="anet-page-head">
+		<h1 class="pull-left" style="margin-top:0px!important;">Reports & Approvals</h1>
+		<div class="submit pull-right"><a href="/reports/new"><btn type="submit" value="Submit Report" class="btn btn-default pull-right">Submit Report</btn></a>
+	</div>
+
+	<section id="my-unapproved">
+		<h3>Unapproved Reports you submitted</h3>
+		<div class="anet-block__body">
+			<table class="usa-table-borderless">
+			    <thead>
+			      <tr class="header">
+			        <th scope="col">Reporters</th>
+			        <th scope="col">Summary</th>
+			        <th scope="col">Submitted</th>
+			      </tr>
+			    </thead>
+			    <tbody>
+			      <tr>
+			        <th scope="row">Gruuber ͐ Katz</th>
+			        <td>Statement adopted by the Continental Congress declaring independence from the British Empire.</td>
+			        <td>Yesterday</td>
+			      </tr>
+			      <tr>
+			        <th scope="row">Gruuber ͐ Katz</th>
+			        <td>Statement adopted by the Continental Congress declaring independence from the British Empire.</td>
+			        <td>Yesterday</td>
+			      </tr>
+		      </tbody>
+	      </table>
+		</div>
+	</section>
+	<hr>
+
+	<section id="to-approve">
+		<h3>Reports to Approve</h3>
+		<div class="anet-block__body">
+			<table class="usa-table-borderless">
+			    <thead>
+			      <tr class="header">
+			        <th scope="col">Reporters</th>
+			        <th scope="col">Summary</th>
+			        <th scope="col">Submitted</th>
+			      </tr>
+			    </thead>
+			    <tbody>
+			      <tr>
+			        <th scope="row">Gruuber ͐ Katz</th>
+			        <td>Statement adopted by the Continental Congress declaring independence from the British Empire.</td>
+			        <td>Yesterday</td>
+			      </tr>
+		      </tbody>
+	      </table>
+		</div>
+	</section>
+	<hr>
+
+	<section id="people-approve">
+		<h3>Personnel to Approve</h3>
+		<div class="anet-block__body">
+			<table class="usa-table-borderless">
+			    <thead>
+			      <tr class="header">
+
+
+			        <th scope="col">Age</th>
+			        <th scope="col">Person</th>
+			        <th scope="col">Position</th>
+			        <th scope="col">Report Referenced</th>
+
+			      </tr>
+			    </thead>
+			    <tbody>
+				  <tr>
+			      	<td>2 days</td>
+			        <th scope="row">Katx</th>
+			        <td>MOD Deputy COS</td>
+			        <td>Statement adopted by the Continental Congress declaring independence from the British Empire.</td>
+			      </tr>
+		      </tbody>
+	      </table>
+		</div>
+	</section>
+
+
 <#list list as report>
 <section class="anet-block">
   <div class="anet-block__title">

@@ -70,6 +70,19 @@ body {
 	}
 }
 
+.anet-page-head {
+	margin-top:30px;
+}
+
+tr:not([class*='header']) {
+	&:hover {
+		&>td,th{
+			transition: background-color 0.3s ease;
+			background:rgba(139,166,201,.4)!important;
+		}
+	}
+}
+
 .anet-block {
 	background: #FFFFFF;
 	border: 1px solid #E5EBF3;
@@ -91,7 +104,10 @@ body {
 	.anet-block__body {
 		overflow:auto; // To capture contained floats
 		padding: 0 20px;
-
+	}
+	
+	.anet-block__copy {
+		padding: 20px 0 20px 0
 	}
 }
 
