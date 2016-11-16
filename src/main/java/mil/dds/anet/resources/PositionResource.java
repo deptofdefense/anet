@@ -138,4 +138,14 @@ public class PositionResource {
 	public List<Position> getEmptyPositions() { 
 		return dao.getEmptyPositions();
 	}
+	
+	@GET
+	@Path("/byCode")
+	public List<Position> getByCode(@QueryParam("code") String code, @QueryParam("prefixMatch") Boolean prefixMatch) {
+		if (prefixMatch) { 
+			return dao.getByCodePrefix(code);
+		} else { 
+			return dao.getByCode(code);
+		}
+}
 }

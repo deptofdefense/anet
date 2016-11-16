@@ -43,12 +43,8 @@
 </section>
 <#if role == "PRINCIPAL">
 	<#assign positionName = "Tashkil">
-	<#assign positionUrl = "/tashkils" >
-	<#assign roleName = "principal" >
 <#else>
 	<#assign positionName = "Billet">
-	<#assign positionUrl = "/billets" >
-	<#assign roleName = "advisor" >
 </#if>
 <section class="anet-block">
   <div class="anet-block__title">
@@ -63,7 +59,7 @@
 		${positionName} Info: 
 		<ul>
 		<li>Id: ${context.position.id} </li>
-		<li>Name: <a href="${positionUrl}/${context.position.id}">${context.position.name}</a></li>
+		<li>Name: <a href="/positions/${context.position.id}">${context.position.name}</a></li>
 		<li>
 		<#if role == "PRINCIPAL">
 			Code: ${context.position.code}
@@ -101,7 +97,7 @@ $(document).ready(function() {
 	$("#positionSelect").select2( {
 	    dropdownParent: $(".mainbody"), 
 		ajax: {
-			url: "${positionUrl}/empty",
+			url: "/positions/empty",
 			dataType: 'json',
 			delay: 250,
 			method: 'GET',
@@ -122,7 +118,7 @@ $(document).ready(function() {
 	
 	$("#positionSetBtn").on('click', function(event) { 
 		var positionId = $("#positionSelect").val();
-		$.ajax({ url: '${positionUrl}/' + positionId + '/${roleName}',
+		$.ajax({ url: '/positions/' + positionId + '/person',
 			method: "POST",
 			contentType: 'application/json',
 			data: JSON.stringify({ id: ${id} })

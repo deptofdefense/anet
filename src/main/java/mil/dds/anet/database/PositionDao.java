@@ -218,4 +218,17 @@ public class PositionDao implements IAnetDao<Position> {
 			.list();
 	}
 
+	public List<Position> getByCode(String code) { 
+		return dbHandle.createQuery("SELECT * from positions where code = :code")
+			.bind("code", code)
+			.map(new PositionMapper())
+			.list();
+	}
+	
+	public List<Position> getByCodePrefix(String code) { 
+		return dbHandle.createQuery("SELECT * from positions where code LIKE :code || '%'")
+				.bind("code", code)
+				.map(new PositionMapper())
+				.list();
+	}
 }

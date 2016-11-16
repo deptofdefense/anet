@@ -1,5 +1,5 @@
 <#include "../template/header.ftl">
-<h2>Viewing Billet</h2>
+<h2>Viewing Position</h2>
 
 <table>
 <tr>
@@ -7,51 +7,51 @@
 	<td>${name}</td>
 </tr>
 <tr>
-	<td>Advisor Org</td>
-	<td><#if advisorOrganization??><a href="/advisorOrganizations/${advisorOrganization.id}">${advisorOrganization.name}</a></#if></td>
+	<td> Org</td>
+	<td><#if organization??><a href="/organizations/${organization.id}">${organization.name}</a></#if></td>
 </tr>
 <tr>
 	<td colspan=2>
-		<#if advisor??>
-			Currently filled by: ${advisor}
+		<#if person??>
+			Currently filled by: ${person}
 		<#else>
-			No person currently in this billet<br>
-			<i style="font-size:12px" >(go to a person page to set the billet on a person.. )</i>
+			No person currently in this position<br>
+			<i style="font-size:12px" >(go to a person page to set the position on a person.. )</i>
 		</#if>
 	</td>
 </tr>
 <tr>
-	<td>Tashkils assigned to this Billet</td>
+	<td>Other Positions assigned to this Position</td>
 	<td>
-		<#list tashkils>
+		<#list associatedPositions>
 			<ul>
-			<#items as tashkil>
-				<li>${tashkil.name} 
-				(<a href="/tashkils/${tashkil.id}">${tashkil.code}</a>) 
-				- [<a data-id="${tashkil.id}" class="tashkilRemoveBtn">delete</a>]
+			<#items as position>
+				<li>${position.name} 
+				(<a href="/positions/${position.id}">${postion.code}</a>) 
+				- [<a data-id="${position.id}" class="positionRemoveBtn">delete</a>]
 				</li>
 			</#items>
 			</ul>
 		<#else>
-			No Tashkils :( <br>
+			No Associated Positions :( <br>
 		</#list>
-		<label for="newTashkilSelect">Assign Tashkil to this billet:</label>
-		<select id="newTashkilSelect" style="width:100%"></select><br>
-		<button id="newTashkilBtn" >Assign</button>
+		<label for="newPositionSelect">Assign Position to this position:</label>
+		<select id="newPositionSelect" style="width:100%"></select><br>
+		<button id="newPositionBtn" >Assign</button>
 	</td>
 </tr>
 </table>
 
-<a href="/billets/${id}/edit">[Edit this billet]</a>
+<a href="/positions/${id}/edit">[Edit this position]</a>
 <#include "../template/footer.ftl">
 
 <script type="text/javascript">
 $(document).ready(function() { 
-	$("#newTashkilSelect").select2({
+	$("#newPositionSelect").select2({
 		dropdownParent: $(".mainbody"),
 		placeholder: "search by code",
 		ajax: {
-			url: "/tashkils/byCode",
+			url: "/positions/byCode",
 			dataType: 'json',
 			delay: 250,
 			method: 'GET',
@@ -71,12 +71,12 @@ $(document).ready(function() {
 		minimumInputLength : 2
 	});
 
-	$("#newTashkilBtn").on('click', function() { 
-		var tashkilId = $("#newTashkilSelect").val();
-		$.ajax({ url : "/billets/${id}/tashkils",
+	$("#newPositionBtn").on('click', function() { 
+		var positionId = $("#newPositionSelect").val();
+		$.ajax({ url : "/positions/${id}/associated",
 			contentType: 'application/json',
 			method: 'POST',
-			data : JSON.stringify( { "id" : tashkilId})
+			data : JSON.stringify( { "id" : positionId})
 		}).done(function(response) { 
 			location.reload();
 		});
