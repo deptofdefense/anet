@@ -11,8 +11,21 @@ body {
 	display: table-cell;
 }
 
-table {
-	margin: 0;
+th {
+	border-width: 0px 0px 1px 0px!important;
+}
+
+tr:not([class*='header']) {
+	&:hover {
+		&>td,th{
+			transition: background-color 0.3s ease;
+			background: rgba(139,166,201,.4) !important;
+		}
+	}
+}
+
+.usa-button-unstyled {
+	color: #000;
 }
 
 .mainbody {
@@ -42,6 +55,7 @@ table {
 .logo {
 	width: 200px;
 	margin-bottom:20px;
+
 	img {
 		width: 200px;
 		height: auto;
@@ -76,15 +90,6 @@ table {
 	margin-top:30px;
 }
 
-tr:not([class*='header']) {
-	&:hover {
-		&>td,th{
-			transition: background-color 0.3s ease;
-			background:rgba(139,166,201,.4)!important;
-		}
-	}
-}
-
 .anet-block {
 	background: #FFFFFF;
 	border: 1px solid #E5EBF3;
@@ -113,19 +118,20 @@ tr:not([class*='header']) {
 	}
 }
 
-th {
-	border-width: 0px 0px 1px 0px!important;
-}
-
 .form-group {
 	label {
 		width: 100%;
 	}
 
-	input[type=text],.select2 {
+	input, .select2 {
 		background: #FFFFFF;
 		border: 1px solid #5b616b;
+	}
+
+	input, select, .select2 {
+		width: 90%;
 		min-width: 300px;
+		max-width: none;
 	}
 }
 

@@ -16,11 +16,6 @@
                   </div>
 
                   <div class="anet-block__body">
-                    <div class="form-group">
-                      <label for="engagementIntent">Summary</label>
-                      <input id="engagementIntent" name="intent" value="${intent!}" />
-                    </div>
-
                     <div class="row">
                       <div class="col-md-6">
                         <div class="form-group">
@@ -29,7 +24,7 @@
                         </div>
                       </div>
                       <div class="col-md-6">
-						<div class="form-group">
+            						<div class="form-group">
                           <label for="engagementLocation">Engagement Location</label>
                           <select id="engagementLocation" name="location_id" >
                           	<#if location??>
@@ -40,57 +35,69 @@
                       </div>
                     </div>
 
-                    <div class="row">
-                      <div class="col-md-6">
-                        <form class="anet-attach-person">
-                          <div class="form-group">
-                            <label for="attachPersonName">Who was Present?</label>
-                            <select id="attachPersonName"></select>
-                          </div>
+                    <div class="form-group">
+                      <label for="engagementIntent">Summary</label>
+                      <input id="engagementIntent" name="intent" value="${intent!}" />
+                    </div>
 
-                          <div class="form-group hide" data-attach-person-type>
-                            <input type="radio" value="advisor" name="attachPersonType" id="attachPersonTypeAdvisor">
-                            <label for="attachPersonTypeAdvisor">Advisor</label>
-                            <input type="radio" value="principal" name="attachPersonType" id="attachPersonTypePrincipal">
-                            <label for="attachPersonTypePrincipal">Afghan Principal</label>
-                            <input type="radio" value="other" name="attachPersonType" id="attachPersonTypeOther">
-                            <label for="attachPersonTypeOther">Other</label>
-                          </div>
-
-                          <div class="form-group hide" data-attach-person-group>
-                            <label for="attachPersonGroup">Organizational Group</label>
-                            <select id="attachPersonGroup"></select>
-                          </div>
-
-                          <div class="form-group">
-                            <button type="button" class="btn btn-default pull-right hide" data-attach-person-submit>Add Person</button>
-                          </div>
-                        </form>
+                    <form class="anet-attach-person">
+                      <div class="form-group">
+                        <label for="attachPersonName">Who was Present?</label>
+                        <select id="attachPersonName" style="width: 90%"></select>
                       </div>
 
-                      <div class="col-md-6">
-                        <table>
+                      <div class="form-group hide" data-attach-new-person>
+                        <div class="col-md-6">
+                          <input type="radio" value="advisor" name="attachPersonType" id="attachPersonTypeAdvisor">
+                          <label for="attachPersonTypeAdvisor">Advisor</label>
+                          <input type="radio" value="principal" name="attachPersonType" id="attachPersonTypePrincipal">
+                          <label for="attachPersonTypePrincipal">Afghan Principal</label>
+                          <input type="radio" value="other" name="attachPersonType" id="attachPersonTypeOther">
+                          <label for="attachPersonTypeOther">Other</label>
+                        </div>
+
+                        <div class="col-md-6">
+                          <label for="attachPersonGroup">Organizational Group</label>
+                          <select id="attachPersonGroup"></select>
+                        </div>
+
+                        <button type="button" class="usa-button pull-right" data-attach-new-person-submit>Add Person</button>
+                        <div class="clearfix"></div>
+                      </div>
+                    </form>
+
+                    <div class="form-group">
+                      <table class="usa-table-borderless">
+                        <thead>
                           <tr>
+                            <th></th>
                             <th>Name</th>
                             <th>Role</th>
-                            <th></th>
                           </tr>
-                          <#if attendees??>
-                          	<#list attendees as a>
-                          		<tr class="attendeeRow" data-id="${a.id}">
-                          			<td data-name>${a.firstName} ${a.lastName}</td>
-                          			<td data-role>${a.role}</td>
-                          			<td data-remove-person><button type="button">x</button></td>
-                          		</tr>
-                          	</#list>
-                          </#if>
-                          <tr data-attached-person-prototype class="attendeeRow" >
-                            <td data-name></td>
-                            <td data-role></td>
-                            <td data-remove-person><button type="button">x</button></td>
-                          </tr>
-                        </table>
-                      </div>
+                        </thead>
+                        <#if attendees??>
+                        	<#list attendees as a>
+                        		<tr class="attendeeRow" data-id="${a.id}">
+                        			<td data-name>${a.firstName} ${a.lastName}</td>
+                        			<td data-role>${a.role}</td>
+                        			<td>
+                                <a href="#" class="button">
+                                  <i class="glyphicon glyphicon-remove"></i>
+                                </a>
+                              </td>
+                        		</tr>
+                        	</#list>
+                        </#if>
+                        <tr data-attached-person-prototype class="attendeeRow">
+                          <td>
+                            <button type="button" class="usa-button-unstyled" data-remove-person>
+                              <i class="glyphicon glyphicon-remove"></i>
+                            </button>
+                          </td>
+                          <td data-name></td>
+                          <td data-role></td>
+                        </tr>
+                      </table>
                     </div>
                   </div>
                 </section>
@@ -146,10 +153,10 @@
                             <label for="attachEFName">Essential Function</label>
                             <select id="attachEFName">
                             	<option></option>
-							<#list context.efs as ef>
-								<option value="${ef.id}">${ef.shortName} - ${ef.longName}</option>
-							</#list>
-							</select>
+                							<#list context.efs as ef>
+              								<option value="${ef.id}">${ef.shortName} - ${ef.longName}</option>
+                							</#list>
+              							</select>
                           </div>
 
                           <div class="form-group">
@@ -276,9 +283,8 @@ var $personRow = $('[data-attached-person-prototype]').removeAttr('data-attached
 var $personTable = $personRow.parent();
 $personRow.remove();
 
-var $attachPersonType = $('[data-attach-person-type]');
-var $attachPersonGroup = $('[data-attach-person-group]');
-var $attachPersonSubmit = $('[data-attach-person-submit]');
+var $attachPersonForm = $('[data-attach-new-person]');
+var $attachPersonSubmit = $('[data-attach-new-person-submit]');
 var addingPerson = {};
 
 function addPersonToTable(person) {
@@ -286,7 +292,7 @@ function addPersonToTable(person) {
   $row.find('[data-name]').html(person.name);
   $row.find('[data-role]').html(person.role);
   $row.find('[data-org]').html(person.org);
-  $row.attr("data-id",person.id);
+  $row.attr("data-id", person.id);
   $row.appendTo($personTable);
 }
 
@@ -330,27 +336,24 @@ function enablePersonSearch(selectId, role) {
       $('#attachPersonName').val('').trigger('change');
     } else if (result.query) {
       addingPerson = {name: result.query};
-      $attachPersonType.removeClass('hide');
-      $attachPersonGroup.removeClass('hide');
-      $attachPersonSubmit.removeClass('hide');
+      $attachPersonForm.removeClass('hide');
     }
   });
 };
 
 $attachPersonSubmit.on('click', function() {
-  var $checkedRole = $attachPersonType.find(':checked');
+  var $checkedRole = $attachPersonForm.find(':checked');
   addingPerson.role = $checkedRole.val().toUpperCase();
   addPersonToTable(addingPerson);
   $checkedRole.val('');
-  $attachPersonType.addClass('hide');
-  $attachPersonGroup.addClass('hide');
-  $attachPersonSubmit.addClass('hide');
+  $attachPersonForm.addClass('hide');
   $('#attachPersonName').val('').trigger('change');
   return false;
 });
 
 $(document.body).on('click', '[data-remove-person]', function(event) {
-  $(this).parent().remove();
+  $(this).parents('tr').remove();
+  return false;
 })
 
 function enableLocationSearch(selectId) {
