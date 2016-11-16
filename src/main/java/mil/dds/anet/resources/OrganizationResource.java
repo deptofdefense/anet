@@ -13,44 +13,44 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import mil.dds.anet.AnetObjectEngine;
-import mil.dds.anet.beans.AdvisorOrganization;
-import mil.dds.anet.database.AdvisorOrganizationDao;
+import mil.dds.anet.beans.Organization;
+import mil.dds.anet.database.OrganizationDao;
 import mil.dds.anet.views.ObjectListView;
 
-@Path("/advisorOrganizations")
+@Path("/organizations")
 @Produces(MediaType.APPLICATION_JSON)
 @PermitAll
-public class AdvisorOrganizationResource {
+public class OrganizationResource {
 
-	private AdvisorOrganizationDao dao;
+	private OrganizationDao dao;
 	
-	public AdvisorOrganizationResource(AnetObjectEngine engine) {
-		this.dao = engine.getAdvisorOrganizationDao(); 
+	public OrganizationResource(AnetObjectEngine engine) {
+		this.dao = engine.getOrganizationDao(); 
 	}
 	
 	@GET
 	@Path("/")
 	@Produces(MediaType.TEXT_HTML)
-	public ObjectListView<AdvisorOrganization> getAllOrgsView(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
-		return new ObjectListView<AdvisorOrganization>(dao.getAll(pageNum, pageSize), AdvisorOrganization.class);
+	public ObjectListView<Organization> getAllOrgsView(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
+		return new ObjectListView<Organization>(dao.getAll(pageNum, pageSize), Organization.class);
 	} 
 	
 	@POST
 	@Path("/new")
-	public AdvisorOrganization createNewAdvisorOrganization(AdvisorOrganization ao) {
+	public Organization createNewAdvisorOrganization(Organization ao) {
 		return dao.insert(ao);
 	}
 	
 	@GET
 	@Path("/{id}")
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
-	public AdvisorOrganization getById(@PathParam("id") int id) {
+	public Organization getById(@PathParam("id") int id) {
 		return dao.getById(id).render("show.ftl");
 	}
 	
 	@POST
 	@Path("/update")
-	public Response updateAdvisorOrganizationName(AdvisorOrganization ao) { 
+	public Response updateAdvisorOrganizationName(Organization ao) { 
 		int numRows = dao.update(ao);
 		return (numRows == 1) ? Response.ok().build() : Response.status(Status.NOT_FOUND).build();
 	}

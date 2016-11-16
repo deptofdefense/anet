@@ -20,6 +20,10 @@
 			<column name="biography" type="text" />
 			<column name="createdAt" type="datetime" />
 			<column name="updatedAt" type="datetime" />
+			<column name="role" type="int" >
+                <constraints nullable="false"/>
+			</column>
+			<column name="pendingVerification" type="boolean" defaultValue="false" />
         </createTable>
 
 		<createTable tableName="groups">
@@ -35,7 +39,7 @@
 			<column name="personId" type="int" />
 		</createTable>
 
-		<createTable tableName="advisorOrganizations">
+		<createTable tableName="organizations">
 			<column name="id" type="int" autoIncrement="true" >
 				<constraints primaryKey="true" nullable="false" />
 			</column>
@@ -44,6 +48,7 @@
 
 			<column name="createdAt" type="datetime" />
 			<column name="updatedAt" type="datetime" />
+			<column name="type" type="int" />
 		</createTable>
 
 		<createTable tableName="poams" >
@@ -66,20 +71,29 @@
 			<column name="updatedAt" type="datetime" />
 		</createTable>
 
-		<createTable tableName="tashkils">
+		<createTable tableName="positions">
 			<column name="id" type="int" autoIncrement="true" >
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="code" type="varchar(100)" />
 			<column name="name" type="varchar(512)" />
+			<column name="organizationId" type="int" />
 			<column name="createdAt" type="datetime" />
 			<column name="updatedAt" type="datetime" />
 		</createTable>
 
-		<createTable tableName="tashkilPrincipals">
-			<column name="tashkilId" type="int" />
-			<column name="principalId" type="int" />
+		<createTable tableName="peoplePositions">
+			<column name="positionId" type="int" />
+			<column name="personId" type="int" />
 			<column name="createdAt" type="datetime" />
+		</createTable>
+
+		<createTable tableName="positionRelationships" >
+			<column name="positionId_a" type="int" />
+			<column name="positionId_b" type="int" />
+			<column name="createdAt" type="datetime" />
+			<column name="updatedAt" type="datetime" />
+			<column name="deleted" type="boolean" />
 		</createTable>
 
 		<createTable tableName="reports">
@@ -94,6 +108,11 @@
 			<column name="text" type="text" />
 			<column name="nextSteps" type="text" />
 			<column name="authorId" type="int" />
+			<column name="approvalStepId" type="int" />
+			<column name="state" type="int" />
+			<column name="engagementDate" type="datetime"/>
+			<column name="atmosphere" type="int"/>
+			<column name="atmosphereDetails" type="text" />
 		</createTable>
 
 		<createTable tableName="reportPeople" >
@@ -130,13 +149,6 @@
     </changeSet>
 
 	<changeSet id="2" author="hpitelka">
-		<addColumn tableName="reports">
-			<column name="approvalStepId" type="int" />
-		</addColumn>
-		<addColumn tableName="reports">
-			<column name="state" type="int" />
-		</addColumn>
-
 		<createTable tableName="approvalSteps">
 			<column name="id" type="int" autoIncrement="true" >
 				<constraints primaryKey="true" nullable="false" />
@@ -159,57 +171,6 @@
 		</createTable>
 	</changeSet>
 
-	<changeSet id="3" author="hpitelka" >
-		<createTable tableName="billets">
-			<column name="id" type="int" autoIncrement="true" >
-				<constraints primaryKey="true" nullable="false" />
-			</column>
-			<column name="name" type="varchar(500)" />
-			<column name="advisorOrganizationId" type="int" />
-			<column name="createdAt" type="datetime" />
-			<column name="updatedAt" type="datetime" />
-		</createTable>
-
-		<createTable tableName="billetAdvisors" >
-			<column name="billetId" type="int" />
-			<column name="advisorId" type="int" />
-			<column name="createdAt" type="datetime" />
-		</createTable>
-	</changeSet>
-
 	<changeSet id="4" author="hpitelka" >
-		<createTable tableName="billetTashkils" >
-			<column name="billetId" type="int" />
-			<column name="tashkilId" type="int" />
-			<column name="createdAt" type="datetime" />
-			<column name="updatedAt" type="datetime" />
-			<column name="deleted" type="boolean" />
-		</createTable>
-	</changeSet>
-
-	<changeSet id="5" author="hpitelka" >
-		<addColumn tableName="people">
-			<column name="role" type="int" >
-                <constraints nullable="false"/>
-			</column>
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="6" author="hpitelka">
-		<addColumn tableName="people">
-			<column name="pendingVerification" type="boolean" defaultValue="false" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="7" author="hpitelka">
-		<addColumn tableName="reports">
-			<column name="engagementDate" type="datetime"/>
-		</addColumn>
-		<addColumn tableName="reports">
-			<column name="atmosphere" type="int"/>
-		</addColumn>
-		<addColumn tableName="reports">
-			<column name="atmosphereDetails" type="text" />
-		</addColumn>
 	</changeSet>
 </databaseChangeLog>

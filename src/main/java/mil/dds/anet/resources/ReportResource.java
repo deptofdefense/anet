@@ -23,11 +23,11 @@ import org.eclipse.jetty.util.log.Logger;
 
 import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
-import mil.dds.anet.beans.AdvisorOrganization;
 import mil.dds.anet.beans.ApprovalAction;
 import mil.dds.anet.beans.ApprovalAction.ApprovalType;
 import mil.dds.anet.beans.ApprovalStep;
 import mil.dds.anet.beans.Comment;
+import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.Report;
@@ -160,13 +160,13 @@ public class ReportResource {
 	public Response submitReport(@PathParam("id") int id) { 
 		Report r = dao.getById(id);
 		
-		AdvisorOrganization ao = engine.getAdvisorOrganizationForPerson(r.getAuthor());
-		if (ao == null ) {
-			return ResponseUtils.withMsg("Unable to find AO for Report Author", Status.BAD_REQUEST);
+		Organization org = engine.getOrganizationForPerson(r.getAuthor());
+		if (org == null ) {
+			return ResponseUtils.withMsg("Unable to find Org for Report Author", Status.BAD_REQUEST);
 		}
-		List<ApprovalStep> steps = engine.getApprovalStepsForOrg(ao);
+		List<ApprovalStep> steps = engine.getApprovalStepsForOrg(org);
 		if (steps == null || steps.size() == 0) {  
-			return ResponseUtils.withMsg("Unable to find approval steps for AO", Status.BAD_REQUEST);
+			return ResponseUtils.withMsg("Unable to find approval steps for Org", Status.BAD_REQUEST);
 		}
 		
 		//Push the report into the first step of this workflow

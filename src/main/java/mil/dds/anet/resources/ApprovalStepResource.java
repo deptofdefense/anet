@@ -14,8 +14,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import mil.dds.anet.AnetObjectEngine;
-import mil.dds.anet.beans.AdvisorOrganization;
 import mil.dds.anet.beans.ApprovalStep;
+import mil.dds.anet.beans.Organization;
 import mil.dds.anet.database.ApprovalStepDao;
 
 @Path("/approvalSteps")
@@ -31,9 +31,9 @@ public class ApprovalStepResource {
 	}
 	
 	@GET
-	@Path("/byAdvisorOrganization")
+	@Path("/byOrganization")
 	public List<ApprovalStep> getStepsForOrg(@QueryParam("id") int id) {
-		AdvisorOrganization ao = new AdvisorOrganization();
+		Organization ao = new Organization();
 		ao.setId(id);
 		return engine.getApprovalStepsForOrg(ao);
 	}

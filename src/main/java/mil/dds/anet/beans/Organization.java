@@ -11,15 +11,18 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.views.AbstractAnetView;
 
-public class AdvisorOrganization extends AbstractAnetView<AdvisorOrganization> {
+public class Organization extends AbstractAnetView<Organization> {
 
+	public static enum OrganizationType { ADVISOR_ORG, PRINCIPAL_ORG }
+	
 	String name;
-	AdvisorOrganization parentOrg;
+	Organization parentOrg;
+	OrganizationType type;
 	
 	DateTime createdAt;
 	DateTime updatedAt;
 	
-	List<Billet> billets; /*Billets in this AO, lazy loaded*/
+	List<Position> positions; /*Positions in this AO, lazy loaded*/
 	List<ApprovalStep> approvalSteps; /*Approval process for this AO, lazy loaded */
 	
 	public String getName() {
@@ -30,18 +33,26 @@ public class AdvisorOrganization extends AbstractAnetView<AdvisorOrganization> {
 	}
 
 	@JsonIgnore
-	public AdvisorOrganization getParentOrg() { 
+	public Organization getParentOrg() { 
 		//TODO: handle load levels for parent org. 
 		return null;
 	}
 	
 	@JsonGetter("parentOrg")
-	public AdvisorOrganization getParentOrgJson() {
+	public Organization getParentOrgJson() {
 		return parentOrg;
 	}
 	
-	public void setParentOrg(AdvisorOrganization parentOrg) {
+	public void setParentOrg(Organization parentOrg) {
 		this.parentOrg = parentOrg;
+	}
+	
+	
+	public OrganizationType getType() {
+		return type;
+	}
+	public void setType(OrganizationType type) {
+		this.type = type;
 	}
 	public DateTime getCreatedAt() {
 		return createdAt;
@@ -57,12 +68,12 @@ public class AdvisorOrganization extends AbstractAnetView<AdvisorOrganization> {
 	}
 	
 	@JsonIgnore
-	public List<Billet> getBillets() {
-		if (billets == null) {
-			billets = AnetObjectEngine.getInstance()
-					.getBilletDao().getByAdvisorOrganization(this);
+	public List<Position> getPositions() {
+		if (positions == null) {
+			positions = AnetObjectEngine.getInstance()
+					.getPositionDao().getByOrganization(this);
 		}
-		return billets;
+		return positions;
 	}
 	
 	@JsonIgnore
@@ -74,14 +85,15 @@ public class AdvisorOrganization extends AbstractAnetView<AdvisorOrganization> {
 		return approvalSteps;
 	}
 	
-	public static AdvisorOrganization create(String name) { 
-		AdvisorOrganization ao = new AdvisorOrganization();
-		ao.setName(name);
-		return ao;
+	public static Organization create(String name, OrganizationType type) { 
+		Organization org = new Organization();
+		org.setName(name);
+		org.setType(type);
+		return org;
 	}
 	
-	public static AdvisorOrganization createWithId(Integer id) { 
-		AdvisorOrganization ao = new AdvisorOrganization();
+	public static Organization createWithId(Integer id) { 
+		Organization ao = new Organization();
 		ao.setId(id);
 		ao.setLoadLevel(LoadLevel.ID_ONLY);
 		return ao;
@@ -92,13 +104,14 @@ public class AdvisorOrganization extends AbstractAnetView<AdvisorOrganization> {
 		if (o == null || o.getClass() != this.getClass()) { 
 			return false;
 		}
-		AdvisorOrganization other = (AdvisorOrganization) o;
+		Organization other = (Organization) o;
 		return Objects.equals(other.getId(), id) &&
-				Objects.equals(other.getName(), name);
+				Objects.equals(other.getName(), name) &&
+				Objects.equals(other.getType(), type);
 	}
 	
 	@Override
 	public int hashCode() { 
-		return Objects.hash(id, name, createdAt, updatedAt);
+		return Objects.hash(id, name, type, createdAt, updatedAt);
 	}
 }

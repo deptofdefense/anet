@@ -233,7 +233,7 @@ public class Report extends AbstractAnetView<Report> {
 	@JsonIgnore
 	public List<ApprovalAction> getApprovalStatus() { 
 		AnetObjectEngine engine = AnetObjectEngine.getInstance();
-		AdvisorOrganization ao = engine.getAdvisorOrganizationForPerson(getAuthor());
+		Organization ao = engine.getOrganizationForPerson(getAuthor());
 		List<ApprovalStep> steps = engine.getApprovalStepsForOrg(ao);
 		
 		List<ApprovalAction> actions = engine.getApprovalActionDao().getFinalActionsForReport(this.getId());

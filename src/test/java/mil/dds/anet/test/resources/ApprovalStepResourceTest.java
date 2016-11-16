@@ -14,11 +14,11 @@ import org.junit.Test;
 import com.google.common.collect.Lists;
 
 import io.dropwizard.client.JerseyClientBuilder;
-import mil.dds.anet.beans.AdvisorOrganization;
 import mil.dds.anet.beans.ApprovalStep;
 import mil.dds.anet.beans.Group;
+import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
-import mil.dds.anet.test.beans.AdvisorOrganizationTest;
+import mil.dds.anet.test.beans.OrganizationTest;
 
 public class ApprovalStepResourceTest extends AbstractResourceTest {
 
@@ -32,9 +32,9 @@ public class ApprovalStepResourceTest extends AbstractResourceTest {
 	public void approvalTest() {
 		Person steve = getSteveSteveson(); //Get an authenticated user. 
 		//Create an Advisor Organization
-		AdvisorOrganization ao = httpQuery("/advisorOrganizations/new", steve)
-				.post(Entity.json(AdvisorOrganizationTest.getTestAO()), AdvisorOrganization.class);
-		assertThat(ao.getId()).isNotNull();
+		Organization org = httpQuery("/organizations/new", steve)
+				.post(Entity.json(OrganizationTest.getTestAO()), Organization.class);
+		assertThat(org.getId()).isNotNull();
 		
 		//Create a group to do the approvals
 		Group g = httpQuery("/groups/new", steve)
@@ -43,15 +43,15 @@ public class ApprovalStepResourceTest extends AbstractResourceTest {
 		
 		//Create 3 steps in order for this AO
 		ApprovalStep as1 = httpQuery("/approvalSteps/new", steve)
-				.post(Entity.json(ApprovalStep.create(null, g, null, ao.getId())), ApprovalStep.class);
+				.post(Entity.json(ApprovalStep.create(null, g, null, org.getId())), ApprovalStep.class);
 		assertThat(as1.getId()).isNotNull();
 		
 		ApprovalStep as2 = httpQuery("/approvalSteps/new", steve)
-				.post(Entity.json(ApprovalStep.create(null, g, null, ao.getId())), ApprovalStep.class);
+				.post(Entity.json(ApprovalStep.create(null, g, null, org.getId())), ApprovalStep.class);
 		assertThat(as1.getId()).isNotNull();
 		
 		ApprovalStep as3 = httpQuery("/approvalSteps/new", steve)
-				.post(Entity.json(ApprovalStep.create(null, g, null, ao.getId())), ApprovalStep.class);
+				.post(Entity.json(ApprovalStep.create(null, g, null, org.getId())), ApprovalStep.class);
 		assertThat(as1.getId()).isNotNull();
 		
 		as1.setNextStepId(as2.getId());
@@ -61,7 +61,7 @@ public class ApprovalStepResourceTest extends AbstractResourceTest {
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
 		//Get them back in order
-		List<ApprovalStep> returned = httpQuery(String.format("/approvalSteps/byAdvisorOrganization?id=%d", ao.getId()), steve)
+		List<ApprovalStep> returned = httpQuery(String.format("/approvalSteps/byOrganization?id=%d", org.getId()), steve)
 				.get(new GenericType<List<ApprovalStep>>() {});
 		assertThat(returned.size()).isEqualTo(3);
 		System.out.println(as1);
@@ -74,7 +74,7 @@ public class ApprovalStepResourceTest extends AbstractResourceTest {
 		resp = httpQuery(String.format("/approvalSteps/%d", as1.getId()), steve).delete();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
-		returned = httpQuery(String.format("/approvalSteps/byAdvisorOrganization?id=%d", ao.getId()), steve)
+		returned = httpQuery(String.format("/approvalSteps/byOrganization?id=%d", org.getId()), steve)
 				.get(new GenericType<List<ApprovalStep>>() {});
 		assertThat(returned.size()).isEqualTo(2);
 		assertThat(returned).contains(as2, atIndex(0));
@@ -82,7 +82,7 @@ public class ApprovalStepResourceTest extends AbstractResourceTest {
 		
 		//Create a new step and put in the middle
 		ApprovalStep as4 = httpQuery("/approvalSteps/new", steve)
-				.post(Entity.json(ApprovalStep.create(null, g, null, ao.getId())), ApprovalStep.class);
+				.post(Entity.json(ApprovalStep.create(null, g, null, org.getId())), ApprovalStep.class);
 		assertThat(as1.getId()).isNotNull();
 		as2.setNextStepId(as4.getId());
 		as4.setNextStepId(as3.getId());
@@ -91,7 +91,7 @@ public class ApprovalStepResourceTest extends AbstractResourceTest {
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
 		//Get them back in order 2 -> 4 -> 3
-		returned = httpQuery("/approvalSteps/byAdvisorOrganization?id=" + ao.getId(), steve)
+		returned = httpQuery("/approvalSteps/byOrganization?id=" + org.getId(), steve)
 				.get(new GenericType<List<ApprovalStep>>() {});
 		assertThat(returned.size()).isEqualTo(3);
 		assertThat(returned).contains(as2, atIndex(0));

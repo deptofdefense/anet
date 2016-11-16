@@ -16,15 +16,11 @@ import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 
-import mil.dds.anet.beans.AdvisorOrganization;
-import mil.dds.anet.beans.Billet;
+import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Person.Role;
-import mil.dds.anet.beans.Tashkil;
-import mil.dds.anet.database.mappers.AdvisorOrganizationMapper;
-import mil.dds.anet.database.mappers.BilletMapper;
+import mil.dds.anet.database.mappers.OrganizationMapper;
 import mil.dds.anet.database.mappers.PersonMapper;
-import mil.dds.anet.database.mappers.TashkilMapper;
 
 @RegisterMapper(PersonMapper.class)
 public class PersonDao implements IAnetDao<Person> {
@@ -89,16 +85,15 @@ public class PersonDao implements IAnetDao<Person> {
 		return query.list();
 	}
 	
-	@RegisterMapper(AdvisorOrganizationMapper.class)
-	public AdvisorOrganization getAdvisorOrganizationForPerson(@Bind("personId") int personId) { 
-		Query<AdvisorOrganization> query = dbHandle.createQuery("SELECT advisorOrganizations.* " +
-				"FROM advisorOrganizations, billets, billetAdvisors WHERE " + 
-				"billetAdvisors.advisorId = :personId AND billetAdvisors.billetId = billets.id " + 
-				"AND billets.advisorOrganizationId = advisorOrganizations.id " + 
-				"ORDER BY billetAdvisors.createdAt DESC LIMIT 1")
+	public Organization getOrganizationForPerson(@Bind("personId") int personId) { 
+		Query<Organization> query = dbHandle.createQuery("SELECT organizations.* " +
+				"FROM organizations, positions, peoplePositions WHERE " + 
+				"peoplePositions.personId = :personId AND peoplePositions.positionId = positions.id " + 
+				"AND positions.organizationId = organizations.id " + 
+				"ORDER BY peoplePositions.createdAt DESC LIMIT 1")
 			.bind("personId", personId)
-			.map(new AdvisorOrganizationMapper());
-		List<AdvisorOrganization> rs = query.list();
+			.map(new OrganizationMapper());
+		List<Organization> rs = query.list();
 		if (rs.size() == 0) { return null; } 
 		return rs.get(0);
 	}

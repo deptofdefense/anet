@@ -10,26 +10,25 @@ import java.util.Objects;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 
-import mil.dds.anet.beans.AdvisorOrganization;
 import mil.dds.anet.beans.ApprovalStep;
-import mil.dds.anet.beans.Billet;
 import mil.dds.anet.beans.Comment;
 import mil.dds.anet.beans.Group;
+import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.geo.Location;
-import mil.dds.anet.database.AdvisorOrganizationDao;
 import mil.dds.anet.database.ApprovalActionDao;
 import mil.dds.anet.database.ApprovalStepDao;
-import mil.dds.anet.database.BilletDao;
 import mil.dds.anet.database.CommentDao;
 import mil.dds.anet.database.GroupDao;
 import mil.dds.anet.database.IAnetDao;
 import mil.dds.anet.database.LocationDao;
+import mil.dds.anet.database.OrganizationDao;
 import mil.dds.anet.database.PersonDao;
 import mil.dds.anet.database.PoamDao;
+import mil.dds.anet.database.PositionDao;
 import mil.dds.anet.database.ReportDao;
-import mil.dds.anet.database.TashkilDao;
 import mil.dds.anet.database.TestingDao;
 import mil.dds.anet.views.AbstractAnetView;
 import mil.dds.anet.views.AbstractAnetView.LoadLevel;
@@ -40,11 +39,10 @@ public class AnetObjectEngine {
 	TestingDao dao;
 	PersonDao personDao;
 	GroupDao groupDao;
-	TashkilDao tashkilDao;
 	PoamDao poamDao;
 	LocationDao locationDao;
-	AdvisorOrganizationDao aoDao;
-	BilletDao billetDao;
+	OrganizationDao orgDao;
+	PositionDao positionDao;
 	ApprovalStepDao asDao;
 	ApprovalActionDao approvalActionDao;
 	ReportDao reportDao;
@@ -60,11 +58,10 @@ public class AnetObjectEngine {
 		
 		personDao = new PersonDao(dbHandle);
 		groupDao = new GroupDao(dbHandle);
-		tashkilDao = new TashkilDao(dbHandle);
 		poamDao = new PoamDao(dbHandle);
 		locationDao =  new LocationDao(dbHandle);
-		aoDao = new AdvisorOrganizationDao(dbHandle, groupDao);
-		billetDao = new BilletDao(dbHandle);
+		orgDao = new OrganizationDao(dbHandle, groupDao);
+		positionDao = new PositionDao(dbHandle);
 		asDao = new ApprovalStepDao(dbHandle);
 		approvalActionDao = new ApprovalActionDao(dbHandle);
 		reportDao = new ReportDao(dbHandle);
@@ -74,8 +71,8 @@ public class AnetObjectEngine {
 		daoMap.put(Person.class, personDao);
 		daoMap.put(Group.class, groupDao);
 		daoMap.put(Location.class, locationDao);
-		daoMap.put(AdvisorOrganization.class, aoDao);
-		daoMap.put(Billet.class, billetDao);
+		daoMap.put(Organization.class, orgDao);
+		daoMap.put(Position.class, positionDao);
 //		daoMap.put(Poam.class, poamDao);
 //		daoMap.put(Tashkil.class, tashkilDao);
 //		daoMap.put(ApprovalStep.class, asDao);
@@ -94,10 +91,6 @@ public class AnetObjectEngine {
 		return groupDao;
 	}
 	
-	public TashkilDao getTashkilDao() { 
-		return tashkilDao;
-	}
-	
 	public PoamDao getPoamDao() { 
 		return poamDao;
 	}
@@ -110,16 +103,16 @@ public class AnetObjectEngine {
 		return locationDao;
 	}
 
-	public AdvisorOrganizationDao getAdvisorOrganizationDao() {
-		return aoDao;
+	public OrganizationDao getOrganizationDao() {
+		return orgDao;
 	}
 
 	public ApprovalActionDao getApprovalActionDao() {
 		return approvalActionDao;
 	}
 
-	public BilletDao getBilletDao() {
-		return billetDao;
+	public PositionDao getPositionDao() {
+		return positionDao;
 	}
 
 	public ApprovalStepDao getApprovalStepDao() {
@@ -134,11 +127,11 @@ public class AnetObjectEngine {
 		return commentDao;
 	}
 	
-	public AdvisorOrganization getAdvisorOrganizationForPerson(Person p) { 
-		return personDao.getAdvisorOrganizationForPerson(p.getId());
+	public Organization getOrganizationForPerson(Person p) { 
+		return personDao.getOrganizationForPerson(p.getId());
 	}
 	
-	public List<ApprovalStep> getApprovalStepsForOrg(AdvisorOrganization ao) { 
+	public List<ApprovalStep> getApprovalStepsForOrg(Organization ao) { 
 		Collection<ApprovalStep> unordered = asDao.getByAdvisorOrganizationId(ao.getId());
 		
 		int numSteps = unordered.size();

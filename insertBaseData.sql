@@ -21,42 +21,42 @@ INSERT INTO people (firstName, lastName, status, role, emailAddress, phoneNumber
 INSERT INTO people (firstName, lastName, status, role, emailAddress, phoneNumber, rank, biography) 
 	VALUES ("Shardul", "Sharton", 0, 1, "shardul@example.com", "+99-9999-9999", "CIV", "");
 
-INSERT INTO billets (name, createdAt, updatedAt) VALUES ('EF1 Advisor 04532', 1478098949000, 1478098949000);
-INSERT INTO billetAdvisors (billetId, advisorId, createdAt) VALUES ((SELECT id from billets where name ='EF1 Advisor 04532'), null, 1478098949000);
-INSERT INTO billets (name, createdAt, updatedAt) VALUES ('EF2 Advisor 4987', 1478098949000, 1478098949000);
-INSERT INTO billetAdvisors (billetId, advisorId, createdAt) VALUES ((SELECT id from billets where name ='EF2 Advisor 4987'), null, 1478098949000);
-INSERT INTO billets (name, createdAt, updatedAt) VALUES ('EF3 Advisor 427', 1478098949000, 1478098949000);
-INSERT INTO billetAdvisors (billetId, advisorId, createdAt) VALUES ((SELECT id from billets where name ='EF3 Advisor 427'), null, 1478098949000);
-INSERT INTO billets (name, createdAt, updatedAt) VALUES ('EF4 Advisor 3', 1478098949000, 1478098949000);
-INSERT INTO billetAdvisors (billetId, advisorId, createdAt) VALUES ((SELECT id from billets where name ='EF4 Advisor 3'), null, 1478098949000);
+INSERT INTO positions (name, createdAt, updatedAt) VALUES ('EF1 Advisor 04532', 1478098949000, 1478098949000);
+INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES ((SELECT id from positions where name ='EF1 Advisor 04532'), null, 1478098949000);
+INSERT INTO positions (name, createdAt, updatedAt) VALUES ('EF2 Advisor 4987', 1478098949000, 1478098949000);
+INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES ((SELECT id from positions where name ='EF2 Advisor 4987'), null, 1478098949000);
+INSERT INTO positions (name, createdAt, updatedAt) VALUES ('EF3 Advisor 427', 1478098949000, 1478098949000);
+INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES ((SELECT id from positions where name ='EF3 Advisor 427'), null, 1478098949000);
+INSERT INTO positions (name, createdAt, updatedAt) VALUES ('EF4 Advisor 3', 1478098949000, 1478098949000);
+INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES ((SELECT id from positions where name ='EF4 Advisor 3'), null, 1478098949000);
 
-INSERT INTO billetAdvisors (billetId, advisorId, createdAt) VALUES 
-	((SELECT id from billets where name = 'EF1 Advisor 04532'), (SELECT id from people where emailAddress = 'bob@example.com'), 1478098949010);
+INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES 
+	((SELECT id from positions where name = 'EF1 Advisor 04532'), (SELECT id from people where emailAddress = 'bob@example.com'), 1478098949010);
 
-INSERT INTO advisorOrganizations (name, createdAt, updatedAt) VALUES ('EF1', 1478098949000, 1478098949000);
-INSERT INTO advisorOrganizations (name, createdAt, updatedAt) VALUES ('EF2', 1478098949000, 1478098949000);
-INSERT INTO advisorOrganizations (name, createdAt, updatedAt) VALUES ('EF3', 1478098949000, 1478098949000);
-INSERT INTO advisorOrganizations (name, createdAt, updatedAt) VALUES ('EF4', 1478098949000, 1478098949000);
-INSERT INTO advisorOrganizations (name, createdAt, updatedAt) VALUES ('EF5', 1478098949000, 1478098949000);
-INSERT INTO advisorOrganizations (name, createdAt, updatedAt) VALUES ('EF6', 1478098949000, 1478098949000);
-INSERT INTO advisorOrganizations (name, createdAt, updatedAt) VALUES ('EF7', 1478098949000, 1478098949000);
-INSERT INTO advisorOrganizations (name, createdAt, updatedAt) VALUES ('EF8', 1478098949000, 1478098949000);
-INSERT INTO advisorOrganizations (name, createdAt, updatedAt) VALUES ('Gender', 1478098949000, 1478098949000);
-INSERT INTO advisorOrganizations (name, createdAt, updatedAt) VALUES ('TAAC-N', 1478098949000, 1478098949000);
-INSERT INTO advisorOrganizations (name, createdAt, updatedAt) VALUES ('TAAC-S', 1478098949000, 1478098949000);
-INSERT INTO advisorOrganizations (name, createdAt, updatedAt) VALUES ('TAAC-W', 1478098949000, 1478098949000);
-INSERT INTO advisorOrganizations (name, createdAt, updatedAt) VALUES ('TAAC-E', 1478098949000, 1478098949000);
-INSERT INTO advisorOrganizations (name, createdAt, updatedAt) VALUES ('TAAC-C', 1478098949000, 1478098949000);
-INSERT INTO advisorOrganizations (name, createdAt, updatedAt) VALUES ('TAAC Air', 1478098949000, 1478098949000);
+INSERT INTO organizations (name, createdAt, updatedAt) VALUES ('EF1', 1478098949000, 1478098949000);
+INSERT INTO organizations (name, createdAt, updatedAt) VALUES ('EF2', 1478098949000, 1478098949000);
+INSERT INTO organizations (name, createdAt, updatedAt) VALUES ('EF3', 1478098949000, 1478098949000);
+INSERT INTO organizations (name, createdAt, updatedAt) VALUES ('EF4', 1478098949000, 1478098949000);
+INSERT INTO organizations (name, createdAt, updatedAt) VALUES ('EF5', 1478098949000, 1478098949000);
+INSERT INTO organizations (name, createdAt, updatedAt) VALUES ('EF6', 1478098949000, 1478098949000);
+INSERT INTO organizations (name, createdAt, updatedAt) VALUES ('EF7', 1478098949000, 1478098949000);
+INSERT INTO organizations (name, createdAt, updatedAt) VALUES ('EF8', 1478098949000, 1478098949000);
+INSERT INTO organizations (name, createdAt, updatedAt) VALUES ('Gender', 1478098949000, 1478098949000);
+INSERT INTO organizations (name, createdAt, updatedAt) VALUES ('TAAC-N', 1478098949000, 1478098949000);
+INSERT INTO organizations (name, createdAt, updatedAt) VALUES ('TAAC-S', 1478098949000, 1478098949000);
+INSERT INTO organizations (name, createdAt, updatedAt) VALUES ('TAAC-W', 1478098949000, 1478098949000);
+INSERT INTO organizations (name, createdAt, updatedAt) VALUES ('TAAC-E', 1478098949000, 1478098949000);
+INSERT INTO organizations (name, createdAt, updatedAt) VALUES ('TAAC-C', 1478098949000, 1478098949000);
+INSERT INTO organizations (name, createdAt, updatedAt) VALUES ('TAAC Air', 1478098949000, 1478098949000);
 
-UPDATE billets SET advisorOrganizationId = (SELECT id FROM advisorOrganizations WHERE name ='EF1') WHERE name LIKE 'EF1%';
-UPDATE billets SET advisorOrganizationId = (SELECT id FROM advisorOrganizations WHERE name ='EF2') WHERE name LIKE 'EF2%';
-UPDATE billets SET advisorOrganizationId = (SELECT id FROM advisorOrganizations WHERE name ='EF3') WHERE name LIKE 'EF3%';
-UPDATE billets SET advisorOrganizationId = (SELECT id FROM advisorOrganizations WHERE name ='EF4') WHERE name LIKE 'EF4%';
+UPDATE positions SET organizationId = (SELECT id FROM organizations WHERE name ='EF1') WHERE name LIKE 'EF1%';
+UPDATE positions SET organizationId = (SELECT id FROM organizations WHERE name ='EF2') WHERE name LIKE 'EF2%';
+UPDATE positions SET organizationId = (SELECT id FROM organizations WHERE name ='EF3') WHERE name LIKE 'EF3%';
+UPDATE positions SET organizationId = (SELECT id FROM organizations WHERE name ='EF4') WHERE name LIKE 'EF4%';
 
 INSERT INTO groups ('name', 'createdAt') VALUES ('EF1 Approvers', 1478098949000);
 INSERT INTO approvalSteps ('approverGroupId', 'advisorOrganizationId') VALUES 
-	((SELECT id from groups WHERE name = 'EF1 Approvers'), (SELECT id from advisorOrganizations where name='EF1'));
+	((SELECT id from groups WHERE name = 'EF1 Approvers'), (SELECT id from organizations where name='EF1'));
 INSERT INTO groupMemberships (groupId, personId) VALUES 
 	((SELECT id from groups WHERE name='EF1 Approvers'), (SELECT id from people where emailAddress = 'henry@example.com'));
 
@@ -121,9 +121,9 @@ INSERT INTO locations (name, lat, lng) VALUES("Fort Amherst", 47.563763, -52.680
 INSERT INTO locations (name, lat, lng) VALUES("Harbour Grace Police Station", 47.705133, -53.214422);
 INSERT INTO locations (name, lat, lng) VALUES("Conception Bay South Police Station", 47.526784, -52.954739);
 
-INSERT INTO tashkils (name, code) VALUES ("Minister of Donuts", "MOD-FO-00001");
-INSERT INTO tashkils (name, code) VALUES ("Chief of Staff - MoD", "MOD-FO-00002");
-INSERT INTO tashkils (name, code) VALUES ("Executive Assistant to the MoD", "MOD-FO-00003");
-INSERT INTO tashkils (name, code) VALUES ("Director of Budgeting - MoD", "MOD-Bud-00001");
-INSERT INTO tashkils (name, code) VALUES ("Writer of Expenses - MoD", "MOD-Bud-00002");
-INSERT INTO tashkils (name, code) VALUES ("Cost Adder - MoD", "MOD-Bud-00003");
+INSERT INTO positions (name, code) VALUES ("Minister of Donuts", "MOD-FO-00001");
+INSERT INTO positions (name, code) VALUES ("Chief of Staff - MoD", "MOD-FO-00002");
+INSERT INTO positions (name, code) VALUES ("Executive Assistant to the MoD", "MOD-FO-00003");
+INSERT INTO positions (name, code) VALUES ("Director of Budgeting - MoD", "MOD-Bud-00001");
+INSERT INTO positions (name, code) VALUES ("Writer of Expenses - MoD", "MOD-Bud-00002");
+INSERT INTO positions (name, code) VALUES ("Cost Adder - MoD", "MOD-Bud-00003");

@@ -15,22 +15,22 @@ import com.google.common.collect.Lists;
 
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.util.Duration;
-import mil.dds.anet.beans.AdvisorOrganization;
 import mil.dds.anet.beans.ApprovalAction;
 import mil.dds.anet.beans.ApprovalStep;
-import mil.dds.anet.beans.Billet;
 import mil.dds.anet.beans.Comment;
 import mil.dds.anet.beans.Group;
+import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
+import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.Atmosphere;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
 import mil.dds.anet.beans.geo.LatLng;
 import mil.dds.anet.beans.geo.Location;
-import mil.dds.anet.test.beans.AdvisorOrganizationTest;
 import mil.dds.anet.test.beans.CommentTest;
+import mil.dds.anet.test.beans.OrganizationTest;
 import mil.dds.anet.test.beans.PersonTest;
 
 public class ReportsResourceTest extends AbstractResourceTest {
@@ -54,22 +54,22 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		principal.setPrimary(true);
 		
 		//Create an Advising Organization for the report writer
-		AdvisorOrganization ao = httpQuery("/advisorOrganizations/new", author)
-				.post(Entity.json(AdvisorOrganizationTest.getTestAO()), AdvisorOrganization.class);
+		Organization org = httpQuery("/organizations/new", author)
+				.post(Entity.json(OrganizationTest.getTestAO()), Organization.class);
 		
 		//Create leadership people in the AO who can approve this report
 		Person approver1 = getRogerRogwell();
 		Person approver2 = getElizabethElizawell();
 		
 		//Create a billet for the author
-		Billet authorBillet = new Billet();
+		Position authorBillet = new Position();
 		authorBillet.setName("A report writer");
-		authorBillet.setAdvisorOrganization(ao);
-		authorBillet = httpQuery("/billets/new", author).post(Entity.json(authorBillet), Billet.class);
+		authorBillet.setOrganization(org);
+		authorBillet = httpQuery("/positions/new", author).post(Entity.json(authorBillet), Position.class);
 		assertThat(authorBillet.getId()).isNotNull();
 		
 		//Set this author in this billet
-		Response resp = httpQuery(String.format("/billets/%d/advisor", authorBillet.getId()), author).post(Entity.json(author));
+		Response resp = httpQuery(String.format("/positions/%d/person", authorBillet.getId()), author).post(Entity.json(author));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
 		//Create Approval workflow for Advising Organization
@@ -80,7 +80,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
 		ApprovalStep approval = httpQuery("/approvalSteps/new", author)
-				.post(Entity.json(ApprovalStep.create(null, approvingGroup, null, ao.getId())), ApprovalStep.class);
+				.post(Entity.json(ApprovalStep.create(null, approvingGroup, null, org.getId())), ApprovalStep.class);
 		
 		//Create Releasing approval step for AO. 
 		Group releasingGroup = httpQuery("/groups/new", author)
@@ -91,11 +91,11 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		
 		//Adding a new approval step to an AO automatically puts it at the end of the approval process. 
 		ApprovalStep releaseApproval = httpQuery("/approvalSteps/new", author)
-				.post(Entity.json(ApprovalStep.create(null, releasingGroup, null, ao.getId())), ApprovalStep.class);
+				.post(Entity.json(ApprovalStep.create(null, releasingGroup, null, org.getId())), ApprovalStep.class);
 		assertThat(releaseApproval.getId()).isNotNull();
 		
 		//Pull the approval workflow for this AO
-		List<ApprovalStep> steps = httpQuery("/approvalSteps/byAdvisorOrganization?id=" + ao.getId())
+		List<ApprovalStep> steps = httpQuery("/approvalSteps/byOrganization?id=" + org.getId())
 				.get(new GenericType<List<ApprovalStep>>() {});
 		assertThat(steps.size()).isEqualTo(2);
 		assertThat(steps.get(0).getId()).isEqualTo(approval.getId());

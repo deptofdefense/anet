@@ -15,10 +15,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import mil.dds.anet.AnetObjectEngine;
-import mil.dds.anet.beans.Billet;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Person.Role;
-import mil.dds.anet.beans.Tashkil;
+import mil.dds.anet.beans.Position;
 import mil.dds.anet.database.PersonDao;
 import mil.dds.anet.views.ObjectListView;
 
@@ -64,11 +63,7 @@ public class PersonResource {
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	public Person getViewById(@PathParam("id") int id) { 
 		Person p = dao.getById(id);
-		if (p.getRole() == Role.PRINCIPAL) {
-			p.addToContext("position", AnetObjectEngine.getInstance().getTashkilDao().getTashkilForPrincipal(p));
-		} else { 
-			p.addToContext("position", AnetObjectEngine.getInstance().getBilletDao().getBilletForAdvisor(p));
-		}
+		p.addToContext("position", AnetObjectEngine.getInstance().getPositionDao().getPositionForPerson(p));
 		return p.render("show.ftl");
 	}
 	
@@ -139,22 +134,13 @@ public class PersonResource {
 	}
 	
 	/**
-	 * Fetches the current billet that a given person (Advisor) is in. 
-	 * @param personId the ID number of the person whose billet you want to lookup
+	 * Fetches the current position that a given person  is in. 
+	 * @param personId the ID number of the person whose position you want to lookup
 	 */
 	@GET
-	@Path("/{id}/billet")
-	public Billet getBilletForAdvisor(@PathParam("personId") int personId) { 
-		return AnetObjectEngine.getInstance().getBilletDao().getBilletForAdvisor(Person.createWithId(personId));
+	@Path("/{id}/position")
+	public Position getPositionForPerson(@PathParam("personId") int personId) { 
+		return AnetObjectEngine.getInstance().getPositionDao().getPositionForPerson(Person.createWithId(personId));
 	}
 	
-	/**
-	 * Fetches the current tashkil that a given person (Principal) is in. 
-	 * @param personId the ID number of the person whose tashkil you want to lookup
-	 */
-	@GET
-	@Path("/{id}/tashkil")
-	public Tashkil getTashkilForPrincipal(@PathParam("personId") int personId) {
-		return AnetObjectEngine.getInstance().getTashkilDao().getTashkilForPrincipal(Person.createWithId(personId));
-	}
 }
