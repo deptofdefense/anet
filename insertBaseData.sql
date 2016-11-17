@@ -137,10 +137,16 @@ INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('Ministry o
 INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('Ministry of Interior', 1, 1478098949000, 1478098949000);
 
 INSERT INTO positions (name, code, type, organizationId ) VALUES ("Minister of Donuts", "MOD-FO-00001", 1, (SELECT id FROM organizations WHERE name ='Ministry of Defense'));
+INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES ((SELECT id from positions where code='MOD-FO-00001'), null, 1478098949000);
 INSERT INTO positions (name, code, type, organizationId) VALUES ("Chief of Staff - MoD", "MOD-FO-00002", 1, (SELECT id FROM organizations WHERE name ='Ministry of Defense'));
+INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES ((SELECT id from positions where code='MOD-FO-00002'), null, 1478098949000);
 INSERT INTO positions (name, code, type, organizationId) VALUES ("Executive Assistant to the MoD", "MOD-FO-00003", 1, (SELECT id FROM organizations WHERE name ='Ministry of Defense'));
+INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES ((SELECT id from positions where code='MOD-FO-00003'), null, 1478098949000);
 INSERT INTO positions (name, code, type, organizationId) VALUES ("Director of Budgeting - MoD", "MOD-Bud-00001", 1, (SELECT id FROM organizations WHERE name ='Ministry of Defense'));
+INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES ((SELECT id from positions where code='MOD-Bud-00001'), null, 1478098949000);
 INSERT INTO positions (name, code, type, organizationId) VALUES ("Writer of Expenses - MoD", "MOD-Bud-00002", 1, (SELECT id FROM organizations WHERE name ='Ministry of Defense'));
+INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES ((SELECT id from positions where code='MOD-Bud-00002'), null, 1478098949000);
 INSERT INTO positions (name, code, type, organizationId) VALUES ("Cost Adder - MoD", "MOD-Bud-00003", 1, (SELECT id FROM organizations WHERE name ='Ministry of Defense'));
+INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES ((SELECT id from positions where code='MOD-Bud-00003'), null, 1478098949000);
 
 

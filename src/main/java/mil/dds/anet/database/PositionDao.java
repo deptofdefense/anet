@@ -208,10 +208,12 @@ public class PositionDao implements IAnetDao<Position> {
 		
 	}
 
-	public List<Position> getEmptyPositions() {
+	public List<Position> getEmptyPositions(PositionType type) {
 		return dbHandle.createQuery("SELECT positions.* FROM positions INNER JOIN " + 
 				"(SELECT positionId, personId, MAX(createdAt) FROM peoplePositions GROUP BY positionId) emptyPositions " +
-				"ON positions.id = emptyPositions.positionId WHERE emptypositions.personId is null")
+				"ON positions.id = emptyPositions.positionId "
+				+ "WHERE emptyPositions.personId is null AND positions.type = :type")
+			.bind("type", DaoUtils.getEnumId(type))
 			.map(new PositionMapper())
 			.list();
 	}

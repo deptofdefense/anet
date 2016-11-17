@@ -135,8 +135,8 @@ public class PositionResource {
 	
 	@GET
 	@Path("/empty")
-	public List<Position> getEmptyPositions() { 
-		return dao.getEmptyPositions();
+	public List<Position> getEmptyPositions(@QueryParam("type") PositionType type) { 
+		return dao.getEmptyPositions(type);
 	}
 	
 	@GET

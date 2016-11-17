@@ -76,9 +76,13 @@
 		<#else>
 		Not currently in a ${positionName}.<br>
 		</#if>
-		Set ${positionName}: <select id="positionSelect" style="width:100%" ></select><br>
+		<div class="form-group">
+			<label for="positionSelect">Set ${positionName}</label>
+			<select id="positionSelect" name="positionSelect" style="width:100%" >
+				<option></option>
+			</select>	
+		</div>
 		<input type="button" id="positionSetBtn" value="Save"></input>
-
       </div>
 	  </div>
       <div class="col-md-6">
@@ -94,26 +98,23 @@
 
 <script type="text/javascript">
 $(document).ready(function() { 
-	$("#positionSelect").select2( {
-	    dropdownParent: $(".mainbody"), 
-		ajax: {
-			url: "/positions/empty",
-			dataType: 'json',
-			delay: 250,
-			method: 'GET',
-			data: function(params) { return {} },
-			processResults : function(data, params) { 
-				var results = _.map(data, function(el) { 
-					return { 
-						id: el["id"],
-						text: el["name"]
-					}
-				});	
-				return { results: results };
+	$.ajax({ 
+		url: "/positions/empty?type=${role}",
+		method: "GET"
+	}).done(function(response) {
+		var results = $.map(response, function(el) { 
+			return { 
+				id: el["id"],
+				text: el["name"]
 			}
-		},
-		minimumInputLength: 0,
-		placeholder: "Begin typing to search"
+		});	
+		$("#positionSelect").select2( {
+			dropdownParent: $(".mainbody"),
+			data: results,
+			placeholder: "Select a position",
+			allowClear: true
+		}); 
+	
 	});
 	
 	$("#positionSetBtn").on('click', function(event) { 
