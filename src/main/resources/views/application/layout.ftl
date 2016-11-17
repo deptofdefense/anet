@@ -33,7 +33,7 @@
 	</head>
 
 	<body>
-		<div class="container">
+		<div class="container mainbody">
 			<div class="security">
 				Highest clearance: || ${context.currentUser} || ${context.url}
 			</div>
