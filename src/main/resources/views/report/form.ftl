@@ -25,7 +25,7 @@
 				<div class="col-md-6">
 					<div class="form-group">
 						<label for="engagementDate">Engagement Date</label>
-						<input id="engagementDate" type="date" name="engagementDate" value="${engagementDate!}">
+						<input id="engagementDate" type="date" name="engagementDate" data-date="${engagementDate!}">
 					</div>
 				</div>
 				<div class="col-md-6">
@@ -186,6 +186,8 @@
 
 <script type="text/javascript">
 $(document).ready(function() {
+	initializeDates();
+
 	enablePersonSearch("#afghanPrincipal","PRINCIPAL");
 	enablePersonSearch("#attachPersonName","");
 	enableLocationSearch("#engagementLocation");
