@@ -78,13 +78,13 @@
                         <#if attendees??>
                         	<#list attendees as a>
                         		<tr class="attendeeRow" data-id="${a.id}">
+                              <td>
+                                <button type="button" class="usa-button-unstyled" data-remove-person>
+                                  <i class="glyphicon glyphicon-remove"></i>
+                                </button>
+                              </td>
                         			<td data-name>${a.firstName} ${a.lastName}</td>
                         			<td data-role>${a.role}</td>
-                        			<td>
-                                <a href="#" class="button">
-                                  <i class="glyphicon glyphicon-remove"></i>
-                                </a>
-                              </td>
                         		</tr>
                         	</#list>
                         </#if>
