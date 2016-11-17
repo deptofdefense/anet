@@ -1,4 +1,5 @@
-<#include "../template/header.ftl">
+<#import "../application/layout.ftl" as application>
+<@application.layout>
 <h1>Listing People</h1>
 <table>
 <tr><th>id</th><th>first</th><th>last</th><th>email</th><th>Status</th><th>Rank</th><th>Role</th></tr>
@@ -15,4 +16,4 @@
 </#list>
 </table>
 <a href="/people/new">[Create new Person]</a>
-<#include "../template/footer.ftl">
+</@application.layout>

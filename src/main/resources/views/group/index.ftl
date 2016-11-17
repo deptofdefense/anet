@@ -1,4 +1,5 @@
-<#include "../template/header.ftl">
+<#import "../application/layout.ftl" as application>
+<@application.layout>
 <h1>Listing Groups</h1>
 <table>
 <tr><th>id</th><th>name</th></tr>
@@ -10,4 +11,4 @@
 </#list>
 </table>
 <a href="/groups/new">[Create new Group]</a>
-<#include "../template/footer.ftl">
+</@application.layout>

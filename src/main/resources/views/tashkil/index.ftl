@@ -1,4 +1,6 @@
-<#include "../template/header.ftl">
+<#import "../application/layout.ftl" as application>
+<@application.layout>
+
 <h1>Listing Tashkils</h1>
 
 <table>
@@ -13,4 +15,4 @@
 </table>
 <a href="/tashkils/new">[Create New Tashkil]</a>
 
-<#include "../template/footer.ftl">
+</@application.layout>

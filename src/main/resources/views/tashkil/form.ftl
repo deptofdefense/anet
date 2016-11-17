@@ -1,6 +1,8 @@
-<#include "../template/header.ftl">
+<#import "../application/layout.ftl" as application>
+<@application.layout>
+
 <h1>
-<#if id?? >
+<#if id??>
 	Editing ${name}
 <#else>
 	Create a new Tashkil
@@ -13,20 +15,21 @@ Code: <input type="text" name="code" value="${code!}" /><br>
 <input type="hidden" name="id" value="${id!}" />
 </form>
 <input type="submit" value="Save" id="saveBtn" />
-<#include "../template/footer.ftl">
 
 <script type="text/javascript">
 $(document).ready(function() {
-	$("#saveBtn").on('click', function(event) { 
+	$("#saveBtn").on('click', function(event) {
 		var tashkil = buildForm("tashkilForm");
 		var url = '/tashkils/' + <#if id??>'update'<#else>'new'</#if>
 		$.ajax({ url : url,
 			method: 'POST',
 			contentType: 'application/json',
 			data: JSON.stringify(tashkil)
-		}).done(function (response) { 
+		}).done(function (response) {
 			window.location = '/tashkils/' + <#if id??>${id}<#else>response.id</#if>;
 		});
 	});
 });
 </script>
+
+</@application.layout>

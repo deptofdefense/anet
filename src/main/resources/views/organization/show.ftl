@@ -1,4 +1,6 @@
-<#include "../template/header.ftl">
+<#import "../application/layout.ftl" as application>
+<@application.layout>
+
 <h1>${name}</h1>
 An ${type} - <a href="/organizations/${id}/edit">[edit]</a>
 
@@ -40,8 +42,6 @@ Add a new approval step:
 </div>
 </#if>
 
-<#include "../template/footer.ftl">
-
 <script type="text/javascript">
 $(document).ready(function() {
 	$("#newApprovalGroupSelect").select2({
@@ -81,5 +81,6 @@ $(document).ready(function() {
 		});
 	});
 });
-
 </script>
+
+</@application.layout>

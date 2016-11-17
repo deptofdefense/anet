@@ -1,6 +1,8 @@
-<#include "../template/header.ftl">
+<#import "../application/layout.ftl" as application>
+<@application.layout>
+
 <h1>
-<#if id?? >
+<#if id??>
 	Editing ${name}
 <#else>
 	Create a new Group
@@ -23,9 +25,9 @@ $(document).ready(function() {
 		var url = '/groups/new'
 	</#if>
 
-	$("#saveBtn").on('click', function (event) { 
-		$.ajax({ 
-			url: url, 
+	$("#saveBtn").on('click', function (event) {
+		$.ajax({
+			url: url,
 			method: 'POST',
 			contentType: 'application/json',
 			data: jsonForm("groupForm")
@@ -40,4 +42,4 @@ $(document).ready(function() {
 });
 </script>
 
-<#include "../template/footer.ftl">
+</@application.layout>

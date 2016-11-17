@@ -1,4 +1,5 @@
-<#include "../template/header.ftl">
+<#import "../application/layout.ftl" as application>
+<@application.layout>
 Report: ${id} - ${engagementDate}<br>
 
 <ul>
@@ -12,16 +13,15 @@ Report: ${id} - ${engagementDate}<br>
 
 <i>Created at: ${createdAt} - Updated at: ${updatedAt} </i><br>
 
-
 <#if context.currentUser.id == author.id>
 	<#if state == "DRAFT" >
-		<button class="reportSubmitBtn" data-id="${id}" >Submit this report.</button> 
+		<button class="reportSubmitBtn" data-id="${id}" >Submit this report.</button>
 		<button class="reportEditBtn" >Edit</button>
 	<#else>
 		<#if state == "PENDING_APPROVAL">
 			Your report is in for review and here is the progress:
 	    <#else>
-			Your report has been released, here is the approval steps: 
+			Your report has been released, here is the approval steps:
 		</#if>
 		<table>
 			<tr><td>stage</td><td>Status</td><td>Approvers</td></tr>
@@ -38,17 +38,17 @@ Report: ${id} - ${engagementDate}<br>
 	      	</#list>
 	      </table>
 	      <button class="reportEditBtn">Edit Report</button>
-	</#if>	
+	</#if>
 <#elseif state == "PENDING_APPROVAL" >
 	<#--  check if this user can approve this TODO: make this suck less.  -->
 	<#list approvalStep.approverGroup.members as m>
 		<#if m.id == context.currentUser.id>
-			You can approve this report! 
+			You can approve this report!
 	      	<button data-id="${id}" class="reportRejectBtn btn btn-danger" >Reject</button>
 	      	<button data-id="${id}" class="reportEditBtn btn btn-primary">Edit</button>
 	      	<button data-id="${id}" class="reportApproveBtn btn btn-primary" >Approve</button>
 	      </#if>
-	</#list> 
+	</#list>
 </#if>
 
 <h5>Comments:</h5>
@@ -70,55 +70,53 @@ Report: ${id} - ${engagementDate}<br>
 </#list>
 
 <div>
-Post a new comment on this report: 
+Post a new comment on this report:
 <textarea id="newCommentText"></textarea>
 <button id="newCommentBtn">Save!</button>
 </div>
 
-<#include "../template/footer.ftl">
-
 <script type="text/javascript">
-$(document).ready(function() { 
+$(document).ready(function() {
 	$(".reportSubmitBtn").on("click", function(event) {
-		var id = $(event.currentTarget).attr("data-id"); 
+		var id = $(event.currentTarget).attr("data-id");
 		$.ajax({
 			url: "/reports/" + id + "/submit",
 			method: "GET"
-		}).done(function(response) { 
+		}).done(function(response) {
 			location.reload();
 		});
 	});
-	
-	$(".reportApproveBtn").on("click", function(event) { 
-		var id = $(event.currentTarget).attr("data-id"); 
+
+	$(".reportApproveBtn").on("click", function(event) {
+		var id = $(event.currentTarget).attr("data-id");
 		$.ajax({
 			url: "/reports/" + id + "/approve",
 			method: "GET"
-		}).done(function(response) { 
+		}).done(function(response) {
 			location.reload();
 		});
 	});
-	$(".reportRejectBtn").on("click", function(event) { 
-		var id = $(event.currentTarget).attr("data-id"); 
+	$(".reportRejectBtn").on("click", function(event) {
+		var id = $(event.currentTarget).attr("data-id");
 		$.ajax({
 			url: "/reports/" + id + "/reject",
 			method: "GET"
-		}).done(function(response) { 
+		}).done(function(response) {
 			location.reload();
 		});
 	});
-	$(".reportEditBtn").on("click", function(event) { 
+	$(".reportEditBtn").on("click", function(event) {
 		window.location = "/reports/${id}/edit"
 	});
-	
+
 	$("#newCommentBtn").on("click", function(event) {
-		var comment = {text: $("#newCommentText").val() }; 
+		var comment = {text: $("#newCommentText").val() };
 		$.ajax({
 			url: "/reports/${id}/comments",
 			contentType: "application/json",
 			method: "POST",
 			data: JSON.stringify(comment)
-		}).done(function(response) { 
+		}).done(function(response) {
 			location.reload();
 		});
 	});
@@ -127,10 +125,12 @@ $(document).ready(function() {
 		$.ajax({
 			url: "/reports/${id}/comments/" + id,
 			method: "DELETE",
-		}).done(function(response) { 
+		}).done(function(response) {
 			location.reload();
 		});
 	});
 
 });
 </script>
+
+</@application.layout>

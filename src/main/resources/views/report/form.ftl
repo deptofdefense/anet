@@ -1,5 +1,4 @@
 <#-- @ftlvariable name="" type="mil.dds.anet.beans.Report" -->
-<#include "../template/header.ftl">
             <div class="row">
               <div class="anet-top-block">
                 <div class="user-submit"><#if id??>Editing<#else>Submitting</#if> as ${context.currentUser.name}</div>
@@ -189,7 +188,9 @@
           </div>
         </div>
       </div>
-<#include "../template/footer.ftl">
+<#import "../application/layout.ftl" as application>
+<@application.layout>
+
 
 <script type="text/javascript">
 $(document).ready(function() {
@@ -384,3 +385,5 @@ $(document).ready(function() {
 });
 
 </script>
+
+</@application.layout>

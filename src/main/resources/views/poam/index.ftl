@@ -1,4 +1,5 @@
-<#include "../template/header.ftl">
+<#import "../application/layout.ftl" as application>
+<@application.layout>
 <h1>Listing Poams</h1>
 Top Level POAMS:
 <ul>
@@ -6,4 +7,4 @@ Top Level POAMS:
 	<li><a href="/poams/${poam.id}">${poam.shortName} - ${poam.longName!}</a></li>
 </#list>
 <a href="/people/new">[Create new Poam]</a>
-<#include "../template/footer.ftl">
+</@application.layout>

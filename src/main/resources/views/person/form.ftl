@@ -1,4 +1,5 @@
-<#include "../template/header.ftl">
+<#import "../application/layout.ftl" as application>
+<@application.layout>
 <h1>
 <#if id?? >
 	Editing ${firstName}
@@ -54,4 +55,4 @@ $(document).ready(function() {
 });
 </script>
 
-<#include "../template/footer.ftl">
+</@application.layout>

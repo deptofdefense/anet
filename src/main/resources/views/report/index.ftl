@@ -1,4 +1,5 @@
-<#include "../template/header.ftl">
+<#import "../application/layout.ftl" as application>
+<@application.layout>
 
 	<div class="anet-page-head">
 		<h1 class="pull-left" style="margin-top:0px!important;">Reports & Approvals</h1>
@@ -122,12 +123,12 @@
 	      <div class="col-md-12">
 	      <#if context.currentUser.id == report.author.id>
 	      	<#if report.state == "DRAFT" >
-	      		<button class="reportSubmitBtn" data-id="${report.id}" >Submit this report.</button> 
+	      		<button class="reportSubmitBtn" data-id="${report.id}" >Submit this report.</button>
 	     	<#else>
 	     		<#if report.state == "PENDING_APPROVAL">
 	      			Your report is in for review and here is the progress:
 	      		<#else>
-					Your report has been released, here is the approval steps: 
+					Your report has been released, here is the approval steps:
 				</#if>
 	      		<table>
 	      			<tr><td>stage</td><td>Status</td><td>Approvers</td></tr>
@@ -143,26 +144,25 @@
 	      				</tr>
 	      			</#list>
 	      		</table>
-	      	</#if>	
+	      	</#if>
 	      <#elseif report.state == "PENDING_APPROVAL" >
 	      <#--  check if this user can approve this TODO: make this suck less.  -->
 	      	<#list report.approvalStep.approverGroup.members as m>
 	      		<#if m.id == context.currentUser.id>
-	      			You can approve this report! 
-	      			<button data-id="${report.id}" class="reportApproveBtn" >Approve</button> - 
+	      			You can approve this report!
+	      			<button data-id="${report.id}" class="reportApproveBtn" >Approve</button> -
 	      			<button data-id="${report.id}" class="reportRejectBtn" >Reject</button>
 	      		</#if>
-	      	</#list> 
+	      	</#list>
 	      </#if>
 	      </div>
 	  </div>
   </div>
 </section>
 </#list>
-<#include "../template/footer.ftl">
 
 <script type="text/javascript">
-$(document).ready(function() { 
+$(document).ready(function() {
 	$('.expand').on('click',function(e){
 	var target = $(e.currentTarget).parents('.anet-block').find('.expanded-area')
 	if(target.hasClass('show')) {
@@ -171,34 +171,36 @@ $(document).ready(function() {
 		target.addClass('show')
 	}
 	})
-	
+
 	$(".reportSubmitBtn").on("click", function(event) {
-		var id = $(event.currentTarget).attr("data-id"); 
+		var id = $(event.currentTarget).attr("data-id");
 		$.ajax({
 			url: "/reports/" + id + "/submit",
 			method: "GET"
-		}).done(function(response) { 
+		}).done(function(response) {
 			location.reload();
 		});
 	});
-	
-	$(".reportApproveBtn").on("click", function(event) { 
-		var id = $(event.currentTarget).attr("data-id"); 
+
+	$(".reportApproveBtn").on("click", function(event) {
+		var id = $(event.currentTarget).attr("data-id");
 		$.ajax({
 			url: "/reports/" + id + "/approve",
 			method: "GET"
-		}).done(function(response) { 
+		}).done(function(response) {
 			location.reload();
 		});
 	});
-	$(".reportRejectBtn").on("click", function(event) { 
-		var id = $(event.currentTarget).attr("data-id"); 
+	$(".reportRejectBtn").on("click", function(event) {
+		var id = $(event.currentTarget).attr("data-id");
 		$.ajax({
 			url: "/reports/" + id + "/reject",
 			method: "GET"
-		}).done(function(response) { 
+		}).done(function(response) {
 			location.reload();
 		});
 	});
 })
 </script>
+
+</@application.layout>
