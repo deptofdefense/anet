@@ -50,28 +50,27 @@ public class OrganizationDao implements IAnetDao<Organization> {
 		return (results.size() == 0) ? null : results.get(0);
 	}
 	
-	public Organization insert(Organization ao) {
-		ao.setCreatedAt(DateTime.now());
-		ao.setUpdatedAt(ao.getCreatedAt());
+	public Organization insert(Organization org) {
+		org.setCreatedAt(DateTime.now());
+		org.setUpdatedAt(org.getCreatedAt());
 		
 		GeneratedKeys<Map<String,Object>> keys = dbHandle.createStatement(
-				"INSERT INTO organizations (name, createdAt, updatedAt) " + 
-				"VALUES (:name, :createdAt, :updatedAt)")
-			.bind("name", ao.getName())
-			.bind("createdAt", ao.getCreatedAt())
-			.bind("updatedAt", ao.getUpdatedAt())
+				"INSERT INTO organizations (name, type, createdAt, updatedAt) " + 
+				"VALUES (:name, :type, :createdAt, :updatedAt)")
+			.bindFromProperties(org)
+			.bind("type", DaoUtils.getEnumId(org.getType()))
 			.executeAndReturnGeneratedKeys();
 		
-		ao.setId(((Integer)keys.first().get("last_insert_rowid()")).intValue());
-		return ao;
+		org.setId(((Integer)keys.first().get("last_insert_rowid()")).intValue());
+		return org;
 	}
 	
-	public int update(Organization ao) {
-		ao.setUpdatedAt(DateTime.now());
-		int numRows = dbHandle.createStatement("UPDATE organizations SET name = :name, updatedAt = :updatedAt where id = :id")
-				.bind("name", ao.getName())
-				.bind("updatedAt", ao.getUpdatedAt())
-				.bind("id", ao.getId())
+	public int update(Organization org) {
+		org.setUpdatedAt(DateTime.now());
+		int numRows = dbHandle.createStatement("UPDATE organizations "
+				+ "SET name = :name, type = :type, updatedAt = :updatedAt where id = :id")
+				.bindFromProperties(org)
+				.bind("type", DaoUtils.getEnumId(org.getType()))
 				.execute();
 			
 		return numRows;

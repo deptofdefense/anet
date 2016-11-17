@@ -38,6 +38,13 @@ public class OrganizationResource {
 		return new ObjectListView<Organization>(dao.getAll(pageNum, pageSize), Organization.class);
 	} 
 	
+	@GET
+	@Path("/new")
+	@Produces(MediaType.TEXT_HTML)
+	public Organization getOrganizationForm() { 
+		return (new Organization()).render("form.ftl");
+	}
+	
 	@POST
 	@Path("/new")
 	public Organization createNewAdvisorOrganization(Organization ao) {
@@ -49,6 +56,13 @@ public class OrganizationResource {
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	public Organization getById(@PathParam("id") int id) {
 		return dao.getById(id).render("show.ftl");
+	}
+	
+	@GET
+	@Path("/{id}/edit")
+	@Produces(MediaType.TEXT_HTML)
+	public Organization getEditForm(@PathParam("id") int id) { 
+		return dao.getById(id).render("form.ftl");
 	}
 	
 	@POST
