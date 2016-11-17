@@ -29,8 +29,6 @@ tr:not([class*='header']) {
 }
 
 .mainbody {
-	max-width: 1024px;
-	width: 1024px;
 	position: relative;
 }
 
@@ -68,21 +66,6 @@ tr:not([class*='header']) {
 		float:right;
 		clear: none;
 		padding-top:20px;
-	}
-}
-
-.anet-top-block {
-	width: 100%;
-	padding-top:20px;
-	.user-submit {
-		float: left;
-		clear: none;
-		padding: 20px;
-	}
-
-	.submit {
-		float: right;
-		clear: none;
 	}
 }
 
@@ -129,7 +112,7 @@ tr:not([class*='header']) {
 	}
 
 	input, select, .select2 {
-		width: 90%;
+		width: 100%;
 		min-width: 300px;
 		max-width: none;
 	}
@@ -141,6 +124,10 @@ tr:not([class*='header']) {
 	padding: .7rem .3rem;
 	margin: 0;
 	height: auto;
+
+	input {
+		max-width: none;
+	}
 
 	.select2-selection {
 		border: none;
@@ -154,11 +141,11 @@ tr:not([class*='header']) {
 		line-height: initial;
 	}
 
-	.select2-selection__arrow {
-		width: 32px;
+	.select2-selection--single .select2-selection__arrow {
+		width: 26px;
 		height: 100%;
-		background-image: url("/assets/arrow-down.png");
-		background-image: url("/assets/arrow-down.svg");
+		background-image: url("/assets/img/arrow-down.png");
+		background-image: url("/assets/img/arrow-down.svg");
 		background-position: right 1.3rem center;
 		background-repeat: no-repeat;
 		background-size: 1.3rem;

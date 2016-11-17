@@ -1,4 +1,6 @@
-<#include "../template/header.ftl">
+<#import "../application/layout.ftl" as application>
+<@application.layout>
+
 <h2>Viewing Tashkil</h2>
 
 <table>
@@ -23,4 +25,5 @@
 </table>
 
 <a href="/tashkils/${id}/edit">[Edit this tashkil]</a>
-<#include "../template/footer.ftl">
+
+</@application.layout>

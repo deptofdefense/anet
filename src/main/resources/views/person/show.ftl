@@ -1,4 +1,5 @@
-<#include "../template/header.ftl">
+<#import "../application/layout.ftl" as application>
+<@application.layout>
 
 <section class="anet-block">
   <div class="anet-block__title">
@@ -56,7 +57,7 @@
       <div class="field">
 
 		<#if context.position??>
-		${positionName} Info: 
+		${positionName} Info:
 		<ul>
 		<li>Id: ${context.position.id} </li>
 		<li>Name: <a href="/positions/${context.position.id}">${context.position.name}</a></li>
@@ -80,7 +81,7 @@
 			<label for="positionSelect">Set ${positionName}</label>
 			<select id="positionSelect" name="positionSelect" style="width:100%" >
 				<option></option>
-			</select>	
+			</select>
 		</div>
 		<input type="button" id="positionSetBtn" value="Save"></input>
       </div>
@@ -93,39 +94,38 @@
  </div>
 </section>
 
-
-<#include "../template/footer.ftl">
-
 <script type="text/javascript">
-$(document).ready(function() { 
-	$.ajax({ 
+$(document).ready(function() {
+	$.ajax({
 		url: "/positions/empty?type=${role}",
 		method: "GET"
 	}).done(function(response) {
-		var results = $.map(response, function(el) { 
-			return { 
+		var results = $.map(response, function(el) {
+			return {
 				id: el["id"],
 				text: el["name"]
 			}
-		});	
+		});
 		$("#positionSelect").select2( {
 			dropdownParent: $(".mainbody"),
 			data: results,
 			placeholder: "Select a position",
 			allowClear: true
-		}); 
-	
+		});
+
 	});
-	
-	$("#positionSetBtn").on('click', function(event) { 
+
+	$("#positionSetBtn").on('click', function(event) {
 		var positionId = $("#positionSelect").val();
 		$.ajax({ url: '/positions/' + positionId + '/person',
 			method: "POST",
 			contentType: 'application/json',
 			data: JSON.stringify({ id: ${id} })
-		}).done(function (response) { 
+		}).done(function (response) {
 			location.reload();
 		})
 	});
 });
 </script>
+
+</@application.layout>

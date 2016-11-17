@@ -1,4 +1,6 @@
-<#include "../template/header.ftl">
+<#import "../application/layout.ftl" as application>
+<@application.layout>
+
 <#list list as report>
 <section class="anet-block">
   <div class="anet-block__title">
@@ -32,10 +34,9 @@
  	</div>
 </section>
 </#list>
-<#include "../template/footer.ftl">
 
 <script type="text/javascript">
-$(document).ready(function() { 
+$(document).ready(function() {
 	$('.expand').on('click',function(e){
 	var target = $(e.currentTarget).parents('.anet-block').find('.expanded-area')
 	if(target.hasClass('show')) {
@@ -44,34 +45,36 @@ $(document).ready(function() {
 		target.addClass('show')
 	}
 	})
-	
+
 	$(".reportSubmitBtn").on("click", function(event) {
-		var id = $(event.currentTarget).attr("data-id"); 
+		var id = $(event.currentTarget).attr("data-id");
 		$.ajax({
 			url: "/reports/" + id + "/submit",
 			method: "GET"
-		}).done(function(response) { 
+		}).done(function(response) {
 			location.reload();
 		});
 	});
-	
-	$(".reportApproveBtn").on("click", function(event) { 
-		var id = $(event.currentTarget).attr("data-id"); 
+
+	$(".reportApproveBtn").on("click", function(event) {
+		var id = $(event.currentTarget).attr("data-id");
 		$.ajax({
 			url: "/reports/" + id + "/approve",
 			method: "GET"
-		}).done(function(response) { 
+		}).done(function(response) {
 			location.reload();
 		});
 	});
-	$(".reportRejectBtn").on("click", function(event) { 
-		var id = $(event.currentTarget).attr("data-id"); 
+	$(".reportRejectBtn").on("click", function(event) {
+		var id = $(event.currentTarget).attr("data-id");
 		$.ajax({
 			url: "/reports/" + id + "/reject",
 			method: "GET"
-		}).done(function(response) { 
+		}).done(function(response) {
 			location.reload();
 		});
 	});
 })
 </script>
+
+</@application.layout>
