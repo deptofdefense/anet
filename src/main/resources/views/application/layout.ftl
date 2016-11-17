@@ -11,7 +11,7 @@
 		<link href="/assets/css/bootstrap.css" rel="stylesheet">
 		<#-- <link href="/assets/css/bootstrap-theme.css" rel="stylesheet"> -->
 		<link rel="stylesheet" href="/assets/css/uswds.css">
-		<link href="/assets/css/select2.min.css" rel="stylesheet" />
+		<link href="/assets/css/select2.css" rel="stylesheet" />
 		<link href="/assets/css/style.less" rel="stylesheet/less" type="text/css">
 
 		<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -61,7 +61,7 @@
 		<script type="text/javascript">
 			less.env = "development";
 		</script>
-		<script src="/assets/js/select2.min.js"></script>
+		<script src="/assets/js/select2.js"></script>
 	</body>
 </html>
 </#macro>
