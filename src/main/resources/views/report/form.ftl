@@ -17,20 +17,20 @@
 
 	<section class="anet-block">
 		<div class="anet-block__title">
-			Report Details
+			Report details
 		</div>
 
 		<div class="anet-block__body">
 			<div class="row">
 				<div class="col-md-6">
 					<div class="form-group">
-						<label for="engagementDate">Engagement Date</label>
+						<label for="engagementDate">Engagement date</label>
 						<input id="engagementDate" type="date" name="engagementDate" data-date="${engagementDate!}">
 					</div>
 				</div>
 				<div class="col-md-6">
 					<div class="form-group">
-						<label for="engagementLocation">Engagement Location</label>
+						<label for="engagementLocation">Engagement location</label>
 						<select id="engagementLocation" name="location_id" >
 							<#if location??>
 							<option value="${location.id}">${location.name}</option>
@@ -46,7 +46,7 @@
 			</div>
 
 			<div class="form-group">
-				<label for="attachPersonName">Who was Present?</label>
+				<label for="attachPersonName">Who was present?</label>
 				<select id="attachPersonName" style="width: 100%"></select>
 			</div>
 
@@ -61,7 +61,7 @@
 				</div>
 
 				<div class="col-md-6">
-					<label for="attachPersonGroup">Organizational Group</label>
+					<label for="attachPersonGroup">Organizational group</label>
 					<select id="attachPersonGroup"></select>
 					<button type="button" class="usa-button pull-right" data-attach-new-person-submit>Add Person</button>
 				</div>
@@ -112,7 +112,7 @@
 			<div class="row">
 				<div class="col-md-6">
 					<div class="form-group">
-						<label for="engagementAtmosphere">Atmosphere of Engagement</label>
+						<label for="engagementAtmosphere">Atmosphere of engagement</label>
 						<select id="engagementAtmosphere" name="engagementAtmosphere">
 							<option>Positive</option>
 							<option>Neutral</option>
@@ -123,7 +123,7 @@
 
 				<div class="col-md-6">
 					<div class="form-group">
-						<label for="engagementAtmosphereDetails">Atmospheric Details</label>
+						<label for="engagementAtmosphereDetails">Atmospheric details</label>
 						<input id="engagementAtmosphereDetails" name="atmosphereDetails" value="${atmosphereDetails!}">
 					</div>
 				</div>
@@ -143,14 +143,14 @@
 
 	<section class="anet-block">
 		<div class="anet-block__title">
-			Essential Functions and Milestones
+			Essential functions and milestones
 		</div>
 
 		<div class="anet-block__body">
 			<div class="row">
 				<div class="col-md-6">
 					<div class="form-group">
-						<label for="attachEFName">Essential Function</label>
+						<label for="attachEFName">Essential function</label>
 						<select id="attachEFName">
 							<option></option>
 							<#list context.efs as ef>
@@ -171,7 +171,7 @@
 				<div class="col-md-6">
 					<table>
 						<tr>
-							<th>Essential Function</th>
+							<th>Essential function</th>
 							<th>POAM</th>
 							<th>Level</th>
 						</tr>
