@@ -1,20 +1,21 @@
 <#include "../template/header.ftl">
-<h1>Listing Billets</h1>
+<h1>Listing Positions</h1>
 
 <table>
-<tr><th>id</th><th>name</th><th>Advisor Organization</th></tr>
-<#list list as billet>
+<tr><th>id</th><th>name</th><th>Type</th><th>Organization</th></tr>
+<#list list as position>
 	<tr>
-		<td><a href="/billets/${billet.id}">${billet.id}</a></td>
-		<td>${billet.name}</td>
+		<td><a href="/positions/${position.id}">${position.id}</a></td>
+		<td>${position.name}</td>
+		<td>${position.type}</td>
 		<td>
-			<#if billet.advisorOrganization?? >
-				<a href="/advisorOrganizations/${billet.advisorOrganization.id}">${billet.advisorOrganization.name}</a>
+			<#if position.organization?? >
+				<a href="/organizations/${position.organization.id}">${position.organization.name}</a>
 			</#if>
 		</td>
 	</tr>
 </#list>
 </table>
-<a href="/billets/new">[Create New Billet]</a>
+<a href="/positions/new">[Create New Position]</a>
 
 <#include "../template/footer.ftl">

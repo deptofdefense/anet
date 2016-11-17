@@ -11,7 +11,7 @@
     </li>
     <li><a <#if context.url == "reports/">class="usa-current" </#if> href="/reports/">Your Reports &amp; Approvals</a></li>
     <li><a href="/">Analytics</a></li>
-    <li><a href="#">Advisor Organizations</a>
+    <li><a href="/organizations">Organizations</a>
       <ul class="collapsed usa-sidenav-sub_list">
         <#assign seq = ["foo", "bar", "baz"]>
         <#list seq as ao>

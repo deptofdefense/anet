@@ -9,7 +9,9 @@ import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.Query;
 
 import mil.dds.anet.beans.Organization;
+import mil.dds.anet.beans.Organization.OrganizationType;
 import mil.dds.anet.database.mappers.OrganizationMapper;
+import mil.dds.anet.utils.DaoUtils;
 
 public class OrganizationDao implements IAnetDao<Organization> {
 
@@ -22,11 +24,21 @@ public class OrganizationDao implements IAnetDao<Organization> {
 	}
 	
 	public List<Organization> getAll(int pageNum, int pageSize) {
-		Query<Organization> query = dbHandle.createQuery("SELECT * from organizations ORDER BY createdAt ASC LIMIT :limit OFFSET :offset")
+		return getAll(pageNum, pageSize, null);
+	}
+	
+	public List<Organization> getAll(int pageNum, int pageSize, OrganizationType type) {
+		StringBuilder queryBuilder = new StringBuilder("SELECT * from organizations ");
+		if (type != null) { 
+			queryBuilder.append("AND type = :type ");
+		}
+		queryBuilder.append("ORDER BY createdAt ASC LIMIT :limit OFFSET :offset");
+		return dbHandle.createQuery(queryBuilder.toString())
 			.bind("limit", pageSize)
 			.bind("offset", pageSize * pageNum)
-			.map(new OrganizationMapper());
-		return query.list();
+			.bind("type", DaoUtils.getEnumId(type))
+			.map(new OrganizationMapper())
+			.list();
 	}
 	
 	public Organization getById(int id) { 
@@ -69,5 +81,13 @@ public class OrganizationDao implements IAnetDao<Organization> {
 		dbHandle.createStatement("DELETE from advisorOrganizations where id = :id")
 			.bind("id", ao.getId())
 			.execute();
+	}
+
+	public List<Organization> searchByName(String name, OrganizationType type) {
+		return dbHandle.createQuery("SELECT * FROM organizations WHERE type = :type AND name LIKE '%' || :name || '%'")
+			.bind("type", DaoUtils.getEnumId(type))
+			.bind("name", name)
+			.map(new OrganizationMapper())
+			.list();
 	} 
 }

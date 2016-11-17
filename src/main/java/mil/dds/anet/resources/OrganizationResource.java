@@ -1,5 +1,7 @@
 package mil.dds.anet.resources;
 
+import java.util.List;
+
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -14,6 +16,7 @@ import javax.ws.rs.core.Response.Status;
 
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Organization;
+import mil.dds.anet.beans.Organization.OrganizationType;
 import mil.dds.anet.database.OrganizationDao;
 import mil.dds.anet.views.ObjectListView;
 
@@ -53,5 +56,11 @@ public class OrganizationResource {
 	public Response updateAdvisorOrganizationName(Organization ao) { 
 		int numRows = dao.update(ao);
 		return (numRows == 1) ? Response.ok().build() : Response.status(Status.NOT_FOUND).build();
+	}
+	
+	@GET
+	@Path("/search")
+	public List<Organization> search(@QueryParam("q") String name, @QueryParam("type") OrganizationType type) {
+		return dao.searchByName(name, type);
 	}
 }

@@ -11,6 +11,7 @@ import org.skife.jdbi.v2.Query;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Position;
+import mil.dds.anet.beans.Position.PositionType;
 import mil.dds.anet.database.mappers.PersonMapper;
 import mil.dds.anet.database.mappers.PositionMapper;
 import mil.dds.anet.utils.DaoUtils;
@@ -35,9 +36,10 @@ public class PositionDao implements IAnetDao<Position> {
 		p.setCreatedAt(DateTime.now());
 		p.setUpdatedAt(DateTime.now());
 		GeneratedKeys<Map<String,Object>> keys = dbHandle.createStatement(
-				"INSERT INTO positions (name, code, organizationId, createdAt, updatedAt) " +
-				"VALUES (:name, :code, :organizationId, :createdAt, :updatedAt)")
+				"INSERT INTO positions (name, code, type, organizationId, createdAt, updatedAt) " +
+				"VALUES (:name, :code, :type, :organizationId, :createdAt, :updatedAt)")
 			.bindFromProperties(p)
+			.bind("type", DaoUtils.getEnumId(p.getType()))
 			.bind("organizationId", DaoUtils.getId(p.getOrganization()))
 			.executeAndReturnGeneratedKeys();
 		p.setId((Integer) (keys.first().get("last_insert_rowid()")));
@@ -66,8 +68,11 @@ public class PositionDao implements IAnetDao<Position> {
 	 */
 	public int update(Position p) { 
 		p.setUpdatedAt(DateTime.now());
-		return dbHandle.createStatement("UPDATE positions SET name = :name, code = :code, organizationId = :organizationId, updatedAt = :updatedAt WHERE id = :id")
+		return dbHandle.createStatement("UPDATE positions SET name = :name, "
+				+ "code = :code, organizationId = :organizationId, type = :type, "
+				+ "updatedAt = :updatedAt WHERE id = :id")
 			.bindFromProperties(p)
+			.bind("type", DaoUtils.getEnumId(p.getType()))
 			.bind("organizationId", DaoUtils.getId(p.getOrganization()))
 			.execute();
 	}
@@ -79,7 +84,7 @@ public class PositionDao implements IAnetDao<Position> {
 		List<Map<String,Object>> positions = dbHandle.createQuery("SELECT positionId FROM peoplePositions where personId = :personId ORDER BY createdAt DESC LIMIT 1")
 			.bind("personId", p.getId())
 			.list();
-		if (positions.size() > 0) { 
+		if (positions.size() > 0) {
 			Integer positionId = (Integer) positions.get(0).get("positionId");
 			if (positionId != null) { 
 				dbHandle.createStatement("INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES (:positionId, null, :createdAt)")
@@ -218,17 +223,21 @@ public class PositionDao implements IAnetDao<Position> {
 			.list();
 	}
 
-	public List<Position> getByCode(String code) { 
-		return dbHandle.createQuery("SELECT * from positions where code = :code")
+	public List<Position> getByCode(String code, boolean prefixMatch, PositionType type) {
+		StringBuilder queryBuilder = new StringBuilder("SELECT * from positions WHERE ");
+		if (prefixMatch) { 
+			queryBuilder.append("code LIKE :code || '%' ");
+		} else { 
+			queryBuilder.append("code = :code");
+		}
+		if (type != null) { 
+			queryBuilder.append("AND type = :type");
+		}
+		return dbHandle.createQuery(queryBuilder.toString())
 			.bind("code", code)
+			.bind("type", DaoUtils.getEnumId(type))
 			.map(new PositionMapper())
 			.list();
 	}
-	
-	public List<Position> getByCodePrefix(String code) { 
-		return dbHandle.createQuery("SELECT * from positions where code LIKE :code || '%'")
-				.bind("code", code)
-				.map(new PositionMapper())
-				.list();
-	}
+
 }

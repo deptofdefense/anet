@@ -14,8 +14,11 @@ import mil.dds.anet.views.AbstractAnetView;
 
 public class Position extends AbstractAnetView<Position> {
 
+	public static enum PositionType { ADVISOR, PRINCIPAL }
+	
 	String name;
 	String code;
+	PositionType type;
 	
 	DateTime createdAt;
 	DateTime updatedAt;
@@ -48,6 +51,14 @@ public class Position extends AbstractAnetView<Position> {
 
 	public DateTime getCreatedAt() {
 		return createdAt;
+	}
+
+	public PositionType getType() {
+		return type;
+	}
+
+	public void setType(PositionType type) {
+		this.type = type;
 	}
 
 	public void setCreatedAt(DateTime createdAt) {
@@ -112,12 +123,13 @@ public class Position extends AbstractAnetView<Position> {
 		return Objects.equals(id, other.getId()) &&
 			Objects.equals(name, other.getName()) &&
 			Objects.equals(code,  other.getCode()) && 
+			Objects.equals(type, other.getType()) && 
 			idEqual(organization, other.getOrganizationJson());
 	}
 	
 	@Override
 	public int hashCode() { 
-		return Objects.hash(id, name, code, organization);
+		return Objects.hash(id, name, code, type, organization);
 	}
 	
 }

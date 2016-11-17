@@ -20,6 +20,7 @@ import org.joda.time.DateTime;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Position;
+import mil.dds.anet.beans.Position.PositionType;
 import mil.dds.anet.database.PositionDao;
 import mil.dds.anet.views.ObjectListView;
 
@@ -56,7 +57,7 @@ public class PositionResource {
 	@Produces(MediaType.TEXT_HTML)
 	public Position getPositionForm() { 
 		Position b = (new Position());
-		b.addToContext("aos", engine.getOrganizationDao().getAll(0, Integer.MAX_VALUE));
+		b.addToContext("orgs", engine.getOrganizationDao().getAll(0, Integer.MAX_VALUE));
 		return b.render("form.ftl");
 	}
 	
@@ -71,7 +72,6 @@ public class PositionResource {
 	@Produces(MediaType.TEXT_HTML)
 	public Position getPositionEditForm(@PathParam("id") int id) { 
 		Position b = dao.getById(id);
-		b.addToContext("aos", engine.getOrganizationDao().getAll(0, Integer.MAX_VALUE));
 		return b.render("form.ftl");
 	}
 	
@@ -141,11 +141,7 @@ public class PositionResource {
 	
 	@GET
 	@Path("/byCode")
-	public List<Position> getByCode(@QueryParam("code") String code, @QueryParam("prefixMatch") Boolean prefixMatch) {
-		if (prefixMatch) { 
-			return dao.getByCodePrefix(code);
-		} else { 
-			return dao.getByCode(code);
-		}
-}
+	public List<Position> getByCode(@QueryParam("code") String code, @QueryParam("prefixMatch") @DefaultValue("false") Boolean prefixMatch, @QueryParam("type") PositionType type) {
+		return dao.getByCode(code, prefixMatch, type);
+	}
 }

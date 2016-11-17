@@ -1,5 +1,15 @@
 <#include "../template/header.ftl">
-<h2>Viewing Position</h2>
+<#if type == 'ADVISOR'>
+	<#assign otherPositionName = 'Tashkil'>
+	<#assign otherPositionType = 'PRINCIPAL' >
+	<#assign positionName = 'Billet'>
+<#else>
+	<#assign otherPositionName = 'Billet'>
+	<#assign otherPositionType = 'ADVISOR' >
+	<#assign positionName = 'Tashkil'>
+</#if>
+
+<h2>Viewing ${positionName}</h2>
 
 <table>
 <tr>
@@ -11,31 +21,37 @@
 	<td><#if organization??><a href="/organizations/${organization.id}">${organization.name}</a></#if></td>
 </tr>
 <tr>
+	<td>Type</td>
+	<td>${type}</td>
+</tr>
+<tr>
 	<td colspan=2>
 		<#if person??>
 			Currently filled by: ${person}
 		<#else>
-			No person currently in this position<br>
+			No person currently in this ${positionName}<br>
 			<i style="font-size:12px" >(go to a person page to set the position on a person.. )</i>
 		</#if>
 	</td>
 </tr>
 <tr>
-	<td>Other Positions assigned to this Position</td>
+	<td>
+		${otherPositionName}s associated with this ${positionName}
+	</td>
 	<td>
 		<#list associatedPositions>
 			<ul>
 			<#items as position>
 				<li>${position.name} 
-				(<a href="/positions/${position.id}">${postion.code}</a>) 
+				(<a href="/positions/${position.id}">${position.code}</a>) 
 				- [<a data-id="${position.id}" class="positionRemoveBtn">delete</a>]
 				</li>
 			</#items>
 			</ul>
 		<#else>
-			No Associated Positions :( <br>
+			No Associated ${otherPositionName}s :( <br>
 		</#list>
-		<label for="newPositionSelect">Assign Position to this position:</label>
+		<label for="newPositionSelect">Assign ${otherPositionName} to this ${positionName}:</label>
 		<select id="newPositionSelect" style="width:100%"></select><br>
 		<button id="newPositionBtn" >Assign</button>
 	</td>
@@ -56,7 +72,11 @@ $(document).ready(function() {
 			delay: 250,
 			method: 'GET',
 			data: function(params) {
-				return { code : params.term, prefixMatch: true}
+				return { 
+					code : params.term, 
+					prefixMatch: true, 
+					type: "${otherPositionType}"
+				}
 			},
 			processResults :  function(data, params) {
 				var results =_.map(data, function (el) {
