@@ -64,9 +64,9 @@
 		<#if role == "PRINCIPAL">
 			Code: ${context.position.code}
 		<#else>
-			AO: 
-			<#if context.position.advisorOrganization?? >
-				${context.position.advisorOrganization.name}
+			Organization: 
+			<#if context.position.organization?? >
+				${context.position.organization.name}
 			<#else>
 				<i>None</i>
 			</#if>

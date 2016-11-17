@@ -17,16 +17,15 @@
 			      </tr>
 			    </thead>
 			    <tbody>
+			    <#list context.myPending as report>
 			      <tr>
-			        <th scope="row">Gruuber ͐ Katz</th>
-			        <td>Statement adopted by the Continental Congress declaring independence from the British Empire.</td>
-			        <td>Yesterday</td>
+			        <th scope="row">${report.author.firstName} ${report.author.lastName}</th>
+			        <td>${report.intent}</td>
+			        <td>${report.updatedAt}</td>
 			      </tr>
-			      <tr>
-			        <th scope="row">Gruuber ͐ Katz</th>
-			        <td>Statement adopted by the Continental Congress declaring independence from the British Empire.</td>
-			        <td>Yesterday</td>
-			      </tr>
+			    <#else>
+			    	<tr><td colspan=3>None</td></tr>
+			    </#list>
 		      </tbody>
 	      </table>
 		</div>
@@ -45,11 +44,15 @@
 			      </tr>
 			    </thead>
 			    <tbody>
+			      <#list context.myPending as report>
 			      <tr>
-			        <th scope="row">Gruuber ͐ Katz</th>
-			        <td>Statement adopted by the Continental Congress declaring independence from the British Empire.</td>
-			        <td>Yesterday</td>
+			        <th scope="row">${report.author.firstName} ${report.author.lastName}</th>
+			        <td>${report.intent}</td>
+			        <td>${report.updatedAt}</td>
 			      </tr>
+			      <#else>
+			        <tr><td colspan=3>None</td></tr>
+			      </#list>
 		      </tbody>
 	      </table>
 		</div>

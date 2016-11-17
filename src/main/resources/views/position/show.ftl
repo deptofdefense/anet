@@ -51,8 +51,10 @@
 		<#else>
 			No Associated ${otherPositionName}s :( <br>
 		</#list>
-		<label for="newPositionSelect">Assign ${otherPositionName} to this ${positionName}:</label>
-		<select id="newPositionSelect" style="width:100%"></select><br>
+		<div class="form-group">
+			<label for="newPositionSelect">Assign ${otherPositionName} to this ${positionName}:</label>
+			<select id="newPositionSelect" style="width:100%"></select><br>
+		</div>
 		<button id="newPositionBtn" >Assign</button>
 	</td>
 </tr>

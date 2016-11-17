@@ -55,8 +55,13 @@ public class ReportResource {
 	@GET
 	@Path("/")
 	@Produces(MediaType.TEXT_HTML)
-	public ObjectListView<Report> getAllReportsView(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
-		return new ObjectListView<Report>(dao.getAll(pageNum, pageSize), Report.class);
+	public ObjectListView<Report> getAllReportsView(@Auth Person p, @DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
+		ObjectListView<Report> view = new ObjectListView<Report>(dao.getAll(pageNum, pageSize), Report.class);
+		List<Report> myApprovals = AnetObjectEngine.getInstance().getReportDao().getReportsForMyApproval(p);
+		List<Report> myPending = AnetObjectEngine.getInstance().getReportDao().getMyReportsPendingApproval(p);
+		view.addToContext("myApprovals", myApprovals);
+		view.addToContext("myPending", myPending);
+		return view;
 	}
 	
 	@GET
