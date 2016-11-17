@@ -23,7 +23,7 @@ function buildForm(formName) {
 	var output = {};
 
 	$form.serializeArray().forEach(function(input) {
-		if (input.name.toLowerCase().indexOf('date') !== -1) {
+		if (input.name.toLowerCase().indexOf('date') !== -1 && input.value) {
 			input.value = new Date(input.value).toISOString();
 		}
 

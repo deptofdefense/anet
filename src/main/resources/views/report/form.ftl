@@ -113,7 +113,7 @@
 				<div class="col-md-6">
 					<div class="form-group">
 						<label for="engagementAtmosphere">Atmosphere of engagement</label>
-						<select id="engagementAtmosphere" name="engagementAtmosphere">
+						<select id="engagementAtmosphere" name="atmosphere">
 							<option>Positive</option>
 							<option>Neutral</option>
 							<option>Negative</option>
@@ -131,12 +131,12 @@
 
 			<div class="form-group">
 				<label for="engagementDetails">Describe the discussion in detail</label>
-				<textarea id="engagementDetails" name="reportText" >${reportText!}</textarea>
+				<textarea id="engagementDetails" name="reportText">${reportText!}</textarea>
 			</div>
 
 			<div class="form-group">
 				<label for="engagementNextSteps">Recommended next steps?</label>
-				<textarea id="engagementNextSteps" name="nextSteps" >${nextSteps!}</textarea>
+				<textarea id="engagementNextSteps" name="nextSteps">${nextSteps!}</textarea>
 			</div>
 		</div>
 	</section>
@@ -165,7 +165,7 @@
 						</select>
 					</div>
 
-					<input type="submit" value="Add EF" class="btn btn-default pull-right">
+					<button type="submit" class="btn btn-default pull-right">Add EF</button>
 				</div>
 
 				<div class="col-md-6">
@@ -236,7 +236,7 @@ $(document).ready(function() {
 		});
 	});
 
-	$(".reportSave").on("click", submitForm);
+	$("form").on("submit", submitForm);
 
 	var $personRow = $('[data-attached-person-prototype]').removeAttr('data-attached-person-prototype');
 	var $personTable = $personRow.parent();
@@ -342,6 +342,7 @@ $(document).ready(function() {
 	}
 
 	function submitForm() {
+		debugger
 		var report = buildForm("reportForm");
 		if (report["principal_id"]) {
 			report["attendees"] = [{ id: report["principal_id"] }]
@@ -376,6 +377,8 @@ $(document).ready(function() {
 		}).done( function (response) {
 			window.location = "/reports/" + ${id!"response.id"};
 		});
+
+		return false;
 	}
 });
 
