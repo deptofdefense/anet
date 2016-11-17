@@ -192,7 +192,7 @@
 <#include "../template/footer.ftl">
 
 <script type="text/javascript">
-$(document).ready(function () {
+$(document).ready(function() {
 	enablePersonSearch("#afghanPrincipal","PRINCIPAL");
 	enablePersonSearch("#attachPersonName","");
 	enableLocationSearch("#engagementLocation");
@@ -241,144 +241,146 @@ $(document).ready(function () {
 		});
 	});
 
-	$(".reportSave").on("click", function(event) {
-		var report = buildForm("reportForm");
-		if (report["principal_id"]) {
-			report["attendees"] = [{ id: report["principal_id"] }]
-			delete report["principal_id"];
-		}
-		if (report["location_id"]) {
-			report["location"] = { id: report["location_id"] }
-			delete report["location_id"];
-		}
+	$(".reportSave").on("click", submitForm);
 
-		report["attendees"] = $.map($personTable.find("tr.attendeeRow"), function (el) {
-			var id = $(el).attr("data-id");
-			//TODO: the UI should have some clue as to who is the 'primary' principal...
-			return { "id" : id, "primary" : false };
-		});
+   var $personRow = $('[data-attached-person-prototype]').removeAttr('data-attached-person-prototype');
+   var $personTable = $personRow.parent();
+   $personRow.remove();
 
-		//TODO: @nickjs: for some reason the <form id="reportForm> is missing like half the elements, can you investigate?
-		report['atmosphere'] = $("[name=atmosphere]").val();
-		report['atmosphereDetails'] = $("[name=atmosphereDetails]").val();
-		report['reportText'] = $("[name=reportText]").val();
-		report['nextSteps'] = $("[name=nextSteps]").val();
+   var $attachPersonForm = $('[data-attach-new-person]');
+   var $attachPersonSubmit = $('[data-attach-new-person-submit]');
+   var addingPerson = {};
 
-		$.ajax({
-			<#if id??>
-				url: '/reports/${id}/edit',
-			<#else>
-				url : '/reports/new',
-			</#if>
-			method: "POST",
-			contentType: "application/json",
-			data: JSON.stringify(report)
-		}).done( function (response) {
-			window.location = "/reports/" + ${id!"response.id"};
-		});
-	});
+   function addPersonToTable(person) {
+     var $row = $personRow.clone();
+     $row.find('[data-name]').html(person.name);
+     $row.find('[data-role]').html(person.role);
+     $row.find('[data-org]').html(person.org);
+     $row.attr("data-id", person.id);
+     $row.appendTo($personTable);
+   }
+
+   function enablePersonSearch(selectId, role) {
+   	$(selectId).select2({
+       dropdownParent: $(".mainbody"),
+   		ajax: {
+   			url: "/people/search",
+   			dataType: 'json',
+   			delay: 250,
+   			method: 'GET',
+   			data: function(params) {
+   				return {q: params.term, role: role}
+   			},
+   			processResults: function(data, params) {
+   				var names = [];
+           if (role !== 'PRINCIPAL') {
+             names.push({id:'-1', text: "Create new person named " + params.term, query: params.term});
+           }
+   				for (i in data) {
+             var person = data[i];
+             person.name = person.firstName + " " + person.lastName;
+   					names.push({
+   						id: person.id,
+   						text: person.name + " " + person.rank + " - " + person.role,
+               person: person
+   					});
+   				}
+   				return {results: names};
+   			}
+   		},
+   		minimumInputLength: 2
+   	}).on('select2:close', function(data) {
+       var $this = $(this);
+       var result = $this.select2('data')[0];
+       if (!result) return;
+
+       if (result.person) {
+         var person = result.person;
+         addPersonToTable(person);
+         $('#attachPersonName').val('').trigger('change');
+       } else if (result.query) {
+         addingPerson = {name: result.query};
+         $attachPersonForm.removeClass('hide');
+       }
+     });
+   };
+
+   $attachPersonSubmit.on('click', function() {
+     var $checkedRole = $attachPersonForm.find(':checked');
+     addingPerson.role = $checkedRole.val().toUpperCase();
+     addPersonToTable(addingPerson);
+     $checkedRole.val('');
+     $attachPersonForm.addClass('hide');
+     $('#attachPersonName').val('').trigger('change');
+     return false;
+   });
+
+   $(document.body).on('click', '[data-remove-person]', function(event) {
+     $(this).parents('tr').remove();
+     return false;
+   });
+
+   function enableLocationSearch(selectId) {
+   	$(selectId).select2({
+       dropdownParent: $(".mainbody"),
+   		ajax: {
+   			url: "/locations/search",
+   			dataType: 'json',
+   			delay: 250,
+   			method: 'GET',
+   			data: function(params) {
+   				return { q : params.term }
+   			},
+   			processResults :  function(data, params) {
+   				var results =_.map(data, function (el) {
+   					return {
+   						id: el["id"] ,
+   						text: el["name"]
+   					}
+   				});
+   				return { results: results };
+   			}
+   		},
+   		minimumInputLength : 2
+   	});
+   }
+
+   function submitForm() {
+      var report = buildForm("reportForm");
+      if (report["principal_id"]) {
+         report["attendees"] = [{ id: report["principal_id"] }]
+         delete report["principal_id"];
+      }
+      if (report["location_id"]) {
+         report["location"] = { id: report["location_id"] }
+         delete report["location_id"];
+      }
+
+      report["attendees"] = $.map($personTable.find("tr.attendeeRow"), function (el) {
+         var id = $(el).attr("data-id");
+         //TODO: the UI should have some clue as to who is the 'primary' principal...
+         return { "id" : id, "primary" : false };
+      });
+
+      //TODO: @nickjs: for some reason the <form id="reportForm> is missing like half the elements, can you investigate?
+      report['atmosphere'] = $("[name=atmosphere]").val();
+      report['atmosphereDetails'] = $("[name=atmosphereDetails]").val();
+      report['reportText'] = $("[name=reportText]").val();
+      report['nextSteps'] = $("[name=nextSteps]").val();
+
+      $.ajax({
+         <#if id??>
+            url: '/reports/${id}/edit',
+         <#else>
+            url : '/reports/new',
+         </#if>
+         method: "POST",
+         contentType: "application/json",
+         data: JSON.stringify(report)
+      }).done( function (response) {
+         window.location = "/reports/" + ${id!"response.id"};
+      });
+   }
 });
-
-var $personRow = $('[data-attached-person-prototype]').removeAttr('data-attached-person-prototype');
-var $personTable = $personRow.parent();
-$personRow.remove();
-
-var $attachPersonForm = $('[data-attach-new-person]');
-var $attachPersonSubmit = $('[data-attach-new-person-submit]');
-var addingPerson = {};
-
-function addPersonToTable(person) {
-  var $row = $personRow.clone();
-  $row.find('[data-name]').html(person.name);
-  $row.find('[data-role]').html(person.role);
-  $row.find('[data-org]').html(person.org);
-  $row.attr("data-id", person.id);
-  $row.appendTo($personTable);
-}
-
-function enablePersonSearch(selectId, role) {
-	$(selectId).select2({
-    dropdownParent: $(".mainbody"),
-		ajax: {
-			url: "/people/search",
-			dataType: 'json',
-			delay: 250,
-			method: 'GET',
-			data: function(params) {
-				return {q: params.term, role: role}
-			},
-			processResults: function(data, params) {
-				var names = [];
-        if (role !== 'PRINCIPAL') {
-          names.push({id:'-1', text: "Create new person named " + params.term, query: params.term});
-        }
-				for (i in data) {
-          var person = data[i];
-          person.name = person.firstName + " " + person.lastName;
-					names.push({
-						id: person.id,
-						text: person.name + " " + person.rank + " - " + person.role,
-            person: person
-					});
-				}
-				return {results: names};
-			}
-		},
-		minimumInputLength: 2
-	}).on('select2:close', function(data) {
-    var $this = $(this);
-    var result = $this.select2('data')[0];
-    if (!result) return;
-
-    if (result.person) {
-      var person = result.person;
-      addPersonToTable(person);
-      $('#attachPersonName').val('').trigger('change');
-    } else if (result.query) {
-      addingPerson = {name: result.query};
-      $attachPersonForm.removeClass('hide');
-    }
-  });
-};
-
-$attachPersonSubmit.on('click', function() {
-  var $checkedRole = $attachPersonForm.find(':checked');
-  addingPerson.role = $checkedRole.val().toUpperCase();
-  addPersonToTable(addingPerson);
-  $checkedRole.val('');
-  $attachPersonForm.addClass('hide');
-  $('#attachPersonName').val('').trigger('change');
-  return false;
-});
-
-$(document.body).on('click', '[data-remove-person]', function(event) {
-  $(this).parents('tr').remove();
-  return false;
-})
-
-function enableLocationSearch(selectId) {
-	$(selectId).select2({
-    dropdownParent: $(".mainbody"),
-		ajax: {
-			url: "/locations/search",
-			dataType: 'json',
-			delay: 250,
-			method: 'GET',
-			data: function(params) {
-				return { q : params.term }
-			},
-			processResults :  function(data, params) {
-				var results =_.map(data, function (el) {
-					return {
-						id: el["id"] ,
-						text: el["name"]
-					}
-				});
-				return { results: results };
-			}
-		},
-		minimumInputLength : 2
-	});
-};
 
 </script>

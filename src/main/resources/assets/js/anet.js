@@ -2,11 +2,13 @@ function jsonForm(formName) {
 	return JSON.stringify(buildForm(formName));
 }
 
-function buildForm(formName) { 
-	form = $("#" + formName).serializeArray();
-	out = {}
-	for (i in form) { 
-		out[form[i]["name"]] = form[i]["value"];
-	}
-	return out;
+function buildForm(formName) {
+	var $form = $("#" + formName);
+	var output = {};
+
+	$form.serializeArray().forEach(function(input) {
+		output[input.name] = input.value;
+	});
+
+	return output;
 }
