@@ -43,7 +43,7 @@
                     <form class="anet-attach-person">
                       <div class="form-group">
                         <label for="attachPersonName">Who was Present?</label>
-                        <select id="attachPersonName" style="width: 90%"></select>
+                        <select id="attachPersonName" style="width: 100%"></select>
                       </div>
 
                       <div class="form-group hide" data-attach-new-person>
