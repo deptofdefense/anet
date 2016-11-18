@@ -21,6 +21,11 @@
 		</div>
 
 		<div class="anet-block__body">
+			<div class="form-group">
+				<label for="engagementIntent">Topic of meeting</label>
+				<input id="engagementIntent" name="intent" value="${intent!}" />
+			</div>
+
 			<div class="row">
 				<div class="col-md-6">
 					<div class="form-group">
@@ -31,20 +36,37 @@
 				<div class="col-md-6">
 					<div class="form-group">
 						<label for="engagementLocation">Engagement location</label>
-						<select id="engagementLocation" name="location_id" >
+						<select id="engagementLocation" name="location_id" style="width:100%">
 							<#if location??>
 							<option value="${location.id}">${location.name}</option>
 							</#if>
 						</select>
 					</div>
+
+					<div class="form-group">
+						<label for="engagementAtmosphere">Atmosphere of engagement</label>
+						<select id="engagementAtmosphere" name="atmosphere">
+							<option>Positive</option>
+							<option>Neutral</option>
+							<option>Negative</option>
+						</select>
+					</div>
+
+					<div class="form-group">
+						<label for="engagementAtmosphereDetails">Atmospheric details</label>
+						<input id="engagementAtmosphereDetails" name="atmosphereDetails" value="${atmosphereDetails!}">
+					</div>
 				</div>
 			</div>
+		</div>
+	</section>
 
-			<div class="form-group">
-				<label for="engagementIntent">Topic of meeting</label>
-				<input id="engagementIntent" name="intent" value="${intent!}" />
-			</div>
+	<section class="anet-block">
+		<div class="anet-block__title">
+			People involved
+		</div>
 
+		<div class="anet-block__body">
 			<div class="form-group">
 				<label for="attachPersonName">Who was present?</label>
 				<select id="attachPersonName" style="width: 100%"></select>
@@ -109,26 +131,6 @@
 		</div>
 
 		<div class="anet-block__body">
-			<div class="row">
-				<div class="col-md-6">
-					<div class="form-group">
-						<label for="engagementAtmosphere">Atmosphere of engagement</label>
-						<select id="engagementAtmosphere" name="atmosphere">
-							<option>Positive</option>
-							<option>Neutral</option>
-							<option>Negative</option>
-						</select>
-					</div>
-				</div>
-
-				<div class="col-md-6">
-					<div class="form-group">
-						<label for="engagementAtmosphereDetails">Atmospheric details</label>
-						<input id="engagementAtmosphereDetails" name="atmosphereDetails" value="${atmosphereDetails!}">
-					</div>
-				</div>
-			</div>
-
 			<div class="form-group">
 				<label for="engagementDetails">Describe the discussion in detail</label>
 				<textarea id="engagementDetails" name="reportText">${reportText!}</textarea>
