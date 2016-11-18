@@ -41,7 +41,7 @@
 			</div>
 
 			<div class="form-group">
-				<label for="engagementIntent">Summary</label>
+				<label for="engagementIntent">Topic of meeting</label>
 				<input id="engagementIntent" name="intent" value="${intent!}" />
 			</div>
 
