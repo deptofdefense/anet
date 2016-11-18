@@ -43,13 +43,14 @@
 						</select>
 					</div>
 
-					<div class="form-group">
+					<div class="form-group engagement-atmosphere">
 						<label for="engagementAtmosphere">Atmosphere of engagement</label>
-						<select id="engagementAtmosphere" name="atmosphere">
-							<option>Positive</option>
-							<option>Neutral</option>
-							<option>Negative</option>
-						</select>
+						<input type="radio" name="engagementAtmosphere" id="atmospherePositive" value="positive">
+						<label for="atmospherePositive">😃</label>
+						<input type="radio" name="engagementAtmosphere" id="atmosphereNeutral" value="neutral">
+						<label for="atmosphereNeutral">😐</label>
+						<input type="radio" name="engagementAtmosphere" id="atmosphereNegative" value="negative">
+						<label for="atmosphereNegative">😡</label>
 					</div>
 
 					<div class="form-group">

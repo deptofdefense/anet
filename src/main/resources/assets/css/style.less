@@ -211,4 +211,19 @@ tr:not([class*='header']) {
 	}
 }
 
+.engagement-atmosphere {
+	input + label {
+		font-size: 5rem;
+		float: left;
+		width: auto;
+		padding: 0 3rem 0 3rem;
+	}
+	input:checked + label {
+		text-shadow: 0 0 10px #0071bc;
+	}
+	input + label::before {
+		display: none;
+	}
+}
+
 @import "nav.less";
