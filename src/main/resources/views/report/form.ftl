@@ -25,7 +25,7 @@
 				<div class="col-md-6">
 					<div class="form-group">
 						<label for="engagementDate">Engagement date</label>
-						<input id="engagementDate" type="date" name="engagementDate" data-date="${engagementDate!}">
+						<div data-datepicker></div>
 					</div>
 				</div>
 				<div class="col-md-6">
