@@ -10,6 +10,7 @@
 		<!-- Bootstrap -->
 		<link href="/assets/css/bootstrap.css" rel="stylesheet">
 		<#-- <link href="/assets/css/bootstrap-theme.css" rel="stylesheet"> -->
+		<link href="/assets/css/bootstrap-datepicker.css" rel="stylesheet" />
 		<link rel="stylesheet" href="/assets/css/uswds.css">
 		<link href="/assets/css/select2.css" rel="stylesheet" />
 		<link href="/assets/css/style.less" rel="stylesheet/less" type="text/css">
@@ -28,6 +29,7 @@
 
 		<!-- Include all compiled plugins (below), or include individual files as needed -->
 		<script src="/assets/js/bootstrap.min.js"></script>
+		<script src="/assets/js/bootstrap-datepicker.js"></script>
 		<script src="/assets/js/less.min.js"></script>
 		<script src="/assets/js/anet.js" ></script>
 	</head>
