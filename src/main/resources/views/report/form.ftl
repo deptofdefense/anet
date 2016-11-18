@@ -17,20 +17,20 @@
 
 	<section class="anet-block">
 		<div class="anet-block__title">
-			Report Details
+			Report details
 		</div>
 
 		<div class="anet-block__body">
 			<div class="row">
 				<div class="col-md-6">
 					<div class="form-group">
-						<label for="engagementDate">Engagement Date</label>
-						<input id="engagementDate" type="date" name="engagementDate" data-date="${engagementDate!}">
+						<label for="engagementDate">Engagement date</label>
+						<div data-datepicker></div>
 					</div>
 				</div>
 				<div class="col-md-6">
 					<div class="form-group">
-						<label for="engagementLocation">Engagement Location</label>
+						<label for="engagementLocation">Engagement location</label>
 						<select id="engagementLocation" name="location_id" >
 							<#if location??>
 							<option value="${location.id}">${location.name}</option>
@@ -41,12 +41,12 @@
 			</div>
 
 			<div class="form-group">
-				<label for="engagementIntent">Summary</label>
+				<label for="engagementIntent">Topic of meeting</label>
 				<input id="engagementIntent" name="intent" value="${intent!}" />
 			</div>
 
 			<div class="form-group">
-				<label for="attachPersonName">Who was Present?</label>
+				<label for="attachPersonName">Who was present?</label>
 				<select id="attachPersonName" style="width: 100%"></select>
 			</div>
 
@@ -61,7 +61,7 @@
 				</div>
 
 				<div class="col-md-6">
-					<label for="attachPersonGroup">Organizational Group</label>
+					<label for="attachPersonGroup">Organizational group</label>
 					<select id="attachPersonGroup"></select>
 					<button type="button" class="usa-button pull-right" data-attach-new-person-submit>Add Person</button>
 				</div>
@@ -112,8 +112,8 @@
 			<div class="row">
 				<div class="col-md-6">
 					<div class="form-group">
-						<label for="engagementAtmosphere">Atmosphere of Engagement</label>
-						<select id="engagementAtmosphere" name="engagementAtmosphere">
+						<label for="engagementAtmosphere">Atmosphere of engagement</label>
+						<select id="engagementAtmosphere" name="atmosphere">
 							<option>Positive</option>
 							<option>Neutral</option>
 							<option>Negative</option>
@@ -123,7 +123,7 @@
 
 				<div class="col-md-6">
 					<div class="form-group">
-						<label for="engagementAtmosphereDetails">Atmospheric Details</label>
+						<label for="engagementAtmosphereDetails">Atmospheric details</label>
 						<input id="engagementAtmosphereDetails" name="atmosphereDetails" value="${atmosphereDetails!}">
 					</div>
 				</div>
@@ -131,26 +131,26 @@
 
 			<div class="form-group">
 				<label for="engagementDetails">Describe the discussion in detail</label>
-				<textarea id="engagementDetails" name="reportText" >${reportText!}</textarea>
+				<textarea id="engagementDetails" name="reportText">${reportText!}</textarea>
 			</div>
 
 			<div class="form-group">
 				<label for="engagementNextSteps">Recommended next steps?</label>
-				<textarea id="engagementNextSteps" name="nextSteps" >${nextSteps!}</textarea>
+				<textarea id="engagementNextSteps" name="nextSteps">${nextSteps!}</textarea>
 			</div>
 		</div>
 	</section>
 
 	<section class="anet-block">
 		<div class="anet-block__title">
-			Essential Functions and Milestones
+			Essential functions and milestones
 		</div>
 
 		<div class="anet-block__body">
 			<div class="row">
 				<div class="col-md-6">
 					<div class="form-group">
-						<label for="attachEFName">Essential Function</label>
+						<label for="attachEFName">Essential function</label>
 						<select id="attachEFName">
 							<option></option>
 							<#list context.efs as ef>
@@ -165,13 +165,13 @@
 						</select>
 					</div>
 
-					<input type="submit" value="Add EF" class="btn btn-default pull-right">
+					<button type="submit" class="btn btn-default pull-right">Add EF</button>
 				</div>
 
 				<div class="col-md-6">
 					<table>
 						<tr>
-							<th>Essential Function</th>
+							<th>Essential function</th>
 							<th>POAM</th>
 							<th>Level</th>
 						</tr>
@@ -236,7 +236,7 @@ $(document).ready(function() {
 		});
 	});
 
-	$(".reportSave").on("click", submitForm);
+	$("form").on("submit", submitForm);
 
 	var $personRow = $('[data-attached-person-prototype]').removeAttr('data-attached-person-prototype');
 	var $personTable = $personRow.parent();
@@ -342,6 +342,7 @@ $(document).ready(function() {
 	}
 
 	function submitForm() {
+		debugger
 		var report = buildForm("reportForm");
 		if (report["principal_id"]) {
 			report["attendees"] = [{ id: report["principal_id"] }]
@@ -376,6 +377,8 @@ $(document).ready(function() {
 		}).done( function (response) {
 			window.location = "/reports/" + ${id!"response.id"};
 		});
+
+		return false;
 	}
 });
 
