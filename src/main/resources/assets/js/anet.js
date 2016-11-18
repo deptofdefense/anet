@@ -12,6 +12,12 @@ function initializeDates(container) {
 		var date = new Date(this.getAttribute('data-date'));
 		this.value = date.toInputFormat();
 	});
+
+	$('[data-datepicker]').datepicker({
+		todayBtn: "link",
+		todayHighlight: true,
+		daysOfWeekHighlighter: "0,6"
+	});
 }
 
 function jsonForm(formName) {
