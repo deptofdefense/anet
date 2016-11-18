@@ -14,7 +14,7 @@ function initializeDates(container) {
 	});
 
 	$('[data-datepicker]').datepicker({
-		todayBtn: "link",
+		todayBtn: "linked",
 		todayHighlight: true,
 		daysOfWeekHighlighted: "0,6"
 	});
