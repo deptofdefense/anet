@@ -33,17 +33,14 @@ INSERT INTO people (firstName, lastName, status, role, emailAddress, phoneNumber
 INSERT INTO people (firstName, lastName, status, role, emailAddress, phoneNumber, rank, biography) 
 	VALUES ("Shardul", "Sharton", 0, 1, "shardul@example.com", "+99-9999-9999", "CIV", "");
 
-INSERT INTO positions (name, type, createdAt, updatedAt) VALUES ('EF1 Advisor 04532', 0, 1478098949000, 1478098949000);
-INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES ((SELECT id from positions where name ='EF1 Advisor 04532'), null, 1478098949000);
-INSERT INTO positions (name, type, createdAt, updatedAt) VALUES ('EF2 Advisor 4987', 0, 1478098949000, 1478098949000);
-INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES ((SELECT id from positions where name ='EF2 Advisor 4987'), null, 1478098949000);
-INSERT INTO positions (name, type, createdAt, updatedAt) VALUES ('EF3 Advisor 427', 0, 1478098949000, 1478098949000);
-INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES ((SELECT id from positions where name ='EF3 Advisor 427'), null, 1478098949000);
-INSERT INTO positions (name, type, createdAt, updatedAt) VALUES ('EF4 Advisor 3', 0, 1478098949000, 1478098949000);
-INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES ((SELECT id from positions where name ='EF4 Advisor 3'), null, 1478098949000);
+INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF1 Advisor 04532', 0, NULL, 1478098949000, 1478098949000);
+INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF2 Advisor 4987', 0, NULL, 1478098949000, 1478098949000);
+INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF3 Advisor 427', 0, NULL, 1478098949000, 1478098949000);
+INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF4 Advisor 3', 0, NULL, 1478098949000, 1478098949000);
 
 INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES 
 	((SELECT id from positions where name = 'EF1 Advisor 04532'), (SELECT id from people where emailAddress = 'bob@example.com'), 1478098949010);
+UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'bob@example.com');
 
 INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('EF1', 0, 1478098949000, 1478098949000);
 INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('EF2', 0, 1478098949000, 1478098949000);
@@ -136,17 +133,11 @@ INSERT INTO locations (name, lat, lng) VALUES("Conception Bay South Police Stati
 INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('Ministry of Defense', 1, 1478098949000, 1478098949000);
 INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('Ministry of Interior', 1, 1478098949000, 1478098949000);
 
-INSERT INTO positions (name, code, type, organizationId ) VALUES ("Minister of Donuts", "MOD-FO-00001", 1, (SELECT id FROM organizations WHERE name ='Ministry of Defense'));
-INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES ((SELECT id from positions where code='MOD-FO-00001'), null, 1478098949000);
-INSERT INTO positions (name, code, type, organizationId) VALUES ("Chief of Staff - MoD", "MOD-FO-00002", 1, (SELECT id FROM organizations WHERE name ='Ministry of Defense'));
-INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES ((SELECT id from positions where code='MOD-FO-00002'), null, 1478098949000);
-INSERT INTO positions (name, code, type, organizationId) VALUES ("Executive Assistant to the MoD", "MOD-FO-00003", 1, (SELECT id FROM organizations WHERE name ='Ministry of Defense'));
-INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES ((SELECT id from positions where code='MOD-FO-00003'), null, 1478098949000);
-INSERT INTO positions (name, code, type, organizationId) VALUES ("Director of Budgeting - MoD", "MOD-Bud-00001", 1, (SELECT id FROM organizations WHERE name ='Ministry of Defense'));
-INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES ((SELECT id from positions where code='MOD-Bud-00001'), null, 1478098949000);
-INSERT INTO positions (name, code, type, organizationId) VALUES ("Writer of Expenses - MoD", "MOD-Bud-00002", 1, (SELECT id FROM organizations WHERE name ='Ministry of Defense'));
-INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES ((SELECT id from positions where code='MOD-Bud-00002'), null, 1478098949000);
-INSERT INTO positions (name, code, type, organizationId) VALUES ("Cost Adder - MoD", "MOD-Bud-00003", 1, (SELECT id FROM organizations WHERE name ='Ministry of Defense'));
-INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES ((SELECT id from positions where code='MOD-Bud-00003'), null, 1478098949000);
+INSERT INTO positions (name, code, type, currentPersonId, organizationId ) VALUES ("Minister of Donuts", "MOD-FO-00001", 1, NULL, (SELECT id FROM organizations WHERE name ='Ministry of Defense'));
+INSERT INTO positions (name, code, type, currentPersonId, organizationId) VALUES ("Chief of Staff - MoD", "MOD-FO-00002", 1, NULL, (SELECT id FROM organizations WHERE name ='Ministry of Defense'));
+INSERT INTO positions (name, code, type, currentPersonId, organizationId) VALUES ("Executive Assistant to the MoD", "MOD-FO-00003", 1, NULL, (SELECT id FROM organizations WHERE name ='Ministry of Defense'));
+INSERT INTO positions (name, code, type, currentPersonId, organizationId) VALUES ("Director of Budgeting - MoD", "MOD-Bud-00001", 1, NULL, (SELECT id FROM organizations WHERE name ='Ministry of Defense'));
+INSERT INTO positions (name, code, type, currentPersonId, organizationId) VALUES ("Writer of Expenses - MoD", "MOD-Bud-00002", 1, NULL, (SELECT id FROM organizations WHERE name ='Ministry of Defense'));
+INSERT INTO positions (name, code, type, currentPersonId, organizationId) VALUES ("Cost Adder - MoD", "MOD-Bud-00003", 1, NULL, (SELECT id FROM organizations WHERE name ='Ministry of Defense'));
 
 

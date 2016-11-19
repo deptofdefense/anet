@@ -83,6 +83,7 @@
 			<column name="type" type="int" >
                 <constraints nullable="false"/>
 			</column>
+			<column name="currentPersonId" type="int" />
 		</createTable>
 
 		<createTable tableName="peoplePositions">

@@ -27,6 +27,7 @@ public class PersonResourceTest extends AbstractResourceTest {
 	public PersonResourceTest() { 
 		if (client == null) { 
 			config.setConnectionTimeout(Duration.seconds(10));
+			config.setTimeout(Duration.seconds(30));
 			client = new JerseyClientBuilder(RULE.getEnvironment()).using(config).build("person test client");
 		}
 	}

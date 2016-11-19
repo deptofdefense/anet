@@ -18,6 +18,7 @@ import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.beans.Position;
+import mil.dds.anet.beans.Position.PositionType;
 import mil.dds.anet.database.PersonDao;
 import mil.dds.anet.views.ObjectListView;
 
@@ -63,7 +64,23 @@ public class PersonResource {
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	public Person getViewById(@PathParam("id") int id) { 
 		Person p = dao.getById(id);
-		p.addToContext("position", AnetObjectEngine.getInstance().getPositionDao().getPositionForPerson(p));
+		Position position = AnetObjectEngine.getInstance().getPositionDao().getCurrentPositionForPerson(p);
+		p.addToContext("position", position);
+		if (position != null) {
+			p.addToContext("previousHolders", AnetObjectEngine.getInstance().getPositionDao().getPeoplePreviouslyInPosition(position));
+			if (position.getType() == PositionType.ADVISOR) {
+				//What reports have been written by all position holders ever (including the current)
+				p.addToContext("positionReports", AnetObjectEngine.getInstance().getReportDao().getReportsByAuthorPosition(position));
+			} else { 
+				//What reports have been written ABOUT all position holders
+				p.addToContext("positionReports", AnetObjectEngine.getInstance().getReportDao().getReportsAboutThisPosition(position));
+			}
+			//What positions is this position associated with and which people are in those positions?
+			p.addToContext("relatedPositions", AnetObjectEngine.getInstance().getPositionDao().getAssociatedPositions(position));
+		} else { 
+			//What reports has this person written. 
+			p.addToContext("personReports", AnetObjectEngine.getInstance().getReportDao().getReportsByAuthor(p));
+		}
 		return p.render("show.ftl");
 	}
 	
@@ -140,7 +157,7 @@ public class PersonResource {
 	@GET
 	@Path("/{id}/position")
 	public Position getPositionForPerson(@PathParam("personId") int personId) { 
-		return AnetObjectEngine.getInstance().getPositionDao().getPositionForPerson(Person.createWithId(personId));
+		return AnetObjectEngine.getInstance().getPositionDao().getCurrentPositionForPerson(Person.createWithId(personId));
 	}
 	
 }

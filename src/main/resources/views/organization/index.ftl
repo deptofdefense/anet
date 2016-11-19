@@ -1,4 +1,6 @@
-<#include "../template/header.ftl">
+<#import "../application/layout.ftl" as application>
+<@application.layout>
+
 <h1>Listing Organizations</h1>
 <a href="/organizations/new">[Create New]</a>
 <table>
@@ -11,4 +13,4 @@
 	<td><a href="/organizations/${org.id}/edit">[Edit]</a></td>
 </#list>
 </table>
-<#include "../template/footer.ftl">
+</@application.layout>

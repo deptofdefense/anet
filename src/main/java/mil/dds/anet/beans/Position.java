@@ -25,7 +25,7 @@ public class Position extends AbstractAnetView<Position> {
 	Organization organization;
 	
 	//Lazy Loaded
-	Person person;
+	Person person; //The Current person.
 	List<Position> associatedPositions;
 
 	public static Position createWithId(Integer id) { 
@@ -103,6 +103,16 @@ public class Position extends AbstractAnetView<Position> {
 					.getPositionDao().getPersonInPositionNow(this);
 		}
 		return person;
+	}
+	
+	@JsonGetter("person")
+	public Person getPersonJson() { 
+		return person;
+	}
+	
+	@JsonSetter("person")
+	public void setPerson(Person p) {
+		this.person = p;
 	}
 	
 	@JsonIgnore

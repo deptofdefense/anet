@@ -1,4 +1,5 @@
-<#include "../template/header.ftl">
+<#import "../application/layout.ftl" as application>
+<@application.layout>
 <#if type == 'ADVISOR'>
 	<#assign otherPositionName = 'Tashkil'>
 	<#assign otherPositionType = 'PRINCIPAL' >
@@ -43,7 +44,8 @@
 			<ul>
 			<#items as position>
 				<li>${position.name} 
-				(<a href="/positions/${position.id}">${position.code}</a>) 
+				(<a href="/positions/${position.id}">${position.code!position.name}</a>)
+				- <#if position.person??>${position.person.firstName} ${position.person.lastName}</#if> 
 				- [<a data-id="${position.id}" class="positionRemoveBtn">delete</a>]
 				</li>
 			</#items>
@@ -61,7 +63,7 @@
 </table>
 
 <a href="/positions/${id}/edit">[Edit this position]</a>
-<#include "../template/footer.ftl">
+
 
 <script type="text/javascript">
 $(document).ready(function() { 
@@ -107,3 +109,4 @@ $(document).ready(function() {
 });
 
 </script>
+</@application.layout>

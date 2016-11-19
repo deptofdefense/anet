@@ -1,4 +1,5 @@
-<#include "../template/header.ftl">
+<#import "../application/layout.ftl" as application>
+<@application.layout>
 <#if type?? && type == 'ADVISOR'>
 	<#assign otherPositionName = 'Tashkil'>
 	<#assign otherPositionType = 'PRINCIPAL' >
@@ -34,7 +35,7 @@
 	</div>
 </form>
 <input type="submit" value="Save" id="saveBtn" />
-<#include "../template/footer.ftl">
+
 
 <script type="text/javascript">
 $(document).ready(function() {
@@ -78,3 +79,5 @@ $(document).ready(function() {
 	});
 });
 </script>
+
+</@application.layout>

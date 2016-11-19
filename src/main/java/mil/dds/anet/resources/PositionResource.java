@@ -41,7 +41,7 @@ public class PositionResource {
 	@Path("/")
 	@Produces(MediaType.TEXT_HTML)
 	public ObjectListView<Position> getAllPositionsView(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
-		return new ObjectListView<Position>(dao.getAllPositions(pageNum, pageSize), Position.class);
+		return new ObjectListView<Position>(dao.getAll(pageNum, pageSize), Position.class);
 	}
 	
 	@GET
@@ -63,8 +63,8 @@ public class PositionResource {
 	
 	@POST
 	@Path("/new")
-	public Position createPosition(Position b) {
-		return dao.insert(b);
+	public Position createPosition(Position p) {
+		return dao.insert(p);
 	}
 	
 	@GET
@@ -84,12 +84,11 @@ public class PositionResource {
 	
 	@GET
 	@Path("/{id}/person")
-	public Person getAdvisorInPosition(@PathParam("id") int PositionId, @QueryParam("atTime") Long atTimeMillis) {
-		Position b = new Position();
-		b.setId(PositionId);
+	public Person getAdvisorInPosition(@PathParam("id") int positionId, @QueryParam("atTime") Long atTimeMillis) {
+		Position p = Position.createWithId(positionId);
 		
 		DateTime dtg = (atTimeMillis == null) ? DateTime.now() : new DateTime(atTimeMillis);
-		return dao.getPersonInPosition(b, dtg);
+		return dao.getPersonInPosition(p, dtg);
 	}
 	
 	@POST

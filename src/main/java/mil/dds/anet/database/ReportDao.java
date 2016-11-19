@@ -11,6 +11,7 @@ import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
+import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
@@ -155,6 +156,34 @@ public class ReportDao implements IAnetDao<Report> {
 		return dbHandle.createQuery("SELECT * FROM reports "
 				+ "WHERE text LIKE '%' || :query || '%';")
 			.bind("query", query)
+			.map(new ReportMapper())
+			.list();
+	}
+
+	public List<Report> getReportsByAuthorPosition(Position position) {
+		return dbHandle.createQuery("SELECT reports.* from peoplePositions "
+				+ "LEFT JOIN reports ON peoplePositions.personId = reports.authorId "
+				+ "WHERE peoplePositions.positionId = :positionId "
+				+ "ORDER BY reports.engagementDate DESC")
+			.bind("positionId", position.getId())
+			.map(new ReportMapper())
+			.list();
+	}
+
+	public Object getReportsAboutThisPosition(Position position) {
+		return dbHandle.createQuery("SELECT reports.* from reports, peoplePositions, reportPeople "
+				+ "WHERE peoplePositions.positionId = :positionId "
+				+ "AND reportPeople.personId = peoplePositions.personId "
+				+ "AND reports.id = reportPeople.reportId "
+				+ "ORDER BY reports.engagementDate DESC")
+			.bind("positionId", position.getId())
+			.map(new ReportMapper())
+			.list();
+	}
+
+	public List<Report> getReportsByAuthor(Person p) {
+		return dbHandle.createQuery("SELECT reports.* from reports where authorId = :personId ORDER BY engagementDate DESC")
+			.bind("personId", p.getId())
 			.map(new ReportMapper())
 			.list();
 	}

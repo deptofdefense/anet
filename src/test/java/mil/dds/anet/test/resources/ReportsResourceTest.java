@@ -23,6 +23,7 @@ import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.Position;
+import mil.dds.anet.beans.Position.PositionType;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.Atmosphere;
 import mil.dds.anet.beans.Report.ReportState;
@@ -64,6 +65,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		//Create a billet for the author
 		Position authorBillet = new Position();
 		authorBillet.setName("A report writer");
+		authorBillet.setType(PositionType.ADVISOR);
 		authorBillet.setOrganization(org);
 		authorBillet = httpQuery("/positions/new", author).post(Entity.json(authorBillet), Position.class);
 		assertThat(authorBillet.getId()).isNotNull();

@@ -2,5 +2,6 @@
 	"id" : null,
 	"name" : "Head of donut operations",
 	"code" : "DNT-001",
-	"organization" : null
+	"organization" : null,
+	"type" : "PRINCIPAL"
 }
