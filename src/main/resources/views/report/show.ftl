@@ -1,6 +1,6 @@
 <#import "../application/layout.ftl" as application>
 <@application.layout>
-Report: ${id} - ${engagementDate}<br>
+Report: ${id} - ${engagementDate!}<br>
 
 <ul>
 <li>Author: <a href="/people/${author.id}">${author.name}</a></li>

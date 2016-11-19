@@ -45,11 +45,11 @@
 
 					<div class="form-group engagement-atmosphere">
 						<label for="engagementAtmosphere">Atmosphere of engagement</label>
-						<input type="radio" name="engagementAtmosphere" id="atmospherePositive" value="positive">
+						<input type="radio" name="atmosphere" id="atmospherePositive" value="positive">
 						<label for="atmospherePositive">😃</label>
-						<input type="radio" name="engagementAtmosphere" id="atmosphereNeutral" value="neutral">
+						<input type="radio" name="atmosphere" id="atmosphereNeutral" value="neutral">
 						<label for="atmosphereNeutral">😐</label>
-						<input type="radio" name="engagementAtmosphere" id="atmosphereNegative" value="negative">
+						<input type="radio" name="atmosphere" id="atmosphereNegative" value="negative">
 						<label for="atmosphereNegative">😡</label>
 					</div>
 

@@ -146,7 +146,8 @@ public class Person extends AbstractAnetView<Person> implements Principal{
 		return String.format("%s %s (%s)", firstName, lastName, emailAddress);
 	}
 	
-	public static Person createWithId(int id) { 
+	public static Person createWithId(Integer id) {
+		if (id == null) { return null; } 
 		Person p = new Person();
 		p.setId(id);
 		p.setLoadLevel(LoadLevel.ID_ONLY);
