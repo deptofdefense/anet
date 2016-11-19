@@ -16,7 +16,7 @@ function initializeDates(container) {
 	$('[data-datepicker]').datepicker({
 		todayBtn: "linked",
 		todayHighlight: true,
-		daysOfWeekHighlighted: "0,6"
+		daysOfWeekHighlighted: "5,6"
 	});
 }
 
