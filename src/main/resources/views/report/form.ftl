@@ -22,7 +22,7 @@
 
 		<div class="anet-block__body">
 			<div class="form-group">
-				<label for="engagementIntent">Topic of meeting</label>
+				<label for="engagementIntent">Subject of meeting</label>
 				<input id="engagementIntent" name="intent" value="${intent!}" />
 			</div>
 
