@@ -38,21 +38,8 @@
 </div>
 <hr>
 <div class="anet-page-head">
-	<h1 style="margin-top:0px!important;clear:both">ANET News and Updates</h1>
+	<h1 style="margin-top:0;clear:both">ANET News and Updates</h1>
 </div>
-	<section class="anet-block">
-		<div class="anet-block__title">
-			<div class="pull-left">ANET Newsletter</div>
-			<div class="pull-right">November 14th,2016</div>
-		</div>
-
-		<div class="anet-block__body">
-		<h3>A letter from the SFAC</h3>
-			<div class="anet-block__copy">
-			Mauris congue dolor nec metus auctor tempor. Phasellus quam velit, tempor eu magna vitae, vulputate rhoncus lectus. Pellentesque semper turpis id elit vulputate, id porttitor quam pulvinar. Sed lobortis libero et felis fermentum, ac maximus ante gravida. Donec at ipsum ut est sollicitudin tincidunt. Nulla est enim, porta ac volutpat a, interdum et tortor. Nunc vel semper eros. Etiam pellentesque pellentesque est, eu blandit ligula placerat sit amet. Vestibulum et consectetur neque. Nullam rutrum nunc non vehicula laoreet. Quisque dignissim sollicitudin dui, ac convallis lectus. Pellentesque metus dui, ultrices et dignissim tristique, luctus vestibulum nisi. Quisque facilisis egestas est, eget ultrices sapien. Nunc accumsan nulla ut vulputate faucibus.<br>Donec maximus eros at dui iaculis, vel tristique nulla scelerisque.
-			</div>
-		</div>
-	</section>
 
 	<section class="anet-block">
 		<div class="anet-block__title">
