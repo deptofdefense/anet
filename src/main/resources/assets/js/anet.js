@@ -14,9 +14,9 @@ function initializeDates(container) {
 	});
 
 	$('[data-datepicker]').datepicker({
-		todayBtn: "link",
+		todayBtn: "linked",
 		todayHighlight: true,
-		daysOfWeekHighlighter: "0,6"
+		daysOfWeekHighlighted: "0,6"
 	});
 }
 
