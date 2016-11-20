@@ -2,12 +2,11 @@
 <@application.layout>
 <h1>Listing People</h1>
 <table>
-<tr><th>id</th><th>first</th><th>last</th><th>email</th><th>Status</th><th>Rank</th><th>Role</th></tr>
+<tr><th>id</th><th>Name</th><th>email</th><th>Status</th><th>Rank</th><th>Role</th></tr>
 <#list list as p>
 	<tr>
 	<td><a href="/people/${p.id}">${p.id}</a></td>
-	<td>${p.firstName}</td>
-	<td>${p.lastName}</td>
+	<td>${p.name}</td>
 	<td>${p.emailAddress!}</td>
 	<td>${p.status!}</td>
 	<td>${p.rank!}</td>

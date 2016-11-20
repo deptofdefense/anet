@@ -19,7 +19,7 @@
 		<tbody>
 		<#list context.myPending as report>
 			<tr>
-				<th scope="row">${report.author.firstName} ${report.author.lastName}</th>
+				<th scope="row">${report.author.name}</th>
 				<td>${report.intent}</td>
 				<td>${report.updatedAt.toString('dd MMM yyyy')}</td>
 				<td><a href="/reports/${report.id}">[View]</a></td>
@@ -27,7 +27,7 @@
 		</#list>
 		<#list context.myApprovals as report>
 			<tr>
-				<th scope="row">${report.author.firstName} ${report.author.lastName}</th>
+				<th scope="row">${report.author.name}</th>
 				<td>${report.intent}</td>
 				<td>${report.updatedAt.toString('dd MMM yyyy')}</td>
 				<td><a href="/reports/${report.id}">[View]</a></td>

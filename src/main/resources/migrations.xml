@@ -11,8 +11,7 @@
             <column name="id" type="int" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="firstName" type="varchar(255)" />
-            <column name="lastName" type="varchar(255)" />
+            <column name="name" type="varchar(255)" />
 			<column name="status" type="int" />
 			<column name="emailAddress" type="varchar(255)" />
 			<column name="phoneNumber" type="varchar(100)" />
@@ -24,6 +23,7 @@
                 <constraints nullable="false"/>
 			</column>
 			<column name="pendingVerification" type="boolean" defaultValue="false" />
+			<column name="locationId" type="int" />
         </createTable>
 
 		<createTable tableName="groups">

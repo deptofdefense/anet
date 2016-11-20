@@ -107,7 +107,7 @@
 										<i class="glyphicon glyphicon-remove"></i>
 									</button>
 								</td>
-								<td data-name>${a.firstName} ${a.lastName}</td>
+								<td data-name>${a.name}</td>
 								<td data-role>${a.role}</td>
 							</tr>
 						</#list>
@@ -281,7 +281,7 @@ $(document).ready(function() {
 					}
 
 					data.forEach(function(person) {
-						person.name = person.firstName + " " + person.lastName;
+						person.name = person.name;
 						names.push({
 							id: person.id,
 							text: person.name + " " + person.rank + " - " + person.role,

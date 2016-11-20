@@ -30,7 +30,7 @@ $(document).ready(function() {
 				var results = _.map(data, function(el) {
 					return {
 						id: el["id"],
-						text: el["firstName"] + " " + el["lastName"] + " (" + el["role"] + ")"
+						text: el["name"] + " (" + el["role"] + ")"
 					}
 				});
 				return { results: results };

@@ -6,7 +6,7 @@ Report: ${id} - ${engagementDate!}<br>
 <li>Author: <a href="/people/${author.id}">${author.name}</a></li>
 <li>Location: <#if location??>${location.name}</#if></li>
 <li>Atmospherics: ${atmosphere} - ${atmosphereDetails!}</li>
-<li>Attendees: <#list attendees as p>${p.firstName} ${p.lastName} (${p.rank}) - ${p.role}, </#list></li>
+<li>Attendees: <#list attendees as p>${p.name} (${p.rank}) - ${p.role}, </#list></li>
 </ul>
 <p>${reportText}<p>
 <p><b>Next Steps: </b>${nextSteps}</p>

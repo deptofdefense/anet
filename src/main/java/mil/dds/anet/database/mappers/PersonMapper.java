@@ -10,6 +10,7 @@ import org.skife.jdbi.v2.tweak.ResultSetMapper;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.beans.Person.Status;
+import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.views.AbstractAnetView.LoadLevel;
 
 public class PersonMapper implements ResultSetMapper<Person> {
@@ -23,8 +24,7 @@ public class PersonMapper implements ResultSetMapper<Person> {
 		//This hits when we do a join but there's no Person record. 
 		if (r.getObject("id") == null) { return null; }
 		a.setId(r.getInt("id"));
-		a.setFirstName(r.getString("firstName"));
-		a.setLastName(r.getString("lastName"));
+		a.setName(r.getString("name"));
 		a.setStatus(MapperUtils.getEnumIdx(r, "status", Status.class));
 		a.setRole(MapperUtils.getEnumIdx(r, "role", Role.class));
 		a.setEmailAddress(r.getString("emailAddress"));
@@ -34,6 +34,11 @@ public class PersonMapper implements ResultSetMapper<Person> {
 		a.setPendingVerification(r.getBoolean("pendingVerification"));
 		a.setCreatedAt(new DateTime(r.getLong("createdAt")));
 		a.setUpdatedAt(new DateTime(r.getLong("updatedAt")));
+		
+		Integer locationId = MapperUtils.getInteger(r, "locationId");
+		if (locationId != null) { 
+			a.setLocation(Location.createWithId(locationId));
+		}
 		a.setLoadLevel(LoadLevel.PROPERTIES);
 		return a;
 	}

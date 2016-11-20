@@ -16,8 +16,7 @@
 	"intent": "Check up with Steve",
 	"attendees": [{
 		"id": null,
-		"firstName": "Steve",
-		"lastName": "Steveson",
+		"name": "Steve Steveson",
 		"status": "ACTIVE",
 		"role" : "PRINCIPAL",
 		"emailAddress": "steve@example.com",
@@ -45,8 +44,7 @@
 	"nextSteps": "Go for a boat ride with Steve tomorrow",
 	"author": {
 		"id": null,
-		"firstName": "Jack",
-		"lastName": "Jackson",
+		"name": "Jack Jackson",
 		"status": "ACTIVE",
 		"role" : "ADVISOR",
 		"emailAddress": "foobar@example.com",
@@ -58,8 +56,7 @@
 		"id": null,
 		"author": {
 			"id": null,
-			"firstName": "Jack",
-			"lastName": "Jackson",
+			"name": "Jack Jackson",
 			"status": "ACTIVE",
 			"role" : "ADVISOR",
 			"emailAddress": "foobar@example.com",

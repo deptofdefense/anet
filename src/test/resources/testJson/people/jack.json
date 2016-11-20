@@ -1,6 +1,5 @@
 {
-	"firstName" : "Jack",
-	"lastName" : "Jackson",
+	"name" : "Jack Jackson",
 	"status" : "ACTIVE",
 	"role" : "ADVISOR",
 	"emailAddress" : "foobar@example.com",

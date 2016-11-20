@@ -19,7 +19,7 @@ public class AnetAuthenticator implements Authenticator<BasicCredentials, Person
 
 	@Override
 	public Optional<Person> authenticate(BasicCredentials credentials) throws AuthenticationException {
-		List<Person> p = dao.findByProperty("firstName", credentials.getUsername(), "lastName", credentials.getPassword());
+		List<Person> p = dao.findByProperty("name", credentials.getUsername() + " " +  credentials.getPassword());
         if (p.size() > 0) { 
             return Optional.of(p.get(0));
         }

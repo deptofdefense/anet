@@ -3,7 +3,7 @@
 
 <section class="anet-block">
   <div class="anet-block__title">
-    ${firstName} ${lastName}
+    ${name}
     <div class="pull-right">
     	${role}
     </div>
@@ -107,7 +107,7 @@
 	</tr>
 	<#list context.relatedPositions as related>
 		<tr>
-			<td><#if related.person??>${related.person.firstName} ${related.person.lastName}</#if></td>
+			<td><#if related.person??>${related.person.name}</#if></td>
 			<td>${related.name} (${related.code!})</td>
 			<td>last report intent here</td>
 			<td>last report date here</td>
@@ -123,7 +123,7 @@
 	</tr>
 	<#list context.previousHolders as person>
 		<tr>
-			<td>${person.firstName} ${person.lastName}</td>
+			<td>${person.name}</td>
 			<td>Date person rotated out</td>
 		</tr>
 	</#list>

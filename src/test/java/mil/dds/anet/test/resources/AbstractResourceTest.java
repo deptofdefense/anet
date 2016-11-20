@@ -1,6 +1,7 @@
 package mil.dds.anet.test.resources;
 
 import java.io.InputStream;
+import java.net.URLEncoder;
 import java.util.Base64;
 import java.util.List;
 
@@ -41,13 +42,13 @@ public abstract class AbstractResourceTest {
 	
 	public Builder httpQuery(String path, Person authUser) { 
 		String authString = Base64.getEncoder().encodeToString(
-				(authUser.getFirstName() + ":" + authUser.getLastName()).getBytes());
+				(authUser.getName().split(" ")[0] + ":" + authUser.getName().split(" ")[1]).getBytes());
 		return httpQuery(path)
 				.header("Authorization", "Basic " + authString);
 	}
 	
 	public Person findOrPutPersonInDb(Person stub) { 
-		List<Person> ret = httpQuery("/people/search?q=" + stub.getLastName(), PersonTest.getSteveStevesonStub()).get(new GenericType<List<Person>>() {});
+		List<Person> ret = httpQuery("/people/search?q=" + URLEncoder.encode(stub.getName()), PersonTest.getSteveStevesonStub()).get(new GenericType<List<Person>>() {});
 		for (Person p : ret) { 
 			if (p.getEmailAddress().equals(stub.getEmailAddress())) { return p; } 
 		}

@@ -11,8 +11,7 @@ public class PersonTest extends BeanTester<Person> {
 
 	public static Person getJackJacksonStub() { 
 		final Person person = new Person();
-		person.setFirstName("Jack");
-		person.setLastName("Jackson");
+		person.setName("Jack Jackson");
 		person.setEmailAddress("foobar@example.com");
 		person.setPhoneNumber("123-456-78960");
 		person.setRank("OF-9");
@@ -24,8 +23,7 @@ public class PersonTest extends BeanTester<Person> {
 
 	public static Person getSteveStevesonStub() {
 		Person person = new Person();
-		person.setFirstName("Steve");
-		person.setLastName("Steveson");
+		person.setName("Steve Steveson");
 		person.setEmailAddress("steve@example.com");
 		person.setPhoneNumber("+011-258-32895");
 		person.setRank("LtCol");
@@ -47,8 +45,7 @@ public class PersonTest extends BeanTester<Person> {
 
 	public static Person getRogerRogwell() {
 		Person person = new Person();
-		person.setFirstName("Roger");
-		person.setLastName("Rogwell");
+		person.setName("Roger Rogwell");
 		person.setEmailAddress("roger@example.com");
 		person.setPhoneNumber("+1-412-543-2839");
 		person.setRank("Maj");
@@ -60,8 +57,7 @@ public class PersonTest extends BeanTester<Person> {
 
 	public static Person getElizabethElizawell() {
 		Person person = new Person();
-		person.setFirstName("Elizabeth");
-		person.setLastName("Elizawell");
+		person.setName("Elizabeth Elizawell");
 		person.setEmailAddress("liz@example.com");
 		person.setPhoneNumber("+1-777-7777");
 		person.setRank("Capt");
@@ -73,8 +69,7 @@ public class PersonTest extends BeanTester<Person> {
 
 	public static ReportPerson personToReportPerson(Person p) {
 		ReportPerson rp = new ReportPerson();
-		rp.setFirstName(p.getFirstName());
-		rp.setLastName(p.getLastName());
+		rp.setName(p.getName());
 		rp.setId(p.getId());
 		rp.setPhoneNumber(p.getPhoneNumber());
 		rp.setEmailAddress(p.getEmailAddress());

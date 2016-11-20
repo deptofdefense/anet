@@ -9,8 +9,7 @@
 </h1>
 
 <form id="personForm" >
-First Name: <input type="text" name="firstName" value="${firstName!}" /><br>
-Last Name: <input type="text" name="lastName" value="${lastName!}"  /><br>
+Name: <input type="text" name="name" value="${name!}" /><br>
 Email Address: <input type="text" name="emailAddress" value="${emailAddress!}" /><br>
 Phone Number: <input type="text" name="phoneNumber" value="${phoneNumber!}" /><br>
 Rank: <input type="text" name="rank" value="${rank!}" /><br>

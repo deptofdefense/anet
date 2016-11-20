@@ -5,8 +5,12 @@ import java.util.Objects;
 
 import org.joda.time.DateTime;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSetter;
 
+import mil.dds.anet.AnetObjectEngine;
+import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.views.AbstractAnetView;
 
 public class Person extends AbstractAnetView<Person> implements Principal{
@@ -14,8 +18,7 @@ public class Person extends AbstractAnetView<Person> implements Principal{
 	public static enum Status { ACTIVE, INACTIVE }
 	public static enum Role { ADVISOR, PRINCIPAL, USER }
 	
-	private String firstName; 
-	private String lastName;
+	private String name;
 	private Status status;
 	private Role role;
 	private Boolean pendingVerification;
@@ -29,27 +32,17 @@ public class Person extends AbstractAnetView<Person> implements Principal{
 	private DateTime createdAt;
 	private DateTime updatedAt;
 	
+	private Location location;
+	
 	public Person() { 
 		this.pendingVerification = false; //Defaults 
 	}
 	
-	@Override
-	@JsonIgnore
 	public String getName() {
-		return String.format("%s %s (%s)", firstName, lastName, emailAddress);
+		return name;
 	}
-	
-	public String getFirstName() {
-		return firstName;
-	}
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-	public String getLastName() {
-		return lastName;
-	}
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
+	public void setName(String name) {
+		this.name = name;
 	}
 	public Status getStatus() {
 		return status;
@@ -114,21 +107,40 @@ public class Person extends AbstractAnetView<Person> implements Principal{
 		this.updatedAt = updatedAt;
 	}
 
+	@JsonIgnore
+	public Location getLocation() { 
+		if (location == null || location.getLoadLevel() == null) { return location; } 
+		if (location.getLoadLevel().contains(LoadLevel.PROPERTIES) == false) { 
+			this.location = AnetObjectEngine.getInstance()
+					.getLocationDao().getById(location.getId());
+		}
+		return location;
+	}
+	
+	@JsonGetter("location")
+	public Location getLocationJson() { 
+		return location;
+	}
+	
+	@JsonSetter("location")
+	public void setLocation(Location location) { 
+		this.location = location;
+	}
+	
 	@Override
 	public boolean equals(Object o) { 
 		if (o == null || getClass() != o.getClass()) {
             return false;
         }
 		Person other = (Person) o;
-		boolean b = Objects.equals(id, other.getId()) && 
-			Objects.equals(other.getFirstName(), getFirstName()) &&
-			Objects.equals(other.getLastName(), this.getLastName()) &&
-			Objects.equals(other.getStatus(), this.getStatus()) && 
+		boolean b = Objects.equals(id, other.getId()) &&
+			Objects.equals(other.getName(), name) &&
+			Objects.equals(other.getStatus(), status) && 
 			Objects.equals(other.getRole(), role) && 
-			Objects.equals(other.getEmailAddress(), this.getEmailAddress()) && 
-			Objects.equals(other.getPhoneNumber(), this.getPhoneNumber()) && 
-			Objects.equals(other.getRank(), this.getRank()) && 
-			Objects.equals(other.getBiography(), this.getBiography()) &&
+			Objects.equals(other.getEmailAddress(), emailAddress) && 
+			Objects.equals(other.getPhoneNumber(), phoneNumber) && 
+			Objects.equals(other.getRank(), rank) && 
+			Objects.equals(other.getBiography(), biography) &&
 			Objects.equals(other.getPendingVerification(), pendingVerification) &&
 			Objects.equals(other.getCreatedAt(), createdAt) &&
 			Objects.equals(other.getUpdatedAt(), updatedAt);
@@ -137,13 +149,13 @@ public class Person extends AbstractAnetView<Person> implements Principal{
 	
 	@Override
 	public int hashCode() { 
-		return Objects.hash(id, firstName, lastName, status, role, emailAddress,
+		return Objects.hash(id, name, status, role, emailAddress,
 			phoneNumber, rank, biography, createdAt, updatedAt, pendingVerification);
 	}
 	
 	@Override
 	public String toString() { 
-		return String.format("%s %s (%s)", firstName, lastName, emailAddress);
+		return String.format("%s (%s)", name, emailAddress);
 	}
 	
 	public static Person createWithId(Integer id) {

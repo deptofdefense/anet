@@ -4,6 +4,7 @@ import static io.dropwizard.testing.FixtureHelpers.fixture;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -42,13 +43,13 @@ public class PersonResourceTest extends AbstractResourceTest {
     	assertThat(retPerson).isEqualTo(jack);
     	assertThat(retPerson.getId()).isEqualTo(jack.getId());
     	
-    	jack.setFirstName("Roberto");
+    	jack.setName("Roberto Jackson");
     	Response resp = httpQuery("/people/update", retPerson)
     			.post(Entity.json(jack));
     	assertThat(resp.getStatus()).isEqualTo(200);
     	
     	retPerson = httpQuery(String.format("/people/%d", jack.getId()), jack).get(Person.class);
-    	assertThat(retPerson.getFirstName()).isEqualTo(jack.getFirstName());
+    	assertThat(retPerson.getName()).isEqualTo(jack.getName());
     }
 	
 //	@Test
@@ -91,17 +92,8 @@ public class PersonResourceTest extends AbstractResourceTest {
 		Random rand = new Random();
 		for (int i=0;i<5;i++) { 
 			Person p = people.get(rand.nextInt(people.size()));
-			String query = p.getFirstName().substring(0, 2 + (rand.nextInt(p.getFirstName().length() - 2)));
-			List<Person> searchResults = httpQuery("/people/search?q=" + query, steve)
-					.get(new GenericType<List<Person>>() {});
-			assertThat(searchResults.size()).isGreaterThan(0);
-			assertThat(searchResults).contains(p);
-		}
-		
-		for (int i=0;i<5;i++) { 
-			Person p = people.get(rand.nextInt(people.size()));
-			String query = p.getLastName().substring(0, 2 + (rand.nextInt(p.getLastName().length() - 2)));
-			List<Person> searchResults = httpQuery("/people/search?q=" + query, steve)
+			String query = p.getName().substring(0, 2 + (rand.nextInt(p.getName().length() - 2)));
+			List<Person> searchResults = httpQuery("/people/search?q=" + URLEncoder.encode(query), steve)
 					.get(new GenericType<List<Person>>() {});
 			assertThat(searchResults.size()).isGreaterThan(0);
 			assertThat(searchResults).contains(p);

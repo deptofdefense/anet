@@ -48,7 +48,7 @@
 			<#items as position>
 				<li>${position.name} 
 				(<a href="/positions/${position.id}">${position.code!position.name}</a>)
-				- <#if position.person??>${position.person.firstName} ${position.person.lastName}</#if> 
+				- <#if position.person??>${position.person.name}</#if> 
 				- [<a data-id="${position.id}" class="positionRemoveBtn">delete</a>]
 				</li>
 			</#items>

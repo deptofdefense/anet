@@ -20,7 +20,7 @@
 			    <tbody>
 			    <#list context.myPending as report>
 			      <tr>
-			        <th scope="row">${report.author.firstName} ${report.author.lastName}</th>
+			        <th scope="row">${report.author.name}</th>
 			        <td>${report.intent}</td>
 			        <td>${report.updatedAt}</td>
 			      </tr>
@@ -47,7 +47,7 @@
 			    <tbody>
 			      <#list context.myPending as report>
 			      <tr>
-			        <th scope="row">${report.author.firstName} ${report.author.lastName}</th>
+			        <th scope="row">${report.author.name}</th>
 			        <td>${report.intent}</td>
 			        <td>${report.updatedAt}</td>
 			      </tr>

@@ -21,6 +21,7 @@ import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.database.mappers.OrganizationMapper;
 import mil.dds.anet.database.mappers.PersonMapper;
+import mil.dds.anet.utils.DaoUtils;
 
 @RegisterMapper(PersonMapper.class)
 public class PersonDao implements IAnetDao<Person> {
@@ -52,11 +53,12 @@ public class PersonDao implements IAnetDao<Person> {
 		p.setCreatedAt(DateTime.now());
 		p.setUpdatedAt(DateTime.now());
 		GeneratedKeys<Map<String, Object>> keys = dbHandle.createStatement("INSERT INTO people " +
-				"(firstName, lastName, status, role, emailAddress, phoneNumber, rank, pendingVerification, biography, createdAt, updatedAt) " +
-				"VALUES (:firstName, :lastName, :status, :role, :emailAddress, :phoneNumber, :rank, :pendingVerification, :biography, :createdAt, :updatedAt);")
+				"(name, status, role, emailAddress, phoneNumber, rank, pendingVerification, biography, createdAt, updatedAt, locationId) " +
+				"VALUES (:name, :status, :role, :emailAddress, :phoneNumber, :rank, :pendingVerification, :biography, :createdAt, :updatedAt, :locationId);")
 			.bindFromProperties(p)
 			.bind("status", (p.getStatus() != null ) ? p.getStatus().ordinal() : null)
 			.bind("role", p.getRole().ordinal())
+			.bind("locationId", DaoUtils.getId(p.getLocation()))
 			.executeAndReturnGeneratedKeys();
 		p.setId((Integer)keys.first().get("last_insert_rowid()"));
 		return p;
@@ -65,16 +67,18 @@ public class PersonDao implements IAnetDao<Person> {
 	public int update(@BindBean Person p){
 		p.setUpdatedAt(DateTime.now());
 		return dbHandle.createStatement("UPDATE people " + 
-				"SET firstName = :firstName, lastName = :lastName, status = :status, role = :role, " + 
+				"SET name = :name, status = :status, role = :role, " + 
 				"phoneNumber = :phoneNumber, rank = :rank, biography = :biography, " +
-				"pendingVerification = :pendingVerification WHERE id = :id")
+				"pendingVerification = :pendingVerification, updatedAt = :updatedAt, "
+				+ "locationId = :locationId WHERE id = :id")
 			.bindFromProperties(p)
+			.bind("locationId", DaoUtils.getId(p.getLocation()))
 			.execute();
 	}
 	
 	
 	public List<Person> searchByName(String searchQuery, Role role) { 
-		String queryString = "SELECT * from people WHERE ( firstName LIKE :query || '%' OR lastName LIKE :query || '%')	";
+		String queryString = "SELECT * from people WHERE name LIKE '%' || :query || '%' ";
 		if (role != null ) { 
 			queryString += " AND role = :role";
 		}
@@ -100,7 +104,7 @@ public class PersonDao implements IAnetDao<Person> {
 
 	public List<Person> findByProperty(String ...strings) {
 		if (strings.length % 2 != 0 ) { throw new RuntimeException("Illegal number of arguments to findByProperty: " + strings.toString()); }
-		HashSet<String> props = Sets.newHashSet("firstName","lastName","emailAddress","rank","phoneNumber","status");
+		HashSet<String> props = Sets.newHashSet("name","emailAddress","rank","phoneNumber","status");
 		List<String> conditions = new ArrayList<String>();
 		
 		for (int i=0;i<strings.length;i+=2) { 
