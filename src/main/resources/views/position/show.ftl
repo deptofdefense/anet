@@ -18,6 +18,9 @@
 	<td>${name}</td>
 </tr>
 <tr>
+	<td>Code</td>
+	<td>${code!}</td>
+<tr>
 	<td> Org</td>
 	<td><#if organization??><a href="/organizations/${organization.id}">${organization.name}</a></#if></td>
 </tr>

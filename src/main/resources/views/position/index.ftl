@@ -1,4 +1,5 @@
-<#include "../template/header.ftl">
+<#import "../application/layout.ftl" as application>
+<@application.layout>
 <h1>Listing Positions</h1>
 
 <table>
@@ -18,4 +19,4 @@
 </table>
 <a href="/positions/new">[Create New Position]</a>
 
-<#include "../template/footer.ftl">
+</@application.layout>

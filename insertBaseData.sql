@@ -9,6 +9,8 @@ DELETE FROM approvalSteps;
 DELETE FROM approvalActions;
 DELETE FROM positionRelationships;
 DELETE FROM locations;
+DELETE FROM reportPeople;
+DELETE FROM reports;
 
 INSERT INTO people (firstName, lastName, status, role, emailAddress, phoneNumber, rank, biography) 
 	VALUES ("Jack", "Jackson", 0, 0, "foobar@example.com", "123-456-78960", "OF-9", "this is a sample biography");
@@ -40,12 +42,24 @@ INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES
 
 INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES 
 	((SELECT id from positions where name = 'EF1 Advisor 04532'), (SELECT id from people where emailAddress = 'bob@example.com'), 1478098949010);
-UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'bob@example.com');
+UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'bob@example.com') WHERE name = 'EF1 Advisor 04532';
+
+-- Rotate an advisor through a billet
+INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES
+	((SELECT id from positions where name = 'EF2 Advisor 4987'), (SELECT id from people where emailAddress = 'reina@example.com'), 1478098639010);
+UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'reina@example.com') WHERE name = 'EF2 Advisor 4987';
+INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES
+	((SELECT id from positions where name = 'EF2 Advisor 4987'), (SELECT id from people where emailAddress = 'foobar@example.com'), 1478098949010);
+UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'foobar@example.com') WHERE name = 'EF2 Advisor 4987';
 
 INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('EF1', 0, 1478098949000, 1478098949000);
 INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('EF2', 0, 1478098949000, 1478098949000);
 INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('EF3', 0, 1478098949000, 1478098949000);
 INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('EF4', 0, 1478098949000, 1478098949000);
+	INSERT INTO organizations (name, type, parentOrgId) VALUES ('EF 4.1', 0 , (SELECT id FROM organizations WHERE name = 'EF4'));
+	INSERT INTO organizations (name, type, parentOrgId) VALUES ('EF 4.2', 0 , (SELECT id FROM organizations WHERE name = 'EF4'));
+	INSERT INTO organizations (name, type, parentOrgId) VALUES ('EF 4.3', 0 , (SELECT id FROM organizations WHERE name = 'EF4'));
+	INSERT INTO organizations (name, type, parentOrgId) VALUES ('EF 4.4', 0 , (SELECT id FROM organizations WHERE name = 'EF4'));
 INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('EF5', 0, 1478098949000, 1478098949000);
 INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('EF6', 0, 1478098949000, 1478098949000);
 INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('EF7', 0, 1478098949000, 1478098949000);
@@ -98,7 +112,7 @@ INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPo
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId) 
 	VALUES ('1.3.C', 'Knowing when you run out of money', 'Milestone', 1478098949000, 1478098949000, (SELECT id from poams where shortName = 'EF1.3'));
 
-INSERT INTO poams (shortName, longName, category, createdAt, updatedAt) VALUES ('EF2', 'TAO', 'EF', 1478098949000, 1478098949000);
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt) VALUES ('EF2', 'Transparency, Accountability, O (TAO)', 'EF', 1478098949000, 1478098949000);
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId) 
 	VALUES ('2.A', 'This is the first Milestone in EF2', 'Milestone', 1478098949000, 1478098949000, (SELECT id from poams where shortName = 'EF2'));
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId) 
@@ -107,8 +121,8 @@ INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPo
 	VALUES ('2.C', 'This is the third Milestone in EF2', 'Milestone', 1478098949000, 1478098949000, (SELECT id from poams where shortName = 'EF2'));
 
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt) VALUES ('EF3', 'Rule of Law', 'EF', 1478098949000, 1478098949000);
-INSERT INTO poams (shortName, longName, category, createdAt, updatedAt) VALUES ('EF4', 'Force Gen', 'EF', 1478098949000, 1478098949000);
-INSERT INTO poams (shortName, longName, category, createdAt, updatedAt) VALUES ('EF5', 'Force Sustainment', 'EF', 1478098949000, 1478098949000);
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt) VALUES ('EF4', 'Force Gen (Training)', 'EF', 1478098949000, 1478098949000);
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt) VALUES ('EF5', 'Force Sustainment (Logistics)', 'EF', 1478098949000, 1478098949000);
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt) VALUES ('EF6', 'C2 Operations', 'EF', 1478098949000, 1478098949000);
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt) VALUES ('EF7', 'Intelligence', 'EF', 1478098949000, 1478098949000);
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt) VALUES ('EF8', 'Stratcom', 'EF', 1478098949000, 1478098949000);
@@ -129,15 +143,55 @@ INSERT INTO locations (name, lat, lng) VALUES("Cabot Tower", 47.570010, -52.6817
 INSERT INTO locations (name, lat, lng) VALUES("Fort Amherst", 47.563763, -52.680590);
 INSERT INTO locations (name, lat, lng) VALUES("Harbour Grace Police Station", 47.705133, -53.214422);
 INSERT INTO locations (name, lat, lng) VALUES("Conception Bay South Police Station", 47.526784, -52.954739);
+INSERT INTO locations (name) VALUES ('MoD Headquarters Kabul');
+INSERT INTO locations (name) VALUES ('MoI Headquarters Kabul');
+INSERT INTO locations (name) VALUES ("President's Palace");
+INSERT INTO locations (name) VALUES ('Kabul Police Academy');
+INSERT INTO locations (name) VALUES ('Police HQ Training Facility');
+INSERT INTO locations (name) VALUES ('Kabul Hospital');
+INSERT INTO locations (name) VALUES ('MoD Army Training Base 123');
+INSERT INTO locations (name) VALUES ('MoD Location the Second');
+INSERT INTO locations (name) VALUES ('MoI Office Building ABC');
 
 INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('Ministry of Defense', 1, 1478098949000, 1478098949000);
 INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('Ministry of Interior', 1, 1478098949000, 1478098949000);
 
-INSERT INTO positions (name, code, type, currentPersonId, organizationId ) VALUES ("Minister of Donuts", "MOD-FO-00001", 1, NULL, (SELECT id FROM organizations WHERE name ='Ministry of Defense'));
+INSERT INTO positions (name, code, type, currentPersonId, organizationId ) VALUES ("Minister of Defense", "MOD-FO-00001", 1, NULL, (SELECT id FROM organizations WHERE name ='Ministry of Defense'));
 INSERT INTO positions (name, code, type, currentPersonId, organizationId) VALUES ("Chief of Staff - MoD", "MOD-FO-00002", 1, NULL, (SELECT id FROM organizations WHERE name ='Ministry of Defense'));
 INSERT INTO positions (name, code, type, currentPersonId, organizationId) VALUES ("Executive Assistant to the MoD", "MOD-FO-00003", 1, NULL, (SELECT id FROM organizations WHERE name ='Ministry of Defense'));
 INSERT INTO positions (name, code, type, currentPersonId, organizationId) VALUES ("Director of Budgeting - MoD", "MOD-Bud-00001", 1, NULL, (SELECT id FROM organizations WHERE name ='Ministry of Defense'));
 INSERT INTO positions (name, code, type, currentPersonId, organizationId) VALUES ("Writer of Expenses - MoD", "MOD-Bud-00002", 1, NULL, (SELECT id FROM organizations WHERE name ='Ministry of Defense'));
 INSERT INTO positions (name, code, type, currentPersonId, organizationId) VALUES ("Cost Adder - MoD", "MOD-Bud-00003", 1, NULL, (SELECT id FROM organizations WHERE name ='Ministry of Defense'));
+INSERT INTO positions (name, code, type, currentPersonId, organizationId) VALUES ("Chief of Police", "MOI-Pol-HQ-00001",1, NULL, (SELECT id FROM organizations WHERE name ='Ministry of Interior'));
 
+-- Put Steve into a Tashkil and associate with the EF1 Advisor Billet
+INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES 
+	((SELECT id from positions where name = 'Cost Adder - MoD'), (SELECT id from people where emailAddress = 'steve@example.com'), 1478098949010);
+UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'steve@example.com') WHERE name = 'Cost Adder - MoD';
+INSERT INTO positionRelationships (positionId_a, positionId_b, createdAt, updatedAt, deleted) VALUES
+	((SELECT id from positions WHERE name ='EF1 Advisor 04532'), 
+	(SELECT id FROM positions WHERE name='Cost Adder - MoD'), 
+	1478098949000, 1478098949000, 0);
+
+-- But Roger in a Tashkil and associate with the EF2 advisor billet
+INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES 
+	((SELECT id from positions where name = 'Chief of Police'), (SELECT id from people where emailAddress = 'roger@example.com'), 1478098949010);
+UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'roger@example.com') WHERE name = 'Chief of Police';
+INSERT INTO positionRelationships (positionId_a, positionId_b, createdAt, updatedAt, deleted) VALUES
+	((SELECT id from positions WHERE name ='Chief of Police'), 
+	(SELECT id FROM positions WHERE name='EF2 Advisor 4987'), 
+	1478098949000, 1478098949000, 0);
+
+
+
+
+
+INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, nextSteps, authorId, state, engagementDate, atmosphere) VALUES
+	(1478098948001, 1478098949000, (SELECT id from locations where name='General Hospital'), "Discuss improvements in Annual Budgeting process",
+	"Today I met with this dude to tell him all the great things that he can do to improve his budgeting process. I hope he listened to me",
+	"Meet with the dude again next week",
+	(SELECT id FROM people where emailAddress='foobar@example.com'), 0, 1478098949000, 0);
+INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
+	(SELECT id FROM people where emailAddress='steve@example.com'),
+	(SELECT id FROM reports where createdAt = 1478098948001), 1);
 

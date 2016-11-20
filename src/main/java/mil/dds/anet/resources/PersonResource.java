@@ -10,6 +10,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -64,6 +65,7 @@ public class PersonResource {
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	public Person getViewById(@PathParam("id") int id) { 
 		Person p = dao.getById(id);
+		if (p == null) { throw new WebApplicationException("No such person", Status.NOT_FOUND); }
 		Position position = AnetObjectEngine.getInstance().getPositionDao().getCurrentPositionForPerson(p);
 		p.addToContext("position", position);
 		if (position != null) {
@@ -71,6 +73,7 @@ public class PersonResource {
 			if (position.getType() == PositionType.ADVISOR) {
 				//What reports have been written by all position holders ever (including the current)
 				p.addToContext("positionReports", AnetObjectEngine.getInstance().getReportDao().getReportsByAuthorPosition(position));
+				System.out.println(p.getContext().get("positionReports"));
 			} else { 
 				//What reports have been written ABOUT all position holders
 				p.addToContext("positionReports", AnetObjectEngine.getInstance().getReportDao().getReportsAboutThisPosition(position));

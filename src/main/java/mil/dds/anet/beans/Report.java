@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.joda.time.DateTime;
 
@@ -164,6 +165,15 @@ public class Report extends AbstractAnetView<Report> {
 		this.attendees = attendees;
 	}
 
+	@JsonIgnore
+	public ReportPerson getPrimaryAttendee() { 
+		getAttendees(); //Force the load of attendees
+		for (ReportPerson rp : attendees) { 
+			if (rp.isPrimary()) { return rp; } 
+		}
+		return null;
+	}
+	
 	public List<Poam> getPoams() {
 		return poams;
 	}

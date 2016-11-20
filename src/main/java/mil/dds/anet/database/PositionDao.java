@@ -204,8 +204,6 @@ public class PositionDao implements IAnetDao<Position> {
 	}
 	
 
-	
-
 	public List<Position> getAssociatedPositions(Position p) {
 		Query<Position> query = dbHandle.createQuery("SELECT " + POSITIONS_FIELDS + ", people.* FROM positions "
 				+ "LEFT JOIN people ON positions.currentPersonId = people.id "

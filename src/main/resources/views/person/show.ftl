@@ -121,10 +121,12 @@
 		<th>Person</th>
 		<th>Date</th>
 	</tr>
-	<tr>
-		<td>Name here</td>
-		<td>Date person rotated out</td>
-	</tr>
+	<#list context.previousHolders as person>
+		<tr>
+			<td>${person.firstName} ${person.lastName}</td>
+			<td>Date person rotated out</td>
+		</tr>
+	</#list>
 </table>
 
 <h3>Reports by this Position</h3>
@@ -133,10 +135,12 @@
 		<th>Who</th>
 		<th>Topic</th>
 	</tr>
-	<tr>
-		<td>Name here</td>
-		<td>Topic here</td>
-	</tr>
+	<#list context.positionReports as report>
+		<tr>
+			<td>${report.primaryAttendee!}</td>
+			<td><a href="/reports/${report.id}">${report.intent!"no summary"}</a></td>
+		</tr>
+	</#list>
 </table>
 <#else>
 <h3>Reports by this Person</h3>

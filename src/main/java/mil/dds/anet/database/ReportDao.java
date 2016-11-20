@@ -162,8 +162,9 @@ public class ReportDao implements IAnetDao<Report> {
 
 	public List<Report> getReportsByAuthorPosition(Position position) {
 		return dbHandle.createQuery("SELECT reports.* from peoplePositions "
-				+ "LEFT JOIN reports ON peoplePositions.personId = reports.authorId "
+				+ "INNER JOIN reports ON peoplePositions.personId = reports.authorId "
 				+ "WHERE peoplePositions.positionId = :positionId "
+				+ "AND peoplePositions.personId IS NOT NULL "
 				+ "ORDER BY reports.engagementDate DESC")
 			.bind("positionId", position.getId())
 			.map(new ReportMapper())
