@@ -37,7 +37,7 @@
 	<body>
 		<div class="container mainbody">
 			<div class="security">
-				Highest clearance: || ${context.currentUser} || ${context.url}
+				DEMO PURPOSES ONLY (DO NOT ADD REAL DATA) || ${context.currentUser} || ${context.url}
 			</div>
 
 			<div class="row">
