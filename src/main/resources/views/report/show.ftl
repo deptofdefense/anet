@@ -113,11 +113,16 @@
 				<#else>
 					<i>No comments</i>
 				</#list>
-
-				<div>
-				Post a new comment on this report:
-				<textarea id="newCommentText"></textarea>
-				<button id="newCommentBtn">Submit Comment</button>
+			</div>
+		</div>
+		<div class="row">
+			<h5>Post a new comment on this report:</h5>
+			<div class="col-md-4">
+				${context.currentUser}
+			</div>
+			<div class="col-md-8">
+				<input id="newCommentText"></input>
+				<button class="pull-right" id="newCommentBtn">Submit Comment</button>
 				</div>
 			</div>
 		</div>
