@@ -56,8 +56,8 @@ public class PersonDao implements IAnetDao<Person> {
 				"(name, status, role, emailAddress, phoneNumber, rank, pendingVerification, biography, createdAt, updatedAt, locationId) " +
 				"VALUES (:name, :status, :role, :emailAddress, :phoneNumber, :rank, :pendingVerification, :biography, :createdAt, :updatedAt, :locationId);")
 			.bindFromProperties(p)
-			.bind("status", (p.getStatus() != null ) ? p.getStatus().ordinal() : null)
-			.bind("role", p.getRole().ordinal())
+			.bind("status", DaoUtils.getEnumId(p.getStatus()))
+			.bind("role", DaoUtils.getEnumId(p.getRole()))
 			.bind("locationId", DaoUtils.getId(p.getLocation()))
 			.executeAndReturnGeneratedKeys();
 		p.setId((Integer)keys.first().get("last_insert_rowid()"));
@@ -72,6 +72,8 @@ public class PersonDao implements IAnetDao<Person> {
 				"pendingVerification = :pendingVerification, updatedAt = :updatedAt, "
 				+ "locationId = :locationId WHERE id = :id")
 			.bindFromProperties(p)
+			.bind("status", DaoUtils.getEnumId(p.getStatus()))
+			.bind("role", DaoUtils.getEnumId(p.getRole()))
 			.bind("locationId", DaoUtils.getId(p.getLocation()))
 			.execute();
 	}

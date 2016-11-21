@@ -38,3 +38,28 @@ function buildForm(formName) {
 
 	return output;
 }
+
+function enableLocationSearch(selectId) {
+	$(selectId).select2({
+		dropdownParent: $(".mainbody"),
+		ajax: {
+			url: "/locations/search",
+			dataType: 'json',
+			delay: 250,
+			method: 'GET',
+			data: function(params) {
+				return { q : params.term }
+			},
+			processResults :  function(data, params) {
+				var results =_.map(data, function (el) {
+					return {
+						id: el["id"] ,
+						text: el["name"]
+					}
+				});
+				return { results: results };
+			}
+		},
+		minimumInputLength : 2
+	});
+}

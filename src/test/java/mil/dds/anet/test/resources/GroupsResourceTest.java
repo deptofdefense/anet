@@ -2,6 +2,9 @@ package mil.dds.anet.test.resources;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
 
@@ -109,14 +112,20 @@ public class GroupsResourceTest extends AbstractResourceTest {
 		Response resp = httpQuery("/groups/", steve)
 			.header("Accept", "text/html").get();
 		assertThat(resp.getStatus()).isEqualTo(200);
-		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
+		String respBody = getResponseBody(resp);
+		assertThat(respBody).as("FreeMarker error").doesNotContain("FreeMarker template error");
+		
+		Pattern groupIdPat = Pattern.compile("<a href=\"/groups/([0-9])+\">");
+		Matcher groupIdMat = groupIdPat.matcher(respBody);
+		assertThat(groupIdMat.find());
+		int groupId = Integer.parseInt(groupIdMat.group(1));
 		
 		resp = httpQuery("/groups/new", steve)
 				.header("Accept", "text/html").get();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
 		
-		resp = httpQuery("/groups/1", steve)
+		resp = httpQuery("/groups/" + groupId, steve)
 				.header("Accept", "text/html").get();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");

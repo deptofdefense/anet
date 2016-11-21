@@ -5,7 +5,7 @@
   <div class="anet-block__title">
     ${name}
     <div class="pull-right">
-    	${role}
+    	<a href="/people/${id}/edit">[edit]</a> - ${role}
     </div>
   </div>
 
@@ -27,6 +27,10 @@
 	   <div class="field">
        	<div class="header">Status</div>
        	<div class="content">${status}</div>
+	   </div>
+	   <div class="field">
+       	<div class="header">Location</div>
+       	<div class="content"><#if location??>${location.name}</#if></div>
 	   </div>
 	  </div>
       <div class="col-md-6">

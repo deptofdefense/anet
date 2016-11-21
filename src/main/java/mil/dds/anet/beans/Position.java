@@ -98,8 +98,9 @@ public class Position extends AbstractAnetView<Position> {
 	
 	@JsonIgnore
 	public Person getPerson() { 
-		if (person == null) { 
-			person = AnetObjectEngine.getInstance()
+		if (person == null || person.getLoadLevel() == null) { return person; } 
+		if (person.getLoadLevel().contains(LoadLevel.PROPERTIES) == false) { 
+			this.person = AnetObjectEngine.getInstance()
 					.getPositionDao().getPersonInPositionNow(this);
 		}
 		return person;
