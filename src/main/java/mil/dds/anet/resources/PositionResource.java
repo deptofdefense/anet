@@ -11,6 +11,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -48,8 +49,9 @@ public class PositionResource {
 	@Path("/{id}")
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	public Position getPosition(@PathParam("id") int id) {
-		Position b = dao.getById(id);
-		return b.render("show.ftl");
+		Position p = dao.getById(id);
+		if (p == null) { throw new WebApplicationException("Not Found", Status.NOT_FOUND); } 
+		return p.render("show.ftl");
 	}
 	
 	@GET

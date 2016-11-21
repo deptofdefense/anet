@@ -3,6 +3,8 @@ package mil.dds.anet.test.resources;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
@@ -237,19 +239,25 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		Response resp = httpQuery("/reports/", steve)
 			.header("Accept", "text/html").get();
 		assertThat(resp.getStatus()).isEqualTo(200);
-		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
+		String respBody = getResponseBody(resp);
+		assertThat(respBody).as("FreeMarker error").doesNotContain("FreeMarker template error");
+		
+		Pattern reportIdPat = Pattern.compile("href=\"/reports/([0-9]+)\"");
+		Matcher reportIdMat = reportIdPat.matcher(respBody);
+		assertThat(reportIdMat.find());
+		int reportId = Integer.parseInt(reportIdMat.group(1));
 		
 		resp = httpQuery("/reports/new", steve)
 				.header("Accept", "text/html").get();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
 		
-		resp = httpQuery("/reports/1", steve)
+		resp = httpQuery("/reports/" + reportId, steve)
 				.header("Accept", "text/html").get();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
 		
-		resp = httpQuery("/reports/1/edit", steve)
+		resp = httpQuery("/reports/" + reportId + "/edit", steve)
 				.header("Accept", "text/html").get();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");

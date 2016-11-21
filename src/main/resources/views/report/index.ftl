@@ -118,7 +118,7 @@
  	</div>
  	<div class="row">
  	<a class="expand" href="#">Expand</a>
- 	<a class="pull-right" href="/reports/${report.id}/">View</a>
+ 	<a class="pull-right" href="/reports/${report.id}">View</a>
  	</div>
     </div>
     <div class="expanded-area">

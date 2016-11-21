@@ -115,7 +115,7 @@ public class GroupsResourceTest extends AbstractResourceTest {
 		String respBody = getResponseBody(resp);
 		assertThat(respBody).as("FreeMarker error").doesNotContain("FreeMarker template error");
 		
-		Pattern groupIdPat = Pattern.compile("<a href=\"/groups/([0-9])+\">");
+		Pattern groupIdPat = Pattern.compile("<a href=\"/groups/([0-9]+)\">");
 		Matcher groupIdMat = groupIdPat.matcher(respBody);
 		assertThat(groupIdMat.find());
 		int groupId = Integer.parseInt(groupIdMat.group(1));

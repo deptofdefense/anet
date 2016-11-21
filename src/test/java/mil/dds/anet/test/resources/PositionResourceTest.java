@@ -3,6 +3,8 @@ package mil.dds.anet.test.resources;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
@@ -12,6 +14,7 @@ import org.joda.time.DateTime;
 import org.junit.Test;
 
 import io.dropwizard.client.JerseyClientBuilder;
+import io.dropwizard.util.Duration;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Position;
@@ -22,6 +25,7 @@ public class PositionResourceTest extends AbstractResourceTest {
 
 	public PositionResourceTest() { 
 		if (client == null) { 
+			config.setTimeout(Duration.seconds(30L));
 			client = new JerseyClientBuilder(RULE.getEnvironment()).using(config).build("positions test client");
 		}
 	}
@@ -119,19 +123,25 @@ public class PositionResourceTest extends AbstractResourceTest {
 		Response resp = httpQuery("/positions/", steve)
 			.header("Accept", "text/html").get();
 		assertThat(resp.getStatus()).isEqualTo(200);
-		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
+		String respBody = getResponseBody(resp);
+		assertThat(respBody).as("FreeMarker error").doesNotContain("FreeMarker template error");
+		
+		Pattern positionIdPat = Pattern.compile("<a href=\"/positions/([0-9]+)\">");
+		Matcher positionIdMat = positionIdPat.matcher(respBody);
+		assertThat(positionIdMat.find());
+		int positionId = Integer.parseInt(positionIdMat.group(1));
 		
 		resp = httpQuery("/positions/new", steve)
 				.header("Accept", "text/html").get();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
 		
-		resp = httpQuery("/positions/1", steve)
+		resp = httpQuery("/positions/" + positionId, steve)
 				.header("Accept", "text/html").get();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
 		
-		resp = httpQuery("/positions/1/edit", steve)
+		resp = httpQuery("/positions/" + positionId + "/edit", steve)
 				.header("Accept", "text/html").get();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
