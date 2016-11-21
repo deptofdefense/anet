@@ -122,7 +122,7 @@
 			</div>
 			<div class="col-md-8">
 				<input id="newCommentText"></input>
-				<button class="pull-right" id="newCommentBtn">Submit Comment</button>
+				<button data-toggle="tooltip" title="Your comment will be added above" class="pull-right" id="newCommentBtn">Submit Comment</button>
 				</div>
 			</div>
 		</div>

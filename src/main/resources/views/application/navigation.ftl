@@ -23,7 +23,7 @@
 				</#list>
 			</ul>
 		</li>
-		<li><a href="/">ANET Training</a></li>
-		<li><a href="/assets/anet-roadmap.jpg">ANETRoadmap</a></li>
+		<li><a data-toggle="tooltip" title="Coming soon!" href="/">ANET Training</a></li>
+		<#-- <li><a href="/assets/anet-roadmap.jpg">ANETRoadmap</a></li> -->
 	</ul>
 </div>
