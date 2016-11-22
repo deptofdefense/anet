@@ -2,15 +2,21 @@ package mil.dds.anet.test.resources;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 
 import org.junit.Test;
 
 import io.dropwizard.client.JerseyClientBuilder;
 import mil.dds.anet.beans.Organization;
-import mil.dds.anet.beans.Position;
+import mil.dds.anet.beans.Organization.OrganizationType;
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.Position;
 import mil.dds.anet.test.beans.OrganizationTest;
 import mil.dds.anet.test.beans.PositionTest;
 
@@ -56,7 +62,48 @@ public class OrganizationResourceTest extends AbstractResourceTest {
 		assertThat(ret.getOrganization()).isNotNull();
 		assertThat(ret.getOrganization().getId()).isEqualTo(updated.getId());
 				
+		//Create a child organizations
+		Organization child = new Organization();
+		child.setParentOrg(Organization.createWithId(created.getId()));
+		child.setName("Child McAo");
+		child.setType(OrganizationType.ADVISOR_ORG);
+		child = httpQuery("/organizations/new", steve)
+				.post(Entity.json(child), Organization.class);
+		assertThat(child.getId()).isNotNull();
 		
+		List<Organization> children = httpQuery(String.format("/organizations/%d/children", created.getId()), steve)
+			.get(new GenericType<List<Organization>>() {});
+		assertThat(children).hasSize(1).contains(child);
 	}
 	
+	
+	@Test
+	public void viewTest() { 
+		Person steve = getSteveSteveson();
+		Response resp = httpQuery("/organizations/", steve)
+			.header("Accept", "text/html").get();
+		assertThat(resp.getStatus()).isEqualTo(200);
+		String respBody = getResponseBody(resp);
+		assertThat(respBody).as("FreeMarker error").doesNotContain("FreeMarker template error");
+		
+		Pattern idPat = Pattern.compile("href=\"/organizations/([0-9]+)\"");
+		Matcher idMat = idPat.matcher(respBody);
+		assertThat(idMat.find());
+		int orgId = Integer.parseInt(idMat.group(1));
+		
+		resp = httpQuery("/organizations/new", steve)
+				.header("Accept", "text/html").get();
+		assertThat(resp.getStatus()).isEqualTo(200);
+		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
+		
+		resp = httpQuery("/organizations/" + orgId, steve)
+				.header("Accept", "text/html").get();
+		assertThat(resp.getStatus()).isEqualTo(200);
+		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
+		
+		resp = httpQuery("/organizations/" + orgId + "/edit", steve)
+				.header("Accept", "text/html").get();
+		assertThat(resp.getStatus()).isEqualTo(200);
+		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
+	}
 }

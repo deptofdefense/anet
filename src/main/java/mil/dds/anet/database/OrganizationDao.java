@@ -50,15 +50,23 @@ public class OrganizationDao implements IAnetDao<Organization> {
 		return (results.size() == 0) ? null : results.get(0);
 	}
 	
+	public List<Organization> getByParentOrgId(int parentId) { 
+		return dbHandle.createQuery("SELECT * FROM organizations WHERE parentOrgId = :parentId")
+			.bind("parentId",parentId)
+			.map(new OrganizationMapper())
+			.list();
+	}
+	
 	public Organization insert(Organization org) {
 		org.setCreatedAt(DateTime.now());
 		org.setUpdatedAt(org.getCreatedAt());
 		
 		GeneratedKeys<Map<String,Object>> keys = dbHandle.createStatement(
-				"INSERT INTO organizations (name, type, createdAt, updatedAt) " + 
-				"VALUES (:name, :type, :createdAt, :updatedAt)")
+				"INSERT INTO organizations (name, type, createdAt, updatedAt, parentOrgId) " + 
+				"VALUES (:name, :type, :createdAt, :updatedAt, :parentOrgId)")
 			.bindFromProperties(org)
 			.bind("type", DaoUtils.getEnumId(org.getType()))
+			.bind("parentOrgId", DaoUtils.getId(org.getParentOrgJson()))
 			.executeAndReturnGeneratedKeys();
 		
 		org.setId(((Integer)keys.first().get("last_insert_rowid()")).intValue());
@@ -68,9 +76,10 @@ public class OrganizationDao implements IAnetDao<Organization> {
 	public int update(Organization org) {
 		org.setUpdatedAt(DateTime.now());
 		int numRows = dbHandle.createStatement("UPDATE organizations "
-				+ "SET name = :name, type = :type, updatedAt = :updatedAt where id = :id")
+				+ "SET name = :name, type = :type, updatedAt = :updatedAt, parentOrgid = :parentOrgId where id = :id")
 				.bindFromProperties(org)
 				.bind("type", DaoUtils.getEnumId(org.getType()))
+				.bind("parentOrgId", DaoUtils.getId(org.getParentOrgJson()))
 				.execute();
 			
 		return numRows;

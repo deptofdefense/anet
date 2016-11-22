@@ -3,7 +3,17 @@
 
 <h1>${name}</h1>
 An ${type} - <a href="/organizations/${id}/edit">[edit]</a>
-
+<#if parentOrg??>Sub-Org under : <a href="/organizations/${parentOrg.id}">${parentOrg.name}</a></#if>
+<#list childrenOrganizations>
+	<div>
+	Sub Organizations:
+	<ul>
+	<#items as org>
+		<li><a href="/organizations/${org.id}">${org.name}</a></li>
+	</#items>
+	</ul>
+	</div>
+</#list>
 <h3>Positions in this Org:</h3>
 <#if positions??>
 <ul>

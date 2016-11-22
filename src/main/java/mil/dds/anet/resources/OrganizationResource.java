@@ -77,4 +77,10 @@ public class OrganizationResource {
 	public List<Organization> search(@QueryParam("q") String name, @QueryParam("type") OrganizationType type) {
 		return dao.searchByName(name, type);
 	}
+	
+	@GET
+	@Path("/{id}/children")
+	public List<Organization> getChildren(@PathParam("id") Integer id) { 
+		return dao.getByParentOrgId(id);
+	}
 }

@@ -7,6 +7,7 @@ import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSetter;
 
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.views.AbstractAnetView;
@@ -24,6 +25,7 @@ public class Organization extends AbstractAnetView<Organization> {
 	
 	List<Position> positions; /*Positions in this AO, lazy loaded*/
 	List<ApprovalStep> approvalSteps; /*Approval process for this AO, lazy loaded */
+	List<Organization> childrenOrgs; /* Lazy loaded */
 	
 	public String getName() {
 		return name;
@@ -34,8 +36,12 @@ public class Organization extends AbstractAnetView<Organization> {
 
 	@JsonIgnore
 	public Organization getParentOrg() { 
-		//TODO: handle load levels for parent org. 
-		return null;
+		if (parentOrg == null || parentOrg.getLoadLevel() == null) { return parentOrg; }
+		if (parentOrg.getLoadLevel().contains(LoadLevel.PROPERTIES) == false) { 
+			this.parentOrg = AnetObjectEngine.getInstance()
+					.getOrganizationDao().getById(parentOrg.getId());
+		}
+		return parentOrg;
 	}
 	
 	@JsonGetter("parentOrg")
@@ -43,6 +49,7 @@ public class Organization extends AbstractAnetView<Organization> {
 		return parentOrg;
 	}
 	
+	@JsonSetter("parentOrg")
 	public void setParentOrg(Organization parentOrg) {
 		this.parentOrg = parentOrg;
 	}
@@ -83,6 +90,24 @@ public class Organization extends AbstractAnetView<Organization> {
 					.getApprovalStepsForOrg(this);
 		}
 		return approvalSteps;
+	}
+	
+	@JsonIgnore
+	public List<Organization> getChildrenOrganizations() { 
+		if (childrenOrgs == null) { 
+			childrenOrgs = AnetObjectEngine.getInstance().getOrganizationDao().getByParentOrgId(id);
+		}
+		return childrenOrgs;
+	}
+	
+	@JsonGetter("childrenOrganizations")
+	public List<Organization> getChildrenOrganizationsJson() { 
+		return childrenOrgs;
+	}
+	
+	@JsonSetter("childrenOrganizations")
+	public void setChildrenOrganizations(List<Organization> childrenOrgs) { 
+		this.childrenOrgs = childrenOrgs;
 	}
 	
 	public static Organization create(String name, OrganizationType type) { 

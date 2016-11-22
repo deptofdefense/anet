@@ -31,6 +31,7 @@ public abstract class AbstractResourceTest {
 	public static Client client;
 	public static JerseyClientConfiguration config = new JerseyClientConfiguration();
 	static { 
+		config.setTimeout(Duration.seconds(30L));
 		config.setConnectionTimeout(Duration.seconds(10));
 	}
 	
