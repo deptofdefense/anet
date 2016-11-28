@@ -46,9 +46,10 @@
 				</div>
 
 				<div class="col-md-8">
-					<form class="usa-search usa-search-small top-search" action="/reports/search" >
+					<form class="usa-search usa-search-small top-search" action="/search" >
 						<div role="search">
 							<label class="usa-sr-only" for="search-field-small">Search small</label>
+							<input type="hidden" name="types" value="people,poams,locations,reports,organizations,positions" />
 							<input id="search-field-small" type="search" name="q">
 							<button type="submit"><span class="usa-sr-only">Search</span></button>
 						</div>

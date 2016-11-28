@@ -94,32 +94,6 @@ public class PositionDao implements IAnetDao<Position> {
 		dbHandle.createStatement("UPDATE positions set currentPersonId = null WHERE currentPersonId = :personId")
 			.bind("personId", person.getId())
 			.execute();
-//		List<Map<String,Object>> positions = dbHandle.createQuery("SELECT positionId FROM peoplePositions where personId = :personId ORDER BY createdAt DESC LIMIT 1")
-//			.bind("personId", p.getId())
-//			.list();
-//		if (positions.size() > 0) {
-//			Integer positionId = (Integer) positions.get(0).get("positionId");
-//			if (positionId != null) { 
-//				dbHandle.createStatement("INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES (:positionId, null, :createdAt)")
-//					.bind("positionId", positionId)
-//					.bind("createdAt", now)
-//					.execute();
-//			}
-//		}
-
-		//Whomever was previously in this position, need to insert a record of them being removed. 
-//		List<Map<String,Object>> persons = dbHandle.createQuery("SELECT personId from peoplePositions WHERE positionId = :positionId ORDER BY createdAt DESC LIMIT 1")
-//				.bind("positionId", b.getId())
-//				.list();
-//		if (persons.size() > 0) {
-//			Integer personId = (Integer) persons.get(0).get("personId");
-//			if (personId != null) { 
-//				dbHandle.createStatement("INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES (null, :personId, :createdAt)")
-//					.bind("personId", personId)
-//					.bind("createdAt", now)
-//					.execute();
-//			}
-//		}
 			
 		dbHandle.createStatement("UPDATE positions SET currentPersonId = :personId WHERE id = :positionId")
 			.bind("personId", person.getId())
@@ -273,6 +247,15 @@ public class PositionDao implements IAnetDao<Position> {
 		return dbHandle.createQuery(queryBuilder.toString())
 			.bind("code", code)
 			.bind("type", DaoUtils.getEnumId(type))
+			.map(new PositionMapper())
+			.list();
+	}
+	
+	public List<Position> search(String query) { 
+		return dbHandle.createQuery("SELECT " + POSITIONS_FIELDS + " FROM positions "
+				+ "WHERE name LIKE '%' || :q || '%' "
+				+ "OR code LIKE '%' || :q || '%'")
+			.bind("q", query)
 			.map(new PositionMapper())
 			.list();
 	}

@@ -1,4 +1,5 @@
 { 
 	"id" : null,
-	"name" : "The Best Advisors Ever"
+	"name" : "The Best Advisors Ever",
+	"type" : "ADVISOR_ORG"
 }

@@ -50,8 +50,10 @@ public class OrganizationDao implements IAnetDao<Organization> {
 		return (results.size() == 0) ? null : results.get(0);
 	}
 	
-	public List<Organization> getByParentOrgId(int parentId) { 
-		return dbHandle.createQuery("SELECT * FROM organizations WHERE parentOrgId = :parentId")
+	public List<Organization> getByParentOrgId(Integer parentId) { 
+		String query = (parentId == null) ? "SELECT * FROM organizations WHERE parentOrgId IS NULL" : 
+			"SELECT * FROM organizations WHERE parentOrgId = :parentId";
+		return dbHandle.createQuery(query)
 			.bind("parentId",parentId)
 			.map(new OrganizationMapper())
 			.list();

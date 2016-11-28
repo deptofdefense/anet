@@ -15,9 +15,8 @@
 		<li>
 			<a href="#">Advisor Organizations</a>
 			<ul class="usa-sidenav-sub_list collapsed">
-				<#assign seq = ["EF1", "EF2", "EF3", "EF4", "EF5", "EF6", "DA MOD"]>
-				<#list seq as ao>
-				<li><a href="/ao/${ao}">${ao}</a></li>
+				<#list context.topAdvisorOrgs as ao>
+				<li><a href="/organizations/${ao.id}">${ao.name}</a></li>
 				<#else>
 				<li>No AOs in Db</li>
 				</#list>

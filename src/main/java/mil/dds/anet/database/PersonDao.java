@@ -78,6 +78,12 @@ public class PersonDao implements IAnetDao<Person> {
 			.execute();
 	}
 	
+	/**
+	 * Searches all people by name regardless of role in the system. 
+	 */
+	public List<Person> searchByName(String searchQuery) { 
+		return searchByName(searchQuery, null);
+	}
 	
 	public List<Person> searchByName(String searchQuery, Role role) { 
 		String queryString = "SELECT * from people WHERE name LIKE '%' || :query || '%' ";
