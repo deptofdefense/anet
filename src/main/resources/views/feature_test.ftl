@@ -12,6 +12,16 @@
 		info.features = Modernizr;
 
 		var request = new XMLHttpRequest();
+		request.addEventListener('load', function() {
+			if (this.readyState === 4) {
+				if (this.status === 200) {
+					document.write('<p>Feature test completed successfully. Thank you!</p>');
+					document.write(this.responseText);
+				} else {
+					document.write('There was an error running the test. Would you mind trying again? If this continues, please let the ANET team know. Thank you!');
+				}
+			}
+		});
 		request.open('POST', '/testing/features');
 		request.setRequestHeader('Content-Type', 'application/json');
 		request.send(JSON.stringify(info));
