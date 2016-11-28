@@ -33,11 +33,11 @@ public class HomeResource {
 	
 	@GET
 	@Path("/search")
-	public HomeView search(@QueryParam("q") String query, @QueryParam("types") String types) {
+	public SimpleView search(@QueryParam("q") String query, @QueryParam("types") String types) {
 		if (types == null) { types = ALL_TYPES;}
 		types = types.toLowerCase();
 
-		HomeView view = (new HomeView()).render("/views/search.ftl");
+		SimpleView view = new SimpleView("/views/search.ftl");
 		if (types.contains("people")) { 
 			view.addToContext("people", AnetObjectEngine.getInstance().getPersonDao().searchByName(query));
 		}
@@ -56,13 +56,10 @@ public class HomeResource {
 		return view;
 	}
 	
-	
-	private static class HomeView extends AbstractAnetView<HomeView> {
-		@GET
-		@Path("/feature_test")
-		public SimpleView featureTest() {
-			return new SimpleView("/views/feature_test.ftl");
-		}
+	@GET
+	@Path("/feature_test")
+	public SimpleView featureTest() {
+		return new SimpleView("/views/feature_test.ftl");
 	}
 
 }
