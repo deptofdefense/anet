@@ -6,11 +6,15 @@
 </head>
 <body>
 	<script>
-		var features = JSON.stringify(Modernizr);
+		var info = {};
+		info.user_agent = navigator.userAgent;
+		info.size = {width: window.innerWidth, height: window.innerHeight};
+		info.features = Modernizr;
+
 		var request = new XMLHttpRequest();
 		request.open('POST', '/testing/features');
 		request.setRequestHeader('Content-Type', 'application/json');
-		request.send(features);
+		request.send(JSON.stringify(info));
 	</script>
 </body>
 </html>

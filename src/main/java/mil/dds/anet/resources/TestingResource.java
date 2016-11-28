@@ -59,7 +59,7 @@ public class TestingResource {
 	@POST
 	@Path("/features")
 	public HashMap<String, Object> featureTestPost(HashMap<String, Object> json) {
-		log.info("JSON: {}", json);
+		log.info("BROWSER_JSON: {}", json);
 		return json;
 	}
 }
