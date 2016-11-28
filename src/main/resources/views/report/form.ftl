@@ -51,6 +51,8 @@
 						<label for="atmosphereNeutral">😐</label>
 						<input type="radio" name="atmosphere" id="atmosphereNegative" value="negative">
 						<label for="atmosphereNegative">😡</label>
+						<!-- <input type="radio" name="atmosphere" id="atmosphereNegative" value="negative">
+						<label for="atmosphereNegative">💩🔥</label> -->
 					</div>
 
 					<div class="form-group hide" data-atmosphere-details>

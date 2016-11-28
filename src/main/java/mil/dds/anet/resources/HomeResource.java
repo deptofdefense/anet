@@ -11,7 +11,7 @@ import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Report;
-import mil.dds.anet.views.AbstractAnetView;
+import mil.dds.anet.views.SimpleView;
 
 @Path("")
 @PermitAll
@@ -19,11 +19,11 @@ public class HomeResource {
 
 	@GET
 	@Path("")
-	public HomeView index(@Auth Person p) {
-		//Get a list of any reports this person wrote that need to be approved, and reports that this person can approve. 
+	public SimpleView index(@Auth Person p) {
+		//Get a list of any reports this person wrote that need to be approved, and reports that this person can approve.
 		List<Report> myApprovals = AnetObjectEngine.getInstance().getReportDao().getReportsForMyApproval(p);
 		List<Report> myPending = AnetObjectEngine.getInstance().getReportDao().getMyReportsPendingApproval(p);
-		HomeView view = new HomeView();
+		SimpleView view = new SimpleView("/views/index.ftl");
 		view.addToContext("myApprovals", myApprovals);
 		view.addToContext("myPending", myPending);
 		return view;
@@ -58,10 +58,11 @@ public class HomeResource {
 	
 	
 	private static class HomeView extends AbstractAnetView<HomeView> {
-
-		protected HomeView() {
-			render("/views/index.ftl");
-		} 
-		
+		@GET
+		@Path("/feature_test")
+		public SimpleView featureTest() {
+			return new SimpleView("/views/feature_test.ftl");
+		}
 	}
+
 }
