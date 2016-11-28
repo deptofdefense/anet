@@ -28,9 +28,9 @@ public class HomeResource {
 		view.addToContext("myPending", myPending);
 		return view;
 	}
-	
+
 	public static String ALL_TYPES = "people,reports,positions,poams,locations";
-	
+
 	@GET
 	@Path("/search")
 	public SimpleView search(@QueryParam("q") String query, @QueryParam("types") String types) {
@@ -38,28 +38,21 @@ public class HomeResource {
 		types = types.toLowerCase();
 
 		SimpleView view = new SimpleView("/views/search.ftl");
-		if (types.contains("people")) { 
+		if (types.contains("people")) {
 			view.addToContext("people", AnetObjectEngine.getInstance().getPersonDao().searchByName(query));
 		}
-		if (types.contains("reports")) { 
+		if (types.contains("reports")) {
 			view.addToContext("reports", AnetObjectEngine.getInstance().getReportDao().search(query));
 		}
-		if (types.contains("positions")) { 
+		if (types.contains("positions")) {
 			view.addToContext("positions", AnetObjectEngine.getInstance().getPositionDao().search(query));
 		}
-		if (types.contains("poams")) { 
+		if (types.contains("poams")) {
 			view.addToContext("poams", AnetObjectEngine.getInstance().getPoamDao().search(query));
 		}
-		if (types.contains("locations")) { 
+		if (types.contains("locations")) {
 			view.addToContext("locations", AnetObjectEngine.getInstance().getLocationDao().searchByName(query));
 		}
 		return view;
 	}
-	
-	@GET
-	@Path("/feature_test")
-	public SimpleView featureTest() {
-		return new SimpleView("/views/feature_test.ftl");
-	}
-
 }
