@@ -23,7 +23,13 @@ public class PoamDao implements IAnetDao<Poam> {
 	}
 	
 	public List<Poam> getAll(int pageNum, int pageSize) { 
-		Query<Poam> query = dbHandle.createQuery("SELECT * from poams ORDER BY createdAt ASC LIMIT :limit OFFSET :offset")
+		String sql;
+		if (DaoUtils.isMsSql(dbHandle)) { 
+			sql = "SELECT * FROM poams ORDER BY createdAt ASC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY";
+		} else { 
+			sql = "SELECT * from poams ORDER BY createdAt ASC LIMIT :limit OFFSET :offset";
+		}
+		Query<Poam> query = dbHandle.createQuery(sql)
 				.bind("limit", pageSize)
 				.bind("offset", pageSize * pageNum)
 				.map(new PoamMapper());
@@ -49,7 +55,7 @@ public class PoamDao implements IAnetDao<Poam> {
 			.bindFromProperties(p)
 			.bind("parentPoamId", (p.getParentPoam() == null) ? null : p.getParentPoam().getId())
 			.executeAndReturnGeneratedKeys();
-		p.setId((Integer)keys.first().get("last_insert_rowid()"));
+		p.setId(DaoUtils.getGeneratedId(keys));
 		return p;
 	}
 	
@@ -79,12 +85,19 @@ public class PoamDao implements IAnetDao<Poam> {
 	}
 	
 	/* Returns the poam and all poams under this one (to all depths) */
-	public List<Poam> getPoamAndChildren(int poamId) { 
-		return dbHandle.createQuery("WITH RECURSIVE parent_poams(id, shortName, longName, category, parentPoamId, createdAt, updatedAt) AS (" + 
-					"SELECT * FROM poams WHERE id = :poamId " + 
-				"UNION ALL " + 
-					"SELECT p.* from parent_poams pp, poams p WHERE p.parentPoamId = pp.id " +
-				") SELECT * from parent_poams;")
+	public List<Poam> getPoamAndChildren(int poamId) {
+		StringBuilder sql = new StringBuilder();
+		if (DaoUtils.isMsSql(dbHandle)) { 
+			sql.append("WITH");
+		} else { 
+			sql.append("WITH RECURSIVE");
+		}
+		sql.append(" parent_poams(id, shortName, longName, category, parentPoamId, createdAt, updatedAt) AS (" + 
+				"SELECT * FROM poams WHERE id = :poamId " + 
+			"UNION ALL " + 
+				"SELECT p.* from parent_poams pp, poams p WHERE p.parentPoamId = pp.id " +
+			") SELECT * from parent_poams;");
+		return dbHandle.createQuery(sql.toString())
 			.bind("poamId", poamId)
 			.map(new PoamMapper())
 			.list();

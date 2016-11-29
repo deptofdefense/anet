@@ -51,7 +51,7 @@ public class ApprovalStepDao implements IAnetDao<ApprovalStep> {
 			.bind("advisorOrganizationId", as.getAdvisorOrganizationId())
 			.executeAndReturnGeneratedKeys();
 		
-		as.setId((Integer)keys.first().get("last_insert_rowid()"));
+		as.setId(DaoUtils.getGeneratedId(keys));
 		
 		//Add this Step to the current org list. 
 		dbHandle.createStatement("UPDATE approvalSteps SET nextStepId = :id " + 

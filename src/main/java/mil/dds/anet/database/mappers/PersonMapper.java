@@ -32,8 +32,8 @@ public class PersonMapper implements ResultSetMapper<Person> {
 		a.setRank(r.getString("rank"));
 		a.setBiography(r.getString("biography"));
 		a.setPendingVerification(r.getBoolean("pendingVerification"));
-		a.setCreatedAt(new DateTime(r.getLong("createdAt")));
-		a.setUpdatedAt(new DateTime(r.getLong("updatedAt")));
+		a.setCreatedAt(new DateTime(r.getTimestamp("createdAt")));
+		a.setUpdatedAt(new DateTime(r.getTimestamp("updatedAt")));
 		
 		Integer locationId = MapperUtils.getInteger(r, "locationId");
 		if (locationId != null) { 

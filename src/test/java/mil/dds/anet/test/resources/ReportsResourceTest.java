@@ -11,6 +11,7 @@ import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.joda.time.DateTime;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
@@ -120,6 +121,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		//Write a Report
 		Report r = new Report();
 		r.setAuthor(author);
+		r.setEngagementDate(DateTime.now());
 		r.setAttendees(Lists.newArrayList(principal));
 		r.setPoams(Lists.newArrayList(action));
 		r.setLocation(loc);

@@ -32,7 +32,13 @@ public class OrganizationDao implements IAnetDao<Organization> {
 		if (type != null) { 
 			queryBuilder.append("AND type = :type ");
 		}
-		queryBuilder.append("ORDER BY createdAt ASC LIMIT :limit OFFSET :offset");
+		queryBuilder.append("ORDER BY createdAt ASC ");
+		if (DaoUtils.isMsSql(dbHandle)) { 
+			queryBuilder.append("OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY");
+		} else { 
+			queryBuilder.append("LIMIT :limit OFFSET :offset");	
+		}
+		
 		return dbHandle.createQuery(queryBuilder.toString())
 			.bind("limit", pageSize)
 			.bind("offset", pageSize * pageNum)
@@ -71,7 +77,7 @@ public class OrganizationDao implements IAnetDao<Organization> {
 			.bind("parentOrgId", DaoUtils.getId(org.getParentOrgJson()))
 			.executeAndReturnGeneratedKeys();
 		
-		org.setId(((Integer)keys.first().get("last_insert_rowid()")).intValue());
+		org.setId(DaoUtils.getGeneratedId(keys));
 		return org;
 	}
 	

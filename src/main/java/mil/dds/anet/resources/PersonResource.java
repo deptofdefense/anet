@@ -146,13 +146,6 @@ public class PersonResource {
 		return dao.searchByName(query, role);
 	}
 	
-	@GET
-	@Path("/search")
-	@Produces(MediaType.TEXT_HTML)
-	public Person getSearchPage() { 
-		return (new Person()).render("search.ftl");
-	}
-	
 	/**
 	 * Fetches the current position that a given person  is in. 
 	 * @param personId the ID number of the person whose position you want to lookup

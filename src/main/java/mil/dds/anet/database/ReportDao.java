@@ -7,7 +7,6 @@ import org.joda.time.DateTime;
 import org.skife.jdbi.v2.GeneratedKeys;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.Query;
-import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
@@ -19,17 +18,22 @@ import mil.dds.anet.database.mappers.ReportMapper;
 import mil.dds.anet.database.mappers.ReportPersonMapper;
 import mil.dds.anet.utils.DaoUtils;
 
-@RegisterMapper(ReportMapper.class)
 public class ReportDao implements IAnetDao<Report> {
 
 	Handle dbHandle;
 	
-	public ReportDao(Handle db) { 
+	public ReportDao(Handle db) {
 		this.dbHandle = db;
 	}
 	
 	public List<Report> getAll(int pageNum, int pageSize) {
-		Query<Report> query = dbHandle.createQuery("SELECT * from reports ORDER BY createdAt ASC LIMIT :limit OFFSET :offset")
+		String sql;
+		if (DaoUtils.isMsSql(dbHandle)) {
+			sql = "SELECT * FROM reports ORDER BY createdAt ASC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY";
+		} else { 
+			sql = "SELECT * from reports ORDER BY createdAt ASC LIMIT :limit OFFSET :offset";
+		}
+		Query<Report> query = dbHandle.createQuery(sql)
 			.bind("limit", pageSize)
 			.bind("offset", pageSize * pageNum)
 			.map(new ReportMapper());
@@ -38,23 +42,23 @@ public class ReportDao implements IAnetDao<Report> {
 	
 	public Report insert(Report r) {
 		r.setCreatedAt(DateTime.now());
-		r.setUpdatedAt(DateTime.now());
+		r.setUpdatedAt(r.getCreatedAt());
+		
 		GeneratedKeys<Map<String, Object>> keys = dbHandle.createStatement(
 				"INSERT INTO reports " + 
 				"(state, createdAt, updatedAt, locationId, intent, exsum, " +
 				"text, nextSteps, authorId, engagementDate, atmosphere, " + 
 				"atmosphereDetails) VALUES " +
 				"(:state, :createdAt, :updatedAt, :locationId, :intent, " +
-				":exsum, :text, :nextSteps, :authorId, :engagementDate, " + 
+				":exsum, :reportText, :nextSteps, :authorId, :engagementDate, " + 
 				":atmosphere, :atmosphereDetails)")
 			.bindFromProperties(r)
 			.bind("state", DaoUtils.getEnumId(r.getState()))
 			.bind("atmosphere", DaoUtils.getEnumId(r.getAtmosphere()))
 			.bind("locationId", DaoUtils.getId(r.getLocation()))
-			.bind("text", r.getReportText())
 			.bind("authorId", r.getAuthor().getId())
 			.executeAndReturnGeneratedKeys();
-		r.setId((Integer) (keys.first().get("last_insert_rowid()")));
+		r.setId(DaoUtils.getGeneratedId(keys));
 		
 		if (r.getAttendeesJson() != null) { 
 			for (ReportPerson p : r.getAttendeesJson()) { 
@@ -103,6 +107,7 @@ public class ReportDao implements IAnetDao<Report> {
 			.bind("text", r.getReportText())
 			.bind("authorId", r.getAuthor().getId())
 			.bind("approvalStepId", DaoUtils.getId(r.getApprovalStepJson()))
+			.bind("atmosphere", DaoUtils.getEnumId(r.getAtmosphere()))
 			.bind("reportId", r.getId())
 			.execute();
 	}
@@ -136,9 +141,10 @@ public class ReportDao implements IAnetDao<Report> {
 	
 	public List<Report> getMyReportsPendingApproval(Person p) { 
 		return dbHandle.createQuery("SELECT * from reports WHERE authorId = :authorId "
-				+ "AND state = :state ORDER BY createdAt DESC")
+				+ "AND state IN (:pending, :draft) ORDER BY createdAt DESC")
 			.bind("authorId", p.getId())
-			.bind("state", ReportState.PENDING_APPROVAL.ordinal())
+			.bind("pending", ReportState.PENDING_APPROVAL.ordinal())
+			.bind("draft", ReportState.DRAFT.ordinal())
 			.map(new ReportMapper())
 			.list();
 	}
@@ -153,8 +159,13 @@ public class ReportDao implements IAnetDao<Report> {
 	}
 
 	public List<Report> search(String query) {
-		return dbHandle.createQuery("SELECT * FROM reports "
-				+ "WHERE text LIKE '%' || :query || '%';")
+		String sql;
+		if (DaoUtils.isMsSql(dbHandle)) { 
+			sql = "SELECT * FROM reports WHERE FREETEXT ((text, nextSteps, intent, atmosphereDetails),:query)";
+		} else { 
+			sql = "SELECT * FROM reports WHERE text LIKE '%' || :query || '%'";
+		}
+		return dbHandle.createQuery(sql)
 			.bind("query", query)
 			.map(new ReportMapper())
 			.list();

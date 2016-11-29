@@ -25,8 +25,8 @@ public class OrganizationMapper implements ResultSetMapper<Organization> {
 			org.setParentOrg(Organization.createWithId(parentOrgId));
 		}
 		
-		org.setCreatedAt(new DateTime(r.getLong("createdAt")));
-		org.setUpdatedAt(new DateTime(r.getLong("updatedAt")));
+		org.setCreatedAt(new DateTime(r.getTimestamp("createdAt")));
+		org.setUpdatedAt(new DateTime(r.getTimestamp("updatedAt")));
 		org.setLoadLevel(LoadLevel.PROPERTIES);
 		return org;
 	}

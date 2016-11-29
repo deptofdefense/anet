@@ -23,8 +23,8 @@ public class PoamMapper implements ResultSetMapper<Poam> {
 		if (parentPoamId != null) { 
 			p.setParentPoam(Poam.createWithId(parentPoamId));
 		}
-		p.setCreatedAt(new DateTime(r.getLong("createdAt")));
-		p.setUpdatedAt(new DateTime(r.getLong("updatedAt")));
+		p.setCreatedAt(new DateTime(r.getTimestamp("createdAt")));
+		p.setUpdatedAt(new DateTime(r.getTimestamp("updatedAt")));
 		return p;
 	}
 

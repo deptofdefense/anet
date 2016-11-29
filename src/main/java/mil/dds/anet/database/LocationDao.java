@@ -12,6 +12,7 @@ import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
 import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.database.mappers.LocationMapper;
+import mil.dds.anet.utils.DaoUtils;
 
 @RegisterMapper(LocationMapper.class)
 public class LocationDao implements IAnetDao<Location> {
@@ -53,7 +54,7 @@ public class LocationDao implements IAnetDao<Location> {
 			.bind("createdAt", l.getCreatedAt())
 			.bind("updatedAt", l.getUpdatedAt())
 			.executeAndReturnGeneratedKeys();
-		l.setId((Integer) (keys.first().get("last_insert_rowid()")));
+		l.setId(DaoUtils.getGeneratedId(keys));
 		return l;
 	}
 	
@@ -65,12 +66,18 @@ public class LocationDao implements IAnetDao<Location> {
 				.bind("name", l.getName())
 				.bind("lat", l.getLatLng().getLat())
 				.bind("lng", l.getLatLng().getLng())
-				.bind("updatedAt", DateTime.now())
+				.bind("updatedAt", DateTime.now()	)
 				.execute();
 	}
 
-	public List<Location> searchByName(String name) { 
-		Query<Location> query = dbHandle.createQuery("SELECT * FROM locations WHERE name LIKE '%' || :name || '%'")
+	public List<Location> searchByName(String name) {
+		String sql;
+		if (DaoUtils.isMsSql(dbHandle)) { 
+			sql = "SELECT * FROM locations WHERE FREETEXT (name, :name)";
+		} else { 
+			sql = "SELECT * FROM locations WHERE name LIKE '%' || :name || '%'";
+		}
+		Query<Location> query = dbHandle.createQuery(sql)
 			.bind("name", name)
 			.map(new LocationMapper());
 		return query.list();

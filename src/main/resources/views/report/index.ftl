@@ -14,18 +14,20 @@
 			      <tr class="header">
 			        <th scope="col">Reporters</th>
 			        <th scope="col">Summary</th>
-			        <th scope="col">Submitted</th>
+			        <th scope="col">Status</th>
+			        <th scope="col">Last Updated</th>
 			      </tr>
 			    </thead>
 			    <tbody>
 			    <#list context.myPending as report>
 			      <tr>
 			        <th scope="row">${report.author.name}</th>
-			        <td>${report.intent}</td>
+			        <td><a href="/reports/${report.id}">${report.intent}</a></td>
+			        <td>${report.state}</td>
 			        <td>${report.updatedAt}</td>
 			      </tr>
 			    <#else>
-			    	<tr><td colspan=3>None</td></tr>
+			    	<tr><td colspan=4>None</td></tr>
 			    </#list>
 		      </tbody>
 	      </table>

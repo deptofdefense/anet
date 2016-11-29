@@ -9,9 +9,6 @@ import org.joda.time.DateTime;
 import org.skife.jdbi.v2.GeneratedKeys;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.Query;
-import org.skife.jdbi.v2.sqlobject.Bind;
-import org.skife.jdbi.v2.sqlobject.BindBean;
-import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
@@ -23,7 +20,6 @@ import mil.dds.anet.database.mappers.OrganizationMapper;
 import mil.dds.anet.database.mappers.PersonMapper;
 import mil.dds.anet.utils.DaoUtils;
 
-@RegisterMapper(PersonMapper.class)
 public class PersonDao implements IAnetDao<Person> {
 
 	Handle dbHandle;
@@ -33,7 +29,13 @@ public class PersonDao implements IAnetDao<Person> {
 	}
 	
 	public List<Person> getAll(int pageNum, int pageSize) {
-		Query<Person> query = dbHandle.createQuery("SELECT * from people ORDER BY createdAt ASC LIMIT :limit OFFSET :offset")
+		String sql;
+		if (DaoUtils.isMsSql(dbHandle)) { 
+			sql = "SELECT * FROM people ORDER BY createdAt ASC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY";
+		} else { 
+			sql = "SELECT * from people ORDER BY createdAt ASC LIMIT :limit OFFSET :offset";
+		}
+		Query<Person> query = dbHandle.createQuery(sql)
 			.bind("limit", pageSize)
 			.bind("offset", pageSize * pageNum)
 			.map(new PersonMapper());
@@ -49,7 +51,7 @@ public class PersonDao implements IAnetDao<Person> {
 		return rs.get(0);
 	}
 	
-	public Person insert(@BindBean Person p){
+	public Person insert(Person p){
 		p.setCreatedAt(DateTime.now());
 		p.setUpdatedAt(DateTime.now());
 		GeneratedKeys<Map<String, Object>> keys = dbHandle.createStatement("INSERT INTO people " +
@@ -60,11 +62,11 @@ public class PersonDao implements IAnetDao<Person> {
 			.bind("role", DaoUtils.getEnumId(p.getRole()))
 			.bind("locationId", DaoUtils.getId(p.getLocation()))
 			.executeAndReturnGeneratedKeys();
-		p.setId((Integer)keys.first().get("last_insert_rowid()"));
+		p.setId(DaoUtils.getGeneratedId(keys));
 		return p;
 	}
 	
-	public int update(@BindBean Person p){
+	public int update(Person p){
 		p.setUpdatedAt(DateTime.now());
 		return dbHandle.createStatement("UPDATE people " + 
 				"SET name = :name, status = :status, role = :role, " + 
@@ -85,24 +87,40 @@ public class PersonDao implements IAnetDao<Person> {
 		return searchByName(searchQuery, null);
 	}
 	
-	public List<Person> searchByName(String searchQuery, Role role) { 
-		String queryString = "SELECT * from people WHERE name LIKE '%' || :query || '%' ";
-		if (role != null ) { 
-			queryString += " AND role = :role";
+	public List<Person> searchByName(String searchQuery, Role role) {
+		StringBuilder queryBuilder = new StringBuilder("SELECT * FROM people WHERE ");
+		if (DaoUtils.isMsSql(dbHandle)) { 
+			queryBuilder.append("FREETEXT ((name, emailAddress, biography),:query)");
+		} else { 
+			queryBuilder.append("name LIKE '%' || :query || '%' ");
 		}
-		Query<Person> query = dbHandle.createQuery(queryString)
+		if (role != null ) { 
+			queryBuilder.append(" AND role = :role");
+		}
+		Query<Person> query = dbHandle.createQuery(queryBuilder.toString())
 			.bind("query", searchQuery)
 			.bind("role", (role != null) ? role.ordinal() : null)
 			.map(new PersonMapper());
 		return query.list();
 	}
 	
-	public Organization getOrganizationForPerson(@Bind("personId") int personId) { 
-		Query<Organization> query = dbHandle.createQuery("SELECT organizations.* " +
-				"FROM organizations, positions, peoplePositions WHERE " + 
-				"peoplePositions.personId = :personId AND peoplePositions.positionId = positions.id " + 
-				"AND positions.organizationId = organizations.id " + 
-				"ORDER BY peoplePositions.createdAt DESC LIMIT 1")
+	public Organization getOrganizationForPerson(int personId) { 
+		String sql;
+		if (DaoUtils.isMsSql(dbHandle)) { 
+			sql = "SELECT TOP(1)organizations.* " +
+					"FROM organizations, positions, peoplePositions WHERE " + 
+					"peoplePositions.personId = :personId AND peoplePositions.positionId = positions.id " + 
+					"AND positions.organizationId = organizations.id " + 
+					"ORDER BY peoplePositions.createdAt DESC";
+		} else { 
+			sql = "SELECT organizations.* " +
+					"FROM organizations, positions, peoplePositions WHERE " + 
+					"peoplePositions.personId = :personId AND peoplePositions.positionId = positions.id " + 
+					"AND positions.organizationId = organizations.id " + 
+					"ORDER BY peoplePositions.createdAt DESC LIMIT 1";
+		}
+		
+		Query<Organization> query = dbHandle.createQuery(sql)
 			.bind("personId", personId)
 			.map(new OrganizationMapper());
 		List<Organization> rs = query.list();

@@ -19,8 +19,8 @@ public class LocationMapper implements ResultSetMapper<Location> {
 		l.setId(r.getInt("id"));
 		l.setName(r.getString("name"));
 		l.setLatLng(new LatLng(r.getDouble("lat"), r.getDouble("lng")));
-		l.setCreatedAt(new DateTime(r.getLong("createdAt")));
-		l.setUpdatedAt(new DateTime(r.getLong("updatedAt")));
+		l.setCreatedAt(new DateTime(r.getTimestamp("createdAt")));
+		l.setUpdatedAt(new DateTime(r.getTimestamp("updatedAt")));
 		l.setLoadLevel(LoadLevel.PROPERTIES);
 		return l;
 	}

@@ -22,7 +22,7 @@ public class ApprovalActionMapper implements ResultSetMapper<ApprovalAction> {
 		aa.setReport(Report.createWithId(MapperUtils.getInteger(rs, "reportId")));
 		aa.setStep(ApprovalStep.createWithId(MapperUtils.getInteger(rs, "approvalStepId")));
 		
-		aa.setCreatedAt(new DateTime(rs.getLong("createdAt")));
+		aa.setCreatedAt(new DateTime(rs.getTimestamp("createdAt")));
 		aa.setType(MapperUtils.getEnumIdx(rs, "type", ApprovalType.class));
 //		aa.setLoadLevel(LoadLevel.PROPERTIES);
 	

@@ -14,6 +14,7 @@ import mil.dds.anet.beans.Group;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.database.mappers.GroupMapper;
 import mil.dds.anet.database.mappers.PersonMapper;
+import mil.dds.anet.utils.DaoUtils;
 
 @RegisterMapper(GroupMapper.class)
 public class GroupDao implements IAnetDao<Group> {
@@ -26,7 +27,13 @@ public class GroupDao implements IAnetDao<Group> {
 	
 	@Override
 	public List<Group> getAll(int pageNum, int pageSize) {
-		Query<Group> query = dbHandle.createQuery("SELECT * from groups ORDER BY createdAt ASC LIMIT :limit OFFSET :offset")
+		String sql;
+		if (DaoUtils.isMsSql(dbHandle)) { 
+			sql = "SELECT * FROM groups ORDER BY createdAt ASC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY";
+		} else { 
+			sql = "SELECT * from groups ORDER BY createdAt ASC LIMIT :limit OFFSET :offset";
+		}
+		Query<Group> query = dbHandle.createQuery(sql)
 			.bind("limit", pageSize)
 			.bind("offset", pageSize * pageNum)
 			.map(new GroupMapper());
@@ -63,7 +70,9 @@ public class GroupDao implements IAnetDao<Group> {
 			.bind("createdAt", g.getCreatedAt())
 			.executeAndReturnGeneratedKeys();
 		
-		g.setId(((Integer)keys.first().get("last_insert_rowid()")).intValue());
+		//"generated_keys"
+
+		g.setId(DaoUtils.getGeneratedId(keys));
 		
 		if (g.getMembers() != null && g.getMembers().size() > 0 ) { 
 			PreparedBatch memberInsertBatch = dbHandle.prepareBatch("INSERT INTO groupMemberships (groupId, personId) VALUES (:groupId, :personId)");

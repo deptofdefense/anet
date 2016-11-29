@@ -39,7 +39,7 @@ public class PositionMapper implements ResultSetMapper<Position> {
 			} catch (SQLException e) {}
 			p.setPerson(person);
 		}
-		p.setCreatedAt(new DateTime(r.getLong("pos_createdAt")));
+		p.setCreatedAt(new DateTime(r.getTimestamp("pos_createdAt")));
 		p.setLoadLevel(LoadLevel.PROPERTIES);
 		return p;
 	}

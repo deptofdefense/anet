@@ -87,6 +87,8 @@ public class GroupsResourceTest extends AbstractResourceTest {
 		
 		Group returned = httpQuery(String.format("/groups/%d", created.getId()), steve)
 				.get(Group.class);
+//		created.getCreatedAt()
+//		returned.getCreatedAt()
 		assertThat(created).isEqualTo(returned);
 	}
 	

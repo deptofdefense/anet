@@ -80,6 +80,7 @@ public class PositionResourceTest extends AbstractResourceTest {
 		//delete the person from this position
 		resp = httpQuery(String.format("/positions/%d/person", created.getId()), jack).delete();
 		assertThat(resp.getStatus()).isEqualTo(200);
+		
 		curr = httpQuery(String.format("/positions/%d/person",created.getId()), jack).get(Person.class);
 		assertThat(curr).isNull();
 		

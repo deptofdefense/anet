@@ -17,7 +17,7 @@ public class GroupMapper implements ResultSetMapper<Group> {
 		Group g = new Group();
 		g.setId(r.getInt("id"));
 		g.setName(r.getString("name"));
-		g.setCreatedAt(new DateTime(r.getLong("createdAt")));
+		g.setCreatedAt(new DateTime(r.getTimestamp("createdAt")));
 		g.setLoadLevel(LoadLevel.PROPERTIES);
 		return g;
 	}

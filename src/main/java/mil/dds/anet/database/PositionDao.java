@@ -29,7 +29,13 @@ public class PositionDao implements IAnetDao<Position> {
 	}
 	
 	public List<Position> getAll(int pageNum, int pageSize) {
-		Query<Position> query = dbHandle.createQuery("SELECT " + POSITIONS_FIELDS + " from positions ORDER BY createdAt ASC LIMIT :limit OFFSET :offset")
+		String sql;
+		if (DaoUtils.isMsSql(dbHandle)) { 
+			sql = "SELECT " + POSITIONS_FIELDS + " FROM positions ORDER BY createdAt ASC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY";
+		} else { 
+			sql = "SELECT " + POSITIONS_FIELDS + " from positions ORDER BY createdAt ASC LIMIT :limit OFFSET :offset";
+		}
+		Query<Position> query = dbHandle.createQuery(sql)
 			.bind("limit", pageSize)
 			.bind("offset", pageSize * pageNum)
 			.map(new PositionMapper());
@@ -38,7 +44,7 @@ public class PositionDao implements IAnetDao<Position> {
 	
 	public Position insert(Position p) { 
 		p.setCreatedAt(DateTime.now());
-		p.setUpdatedAt(DateTime.now());
+		p.setUpdatedAt(p.getCreatedAt());
 		GeneratedKeys<Map<String,Object>> keys = dbHandle.createStatement(
 				"INSERT INTO positions (name, code, type, organizationId, currentPersonId, createdAt, updatedAt) " +
 				"VALUES (:name, :code, :type, :organizationId, :currentPersonId, :createdAt, :updatedAt)")
@@ -47,7 +53,7 @@ public class PositionDao implements IAnetDao<Position> {
 			.bind("organizationId", DaoUtils.getId(p.getOrganizationJson()))
 			.bind("currentPersonId", DaoUtils.getId(p.getPersonJson()))
 			.executeAndReturnGeneratedKeys();
-		p.setId((Integer) (keys.first().get("last_insert_rowid()")));
+		p.setId(DaoUtils.getGeneratedId(keys));
 		
 		//TODO: this should be in a transaction.
 		if (p.getPersonJson() != null) { 
@@ -115,10 +121,19 @@ public class PositionDao implements IAnetDao<Position> {
 			.bind("positionId", position.getId())
 			.execute();
 			
-		dbHandle.createStatement("INSERT INTO peoplePositions (positionId, personId, createdAt) " + 
-			"VALUES(null, " +
-				"(SELECT personId FROM peoplePositions WHERE positionId = :positionId ORDER BY createdAt DESC LIMIT 1), " +
-			":createdAt)")
+		String sql;
+		if (DaoUtils.isMsSql(dbHandle)) { 
+			sql = "INSERT INTO peoplePositions (positionId, personId, createdAt) " + 
+					"VALUES(null, " +
+					"(SELECT TOP(1)personId FROM peoplePositions WHERE positionId = :positionId ORDER BY createdAt DESC), " +
+				":createdAt)";
+		} else { 
+			sql = "INSERT INTO peoplePositions (positionId, personId, createdAt) " + 
+					"VALUES(null, " +
+					"(SELECT personId FROM peoplePositions WHERE positionId = :positionId ORDER BY createdAt DESC LIMIT 1), " +
+				":createdAt)";
+		}
+		dbHandle.createStatement(sql)
 			.bind("positionId", position.getId())
 			.bind("createdAt", now)
 			.execute();
@@ -141,11 +156,21 @@ public class PositionDao implements IAnetDao<Position> {
 	}
 	
 	public Person getPersonInPosition(Position b, DateTime dtg) { 
-		Query<Person> query = dbHandle.createQuery("SELECT people.* FROM peoplePositions " +
+		String sql;
+		if (DaoUtils.isMsSql(dbHandle)) { 
+			sql = "SELECT TOP(1)people.* FROM peoplePositions " +
+					" LEFT JOIN people ON people.id = peoplePositions.personId " +
+					"WHERE peoplePositions.positionId = :positionId " +
+					"AND peoplePositions.createdAt < :dtg " + 
+					"ORDER BY peoplePositions.createdAt DESC";
+		} else { 
+			sql = "SELECT people.* FROM peoplePositions " +
 				" LEFT JOIN people ON people.id = peoplePositions.personId " +
 				"WHERE peoplePositions.positionId = :positionId " +
 				"AND peoplePositions.createdAt < :dtg " + 
-				"ORDER BY peoplePositions.createdAt DESC LIMIT 1")
+				"ORDER BY peoplePositions.createdAt DESC LIMIT 1";
+		}
+		Query<Person> query = dbHandle.createQuery(sql)
 			.bind("positionId", b.getId())
 			.bind("dtg", dtg)
 			.map(new PersonMapper());
@@ -191,14 +216,15 @@ public class PositionDao implements IAnetDao<Position> {
 	}
 
 	public void associatePosition(Position a, Position b) {
+		DateTime now = DateTime.now();
 		Integer idOne = Math.min(a.getId(), b.getId());
 		Integer idTwo = Math.max(a.getId(), b.getId());
 		dbHandle.createStatement("INSERT INTO positionRelationships (positionId_a, positionId_b, createdAt, updatedAt, deleted) " + 
 				"VALUES (:positionId_a, :positionId_b, :createdAt, :updatedAt, :deleted)")
 			.bind("positionId_a", idOne)
 			.bind("positionId_b", idTwo)
-			.bind("createdAt", DateTime.now())
-			.bind("updatedAt", DateTime.now())
+			.bind("createdAt", now)
+			.bind("updatedAt", now)
 			.bind("deleted", false)
 			.execute();
 	}

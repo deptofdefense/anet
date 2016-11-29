@@ -57,6 +57,11 @@ public class Location extends AbstractAnetView<Location> {
 		return Objects.hash(id, name, latLng, createdAt);
 	}
 	
+	@Override
+	public String toString() { 
+		return String.format("(%d) - %s [%f, %f]", id, name, latLng.getLat(), latLng.getLng()); 
+	}
+	
 	public static Location create(String name, LatLng latLng) { 
 		Location l = new Location();
 		l.setName(name);
@@ -70,4 +75,6 @@ public class Location extends AbstractAnetView<Location> {
 		l.setLoadLevel(LoadLevel.ID_ONLY);
 		return l;
 	}
+	
+	
 }

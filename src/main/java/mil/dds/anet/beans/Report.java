@@ -245,7 +245,7 @@ public class Report extends AbstractAnetView<Report> {
 		Organization ao = engine.getOrganizationForPerson(getAuthor());
 		List<ApprovalStep> steps = engine.getApprovalStepsForOrg(ao);
 		
-		List<ApprovalAction> actions = engine.getApprovalActionDao().getFinalActionsForReport(this.getId());
+		List<ApprovalAction> actions = engine.getApprovalActionDao().getActionsForReport(this.getId());
 		
 		List<ApprovalAction> workflow = new LinkedList<ApprovalAction>();
 		for (ApprovalStep step : steps) { 

@@ -31,8 +31,8 @@ public class CommentMapper implements ResultSetMapper<Comment> {
 		c.setAuthor(author);
 		
 		c.setText(r.getString("text"));
-		c.setCreatedAt(new DateTime(r.getLong("c_createdAt")));
-		c.setUpdatedAt(new DateTime(r.getLong("c_updatedAt")));
+		c.setCreatedAt(new DateTime(r.getTimestamp("c_createdAt")));
+		c.setUpdatedAt(new DateTime(r.getTimestamp("c_updatedAt")));
 		c.setLoadLevel(LoadLevel.PROPERTIES);
 		return c;
 	}

@@ -2,6 +2,7 @@ package mil.dds.anet.database.mappers;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 import org.joda.time.DateTime;
 import org.skife.jdbi.v2.StatementContext;
@@ -23,11 +24,11 @@ public class ReportMapper implements ResultSetMapper<Report> {
 		r.setId(rs.getInt("id"));
 		
 		r.setState(MapperUtils.getEnumIdx(rs, "state", ReportState.class));
-		r.setCreatedAt(new DateTime(rs.getLong("createdAt")));
-		r.setUpdatedAt(new DateTime(rs.getLong("updatedAt")));
+		r.setCreatedAt(new DateTime(rs.getTimestamp("createdAt")));
+		r.setUpdatedAt(new DateTime(rs.getTimestamp("updatedAt")));
 		
-		Long engagementDate = rs.getLong("engagementDate");
-		if (engagementDate != 0L) { 
+		Timestamp engagementDate = rs.getTimestamp("engagementDate");
+		if (engagementDate != null) { 
 			r.setEngagementDate(new DateTime(engagementDate));
 		}
 		
