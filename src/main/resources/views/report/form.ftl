@@ -327,7 +327,6 @@ $(document).ready(function() {
 	});
 
 	function submitForm() {
-		debugger
 		var report = buildForm("reportForm");
 		if (report["principal_id"]) {
 			report["attendees"] = [{ id: report["principal_id"] }]
