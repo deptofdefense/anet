@@ -105,23 +105,23 @@
 						<#list attendees as a>
 							<tr class="attendeeRow" data-id="${a.id}">
 								<td>
-									<button type="button" class="usa-button-unstyled" data-remove-person>
+									<button type="button" class="usa-button-unstyled" data-remove>
 										<i class="glyphicon glyphicon-remove"></i>
 									</button>
 								</td>
-								<td data-name>${a.name}</td>
-								<td data-role>${a.role}</td>
+								<td data-attribute="name">${a.name}</td>
+								<td data-attribute="role">${a.role}</td>
 							</tr>
 						</#list>
 					</#if>
 					<tr data-attached-person-prototype class="attendeeRow">
 						<td>
-							<button type="button" class="usa-button-unstyled" data-remove-person>
+							<button type="button" class="usa-button-unstyled" data-remove>
 								<i class="glyphicon glyphicon-remove"></i>
 							</button>
 						</td>
-						<td data-name></td>
-						<td data-role></td>
+						<td data-attribute="name"></td>
+						<td data-attribute="role"></td>
 					</tr>
 				</table>
 			</div>
@@ -248,22 +248,11 @@ $(document).ready(function() {
 		$atmosphereDetails.toggleClass('hide', this.value === 'positive');
 	});
 
-	var $personRow = $('[data-attached-person-prototype]').removeAttr('data-attached-person-prototype');
-	var $personTable = $personRow.parent();
-	$personRow.remove();
+	var personAttacher = new ResourceAttacher('person');
 
 	var $attachPersonForm = $('[data-attach-new-person]');
 	var $attachPersonSubmit = $('[data-attach-new-person-submit]');
 	var addingPerson = {};
-
-	function addPersonToTable(person) {
-		var $row = $personRow.clone();
-		$row.find('[data-name]').html(person.name);
-		$row.find('[data-role]').html(person.role);
-		$row.find('[data-org]').html(person.org);
-		$row.attr("data-id", person.id);
-		$row.appendTo($personTable);
-	}
 
 	function enablePersonSearch(selectId, role) {
 		$(selectId).select2({
@@ -302,7 +291,7 @@ $(document).ready(function() {
 
 			if (result.person) {
 				var person = result.person;
-				addPersonToTable(person);
+				personAttacher.attachResource(person);
 				$('#attachPersonName').val('').trigger('change');
 			} else if (result.query) {
 				addingPerson = {name: result.query};
@@ -314,15 +303,10 @@ $(document).ready(function() {
 	$attachPersonSubmit.on('click', function() {
 		var $checkedRole = $attachPersonForm.find(':checked');
 		addingPerson.role = $checkedRole.val().toUpperCase();
-		addPersonToTable(addingPerson);
+		personAttacher.attachResource(addingPerson);
 		$checkedRole.val('');
 		$attachPersonForm.addClass('hide');
 		$('#attachPersonName').val('').trigger('change');
-		return false;
-	});
-
-	$(document.body).on('click', '[data-remove-person]', function(event) {
-		$(this).parents('tr').remove();
 		return false;
 	});
 
