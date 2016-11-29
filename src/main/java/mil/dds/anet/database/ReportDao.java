@@ -44,14 +44,21 @@ public class ReportDao implements IAnetDao<Report> {
 		r.setCreatedAt(DateTime.now());
 		r.setUpdatedAt(r.getCreatedAt());
 		
-		GeneratedKeys<Map<String, Object>> keys = dbHandle.createStatement(
-				"INSERT INTO reports " + 
+		//MSSQL requires explicit CAST when a datetime2 might be NULL. 
+		StringBuilder sql = new StringBuilder("INSERT INTO reports " + 
 				"(state, createdAt, updatedAt, locationId, intent, exsum, " +
 				"text, nextSteps, authorId, engagementDate, atmosphere, " + 
 				"atmosphereDetails) VALUES " +
 				"(:state, :createdAt, :updatedAt, :locationId, :intent, " +
-				":exsum, :reportText, :nextSteps, :authorId, :engagementDate, " + 
-				":atmosphere, :atmosphereDetails)")
+				":exsum, :reportText, :nextSteps, :authorId, ");
+		if (DaoUtils.isMsSql(dbHandle)) { 
+			sql.append("CAST(:engagementDate AS datetime2), ");
+		} else { 
+			sql.append(":engagementDate");
+		}
+		sql.append(":atmosphere, :atmosphereDetails)");
+		
+		GeneratedKeys<Map<String, Object>> keys = dbHandle.createStatement(sql.toString())
 			.bindFromProperties(r)
 			.bind("state", DaoUtils.getEnumId(r.getState()))
 			.bind("atmosphere", DaoUtils.getEnumId(r.getAtmosphere()))
@@ -96,11 +103,19 @@ public class ReportDao implements IAnetDao<Report> {
 	
 	public int update(Report r) { 
 		r.setUpdatedAt(DateTime.now());
-		return dbHandle.createStatement("UPDATE reports SET " +
+		
+		StringBuilder sql = new StringBuilder("UPDATE reports SET " +
 				"state = :state, updatedAt = :updatedAt, locationId = :locationId, " + 
 				"intent = :intent, exsum = :exsum, text = :text, nextSteps = :nextSteps, " + 
-				"approvalStepId = :approvalStepId, engagementDate = :engagementDate, " +
-				"atmosphere = :atmosphere, atmosphereDetails = :atmosphereDetails WHERE id = :reportId")
+				"approvalStepId = :approvalStepId, ");
+		if (DaoUtils.isMsSql(dbHandle)) { 
+			sql.append("engagementDate = CAST(:engagementDate AS datetime2), ");
+		} else { 
+			sql.append("engagementDate = :enagementDate");
+		}
+		sql.append("atmosphere = :atmosphere, atmosphereDetails = :atmosphereDetails WHERE id = :reportId");
+		
+		return dbHandle.createStatement(sql.toString())
 			.bindFromProperties(r)
 			.bind("state", r.getState().ordinal())
 			.bind("locationId", DaoUtils.getId(r.getLocation()))

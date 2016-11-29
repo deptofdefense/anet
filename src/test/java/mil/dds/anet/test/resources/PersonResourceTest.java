@@ -1,13 +1,9 @@
 package mil.dds.anet.test.resources;
 
-import static io.dropwizard.testing.FixtureHelpers.fixture;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,11 +13,7 @@ import javax.ws.rs.core.Response;
 
 import org.junit.Test;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import io.dropwizard.client.JerseyClientBuilder;
-import io.dropwizard.jackson.Jackson;
 import io.dropwizard.util.Duration;
 import mil.dds.anet.beans.Person;
 

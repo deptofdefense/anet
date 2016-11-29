@@ -10,7 +10,6 @@ import java.util.Objects;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 
-import io.dropwizard.jdbi.args.JodaDateTimeArgumentFactory;
 import mil.dds.anet.beans.ApprovalStep;
 import mil.dds.anet.beans.Comment;
 import mil.dds.anet.beans.Group;
@@ -56,7 +55,6 @@ public class AnetObjectEngine {
 	
 	public AnetObjectEngine(DBI jdbi) { 
 		dbHandle = jdbi.open();
-		dbHandle.registerArgumentFactory(new JodaDateTimeArgumentFactory());
 		
 		personDao = new PersonDao(dbHandle);
 		groupDao = new GroupDao(dbHandle);

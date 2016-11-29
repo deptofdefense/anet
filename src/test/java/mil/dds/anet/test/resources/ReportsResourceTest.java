@@ -121,7 +121,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		//Write a Report
 		Report r = new Report();
 		r.setAuthor(author);
-		r.setEngagementDate(DateTime.now());
+//		r.setEngagementDate(DateTime.now());
 		r.setAttendees(Lists.newArrayList(principal));
 		r.setPoams(Lists.newArrayList(action));
 		r.setLocation(loc);
