@@ -90,7 +90,8 @@ public class PersonDao implements IAnetDao<Person> {
 	public List<Person> searchByName(String searchQuery, Role role) {
 		StringBuilder queryBuilder = new StringBuilder("SELECT * FROM people WHERE ");
 		if (DaoUtils.isMsSql(dbHandle)) { 
-			queryBuilder.append("FREETEXT ((name, emailAddress, biography),:query)");
+			searchQuery = "\"" + searchQuery + "*\"";
+			queryBuilder.append("CONTAINS (name, :query)");
 		} else { 
 			queryBuilder.append("name LIKE '%' || :query || '%' ");
 		}
