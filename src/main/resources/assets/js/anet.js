@@ -1,3 +1,7 @@
+$(document).ready(function(){
+	$('[data-toggle="tooltip"]').tooltip();
+});
+
 Date.prototype.toInputFormat = function() {
 	return [this.getFullYear(), this.getMonth() + 1, this.getDate()]
 		.map(function(value) {

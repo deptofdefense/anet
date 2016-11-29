@@ -61,13 +61,11 @@
 			</div>
 		</div>
 
+		<#if context.devMode>
 		<script type="text/javascript">
 			less.env = "development";
-			$(document).ready(function(){
-			    $('[data-toggle="tooltip"]').tooltip();
-			});
 		</script>
-		<script src="/assets/js/select2.js"></script>
+		</#if>
 	</body>
 </html>
 </#macro>
