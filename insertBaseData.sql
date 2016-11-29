@@ -11,6 +11,7 @@ DELETE FROM positionRelationships;
 DELETE FROM locations;
 DELETE FROM reportPeople;
 DELETE FROM reports;
+DELETE FROM comments;
 
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt) 
 	VALUES ('Jack Jackson', 0, 0, 'foobar@example.com', '123-456-78960', 'OF-9', 'this is a sample biography', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);

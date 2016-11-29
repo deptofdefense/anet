@@ -54,7 +54,7 @@ public class ReportDao implements IAnetDao<Report> {
 		if (DaoUtils.isMsSql(dbHandle)) { 
 			sql.append("CAST(:engagementDate AS datetime2), ");
 		} else { 
-			sql.append(":engagementDate");
+			sql.append(":engagementDate, ");
 		}
 		sql.append(":atmosphere, :atmosphereDetails)");
 		
@@ -111,7 +111,7 @@ public class ReportDao implements IAnetDao<Report> {
 		if (DaoUtils.isMsSql(dbHandle)) { 
 			sql.append("engagementDate = CAST(:engagementDate AS datetime2), ");
 		} else { 
-			sql.append("engagementDate = :enagementDate");
+			sql.append("engagementDate = :engagementDate, ");
 		}
 		sql.append("atmosphere = :atmosphere, atmosphereDetails = :atmosphereDetails WHERE id = :reportId");
 		

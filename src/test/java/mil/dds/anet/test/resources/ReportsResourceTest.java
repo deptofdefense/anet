@@ -11,7 +11,6 @@ import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.joda.time.DateTime;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
@@ -225,7 +224,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 			.get(new GenericType<List<Comment>>() {});
 		assertThat(commentsReturned).hasSize(3); //the rejection comment will be there as well. 
 		assertThat(commentsReturned).containsSequence(cOne, cTwo); //Assert order of comments! 
-		
+
 		//Search for this report by Author
 		//Search for this report by Advisor
 		//Search for this report by Location
