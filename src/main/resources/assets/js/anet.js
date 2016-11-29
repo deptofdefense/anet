@@ -63,3 +63,55 @@ function enableLocationSearch(selectId) {
 		minimumInputLength : 2
 	});
 }
+
+// Resource Attacher
+
+function ResourceAttacher(resourceName) {
+	this.attachedResources = {};
+
+	this.$protoRow = $('[data-attached-' + resourceName + '-prototype]').removeAttr('data-attached-' + resourceName + '-prototype');
+	this.$table = this.$protoRow.parent();
+	this.$protoRow.remove();
+
+	var _this = this;
+
+	this.$table.on('click', '[data-remove]', function(event) {
+		var id = $(this).parents('[data-id]').attr('data-id');
+		var resource = _this.attachedResources[id];
+		_this.removeResource(resource);
+		return false;
+	});
+}
+
+ResourceAttacher.prototype.attachResource = function(resource) {
+	if (!resource.id)
+		return;
+
+	this.attachedResources[resource.id] = resource;
+	this.renderRowForResource(resource);
+}
+
+ResourceAttacher.prototype.renderRowForResource = function(resource) {
+	var id = resource.id;
+	var $row = id && this.$table.find('[data-id=\'' + id + '\']');
+	if (!($row && $row[0])) {
+		$row = this.$protoRow.clone();
+		$row.appendTo(this.$table);
+	}
+
+	$row.attr('data-id', id);
+	$row.find('[data-attribute]').each(function() {
+		this.innerHTML = resource[this.getAttribute('data-attribute')];
+	});
+}
+
+ResourceAttacher.prototype.removeResource = function(resource) {
+	var id = resource.id;
+	if (!this.attachedResources[id])
+		return;
+
+	this.$table.find('[data-id=\'' + id + '\']').remove();
+
+	this.attachedResources[id] = null;
+	delete this.attachedResources[id];
+}
