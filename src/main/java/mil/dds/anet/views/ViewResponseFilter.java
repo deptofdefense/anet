@@ -10,9 +10,16 @@ import javax.ws.rs.core.SecurityContext;
 
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Organization;
+import mil.dds.anet.config.AnetConfiguration;
 
 public class ViewResponseFilter implements ContainerResponseFilter {
 
+	AnetConfiguration config;
+	
+	public ViewResponseFilter(AnetConfiguration config) { 
+		this.config = config;
+	}
+	
 	@Override
 	public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
 		Object entity = responseContext.getEntity();
@@ -27,7 +34,9 @@ public class ViewResponseFilter implements ContainerResponseFilter {
 
 			List<Organization> topAdvisorOrgs = AnetObjectEngine.getInstance().getOrganizationDao().getByParentOrgId(null);
 			view.addToContext("topAdvisorOrgs", topAdvisorOrgs);
-			view.addToContext("devMode", false);
+			view.addToContext("devMode", config.isDevelopmentMode());
+			view.addToContext("securityMarking", config.getSecurityMarking());
+			view.addToContext("securityColor", config.getSecurityColor());
 		}
 
 

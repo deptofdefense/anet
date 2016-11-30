@@ -1,3 +1,7 @@
+developmentMode: false
+securityMarking: DEMO USE ONLY
+securityColor: "green"
+
 database:
   driverClass: com.microsoft.sqlserver.jdbc.SQLServerDriver
   #driverClass: org.sqlite.JDBC
@@ -8,8 +12,6 @@ database:
   #properties:
   #  date_string_format: "yyyy-mm-dd hh:mm:ss.SSS Z"
   #  date_class: "text"
-
-
 
 server:
   applicationConnectors:

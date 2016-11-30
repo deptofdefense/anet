@@ -9,6 +9,11 @@ import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
 
 public class AnetConfiguration extends Configuration {
+	
+	private boolean developmentMode;
+	private String securityMarking;
+	private String securityColor;
+	
 	@Valid
     @NotNull
     private DataSourceFactory database = new DataSourceFactory();
@@ -22,4 +27,28 @@ public class AnetConfiguration extends Configuration {
     public DataSourceFactory getDataSourceFactory() {
         return database;
     }
+
+	public boolean isDevelopmentMode() {
+		return developmentMode;
+	}
+
+	public void setDevelopmentMode(boolean developmentMode) {
+		this.developmentMode = developmentMode;
+	}
+
+	public String getSecurityMarking() {
+		return securityMarking;
+	}
+
+	public void setSecurityMarking(String securityMarking) {
+		this.securityMarking = securityMarking;
+	}
+
+	public String getSecurityColor() {
+		return securityColor;
+	}
+
+	public void setSecurityColor(String securityColor) {
+		this.securityColor = securityColor;
+	}
 }

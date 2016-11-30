@@ -21,7 +21,7 @@
 				if (this.readyState === 4) {
 					if (this.status === 200) {
 						document.write('<p>Feature test completed successfully. Thank you!</p>');
-						document.write(this.responseText);
+//						document.write(this.responseText);
 
 						var secondInfo = userInfo();
 						secondInfo.round_trip_time = secondInfo.request_time - info.request_time;

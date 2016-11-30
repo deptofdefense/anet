@@ -42,9 +42,11 @@ public class AnetApplication extends Application<AnetConfiguration> {
 	@Override
 	public void initialize(Bootstrap<AnetConfiguration> bootstrap) {
 		bootstrap.setConfigurationSourceProvider(
-				new SubstitutingSourceProvider(
-						bootstrap.getConfigurationSourceProvider(),
-						new EnvironmentVariableSubstitutor(false)));
+			new SubstitutingSourceProvider(
+				bootstrap.getConfigurationSourceProvider(),
+				new EnvironmentVariableSubstitutor(false)
+			)
+		);
 
 		bootstrap.addBundle(new MigrationsBundle<AnetConfiguration>() {
 	        @Override
@@ -97,7 +99,7 @@ public class AnetApplication extends Application<AnetConfiguration> {
 		environment.jersey().register(asResource);
 		environment.jersey().register(reportResource);
 		environment.jersey().register(new HomeResource());
-		environment.jersey().register(new ViewResponseFilter());
+		environment.jersey().register(new ViewResponseFilter(configuration));
 
 	}
 
