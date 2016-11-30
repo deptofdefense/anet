@@ -110,7 +110,14 @@ public class PoamDao implements IAnetDao<Poam> {
 	}
 
 	public List<Poam> search(String query) {
-		return dbHandle.createQuery("SELECT * FROM poams WHERE longName LIKE '%' || :q || '%' OR shortName LIKE '%' || :q || '%'")
+		String sql;
+		if (DaoUtils.isMsSql(dbHandle)) { 
+			query = "\"" + query + "*\"";
+			sql = "SELECT * FROM poams WHERE CONTAINS((longName, shortName), :q)";
+		} else { 
+			sql = "SELECT * FROM poams WHERE longName LIKE '%' || :q || '%' OR shortName LIKE '%' || :q || '%'";
+		}
+		return dbHandle.createQuery(sql)
 			.map(new PoamMapper())
 			.bind("q", query)
 			.list();

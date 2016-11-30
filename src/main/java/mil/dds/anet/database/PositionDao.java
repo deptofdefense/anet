@@ -290,10 +290,16 @@ public class PositionDao implements IAnetDao<Position> {
 	}
 	
 	public List<Position> search(String query) { 
-		return dbHandle.createQuery("SELECT " + POSITIONS_FIELDS + " FROM positions "
-				+ "WHERE name LIKE '%' || :q || '%' "
-				+ "OR code LIKE '%' || :q || '%'")
-			.bind("q", query)
+		String sql;
+		if (DaoUtils.isMsSql(dbHandle)) {
+			query = "\"" + query + "*\"";
+			sql = "SELECT " + POSITIONS_FIELDS + " FROM positions WHERE CONTAINS ((name, code), :query)";
+		} else { 
+			sql = "SELECT " + POSITIONS_FIELDS + " FROM positions WHERE name LIKE '%' || :query || '%' "
+				+ "OR code LIKE '%' || :query || '%'";
+		}
+		return dbHandle.createQuery(sql)
+			.bind("query", query)
 			.map(new PositionMapper())
 			.list();
 	}
