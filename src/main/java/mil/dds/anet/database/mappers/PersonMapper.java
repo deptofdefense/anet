@@ -10,7 +10,6 @@ import org.skife.jdbi.v2.tweak.ResultSetMapper;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.beans.Person.Status;
-import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.views.AbstractAnetView.LoadLevel;
 
 public class PersonMapper implements ResultSetMapper<Person> {
@@ -35,10 +34,6 @@ public class PersonMapper implements ResultSetMapper<Person> {
 		a.setCreatedAt(new DateTime(r.getTimestamp("createdAt")));
 		a.setUpdatedAt(new DateTime(r.getTimestamp("updatedAt")));
 		
-		Integer locationId = MapperUtils.getInteger(r, "locationId");
-		if (locationId != null) { 
-			a.setLocation(Location.createWithId(locationId));
-		}
 		a.setLoadLevel(LoadLevel.PROPERTIES);
 		return a;
 	}

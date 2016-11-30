@@ -20,7 +20,7 @@ public class PositionDao implements IAnetDao<Position> {
 
 	private static String POSITIONS_FIELDS  = "positions.id AS pos_id, positions.name AS pos_name, positions.code AS pos_code, positions.type AS pos_type, "
 			+ "positions.createdAt AS pos_createdAt, positions.updatedAt AS pos_updatedAt, positions.organizationId AS pos_organizationId, " 
-			+ "positions.currentPersonId AS pos_currentPersonId ";
+			+ "positions.currentPersonId AS pos_currentPersonId, positions.locationId AS pos_locationId ";
 	
 	Handle dbHandle;
 	
@@ -46,12 +46,14 @@ public class PositionDao implements IAnetDao<Position> {
 		p.setCreatedAt(DateTime.now());
 		p.setUpdatedAt(p.getCreatedAt());
 		GeneratedKeys<Map<String,Object>> keys = dbHandle.createStatement(
-				"INSERT INTO positions (name, code, type, organizationId, currentPersonId, createdAt, updatedAt) " +
-				"VALUES (:name, :code, :type, :organizationId, :currentPersonId, :createdAt, :updatedAt)")
+				"INSERT INTO positions (name, code, type, organizationId, currentPersonId, locationId, createdAt, updatedAt) " +
+				"VALUES (:name, :code, :type, :organizationId, :currentPersonId, :locationId, :createdAt, :updatedAt)")
 			.bindFromProperties(p)
 			.bind("type", DaoUtils.getEnumId(p.getType()))
 			.bind("organizationId", DaoUtils.getId(p.getOrganizationJson()))
 			.bind("currentPersonId", DaoUtils.getId(p.getPersonJson()))
+
+			.bind("locationId", DaoUtils.getId(p.getLocation()))
 			.executeAndReturnGeneratedKeys();
 		p.setId(DaoUtils.getGeneratedId(keys));
 		
@@ -86,10 +88,11 @@ public class PositionDao implements IAnetDao<Position> {
 		p.setUpdatedAt(DateTime.now());
 		return dbHandle.createStatement("UPDATE positions SET name = :name, "
 				+ "code = :code, organizationId = :organizationId, type = :type, "
-				+ "updatedAt = :updatedAt WHERE id = :id")
+				+ "locationId = :locationId, updatedAt = :updatedAt WHERE id = :id")
 			.bindFromProperties(p)
 			.bind("type", DaoUtils.getEnumId(p.getType()))
 			.bind("organizationId", DaoUtils.getId(p.getOrganization()))
+			.bind("locationId", DaoUtils.getId(p.getLocation()))
 			.execute();
 	}
 	
@@ -205,7 +208,8 @@ public class PositionDao implements IAnetDao<Position> {
 	public List<Position> getAllPositionsForPerson(Person p) { 
 		return dbHandle.createQuery("SELECT " + POSITIONS_FIELDS + " FROM positions, peoplePositions "
 				+ "WHERE peoplePositions.personId = :personId "
-				+ "AND peoplePositions.positionId = positions.id")
+				+ "AND peoplePositions.positionId = positions.id "
+				+ "ORDER BY peoplePositions.createdAt DESC")
 			.bind("personId", p.getId())
 			.map(new PositionMapper())
 			.list();

@@ -34,10 +34,6 @@
 				 	<div class="header">Role</div>
 				 	<div class="content">${role}</div>
 				 </div>
-				 <div class="field">
-				 	<div class="header">Location</div>
-				 	<div class="content"><#if location??>${location.name}</#if></div>
-			 	</div>
 			</div>
 			<div class="col-md-6">
 				<div class="field">

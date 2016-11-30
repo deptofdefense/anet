@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
 import mil.dds.anet.AnetObjectEngine;
+import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.views.AbstractAnetView;
 
 public class Position extends AbstractAnetView<Position> {
@@ -22,11 +23,12 @@ public class Position extends AbstractAnetView<Position> {
 	
 	DateTime createdAt;
 	DateTime updatedAt;
-	Organization organization;
 	
 	//Lazy Loaded
+	Organization organization;
 	Person person; //The Current person.
 	List<Position> associatedPositions;
+	private Location location;
 
 	public static Position createWithId(Integer id) { 
 		Position b = new Position();
@@ -123,6 +125,26 @@ public class Position extends AbstractAnetView<Position> {
 				.getPositionDao().getAssociatedPositions(this);
 		}
 		return associatedPositions;
+	}
+	
+	@JsonIgnore
+	public Location getLocation() { 
+		if (location == null || location.getLoadLevel() == null) { return location; } 
+		if (location.getLoadLevel().contains(LoadLevel.PROPERTIES) == false) { 
+			this.location = AnetObjectEngine.getInstance()
+					.getLocationDao().getById(location.getId());
+		}
+		return location;
+	}
+	
+	@JsonGetter("location")
+	public Location getLocationJson() { 
+		return location;
+	}
+	
+	@JsonSetter("location")
+	public void setLocation(Location location) { 
+		this.location = location;
 	}
 	
 	@Override

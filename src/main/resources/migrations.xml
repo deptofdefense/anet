@@ -23,7 +23,6 @@
                 <constraints nullable="false"/>
 			</column>
 			<column name="pendingVerification" type="boolean" defaultValue="false" />
-			<column name="locationId" type="int" />
         </createTable>
 
 		<createTable tableName="groups">
@@ -86,6 +85,7 @@
                 <constraints nullable="false"/>
 			</column>
 			<column name="currentPersonId" type="int" />
+			<column name="locationId" type="int" />
 		</createTable>
 
 		<createTable tableName="peoplePositions">

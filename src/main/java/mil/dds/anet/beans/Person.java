@@ -5,12 +5,6 @@ import java.util.Objects;
 
 import org.joda.time.DateTime;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonSetter;
-
-import mil.dds.anet.AnetObjectEngine;
-import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.views.AbstractAnetView;
 
 public class Person extends AbstractAnetView<Person> implements Principal{
@@ -31,8 +25,6 @@ public class Person extends AbstractAnetView<Person> implements Principal{
 	
 	private DateTime createdAt;
 	private DateTime updatedAt;
-	
-	private Location location;
 	
 	public Person() { 
 		this.pendingVerification = false; //Defaults 
@@ -105,26 +97,6 @@ public class Person extends AbstractAnetView<Person> implements Principal{
 
 	public void setUpdatedAt(DateTime updatedAt) {
 		this.updatedAt = updatedAt;
-	}
-
-	@JsonIgnore
-	public Location getLocation() { 
-		if (location == null || location.getLoadLevel() == null) { return location; } 
-		if (location.getLoadLevel().contains(LoadLevel.PROPERTIES) == false) { 
-			this.location = AnetObjectEngine.getInstance()
-					.getLocationDao().getById(location.getId());
-		}
-		return location;
-	}
-	
-	@JsonGetter("location")
-	public Location getLocationJson() { 
-		return location;
-	}
-	
-	@JsonSetter("location")
-	public void setLocation(Location location) { 
-		this.location = location;
 	}
 	
 	@Override

@@ -13,18 +13,23 @@ DELETE FROM reportPeople;
 DELETE FROM reports;
 DELETE FROM comments;
 
+--Advisors
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt) 
 	VALUES ('Jack Jackson', 0, 0, 'foobar@example.com', '123-456-78960', 'OF-9', 'this is a sample biography', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt) 
+	VALUES ('Elizabeth Elizawell', 0, 0, 'liz@example.com', '+1-777-7777', 'Capt', 'elizabeth is another test person we have in the database', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+-- Principals
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt) 
 	VALUES ('Steve Steveson', 0, 1, 'steve@example.com', '+011-232-12324', 'LtCol', 'this is a sample person who could be a Principal!', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt) 
 	VALUES ('Roger Rogewell', 0, 1, 'roger@example.com', '+1-412-7324', 'Maj', 'Roger is another test person we have in the database', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt) 
-	VALUES ('Elizabeth Elizawell', 0, 0, 'liz@example.com', '+1-777-7777', 'Capt', 'elizabeth is another test person we have in the database', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+-- Super Users
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt) 
 	VALUES ('Bob Bobtown', 0, 0, 'bob@example.com', '+1-444-7324', 'Civ', 'Bob is yet another test person we have in the database', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt) 
 	VALUES ('Henry Henderson', 0, 2, 'henry@example.com', '+2-456-7324', 'BGen', 'Henry is a SUPER USER', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+--People
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt) 
 	VALUES ('Hunter Huntman', 0, 1, 'hunter@example.com', '+1-412-9314', 'CIV', '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt) 
@@ -37,21 +42,39 @@ INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biograp
 	VALUES ('Shardul Sharton', 0, 1, 'shardul@example.com', '+99-9999-9999', 'CIV', '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF1 Advisor 04532', 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF1 SuperUser', 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF2 Advisor 4987', 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF2 SuperUser', 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF3 Advisor 427', 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF4 Advisor 3', 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
+-- Put Bob into the Super User Billet in EF1
 INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES 
-	((SELECT id from positions where name = 'EF1 Advisor 04532'), (SELECT id from people where emailAddress = 'bob@example.com'), CURRENT_TIMESTAMP);
-UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'bob@example.com') WHERE name = 'EF1 Advisor 04532';
+	((SELECT id from positions where name = 'EF1 SuperUser'), (SELECT id from people where emailAddress = 'bob@example.com'), CURRENT_TIMESTAMP);
+UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'bob@example.com') WHERE name = 'EF1 SuperUser';
 
--- Rotate an advisor through a billet
+-- Put Henry into the Super User Billet in EF2
+INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES 
+	((SELECT id from positions where name = 'EF2 SuperUser'), (SELECT id from people where emailAddress = 'henry@example.com'), CURRENT_TIMESTAMP);
+UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'henry@example.com') WHERE name = 'EF2 SuperUser';
+
+-- Rotate an advisor through a billet ending up with Jack in the EF2 Advisor Billet
 INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES
 	((SELECT id from positions where name = 'EF2 Advisor 4987'), (SELECT id from people where emailAddress = 'reina@example.com'), CURRENT_TIMESTAMP);
 UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'reina@example.com') WHERE name = 'EF2 Advisor 4987';
 INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES
 	((SELECT id from positions where name = 'EF2 Advisor 4987'), (SELECT id from people where emailAddress = 'foobar@example.com'), CURRENT_TIMESTAMP);
 UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'foobar@example.com') WHERE name = 'EF2 Advisor 4987';
+
+-- Put Elizabeth into the EF1 Advisor Billet
+INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES 
+	((SELECT id from positions where name = 'EF1 Advisor 04532'), (SELECT id from people where emailAddress = 'liz@example.com'), CURRENT_TIMESTAMP);
+UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'liz@example.com') WHERE name = 'EF1 Advisor 04532';
+
+-- Put Reina into the EF3 Advisor Billet
+INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES 
+	((SELECT id from positions where name = 'EF3 Advisor 427'), (SELECT id from people where emailAddress = 'reina@example.com'), CURRENT_TIMESTAMP);
+UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'reina@example.com') WHERE name = 'EF3 Advisor 427';
 
 INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('EF1', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('EF2', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
@@ -154,6 +177,7 @@ INSERT INTO locations (name) VALUES ('MoD Army Training Base 123');
 INSERT INTO locations (name) VALUES ('MoD Location the Second');
 INSERT INTO locations (name) VALUES ('MoI Office Building ABC');
 
+
 INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('Ministry of Defense', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('Ministry of Interior', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
@@ -183,8 +207,8 @@ INSERT INTO positionRelationships (positionId_a, positionId_b, createdAt, update
 	(SELECT id FROM positions WHERE name='EF2 Advisor 4987'), 
 	CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0);
 
-
-
+UPDATE positions SET locationId = (SELECT id from LOCATIONS where name = 'Kabul Police Academy') WHERE name = 'Chief of Police';
+UPDATE positions SET locationId = (SELECT id from LOCATIONS where name = 'MoD Headquarters Kabul') WHERE name = 'Cost Adder - MoD';
 
 
 INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, nextSteps, authorId, state, engagementDate, atmosphere) VALUES

@@ -11,6 +11,7 @@ import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Position.PositionType;
+import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.views.AbstractAnetView.LoadLevel;
 
 public class PositionMapper implements ResultSetMapper<Position> {
@@ -39,6 +40,12 @@ public class PositionMapper implements ResultSetMapper<Position> {
 			} catch (SQLException e) {}
 			p.setPerson(person);
 		}
+		
+		Integer locationId = MapperUtils.getInteger(r, "pos_locationId");
+		if (locationId != null) { 
+			p.setLocation(Location.createWithId(locationId));
+		}
+		
 		p.setCreatedAt(new DateTime(r.getTimestamp("pos_createdAt")));
 		p.setLoadLevel(LoadLevel.PROPERTIES);
 		return p;

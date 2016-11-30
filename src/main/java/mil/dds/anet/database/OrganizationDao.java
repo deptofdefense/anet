@@ -100,7 +100,14 @@ public class OrganizationDao implements IAnetDao<Organization> {
 	}
 
 	public List<Organization> searchByName(String name, OrganizationType type) {
-		return dbHandle.createQuery("SELECT * FROM organizations WHERE type = :type AND name LIKE '%' || :name || '%'")
+		String sql;
+		if (DaoUtils.isMsSql(dbHandle)) { 
+			name = "\"" + name + "*\"";
+			sql = "SELECT * FROM organizations WHERE CONTAINS (name, :name) AND type = :type";
+		} else { 
+			sql = "SELECT * FROM organizations WHERE type = :type AND name LIKE '%' || :name || '%'";
+		}
+		return dbHandle.createQuery(sql)
 			.bind("type", DaoUtils.getEnumId(type))
 			.bind("name", name)
 			.map(new OrganizationMapper())

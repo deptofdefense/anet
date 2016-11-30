@@ -45,9 +45,9 @@
 		       		</div>
 				</div>
 				<div class="field">
-					<div class="header">Location</div>
-		       		<div class="content"></a></div>
-				</div>
+				 	<div class="header">Location</div>
+				 	<div class="content"><#if location??>${location.name}</#if></div>
+			 	</div>
 			</div>
 			<div class="col-md-6">
 				Description:

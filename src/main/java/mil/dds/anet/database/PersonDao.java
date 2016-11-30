@@ -55,12 +55,11 @@ public class PersonDao implements IAnetDao<Person> {
 		p.setCreatedAt(DateTime.now());
 		p.setUpdatedAt(DateTime.now());
 		GeneratedKeys<Map<String, Object>> keys = dbHandle.createStatement("INSERT INTO people " +
-				"(name, status, role, emailAddress, phoneNumber, rank, pendingVerification, biography, createdAt, updatedAt, locationId) " +
-				"VALUES (:name, :status, :role, :emailAddress, :phoneNumber, :rank, :pendingVerification, :biography, :createdAt, :updatedAt, :locationId);")
+				"(name, status, role, emailAddress, phoneNumber, rank, pendingVerification, biography, createdAt, updatedAt) " +
+				"VALUES (:name, :status, :role, :emailAddress, :phoneNumber, :rank, :pendingVerification, :biography, :createdAt, :updatedAt);")
 			.bindFromProperties(p)
 			.bind("status", DaoUtils.getEnumId(p.getStatus()))
 			.bind("role", DaoUtils.getEnumId(p.getRole()))
-			.bind("locationId", DaoUtils.getId(p.getLocation()))
 			.executeAndReturnGeneratedKeys();
 		p.setId(DaoUtils.getGeneratedId(keys));
 		return p;
@@ -71,12 +70,11 @@ public class PersonDao implements IAnetDao<Person> {
 		return dbHandle.createStatement("UPDATE people " + 
 				"SET name = :name, status = :status, role = :role, " + 
 				"phoneNumber = :phoneNumber, rank = :rank, biography = :biography, " +
-				"pendingVerification = :pendingVerification, updatedAt = :updatedAt, "
-				+ "locationId = :locationId WHERE id = :id")
+				"pendingVerification = :pendingVerification, updatedAt = :updatedAt "
+				+ "WHERE id = :id")
 			.bindFromProperties(p)
 			.bind("status", DaoUtils.getEnumId(p.getStatus()))
 			.bind("role", DaoUtils.getEnumId(p.getRole()))
-			.bind("locationId", DaoUtils.getId(p.getLocation()))
 			.execute();
 	}
 	
