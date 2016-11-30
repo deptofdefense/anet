@@ -2,8 +2,14 @@
 <@application.layout>
 
 	<div class="anet-page-head">
+		<div class="submit pull-right">
+			<a href="/reports/new"><btn type="submit" value="Submit Report" class="btn btn-default pull-right">Submit Report</btn></a>
+			<#if context.currentUser.role == "SUPER_USER">
+				<a href="/positions/new"><btn type="submit" value="Create Position" class="btn btn-default pull-right">Create Position</btn></a>
+				<a href="/people/new"><btn type="submit" value="Add Person" class="btn btn-default pull-right">Add Person</btn></a>
+			</#if>
+		</div>
 		<h1 class="pull-left" style="margin-top:0px!important;">Reports & Approvals</h1>
-		<div class="submit pull-right"><a href="/reports/new"><btn type="submit" value="Submit Report" class="btn btn-default pull-right">Submit Report</btn></a>
 	</div>
 
 	<section id="my-unapproved">

@@ -16,7 +16,7 @@ import mil.dds.anet.views.AbstractAnetView;
 public class Person extends AbstractAnetView<Person> implements Principal{
 
 	public static enum Status { ACTIVE, INACTIVE }
-	public static enum Role { ADVISOR, PRINCIPAL, USER }
+	public static enum Role { ADVISOR, PRINCIPAL, SUPER_USER }
 	
 	private String name;
 	private Status status;
