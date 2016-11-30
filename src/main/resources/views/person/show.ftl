@@ -100,55 +100,7 @@
  </div>
 </section>
 
-<#if context.position??>
-<h3>${relatedPositionName}s</h3>
-<table>
-	<tr>
-		<th>Name</th>
-		<th>Position</th>
-		<th>Last Report</th>
-		<th>Date of Last Report</th>
-	</tr>
-	<#list context.relatedPositions as related>
-		<tr>
-			<td><#if related.person??>${related.person.name}</#if></td>
-			<td>${related.name} (${related.code!})</td>
-			<td>last report intent here</td>
-			<td>last report date here</td>
-		</tr>
-	</#list>
-</table>
 
-<h3>Previous Position Holders</h3>
-<table>
-	<tr>
-		<th>Person</th>
-		<th>Date</th>
-	</tr>
-	<#list context.previousHolders as person>
-		<tr>
-			<td>${person.name}</td>
-			<td>Date person rotated out</td>
-		</tr>
-	</#list>
-</table>
-
-<h3>Reports by this Position</h3>
-<table>
-	<tr>
-		<th>Who</th>
-		<th>Topic</th>
-	</tr>
-	<#list context.positionReports as report>
-		<tr>
-			<td>${report.primaryAttendee!}</td>
-			<td><a href="/reports/${report.id}">${report.intent!"no summary"}</a></td>
-		</tr>
-	</#list>
-</table>
-<#else>
-<h3>Reports by this Person</h3>
-</#if>
 <script type="text/javascript">
 $(document).ready(function() {
 	$.ajax({

@@ -1,5 +1,6 @@
 package mil.dds.anet.resources;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.annotation.security.PermitAll;
@@ -19,6 +20,7 @@ import javax.ws.rs.core.Response.Status;
 import org.joda.time.DateTime;
 
 import mil.dds.anet.AnetObjectEngine;
+import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Position.PositionType;
@@ -47,10 +49,41 @@ public class PositionResource {
 	
 	@GET
 	@Path("/{id}")
-	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	@Produces(MediaType.APPLICATION_JSON)
 	public Position getPosition(@PathParam("id") int id) {
 		Position p = dao.getById(id);
 		if (p == null) { throw new WebApplicationException("Not Found", Status.NOT_FOUND); } 
+		return p;
+	}
+	
+	@GET
+	@Path("/{id}")
+	@Produces(MediaType.TEXT_HTML)
+	public Position getPositionView(@PathParam("id") int id) { 
+		Position p = dao.getById(id);
+		if (p == null) { throw new WebApplicationException("Not Found", Status.NOT_FOUND); } 
+
+		Organization org = p.getOrganization();
+		if (org != null) { 
+			LinkedList<Organization> hierarchy = new LinkedList<Organization>();
+			hierarchy.addFirst(org);
+			while (org.getParentOrg() != null) { 
+				hierarchy.addFirst(org.getParentOrg());
+				org = org.getParentOrg();
+			}
+			p.addToContext("orgHierarchy", hierarchy);
+		}
+		
+		p.addToContext("previousHolders", AnetObjectEngine.getInstance().getPositionDao().getPeoplePreviouslyInPosition(p));
+		if (p.getType() == PositionType.ADVISOR) {
+			//What reports have been written by all position holders ever (including the current)
+			p.addToContext("positionReports", AnetObjectEngine.getInstance().getReportDao().getReportsByAuthorPosition(p));
+		} else { 
+			//What reports have been written ABOUT all position holders
+			p.addToContext("positionReports", AnetObjectEngine.getInstance().getReportDao().getReportsAboutThisPosition(p));
+		}
+		//What positions is this position associated with and which people are in those positions?
+		p.addToContext("relatedPositions", AnetObjectEngine.getInstance().getPositionDao().getAssociatedPositions(p));
 		return p.render("show.ftl");
 	}
 	
