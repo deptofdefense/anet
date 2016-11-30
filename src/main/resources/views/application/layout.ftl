@@ -66,6 +66,7 @@
 			less.env = "development";
 		</script>
 		</#if>
+		<script src="/assets/js/select2.js"></script>
 	</body>
 </html>
 </#macro>
