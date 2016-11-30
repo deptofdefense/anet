@@ -61,17 +61,26 @@ public class PersonResource {
 	 */
 	@GET
 	@Path("/{id}")
-	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
-	public Person getViewById(@PathParam("id") int id) { 
+	@Produces(MediaType.APPLICATION_JSON)
+	public Person getById(@PathParam("id") int id) { 
 		Person p = dao.getById(id);
 		if (p == null) { throw new WebApplicationException("No such person", Status.NOT_FOUND); }
-		Position position = AnetObjectEngine.getInstance().getPositionDao().getCurrentPositionForPerson(p);
-		p.addToContext("position", position);
+		return p;
+	}
+	
+	@GET
+	@Path("/{id}")
+	@Produces(MediaType.TEXT_HTML)
+	public Person getPersonView(@PathParam("id") int id) { 
+		Person p = dao.getById(id);
+		if (p == null) { throw new WebApplicationException("No such person", Status.NOT_FOUND); }
+		List<Position> positions = AnetObjectEngine.getInstance().getPositionDao().getAllPositionsForPerson(p);
+		p.addToContext("positions", positions);
 		//What reports has this person written. 
 		p.addToContext("personReports", AnetObjectEngine.getInstance().getReportDao().getReportsByAuthor(p));
 		return p.render("show.ftl");
+		
 	}
-	
 	
 	@GET
 	@Path("/new")

@@ -202,6 +202,14 @@ public class PositionDao implements IAnetDao<Position> {
 		return positions.get(0);		
 	}
 	
+	public List<Position> getAllPositionsForPerson(Person p) { 
+		return dbHandle.createQuery("SELECT " + POSITIONS_FIELDS + " FROM positions, peoplePositions "
+				+ "WHERE peoplePositions.personId = :personId "
+				+ "AND peoplePositions.positionId = positions.id")
+			.bind("personId", p.getId())
+			.map(new PositionMapper())
+			.list();
+	}
 
 	public List<Position> getAssociatedPositions(Position p) {
 		Query<Position> query = dbHandle.createQuery("SELECT " + POSITIONS_FIELDS + ", people.* FROM positions "

@@ -98,8 +98,12 @@
 	</tr>
 	<#list context.relatedPositions as related>
 		<tr>
-			<td><#if related.person??>${related.person.name}</#if></td>
-			<td>${related.name} (${related.code!})</td>
+			<td><#if related.person??>
+				<a href="/people/${related.person.id}">${related.person.name}</a>
+			</#if></td>
+			<td>
+				<a href="/positions/${related.id}">${related.name} (${related.code!})</a>
+			</td>
 			<td>last report intent here</td>
 			<td>last report date here</td>
 		</tr>
@@ -114,7 +118,7 @@
 	</tr>
 	<#list context.previousHolders as person>
 		<tr>
-			<td>${person.name}</td>
+			<td><a href="/people/${person.id}">${person.rank!} ${person.name}</a></td>
 			<td>Date person rotated out</td>
 		</tr>
 	</#list>

@@ -1,50 +1,51 @@
 <#import "../application/layout.ftl" as application>
 <@application.layout>
 
-<section class="anet-block">
-  <div class="anet-block__title">
-    ${name}
-    <div class="pull-right">
-    	<a href="/people/${id}/edit">[edit]</a> - ${role}
-    </div>
-  </div>
+<div class="anet-page-head">
+	<div class="pull-left"><h3 class="pull-left">${rank!} ${name}</h3></div>
+	<div class="pull-right"><h3 class="pull-right">${status}</h3></div>
+</div>
+<br><br><br><!-- TODO: FIX THIS -->
 
-  <div class="anet-block__body">
-    <div class="row">
-      <div class="col-md-6">
-       <div class="field">
-       	<div class="header">Email</div>
-       	<div class="content"><a href="mailto:${emailAddress}">${emailAddress}</a></div>
-	   </div>
-	   <div class="field">
-       	<div class="header">Phone</div>
-       	<div class="content"><a href="tel:${phoneNumber}">${phoneNumber}</a></div>
-	   </div>
-	   <div class="field">
-       	<div class="header">Rank</div>
-       	<div class="content">${rank}</div>
-	   </div>
-	   <div class="field">
-       	<div class="header">Status</div>
-       	<div class="content">${status}</div>
-	   </div>
-	   <div class="field">
-       	<div class="header">Location</div>
-       	<div class="content"><#if location??>${location.name}</#if></div>
-	   </div>
-	  </div>
-      <div class="col-md-6">
-        <div class="field">
-        ${biography}
-        </div>
-        <div class="field">
-        <small>
-        Created at: ${createdAt} <br>Updated at: ${updatedAt}
-        </small>
-        </div>
-      </div>
-    </div>
-  </div>
+<section class="anet-block">
+	<div class="anet-block__title">
+		${name}
+		<div class="pull-right">
+			<a href="/people/${id}/edit">[edit]</a>
+		</div>
+	</div>
+
+	<div class="anet-block__body">
+		<div class="row">
+			<div class="col-md-6">
+				<div class="field">
+			 		<div class="header">Email</div>
+			 		<div class="content"><a href="mailto:${emailAddress}">${emailAddress}</a></div>
+		 		</div>
+			 	<div class="field">
+				 	<div class="header">Phone</div>
+				 	<div class="content">${phoneNumber}</div>
+				 </div>
+				 <div class="field">
+				 	<div class="header">Rank</div>
+				 	<div class="content">${rank}</div>
+				 </div>
+				 <div class="field">
+				 	<div class="header">Role</div>
+				 	<div class="content">${role}</div>
+				 </div>
+				 <div class="field">
+				 	<div class="header">Location</div>
+				 	<div class="content"><#if location??>${location.name}</#if></div>
+			 	</div>
+			</div>
+			<div class="col-md-6">
+				<div class="field">
+				${biography}
+				</div>
+			</div>
+		</div>
+	</div>
 </section>
 <#if role == "PRINCIPAL">
 	<#assign positionName = "Tashkil">
@@ -54,52 +55,65 @@
 	<#assign relatedPositionName = "Principal">
 </#if>
 <section class="anet-block">
-  <div class="anet-block__title">
-    ${positionName} Settings
-  </div>
-   <div class="anet-block__body">
-    <div class="row">
-      <div class="col-md-6">
-      <div class="field">
-
-		<#if context.position??>
-		${positionName} Info:
-		<ul>
-		<li>Id: ${context.position.id} </li>
-		<li>Name: <a href="/positions/${context.position.id}">${context.position.name}</a></li>
-		<li>
-		<#if role == "PRINCIPAL">
-			Code: ${context.position.code}
-		<#else>
-			Organization: 
-			<#if context.position.organization?? >
-				${context.position.organization.name}
-			<#else>
-				<i>None</i>
-			</#if>
-		</#if>
-		</li>
-		</ul>
-		<#else>
-		Not currently in a ${positionName}.<br>
-		</#if>
-		<div class="form-group">
-			<label for="positionSelect">Set ${positionName}</label>
-			<select id="positionSelect" name="positionSelect" style="width:100%" >
-				<option></option>
-			</select>
+	<div class="anet-block__title">
+		${positionName}s held by this Person
+	</div>
+	 <div class="anet-block__body">
+		<div class="row">
+			<table>
+				<thead>
+					<tr>
+						<th>Date</th>
+						<th>Org</th>
+						<th>Position</th>
+					</tr>
+				</thead>
+				<tbody>
+					<#list context.positions as position>
+						<tr>
+							<td></td>
+							<td><#if position.organization??>
+								<a href="/organizations/${position.organization.id}">${position.organization.name}</a>
+							</#if></td>
+							<td>
+								<a href="/positions/${position.id}">${position.name}</a>
+							</td>
+						</tr>
+					</#list>
+				</tbody>
+			</table>
 		</div>
-		<input type="button" id="positionSetBtn" value="Save"></input>
-      </div>
-	  </div>
-      <div class="col-md-6">
-        <div class="field">
-   	  </div>
-   	</div>
-   </div>
- </div>
+	 </div>
 </section>
 
+<section class="anet-block">
+	<div class="anet-block__title">
+		Reports by this Position
+	</div>
+	 <div class="anet-block__body">
+		<div class="row">
+			<table>
+				<thead>
+					<tr>
+						<th>Date</th>
+						<th>Who</th>
+						<th>Topic</th>
+					</tr>
+				</thead>
+				<tbody>
+					<#list context.personReports as report>
+						<tr>
+							<td>${report.engagementDate}</td>
+							<td>${report.primaryAttendee!}</td>
+							<td><a href="/reports/${report.id}">${report.intent!"no summary"}</a></td>
+						</tr>
+					</#list>
+				</tbody>
+			</table>
+		</div>
+	 </div>
+ </div>
+</section>
 
 <script type="text/javascript">
 $(document).ready(function() {
