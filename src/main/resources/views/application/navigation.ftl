@@ -11,7 +11,7 @@
 			</ul>
 		</li>
 		<li><a <#if context.url == "reports/">class="usa-current"</#if> href="/reports/">Your Reports &amp; Approvals</a></li>
-		<li><a href="/">Analytics</a></li>
+		<!-- <li><a href="/">Analytics</a></li> -->
 		<li>
 			<a href="#">Advisor Organizations</a>
 			<ul class="usa-sidenav-sub_list collapsed">
@@ -22,7 +22,7 @@
 				</#list>
 			</ul>
 		</li>
-		<li><a data-toggle="tooltip" title="Coming soon!" href="/">ANET Training</a></li>
+		<!-- <li><a data-toggle="tooltip" title="Coming soon!" href="/">ANET Training</a></li> -->
 		<#-- <li><a href="/assets/anet-roadmap.jpg">ANETRoadmap</a></li> -->
 	</ul>
 </div>
