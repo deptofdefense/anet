@@ -211,16 +211,18 @@ $(document).ready(function() {
 	var poamAttacher = new ResourceAttacher('poam');
 	var selectedPoam = {};
 
-	$('#attachEFName').select2({
+	var $efSelector = $('#attachEFName');
+	var $poamSelector = $('#attachEFMilestones');
+
+	$efSelector.select2({
 		dropdownParent: $('.mainbody'),
 		placeholder: 'Select an EF'
 	});
-
-	$('#attachEFMilestones').select2({
+	$poamSelector.select2({
 		placeholder: 'Select an EF first'
-	})
+	});
 
-	$('#attachEFName').on('select2:select', function (event) {
+	$efSelector.on('select2:select', function (event) {
 		var efId = this.value;
 		selectedPoam.ef = this.options[this.selectedIndex].innerHTML;
 		$.ajax({
@@ -233,8 +235,8 @@ $(document).ready(function() {
 					text: poam.shortName + " - " + poam.longName
 				};
 			});
-			$('#attachEFMilestones').html('<option></option>');
-			$('#attachEFMilestones').select2({
+			$poamSelector.html('<option></option>');
+			$poamSelector.select2({
 				data: results,
 				dropdownParent: $('.mainbody'),
 				placeholder: 'Select a POAM'
@@ -242,10 +244,17 @@ $(document).ready(function() {
 		});
 	});
 
-	$('#attachEFMilestones').on('select2:select', function(event) {
+	$poamSelector.on('select2:select', function(event) {
 		selectedPoam.id = this.value;
 		selectedPoam.poam = this.options[this.selectedIndex].innerHTML;
-		poamAttacher.attachResource(selectedPoam)
+		poamAttacher.attachResource(selectedPoam);
+
+		$efSelector.val('').trigger('change');
+		$poamSelector.val('').trigger('change');
+		$poamSelector.html('<option></option>');
+		$poamSelector.select2({
+			placeholder: 'Select an EF first'
+		});
 	});
 
 	$('#reportForm').on('submit', submitForm);
