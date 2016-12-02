@@ -248,7 +248,7 @@ $(document).ready(function() {
 		poamAttacher.attachResource(selectedPoam)
 	});
 
-	$('#personForm').on('submit', submitForm);
+	$('#reportForm').on('submit', submitForm);
 
 	var $atmosphereDetails = $('[data-atmosphere-details]')
 	$('[name=atmosphere]').on('change', function() {
@@ -329,6 +329,10 @@ $(document).ready(function() {
 		report["attendees"] = $.map(personAttacher.attachedResources, function (person) {
 			//TODO: the UI should have some clue as to who is the 'primary' principal...
 			return {id: person.id, primary: false};
+		});
+
+		report["poams"] = $.map(poamAttacher.attachedResources, function(poam) {
+			return {id: poam.id};
 		});
 
 		//TODO: @nickjs: for some reason the <form id="reportForm> is missing like half the elements, can you investigate?
