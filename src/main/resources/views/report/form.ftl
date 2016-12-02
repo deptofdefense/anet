@@ -315,19 +315,16 @@ $(document).ready(function() {
 
 	function submitForm() {
 		var report = buildForm("reportForm");
-		if (report["principal_id"]) {
-			report["attendees"] = [{ id: report["principal_id"] }]
-			delete report["principal_id"];
-		}
+		var id = $('[data-report-id]').val();
+
 		if (report["location_id"]) {
 			report["location"] = { id: report["location_id"] }
 			delete report["location_id"];
 		}
 
-		report["attendees"] = $.map($personTable.find("tr.attendeeRow"), function (el) {
-			var id = $(el).attr("data-id");
+		report["attendees"] = $.map(personAttacher.attachedResources, function (person) {
 			//TODO: the UI should have some clue as to who is the 'primary' principal...
-			return { "id" : id, "primary" : false };
+			return {id: person.id, primary: false};
 		});
 
 		//TODO: @nickjs: for some reason the <form id="reportForm> is missing like half the elements, can you investigate?
@@ -337,16 +334,12 @@ $(document).ready(function() {
 		report['nextSteps'] = $("[name=nextSteps]").val();
 
 		$.ajax({
-			<#if id??>
-				url: '/reports/${id}/edit',
-			<#else>
-				url : '/reports/new',
-			</#if>
+			url: id ? '/reports/' + id + '/edit' : '/reports/new',
 			method: "POST",
 			contentType: "application/json",
 			data: JSON.stringify(report)
 		}).done( function (response) {
-			window.location = "/reports/" + ${id!"response.id"};
+			window.location = "/reports/" + id || response.id;
 		});
 
 		return false;
