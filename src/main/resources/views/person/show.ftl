@@ -24,11 +24,11 @@
 		 		</div>
 			 	<div class="field">
 				 	<div class="header">Phone</div>
-				 	<div class="content">${phoneNumber}</div>
+				 	<div class="content">${phoneNumber!}</div>
 				 </div>
 				 <div class="field">
 				 	<div class="header">Rank</div>
-				 	<div class="content">${rank}</div>
+				 	<div class="content">${rank!}</div>
 				 </div>
 				 <div class="field">
 				 	<div class="header">Role</div>

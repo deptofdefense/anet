@@ -242,10 +242,23 @@ public class Report extends AbstractAnetView<Report> {
 	@JsonIgnore
 	public List<ApprovalAction> getApprovalStatus() { 
 		AnetObjectEngine engine = AnetObjectEngine.getInstance();
-		Organization ao = engine.getOrganizationForPerson(getAuthor());
-		List<ApprovalStep> steps = engine.getApprovalStepsForOrg(ao);
-		
 		List<ApprovalAction> actions = engine.getApprovalActionDao().getActionsForReport(this.getId());
+		if (this.getState() == ReportState.RELEASED) { 
+			return actions;
+		}
+		
+		Organization ao = engine.getOrganizationForPerson(getAuthor());
+		if (ao == null) { 
+			//TODO: return the default approval steps if in PENDING. 
+			return actions;
+		}
+		
+		List<ApprovalStep> steps = engine.getApprovalStepsForOrg(ao);
+		if (steps == null || steps.size() == 0) {
+			//TODO: return the default approval steps if in PENDING. 
+			return actions;
+		}
+		
 		
 		List<ApprovalAction> workflow = new LinkedList<ApprovalAction>();
 		for (ApprovalStep step : steps) { 
