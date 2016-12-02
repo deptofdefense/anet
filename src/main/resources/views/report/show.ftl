@@ -21,7 +21,7 @@
 									<#else>
 										<img class="participant_img" src="/assets/img/part_nato.png">
 									</#if>
-								${p.name} (${p.rank!}) - ${p.role}</li> 
+								${p.name} (${p.rank!}) - ${p.role}</li>
 							</#list>
 						</ul>
 					</ul>
@@ -100,7 +100,7 @@
 					<#items as comment>
 						<tr>
 							<td>${comment.author}</td>
-							<td>${comment.text}</td>
+							<td>${comment.text!}</td>
 							<#if context.currentUser.id == comment.author.id>
 								<td class="delete"><a class="deleteComment" data-id="${comment.id}"><button type="button" class="btn btn-danger">Delete</button></td>
 							</#if>
@@ -116,12 +116,7 @@
 			</div>
 		</div>
 		<div class="row  commentbtn">
-			<h5>Post a new comment on this report:</h5>
-			<div class="col-md-4">
-				${context.currentUser}
-			</div>
 			<div class="col-md-8">
-				<input id="newCommentText"></input>
 				<button data-toggle="tooltip" title="Your comment will be added above" class="pull-right" id="newCommentBtn">Submit Comment</button>
 				<button data-toggle="tooltip" title="Author will be asked to resubmit" class="pull-right" id="reject">Return to Author</button>
 				</div>
@@ -140,7 +135,7 @@
       </div>
       <div class="modal-body">
       	<label for="newCommentTextReject">Why are you rejecting the report?</label>
-        <input id="newCommentText"></input>
+        <textarea id="newCommentText"></textarea>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -152,8 +147,8 @@
 
 <script type="text/javascript">
 $(document).ready(function() {
+	var id = $('[data-id]').attr("data-id");
 	$(".reportSubmitBtn").on("click", function(event) {
-		var id = $(event.currentTarget).attr("data-id");
 		$.ajax({
 			url: "/reports/" + id + "/submit",
 			method: "GET"
@@ -169,12 +164,13 @@ $(document).ready(function() {
 	$('.rejectSend').on('click',function() {
 		$('.modal-body').html('Saving...').delay(1000, function() {
 
-			var comment = {text: $("#newCommentTextReject").val() };
+			var comment = {text: $("#newCommentText").text()};
+			debugger
 			$.ajax({
-				url: "/reports/${id}/comments",
+				url: "/reports/" + id + "/comments",
 				contentType: "application/json",
 				method: "POST",
-				data: JSON.stringify('<b>ReturnToAuthor:</b> '+comment)
+				data: JSON.stringify(comment)
 			}).done(function(response) {
 				location.reload();
 			});
