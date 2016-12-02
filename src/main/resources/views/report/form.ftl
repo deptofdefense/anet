@@ -106,7 +106,7 @@
 					</thead>
 					<#if attendees??>
 						<#list attendees as a>
-							<tr class="attendeeRow" data-id="${a.id}">
+							<tr data-id="${a.id}">
 								<td>
 									<button type="button" class="usa-button-unstyled" data-remove>
 										<i class="glyphicon glyphicon-remove"></i>
@@ -117,7 +117,7 @@
 							</tr>
 						</#list>
 					</#if>
-					<tr data-attached-person-prototype class="attendeeRow">
+					<tr data-attached-person-prototype>
 						<td>
 							<button type="button" class="usa-button-unstyled" data-remove>
 								<i class="glyphicon glyphicon-remove"></i>
@@ -169,19 +169,27 @@
 
 					<div class="form-group">
 						<label for="attachEFMilestones">Milestones</label>
-						<select id="attachEFMilestones" >
+						<select id="attachEFMilestones">
+							<option></option>
 						</select>
 					</div>
-
-					<button type="submit" class="btn btn-default pull-right">Add EF</button>
 				</div>
 
 				<div class="col-md-6">
 					<table>
 						<tr>
-							<th>Essential function</th>
+							<th>
+							<th>EF</th>
 							<th>POAM</th>
-							<th>Level</th>
+						</tr>
+						<tr data-attached-poam-prototype>
+							<td>
+								<button type="button" class="usa-button-unstyled" data-remove>
+									<i class="glyphicon glyphicon-remove"></i>
+								</button>
+							</td>
+							<td data-attribute="ef"></td>
+							<td data-attribute="poam"></td>
 						</tr>
 					</table>
 				</div>
@@ -200,51 +208,47 @@ $(document).ready(function() {
 	enablePersonSearch("#attachPersonName","");
 	enableLocationSearch("#engagementLocation");
 
-	$("#attachEFName").select2({
-		dropdownParent: $(".mainbody"),
+	var poamAttacher = new ResourceAttacher('poam');
+	var selectedPoam = {};
+
+	$('#attachEFName').select2({
+		dropdownParent: $('.mainbody'),
 		placeholder: 'Select an EF'
 	});
-	$("#attachEFName").on("select2:select", function (e) {
-		var efId = $("#attachEFName").val();
-		$.ajax( {
-			url: '/poams/' + efId + '/children?cat=Milestone',
-			method: "GET"
-		}).done(function(response) {
-			var results = _.map(response, function(el) {
-				return {
-					id : el.id,
-					text: el.shortName + " - " + el.longName
-				}
-			});
-			$("#attachEFMilestones").empty();
-			$("#attachEFMilestones").select2({
-				data: results,
-				dropdownParent: $(".mainbody")
-			});
-		});
-	});
 
-	$("#attachEFMilestones").on("select2:select", function(e) {
-		var milestoneId = $("#attachEFMilestones").val();
+	$('#attachEFMilestones').select2({
+		placeholder: 'Select an EF first'
+	})
+
+	$('#attachEFName').on('select2:select', function (event) {
+		var efId = this.value;
+		selectedPoam.ef = this.options[this.selectedIndex].innerHTML;
 		$.ajax({
-			url: '/poams/' + milestoneId + '/children?cat=Action',
+			url: '/poams/' + efId + '/children?cat=Milestone',
 			method: 'GET'
 		}).done(function(response) {
-		var results = _.map(response, function(el) {
+			var results = _.map(response, function(poam) {
 				return {
-					id : el.id,
-					text: el.shortName + " - " + el.longName
-				}
+					id: poam.id,
+					text: poam.shortName + " - " + poam.longName
+				};
 			});
-			$("#attachEFActions").empty();
-			$("#attachEFActions").select2({
+			$('#attachEFMilestones').html('<option></option>');
+			$('#attachEFMilestones').select2({
 				data: results,
-				dropdownParent: $(".mainbody")
+				dropdownParent: $('.mainbody'),
+				placeholder: 'Select a POAM'
 			});
 		});
 	});
 
-	$("form").on("submit", submitForm);
+	$('#attachEFMilestones').on('select2:select', function(event) {
+		selectedPoam.id = this.value;
+		selectedPoam.poam = this.options[this.selectedIndex].innerHTML;
+		poamAttacher.attachResource(selectedPoam)
+	});
+
+	$('#personForm').on('submit', submitForm);
 
 	var $atmosphereDetails = $('[data-atmosphere-details]')
 	$('[name=atmosphere]').on('change', function() {
