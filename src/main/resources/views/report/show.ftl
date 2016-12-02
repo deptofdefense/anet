@@ -115,7 +115,7 @@
 				</#list>
 			</div>
 		</div>
-		<div class="row">
+		<div class="row  commentbtn">
 			<h5>Post a new comment on this report:</h5>
 			<div class="col-md-4">
 				${context.currentUser}
@@ -123,10 +123,32 @@
 			<div class="col-md-8">
 				<input id="newCommentText"></input>
 				<button data-toggle="tooltip" title="Your comment will be added above" class="pull-right" id="newCommentBtn">Submit Comment</button>
+				<button data-toggle="tooltip" title="Author will be asked to resubmit" class="pull-right" id="reject">Return to Author</button>
 				</div>
 			</div>
 		</div>
 	</div>
+
+<div class="modal returnReport fade">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">Send Back Report?</h4>
+      </div>
+      <div class="modal-body">
+      	<label for="newCommentTextReject">Why are you rejecting the report?</label>
+        <input id="newCommentText"></input>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary rejectSend">Save changes</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
 <script type="text/javascript">
 $(document).ready(function() {
@@ -139,6 +161,28 @@ $(document).ready(function() {
 			location.reload();
 		});
 	});
+
+	$('#reject').on('click',function() {
+		$('.returnReport.modal').modal('show')
+	})
+
+	$('.rejectSend').on('click',function() {
+		$('.modal-body').html('Saving...').delay(1000, function() {
+
+			var comment = {text: $("#newCommentTextReject").val() };
+			$.ajax({
+				url: "/reports/${id}/comments",
+				contentType: "application/json",
+				method: "POST",
+				data: JSON.stringify('<b>ReturnToAuthor:</b> '+comment)
+			}).done(function(response) {
+				location.reload();
+			});
+
+			$('.returnReport.modal').modal('hide')
+			$('.commentbtn').html('The report has been returned to ${author.name}')
+		})
+	})
 
 	$(".reportApproveBtn").on("click", function(event) {
 		var id = $(event.currentTarget).attr("data-id");
@@ -173,6 +217,7 @@ $(document).ready(function() {
 			location.reload();
 		});
 	});
+
 	$(".deleteComment").on("click", function(event) {
 		var id = $(event.currentTarget).attr("data-id");
 		$.ajax({
