@@ -162,10 +162,8 @@ $(document).ready(function() {
 	})
 
 	$('.rejectSend').on('click',function() {
+		var comment = {text: $("#newCommentText").text()};
 		$('.modal-body').html('Saving...').delay(1000, function() {
-
-			var comment = {text: $("#newCommentText").text()};
-			debugger
 			$.ajax({
 				url: "/reports/" + id + "/comments",
 				contentType: "application/json",
