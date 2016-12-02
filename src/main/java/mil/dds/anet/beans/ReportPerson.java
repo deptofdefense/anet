@@ -31,5 +31,11 @@ public class ReportPerson extends Person {
 		return super.hashCode() * ((primary) ? 7 : -7);
 	}
 	
+	public static ReportPerson createWithId(Integer id) {
+		ReportPerson rp = new ReportPerson();
+		rp.setId(id);
+		rp.setLoadLevel(LoadLevel.ID_ONLY);
+		return rp;
+	}
 	
 }

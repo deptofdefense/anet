@@ -89,7 +89,7 @@ public class ReportResource {
 	@Path("/new")
 	public Report createNewReport(@Auth Person author, Report r) { 
 		if (r.getState() == null) { r.setState(ReportState.DRAFT); }
-		r.setAuthor(author);
+		if (r.getAuthor() == null) { r.setAuthor(author); } 
 		return dao.insert(r);
 	}
 	

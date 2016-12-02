@@ -16,12 +16,12 @@
 						<ul><h5>Attendees</h5>
 							<#list attendees as p>
 								<li>
-									<#if p.role == "Afghan">
+									<#if p.role == "PRINCIPAL">
 										<img class="participant_img" src="/assets/img/part_afg.png">
 									<#else>
 										<img class="participant_img" src="/assets/img/part_nato.png">
 									</#if>
-								${p.name} (${p.rank}) - ${p.role}</li> 
+								${p.name} (${p.rank!}) - ${p.role}</li> 
 							</#list>
 						</ul>
 					</ul>
