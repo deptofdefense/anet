@@ -3,15 +3,13 @@ securityMarking: DEMO USE ONLY
 securityColor: "green"
 
 database:
-  driverClass: com.microsoft.sqlserver.jdbc.SQLServerDriver
-  #driverClass: org.sqlite.JDBC
+  driverClass: ${ANET_DB_DRIVER}
   user: ${ANET_DB_USERNAME}
   password: ${ANET_DB_PASSWORD}
-  url: jdbc:sqlserver://${ANET_DB_SERVER};databaseName=${ANET_DB_NAME}
-  #url: jdbc:sqlite:development.db
-  #properties:
-  #  date_string_format: "yyyy-mm-dd hh:mm:ss.SSS Z"
-  #  date_class: "text"
+  url: ${ANET_DB_URL}
+  properties:
+   date_string_format: ${ANET_DB_DATE_STRING_FORMAT}
+   date_class: ${ANET_DB_DATE_CLASS}
 
 server:
   applicationConnectors:
