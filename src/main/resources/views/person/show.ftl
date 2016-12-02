@@ -20,7 +20,7 @@
 			<div class="col-md-6">
 				<div class="field">
 			 		<div class="header">Email</div>
-			 		<div class="content"><a href="mailto:${emailAddress}">${emailAddress}</a></div>
+			 		<div class="content"><a href="mailto:${emailAddress!}">${emailAddress!}</a></div>
 		 		</div>
 			 	<div class="field">
 				 	<div class="header">Phone</div>
