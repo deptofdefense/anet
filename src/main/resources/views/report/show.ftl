@@ -13,20 +13,24 @@
 						<li><h5 class="inline">Author:</h5> <a href="/people/${author.id}">${author.name}</a></li>
 						<li><h5 class="inline">Location:</h5> <#if location??>${location.name}</#if></li>
 						<li><h5 class="inline">Atmospherics:</h5> ${atmosphere} - ${atmosphereDetails!}</li>
-						<ul><h5>Attendees</h5>
-							<#list attendees as p>
-								<li>
-									<#if p.role == "PRINCIPAL">
-										<img class="participant_img" src="/assets/img/part_afg.png">
-									<#else>
-										<img class="participant_img" src="/assets/img/part_nato.png">
-									</#if>
-								${p.name} (${p.rank!}) - ${p.role}</li>
-							</#list>
-						</ul>
 					</ul>
 				</div>
 				<div class="col-md-6">
+					<ul><h5>Attendees</h5>
+						<#list attendees as p>
+							<li>
+								<#if p.role == "PRINCIPAL">
+									<img class="participant_img" src="/assets/img/part_afg.png">
+								<#else>
+									<img class="participant_img" src="/assets/img/part_nato.png">
+								</#if>
+							${p.name} (${p.rank!}) - ${p.role}</li>
+						</#list>
+					</ul>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
 					<h5>Discussion</h5>
 					<p>${reportText}<p>
 					<h5>Next Steps</h5>
@@ -115,14 +119,20 @@
 				</#list>
 			</div>
 		</div>
-		<div class="row  commentbtn">
-			<div class="col-md-8">
-				<button data-toggle="tooltip" title="Your comment will be added above" class="pull-right" id="newCommentBtn">Submit Comment</button>
-				<button data-toggle="tooltip" title="Author will be asked to resubmit" class="pull-right" id="reject">Return to Author</button>
-				</div>
+		<div class="row">
+			<div class='col-md-8'>
+				<label for="newCommentTextReject">Leave a Comment</label>
+		        <input id="newCommentTextReject" />
+	        </div>
+		</div>
+		<div class="row">
+	        <div class="col-md-8">
+				<button data-toggle="tooltip" title="Your comment will be added above" class='pull-right' id="newCommentBtn">Submit Comment</button>
+				<button data-toggle="tooltip" title="Author will be asked to resubmit" class='pull-right' id="reject">Return to Author</button>
 			</div>
 		</div>
 	</div>
+</div>
 
 <div class="modal returnReport fade">
   <div class="modal-dialog" role="document">
@@ -135,7 +145,7 @@
       </div>
       <div class="modal-body">
       	<label for="newCommentTextReject">Why are you rejecting the report?</label>
-        <textarea id="newCommentText"></textarea>
+        <textarea id="newCommentTextReject"></textarea>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
