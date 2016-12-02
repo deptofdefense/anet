@@ -79,6 +79,17 @@ function ResourceAttacher(resourceName) {
 
 	var _this = this;
 
+	this.$table.find('[data-id]').each(function() {
+		var $row = $(this);
+		var id = $row.attr('data-id');
+		var resource = {id: id};
+		$row.find('[data-attribute]').each(function() {
+			resource[this.getAttribute('data-attribute')] = this.innerHTML;
+		});
+
+		_this.attachedResources[id] = resource;
+	});
+
 	this.$table.on('click', '[data-remove]', function(event) {
 		var id = $(this).parents('[data-id]').attr('data-id');
 		var resource = _this.attachedResources[id];
