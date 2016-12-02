@@ -21,7 +21,7 @@ server:
     - type: http
       port: 8081
 
-viewRendererConfiguration:
+views:
   .ftl:
     number_format: computer
 

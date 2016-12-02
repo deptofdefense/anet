@@ -23,7 +23,7 @@ public class AnetConfiguration extends Configuration {
     private DataSourceFactory database = new DataSourceFactory();
 
 	@NotNull
-	private Map<String, Map<String, String>> viewRendererConfiguration = Collections.emptyMap();
+	private Map<String, Map<String, String>> views = Collections.emptyMap();
 
     @JsonProperty("database")
     public void setDataSourceFactory(DataSourceFactory factory) {
@@ -59,17 +59,17 @@ public class AnetConfiguration extends Configuration {
 		this.securityColor = securityColor;
 	}
 
-	@JsonProperty("viewRendererConfiguration")
-	public Map<String, Map<String, String>> getViewRendererConfiguration() {
-		return viewRendererConfiguration;
+	@JsonProperty("views")
+	public Map<String, Map<String, String>> getViews() {
+		return views;
 	}
 
-	@JsonProperty("viewRendererConfiguration")
-	public void setViewRendererConfiguration(Map<String, Map<String, String>> viewRendererConfiguration) {
+	@JsonProperty("views")
+	public void setViews(Map<String, Map<String, String>> views) {
 		final ImmutableMap.Builder<String, Map<String, String>> builder = ImmutableMap.builder();
-		for (Map.Entry<String, Map<String, String>> entry : viewRendererConfiguration.entrySet()) {
+		for (Map.Entry<String, Map<String, String>> entry : views.entrySet()) {
 			builder.put(entry.getKey(), ImmutableMap.copyOf(entry.getValue()));
 		}
-		this.viewRendererConfiguration = builder.build();
+		this.views = builder.build();
 	}
 }
