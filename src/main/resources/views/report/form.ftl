@@ -58,7 +58,7 @@
 						<label for="atmosphereNegative">💩🔥</label> -->
 					</div>
 
-					<div class="form-group hide" data-atmosphere-details>
+					<div class="form-group <#if !atmosphereDetails??>hide</#if>" data-atmosphere-details>
 						<label for="engagementAtmosphereDetails">Atmospheric details</label>
 						<input id="engagementAtmosphereDetails" name="atmosphereDetails" value="${atmosphereDetails!}">
 					</div>
@@ -247,7 +247,7 @@ $(document).ready(function() {
 	$("form").on("submit", submitForm);
 
 	var $atmosphereDetails = $('[data-atmosphere-details]')
-	$('[name=engagementAtmosphere]').on('change', function() {
+	$('[name=atmosphere]').on('change', function() {
 		$atmosphereDetails.toggleClass('hide', this.value === 'positive');
 	});
 
