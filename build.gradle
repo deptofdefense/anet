@@ -41,8 +41,21 @@ dependencies {
 
 
 mainClassName = "mil.dds.anet.AnetApplication"
-run.args = ["server","anet.yml"]
 
+String dbDriver = run.environment['DB_DRIVER']
+dbDriver = dbDriver ? dbDriver : "sqlite"
+
+if (dbDriver == "sqlserver") {
+	run.environment("ANET_DB_DRIVER", "com.microsoft.sqlserver.jdbc.SQLServerDriver")
+	run.environment("ANET_DB_URL", "jdbc:sqlserver://${run.environment['ANET_DB_SERVER']};databaseName=${run.environment['ANET_DB_NAME']}")
+} else {
+	run.environment("ANET_DB_DRIVER", "org.sqlite.JDBC")
+	run.environment("ANET_DB_URL", "jdbc:sqlite:development.db")
+	run.environment("ANET_DB_DATE_STRING_FORMAT", "yyyy-mm-dd hh:mm:ss.SSS Z")
+	run.environment("ANET_DB_DATE_CLASS", "text")
+}
+
+run.args = ["server","anet.yml"]
 
 task dbStatus(dependsOn: 'compileJava', type: JavaExec) {
 	classpath =  sourceSets.main.runtimeClasspath
