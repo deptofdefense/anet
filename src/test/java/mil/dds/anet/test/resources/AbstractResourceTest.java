@@ -9,6 +9,7 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
@@ -41,11 +42,16 @@ public abstract class AbstractResourceTest {
 			.request();
 	}
 	
-	public Builder httpQuery(String path, Person authUser) { 
+	public Builder httpQuery(String path, Person authUser, MediaType acceptType) { 
 		String authString = Base64.getEncoder().encodeToString(
 				(authUser.getName().split(" ")[0] + ":" + authUser.getName().split(" ")[1]).getBytes());
 		return httpQuery(path)
-				.header("Authorization", "Basic " + authString);
+				.header("Authorization", "Basic " + authString)
+				.header("Accept", acceptType.toString());
+	}
+	
+	public Builder httpQuery(String path, Person authUser) { 
+		return httpQuery(path, authUser, MediaType.APPLICATION_JSON_TYPE);
 	}
 	
 	public Person findOrPutPersonInDb(Person stub) { 

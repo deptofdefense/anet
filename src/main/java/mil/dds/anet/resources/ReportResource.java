@@ -66,7 +66,7 @@ public class ReportResource {
 
 	@GET
 	@Path("/{id}")
-	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	@Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON})
 	public Report getById(@PathParam("id") int id) {
 		Report r =  dao.getById(id);
 		if (r == null) { throw new WebApplicationException("No such report", Status.NOT_FOUND); }
@@ -307,7 +307,7 @@ public class ReportResource {
 
 	@GET
 	@Path("/search")
-	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	@Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON})
 	public ObjectListView<Report> searchReports(@QueryParam("q") String query) {
 		List<Report> list = Collections.emptyList();
 		if (query != null && query.trim().length() > 0) {

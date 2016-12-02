@@ -243,9 +243,6 @@ public class Report extends AbstractAnetView<Report> {
 	public List<ApprovalAction> getApprovalStatus() { 
 		AnetObjectEngine engine = AnetObjectEngine.getInstance();
 		List<ApprovalAction> actions = engine.getApprovalActionDao().getActionsForReport(this.getId());
-		if (this.getState() == ReportState.RELEASED) { 
-			return actions;
-		}
 		
 		Organization ao = engine.getOrganizationForPerson(getAuthor());
 		if (ao == null) { 

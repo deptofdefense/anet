@@ -53,7 +53,7 @@ public class OrganizationResource {
 	
 	@GET
 	@Path("/{id}")
-	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	@Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON})
 	public Organization getById(@PathParam("id") int id) {
 		return dao.getById(id).render("show.ftl");
 	}

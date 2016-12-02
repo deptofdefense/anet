@@ -58,13 +58,17 @@
 						<tr><td>stage</td><td>Status</td><td>Approvers</td></tr>
 						<#list approvalStatus as action>
 							<tr>
-								<td>${action?index}</td>
+								<td>${action?index + 1}</td>
 								<td>
 									<#if action.type??>
 										${action.type} by ${action.person} on ${action.createdAt}
 				      				</#if>
 				      			</td>
-				      			<td><a href="/groups/${action.step.approverGroup.id}">${action.step.approverGroup.name}</a></td>
+				      			<td>
+				      			<#if action.step??>
+				      				<a href="/groups/${action.step.approverGroup.id}">${action.step.approverGroup.name}</a>
+				      			</#if>
+				      			</td>
 				      		</tr>
 				      	</#list>
 				      </table>

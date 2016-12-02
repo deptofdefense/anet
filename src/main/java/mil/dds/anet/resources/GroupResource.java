@@ -40,7 +40,7 @@ public class GroupResource {
 	
 	@GET
 	@Path("/{id}")
-	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	@Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON})
 	public Group getById(@PathParam("id") int id) { 
 		Group g = dao.getById(id);
 		if (g == null) { return null; }

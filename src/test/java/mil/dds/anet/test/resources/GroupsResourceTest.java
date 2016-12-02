@@ -6,6 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.junit.Test;
@@ -111,8 +112,7 @@ public class GroupsResourceTest extends AbstractResourceTest {
 	@Test
 	public void viewTest() { 
 		Person steve = getSteveSteveson();
-		Response resp = httpQuery("/groups/", steve)
-			.header("Accept", "text/html").get();
+		Response resp = httpQuery("/groups/", steve, MediaType.TEXT_HTML_TYPE).get();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		String respBody = getResponseBody(resp);
 		assertThat(respBody).as("FreeMarker error").doesNotContain("FreeMarker template error");
@@ -122,13 +122,11 @@ public class GroupsResourceTest extends AbstractResourceTest {
 		assertThat(groupIdMat.find());
 		int groupId = Integer.parseInt(groupIdMat.group(1));
 		
-		resp = httpQuery("/groups/new", steve)
-				.header("Accept", "text/html").get();
+		resp = httpQuery("/groups/new", steve, MediaType.TEXT_HTML_TYPE).get();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
 		
-		resp = httpQuery("/groups/" + groupId, steve)
-				.header("Accept", "text/html").get();
+		resp = httpQuery("/groups/" + groupId, steve, MediaType.TEXT_HTML_TYPE).get();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
 		

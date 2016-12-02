@@ -23,11 +23,24 @@ public class ApprovalAction {
 	ApprovalType type;
 	
 	
+	@JsonIgnore
 	public ApprovalStep getStep() {
+		if (step == null || step.getLoadLevel() == null) { return step; }
+		if (step.getLoadLevel().contains(LoadLevel.PROPERTIES) == false) { 
+			this.step = AnetObjectEngine.getInstance()
+					.getApprovalStepDao().getById(step.getId());
+		}
 		return step;
 	}
+	
+	@JsonSetter("step")
 	public void setStep(ApprovalStep step) {
 		this.step = step;
+	}
+	
+	@JsonGetter("step")
+	public ApprovalStep getStepJson() { 
+		return step;
 	}
 	
 	@JsonGetter("person")
