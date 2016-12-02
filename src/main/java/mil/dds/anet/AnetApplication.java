@@ -1,5 +1,7 @@
 package mil.dds.anet;
 
+import java.util.Map;
+
 import org.skife.jdbi.v2.DBI;
 
 import io.dropwizard.Application;
@@ -57,7 +59,13 @@ public class AnetApplication extends Application<AnetConfiguration> {
 	    });
 
 		bootstrap.addBundle(new AssetsBundle("/assets", "/assets", "index.html"));
-		bootstrap.addBundle(new ViewBundle<AnetConfiguration>());
+
+		bootstrap.addBundle(new ViewBundle<AnetConfiguration>() {
+			@Override
+			public Map<String, Map<String, String>> getViewConfiguration(AnetConfiguration configuration) {
+				return configuration.getViewRendererConfiguration();
+			}
+		});
 	}
 
 	@Override
@@ -78,7 +86,7 @@ public class AnetApplication extends Application<AnetConfiguration> {
 	    //If you want to use @Auth to inject a custom Principal type into your resource
 	    environment.jersey().register(new AuthValueFactoryProvider.Binder<>(Person.class));
 	    environment.jersey().register(new WebExceptionMapper());
-	    
+
 		TestingResource test = new TestingResource(engine);
 		PersonResource personResource = new PersonResource(engine);
 		GroupResource groupResource = new GroupResource(engine);

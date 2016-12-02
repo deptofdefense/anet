@@ -21,6 +21,10 @@ server:
     - type: http
       port: 8081
 
+viewRendererConfiguration:
+  .ftl:
+    number_format: computer
+
 logging:
   level: INFO
   loggers:
@@ -37,7 +41,7 @@ logging:
           currentLogFilename: ./logs/testingLogger.log
           archivedLogFilenamePattern: ./logs/testingLogger-%d.log.gz
           archivedFileCount: 2
-  appenders: 
+  appenders:
     - type: console
       threshold: TRACE
       target: stdout
