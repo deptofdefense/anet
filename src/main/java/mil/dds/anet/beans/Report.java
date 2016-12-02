@@ -1,7 +1,10 @@
 package mil.dds.anet.beans;
 
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -255,14 +258,17 @@ public class Report extends AbstractAnetView<Report> {
 			//TODO: return the default approval steps if in PENDING. 
 			return actions;
 		}
-		
-		
+				
 		List<ApprovalAction> workflow = new LinkedList<ApprovalAction>();
 		for (ApprovalStep step : steps) { 
-			//If there is an Action for this step, grab it and record this.
+			//If there is an Action for this step, grab the last one (date wise)
 			Optional<ApprovalAction> existing = actions.stream().filter(a -> 
 					a.getStep().getId().equals(step.getId())
-				).findFirst();
+				).max(new Comparator<ApprovalAction>(){
+					public int compare(ApprovalAction a, ApprovalAction b) {
+						return a.getCreatedAt().compareTo(b.getCreatedAt());
+					}
+				});
 			ApprovalAction action;
 			if (existing.isPresent()) { 
 				action = existing.get();
