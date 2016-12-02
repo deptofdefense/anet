@@ -73,7 +73,8 @@ public class LocationDao implements IAnetDao<Location> {
 	public List<Location> searchByName(String name) {
 		String sql;
 		if (DaoUtils.isMsSql(dbHandle)) { 
-			sql = "SELECT * FROM locations WHERE FREETEXT (name, :name)";
+			name = "\"" + name + "*\"";
+			sql = "SELECT * FROM locations WHERE CONTAINS (name, :name)";
 		} else { 
 			sql = "SELECT * FROM locations WHERE name LIKE '%' || :name || '%'";
 		}
