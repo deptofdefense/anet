@@ -228,10 +228,22 @@ public class ReportDao implements IAnetDao<Report> {
 	}
 
 	public List<Location> getRecentLocations(Person p) {
-		Query<Map<String,Object>> createQuery = dbHandle.createQuery("select locations.* from reports, locations where reports.locationid = locations.id and reports.authorId = :authorId order by reports.createdAt DESC LIMIT 10")
-				.bind("authorId", p.getId());
-		List<Location> list = createQuery.map(new LocationMapper()).list();
-		return list;
+		String sql;
+		if (DaoUtils.isMsSql(dbHandle)) {
+			sql = "SELECT TOP 10 locations.* FROM reports, locations "
+					+ "WHERE reports.locantionid = locations.id "
+					+ "AND reports.authorId = :authorId "
+					+ "ORDER BY reports.createdAt DESC";
+		} else {
+			sql = "SELECT locations.* FROM reports, locations "
+					+ "WHERE reports.locationid = locations.id "
+					+ "AND reports.authorId = :authorId "
+					+ "ORDER BY reports.createdAt DESC LIMIT 10";
+		}
+		return dbHandle.createQuery(sql)
+				.bind("authorId", p.getId())
+		.map(new LocationMapper())
+		.list();
 	}
 	
 }
