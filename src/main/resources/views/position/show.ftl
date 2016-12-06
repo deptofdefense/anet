@@ -124,7 +124,7 @@
 	</#list>
 </table>
 
-<h3>Reports by this Position</h3>
+<h3>Reports <#if type == 'ADVISOR'>by<#else>about</#if> this Position</h3>
 <table>
 	<tr>
 		<th>Who</th>

@@ -183,10 +183,6 @@ INSERT INTO positionRelationships (positionId_a, positionId_b, createdAt, update
 	(SELECT id FROM positions WHERE name='EF2 Advisor 4987'), 
 	'2016-11-28 04:00:00.000 +0000', '2016-11-28 04:00:00.000 +0000', 0);
 
-
-
-
-
 INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, nextSteps, authorId, state, engagementDate, atmosphere) VALUES
 	('2016-11-28 04:00:00.000 +0000', '2016-11-28 04:00:00.000 +0000', (SELECT id from locations where name='General Hospital'), 'Discuss improvements in Annual Budgeting process',
 	'Today I met with this dude to tell him all the great things that he can do to improve his budgeting process. I hope he listened to me',
