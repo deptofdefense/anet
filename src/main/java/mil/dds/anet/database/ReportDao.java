@@ -231,7 +231,7 @@ public class ReportDao implements IAnetDao<Report> {
 		String sql;
 		if (DaoUtils.isMsSql(dbHandle)) {
 			sql = "SELECT TOP 10 locations.* FROM reports, locations "
-					+ "WHERE reports.locantionid = locations.id "
+					+ "WHERE reports.locationid = locations.id "
 					+ "AND reports.authorId = :authorId "
 					+ "ORDER BY reports.createdAt DESC";
 		} else {
