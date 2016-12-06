@@ -14,6 +14,8 @@ import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
+import mil.dds.anet.beans.geo.Location;
+import mil.dds.anet.database.mappers.LocationMapper;
 import mil.dds.anet.database.mappers.PoamMapper;
 import mil.dds.anet.database.mappers.ReportMapper;
 import mil.dds.anet.database.mappers.ReportPersonMapper;
@@ -223,6 +225,13 @@ public class ReportDao implements IAnetDao<Report> {
 			.bind("personId", p.getId())
 			.map(new ReportMapper())
 			.list();
+	}
+
+	public List<Location> getRecentLocations(Person p) {
+		Query<Map<String,Object>> createQuery = dbHandle.createQuery("select locations.* from reports, locations where reports.locationid = locations.id and reports.authorId = :authorId order by reports.createdAt DESC LIMIT 10")
+				.bind("authorId", p.getId());
+		List<Location> list = createQuery.map(new LocationMapper()).list();
+		return list;
 	}
 	
 }
