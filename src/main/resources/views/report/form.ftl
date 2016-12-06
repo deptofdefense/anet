@@ -191,6 +191,17 @@
 							<td data-attribute="ef"></td>
 							<td data-attribute="poam"></td>
 						</tr>
+						<#list poams as p>
+							<tr data-id="${p.id}" >
+								<td>
+									<button type="button" class="usa-button-unstyled" data-remove>
+										<i class="glyphicon glyphicon-remove"></i>
+									</button>
+								</td>
+								<td data-attribute="ef" >${p.shortName}</td>
+								<td data-attribute="poam" >${p.longName}</td>
+							</tr>
+						</#list>
 					</table>
 				</div>
 			</div>
@@ -349,7 +360,7 @@ $(document).ready(function() {
 		report['atmosphereDetails'] = $("[name=atmosphereDetails]").val();
 		report['reportText'] = $("[name=reportText]").val();
 		report['nextSteps'] = $("[name=nextSteps]").val();
-
+		
 		$.ajax({
 			url: id ? '/reports/' + id + '/edit' : '/reports/new',
 			method: "POST",

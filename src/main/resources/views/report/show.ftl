@@ -27,6 +27,11 @@
 							${p.name} (${p.rank!}) - ${p.role}</li>
 						</#list>
 					</ul>
+					<ul><h5>Poams</h5>
+						<#list poams as p>
+							<li>${p.shortName}: ${p.longName}</li>
+						</#list>
+					</ul>
 				</div>
 			</div>
 			<div class="row">

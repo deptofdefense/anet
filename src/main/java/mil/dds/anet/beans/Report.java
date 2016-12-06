@@ -1,10 +1,8 @@
 package mil.dds.anet.beans;
 
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -176,12 +174,22 @@ public class Report extends AbstractAnetView<Report> {
 		return null;
 	}
 	
+	@JsonIgnore
 	public List<Poam> getPoams() {
+		if (poams == null) { 
+			poams = AnetObjectEngine.getInstance().getReportDao().getPoamsForReport(this);
+		}
 		return poams;
 	}
 
+	@JsonSetter("poams")
 	public void setPoams(List<Poam> poams) {
 		this.poams = poams;
+	}
+	
+	@JsonGetter("poams")
+	public List<Poam> getPoamsJson() { 
+		return poams;
 	}
 
 	public String getReportText() {
@@ -300,7 +308,7 @@ public class Report extends AbstractAnetView<Report> {
 				Objects.equals(r.getAtmosphere(), atmosphere) &&
 				Objects.equals(r.getAtmosphereDetails(), atmosphereDetails) &&
 				Objects.equals(r.getAttendeesJson(), attendees) &&
-				Objects.equals(r.getPoams(), poams) &&
+				Objects.equals(r.getPoamsJson(), poams) &&
 				Objects.equals(r.getReportText(), reportText) &&
 				Objects.equals(r.getNextSteps(), nextSteps) &&
 				idEqual(r.getAuthorJson(), author) &&

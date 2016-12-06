@@ -14,6 +14,7 @@ import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
+import mil.dds.anet.database.mappers.PoamMapper;
 import mil.dds.anet.database.mappers.ReportMapper;
 import mil.dds.anet.database.mappers.ReportPersonMapper;
 import mil.dds.anet.utils.DaoUtils;
@@ -78,7 +79,7 @@ public class ReportDao implements IAnetDao<Report> {
 					.execute();
 			}
 		}
-		if (r.getPoams() != null) { 
+		if (r.getPoamsJson() != null) { 
 			for (Poam p : r.getPoams()) { 
 				//TODO: batch this. 
 				dbHandle.createStatement("INSERT INTO reportPoams " +
@@ -171,6 +172,15 @@ public class ReportDao implements IAnetDao<Report> {
 			.bind("reportId", reportId)
 			.map(new ReportPersonMapper())
 			.list();
+	}
+	
+	public List<Poam> getPoamsForReport(Report report) {
+		return dbHandle.createQuery("SELECT * FROM poams, reportPoams "
+				+ "WHERE reportPoams.reportId = :reportId "
+				+ "AND reportPoams.poamId = poams.id")
+				.bind("reportId", report.getId())
+				.map(new PoamMapper())
+				.list();
 	}
 
 	public List<Report> search(String query) {
