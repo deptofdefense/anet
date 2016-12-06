@@ -88,11 +88,15 @@ public class PositionResource {
 	}
 	
 	@GET
-	@Path("/new")
+	@Path("/new{type}")
 	@Produces(MediaType.TEXT_HTML)
-	public Position getPositionForm() { 
+	public Position getPositionForm(@PathParam("type") String type) { 
 		Position b = (new Position());
-		b.addToContext("orgs", engine.getOrganizationDao().getAll(0, Integer.MAX_VALUE));
+		if (type.equalsIgnoreCase("BILLET")) { 
+			b.setType(PositionType.ADVISOR);
+		} else { 
+			b.setType(PositionType.PRINCIPAL);
+		}
 		return b.render("form.ftl");
 	}
 	
