@@ -17,7 +17,9 @@ public class AnetConfiguration extends Configuration {
 	private boolean developmentMode;
 	private String securityMarking;
 	private String securityColor;
-
+	
+	private SmtpConfiguration smtp;
+	
 	@Valid
     @NotNull
     private DataSourceFactory database = new DataSourceFactory();
@@ -71,5 +73,51 @@ public class AnetConfiguration extends Configuration {
 			builder.put(entry.getKey(), ImmutableMap.copyOf(entry.getValue()));
 		}
 		this.views = builder.build();
+	}
+	
+	public SmtpConfiguration getSmtp() {
+		return smtp;
+	}
+
+	public void setSmtp(SmtpConfiguration smtp) {
+		this.smtp = smtp;
+	}
+
+	public static class SmtpConfiguration { 
+		private String hostname;
+		private Integer port = 587;
+		private String username;
+		private String password;
+		private Boolean startTLS = true;
+		public String getHostname() {
+			return hostname;
+		}
+		public void setHostname(String hostname) {
+			this.hostname = hostname;
+		}
+		public Integer getPort() {
+			return port;
+		}
+		public void setPort(Integer port) {
+			this.port = port;
+		}
+		public String getUsername() {
+			return username;
+		}
+		public void setUsername(String username) {
+			this.username = username;
+		}
+		public String getPassword() {
+			return password;
+		}
+		public void setPassword(String password) {
+			this.password = password;
+		}
+		public Boolean getStartTLS() {
+			return startTLS;
+		}
+		public void setStartTLS(Boolean startTLS) {
+			this.startTLS = startTLS;
+		}
 	}
 }

@@ -87,7 +87,7 @@ public class AnetApplication extends Application<AnetConfiguration> {
 	    environment.jersey().register(new AuthValueFactoryProvider.Binder<>(Person.class));
 	    environment.jersey().register(new WebExceptionMapper());
 
-		TestingResource test = new TestingResource(engine);
+		TestingResource test = new TestingResource(engine, configuration);
 		PersonResource personResource = new PersonResource(engine);
 		GroupResource groupResource = new GroupResource(engine);
 		PoamResource poamResource =  new PoamResource(engine);

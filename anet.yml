@@ -2,6 +2,13 @@ developmentMode: false
 securityMarking: DEMO USE ONLY
 securityColor: "green"
 
+smtp:
+  hostname: ${ANET_SMTP_SERVER}
+  port: 587
+  username: ${ANET_SMTP_USERNAME}
+  password: ${ANET_SMTP_PASSWORD}
+  startTLS: true
+
 database:
   driverClass: ${ANET_DB_DRIVER}
   user: ${ANET_DB_USERNAME}
