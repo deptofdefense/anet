@@ -41,6 +41,9 @@
 							<option value="${location.id}">${location.name}</option>
 							</#if>
 						</select>
+						<#list context.recentLocations as location>
+							${location.name},
+						</#list>
 					</div>
 
 					<div class="form-group engagement-atmosphere">
