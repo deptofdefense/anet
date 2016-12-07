@@ -254,14 +254,14 @@ public class ReportDao implements IAnetDao<Report> {
 					+ "FROM people "
 					+ "JOIN reportPeople ON people.id = reportPeople.personId "
 					+ "JOIN reports ON reportPeople.reportId = reports.id "
-					+ "WHERE reports.authorId = 1 "
+					+ "WHERE reports.authorId = :authorId "
 					+ "ORDER BY reports.createdAt DESC";
 		} else {
 			sql = "SELECT people.* "
 					+ "FROM people "
 					+ "JOIN reportPeople ON people.id = reportPeople.personId "
 					+ "JOIN reports ON reportPeople.reportId = reports.id "
-					+ "WHERE reports.authorId = 1 "
+					+ "WHERE reports.authorId = :authorId "
 					+ "ORDER BY reports.createdAt DESC LIMIT 10";
 		}
 		return dbHandle.createQuery(sql)
