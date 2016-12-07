@@ -79,6 +79,9 @@
 			<div class="form-group">
 				<label for="attachPersonName">Who was present?</label>
 				<select id="attachPersonName" style="width: 100%"></select>
+				<#list context.recentPeople as person>
+					${person.name},
+				</#list>
 			</div>
 
 			<div class="form-group hide" data-attach-new-person>
