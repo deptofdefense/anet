@@ -55,8 +55,10 @@ public class PersonDao implements IAnetDao<Person> {
 		p.setCreatedAt(DateTime.now());
 		p.setUpdatedAt(DateTime.now());
 		GeneratedKeys<Map<String, Object>> keys = dbHandle.createStatement("INSERT INTO people " +
-				"(name, status, role, emailAddress, phoneNumber, rank, pendingVerification, biography, createdAt, updatedAt) " +
-				"VALUES (:name, :status, :role, :emailAddress, :phoneNumber, :rank, :pendingVerification, :biography, :createdAt, :updatedAt);")
+				"(name, status, role, emailAddress, phoneNumber, rank, pendingVerification, "
+				+ "biography, domainUsername, createdAt, updatedAt) " +
+				"VALUES (:name, :status, :role, :emailAddress, :phoneNumber, :rank, :pendingVerification, "
+				+ ":biography, :domainUsername:createdAt, :updatedAt);")
 			.bindFromProperties(p)
 			.bind("status", DaoUtils.getEnumId(p.getStatus()))
 			.bind("role", DaoUtils.getEnumId(p.getRole()))
@@ -129,7 +131,7 @@ public class PersonDao implements IAnetDao<Person> {
 
 	public List<Person> findByProperty(String ...strings) {
 		if (strings.length % 2 != 0 ) { throw new RuntimeException("Illegal number of arguments to findByProperty: " + strings.toString()); }
-		HashSet<String> props = Sets.newHashSet("name","emailAddress","rank","phoneNumber","status");
+		HashSet<String> props = Sets.newHashSet("name","emailAddress","rank","phoneNumber","status", "domainUsername");
 		List<String> conditions = new ArrayList<String>();
 		
 		for (int i=0;i<strings.length;i+=2) { 

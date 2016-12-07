@@ -30,6 +30,7 @@ public class PersonMapper implements ResultSetMapper<Person> {
 		a.setPhoneNumber(r.getString("phoneNumber"));
 		a.setRank(r.getString("rank"));
 		a.setBiography(r.getString("biography"));
+		a.setDomainUsername(r.getString("domainUsername"));
 		a.setPendingVerification(r.getBoolean("pendingVerification"));
 		a.setCreatedAt(new DateTime(r.getTimestamp("createdAt")));
 		a.setUpdatedAt(new DateTime(r.getTimestamp("updatedAt")));

@@ -13,26 +13,26 @@ DELETE FROM reportPeople;
 DELETE FROM reports;
 DELETE FROM comments;
 
-INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt) 
-	VALUES ('Jack Jackson', 0, 0, 'foobar@example.com', '123-456-78960', 'OF-9', 'this is a sample biography', '2016-11-28 04:00:00.000 +0000', '2016-11-28 04:00:00.000 +0000');
+INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, createdAt, updatedAt) 
+	VALUES ('Jack Jackson', 0, 0, 'foobar@example.com', '123-456-78960', 'OF-9', 'this is a sample biography', 'jack', '2016-11-28 04:00:00.000 +0000', '2016-11-28 04:00:00.000 +0000');
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt) 
 	VALUES ('Steve Steveson', 0, 1, 'steve@example.com', '+011-232-12324', 'LtCol', 'this is a sample person who could be a Principal!', '2016-11-28 04:00:00.000 +0000', '2016-11-28 04:00:00.000 +0000');
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt) 
 	VALUES ('Roger Rogewell', 0, 1, 'roger@example.com', '+1-412-7324', 'Maj', 'Roger is another test person we have in the database', '2016-11-28 04:00:00.000 +0000', '2016-11-28 04:00:00.000 +0000');
+INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, createdAt, updatedAt) 
+	VALUES ('Elizabeth Elizawell', 0, 0, 'liz@example.com', '+1-777-7777', 'Capt', 'elizabeth is another test Advisor we have in the database', 'elizabeth', '2016-11-28 04:00:00.000 +0000', '2016-11-28 04:00:00.000 +0000');
+INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, createdAt, updatedAt) 
+	VALUES ('Bob Bobtown', 0, 0, 'bob@example.com', '+1-444-7324', 'Civ', 'Bob is yet another test Advisor we have in the database', 'bob', '2016-11-28 04:00:00.000 +0000', '2016-11-28 04:00:00.000 +0000');
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt) 
-	VALUES ('Elizabeth Elizawell', 0, 0, 'liz@example.com', '+1-777-7777', 'Capt', 'elizabeth is another test person we have in the database', '2016-11-28 04:00:00.000 +0000', '2016-11-28 04:00:00.000 +0000');
-INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt) 
-	VALUES ('Bob Bobtown', 0, 0, 'bob@example.com', '+1-444-7324', 'Civ', 'Bob is yet another test person we have in the database', '2016-11-28 04:00:00.000 +0000', '2016-11-28 04:00:00.000 +0000');
-INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt) 
-	VALUES ('Henry Henderson', 0, 1, 'henry@example.com', '+2-456-7324', 'BGen', 'Henry is another test person we have in the database', '2016-11-28 04:00:00.000 +0000', '2016-11-28 04:00:00.000 +0000');
+	VALUES ('Henry Henderson', 0, 1, 'henry@example.com', '+2-456-7324', 'BGen', 'Henry is another test Principal we have in the database', '2016-11-28 04:00:00.000 +0000', '2016-11-28 04:00:00.000 +0000');
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt) 
 	VALUES ('Hunter Huntman', 0, 1, 'hunter@example.com', '+1-412-9314', 'CIV', '', '2016-11-28 04:00:00.000 +0000', '2016-11-28 04:00:00.000 +0000');
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt) 
 	VALUES ('Andrew Anderson', 0, 1, 'andrew@example.com', '+1-412-7324', 'CIV', '', '2016-11-28 04:00:00.000 +0000', '2016-11-28 04:00:00.000 +0000');
-INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt) 
-	VALUES ('Nick Nicholson', 0, 0, 'nick@example.com', '+1-202-7324', 'CIV', '', '2016-11-28 04:00:00.000 +0000', '2016-11-28 04:00:00.000 +0000');
-INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt) 
-	VALUES ('Reina Reanton', 0, 0, 'reina@example.com', '+42-233-7324', 'CIV', '', '2016-11-28 04:00:00.000 +0000', '2016-11-28 04:00:00.000 +0000');
+INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, createdAt, updatedAt) 
+	VALUES ('Nick Nicholson', 0, 0, 'nick@example.com', '+1-202-7324', 'CIV', '', 'nick', '2016-11-28 04:00:00.000 +0000', '2016-11-28 04:00:00.000 +0000');
+INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, createdAt, updatedAt) 
+	VALUES ('Reina Reanton', 0, 0, 'reina@example.com', '+42-233-7324', 'CIV', '', 'reina', '2016-11-28 04:00:00.000 +0000', '2016-11-28 04:00:00.000 +0000');
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt) 
 	VALUES ('Shardul Sharton', 0, 1, 'shardul@example.com', '+99-9999-9999', 'CIV', '', '2016-11-28 04:00:00.000 +0000', '2016-11-28 04:00:00.000 +0000');
 

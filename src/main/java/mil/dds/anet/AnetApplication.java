@@ -1,6 +1,11 @@
 package mil.dds.anet;
 
+import java.util.EnumSet;
 import java.util.Map;
+
+import javax.servlet.DispatcherType;
+import javax.servlet.Filter;
+import javax.servlet.FilterRegistration;
 
 import org.skife.jdbi.v2.DBI;
 
@@ -30,6 +35,7 @@ import mil.dds.anet.resources.PositionResource;
 import mil.dds.anet.resources.ReportResource;
 import mil.dds.anet.resources.TestingResource;
 import mil.dds.anet.views.ViewResponseFilter;
+import waffle.servlet.NegotiateSecurityFilter;
 
 public class AnetApplication extends Application<AnetConfiguration> {
 	public static void main(String[] args) throws Exception {
@@ -76,13 +82,22 @@ public class AnetApplication extends Application<AnetConfiguration> {
 
 		final AnetObjectEngine engine = new AnetObjectEngine(jdbi);
 
-		environment.jersey().register(new AuthDynamicFeature(
-	            new BasicCredentialAuthFilter.Builder<Person>()
-	                .setAuthenticator(new AnetAuthenticator(engine))
-//	                .setAuthorizer(new ExampleAuthorizer())
-	                .setRealm("ANET")
-	                .buildAuthFilter()));
-//	    environment.jersey().register(RolesAllowedDynamicFeature.class);
+		if (configuration.isDevelopmentMode()) {
+			//In development mode just allow basic HTTP Authentication
+			environment.jersey().register(new AuthDynamicFeature(
+					new BasicCredentialAuthFilter.Builder<Person>()
+						.setAuthenticator(new AnetDevAuthenticator(engine))
+						.setRealm("ANET")
+						.buildAuthFilter()));	
+		} else { 
+			//In Production require Windows AD Authentication.
+			Filter nsf = new NegotiateSecurityFilter();
+			FilterRegistration nsfReg = environment.servlets().addFilter("NegotiateSecurityFilter", nsf);
+			nsfReg.setInitParameters(configuration.getWaffleConfig());
+			nsfReg.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
+			environment.jersey().register(new AuthDynamicFeature(new AnetAuthenticationFilter(engine)));
+		}
+		
 	    //If you want to use @Auth to inject a custom Principal type into your resource
 	    environment.jersey().register(new AuthValueFactoryProvider.Binder<>(Person.class));
 	    environment.jersey().register(new WebExceptionMapper());

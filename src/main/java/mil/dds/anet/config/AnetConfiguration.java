@@ -2,6 +2,8 @@ package mil.dds.anet.config;
 
 import java.util.Map;
 import java.util.Collections;
+import java.util.HashMap;
+
 import com.google.common.collect.ImmutableMap;
 
 import javax.validation.Valid;
@@ -19,6 +21,9 @@ public class AnetConfiguration extends Configuration {
 	private String securityColor;
 	
 	private SmtpConfiguration smtp;
+	
+	@NotNull
+	private Map<String,String> waffleConfig = new HashMap<String,String>();
 	
 	@Valid
     @NotNull
@@ -75,6 +80,14 @@ public class AnetConfiguration extends Configuration {
 		this.views = builder.build();
 	}
 	
+	public Map<String, String> getWaffleConfig() {
+		return waffleConfig;
+	}
+	
+	public void setWaffleConfig(Map<String,String> config) { 
+		this.waffleConfig = config;
+	}
+	
 	public SmtpConfiguration getSmtp() {
 		return smtp;
 	}
@@ -120,4 +133,6 @@ public class AnetConfiguration extends Configuration {
 			this.startTLS = startTLS;
 		}
 	}
+
+	
 }

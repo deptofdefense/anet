@@ -225,4 +225,10 @@
 			ALTER TABLE approvalActions ALTER COLUMN createdAt datetime2;
 		</sql>
 	</changeSet>
+
+	<changeSet id="6" author="hpitelka">
+		<addColumn tableName="people">
+			<column name="domainUsername" type="varchar(500)" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

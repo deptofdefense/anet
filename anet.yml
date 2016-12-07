@@ -1,4 +1,4 @@
-developmentMode: false
+developmentMode: true
 securityMarking: DEMO USE ONLY
 securityColor: "green"
 
@@ -17,6 +17,16 @@ database:
   properties:
    date_string_format: ${ANET_DB_DATE_STRING_FORMAT}
    date_class: ${ANET_DB_DATE_CLASS}
+waffleConfig:
+  principalFormat: fqn
+  roleFormat: both
+  allowGuestLogin: false
+  impersonate: false
+  securityFilterProviders: waffle.servlet.spi.BasicSecurityFilterProvider
+  #securityFilterProviders: "waffle.servlet.spi.BasicSecurityFilterProvider waffle.servlet.spi.NegotiateSecurityFilterProvider"
+  #"waffle.servlet.spi.NegotiateSecurityFilterProvider/protocols": Negotiate NTLM
+  "waffle.servlet.spi.BasicSecurityFilterProvider/realm": ANET
+
 
 server:
   applicationConnectors:

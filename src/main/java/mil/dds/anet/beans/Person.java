@@ -22,6 +22,7 @@ public class Person extends AbstractAnetView<Person> implements Principal{
 	
 	private String rank;
 	private String biography;
+	private String domainUsername;
 	
 	private DateTime createdAt;
 	private DateTime updatedAt;
@@ -81,6 +82,14 @@ public class Person extends AbstractAnetView<Person> implements Principal{
 	}
 	public void setBiography(String biography) {
 		this.biography = biography;
+	}
+
+	public String getDomainUsername() {
+		return domainUsername;
+	}
+
+	public void setDomainUsername(String domainUsername) {
+		this.domainUsername = domainUsername;
 	}
 
 	public DateTime getCreatedAt() {
