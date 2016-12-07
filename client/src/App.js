@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
-import logo from './logo.svg'
-import './App.css'
 
 import {Button, Modal} from 'react-bootstrap'
+import Security from './components/security'
 
 class App extends Component {
 	constructor(props) {
@@ -10,39 +9,33 @@ class App extends Component {
 		this.state = {showModal: false}
 	}
 
-  render() {
-    return (
-      <div className="App">
-        <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
-        </div>
-        <div className="App-intro">
-			<p>Hello world!</p>
+	render() {
+		return (
+			<div className="anet">
+				<Security />
 
-			<Button bsStyle="primary" onClick={this.openModal}>Open Modal</Button>
+				<Button bsStyle="primary" onClick={this.openModal}>Open Modal</Button>
 
-			<Modal show={this.state.showModal} onHide={this.closeModal}>
-				<Modal.Header closeButton>
-					<Modal.Title>Header</Modal.Title>
-				</Modal.Header>
+				<Modal show={this.state.showModal} onHide={this.closeModal}>
+					<Modal.Header closeButton>
+						<Modal.Title>Header</Modal.Title>
+					</Modal.Header>
 
-				<Modal.Body>
-					This is the modal body.
-				</Modal.Body>
-			</Modal>
-        </div>
-      </div>
-    );
-  }
+					<Modal.Body>
+						This is the modal body.
+					</Modal.Body>
+				</Modal>
+			</div>
+		);
+	}
 
-  openModal = () => {
-	  this.setState({showModal: true})
-  }
+	openModal = () => {
+		this.setState({showModal: true})
+	}
 
-  closeModal = () => {
-	  this.setState({showModal: false})
-  }
+	closeModal = () => {
+		this.setState({showModal: false})
+	}
 }
 
-export default App;
+export default App

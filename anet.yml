@@ -1,6 +1,4 @@
 developmentMode: true
-securityMarking: DEMO USE ONLY
-securityColor: "green"
 
 smtp:
   hostname: ${ANET_SMTP_SERVER}

@@ -36,8 +36,8 @@
 
 	<body>
 		<div class="container mainbody">
-			<div class="security" style="background:${context.securityColor}">
-				${context.securityMarking} || ${context.currentUser} || ${context.url}
+			<div class="security" style="background:green">
+				DEMO USE ONLY || ${context.currentUser} || ${context.url}
 			</div>
 
 			<div class="row">
