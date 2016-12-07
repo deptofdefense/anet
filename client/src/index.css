@@ -4,7 +4,12 @@ html {
 }
 
 body {
-  margin-top: 0;
-  padding: 0;
-  font-family: sans-serif;
+	display: table-cell;
+	margin: 0;
+	padding: 0;
+	font-family: sans-serif;
+}
+
+.anet {
+	margin-top: 150px;
 }
