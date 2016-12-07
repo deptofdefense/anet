@@ -33,6 +33,7 @@ import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
+import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.database.ReportDao;
 import mil.dds.anet.utils.ResponseUtils;
 import mil.dds.anet.views.ObjectListView;
@@ -78,10 +79,12 @@ public class ReportResource {
 	@GET
 	@Path("/new")
 	@Produces(MediaType.TEXT_HTML)
-	public Report createNewReportForm() {
+	public Report createNewReportForm(@Auth Person author) {
 		List<Poam> milestones = engine.getPoamDao().getPoamsByCategory("EF");
+		List<Location> recentLocations = engine.getReportDao().getRecentLocations(author);
 		Report r = (new Report()).render("form.ftl");
 		r.addToContext("efs", milestones);
+		r.addToContext("recentLocations", recentLocations);
 		return r;
 	}
 
