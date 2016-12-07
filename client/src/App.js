@@ -1,9 +1,9 @@
-import React, { Component } from 'react'
+import React from 'react'
 
 import {Button, Modal} from 'react-bootstrap'
 import SecurityBanner from './components/SecurityBanner'
 
-class App extends Component {
+export default class App extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {showModal: false}
@@ -37,5 +37,3 @@ class App extends Component {
 		this.setState({showModal: false})
 	}
 }
-
-export default App

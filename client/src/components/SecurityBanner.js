@@ -1,6 +1,6 @@
 import React from 'react'
 
-const style = {
+const css = {
 	background: process.env.REACT_APP_SECURITY_COLOR,
 	color: 'white',
 	opacity: '0.8',
@@ -12,14 +12,12 @@ const style = {
 	textAlign: 'center',
 }
 
-class SecurityBanner extends React.Component {
+export default class SecurityBanner extends React.Component {
 	render() {
 		return (
-			<div className="security" style={style}>
+			<div className="security" style={css}>
 				{process.env.REACT_APP_SECURITY_MARKING}
 			</div>
 		)
 	}
 }
-
-export default SecurityBanner
