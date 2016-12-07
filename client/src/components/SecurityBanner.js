@@ -12,7 +12,7 @@ const style = {
 	textAlign: 'center',
 }
 
-export default class extends React.Component {
+class SecurityBanner extends React.Component {
 	render() {
 		return (
 			<div className="security" style={style}>
@@ -21,3 +21,5 @@ export default class extends React.Component {
 		)
 	}
 }
+
+export default SecurityBanner

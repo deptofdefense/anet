@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 
 import {Button, Modal} from 'react-bootstrap'
-import Security from './components/security'
+import SecurityBanner from './components/SecurityBanner'
 
 class App extends Component {
 	constructor(props) {
@@ -12,7 +12,7 @@ class App extends Component {
 	render() {
 		return (
 			<div className="anet">
-				<Security />
+				<SecurityBanner />
 
 				<Button bsStyle="primary" onClick={this.openModal}>Open Modal</Button>
 
