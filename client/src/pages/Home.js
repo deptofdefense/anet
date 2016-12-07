@@ -1,9 +1,8 @@
 import React from 'react'
 
 import {Button, Modal} from 'react-bootstrap'
-import SecurityBanner from './components/SecurityBanner'
 
-export default class App extends React.Component {
+export default class Home extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {showModal: false}
@@ -11,9 +10,7 @@ export default class App extends React.Component {
 
 	render() {
 		return (
-			<div className="anet">
-				<SecurityBanner />
-
+			<div>
 				<Button bsStyle="primary" onClick={this.openModal}>Open Modal</Button>
 
 				<Modal show={this.state.showModal} onHide={this.closeModal}>
@@ -26,7 +23,7 @@ export default class App extends React.Component {
 					</Modal.Body>
 				</Modal>
 			</div>
-		);
+		)
 	}
 
 	openModal = () => {
