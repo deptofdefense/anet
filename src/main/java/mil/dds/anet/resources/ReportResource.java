@@ -82,9 +82,11 @@ public class ReportResource {
 	public Report createNewReportForm(@Auth Person author) {
 		List<Poam> milestones = engine.getPoamDao().getPoamsByCategory("EF");
 		List<Location> recentLocations = engine.getReportDao().getRecentLocations(author);
+		List<Person> recentPeople = engine.getReportDao().getRecentPeople(author);
 		Report r = (new Report()).render("form.ftl");
 		r.addToContext("efs", milestones);
 		r.addToContext("recentLocations", recentLocations);
+		r.addToContext("recentPeople", recentPeople);
 		return r;
 	}
 
