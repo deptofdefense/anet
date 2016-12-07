@@ -32,6 +32,7 @@ local.properties
 .gradle/
 build/
 bin/
+node_modules/
 localSettings.gradle
 
 .DS_Store

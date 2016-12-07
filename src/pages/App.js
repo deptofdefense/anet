@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 
 import {Button, Modal} from 'react-bootstrap'
-import Security from './components/security'
+import Security from '../components/security'
 
 class App extends Component {
 	constructor(props) {
