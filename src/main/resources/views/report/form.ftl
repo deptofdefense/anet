@@ -178,6 +178,9 @@
 						<select id="attachEFMilestones">
 							<option></option>
 						</select>
+						<#list context.recentPoams as poam>
+							${poam.shortName},
+						</#list>
 					</div>
 				</div>
 

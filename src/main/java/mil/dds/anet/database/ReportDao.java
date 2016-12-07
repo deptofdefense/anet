@@ -243,8 +243,8 @@ public class ReportDao implements IAnetDao<Report> {
 		}
 		return dbHandle.createQuery(sql)
 				.bind("authorId", p.getId())
-		.map(new LocationMapper())
-		.list();
+				.map(new LocationMapper())
+				.list();
 	}
 
 	public List<Person> getRecentPeople(Person author) {
@@ -254,20 +254,43 @@ public class ReportDao implements IAnetDao<Report> {
 					+ "FROM people "
 					+ "JOIN reportPeople ON people.id = reportPeople.personId "
 					+ "JOIN reports ON reportPeople.reportId = reports.id "
-					+ "WHERE reports.authorId = 1 "
+					+ "WHERE reports.authorId = :authorId "
 					+ "ORDER BY reports.createdAt DESC";
 		} else {
 			sql = "SELECT people.* "
 					+ "FROM people "
 					+ "JOIN reportPeople ON people.id = reportPeople.personId "
 					+ "JOIN reports ON reportPeople.reportId = reports.id "
-					+ "WHERE reports.authorId = 1 "
+					+ "WHERE reports.authorId = :authorId "
 					+ "ORDER BY reports.createdAt DESC LIMIT 10";
 		}
 		return dbHandle.createQuery(sql)
 				.bind("authorId", author.getId())
-		.map(new PersonMapper())
-		.list();
+				.map(new PersonMapper())
+				.list();
+	}
+
+	public List<Poam> getRecentPoams(Person author) {
+		String sql;
+		if (DaoUtils.isMsSql(dbHandle)) {
+			sql = "SELECT TOP 10 poams.* "
+					+ "FROM poams "
+					+ "JOIN reportPoams ON poams.id = reportPoams.poamId "
+					+ "JOIN reports ON reportPoams.reportId = reports.id "
+					+ "WHERE reports.authorId = :authorId "
+					+ "ORDER BY reports.createdAt DESC";
+		} else {
+			sql = "SELECT poams.* "
+					+ "FROM poams "
+					+ "JOIN reportPoams ON poams.id = reportPoams.poamId "
+					+ "JOIN reports ON reportPoams.reportId = reports.id "
+					+ "WHERE reports.authorId = :authorId "
+					+ "ORDER BY reports.createdAt DESC LIMIT 10";
+		}
+		return dbHandle.createQuery(sql)
+				.bind("authorId", author.getId())
+				.map(new PoamMapper())
+				.list();
 	}
 	
 }
