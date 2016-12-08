@@ -3,7 +3,6 @@ import React from 'react'
 const css = {
 	background: process.env.REACT_APP_SECURITY_COLOR,
 	color: 'white',
-	opacity: '0.8',
 	position: 'fixed',
 	top: 0,
 	left: 0,
