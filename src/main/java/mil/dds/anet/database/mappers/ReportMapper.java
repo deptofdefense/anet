@@ -51,8 +51,9 @@ public class ReportMapper implements ResultSetMapper<Report> {
 		r.setReportText(rs.getString("reports_text"));
 		r.setNextSteps(rs.getString("reports_nextSteps"));
 		
-		Person p = Person.createWithId((MapperUtils.getInteger(rs, "reports_authorId")));
-		r.setAuthor(p);
+		Person author = Person.createWithId((MapperUtils.getInteger(rs, "reports_authorId")));
+		PersonMapper.fillInFields(author, rs);
+		r.setAuthor(author);
 		r.setLoadLevel(LoadLevel.PROPERTIES);
 		
 		return r;

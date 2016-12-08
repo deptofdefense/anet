@@ -2,7 +2,6 @@ package mil.dds.anet.database;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -23,19 +22,17 @@ import mil.dds.anet.utils.DaoUtils;
 
 public class PersonDao implements IAnetDao<Person> {
 
-	public static String[] fields = {"id","name","status","role",
+	private static String[] fields = {"id","name","status","role",
 			"emailAddress","phoneNumber","rank","biography",
 			"domainUsername","pendingVerification","createdAt",
 			"updatedAt"};
-	public static String tableName = "people";
+	private static String tableName = "people";
+	public static String PERSON_FIELDS = DaoUtils.buildFieldAliases(tableName, fields);
 	
 	Handle dbHandle;
-	public static String PERSON_FIELDS;
 	
 	public PersonDao(Handle h) { 
 		this.dbHandle = h;
-		
-		PERSON_FIELDS = DaoUtils.buildFieldAliases(tableName, fields);
 	}
 	
 	public List<Person> getAll(int pageNum, int pageSize) {

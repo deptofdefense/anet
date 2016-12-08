@@ -95,7 +95,7 @@
 		</div>
 	</section>
 
-
+<#-- 
 <#list list as report>
 <section class="anet-block">
   <div class="anet-block__title">
@@ -156,8 +156,9 @@
 	      			</#list>
 	      		</table>
 	      	</#if>
-	      <#elseif report.state == "PENDING_APPROVAL" >
+	      <#elseif report.state == "PENDING_APPROVAL" > -->
 	      <#--  check if this user can approve this TODO: make this suck less.  -->
+	      <#-- 
 	      	<#list report.approvalStep.approverGroup.members as m>
 	      		<#if m.id == context.currentUser.id>
 	      			You can approve this report!
@@ -171,6 +172,8 @@
   </div>
 </section>
 </#list>
+
+ -->
 
 <script type="text/javascript">
 $(document).ready(function() {
