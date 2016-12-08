@@ -1,6 +1,8 @@
 import React from 'react'
 import {Form, FormGroup, FormControl, Col} from 'react-bootstrap'
 
+import DatePicker from 'react-bootstrap-date-picker'
+
 import Breadcrumbs from '../../components/Breadcrumbs'
 
 export default class ReportNew extends React.Component {
@@ -15,7 +17,7 @@ export default class ReportNew extends React.Component {
 							Engagement date
 						</Col>
 						<Col sm={10}>
-							<FormControl />
+							<DatePicker />
 						</Col>
 					</FormGroup>
 				</Form>
