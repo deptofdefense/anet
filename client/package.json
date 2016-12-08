@@ -2,6 +2,7 @@
   "name": "anet",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:8080",
   "devDependencies": {
     "react-scripts": "0.7.0"
   },
