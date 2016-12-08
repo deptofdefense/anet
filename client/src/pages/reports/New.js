@@ -3,6 +3,7 @@ import {Form, FormGroup, Col, ControlLabel} from 'react-bootstrap'
 
 import DatePicker from 'react-bootstrap-date-picker'
 
+import {ContentForHeader} from '../../components/Header'
 import Breadcrumbs from '../../components/Breadcrumbs'
 import TextEditor from '../../components/TextEditor'
 
@@ -23,6 +24,10 @@ export default class ReportNew extends React.Component {
 
 		return (
 			<div>
+				<ContentForHeader>
+					<h1>Create a new Report</h1>
+				</ContentForHeader>
+
 				<Breadcrumbs items={[['EF4', '/organizations/ef4'], ['Submit a report', '/reports/new']]} />
 
 				<Form horizontal>

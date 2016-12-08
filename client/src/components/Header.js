@@ -1,31 +1,48 @@
 import React from 'react'
 import {Link} from 'react-router'
 import {Button} from 'react-bootstrap'
+import {Injectable, Injector} from 'react-injectables'
 
 import logo from '../resources/logo.png'
 
-const background = {
+const backgroundCss = {
 	background: 'white',
 	paddingTop: '58px',
 	height: '132px',
 	boxShadow: '0 4px 3px 0 rgba(0,0,0,0.1)',
-	marginBottom: '32px'
+	marginBottom: '32px',
 }
 
-export default class Header extends React.Component {
+const logoCss = {
+	width: '164px',
+}
+
+class Header extends React.Component {
 	render() {
 		return (
-			<div style={background}>
+			<div style={backgroundCss}>
 				<div className="container">
 					<Link to="/">
-						<img src={logo} alt="ANET logo" width={164} />
+						<img src={logo} alt="ANET logo" style={logoCss} />
 					</Link>
 
-					{this.props.children}
+					{this.props.injections}
 
 					<Button bsStyle="primary" className="pull-right">Create</Button>
 				</div>
 			</div>
 		)
 	}
+}
+
+// this is some magic around the Injectable library to allow
+// components further down the tree to inject children into the header
+const InjectableHeader = Injectable(Header)
+const HeaderInjector = Injector({into: InjectableHeader})
+export default InjectableHeader
+export function ContentForHeader(props) {
+	let Injector = HeaderInjector(function() {
+		return props.children
+	})
+	return <Injector />
 }
