@@ -1,7 +1,9 @@
 import React from 'react'
 import {Table} from 'react-bootstrap'
 import {Link} from 'react-router'
+
 import API from '../../api'
+import Breadcrumbs from '../../components/Breadcrumbs'
 
 export default class ReportsIndex extends React.Component {
 	constructor(props) {
@@ -28,6 +30,8 @@ export default class ReportsIndex extends React.Component {
 	render() {
 		return (
 			<div>
+				<Breadcrumbs items={[['My reports', '/reports']]} />
+
 				<Table striped>
 					<thead>
 						<tr>

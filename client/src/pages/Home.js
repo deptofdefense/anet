@@ -1,6 +1,7 @@
 import React from 'react'
-import {Button, Modal, Breadcrumb} from 'react-bootstrap'
-import {IndexLinkContainer as Link} from 'react-router-bootstrap'
+import {Button, Modal} from 'react-bootstrap'
+
+import Breadcrumbs from '../components/Breadcrumbs'
 
 export default class Home extends React.Component {
 	constructor(props) {
@@ -11,17 +12,7 @@ export default class Home extends React.Component {
 	render() {
 		return (
 			<div>
-				<Breadcrumb>
-					<Link to="/">
-						<Breadcrumb.Item>ANET</Breadcrumb.Item>
-					</Link>
-					<Link to="/organization/ef4">
-						<Breadcrumb.Item>EF4</Breadcrumb.Item>
-					</Link>
-					<Link to="/organization/ef4/advisors">
-						<Breadcrumb.Item>Advisors</Breadcrumb.Item>
-					</Link>
-				</Breadcrumb>
+				<Breadcrumbs />
 
 				<Button bsStyle="primary" onClick={this.openModal}>Open Modal</Button>
 
