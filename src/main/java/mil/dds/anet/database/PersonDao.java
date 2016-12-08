@@ -58,7 +58,7 @@ public class PersonDao implements IAnetDao<Person> {
 				"(name, status, role, emailAddress, phoneNumber, rank, pendingVerification, "
 				+ "biography, domainUsername, createdAt, updatedAt) " +
 				"VALUES (:name, :status, :role, :emailAddress, :phoneNumber, :rank, :pendingVerification, "
-				+ ":biography, :domainUsername:createdAt, :updatedAt);")
+				+ ":biography, :domainUsername, :createdAt, :updatedAt);")
 			.bindFromProperties(p)
 			.bind("status", DaoUtils.getEnumId(p.getStatus()))
 			.bind("role", DaoUtils.getEnumId(p.getRole()))

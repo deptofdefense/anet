@@ -167,10 +167,12 @@ public class ReportResource {
 	@Path("/{id}/submit")
 	public Response submitReport(@PathParam("id") int id) {
 		Report r = dao.getById(id);
-
+		//TODO: this needs to be done by either the Author, a Superuser for the AO, or an Administrator
+		
 		Organization org = engine.getOrganizationForPerson(r.getAuthor());
 		if (org == null ) {
-			return ResponseUtils.withMsg("Unable to find Org for Report Author", Status.BAD_REQUEST);
+			// Author missing Org, use the Default Approval Workflow
+			org = Organization.createWithId(-1); 
 		}
 		List<ApprovalStep> steps = engine.getApprovalStepsForOrg(org);
 		if (steps == null || steps.size() == 0) {

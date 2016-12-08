@@ -18,6 +18,7 @@ public class PersonTest extends BeanTester<Person> {
 		person.setStatus(Status.ACTIVE);
 		person.setRole(Role.ADVISOR);
 		person.setBiography("this is a sample biography");
+		person.setDomainUsername("jack");
 		return person;
 	}
 

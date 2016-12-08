@@ -160,13 +160,13 @@ public class PositionDao implements IAnetDao<Position> {
 	
 	public Person getPersonInPosition(Position b, DateTime dtg) { 
 		String sql;
-		if (DaoUtils.isMsSql(dbHandle)) { 
+		if (DaoUtils.isMsSql(dbHandle)) {
 			sql = "SELECT TOP(1)people.* FROM peoplePositions " +
 					" LEFT JOIN people ON people.id = peoplePositions.personId " +
 					"WHERE peoplePositions.positionId = :positionId " +
 					"AND peoplePositions.createdAt < :dtg " + 
 					"ORDER BY peoplePositions.createdAt DESC";
-		} else { 
+		} else {
 			sql = "SELECT people.* FROM peoplePositions " +
 				" LEFT JOIN people ON people.id = peoplePositions.personId " +
 				"WHERE peoplePositions.positionId = :positionId " +

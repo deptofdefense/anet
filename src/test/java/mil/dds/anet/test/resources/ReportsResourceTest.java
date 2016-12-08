@@ -11,6 +11,7 @@ import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.joda.time.DateTime;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
@@ -23,6 +24,7 @@ import mil.dds.anet.beans.Comment;
 import mil.dds.anet.beans.Group;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Position.PositionType;
@@ -232,6 +234,87 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		//Search for this report by keyword
 		//Search for this report by POAM (top level and bottom level)
 		
+	}
+	
+	@Test
+	public void testDefaultApprovalFlow() { 
+		Person jack = getJackJackson();
+		//Create a Person who isn't in a Billet
+		Person author = new Person();
+		author.setName("A New Guy");
+		author.setRole(Role.ADVISOR);
+		author.setStatus(Person.Status.ACTIVE);
+		author = httpQuery("/people/new", jack).post(Entity.json(author), Person.class);
+		assertThat(author.getId()).isNotNull();
+		
+		//Write a report as that person
+		Report r = new Report();
+		r.setAuthor(author);
+		r.setIntent("I am a new Advisor and wish to be included in things");
+		r.setAtmosphere(Atmosphere.NEUTRAL);
+		r.setReportText("I just got here in town and am writing a report for the first time, but have no reporting structure set up");
+		r.setEngagementDate(DateTime.now());
+		r = httpQuery("/reports/new", jack).post(Entity.json(r), Report.class);
+		assertThat(r.getId()).isNotNull();
+		
+		//Submit the report
+		Response resp = httpQuery("/reports/" + r.getId() + "/submit", jack)
+				.get();
+		assertThat(resp.getStatus()).isEqualTo(200);
+		
+		//Check the approval Step
+		Report returned = httpQuery("/reports/" + r.getId(), jack).get(Report.class);
+		assertThat(returned.getId()).isEqualTo(r.getId());
+		assertThat(returned.getState()).isEqualTo(Report.ReportState.PENDING_APPROVAL);
+		
+		//Find the default ApprovalSteps
+		List<ApprovalStep> steps = httpQuery("/approvalSteps/byOrganization?id=-1", jack)
+				.get(new GenericType<List<ApprovalStep>>() {});
+		assertThat(steps).isNotNull();
+		assertThat(steps).hasSize(1);
+		assertThat(returned.getApprovalStepJson().getId()).isEqualTo(steps.get(0).getId());
+		
+		//Get the Person who is able to approve that report (nick@example.com)
+		Person nick = new Person();
+		nick.setDomainUsername("nick");
+		
+		//Create billet for Author
+		Position billet = new Position();
+		billet.setName("EF1 new advisor");
+		billet.setType(Position.PositionType.ADVISOR);
+		
+		//Put billet in EF1
+		List<Organization> results = httpQuery("/organizations/search?q=EF1&type=ADVISOR_ORG", nick).get(new GenericType<List<Organization>>() {});
+		assertThat(results.size()).isGreaterThan(0);
+		Organization ef1 = null;
+		for (Organization org : results) { 
+			if (org.getName().trim().equalsIgnoreCase("ef1")) { 
+				billet.setOrganization(Organization.createWithId(org.getId()));
+				ef1 = org;
+				break;
+			}
+		}
+		assertThat(billet.getOrganization()).isNotNull();
+		assertThat(ef1).isNotNull();
+		
+		billet = httpQuery("/positions/new", nick)
+				.post(Entity.json(billet), Position.class);
+		assertThat(billet.getId()).isNotNull();
+		
+		//Put Author in the billet
+		resp = httpQuery("/positions/" + billet.getId() + "/person", nick)
+				.post(Entity.json(author));
+		assertThat(resp.getStatus()).isEqualTo(200);
+		
+		//Nick should kick the report
+		resp = httpQuery("/reports/" + r.getId() + "/submit", nick).get();
+		assertThat(resp.getStatus()).isEqualTo(200);
+		
+		//Report should now be up for review by EF1 approvers
+		Report returned2 = httpQuery("/reports/" + r.getId(), jack).get(Report.class);
+		assertThat(returned2.getId()).isEqualTo(r.getId());
+		assertThat(returned2.getState()).isEqualTo(Report.ReportState.PENDING_APPROVAL);
+		assertThat(returned2.getApprovalStepJson().getId()).isNotEqualTo(returned.getApprovalStepJson().getId());		
 	}
 	
 	@Test

@@ -44,7 +44,7 @@ public abstract class AbstractResourceTest {
 	
 	public Builder httpQuery(String path, Person authUser, MediaType acceptType) { 
 		String authString = Base64.getEncoder().encodeToString(
-				(authUser.getName().split(" ")[0] + ":" + authUser.getName().split(" ")[1]).getBytes());
+				(authUser.getDomainUsername() + ":").getBytes());
 		return httpQuery(path)
 				.header("Authorization", "Basic " + authString)
 				.header("Accept", acceptType.toString());
@@ -55,7 +55,7 @@ public abstract class AbstractResourceTest {
 	}
 	
 	public Person findOrPutPersonInDb(Person stub) { 
-		List<Person> ret = httpQuery("/people/search?q=" + URLEncoder.encode(stub.getName()), PersonTest.getSteveStevesonStub()).get(new GenericType<List<Person>>() {});
+		List<Person> ret = httpQuery("/people/search?q=" + URLEncoder.encode(stub.getName()), PersonTest.getJackJacksonStub()).get(new GenericType<List<Person>>() {});
 		for (Person p : ret) { 
 			if (p.getEmailAddress().equals(stub.getEmailAddress())) { return p; } 
 		}

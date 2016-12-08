@@ -13,26 +13,29 @@ DELETE FROM reportPeople;
 DELETE FROM reports;
 DELETE FROM comments;
 
+--Advisors
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, createdAt, updatedAt) 
 	VALUES ('Jack Jackson', 0, 0, 'foobar@example.com', '123-456-78960', 'OF-9', 'this is a sample biography', 'jack', '2016-11-28 04:00:00.000 +0000', '2016-11-28 04:00:00.000 +0000');
+INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, createdAt, updatedAt) 
+	VALUES ('Elizabeth Elizawell', 0, 0, 'liz@example.com', '+1-777-7777', 'Capt', 'elizabeth is a test Advisor', 'elizabeth', '2016-11-28 04:00:00.000 +0000', '2016-11-28 04:00:00.000 +0000');
+INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, createdAt, updatedAt) 
+	VALUES ('Bob Bobtown', 0, 0, 'bob@example.com', '+1-444-7324', 'Civ', 'Bob is a test Advisor', 'bob', '2016-11-28 04:00:00.000 +0000', '2016-11-28 04:00:00.000 +0000');
+INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, createdAt, updatedAt) 
+	VALUES ('Nick Nicholson', 0, 0, 'nick@example.com', '+1-202-7324', 'CIV', 'Is the System Administrator', 'nick', '2016-11-28 04:00:00.000 +0000', '2016-11-28 04:00:00.000 +0000');
+INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, createdAt, updatedAt) 
+	VALUES ('Reina Reanton', 0, 0, 'reina@example.com', '+42-233-7324', 'CIV', 'Is the EF1 Super User', 'reina', '2016-11-28 04:00:00.000 +0000', '2016-11-28 04:00:00.000 +0000');
+
+--Principals
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt) 
 	VALUES ('Steve Steveson', 0, 1, 'steve@example.com', '+011-232-12324', 'LtCol', 'this is a sample person who could be a Principal!', '2016-11-28 04:00:00.000 +0000', '2016-11-28 04:00:00.000 +0000');
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt) 
 	VALUES ('Roger Rogewell', 0, 1, 'roger@example.com', '+1-412-7324', 'Maj', 'Roger is another test person we have in the database', '2016-11-28 04:00:00.000 +0000', '2016-11-28 04:00:00.000 +0000');
-INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, createdAt, updatedAt) 
-	VALUES ('Elizabeth Elizawell', 0, 0, 'liz@example.com', '+1-777-7777', 'Capt', 'elizabeth is another test Advisor we have in the database', 'elizabeth', '2016-11-28 04:00:00.000 +0000', '2016-11-28 04:00:00.000 +0000');
-INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, createdAt, updatedAt) 
-	VALUES ('Bob Bobtown', 0, 0, 'bob@example.com', '+1-444-7324', 'Civ', 'Bob is yet another test Advisor we have in the database', 'bob', '2016-11-28 04:00:00.000 +0000', '2016-11-28 04:00:00.000 +0000');
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt) 
 	VALUES ('Henry Henderson', 0, 1, 'henry@example.com', '+2-456-7324', 'BGen', 'Henry is another test Principal we have in the database', '2016-11-28 04:00:00.000 +0000', '2016-11-28 04:00:00.000 +0000');
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt) 
 	VALUES ('Hunter Huntman', 0, 1, 'hunter@example.com', '+1-412-9314', 'CIV', '', '2016-11-28 04:00:00.000 +0000', '2016-11-28 04:00:00.000 +0000');
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt) 
 	VALUES ('Andrew Anderson', 0, 1, 'andrew@example.com', '+1-412-7324', 'CIV', '', '2016-11-28 04:00:00.000 +0000', '2016-11-28 04:00:00.000 +0000');
-INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, createdAt, updatedAt) 
-	VALUES ('Nick Nicholson', 0, 0, 'nick@example.com', '+1-202-7324', 'CIV', '', 'nick', '2016-11-28 04:00:00.000 +0000', '2016-11-28 04:00:00.000 +0000');
-INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, createdAt, updatedAt) 
-	VALUES ('Reina Reanton', 0, 0, 'reina@example.com', '+42-233-7324', 'CIV', '', 'reina', '2016-11-28 04:00:00.000 +0000', '2016-11-28 04:00:00.000 +0000');
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt) 
 	VALUES ('Shardul Sharton', 0, 1, 'shardul@example.com', '+99-9999-9999', 'CIV', '', '2016-11-28 04:00:00.000 +0000', '2016-11-28 04:00:00.000 +0000');
 
@@ -42,13 +45,13 @@ INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES
 INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF4 Advisor 3', 0, NULL, '2016-11-28 04:00:00.000 +0000', '2016-11-28 04:00:00.000 +0000');
 
 INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES 
-	((SELECT id from positions where name = 'EF1 Advisor 04532'), (SELECT id from people where emailAddress = 'bob@example.com'), '2016-11-28 04:00:00.000 +0000');
-UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'bob@example.com') WHERE name = 'EF1 Advisor 04532';
+	((SELECT id from positions where name = 'EF1 Advisor 04532'), (SELECT id from people where emailAddress = 'reina@example.com'), '2016-11-28 04:00:00.000 +0000');
+UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'reina@example.com') WHERE name = 'EF1 Advisor 04532';
 
 -- Rotate an advisor through a billet
 INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES
-	((SELECT id from positions where name = 'EF2 Advisor 4987'), (SELECT id from people where emailAddress = 'reina@example.com'), '2016-11-28 04:00:00.000 +0000');
-UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'reina@example.com') WHERE name = 'EF2 Advisor 4987';
+	((SELECT id from positions where name = 'EF2 Advisor 4987'), (SELECT id from people where emailAddress = 'bob@example.com'), '2016-11-28 04:00:00.000 +0000');
+UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'bob@example.com') WHERE name = 'EF2 Advisor 4987';
 INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES
 	((SELECT id from positions where name = 'EF2 Advisor 4987'), (SELECT id from people where emailAddress = 'foobar@example.com'), '2016-11-28 04:01:00.000 +0000');
 UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'foobar@example.com') WHERE name = 'EF2 Advisor 4987';
@@ -191,4 +194,9 @@ INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, nextSteps, 
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 	(SELECT id FROM people where emailAddress='steve@example.com'),
 	(SELECT id FROM reports where createdAt = '2016-11-28 04:00:00.000 +0000'), 1);
+
+--Create the default Approval Group
+INSERT INTO groups (name, createdAt) VALUES ('Default Approvers', '2016-11-28 04:00:00:00.000 +0000');
+INSERT INTO groupMemberships (groupId, personId) VALUES ((SELECT id from groups where name = 'Default Approvers'), (SELECT id from people where emailAddress='nick@example.com'));
+INSERT INTO approvalSteps (approverGroupId, advisorOrganizationId) VALUES ((SELECT id from groups where name = 'Default Approvers'), -1);
 
