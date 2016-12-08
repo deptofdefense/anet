@@ -25,7 +25,7 @@ export default class ReportNew extends React.Component {
 		return (
 			<div>
 				<ContentForHeader>
-					<h1>Create a new Report</h1>
+					<h2>Create a new Report</h2>
 				</ContentForHeader>
 
 				<Breadcrumbs items={[['EF4', '/organizations/ef4'], ['Submit a report', '/reports/new']]} />

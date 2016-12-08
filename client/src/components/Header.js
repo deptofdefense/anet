@@ -22,11 +22,13 @@ class Header extends React.Component {
 		return (
 			<div style={backgroundCss}>
 				<div className="container">
-					<Link to="/">
+					<Link to="/" className="pull-left">
 						<img src={logo} alt="ANET logo" style={logoCss} />
 					</Link>
 
-					{this.props.injections}
+					<div className="pull-left header-content">
+						{this.props.injections}
+					</div>
 
 					<Button bsStyle="primary" className="pull-right">Create</Button>
 				</div>

@@ -6,3 +6,12 @@ fieldset {
 	background: white;
 	padding: 3rem;
 }
+
+.header-content {
+	margin-left: 142px;
+}
+
+.header-content > * {
+	margin: 0;
+	padding: 0;
+}
