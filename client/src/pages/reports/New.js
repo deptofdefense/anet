@@ -1,27 +1,15 @@
 import React from 'react'
-import {Form, FormGroup, Col, ControlLabel} from 'react-bootstrap'
+import {Form} from 'react-bootstrap'
 
 import DatePicker from 'react-bootstrap-date-picker'
 
 import {ContentForHeader} from '../../components/Header'
+import {HorizontalFormField} from '../../components/FormField'
 import Breadcrumbs from '../../components/Breadcrumbs'
 import TextEditor from '../../components/TextEditor'
 
 export default class ReportNew extends React.Component {
 	render() {
-		let HorizontalControl = function(props) {
-			return (
-				<FormGroup controlId={props.controlId}>
-					<Col sm={3} componentClass={ControlLabel}>
-						Engagement date
-					</Col>
-					<Col sm={9}>
-						{props.children}
-					</Col>
-				</FormGroup>
-			)
-		}
-
 		return (
 			<div>
 				<ContentForHeader>
@@ -34,13 +22,25 @@ export default class ReportNew extends React.Component {
 					<fieldset>
 						<legend>Engagement details</legend>
 
-						<HorizontalControl controlId="engagementDate">
-							<DatePicker />
-						</HorizontalControl>
+						<HorizontalFormField
+							id="engagementIntent"
+							label="Meeting subject" />
 
-						<HorizontalControl controlId="engagementDetails">
+						<HorizontalFormField
+							id="engagementDate"
+							label="Engagement date">
+							<DatePicker />
+						</HorizontalFormField>
+
+						<HorizontalFormField
+							id="engagementLocation"
+							label="Engagement location" />
+
+						<HorizontalFormField
+							id="engagementDetails"
+							label="Engagement details">
 							<TextEditor />
-						</HorizontalControl>
+						</HorizontalFormField>
 					</fieldset>
 				</Form>
 			</div>
