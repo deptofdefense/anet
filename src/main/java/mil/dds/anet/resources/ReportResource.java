@@ -183,6 +183,7 @@ public class ReportResource {
 		r.setApprovalStep(steps.get(0));
 		r.setState(ReportState.PENDING_APPROVAL);
 		int numRows = dao.update(r);
+		System.out.println(String.format("Setting report %d to step %d because of org %d on author %d", r.getId(), steps.get(0).getId(), org.getId(), r.getAuthorJson().getId()));
 		return (numRows == 1) ? Response.ok().build() : ResponseUtils.withMsg("No records updated", Status.BAD_REQUEST);
 	}
 

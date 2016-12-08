@@ -65,6 +65,7 @@ public class PersonTest extends BeanTester<Person> {
 		person.setStatus(Status.ACTIVE);
 		person.setRole(Role.ADVISOR);
 		person.setBiography("elizabeth is another test person we have in the database");
+		person.setDomainUsername("elizabeth");
 		return person;
 	}
 

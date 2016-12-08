@@ -63,7 +63,11 @@ public class ReportsResourceTest extends AbstractResourceTest {
 				.post(Entity.json(OrganizationTest.getTestAO()), Organization.class);
 		
 		//Create leadership people in the AO who can approve this report
-		Person approver1 = getRogerRogwell();
+		Person approver1 = new Person();
+		approver1.setDomainUsername("bob");
+		approver1.setName("Bob Bobtown");
+		approver1.setEmailAddress("bob@example.com");
+		approver1 = findOrPutPersonInDb(approver1);
 		Person approver2 = getElizabethElizawell();
 		
 		//Create a billet for the author
@@ -142,6 +146,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		
 		Report returned = httpQuery(String.format("/reports/%d", created.getId()), author).get(Report.class);
 		assertThat(returned.getState()).isEqualTo(ReportState.PENDING_APPROVAL);
+		System.out.println("Expecting report " + returned.getId() + " in step " + approval.getId() + " because of org" + org.getId() + " on author " + author.getId());
 		assertThat(returned.getApprovalStep().getId()).isEqualTo(approval.getId());
 		
 		//TODO: verify the location on this report
@@ -244,6 +249,8 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		author.setName("A New Guy");
 		author.setRole(Role.ADVISOR);
 		author.setStatus(Person.Status.ACTIVE);
+		author.setDomainUsername("newGuy");
+		author.setEmailAddress("newGuy@example.com");
 		author = httpQuery("/people/new", jack).post(Entity.json(author), Person.class);
 		assertThat(author.getId()).isNotNull();
 		
@@ -319,8 +326,8 @@ public class ReportsResourceTest extends AbstractResourceTest {
 	
 	@Test
 	public void viewTest() { 
-		Person steve = getSteveSteveson();
-		Response resp = httpQuery("/reports/", steve)
+		Person jack = getJackJackson();
+		Response resp = httpQuery("/reports/", jack)
 			.header("Accept", "text/html").get();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		String respBody = getResponseBody(resp);
@@ -331,17 +338,17 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		assertThat(reportIdMat.find());
 		int reportId = Integer.parseInt(reportIdMat.group(1));
 		
-		resp = httpQuery("/reports/new", steve)
+		resp = httpQuery("/reports/new", jack)
 				.header("Accept", "text/html").get();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
 		
-		resp = httpQuery("/reports/" + reportId, steve)
+		resp = httpQuery("/reports/" + reportId, jack)
 				.header("Accept", "text/html").get();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
 		
-		resp = httpQuery("/reports/" + reportId + "/edit", steve)
+		resp = httpQuery("/reports/" + reportId + "/edit", jack)
 				.header("Accept", "text/html").get();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");

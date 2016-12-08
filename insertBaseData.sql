@@ -1,17 +1,17 @@
-DELETE FROM people;
-DELETE FROM positions;
-DELETE FROM peoplePositions;
-DELETE FROM organizations;
-DELETE FROM groups;
-DELETE FROM poams;
-DELETE FROM groupMemberships;
-DELETE FROM approvalSteps;
-DELETE FROM approvalActions;
-DELETE FROM positionRelationships;
-DELETE FROM locations;
-DELETE FROM reportPeople;
-DELETE FROM reports;
-DELETE FROM comments;
+TRUNCATE TABLE people;
+TRUNCATE TABLE positions;
+TRUNCATE TABLE peoplePositions;
+TRUNCATE TABLE organizations;
+TRUNCATE TABLE groups;
+TRUNCATE TABLE poams;
+TRUNCATE TABLE groupMemberships;
+TRUNCATE TABLE approvalSteps;
+TRUNCATE TABLE approvalActions;
+TRUNCATE TABLE positionRelationships;
+TRUNCATE TABLE locations;
+TRUNCATE TABLE reportPeople;
+TRUNCATE TABLE reports;
+TRUNCATE TABLE comments;
 
 --Advisors
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, createdAt, updatedAt) 
@@ -217,4 +217,9 @@ INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, nextSteps, 
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 	(SELECT id FROM people where emailAddress='steve@example.com'),
 	(SELECT id FROM reports where createdAt = CURRENT_TIMESTAMP), 1);
+
+--Create the default Approval Group
+INSERT INTO groups (name, createdAt) VALUES ('Default Approvers', CURRENT_TIMESTAMP);
+INSERT INTO groupMemberships (groupId, personId) VALUES ((SELECT id from groups where name = 'Default Approvers'), (SELECT id from people where emailAddress='nick@example.com'));
+INSERT INTO approvalSteps (approverGroupId, advisorOrganizationId) VALUES ((SELECT id from groups where name = 'Default Approvers'), -1);
 

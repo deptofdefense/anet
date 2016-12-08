@@ -69,9 +69,6 @@ public class GroupDao implements IAnetDao<Group> {
 			.bind("name",g.getName())
 			.bind("createdAt", g.getCreatedAt())
 			.executeAndReturnGeneratedKeys();
-		
-		//"generated_keys"
-
 		g.setId(DaoUtils.getGeneratedId(keys));
 		
 		if (g.getMembers() != null && g.getMembers().size() > 0 ) { 

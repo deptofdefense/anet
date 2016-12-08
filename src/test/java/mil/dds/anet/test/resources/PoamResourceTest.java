@@ -24,38 +24,38 @@ public class PoamResourceTest extends AbstractResourceTest {
 	
 	@Test
 	public void poamTest() { 
-		Person steve = getSteveSteveson();
+		Person jack = getJackJackson();
 		
-		Poam a = httpQuery("/poams/new", steve)
+		Poam a = httpQuery("/poams/new", jack)
 			.post(Entity.json(Poam.create("TestF1", "Do a thing with a person", "Test-EF")), Poam.class);
 		assertThat(a.getId()).isNotNull();
 				
-		Poam b = httpQuery("/poams/new", steve)
+		Poam b = httpQuery("/poams/new", jack)
 				.post(Entity.json(Poam.create("TestM1", "Teach a person how to fish", "Test-Milestone", a)), Poam.class);
 		assertThat(b.getId()).isNotNull();
 		
-		Poam c = httpQuery("/poams/new", steve)
+		Poam c = httpQuery("/poams/new", jack)
 				.post(Entity.json(Poam.create("TestM2", "Watch the person fishing", "Test-Milestone", a)), Poam.class);
 		assertThat(c.getId()).isNotNull();
 		
-		Poam d = httpQuery("/poams/new", steve)
+		Poam d = httpQuery("/poams/new", jack)
 				.post(Entity.json(Poam.create("TestM3", "Have the person go fishing without you", "Test-Milestone", a)), Poam.class);
 		assertThat(d.getId()).isNotNull();
 		
-		Poam e = httpQuery("/poams/new", steve)
+		Poam e = httpQuery("/poams/new", jack)
 				.post(Entity.json(Poam.create("TestF2", "Be a thing in a test case", "Test-EF")), Poam.class);
 		assertThat(e.getId()).isNotNull();
 		
-		Poam returned = httpQuery("/poams/" + a.getId(), steve).get(Poam.class);
+		Poam returned = httpQuery("/poams/" + a.getId(), jack).get(Poam.class);
 		assertThat(returned).isEqualTo(a);
-		returned = httpQuery("/poams/" + b.getId(), steve).get(Poam.class);
+		returned = httpQuery("/poams/" + b.getId(), jack).get(Poam.class);
 		assertThat(returned).isEqualTo(b);		
 		
-		List<Poam> children = httpQuery("/poams/" + a.getId() + "/children", steve).get(new GenericType<List<Poam>>() {});
+		List<Poam> children = httpQuery("/poams/" + a.getId() + "/children", jack).get(new GenericType<List<Poam>>() {});
 		assertThat(children).contains(b, c, d);
 		assertThat(children).doesNotContain(e);
 		
-		List<Poam> tree = httpQuery("/poams/tree", steve).get(new GenericType<List<Poam>>() {});
+		List<Poam> tree = httpQuery("/poams/tree", jack).get(new GenericType<List<Poam>>() {});
 		assertThat(tree).contains(a, e);
 		assertThat(tree).doesNotContain(b);
 		for (Poam p : tree) { 
@@ -66,9 +66,9 @@ public class PoamResourceTest extends AbstractResourceTest {
 		
 		//modify a poam. 
 		a.setLongName("Do a thing with a person modified");
-		Response resp = httpQuery("/poams/update", steve).post(Entity.json(a));
+		Response resp = httpQuery("/poams/update", jack).post(Entity.json(a));
 		assertThat(resp.getStatus()).isEqualTo(200);
-		returned = httpQuery("/poams/" + a.getId(), steve).get(Poam.class);
+		returned = httpQuery("/poams/" + a.getId(), jack).get(Poam.class);
 		assertThat(returned.getLongName()).isEqualTo(a.getLongName());;
 
 		

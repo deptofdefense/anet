@@ -7,6 +7,7 @@ import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 import javax.servlet.FilterRegistration;
 
+import org.joda.time.DateTimeZone;
 import org.skife.jdbi.v2.DBI;
 
 import io.dropwizard.Application;
@@ -77,6 +78,7 @@ public class AnetApplication extends Application<AnetConfiguration> {
 	@Override
 	public void run(AnetConfiguration configuration, Environment environment) {
 		System.out.println(configuration.getDataSourceFactory().getUrl());
+		DateTimeZone.setDefault(DateTimeZone.UTC);
 		final DBIFactory factory = new DBIFactory();
 		final DBI jdbi = factory.build(environment, configuration.getDataSourceFactory(), "mssql");
 

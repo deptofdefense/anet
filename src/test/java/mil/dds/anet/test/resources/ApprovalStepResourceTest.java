@@ -30,38 +30,38 @@ public class ApprovalStepResourceTest extends AbstractResourceTest {
 	
 	@Test
 	public void approvalTest() {
-		Person steve = getSteveSteveson(); //Get an authenticated user. 
+		Person jack = getJackJackson(); //Get an authenticated user. 
 		//Create an Advisor Organization
-		Organization org = httpQuery("/organizations/new", steve)
+		Organization org = httpQuery("/organizations/new", jack)
 				.post(Entity.json(OrganizationTest.getTestAO()), Organization.class);
 		assertThat(org.getId()).isNotNull();
 		
 		//Create a group to do the approvals
-		Group g = httpQuery("/groups/new", steve)
+		Group g = httpQuery("/groups/new", jack)
 				.post(Entity.json(Group.create("Test Approval Group")), Group.class);
 		assertThat(g.getId()).isNotNull();
 		
 		//Create 3 steps in order for this AO
-		ApprovalStep as1 = httpQuery("/approvalSteps/new", steve)
+		ApprovalStep as1 = httpQuery("/approvalSteps/new", jack)
 				.post(Entity.json(ApprovalStep.create(null, g, null, org.getId())), ApprovalStep.class);
 		assertThat(as1.getId()).isNotNull();
 		
-		ApprovalStep as2 = httpQuery("/approvalSteps/new", steve)
+		ApprovalStep as2 = httpQuery("/approvalSteps/new", jack)
 				.post(Entity.json(ApprovalStep.create(null, g, null, org.getId())), ApprovalStep.class);
 		assertThat(as1.getId()).isNotNull();
 		
-		ApprovalStep as3 = httpQuery("/approvalSteps/new", steve)
+		ApprovalStep as3 = httpQuery("/approvalSteps/new", jack)
 				.post(Entity.json(ApprovalStep.create(null, g, null, org.getId())), ApprovalStep.class);
 		assertThat(as1.getId()).isNotNull();
 		
 		as1.setNextStepId(as2.getId());
 		as2.setNextStepId(as3.getId());
 		List<ApprovalStep> asList = Lists.newArrayList(as1, as2, as3);
-		Response resp = httpQuery("/approvalSteps/update", steve).post(Entity.json(asList));
+		Response resp = httpQuery("/approvalSteps/update", jack).post(Entity.json(asList));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
 		//Get them back in order
-		List<ApprovalStep> returned = httpQuery(String.format("/approvalSteps/byOrganization?id=%d", org.getId()), steve)
+		List<ApprovalStep> returned = httpQuery(String.format("/approvalSteps/byOrganization?id=%d", org.getId()), jack)
 				.get(new GenericType<List<ApprovalStep>>() {});
 		assertThat(returned.size()).isEqualTo(3);
 		System.out.println(as1);
@@ -71,27 +71,27 @@ public class ApprovalStepResourceTest extends AbstractResourceTest {
 		assertThat(returned).contains(as3, atIndex(2));
 		
 		//Remove the first step
-		resp = httpQuery(String.format("/approvalSteps/%d", as1.getId()), steve).delete();
+		resp = httpQuery(String.format("/approvalSteps/%d", as1.getId()), jack).delete();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
-		returned = httpQuery(String.format("/approvalSteps/byOrganization?id=%d", org.getId()), steve)
+		returned = httpQuery(String.format("/approvalSteps/byOrganization?id=%d", org.getId()), jack)
 				.get(new GenericType<List<ApprovalStep>>() {});
 		assertThat(returned.size()).isEqualTo(2);
 		assertThat(returned).contains(as2, atIndex(0));
 		assertThat(returned).contains(as3, atIndex(1));
 		
 		//Create a new step and put in the middle
-		ApprovalStep as4 = httpQuery("/approvalSteps/new", steve)
+		ApprovalStep as4 = httpQuery("/approvalSteps/new", jack)
 				.post(Entity.json(ApprovalStep.create(null, g, null, org.getId())), ApprovalStep.class);
 		assertThat(as1.getId()).isNotNull();
 		as2.setNextStepId(as4.getId());
 		as4.setNextStepId(as3.getId());
 		asList = Lists.newArrayList(as2, as3, as4);
-		resp = httpQuery("/approvalSteps/update", steve).post(Entity.json(asList));
+		resp = httpQuery("/approvalSteps/update", jack).post(Entity.json(asList));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
 		//Get them back in order 2 -> 4 -> 3
-		returned = httpQuery("/approvalSteps/byOrganization?id=" + org.getId(), steve)
+		returned = httpQuery("/approvalSteps/byOrganization?id=" + org.getId(), jack)
 				.get(new GenericType<List<ApprovalStep>>() {});
 		assertThat(returned.size()).isEqualTo(3);
 		assertThat(returned).contains(as2, atIndex(0));

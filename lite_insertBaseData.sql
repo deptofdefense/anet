@@ -44,17 +44,34 @@ INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES
 INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF3 Advisor 427', 0, NULL, '2016-11-28 04:00:00.000 +0000', '2016-11-28 04:00:00.000 +0000');
 INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF4 Advisor 3', 0, NULL, '2016-11-28 04:00:00.000 +0000', '2016-11-28 04:00:00.000 +0000');
 
+-- Put Bob into the Super User Billet in EF1
 INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES 
-	((SELECT id from positions where name = 'EF1 Advisor 04532'), (SELECT id from people where emailAddress = 'reina@example.com'), '2016-11-28 04:00:00.000 +0000');
-UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'reina@example.com') WHERE name = 'EF1 Advisor 04532';
+	((SELECT id from positions where name = 'EF1 SuperUser'), (SELECT id from people where emailAddress = 'bob@example.com'), CURRENT_TIMESTAMP);
+UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'bob@example.com') WHERE name = 'EF1 SuperUser';
 
--- Rotate an advisor through a billet
+-- Put Henry into the Super User Billet in EF2
+INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES 
+	((SELECT id from positions where name = 'EF2 SuperUser'), (SELECT id from people where emailAddress = 'henry@example.com'), CURRENT_TIMESTAMP);
+UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'henry@example.com') WHERE name = 'EF2 SuperUser';
+
+-- Rotate an advisor through a billet ending up with Jack in the EF2 Advisor Billet
 INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES
-	((SELECT id from positions where name = 'EF2 Advisor 4987'), (SELECT id from people where emailAddress = 'bob@example.com'), '2016-11-28 04:00:00.000 +0000');
-UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'bob@example.com') WHERE name = 'EF2 Advisor 4987';
+	((SELECT id from positions where name = 'EF2 Advisor 4987'), (SELECT id from people where emailAddress = 'reina@example.com'), CURRENT_TIMESTAMP);
+UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'reina@example.com') WHERE name = 'EF2 Advisor 4987';
 INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES
-	((SELECT id from positions where name = 'EF2 Advisor 4987'), (SELECT id from people where emailAddress = 'foobar@example.com'), '2016-11-28 04:01:00.000 +0000');
+	((SELECT id from positions where name = 'EF2 Advisor 4987'), (SELECT id from people where emailAddress = 'foobar@example.com'), CURRENT_TIMESTAMP);
 UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'foobar@example.com') WHERE name = 'EF2 Advisor 4987';
+
+-- Put Elizabeth into the EF1 Advisor Billet
+INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES 
+	((SELECT id from positions where name = 'EF1 Advisor 04532'), (SELECT id from people where emailAddress = 'liz@example.com'), CURRENT_TIMESTAMP);
+UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'liz@example.com') WHERE name = 'EF1 Advisor 04532';
+
+-- Put Reina into the EF3 Advisor Billet
+INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES 
+	((SELECT id from positions where name = 'EF3 Advisor 427'), (SELECT id from people where emailAddress = 'reina@example.com'), CURRENT_TIMESTAMP);
+UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'reina@example.com') WHERE name = 'EF3 Advisor 427';
+
 
 INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('EF1', 0, '2016-11-28 04:00:00.000 +0000', '2016-11-28 04:00:00.000 +0000');
 INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('EF2', 0, '2016-11-28 04:00:00.000 +0000', '2016-11-28 04:00:00.000 +0000');

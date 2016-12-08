@@ -17,6 +17,8 @@ import org.junit.Test;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.util.Duration;
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.Person.Role;
+import mil.dds.anet.beans.Person.Status;
 
 public class PersonResourceTest extends AbstractResourceTest {
 		
@@ -32,20 +34,27 @@ public class PersonResourceTest extends AbstractResourceTest {
 	public void testCreatePerson() {
 		Person jack = getJackJackson();
 		//Creation is handled by the parent class, which really does a search... :D. 
-		System.out.println(jack.getCreatedAt());
-		Person retPerson = httpQuery(String.format("/people/%d", jack.getId()), jack).get(Person.class);
-    	System.out.println(retPerson.getCreatedAt());
-    	
+		Person retPerson = httpQuery(String.format("/people/%d", jack.getId()), jack).get(Person.class); 	
     	assertThat(retPerson).isEqualTo(jack);
     	assertThat(retPerson.getId()).isEqualTo(jack.getId());
     	
-    	jack.setName("Roberto Jackson");
+    	Person newPerson = new Person();
+    	newPerson.setName("testCreatePerson Person");
+    	newPerson.setRole(Role.PRINCIPAL);
+    	newPerson.setStatus(Status.ACTIVE);
+    	newPerson.setBiography("Created buy the PersonResourceTest#testCreatePerson");
+    	newPerson = httpQuery("/people/new", jack).post(Entity.json(newPerson), Person.class);
+    	assertThat(newPerson.getId()).isNotNull();
+    	assertThat(newPerson.getName()).isEqualTo("testCreatePerson Person");
+    	
+    	
+    	newPerson.setName("testCreatePerson updated name");
     	Response resp = httpQuery("/people/update", retPerson)
-    			.post(Entity.json(jack));
+    			.post(Entity.json(newPerson));
     	assertThat(resp.getStatus()).isEqualTo(200);
     	
-    	retPerson = httpQuery(String.format("/people/%d", jack.getId()), jack).get(Person.class);
-    	assertThat(retPerson.getName()).isEqualTo(jack.getName());
+    	retPerson = httpQuery(String.format("/people/%d", newPerson.getId()), jack).get(Person.class);
+    	assertThat(retPerson.getName()).isEqualTo(newPerson.getName());
     }
 	
 //	@Test
@@ -69,18 +78,18 @@ public class PersonResourceTest extends AbstractResourceTest {
 	
 	@Test
 	public void testSearchPerson() { 
-		Person steve = getSteveSteveson();
+		Person jack = getJackJackson();
 			
 		String query = "Bobtown";
-		List<Person> searchResults = httpQuery("/people/search?q=" + URLEncoder.encode(query), steve)
+		List<Person> searchResults = httpQuery("/people/search?q=" + URLEncoder.encode(query), jack)
 				.get(new GenericType<List<Person>>() {});
 		assertThat(searchResults.size()).isGreaterThan(0);
 	}
     
 	@Test
 	public void viewTest() { 
-		Person steve = getSteveSteveson();
-		Response resp = httpQuery("/people/", steve, MediaType.TEXT_HTML_TYPE).get();
+		Person jack = getJackJackson();
+		Response resp = httpQuery("/people/", jack, MediaType.TEXT_HTML_TYPE).get();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		String respBody = getResponseBody(resp);
 		assertThat(respBody).as("FreeMarker error").doesNotContain("FreeMarker template error");
@@ -90,15 +99,15 @@ public class PersonResourceTest extends AbstractResourceTest {
 		assertThat(personIdMat.find());
 		int personId = Integer.parseInt(personIdMat.group(1));
 		
-		resp = httpQuery("/people/new", steve, MediaType.TEXT_HTML_TYPE).get();
+		resp = httpQuery("/people/new", jack, MediaType.TEXT_HTML_TYPE).get();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
 		
-		resp = httpQuery("/people/" + personId, steve, MediaType.TEXT_HTML_TYPE).get();
+		resp = httpQuery("/people/" + personId, jack, MediaType.TEXT_HTML_TYPE).get();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
 		
-		resp = httpQuery("/people/" + personId + "/edit", steve, MediaType.TEXT_HTML_TYPE).get();
+		resp = httpQuery("/people/" + personId + "/edit", jack, MediaType.TEXT_HTML_TYPE).get();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
 	}

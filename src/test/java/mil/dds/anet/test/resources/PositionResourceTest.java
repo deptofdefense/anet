@@ -120,8 +120,8 @@ public class PositionResourceTest extends AbstractResourceTest {
 	
 	@Test
 	public void viewTest() { 
-		Person steve = getSteveSteveson();
-		Response resp = httpQuery("/positions/", steve)
+		Person jack = getJackJackson();
+		Response resp = httpQuery("/positions/", jack)
 			.header("Accept", "text/html").get();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		String respBody = getResponseBody(resp);
@@ -132,17 +132,17 @@ public class PositionResourceTest extends AbstractResourceTest {
 		assertThat(positionIdMat.find());
 		int positionId = Integer.parseInt(positionIdMat.group(1));
 		
-		resp = httpQuery("/positions/new", steve)
+		resp = httpQuery("/positions/newBillet", jack)
 				.header("Accept", "text/html").get();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
 		
-		resp = httpQuery("/positions/" + positionId, steve)
+		resp = httpQuery("/positions/" + positionId, jack)
 				.header("Accept", "text/html").get();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
 		
-		resp = httpQuery("/positions/" + positionId + "/edit", steve)
+		resp = httpQuery("/positions/" + positionId + "/edit", jack)
 				.header("Accept", "text/html").get();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
@@ -152,29 +152,29 @@ public class PositionResourceTest extends AbstractResourceTest {
 	public void tashkilTest() { 
 		//Create Position
 		Position t = PositionTest.getTestPosition();
-		Person steve = getSteveSteveson();
+		Person jack = getJackJackson();
 		
-		Position created = httpQuery("/positions/new", steve).post(Entity.json(t), Position.class);
+		Position created = httpQuery("/positions/new", jack).post(Entity.json(t), Position.class);
 		assertThat(created.getName()).isEqualTo(t.getName());
 		assertThat(created.getCode()).isEqualTo(t.getCode());
 		assertThat(created.getId()).isNotNull();
 		
 		//Change Name/Code
 		created.setName("Deputy Chief of Donuts");
-		Response resp = httpQuery("/positions/update", steve).post(Entity.json(created));
+		Response resp = httpQuery("/positions/update", jack).post(Entity.json(created));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
-		Position returned = httpQuery(String.format("/positions/%d",created.getId()), steve).get(Position.class);
+		Position returned = httpQuery(String.format("/positions/%d",created.getId()), jack).get(Position.class);
 		assertThat(returned.getName()).isEqualTo(created.getName());
 		assertThat(returned.getCode()).isEqualTo(created.getCode());
 		
 		//Assign Principal
-		Person principal = getJackJackson();
+		Person principal = getSteveSteveson();
 		
-		resp = httpQuery(String.format("/positions/%d/person",created.getId()), steve).post(Entity.json(principal));
+		resp = httpQuery(String.format("/positions/%d/person",created.getId()), jack).post(Entity.json(principal));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
-		Person returnedPrincipal = httpQuery(String.format("/positions/%d/person", created.getId()), steve).get(Person.class);
+		Person returnedPrincipal = httpQuery(String.format("/positions/%d/person", created.getId()), jack).get(Person.class);
 		assertThat(returnedPrincipal.getId()).isEqualTo(principal.getId());
 		
 		//TODO: Change the Principal
