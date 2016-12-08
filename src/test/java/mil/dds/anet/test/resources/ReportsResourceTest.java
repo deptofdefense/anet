@@ -290,6 +290,21 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		billet.setName("EF1 new advisor");
 		billet.setType(Position.PositionType.ADVISOR);
 		
+		billet = httpQuery("/positions/new", nick)
+				.post(Entity.json(billet), Position.class);
+		assertThat(billet.getId()).isNotNull();
+		
+		//Put Author in the billet
+		resp = httpQuery("/positions/" + billet.getId() + "/person", nick)
+				.post(Entity.json(author));
+		assertThat(resp.getStatus()).isEqualTo(200);
+		
+		//Have Super User kick the report, it should be re-assigned to the default approval path because the billet has no Org
+		resp = httpQuery("/reports/" + r.getId() + "/submit", nick).get();
+		assertThat(resp.getStatus()).isEqualTo(200);
+		returned = httpQuery("/reports/" + r.getId(), jack).get(Report.class);
+		assertThat(returned.getApprovalStepJson().getId()).isEqualTo(steps.get(0).getId());
+		
 		//Put billet in EF1
 		List<Organization> results = httpQuery("/organizations/search?q=EF1&type=ADVISOR_ORG", nick).get(new GenericType<List<Organization>>() {});
 		assertThat(results.size()).isGreaterThan(0);
@@ -304,13 +319,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		assertThat(billet.getOrganization()).isNotNull();
 		assertThat(ef1).isNotNull();
 		
-		billet = httpQuery("/positions/new", nick)
-				.post(Entity.json(billet), Position.class);
-		assertThat(billet.getId()).isNotNull();
-		
-		//Put Author in the billet
-		resp = httpQuery("/positions/" + billet.getId() + "/person", nick)
-				.post(Entity.json(author));
+		resp = httpQuery("/positions/update", nick).post(Entity.json(billet));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
 		//Nick should kick the report

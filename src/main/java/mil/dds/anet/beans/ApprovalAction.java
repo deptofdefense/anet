@@ -85,7 +85,7 @@ public class ApprovalAction {
 			return false;
 		}
 		ApprovalAction other = (ApprovalAction) o;
-		return Objects.equals(step, other.getStep()) &&
+		return Objects.equals(step, other.getStepJson()) &&
 				AbstractAnetView.idEqual(person, other.getPersonJson()) &&
 				Objects.equals(report, other.getReport()) &&
 				Objects.equals(createdAt, other.getCreatedAt()) &&
@@ -95,5 +95,10 @@ public class ApprovalAction {
 	@Override
 	public int hashCode() { 
 		return Objects.hash(step, person, report, createdAt, type);
+	}
+	
+	@Override
+	public String toString() { 
+		return String.format("[ApprovalAction: step:%d, type:%s, person:%d, report:%d]", step.getId(), type, person.getId(), report.getId());
 	}
 }

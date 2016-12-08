@@ -176,14 +176,14 @@ public class ReportResource {
 		}
 		List<ApprovalStep> steps = engine.getApprovalStepsForOrg(org);
 		if (steps == null || steps.size() == 0) {
-			return ResponseUtils.withMsg("Unable to find approval steps for Org", Status.BAD_REQUEST);
+			//Missing approval steps for this organization
+			steps = engine.getApprovalStepsForOrg(Organization.createWithId(-1));
 		}
 
 		//Push the report into the first step of this workflow
 		r.setApprovalStep(steps.get(0));
 		r.setState(ReportState.PENDING_APPROVAL);
 		int numRows = dao.update(r);
-		System.out.println(String.format("Setting report %d to step %d because of org %d on author %d", r.getId(), steps.get(0).getId(), org.getId(), r.getAuthorJson().getId()));
 		return (numRows == 1) ? Response.ok().build() : ResponseUtils.withMsg("No records updated", Status.BAD_REQUEST);
 	}
 
