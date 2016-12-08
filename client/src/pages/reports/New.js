@@ -1,5 +1,5 @@
 import React from 'react'
-import {Form, FormGroup, FormControl, Col} from 'react-bootstrap'
+import {Form, FormGroup, Col, ControlLabel} from 'react-bootstrap'
 
 import DatePicker from 'react-bootstrap-date-picker'
 
@@ -8,28 +8,35 @@ import TextEditor from '../../components/TextEditor'
 
 export default class ReportNew extends React.Component {
 	render() {
+		let HorizontalControl = function(props) {
+			return (
+				<FormGroup controlId={props.controlId}>
+					<Col sm={3} componentClass={ControlLabel}>
+						Engagement date
+					</Col>
+					<Col sm={9}>
+						{props.children}
+					</Col>
+				</FormGroup>
+			)
+		}
+
 		return (
 			<div>
 				<Breadcrumbs items={[['EF4', '/organizations/ef4'], ['Submit a report', '/reports/new']]} />
 
 				<Form horizontal>
-					<FormGroup>
-						<Col sm={2}>
-							Engagement date
-						</Col>
-						<Col sm={10}>
-							<DatePicker />
-						</Col>
-					</FormGroup>
+					<fieldset>
+						<legend>Engagement details</legend>
 
-					<FormGroup>
-						<Col sm={2}>
-							Description
-						</Col>
-						<Col sm={10}>
+						<HorizontalControl controlId="engagementDate">
+							<DatePicker />
+						</HorizontalControl>
+
+						<HorizontalControl controlId="engagementDetails">
 							<TextEditor />
-						</Col>
-					</FormGroup>
+						</HorizontalControl>
+					</fieldset>
 				</Form>
 			</div>
 		)
