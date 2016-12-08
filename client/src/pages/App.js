@@ -11,9 +11,9 @@ export default class App extends React.Component {
 			<div className="anet">
 				<SecurityBanner />
 
-				<div className="container">
-					<Header />
+				<Header />
 
+				<div className="container">
 					<Grid>
 						<Row>
 							<Col sm={3}>
@@ -25,8 +25,6 @@ export default class App extends React.Component {
 							</Col>
 						</Row>
 					</Grid>
-
-
 				</div>
 			</div>
 		)

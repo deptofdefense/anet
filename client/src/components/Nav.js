@@ -1,22 +1,22 @@
 import React from 'react'
 import {Nav, NavItem} from 'react-bootstrap'
-import {IndexLinkContainer} from 'react-router-bootstrap'
+import {IndexLinkContainer as Link} from 'react-router-bootstrap'
 
 export default class extends React.Component {
 	render() {
 		return (
 			<Nav bsStyle="pills" stacked>
-				<IndexLinkContainer to="/">
+				<Link to="/">
 					<NavItem>Home</NavItem>
-				</IndexLinkContainer>
+				</Link>
 
-				<IndexLinkContainer to="/reports/new">
+				<Link to="/reports/new">
 					<NavItem>Submit a report</NavItem>
-				</IndexLinkContainer>
+				</Link>
 
-				<IndexLinkContainer to="/reports">
+				<Link to="/reports">
 					<NavItem>My AO</NavItem>
-				</IndexLinkContainer>
+				</Link>
 			</Nav>
 		)
 	}
