@@ -4,6 +4,7 @@ import {Form, FormGroup, FormControl, Col} from 'react-bootstrap'
 import DatePicker from 'react-bootstrap-date-picker'
 
 import Breadcrumbs from '../../components/Breadcrumbs'
+import TextEditor from '../../components/TextEditor'
 
 export default class ReportNew extends React.Component {
 	render() {
@@ -18,6 +19,15 @@ export default class ReportNew extends React.Component {
 						</Col>
 						<Col sm={10}>
 							<DatePicker />
+						</Col>
+					</FormGroup>
+
+					<FormGroup>
+						<Col sm={2}>
+							Description
+						</Col>
+						<Col sm={10}>
+							<TextEditor />
 						</Col>
 					</FormGroup>
 				</Form>

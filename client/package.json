@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "bootstrap": "^3.3.7",
+    "draft-js": "^0.9.1",
     "react": "^15.4.1",
     "react-bootstrap": "^0.30.7",
     "react-bootstrap-date-picker": "^4.0.0",
