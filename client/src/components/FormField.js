@@ -11,7 +11,7 @@ function HorizontalFormField({id, label, children, rightComponentClass, ...props
 				{label}
 			</Col>
 			<Col sm={7}>
-				{children || <FormControl {...props} />}
+				{props.type === 'static' ? (<FormControl.Static>{children || props.value}</FormControl.Static>) : (children || <FormControl {...props} />)}
 			</Col>
 			{/*rightComponentClass && <Col sm={2} componentClass={rightComponentClass}></Col>*/}
 		</FormGroup>

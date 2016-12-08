@@ -4,6 +4,7 @@ body {
 
 fieldset {
 	background: white;
+	border: 1px solid #eee;
 	padding: 3rem;
 }
 

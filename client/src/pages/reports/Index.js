@@ -16,17 +16,6 @@ export default class ReportsIndex extends React.Component {
 			.then(data => this.setState({reports: data.list}))
 	}
 
-	renderTableRow(report) {
-		return (
-			<tr key={report.id}>
-				<td>{report.author.name}</td>
-				<td><Link to={{pathname: `/reports/${report.id}`}}>{report.intent}</Link></td>
-				<td>{report.state}</td>
-				<td>{report.updatedAt}</td>
-			</tr>
-		)
-	}
-
 	render() {
 		return (
 			<div>
@@ -43,7 +32,14 @@ export default class ReportsIndex extends React.Component {
 					</thead>
 
 					<tbody>
-						{this.state.reports.map(this.renderTableRow)}
+						{this.state.reports.map(report =>
+							<tr key={report.id}>
+								<td>{report.author.name}</td>
+								<td><Link to={"/reports/" + report.id}>{report.intent}</Link></td>
+								<td>{report.state}</td>
+								<td>{report.updatedAt}</td>
+							</tr>
+						)}
 					</tbody>
 				</Table>
 			</div>
