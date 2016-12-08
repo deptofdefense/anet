@@ -17,23 +17,23 @@ public class PersonMapper implements ResultSetMapper<Person> {
 	@Override
 	public Person map(int index, ResultSet r, StatementContext ctx) throws SQLException {
 		return fillInFields(new Person(), r);
-	} 
+	}
 	
 	public static <T extends Person> T fillInFields(T a, ResultSet r) throws SQLException {
 		//This hits when we do a join but there's no Person record. 
-		if (r.getObject("id") == null) { return null; }
-		a.setId(r.getInt("id"));
-		a.setName(r.getString("name"));
-		a.setStatus(MapperUtils.getEnumIdx(r, "status", Status.class));
-		a.setRole(MapperUtils.getEnumIdx(r, "role", Role.class));
-		a.setEmailAddress(r.getString("emailAddress"));
-		a.setPhoneNumber(r.getString("phoneNumber"));
-		a.setRank(r.getString("rank"));
-		a.setBiography(r.getString("biography"));
-		a.setDomainUsername(r.getString("domainUsername"));
-		a.setPendingVerification(r.getBoolean("pendingVerification"));
-		a.setCreatedAt(new DateTime(r.getTimestamp("createdAt")));
-		a.setUpdatedAt(new DateTime(r.getTimestamp("updatedAt")));
+		if (r.getObject("people_id") == null) { return null; }
+		a.setId(r.getInt("people_id"));
+		a.setName(r.getString("people_name"));
+		a.setStatus(MapperUtils.getEnumIdx(r, "people_status", Status.class));
+		a.setRole(MapperUtils.getEnumIdx(r, "people_role", Role.class));
+		a.setEmailAddress(r.getString("people_emailAddress"));
+		a.setPhoneNumber(r.getString("people_phoneNumber"));
+		a.setRank(r.getString("people_rank"));
+		a.setBiography(r.getString("people_biography"));
+		a.setDomainUsername(r.getString("people_domainUsername"));
+		a.setPendingVerification(r.getBoolean("people_pendingVerification"));
+		a.setCreatedAt(new DateTime(r.getTimestamp("people_createdAt")));
+		a.setUpdatedAt(new DateTime(r.getTimestamp("people_updatedAt")));
 		
 		a.setLoadLevel(LoadLevel.PROPERTIES);
 		return a;

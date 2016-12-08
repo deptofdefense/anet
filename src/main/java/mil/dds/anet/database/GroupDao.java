@@ -49,7 +49,7 @@ public class GroupDao implements IAnetDao<Group> {
 		if (groups.size() == 0) { return null; } 
 		Group g = groups.get(0);
 		
-		Query<Person> membersQuery = dbHandle.createQuery("SELECT people.* " + 
+		Query<Person> membersQuery = dbHandle.createQuery("SELECT " + PersonDao.PERSON_FIELDS + " " +  
 				"FROM people, groupMemberships " + 
 				"WHERE groupMemberships.groupId = :groupId " +
 				"AND groupMemberships.personId = people.id")

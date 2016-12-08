@@ -2,6 +2,7 @@ package mil.dds.anet.database;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -22,18 +23,27 @@ import mil.dds.anet.utils.DaoUtils;
 
 public class PersonDao implements IAnetDao<Person> {
 
+	public static String[] fields = {"id","name","status","role",
+			"emailAddress","phoneNumber","rank","biography",
+			"domainUsername","pendingVerification","createdAt",
+			"updatedAt"};
+	public static String tableName = "people";
+	
 	Handle dbHandle;
+	public static String PERSON_FIELDS;
 	
 	public PersonDao(Handle h) { 
 		this.dbHandle = h;
+		
+		PERSON_FIELDS = DaoUtils.buildFieldAliases(tableName, fields);
 	}
 	
 	public List<Person> getAll(int pageNum, int pageSize) {
 		String sql;
 		if (DaoUtils.isMsSql(dbHandle)) { 
-			sql = "SELECT * FROM people ORDER BY createdAt ASC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY";
+			sql = "SELECT " + PERSON_FIELDS + " FROM people ORDER BY createdAt ASC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY";
 		} else { 
-			sql = "SELECT * from people ORDER BY createdAt ASC LIMIT :limit OFFSET :offset";
+			sql = "SELECT " + PERSON_FIELDS + " from people ORDER BY createdAt ASC LIMIT :limit OFFSET :offset";
 		}
 		Query<Person> query = dbHandle.createQuery(sql)
 			.bind("limit", pageSize)
@@ -43,7 +53,7 @@ public class PersonDao implements IAnetDao<Person> {
 	}
 
 	public Person getById(int id) { 
-		Query<Person> query = dbHandle.createQuery("select * from people where id = :id")
+		Query<Person> query = dbHandle.createQuery("SELECT " + PERSON_FIELDS + " FROM people WHERE id = :id")
 				.bind("id",  id)
 				.map(new PersonMapper());
 		List<Person> rs = query.list();
@@ -88,7 +98,7 @@ public class PersonDao implements IAnetDao<Person> {
 	}
 	
 	public List<Person> searchByName(String searchQuery, Role role) {
-		StringBuilder queryBuilder = new StringBuilder("SELECT * FROM people WHERE ");
+		StringBuilder queryBuilder = new StringBuilder("SELECT " + PERSON_FIELDS + " FROM people WHERE ");
 		if (DaoUtils.isMsSql(dbHandle)) { 
 			searchQuery = "\"" + searchQuery + "*\"";
 			queryBuilder.append("CONTAINS (name, :query)");
@@ -139,7 +149,7 @@ public class PersonDao implements IAnetDao<Person> {
 				conditions.add(strings[i] + " = ? ");
 			}
 		}
-		String queryString = "SELECT * from people WHERE " + Joiner.on(" AND ").join(conditions);
+		String queryString = "SELECT " + PERSON_FIELDS + " from people WHERE " + Joiner.on(" AND ").join(conditions);
 		Query<Map<String, Object>> query = dbHandle.createQuery(queryString);
 		for (int i=0;i<strings.length;i+=2) { 
 			query.bind((i/2), strings[i+1]);

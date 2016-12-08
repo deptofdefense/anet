@@ -2,12 +2,16 @@ package mil.dds.anet.utils;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.WebApplicationException;
 
 import org.skife.jdbi.v2.GeneratedKeys;
 import org.skife.jdbi.v2.Handle;
+
+import com.google.common.base.Joiner;
 
 import mil.dds.anet.views.AbstractAnetView;
 
@@ -55,6 +59,14 @@ public class DaoUtils {
 		} else { 
 			throw new WebApplicationException("Unexpected id type returned from database");
 		}
+	}
+	
+	public static String buildFieldAliases(String tableName, String[] fields) { 
+		List<String> fieldAliases = new LinkedList<String>();
+		for (String field : fields) { 
+			fieldAliases.add(String.format("%s.%s AS %s_%s", tableName, field, tableName, field));
+		}
+		return Joiner.on(", ").join(fieldAliases);
 	}
 	
 }

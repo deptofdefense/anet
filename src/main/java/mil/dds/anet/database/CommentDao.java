@@ -64,7 +64,7 @@ public class CommentDao implements IAnetDao<Comment> {
 	public List<Comment> getCommentsForReport(Report report) {
 		return dbHandle.createQuery("SELECT c.id AS c_id, "
 				+ "c.createdAt AS c_createdAt, c.updatedAt AS c_updatedAt, "
-				+ "c.authorId, c.reportId, c.text, people.* "
+				+ "c.authorId, c.reportId, c.text, " + PersonDao.PERSON_FIELDS + " "
 				+ "FROM comments c LEFT JOIN people ON c.authorId = people.id "
 				+ "WHERE c.reportId = :reportId ORDER BY c.createdAt ASC")
 			.bind("reportId", report.getId())
