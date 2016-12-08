@@ -9,6 +9,8 @@ import Breadcrumbs from '../../components/Breadcrumbs'
 import TextEditor from '../../components/TextEditor'
 
 export default class ReportNew extends React.Component {
+	static useNavigation = false
+
 	render() {
 		return (
 			<div>

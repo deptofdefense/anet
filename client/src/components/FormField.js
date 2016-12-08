@@ -7,7 +7,7 @@ function HorizontalFormField({id, label, children, rightComponentClass, ...props
 
 	return (
 		<FormGroup controlId={id}>
-			<Col sm={3} componentClass={ControlLabel}>
+			<Col sm={2} componentClass={ControlLabel}>
 				{label}
 			</Col>
 			<Col sm={7}>

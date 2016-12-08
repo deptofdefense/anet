@@ -14,17 +14,22 @@ export default class App extends React.Component {
 				<Header />
 
 				<div className="container">
-					<Grid>
-						<Row>
-							<Col sm={3}>
-								<Nav />
-							</Col>
-
-							<Col sm={9}>
-								{this.props.children}
-							</Col>
-						</Row>
-					</Grid>
+					{this.props.children.type.useNavigation === false ? (
+						<Col xs={12}>
+							{this.props.children}
+						</Col>
+					) : (
+						<Grid>
+							<Row>
+								<Col sm={3}>
+									<Nav />
+								</Col>
+								<Col sm={9}>
+									{this.props.children}
+								</Col>
+							</Row>
+						</Grid>
+					)}
 				</div>
 			</div>
 		)
