@@ -3,6 +3,16 @@ import {Editor, EditorState, RichUtils} from 'draft-js'
 
 import './TextEditor.css'
 
+// Custom overrides for "code" style.
+const styleMap = {
+CODE: {
+  backgroundColor: 'rgba(0, 0, 0, 0.05)',
+  fontFamily: '"Inconsolata", "Menlo", "Consolas", monospace',
+  fontSize: 16,
+  padding: 2,
+},
+};
+
 export default class TextEditor extends React.Component {
         constructor(props) {
           super(props);
@@ -90,16 +100,6 @@ export default class TextEditor extends React.Component {
           );
         }
       }
-
-      // Custom overrides for "code" style.
-      const styleMap = {
-        CODE: {
-          backgroundColor: 'rgba(0, 0, 0, 0.05)',
-          fontFamily: '"Inconsolata", "Menlo", "Consolas", monospace',
-          fontSize: 16,
-          padding: 2,
-        },
-      };
 
       function getBlockStyle(block) {
         switch (block.getType()) {
