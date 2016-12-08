@@ -1,23 +1,33 @@
 import React from 'react'
-import {Link} from 'react-router'
+import {Grid, Row, Col} from 'react-bootstrap'
 
 import SecurityBanner from '../components/SecurityBanner'
 import Header from '../components/Header'
+import Nav from '../components/Nav'
 
 export default class App extends React.Component {
 	render() {
 		return (
 			<div className="anet">
 				<SecurityBanner />
-				<Header />
 
-				<div>
-					<Link to="/">Home</Link>
-					<Link to="/reports/new">Submit a report</Link>
-					<Link to="/reports">My AO</Link>
+				<div className="container">
+					<Header />
+
+					<Grid>
+						<Row>
+							<Col sm={3}>
+								<Nav />
+							</Col>
+
+							<Col sm={9}>
+								{this.props.children}
+							</Col>
+						</Row>
+					</Grid>
+
+
 				</div>
-
-				{this.props.children}
 			</div>
 		)
 	}
