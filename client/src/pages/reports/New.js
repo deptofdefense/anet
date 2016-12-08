@@ -22,25 +22,27 @@ export default class ReportNew extends React.Component {
 					<fieldset>
 						<legend>Engagement details</legend>
 
-						<HorizontalFormField
-							id="engagementIntent"
-							label="Meeting subject" />
+						<HorizontalFormField id="engagementIntent" label="Meeting subject" />
 
-						<HorizontalFormField
-							id="engagementDate"
-							label="Engagement date">
+						<HorizontalFormField id="engagementDate">
 							<DatePicker />
 						</HorizontalFormField>
 
-						<HorizontalFormField
-							id="engagementLocation"
-							label="Engagement location" />
+						<HorizontalFormField id="engagementLocation" />
+					</fieldset>
 
-						<HorizontalFormField
-							id="engagementDetails"
-							label="Engagement details">
-							<TextEditor />
+					<fieldset>
+						<legend>Meeting attendance</legend>
+
+						<HorizontalFormField id="addAttendee">
+
 						</HorizontalFormField>
+					</fieldset>
+
+					<fieldset>
+						<legend>Meeting discussion</legend>
+
+						<TextEditor />
 					</fieldset>
 				</Form>
 			</div>

@@ -1,7 +1,10 @@
 import React from 'react'
+import _ from 'lodash'
 import {FormGroup, Col, ControlLabel, FormControl} from 'react-bootstrap'
 
 function HorizontalFormField({id, label, children, rightComponentClass, ...props}) {
+	label = label || _.upperFirst(_.startCase(id).toLowerCase())
+
 	return (
 		<FormGroup controlId={id}>
 			<Col sm={3} componentClass={ControlLabel}>
