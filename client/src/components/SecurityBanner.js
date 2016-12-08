@@ -10,6 +10,7 @@ const css = {
 	width: '100%',
 	fontSize: '18px',
 	textAlign: 'center',
+	zIndex: 10
 }
 
 export default class SecurityBanner extends React.Component {
