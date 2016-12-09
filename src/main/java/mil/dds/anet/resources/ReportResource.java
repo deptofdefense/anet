@@ -123,7 +123,7 @@ public class ReportResource {
 			break;
 		case PENDING_APPROVAL:
 			//Either the author, or the approver
-			if (!existing.getAuthorJson().getId().equals(editor.getId())) {
+			if (existing.getAuthorJson().getId().equals(editor.getId())) {
 				//This is okay, but move it back to draft
 				r.setState(ReportState.DRAFT);
 				r.setApprovalStep(null);
@@ -139,23 +139,28 @@ public class ReportResource {
 		}
 		r.setAuthor(existing.getAuthorJson());
 		dao.update(r);
-		//Fetch the people associated with this report
+		//Update Attendees: Fetch the people associated with this report
 		List<ReportPerson> existingPeople = dao.getAttendeesForReport(r.getId());
 		List<Integer> existingPplIds = existingPeople.stream().map( rp -> rp.getId()).collect(Collectors.toList());
 		//Find any differences and fix them.
 		for (ReportPerson rp : r.getAttendees()) {
 			int idx = existingPplIds.indexOf(rp.getId());
-			if (idx == -1) {
-				//Add this person s
-				dao.addAttendeeToReport(rp, r);
-			} else {
-				//This person already is in the DB
-				existingPplIds.remove(idx);
-			}
+			if (idx == -1) { dao.addAttendeeToReport(rp, r); } else { existingPplIds.remove(idx);}
 		}
 		//Any ids left in existingPplIds needs to be removed.
 		for (Integer id : existingPplIds) {
-			dao.removeAttendeeFromReport(id, r);
+			dao.removeAttendeeFromReport(Person.createWithId(id), r);
+		}
+		
+		//Update Poams:
+		List<Poam> existingPoams = dao.getPoamsForReport(r);
+		List<Integer> existingPoamIds = existingPoams.stream().map( p -> p.getId()).collect(Collectors.toList());
+		for (Poam p : r.getPoamsJson()) { 
+			int idx = existingPoamIds.indexOf(p.getId());
+			if (idx == -1) { dao.addPoamToReport(p, r); } else {  existingPoamIds.remove(idx); }
+		}
+		for (Integer id : existingPoamIds) { 
+			dao.removePoamFromReport(Poam.createWithId(id), r);
 		}
 		return Response.ok().build();
 	}

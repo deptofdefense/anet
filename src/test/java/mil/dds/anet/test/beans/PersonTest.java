@@ -69,6 +69,32 @@ public class PersonTest extends BeanTester<Person> {
 		return person;
 	}
 
+	public static Person getNickNicholson() { 
+		Person p = new Person();
+		p.setName("Nick Nicholson");
+		p.setEmailAddress("nick@example.com");
+		p.setPhoneNumber("+1-202-7324");
+		p.setRank("CIV");
+		p.setStatus(Status.ACTIVE);
+		p.setRole(Role.ADVISOR);
+		p.setBiography("");
+		p.setDomainUsername("nick");
+		return p;
+	}
+	
+	public static Person getBobBobtown() { 
+		Person p = new Person();
+		p.setName("Bob Bobtown");
+		p.setEmailAddress("bob@example.com");
+		p.setPhoneNumber("+1-444-7324");
+		p.setRank("CIV");
+		p.setStatus(Status.ACTIVE);
+		p.setRole(Role.ADVISOR);
+		p.setBiography("Bob is the EF1 Super User");
+		p.setDomainUsername("bob");
+		return p;
+	}
+	
 	public static ReportPerson personToReportPerson(Person p) {
 		ReportPerson rp = new ReportPerson();
 		rp.setName(p.getName());

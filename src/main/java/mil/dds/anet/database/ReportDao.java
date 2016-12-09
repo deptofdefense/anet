@@ -154,11 +154,25 @@ public class ReportDao implements IAnetDao<Report> {
 			.execute();
 	}
 	
-	public int removeAttendeeFromReport(int personId, Report r) { 
+	public int removeAttendeeFromReport(Person p, Report r) { 
 		return dbHandle.createStatement("DELETE FROM reportPeople WHERE reportId = :reportId AND personId = :personId")
 			.bind("reportId", r.getId())
-			.bind("personId", personId)
+			.bind("personId", p.getId())
 			.execute();
+	}
+	
+	public int addPoamToReport(Poam p, Report r) { 
+		return dbHandle.createStatement("INSERT INTO reportPoams (poamId, reportId) VALUES (:poamId, :reportId)")
+			.bind("reportId", r.getId())
+			.bind("poamId", p.getId())
+			.execute();
+	}
+	
+	public int removePoamFromReport(Poam p, Report r) { 
+		return dbHandle.createStatement("DELETE FROM reportPoams WHERE reportId = :reportId AND poamId = :poamId")
+				.bind("reportId", r.getId())
+				.bind("poamId", p.getId())
+				.execute();
 	}
 	
 	/* Returns reports that the given person can currently approve */
@@ -189,7 +203,7 @@ public class ReportDao implements IAnetDao<Report> {
 	}
 	
 	public List<ReportPerson> getAttendeesForReport(int reportId) { 
-		return dbHandle.createQuery("SELECT * FROM reportPeople "
+		return dbHandle.createQuery("SELECT " + PersonDao.PERSON_FIELDS + ", reportPeople.isPrimary FROM reportPeople "
 				+ "LEFT JOIN people ON reportPeople.personId = people.id "
 				+ "WHERE reportPeople.reportId = :reportId")
 			.bind("reportId", reportId)

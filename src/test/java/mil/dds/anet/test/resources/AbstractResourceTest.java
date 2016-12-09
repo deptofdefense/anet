@@ -81,6 +81,14 @@ public abstract class AbstractResourceTest {
 		return findOrPutPersonInDb(PersonTest.getElizabethElizawell());
 	}
 	
+	public Person getNickNicholson() { 
+		return findOrPutPersonInDb(PersonTest.getNickNicholson());
+	}
+	
+	public Person getBobBobtown() { 
+		return findOrPutPersonInDb(PersonTest.getBobBobtown());
+	}
+	
 	public String getResponseBody(Response resp) {
 		try { 
 			InputStream is = (InputStream) resp.getEntity();

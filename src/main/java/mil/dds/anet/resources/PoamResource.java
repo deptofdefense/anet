@@ -105,6 +105,12 @@ public class PoamResource {
 		return topPoams;		
 	}
 	
+	@GET
+	@Path("/search")
+	public List<Poam> search(@QueryParam("q") String query) { 
+		return dao.search(query);
+	}
+	
 	//TODO: You should never be able to delete a POAM, right?  
 	
 	

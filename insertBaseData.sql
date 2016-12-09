@@ -103,7 +103,7 @@ INSERT INTO groups (name, createdAt) VALUES ('EF1 Approvers', CURRENT_TIMESTAMP)
 INSERT INTO approvalSteps (approverGroupId, advisorOrganizationId) VALUES 
 	((SELECT id from groups WHERE name = 'EF1 Approvers'), (SELECT id from organizations where name='EF1'));
 INSERT INTO groupMemberships (groupId, personId) VALUES 
-	((SELECT id from groups WHERE name='EF1 Approvers'), (SELECT id from people where emailAddress = 'henry@example.com'));
+	((SELECT id from groups WHERE name='EF1 Approvers'), (SELECT id from people where emailAddress = 'bob@example.com'));
 
 
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt)	VALUES ('EF1', 'Budget and Planning', 'EF', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
