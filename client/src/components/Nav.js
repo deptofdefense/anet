@@ -15,7 +15,7 @@ export default class extends React.Component {
 				</Link>
 
 				<Link to="/reports">
-					<NavItem>My AO</NavItem>
+					<NavItem>Reports</NavItem>
 				</Link>
 			</Nav>
 		)
