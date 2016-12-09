@@ -1,4 +1,6 @@
 import React from 'react'
+import {Form} from 'react-bootstrap'
+import moment from 'moment'
 
 import API from '../../api'
 import Breadcrumbs from '../../components/Breadcrumbs'
@@ -24,9 +26,14 @@ export default class ReportShow extends React.Component {
 				<Breadcrumbs items={[['Reports', '/reports'], [breadcrumbName, breadcrumbUrl]]} />
 
 				<h2>Report #{report.id}</h2>
-				<fieldset>
-					<HorizontalFormField label="Subject" type="static" value={report.intent} />
-				</fieldset>
+
+				<Form horizontal>
+					<fieldset>
+						<HorizontalFormField label="Subject" type="static" value={report.intent} />
+						<HorizontalFormField label="Date" type="static" value={moment(report.engagementDate).format("L LT")} />
+						<HorizontalFormField label="Location" type="static" value={report.engagementLocation} />
+					</fieldset>
+				</Form>
 			</div>
 		)
 	}

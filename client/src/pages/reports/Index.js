@@ -5,6 +5,8 @@ import {Link} from 'react-router'
 import API from '../../api'
 import Breadcrumbs from '../../components/Breadcrumbs'
 
+import moment from 'moment'
+
 export default class ReportsIndex extends React.Component {
 	constructor(props) {
 		super(props)
@@ -37,7 +39,7 @@ export default class ReportsIndex extends React.Component {
 								<td>{report.author.name}</td>
 								<td><Link to={"/reports/" + report.id}>{report.intent}</Link></td>
 								<td>{report.state}</td>
-								<td>{report.updatedAt}</td>
+								<td>{moment(report.updatedAt).fromNow()}</td>
 							</tr>
 						)}
 					</tbody>
