@@ -86,7 +86,7 @@ module.exports = {
       'react-native': 'react-native-web'
     }
   },
-  
+
   module: {
     // First, run the linter.
     // It's important to do this before Babel processes the JS.
@@ -98,12 +98,20 @@ module.exports = {
       }
     ],
     loaders: [
+      // Process index.html with a super simple html loader.
+      // This is different than the create-react-app default.
+      // We use this in order to inject Freemarker template
+      // content into the page in production.
+      {
+        test: /\.html$/,
+        loader: 'html'
+      },
       // Process JS with Babel.
       {
         test: /\.(js|jsx)$/,
         include: paths.appSrc,
         loader: 'babel',
-        
+
       },
       // The notation here is somewhat confusing.
       // "postcss" loader applies autoprefixer to our CSS.
@@ -157,7 +165,7 @@ module.exports = {
       }
     ]
   },
-  
+
   // We use PostCSS for autoprefixing only.
   postcss: function() {
     return [
