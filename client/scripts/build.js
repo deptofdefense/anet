@@ -131,6 +131,13 @@ function build(previousSizeMap) {
       process.exit(1);
     }
 
+    fs.copy(paths.appBuild + '/index.html', paths.appBuild + '/../../views/react.ftl', function(err) {
+      if (err) {
+        printErrors('Failed to copy index.ftl', [err]);
+        process.exit(1);
+      }
+    });
+
     console.log(chalk.green('Compiled successfully.'));
     console.log();
 
