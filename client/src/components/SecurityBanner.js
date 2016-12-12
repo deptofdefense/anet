@@ -16,7 +16,7 @@ export default class SecurityBanner extends React.Component {
 	render() {
 		return (
 			<div className="security" style={css}>
-				{process.env.REACT_APP_SECURITY_MARKING}
+				{process.env.REACT_APP_SECURITY_MARKING} || {window.ANET_DATA.currentUser}
 			</div>
 		)
 	}

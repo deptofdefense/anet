@@ -28,7 +28,7 @@
 		Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
 		work correctly both with client-side routing and a non-root public URL.
 		Learn how to configure a non-root public URL by running `npm run build`.
-	-->
+		-->
 	</head>
 	<body>
 		<div id="root"></div>
@@ -41,6 +41,13 @@
 
 		To begin the development, run `npm start`.
 		To create a production bundle, use `npm run build`.
-	-->
+		-->
+
+		<script>
+		window.ANET_DATA = {
+			"currentUser": "${context.currentUser}",
+		}
+		</script>
+
 	</body>
 </html>
