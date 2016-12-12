@@ -7,6 +7,7 @@ import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 import javax.servlet.FilterRegistration;
 
+import org.eclipse.jetty.server.session.SessionHandler;
 import org.joda.time.DateTimeZone;
 import org.skife.jdbi.v2.DBI;
 
@@ -83,6 +84,7 @@ public class AnetApplication extends Application<AnetConfiguration> {
 		final DBI jdbi = factory.build(environment, configuration.getDataSourceFactory(), "mssql");
 
 		final AnetObjectEngine engine = new AnetObjectEngine(jdbi);
+		environment.servlets().setSessionHandler(new SessionHandler());
 
 		if (configuration.isDevelopmentMode()) {
 			//In development mode just allow basic HTTP Authentication
