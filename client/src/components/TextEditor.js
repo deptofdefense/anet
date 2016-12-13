@@ -91,7 +91,7 @@ export default class TextEditor extends React.Component {
                   handleKeyCommand={this.handleKeyCommand}
                   onChange={this.onChange}
                   onTab={this.onTab}
-                  placeholder="Tell a story..."
+                  placeholder={this.props.placeholder}
                   ref="editor"
                   spellCheck={true}
                 />
