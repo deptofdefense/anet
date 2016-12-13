@@ -18,6 +18,8 @@ import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.geo.Location;
+import mil.dds.anet.database.AdminDao;
+import mil.dds.anet.database.AdminDao.AdminSettingKeys;
 import mil.dds.anet.database.ApprovalActionDao;
 import mil.dds.anet.database.ApprovalStepDao;
 import mil.dds.anet.database.CommentDao;
@@ -47,6 +49,7 @@ public class AnetObjectEngine {
 	ApprovalActionDao approvalActionDao;
 	ReportDao reportDao;
 	CommentDao commentDao;
+	AdminDao adminDao;
 
 	private static Map<Class<? extends AbstractAnetView<?>>, IAnetDao<?>> daoMap;
 	private static AnetObjectEngine instance; 
@@ -66,6 +69,7 @@ public class AnetObjectEngine {
 		approvalActionDao = new ApprovalActionDao(dbHandle);
 		reportDao = new ReportDao(dbHandle);
 		commentDao = new CommentDao(dbHandle);
+		adminDao = new AdminDao(dbHandle);
 		
 		daoMap = new HashMap<Class<? extends AbstractAnetView<?>>, IAnetDao<?>>();
 		daoMap.put(Person.class, personDao);
@@ -127,6 +131,10 @@ public class AnetObjectEngine {
 		return commentDao;
 	}
 	
+	public AdminDao getAdminDao() { 
+		return adminDao;
+	}
+	
 	public Organization getOrganizationForPerson(Person p) { 
 		return personDao.getOrganizationForPerson(p.getId());
 	}
@@ -168,5 +176,9 @@ public class AnetObjectEngine {
 		if ( dao == null) { throw new UnsupportedOperationException("No dao loaded for " + bean.getClass()); }
 		//TODO: support load levels above PROPERTIES. 
 		return dao.getById(bean.getId());
+	}
+	
+	public String getAdminSetting(AdminSettingKeys key) { 
+		return adminDao.getSetting(key);
 	}
 }

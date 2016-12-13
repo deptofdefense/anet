@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.geo.Location;
+import mil.dds.anet.database.AdminDao.AdminSettingKeys;
 import mil.dds.anet.views.AbstractAnetView;
 
 public class Report extends AbstractAnetView<Report> {
@@ -272,7 +273,8 @@ public class Report extends AbstractAnetView<Report> {
 		Organization ao = engine.getOrganizationForPerson(getAuthor());
 		if (ao == null) {
 			//use the default approval workflow. 
-			ao = Organization.createWithId(-1);
+			ao = Organization.createWithId(
+					Integer.parseInt(engine.getAdminSetting(AdminSettingKeys.DEFAULT_APPROVAL_ORGANIZATION)));
 		}
 		
 		List<ApprovalStep> steps = engine.getApprovalStepsForOrg(ao);

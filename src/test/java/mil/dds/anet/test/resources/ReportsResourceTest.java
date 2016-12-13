@@ -19,6 +19,7 @@ import com.google.common.collect.Lists;
 
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.util.Duration;
+import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.ApprovalAction;
 import mil.dds.anet.beans.ApprovalStep;
 import mil.dds.anet.beans.Comment;
@@ -35,6 +36,7 @@ import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
 import mil.dds.anet.beans.geo.LatLng;
 import mil.dds.anet.beans.geo.Location;
+import mil.dds.anet.database.AdminDao.AdminSettingKeys;
 import mil.dds.anet.test.beans.CommentTest;
 import mil.dds.anet.test.beans.OrganizationTest;
 import mil.dds.anet.test.beans.PersonTest;
@@ -276,7 +278,9 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		assertThat(returned.getState()).isEqualTo(Report.ReportState.PENDING_APPROVAL);
 		
 		//Find the default ApprovalSteps
-		List<ApprovalStep> steps = httpQuery("/approvalSteps/byOrganization?id=-1", jack)
+		Integer defaultOrgId = Integer.parseInt(AnetObjectEngine.getInstance().getAdminSetting(AdminSettingKeys.DEFAULT_APPROVAL_ORGANIZATION));
+		assertThat(defaultOrgId).isNotNull();
+		List<ApprovalStep> steps = httpQuery("/approvalSteps/byOrganization?id=" + defaultOrgId, jack)
 				.get(new GenericType<List<ApprovalStep>>() {});
 		assertThat(steps).isNotNull();
 		assertThat(steps).hasSize(1);

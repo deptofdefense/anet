@@ -35,6 +35,7 @@ import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
 import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.database.ReportDao;
+import mil.dds.anet.database.AdminDao.AdminSettingKeys;
 import mil.dds.anet.utils.ResponseUtils;
 import mil.dds.anet.views.ObjectListView;
 
@@ -177,7 +178,8 @@ public class ReportResource {
 		Organization org = engine.getOrganizationForPerson(r.getAuthor());
 		if (org == null ) {
 			// Author missing Org, use the Default Approval Workflow
-			org = Organization.createWithId(-1); 
+			org = Organization.createWithId(
+				Integer.parseInt(engine.getAdminSetting(AdminSettingKeys.DEFAULT_APPROVAL_ORGANIZATION))); 
 		}
 		List<ApprovalStep> steps = engine.getApprovalStepsForOrg(org);
 		if (steps == null || steps.size() == 0) {

@@ -41,12 +41,12 @@ public class ReportDao implements IAnetDao<Report> {
 			sql = "SELECT " + REPORT_FIELDS + ", " + PersonDao.PERSON_FIELDS
 					+ "FROM reports, people "
 					+ "WHERE reports.authorId = people.id "
-					+ "ORDER BY reports.createdAt ASC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY";
+					+ "ORDER BY reports.createdAt DESC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY";
 		} else { 
 			sql = "SELECT " + REPORT_FIELDS + ", " + PersonDao.PERSON_FIELDS
 					+ "FROM reports, people "
 					+ "WHERE reports.authorId = people.id "
-					+ "ORDER BY reports.createdAt ASC LIMIT :limit OFFSET :offset";
+					+ "ORDER BY reports.createdAt DESC LIMIT :limit OFFSET :offset";
 		}
 		Query<Report> query = dbHandle.createQuery(sql)
 			.bind("limit", pageSize)

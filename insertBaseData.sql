@@ -1,18 +1,19 @@
-TRUNCATE TABLE people;
-TRUNCATE TABLE positions;
-TRUNCATE TABLE peoplePositions;
-TRUNCATE TABLE organizations;
-TRUNCATE TABLE groups;
-TRUNCATE TABLE poams;
-TRUNCATE TABLE groupMemberships;
-TRUNCATE TABLE approvalSteps;
-TRUNCATE TABLE approvalActions;
-TRUNCATE TABLE positionRelationships;
-TRUNCATE TABLE locations;
-TRUNCATE TABLE reportPeople;
-TRUNCATE TABLE reports;
-TRUNCATE TABLE comments;
-TRUNCATE TABLE reportPoams;
+--TRUNCATE TABLE peoplePositions;
+--TRUNCATE TABLE groupMemberships;
+--TRUNCATE TABLE approvalActions;
+--TRUNCATE TABLE positionRelationships;
+--TRUNCATE TABLE reportPoams;
+--TRUNCATE TABLE reportPeople;
+--TRUNCATE TABLE people;
+--TRUNCATE TABLE positions;
+--TRUNCATE TABLE organizations;
+--TRUNCATE TABLE groups;
+--TRUNCATE TABLE poams;
+--TRUNCATE TABLE approvalSteps;
+--TRUNCATE TABLE locations;
+--TRUNCATE TABLE comments;
+--TRUNCATE TABLE reports;
+
 
 --Advisors
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, createdAt, updatedAt) 
@@ -227,7 +228,12 @@ INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 	(SELECT id FROM reports where createdAt = CURRENT_TIMESTAMP), 1);
 
 --Create the default Approval Group
+INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('ANET Administrators', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO groups (name, createdAt) VALUES ('Default Approvers', CURRENT_TIMESTAMP);
 INSERT INTO groupMemberships (groupId, personId) VALUES ((SELECT id from groups where name = 'Default Approvers'), (SELECT id from people where emailAddress='nick@example.com'));
-INSERT INTO approvalSteps (approverGroupId, advisorOrganizationId) VALUES ((SELECT id from groups where name = 'Default Approvers'), -1);
+INSERT INTO approvalSteps (approverGroupId, advisorOrganizationId) VALUES ((SELECT id from groups where name = 'Default Approvers'), (select id from organizations where name='ANET Administrators'));
 
+--Set the Admin Settings
+INSERT INTO adminSettings ([key], value) VALUES ('SECURITY_BANNER_TEXT', 'DEMO USE ONLY');
+INSERT INTO adminSettings ([key], value) VALUES ('SECURITY_BANNER_COLOR', 'green');
+INSERT INTO adminSettings ([key], value) VALUES ('DEFAULT_APPROVAL_ORGANIZATION', (select CAST(id AS varchar) from organizations where name='ANET Administrators'));

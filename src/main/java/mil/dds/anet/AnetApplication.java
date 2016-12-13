@@ -26,6 +26,7 @@ import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.config.AnetConfiguration;
+import mil.dds.anet.resources.AdminResource;
 import mil.dds.anet.resources.ApprovalStepResource;
 import mil.dds.anet.resources.GroupResource;
 import mil.dds.anet.resources.HomeResource;
@@ -115,6 +116,7 @@ public class AnetApplication extends Application<AnetConfiguration> {
 		PositionResource positionResource = new PositionResource(engine);
 		ApprovalStepResource asResource = new ApprovalStepResource(engine);
 		ReportResource reportResource = new ReportResource(engine);
+		AdminResource adminResource = new AdminResource(engine);
 
 		environment.jersey().register(test);
 		environment.jersey().register(personResource);
@@ -125,6 +127,7 @@ public class AnetApplication extends Application<AnetConfiguration> {
 		environment.jersey().register(positionResource);
 		environment.jersey().register(asResource);
 		environment.jersey().register(reportResource);
+		environment.jersey().register(adminResource);
 		environment.jersey().register(new HomeResource());
 		environment.jersey().register(new ViewResponseFilter(configuration));
 

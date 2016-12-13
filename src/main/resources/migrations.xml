@@ -281,10 +281,9 @@
 		<addForeignKeyConstraint baseColumnNames="approverGroupId" baseTableName="approvalSteps"
 			constraintName="fk_approvalSteps_group" onDelete="NO ACTION" onUpdate="NO ACTION"
 			referencedColumnNames="id" referencedTableName="groups" />
-		<!--  This constraint is invalid because we use orgId = -1 to signify the default approval Step
 		<addForeignKeyConstraint baseColumnNames="advisorOrganizationId" baseTableName="approvalSteps"
 			constraintName="fk_approvalSteps_orgId" onDelete="NO ACTION" onUpdate="NO ACTION"
-			referencedColumnNames="id" referencedTableName="organizations" /> -->
+			referencedColumnNames="id" referencedTableName="organizations" /> 
 
 		<!-- Approval Actions -->
 		<addForeignKeyConstraint baseColumnNames="approvalStepId" baseTableName="approvalActions"
@@ -373,5 +372,13 @@
 		<addForeignKeyConstraint baseColumnNames="positionId_b" baseTableName="positionRelationships"
 			constraintName="fk_positionsRelationships_idB" onDelete="NO ACTION" onUpdate="NO ACTION"
 			referencedColumnNames="id" referencedTableName="positions" />
+	</changeSet>
+
+	<changeSet id="9" author="hpitelka" >
+		<createTable tableName="adminSettings">
+            <column name="key" type="varchar(255)" />
+            <column name="value" type="text" />
+		</createTable>
+		<addUniqueConstraint tableName="adminSettings" columnNames="key" constraintName="adminSettingKey" />
 	</changeSet>
 </databaseChangeLog>
