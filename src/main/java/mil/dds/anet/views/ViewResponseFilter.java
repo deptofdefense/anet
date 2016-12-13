@@ -6,7 +6,10 @@ import java.util.List;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
+
+import com.google.common.collect.ImmutableList;
 
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Organization;
@@ -37,6 +40,11 @@ public class ViewResponseFilter implements ContainerResponseFilter {
 			view.addToContext("devMode", config.isDevelopmentMode());
 			view.addToContext("securityMarking", config.getSecurityMarking());
 			view.addToContext("securityColor", config.getSecurityColor());
+		}
+		
+		if (responseContext.getMediaType().equals(MediaType.APPLICATION_JSON_TYPE)) { 
+			responseContext.getHeaders().put("Cache-Control", ImmutableList.of("no-store, no-cache, must-revalidate, post-check=0, pre-check=0"));
+			responseContext.getHeaders().put("Pragma",ImmutableList.of("no-cache"));
 		}
 
 

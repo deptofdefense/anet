@@ -1,18 +1,35 @@
---TRUNCATE TABLE peoplePositions;
---TRUNCATE TABLE groupMemberships;
---TRUNCATE TABLE approvalActions;
---TRUNCATE TABLE positionRelationships;
---TRUNCATE TABLE reportPoams;
---TRUNCATE TABLE reportPeople;
---TRUNCATE TABLE people;
---TRUNCATE TABLE positions;
---TRUNCATE TABLE organizations;
---TRUNCATE TABLE groups;
---TRUNCATE TABLE poams;
---TRUNCATE TABLE approvalSteps;
---TRUNCATE TABLE locations;
---TRUNCATE TABLE comments;
---TRUNCATE TABLE reports;
+--DROP TABLE peoplePositions;
+--DROP TABLE groupMemberships;
+--DROP TABLE approvalActions;
+--DROP TABLE positionRelationships;
+--DROP TABLE reportPoams;
+--DROP TABLE reportPeople;
+--DROP TABLE positions;
+--DROP TABLE poams;
+--DROP TABLE comments;
+--DROP TABLE reports;
+--DROP TABLE people;
+--DROP TABLE approvalSteps;
+--DROP TABLE locations;
+--DROP TABLE organizations;
+--DROP TABLE groups;
+
+TRUNCATE TABLE peoplePositions;
+TRUNCATE TABLE groupMemberships;
+TRUNCATE TABLE approvalActions;
+TRUNCATE TABLE positionRelationships;
+TRUNCATE TABLE reportPoams;
+TRUNCATE TABLE reportPeople;
+TRUNCATE TABLE positions;
+TRUNCATE TABLE poams;
+TRUNCATE TABLE comments;
+TRUNCATE TABLE reports;
+TRUNCATE TABLE people;
+TRUNCATE TABLE approvalSteps;
+TRUNCATE TABLE locations;
+TRUNCATE TABLE organizations;
+TRUNCATE TABLE groups;
+
 
 
 --Advisors
