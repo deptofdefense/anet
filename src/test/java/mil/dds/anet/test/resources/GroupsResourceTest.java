@@ -47,7 +47,12 @@ public class GroupsResourceTest extends AbstractResourceTest {
 		assertThat(resp.getStatus()).isEqualTo(200);
 		resp = httpQuery(String.format("/groups/%d/addMember?personId=%d", returned.getId(), elizabeth.getId()), jack).get();
 		assertThat(resp.getStatus()).isEqualTo(200);
-				
+		
+		//Verify that adding the same person to the group again fails
+		resp = httpQuery(String.format("/groups/%d/addMember?personId=%d", returned.getId(), jack.getId()), jack)
+				.get();
+		assertThat(resp.getStatus()).isEqualTo(500);
+		
 		//Verify that users are in the group
 		returned = httpQuery(String.format("/groups/%d", created.getId()), jack)
 				.get(Group.class);

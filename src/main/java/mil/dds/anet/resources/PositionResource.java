@@ -103,7 +103,13 @@ public class PositionResource {
 	@POST
 	@Path("/new")
 	public Position createPosition(Position p) {
+		if (p.getName() == null || p.getName().trim().length() == 0) { 
+			throw new WebApplicationException("Position Name must not be null", Status.BAD_REQUEST);
+		}
+		if (p.getType() == null) { throw new WebApplicationException("Position type must be defined", Status.BAD_REQUEST); } 
+		
 		return dao.insert(p);
+		
 	}
 	
 	@GET

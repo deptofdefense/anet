@@ -11,6 +11,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -50,13 +51,16 @@ public class GroupResource {
 	@GET
 	@Path("/new")
 	@Produces(MediaType.TEXT_HTML)
-	public Group createNewGroupForm() { 
+	public Group createNewGroupForm() {
 		return new Group().render("form.ftl");
 	}
 	
 	@POST
 	@Path("/new")
-	public Group createNewGroup(Group g) { 
+	public Group createNewGroup(Group g) {
+		if (g.getName() == null || g.getName().trim().length() == 0 ) { 
+			throw new WebApplicationException("Group Name must not be empty", Status.BAD_REQUEST);
+		}
 		return dao.insert(g);
 	}
 	

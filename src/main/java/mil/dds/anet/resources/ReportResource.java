@@ -91,8 +91,8 @@ public class ReportResource {
 	@POST
 	@Path("/new")
 	public Report createNewReport(@Auth Person author, Report r) {
-		if (r.getState() == null) { r.setState(ReportState.DRAFT); }
-		if (r.getAuthor() == null) { r.setAuthor(author); } 
+		if (r.getState() == null) { r.setState(ReportState.DRAFT); } //TODO: don't do this long term.
+		if (r.getAuthor() == null) { r.setAuthor(author); } //TODO: don't do this long term. 
 		return dao.insert(r);
 	}
 

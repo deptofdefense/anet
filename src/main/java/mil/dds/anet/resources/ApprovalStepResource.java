@@ -55,7 +55,7 @@ public class ApprovalStepResource {
 	
 	@DELETE
 	@Path("/{id}")
-	public Response deleteStep(@PathParam("id") int id) { 
+	public Response deleteStep(@PathParam("id") int id) {
 		boolean success = dao.deleteStep(id);
 		return (success) ? Response.ok().build() : Response.status(Status.NOT_ACCEPTABLE).build();
 	}
