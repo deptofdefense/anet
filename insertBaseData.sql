@@ -12,6 +12,7 @@ TRUNCATE TABLE locations;
 TRUNCATE TABLE reportPeople;
 TRUNCATE TABLE reports;
 TRUNCATE TABLE comments;
+TRUNCATE TABLE reportPoams;
 
 --Advisors
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, createdAt, updatedAt) 
@@ -78,10 +79,10 @@ INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('EF1', 0, C
 INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('EF2', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('EF3', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('EF4', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-	INSERT INTO organizations (name, type, parentOrgId) VALUES ('EF 4.1', 0 , (SELECT id FROM organizations WHERE name = 'EF4'));
-	INSERT INTO organizations (name, type, parentOrgId) VALUES ('EF 4.2', 0 , (SELECT id FROM organizations WHERE name = 'EF4'));
-	INSERT INTO organizations (name, type, parentOrgId) VALUES ('EF 4.3', 0 , (SELECT id FROM organizations WHERE name = 'EF4'));
-	INSERT INTO organizations (name, type, parentOrgId) VALUES ('EF 4.4', 0 , (SELECT id FROM organizations WHERE name = 'EF4'));
+	INSERT INTO organizations (name, type, parentOrgId, createdAt, updatedAt) VALUES ('EF 4.1', 0 , (SELECT id FROM organizations WHERE name = 'EF4'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	INSERT INTO organizations (name, type, parentOrgId, createdAt, updatedAt) VALUES ('EF 4.2', 0 , (SELECT id FROM organizations WHERE name = 'EF4'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	INSERT INTO organizations (name, type, parentOrgId, createdAt, updatedAt) VALUES ('EF 4.3', 0 , (SELECT id FROM organizations WHERE name = 'EF4'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	INSERT INTO organizations (name, type, parentOrgId, createdAt, updatedAt) VALUES ('EF 4.4', 0 , (SELECT id FROM organizations WHERE name = 'EF4'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('EF5', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('EF6', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('EF7', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
@@ -156,36 +157,43 @@ INSERT INTO poams (shortName, longName, category, createdAt, updatedAt) VALUES (
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt) VALUES ('TAAC-C', '', 'EF', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt) VALUES ('TAAC Air', '', 'EF', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
-INSERT INTO locations (name, lat, lng) VALUES('St Johns Airport', 47.613442, -52.740936);
-INSERT INTO locations (name, lat, lng) VALUES('Murray''s Hotel', 47.561517, -52.708760);
-INSERT INTO locations (name, lat, lng) VALUES('Wishingwells Park', 47.560040, -52.736962);
-INSERT INTO locations (name, lat, lng) VALUES('General Hospital', 47.571772, -52.741935);
-INSERT INTO locations (name, lat, lng) VALUES('Portugal Cove Ferry Terminal', 47.626718, -52.857241);
-INSERT INTO locations (name, lat, lng) VALUES('Cabot Tower', 47.570010, -52.681770);
-INSERT INTO locations (name, lat, lng) VALUES('Fort Amherst', 47.563763, -52.680590);
-INSERT INTO locations (name, lat, lng) VALUES('Harbour Grace Police Station', 47.705133, -53.214422);
-INSERT INTO locations (name, lat, lng) VALUES('Conception Bay South Police Station', 47.526784, -52.954739);
-INSERT INTO locations (name) VALUES ('MoD Headquarters Kabul');
-INSERT INTO locations (name) VALUES ('MoI Headquarters Kabul');
-INSERT INTO locations (name) VALUES ('President''s Palace');
-INSERT INTO locations (name) VALUES ('Kabul Police Academy');
-INSERT INTO locations (name) VALUES ('Police HQ Training Facility');
-INSERT INTO locations (name) VALUES ('Kabul Hospital');
-INSERT INTO locations (name) VALUES ('MoD Army Training Base 123');
-INSERT INTO locations (name) VALUES ('MoD Location the Second');
-INSERT INTO locations (name) VALUES ('MoI Office Building ABC');
+INSERT INTO locations (name, lat, lng, createdAt, updatedAt) VALUES('St Johns Airport', 47.613442, -52.740936, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO locations (name, lat, lng, createdAt, updatedAt) VALUES('Murray''s Hotel', 47.561517, -52.708760, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO locations (name, lat, lng, createdAt, updatedAt) VALUES('Wishingwells Park', 47.560040, -52.736962, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO locations (name, lat, lng, createdAt, updatedAt) VALUES('General Hospital', 47.571772, -52.741935, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO locations (name, lat, lng, createdAt, updatedAt) VALUES('Portugal Cove Ferry Terminal', 47.626718, -52.857241, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO locations (name, lat, lng, createdAt, updatedAt) VALUES('Cabot Tower', 47.570010, -52.681770, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO locations (name, lat, lng, createdAt, updatedAt) VALUES('Fort Amherst', 47.563763, -52.680590, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO locations (name, lat, lng, createdAt, updatedAt) VALUES('Harbour Grace Police Station', 47.705133, -53.214422, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO locations (name, lat, lng, createdAt, updatedAt) VALUES('Conception Bay South Police Station', 47.526784, -52.954739, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO locations (name, createdAt, updatedAt) VALUES ('MoD Headquarters Kabul', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO locations (name, createdAt, updatedAt) VALUES ('MoI Headquarters Kabul', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO locations (name, createdAt, updatedAt) VALUES ('President''s Palace', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO locations (name, createdAt, updatedAt) VALUES ('Kabul Police Academy', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO locations (name, createdAt, updatedAt) VALUES ('Police HQ Training Facility', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO locations (name, createdAt, updatedAt) VALUES ('Kabul Hospital', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO locations (name, createdAt, updatedAt) VALUES ('MoD Army Training Base 123', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO locations (name, createdAt, updatedAt) VALUES ('MoD Location the Second', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO locations (name, createdAt, updatedAt) VALUES ('MoI Office Building ABC', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 
 INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('Ministry of Defense', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('Ministry of Interior', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
-INSERT INTO positions (name, code, type, currentPersonId, organizationId ) VALUES ('Minister of Defense', 'MOD-FO-00001', 1, NULL, (SELECT id FROM organizations WHERE name ='Ministry of Defense'));
-INSERT INTO positions (name, code, type, currentPersonId, organizationId) VALUES ('Chief of Staff - MoD', 'MOD-FO-00002', 1, NULL, (SELECT id FROM organizations WHERE name ='Ministry of Defense'));
-INSERT INTO positions (name, code, type, currentPersonId, organizationId) VALUES ('Executive Assistant to the MoD', 'MOD-FO-00003', 1, NULL, (SELECT id FROM organizations WHERE name ='Ministry of Defense'));
-INSERT INTO positions (name, code, type, currentPersonId, organizationId) VALUES ('Director of Budgeting - MoD', 'MOD-Bud-00001', 1, NULL, (SELECT id FROM organizations WHERE name ='Ministry of Defense'));
-INSERT INTO positions (name, code, type, currentPersonId, organizationId) VALUES ('Writer of Expenses - MoD', 'MOD-Bud-00002', 1, NULL, (SELECT id FROM organizations WHERE name ='Ministry of Defense'));
-INSERT INTO positions (name, code, type, currentPersonId, organizationId) VALUES ('Cost Adder - MoD', 'MOD-Bud-00003', 1, NULL, (SELECT id FROM organizations WHERE name ='Ministry of Defense'));
-INSERT INTO positions (name, code, type, currentPersonId, organizationId) VALUES ('Chief of Police', 'MOI-Pol-HQ-00001',1, NULL, (SELECT id FROM organizations WHERE name ='Ministry of Interior'));
+INSERT INTO positions (name, code, type, currentPersonId, organizationId, createdAt, updatedAt) 
+	VALUES ('Minister of Defense', 'MOD-FO-00001', 1, NULL, (SELECT id FROM organizations WHERE name ='Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, code, type, currentPersonId, organizationId, createdAt, updatedAt) 
+	VALUES ('Chief of Staff - MoD', 'MOD-FO-00002', 1, NULL, (SELECT id FROM organizations WHERE name ='Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, code, type, currentPersonId, organizationId, createdAt, updatedAt) 
+	VALUES ('Executive Assistant to the MoD', 'MOD-FO-00003', 1, NULL, (SELECT id FROM organizations WHERE name ='Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, code, type, currentPersonId, organizationId, createdAt, updatedAt) 
+	VALUES ('Director of Budgeting - MoD', 'MOD-Bud-00001', 1, NULL, (SELECT id FROM organizations WHERE name ='Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, code, type, currentPersonId, organizationId, createdAt, updatedAt) 
+	VALUES ('Writer of Expenses - MoD', 'MOD-Bud-00002', 1, NULL, (SELECT id FROM organizations WHERE name ='Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, code, type, currentPersonId, organizationId, createdAt, updatedAt) 
+	VALUES ('Cost Adder - MoD', 'MOD-Bud-00003', 1, NULL, (SELECT id FROM organizations WHERE name ='Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, code, type, currentPersonId, organizationId, createdAt, updatedAt) 
+	VALUES ('Chief of Police', 'MOI-Pol-HQ-00001',1, NULL, (SELECT id FROM organizations WHERE name ='Ministry of Interior'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Put Steve into a Tashkil and associate with the EF1 Advisor Billet
 INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES 
