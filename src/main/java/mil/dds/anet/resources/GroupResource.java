@@ -21,7 +21,7 @@ import mil.dds.anet.beans.Group;
 import mil.dds.anet.database.GroupDao;
 import mil.dds.anet.views.ObjectListView;
 
-@Path("/groups")
+@Path("/api/groups")
 @Produces(MediaType.APPLICATION_JSON)
 @PermitAll
 public class GroupResource {

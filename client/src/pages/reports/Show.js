@@ -13,7 +13,7 @@ export default class ReportShow extends React.Component {
 	}
 
 	componentDidMount() {
-		API.fetch('/reports/' + this.props.params.id)
+		API.fetch('/api/reports/' + this.props.params.id)
 			.then(data => this.setState({report: data}))
 	}
 

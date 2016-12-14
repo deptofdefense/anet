@@ -18,7 +18,7 @@ import mil.dds.anet.views.SimpleView;
 public class HomeResource {
 
 	@GET
-	@Path("")
+	@Path("{path: .*}")
 	public SimpleView reactIndex(@Auth Person p) {
 		//Get a list of any reports this person wrote that need to be approved, and reports that this person can approve.
 		List<Report> myApprovals = AnetObjectEngine.getInstance().getReportDao().getReportsForMyApproval(p);
@@ -44,7 +44,7 @@ public class HomeResource {
 	public static String ALL_TYPES = "people,reports,positions,poams,locations";
 
 	@GET
-	@Path("/search")
+	@Path("/api/search")
 	public SimpleView search(@QueryParam("q") String query, @QueryParam("types") String types) {
 		if (types == null) { types = ALL_TYPES;}
 		types = types.toLowerCase();

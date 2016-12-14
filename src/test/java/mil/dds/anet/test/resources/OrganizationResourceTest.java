@@ -34,13 +34,13 @@ public class OrganizationResourceTest extends AbstractResourceTest {
 		Person jack = getJackJackson(); //get an authenticated user 
 		
 		//Create a new AO
-		Organization created = httpQuery("/organizations/new", jack)
+		Organization created = httpQuery("/api/organizations/new", jack)
 			.post(Entity.json(ao), Organization.class);
 		assertThat(ao.getName()).isEqualTo(created.getName());
 		
 		//update name of the AO
 		created.setName("Ao McAoFace");
-		Response resp = httpQuery("/organizations/update", jack)
+		Response resp = httpQuery("/api/organizations/update", jack)
 				.post(Entity.json(created));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
@@ -50,12 +50,12 @@ public class OrganizationResourceTest extends AbstractResourceTest {
 		assertThat(updated.getName()).isEqualTo(created.getName());
 		
 		//Create a position and put then in this AO
-		Position b1 = httpQuery("/positions/new", jack).post(Entity.json(PositionTest.getTestPosition()), Position.class);
+		Position b1 = httpQuery("/api/positions/new", jack).post(Entity.json(PositionTest.getTestPosition()), Position.class);
 		assertThat(b1.getId()).isNotNull();
 		assertThat(b1.getOrganization()).isNull();
 		
 		b1.setOrganization(updated);
-		resp = httpQuery("/positions/update", jack).post(Entity.json(b1));
+		resp = httpQuery("/api/positions/update", jack).post(Entity.json(b1));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
 		Position ret = httpQuery(String.format("/positions/%d", b1.getId()), jack).get(Position.class);
@@ -67,7 +67,7 @@ public class OrganizationResourceTest extends AbstractResourceTest {
 		child.setParentOrg(Organization.createWithId(created.getId()));
 		child.setName("Child McAo");
 		child.setType(OrganizationType.ADVISOR_ORG);
-		child = httpQuery("/organizations/new", jack)
+		child = httpQuery("/api/organizations/new", jack)
 				.post(Entity.json(child), Organization.class);
 		assertThat(child.getId()).isNotNull();
 		

@@ -31,7 +31,7 @@ import mil.dds.anet.config.AnetConfiguration;
 import mil.dds.anet.config.AnetConfiguration.SmtpConfiguration;
 import mil.dds.anet.views.SimpleView;
 
-@Path("/testing")
+@Path("/api/testing")
 @Produces(MediaType.APPLICATION_JSON)
 public class TestingResource {
 

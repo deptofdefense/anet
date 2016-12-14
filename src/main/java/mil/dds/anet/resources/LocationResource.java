@@ -17,7 +17,7 @@ import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.database.LocationDao;
 
-@Path("/locations")
+@Path("/api/locations")
 @Produces(MediaType.APPLICATION_JSON)
 public class LocationResource {
 

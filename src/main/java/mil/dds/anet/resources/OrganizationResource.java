@@ -20,7 +20,7 @@ import mil.dds.anet.beans.Organization.OrganizationType;
 import mil.dds.anet.database.OrganizationDao;
 import mil.dds.anet.views.ObjectListView;
 
-@Path("/organizations")
+@Path("/api/organizations")
 @Produces(MediaType.APPLICATION_JSON)
 @PermitAll
 public class OrganizationResource {

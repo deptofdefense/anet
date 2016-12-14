@@ -22,7 +22,7 @@ import mil.dds.anet.beans.Position;
 import mil.dds.anet.database.PersonDao;
 import mil.dds.anet.views.ObjectListView;
 
-@Path("/people")
+@Path("/api/people")
 @Produces(MediaType.APPLICATION_JSON)
 @PermitAll
 public class PersonResource {

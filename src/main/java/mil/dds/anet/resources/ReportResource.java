@@ -39,7 +39,7 @@ import mil.dds.anet.database.AdminDao.AdminSettingKeys;
 import mil.dds.anet.utils.ResponseUtils;
 import mil.dds.anet.views.ObjectListView;
 
-@Path("/reports")
+@Path("/api/reports")
 @Produces(MediaType.APPLICATION_JSON)
 @PermitAll
 public class ReportResource {
