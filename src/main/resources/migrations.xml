@@ -266,7 +266,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="8" author="hpitelka">
+	<changeSet id="8" author="hpitelka" dbms="mssql" >
 		<!-- Groups -->
 		<addUniqueConstraint tableName="groupMemberships" columnNames="groupId, personId" constraintName="uniqueGroupMembership" />
 		<addNotNullConstraint tableName="groups" columnName="name" columnDataType="varchar(512)" />
@@ -379,6 +379,9 @@
             <column name="key" type="varchar(255)" />
             <column name="value" type="text" />
 		</createTable>
+	</changeSet>
+	<changeSet id="10" author="hpitelka" dbms="mssql" >
 		<addUniqueConstraint tableName="adminSettings" columnNames="key" constraintName="adminSettingKey" />
 	</changeSet>
+
 </databaseChangeLog>

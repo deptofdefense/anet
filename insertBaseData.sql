@@ -13,6 +13,8 @@
 --DROP TABLE locations;
 --DROP TABLE organizations;
 --DROP TABLE groups;
+--DROP TABLE DATABASECHANGELOG;
+--DROP TABLE adminSettings;
 
 TRUNCATE TABLE peoplePositions;
 TRUNCATE TABLE groupMemberships;
