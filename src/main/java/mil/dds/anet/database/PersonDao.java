@@ -112,16 +112,16 @@ public class PersonDao implements IAnetDao<Person> {
 		return query.list();
 	}
 	
-	public Organization getOrganizationForPerson(int personId) { 
+	public Organization getOrganizationForPerson(int personId) {
 		String sql;
 		if (DaoUtils.isMsSql(dbHandle)) { 
-			sql = "SELECT TOP(1)organizations.* " +
+			sql = "SELECT TOP(1) " + OrganizationDao.ORGANIZATION_FIELDS +
 					"FROM organizations, positions, peoplePositions WHERE " + 
 					"peoplePositions.personId = :personId AND peoplePositions.positionId = positions.id " + 
 					"AND positions.organizationId = organizations.id " + 
 					"ORDER BY peoplePositions.createdAt DESC";
 		} else { 
-			sql = "SELECT organizations.* " +
+			sql = "SELECT " + OrganizationDao.ORGANIZATION_FIELDS +
 					"FROM organizations, positions, peoplePositions WHERE " + 
 					"peoplePositions.personId = :personId AND peoplePositions.positionId = positions.id " + 
 					"AND positions.organizationId = organizations.id " + 
@@ -143,10 +143,12 @@ public class PersonDao implements IAnetDao<Person> {
 		
 		for (int i=0;i<strings.length;i+=2) { 
 			if (props.contains(strings[i])) { 
-				conditions.add(strings[i] + " = ? ");
+				conditions.add(String.format("%s.%s = ?", tableName, strings[i]));
 			}
 		}
-		String queryString = "SELECT " + PERSON_FIELDS + " from people WHERE " + Joiner.on(" AND ").join(conditions);
+		String queryString = "SELECT " + PERSON_FIELDS + "," + PositionDao.POSITIONS_FIELDS 
+				+ "FROM people LEFT JOIN positions ON people.id = positions.currentPersonId "
+				+ "WHERE " + Joiner.on(" AND ").join(conditions);
 		Query<Map<String, Object>> query = dbHandle.createQuery(queryString);
 		for (int i=0;i<strings.length;i+=2) { 
 			query.bind((i/2), strings[i+1]);

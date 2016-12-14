@@ -20,8 +20,16 @@ public class PositionMapper implements ResultSetMapper<Position> {
 	public Position map(int index, ResultSet r, StatementContext ctx) throws SQLException {
 		//This hits when we do a join but there's no Billet record. 
 		if (r.getObject("positions_id") == null) { return null; }
-				
-		Position p = new Position();
+		
+		Position p = fillInFields(new Position(), r);
+		
+		if (MapperUtils.containsColumnNamed(r, "people_id")) { 
+			PersonMapper.fillInFields(p.getPersonJson(), r);
+		}
+		return p;
+	}
+	
+	public static Position fillInFields(Position p, ResultSet r)  throws SQLException { 
 		p.setId(r.getInt("positions_id"));
 		p.setName(r.getString("positions_name"));
 		p.setCode(r.getString("positions_code"));
@@ -32,13 +40,7 @@ public class PositionMapper implements ResultSetMapper<Position> {
 		}
 		Integer personId = MapperUtils.getInteger(r, "positions_currentPersonId");
 		if (personId != null) {
-			Person person = Person.createWithId(personId);
-			try { 
-				//TODO: This is terrible,f ix this. 
-				r.getString("person_firstName"); //This will throw a SQLException if the column doesn't exist.
-				PersonMapper.<Person>fillInFields(person, r);
-			} catch (SQLException e) {}
-			p.setPerson(person);
+			p.setPerson(Person.createWithId(personId));
 		}
 		
 		Integer locationId = MapperUtils.getInteger(r, "positions_locationId");

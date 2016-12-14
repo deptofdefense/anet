@@ -31,16 +31,17 @@ public class OrganizationResourceTest extends AbstractResourceTest {
 	@Test
 	public void createAO() { 
 		Organization ao = OrganizationTest.getTestAO();
-		Person jack = getJackJackson(); //get an authenticated user 
+		Person admin = getArthurDmin(); //get an authenticated user
+		Person jack = getJackJackson();
 		
 		//Create a new AO
-		Organization created = httpQuery("/organizations/new", jack)
+		Organization created = httpQuery("/organizations/new", admin)
 			.post(Entity.json(ao), Organization.class);
 		assertThat(ao.getName()).isEqualTo(created.getName());
 		
 		//update name of the AO
 		created.setName("Ao McAoFace");
-		Response resp = httpQuery("/organizations/update", jack)
+		Response resp = httpQuery("/organizations/update", admin)
 				.post(Entity.json(created));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		

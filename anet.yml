@@ -49,6 +49,7 @@ logging:
     "org.sqlite.JDBC" : TRACE
     "io.dropwizard.assets.AssetsBundle" : TRACE
     "io.dropwizard.assets.*" : TRACE
+    "waffle.servlet.NegotiateSecurityFilter" : TRACE
     "mil.dds.anet.resources.TestingResource" :
       level: INFO
       appenders:

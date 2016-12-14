@@ -16,17 +16,17 @@ public class OrganizationMapper implements ResultSetMapper<Organization> {
 	@Override
 	public Organization map(int index, ResultSet r, StatementContext ctx) throws SQLException {
 		Organization org = new Organization();
-		org.setId(r.getInt("id"));
-		org.setName(r.getString("name"));
-		org.setType(MapperUtils.getEnumIdx(r, "type", OrganizationType.class));
+		org.setId(r.getInt("organizations_id"));
+		org.setName(r.getString("organizations_name"));
+		org.setType(MapperUtils.getEnumIdx(r, "organizations_type", OrganizationType.class));
 		
-		Integer parentOrgId = MapperUtils.getInteger(r, "parentOrgId");
+		Integer parentOrgId = MapperUtils.getInteger(r, "organizations_parentOrgId");
 		if (parentOrgId != null) { 
 			org.setParentOrg(Organization.createWithId(parentOrgId));
 		}
 		
-		org.setCreatedAt(new DateTime(r.getTimestamp("createdAt")));
-		org.setUpdatedAt(new DateTime(r.getTimestamp("updatedAt")));
+		org.setCreatedAt(new DateTime(r.getTimestamp("organizations_createdAt")));
+		org.setUpdatedAt(new DateTime(r.getTimestamp("organizations_updatedAt")));
 		org.setLoadLevel(LoadLevel.PROPERTIES);
 		return org;
 	}

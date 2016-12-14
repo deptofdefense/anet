@@ -22,7 +22,7 @@ public class PositionDao implements IAnetDao<Position> {
 			"updatedAt", "organizationId", "currentPersonId", "type", 
 			"locationId" };
 	private static String tableName = "positions";
-	private static String POSITIONS_FIELDS  = DaoUtils.buildFieldAliases(tableName, fields);
+	public static String POSITIONS_FIELDS  = DaoUtils.buildFieldAliases(tableName, fields);
 	
 	Handle dbHandle;
 	
@@ -44,7 +44,7 @@ public class PositionDao implements IAnetDao<Position> {
 		return query.list();
 	}
 	
-	public Position insert(Position p) { 
+	public Position insert(Position p) {
 		p.setCreatedAt(DateTime.now());
 		p.setUpdatedAt(p.getCreatedAt());
 		GeneratedKeys<Map<String,Object>> keys = dbHandle.createStatement(

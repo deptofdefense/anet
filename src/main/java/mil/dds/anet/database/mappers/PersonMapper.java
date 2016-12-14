@@ -10,13 +10,20 @@ import org.skife.jdbi.v2.tweak.ResultSetMapper;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.beans.Person.Status;
+import mil.dds.anet.beans.Position;
 import mil.dds.anet.views.AbstractAnetView.LoadLevel;
 
 public class PersonMapper implements ResultSetMapper<Person> {
 
 	@Override
 	public Person map(int index, ResultSet r, StatementContext ctx) throws SQLException {
-		return fillInFields(new Person(), r);
+		Person p = fillInFields(new Person(), r);
+		
+		if (MapperUtils.containsColumnNamed(r, "positions_id")) { 
+			p.setPosition(PositionMapper.fillInFields(new Position(), r));
+		}
+		
+		return p;
 	}
 	
 	public static <T extends Person> T fillInFields(T a, ResultSet r) throws SQLException {
@@ -34,6 +41,7 @@ public class PersonMapper implements ResultSetMapper<Person> {
 		a.setPendingVerification(r.getBoolean("people_pendingVerification"));
 		a.setCreatedAt(new DateTime(r.getTimestamp("people_createdAt")));
 		a.setUpdatedAt(new DateTime(r.getTimestamp("people_updatedAt")));
+		
 		
 		a.setLoadLevel(LoadLevel.PROPERTIES);
 		return a;

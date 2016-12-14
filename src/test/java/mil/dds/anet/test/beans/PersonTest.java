@@ -112,6 +112,16 @@ public class PersonTest extends BeanTester<Person> {
 		return rp;
 	}
 
+	public static Person getArthurDmin() {
+		Person p = new Person();
+		p.setName("Arthur Dmin");
+		p.setEmailAddress("arthur@example.com");
+		p.setStatus(Status.ACTIVE);
+		p.setRole(Role.ADVISOR);
+		p.setDomainUsername("arthur");
+		return p;
+	}
+
 	
 	
 

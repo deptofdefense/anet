@@ -42,7 +42,7 @@ public class ViewResponseFilter implements ContainerResponseFilter {
 			view.addToContext("securityColor", config.getSecurityColor());
 		}
 		
-		if (responseContext.getMediaType().equals(MediaType.APPLICATION_JSON_TYPE)) { 
+		if (MediaType.APPLICATION_JSON_TYPE.equals(responseContext.getMediaType())) { 
 			responseContext.getHeaders().put("Cache-Control", ImmutableList.of("no-store, no-cache, must-revalidate, post-check=0, pre-check=0"));
 			responseContext.getHeaders().put("Pragma",ImmutableList.of("no-cache"));
 		}

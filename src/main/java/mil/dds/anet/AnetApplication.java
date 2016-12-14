@@ -24,6 +24,8 @@ import io.dropwizard.migrations.MigrationsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
+import mil.dds.anet.auth.AnetAuthenticationFilter;
+import mil.dds.anet.auth.AnetDevAuthenticator;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.config.AnetConfiguration;
 import mil.dds.anet.resources.AdminResource;
@@ -92,6 +94,7 @@ public class AnetApplication extends Application<AnetConfiguration> {
 			environment.jersey().register(new AuthDynamicFeature(
 					new BasicCredentialAuthFilter.Builder<Person>()
 						.setAuthenticator(new AnetDevAuthenticator(engine))
+						.setAuthorizer(new AnetAuthenticationFilter(engine)) //Acting only as Authz.
 						.setRealm("ANET")
 						.buildAuthFilter()));	
 		} else { 
