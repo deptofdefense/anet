@@ -11,9 +11,14 @@ import TextEditor from '../../components/TextEditor'
 export default class ReportNew extends React.Component {
 	static useNavigation = false
 
+	componentDidMount() {
+		let input = this.refs.container.querySelector('[data-focus]')
+		if (input) input.focus()
+	}
+
 	render() {
 		return (
-			<div>
+			<div ref="container">
 				<ContentForHeader>
 					<h2>Create a new Report</h2>
 				</ContentForHeader>
@@ -24,7 +29,7 @@ export default class ReportNew extends React.Component {
 					<fieldset>
 						<legend>Engagement details <small>Required</small></legend>
 
-						<HorizontalFormField id="engagementIntent" label="Meeting subject" placeholder="What happened?" />
+						<HorizontalFormField id="engagementIntent" label="Meeting subject" placeholder="What happened?" data-focus />
 
 						<HorizontalFormField id="engagementDate">
 							<DatePicker placeholder="When did it happen?" />
