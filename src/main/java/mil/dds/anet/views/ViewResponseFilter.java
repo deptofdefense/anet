@@ -18,11 +18,11 @@ import mil.dds.anet.config.AnetConfiguration;
 public class ViewResponseFilter implements ContainerResponseFilter {
 
 	AnetConfiguration config;
-	
-	public ViewResponseFilter(AnetConfiguration config) { 
+
+	public ViewResponseFilter(AnetConfiguration config) {
 		this.config = config;
 	}
-	
+
 	@Override
 	public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
 		Object entity = responseContext.getEntity();
@@ -38,8 +38,6 @@ public class ViewResponseFilter implements ContainerResponseFilter {
 			List<Organization> topAdvisorOrgs = AnetObjectEngine.getInstance().getOrganizationDao().getByParentOrgId(null);
 			view.addToContext("topAdvisorOrgs", topAdvisorOrgs);
 			view.addToContext("devMode", config.isDevelopmentMode());
-			view.addToContext("securityMarking", config.getSecurityMarking());
-			view.addToContext("securityColor", config.getSecurityColor());
 		}
 		
 		if (MediaType.APPLICATION_JSON_TYPE.equals(responseContext.getMediaType())) { 

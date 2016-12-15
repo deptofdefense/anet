@@ -39,15 +39,15 @@ public class PositionResourceTest extends AbstractResourceTest {
 		//Create Position
 		Position test = PositionTest.getTestPosition();
 		
-		Position created = httpQuery("/positions/new", jack).post(Entity.json(test), Position.class);
+		Position created = httpQuery("/api/positions/new", jack).post(Entity.json(test), Position.class);
 		assertThat(created.getName()).isEqualTo(test.getName());
 		
 		//Assign to an AO
-		Organization ao = httpQuery("/organizations/new", jack)
+		Organization ao = httpQuery("/api/organizations/new", jack)
 				.post(Entity.json(OrganizationTest.getTestAO()), Organization.class);
 		created.setOrganization(Organization.createWithId(ao.getId()));
 		
-		Response resp = httpQuery("/positions/update", jack).post(Entity.json(created));
+		Response resp = httpQuery("/api/positions/update", jack).post(Entity.json(created));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
 		Position returned = httpQuery(String.format("/positions/%d",created.getId()), jack).get(Position.class);
@@ -94,7 +94,7 @@ public class PositionResourceTest extends AbstractResourceTest {
 		//Create a principal
 		Person principal = getRogerRogwell();
 		assertThat(principal.getId()).isNotNull();
-		Position t = httpQuery("/positions/new", jack).post(Entity.json(PositionTest.getTestPosition()), Position.class);
+		Position t = httpQuery("/api/positions/new", jack).post(Entity.json(PositionTest.getTestPosition()), Position.class);
 		assertThat(t.getId()).isNotNull();
 		
 		//put the principal in a tashkil
@@ -155,17 +155,17 @@ public class PositionResourceTest extends AbstractResourceTest {
 		Position t = PositionTest.getTestPosition();
 		Person jack = getJackJackson();
 		
-		Position created = httpQuery("/positions/new", jack).post(Entity.json(t), Position.class);
+		Position created = httpQuery("/api/positions/new", jack).post(Entity.json(t), Position.class);
 		assertThat(created.getName()).isEqualTo(t.getName());
 		assertThat(created.getCode()).isEqualTo(t.getCode());
 		assertThat(created.getId()).isNotNull();
 		
 		//Change Name/Code
 		created.setName("Deputy Chief of Donuts");
-		Response resp = httpQuery("/positions/update", jack).post(Entity.json(created));
+		Response resp = httpQuery("/api/positions/update", jack).post(Entity.json(created));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
-		Position returned = httpQuery(String.format("/positions/%d",created.getId()), jack).get(Position.class);
+		Position returned = httpQuery(String.format("/api/positions/%d",created.getId()), jack).get(Position.class);
 		assertThat(returned.getName()).isEqualTo(created.getName());
 		assertThat(returned.getCode()).isEqualTo(created.getCode());
 		
@@ -175,7 +175,7 @@ public class PositionResourceTest extends AbstractResourceTest {
 		resp = httpQuery(String.format("/positions/%d/person",created.getId()), jack).post(Entity.json(principal));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
-		Person returnedPrincipal = httpQuery(String.format("/positions/%d/person", created.getId()), jack).get(Person.class);
+		Person returnedPrincipal = httpQuery(String.format("/api/positions/%d/person", created.getId()), jack).get(Person.class);
 		assertThat(returnedPrincipal.getId()).isEqualTo(principal.getId());
 		
 		//TODO: Change the Principal

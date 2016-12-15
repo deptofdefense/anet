@@ -23,7 +23,7 @@ import mil.dds.anet.beans.Person;
 import mil.dds.anet.database.ApprovalStepDao;
 import mil.dds.anet.utils.AuthUtils;
 
-@Path("/approvalSteps")
+@Path("/api/approvalSteps")
 @Produces(MediaType.APPLICATION_JSON)
 public class ApprovalStepResource {
 

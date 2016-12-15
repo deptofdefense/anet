@@ -17,14 +17,12 @@ import io.dropwizard.db.DataSourceFactory;
 public class AnetConfiguration extends Configuration {
 
 	private boolean developmentMode;
-	private String securityMarking;
-	private String securityColor;
-	
+
 	private SmtpConfiguration smtp;
-	
+
 	@NotNull
 	private Map<String,String> waffleConfig = new HashMap<String,String>();
-	
+
 	@Valid
     @NotNull
     private DataSourceFactory database = new DataSourceFactory();
@@ -50,22 +48,6 @@ public class AnetConfiguration extends Configuration {
 		this.developmentMode = developmentMode;
 	}
 
-	public String getSecurityMarking() {
-		return securityMarking;
-	}
-
-	public void setSecurityMarking(String securityMarking) {
-		this.securityMarking = securityMarking;
-	}
-
-	public String getSecurityColor() {
-		return securityColor;
-	}
-
-	public void setSecurityColor(String securityColor) {
-		this.securityColor = securityColor;
-	}
-
 	@JsonProperty("views")
 	public Map<String, Map<String, String>> getViews() {
 		return views;
@@ -79,15 +61,15 @@ public class AnetConfiguration extends Configuration {
 		}
 		this.views = builder.build();
 	}
-	
+
 	public Map<String, String> getWaffleConfig() {
 		return waffleConfig;
 	}
-	
-	public void setWaffleConfig(Map<String,String> config) { 
+
+	public void setWaffleConfig(Map<String,String> config) {
 		this.waffleConfig = config;
 	}
-	
+
 	public SmtpConfiguration getSmtp() {
 		return smtp;
 	}
@@ -96,7 +78,7 @@ public class AnetConfiguration extends Configuration {
 		this.smtp = smtp;
 	}
 
-	public static class SmtpConfiguration { 
+	public static class SmtpConfiguration {
 		private String hostname;
 		private Integer port = 587;
 		private String username;
@@ -134,5 +116,5 @@ public class AnetConfiguration extends Configuration {
 		}
 	}
 
-	
+
 }

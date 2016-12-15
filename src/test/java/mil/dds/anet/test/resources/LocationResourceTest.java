@@ -29,7 +29,7 @@ public class LocationResourceTest extends AbstractResourceTest {
 	public void locationTest() throws UnsupportedEncodingException { 
 		Location l = Location.create("The Boat Dock", new LatLng(12.34,-56.78));
 		
-		Location created = httpQuery("/locations/new")
+		Location created = httpQuery("/api/locations/new")
 				.post(Entity.json(l), Location.class);
 		assertThat(created.getName()).isEqualTo(l.getName());
 		assertThat(created).isNotEqualTo(l);
@@ -38,7 +38,7 @@ public class LocationResourceTest extends AbstractResourceTest {
 		//You cannot search for the Boat Dock location, because full-text indexing
 		// is done in asynchronously and is not guaranteed to be done
 		// so we search for a record in the base data set. 
-		List<Location> results = httpQuery(String.format("/locations/search?q=%s", 
+		List<Location> results = httpQuery(String.format("/api/locations/search?q=%s", 
 				URLEncoder.encode("Police", "UTF-8")))
 				.get(new GenericType<List<Location>>() {});
 		assertThat(results.size()).isGreaterThan(0);
@@ -48,10 +48,10 @@ public class LocationResourceTest extends AbstractResourceTest {
 		
 		//Update
 		created.setName("Down by the Bay");
-		Response resp = httpQuery("/locations/update").post(Entity.json(created));
+		Response resp = httpQuery("/api/locations/update").post(Entity.json(created));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
-		Location returned = httpQuery(String.format("/locations/%d", created.getId())).get(Location.class);
+		Location returned = httpQuery(String.format("/api/locations/%d", created.getId())).get(Location.class);
 		assertThat(returned.getName()).isEqualTo(created.getName());
 	}
 	

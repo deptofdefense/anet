@@ -43,13 +43,13 @@ public class PersonResourceTest extends AbstractResourceTest {
     	newPerson.setRole(Role.PRINCIPAL);
     	newPerson.setStatus(Status.ACTIVE);
     	newPerson.setBiography("Created buy the PersonResourceTest#testCreatePerson");
-    	newPerson = httpQuery("/people/new", jack).post(Entity.json(newPerson), Person.class);
+    	newPerson = httpQuery("/api/people/new", jack).post(Entity.json(newPerson), Person.class);
     	assertThat(newPerson.getId()).isNotNull();
     	assertThat(newPerson.getName()).isEqualTo("testCreatePerson Person");
     	
     	
     	newPerson.setName("testCreatePerson updated name");
-    	Response resp = httpQuery("/people/update", retPerson)
+    	Response resp = httpQuery("/api/people/update", retPerson)
     			.post(Entity.json(newPerson));
     	assertThat(resp.getStatus()).isEqualTo(200);
     	
@@ -81,7 +81,7 @@ public class PersonResourceTest extends AbstractResourceTest {
 		Person jack = getJackJackson();
 			
 		String query = "Bobtown";
-		List<Person> searchResults = httpQuery("/people/search?q=" + URLEncoder.encode(query), jack)
+		List<Person> searchResults = httpQuery("/api/people/search?q=" + URLEncoder.encode(query), jack)
 				.get(new GenericType<List<Person>>() {});
 		assertThat(searchResults.size()).isGreaterThan(0);
 	}

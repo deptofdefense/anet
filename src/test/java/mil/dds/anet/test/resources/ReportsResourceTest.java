@@ -62,7 +62,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		principal.setPrimary(true);
 		
 		//Create an Advising Organization for the report writer
-		Organization org = httpQuery("/organizations/new", author)
+		Organization org = httpQuery("/api/organizations/new", author)
 				.post(Entity.json(OrganizationTest.getTestAO()), Organization.class);
 		
 		//Create leadership people in the AO who can approve this report
@@ -78,7 +78,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		authorBillet.setName("A report writer");
 		authorBillet.setType(PositionType.ADVISOR);
 		authorBillet.setOrganization(org);
-		authorBillet = httpQuery("/positions/new", author).post(Entity.json(authorBillet), Position.class);
+		authorBillet = httpQuery("/api/positions/new", author).post(Entity.json(authorBillet), Position.class);
 		assertThat(authorBillet.getId()).isNotNull();
 		
 		//Set this author in this billet
@@ -86,29 +86,29 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
 		//Create Approval workflow for Advising Organization
-		Group approvingGroup = httpQuery("/groups/new", author)
+		Group approvingGroup = httpQuery("/api/groups/new", author)
 				.post(Entity.json(Group.create("Test Group of initial approvers")), Group.class);
 		resp = httpQuery(String.format("/groups/%d/addMember?personId=%d", approvingGroup.getId(), approver1.getId()), author)
 				.get();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
-		ApprovalStep approval = httpQuery("/approvalSteps/new", author)
+		ApprovalStep approval = httpQuery("/api/approvalSteps/new", author)
 				.post(Entity.json(ApprovalStep.create(null, approvingGroup, null, org.getId())), ApprovalStep.class);
 		
 		//Create Releasing approval step for AO. 
-		Group releasingGroup = httpQuery("/groups/new", author)
+		Group releasingGroup = httpQuery("/api/groups/new", author)
 				.post(Entity.json(Group.create("Test Group of releasers")), Group.class);
 		resp = httpQuery(String.format("/groups/%d/addMember?personId=%d", releasingGroup.getId(), approver2.getId()), author)
 				.get();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
 		//Adding a new approval step to an AO automatically puts it at the end of the approval process. 
-		ApprovalStep releaseApproval = httpQuery("/approvalSteps/new", author)
+		ApprovalStep releaseApproval = httpQuery("/api/approvalSteps/new", author)
 				.post(Entity.json(ApprovalStep.create(null, releasingGroup, null, org.getId())), ApprovalStep.class);
 		assertThat(releaseApproval.getId()).isNotNull();
 		
 		//Pull the approval workflow for this AO
-		List<ApprovalStep> steps = httpQuery("/approvalSteps/byOrganization?id=" + org.getId())
+		List<ApprovalStep> steps = httpQuery("/api/approvalSteps/byOrganization?id=" + org.getId())
 				.get(new GenericType<List<ApprovalStep>>() {});
 		assertThat(steps.size()).isEqualTo(2);
 		assertThat(steps.get(0).getId()).isEqualTo(approval.getId());
@@ -117,13 +117,13 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		
 		//TODO: Create a POAM structure for the AO
 //		fail("No way to assign a POAM to an AO");
-		Poam top = httpQuery("/poams/new", author)
+		Poam top = httpQuery("/api/poams/new", author)
 				.post(Entity.json(Poam.create("test-1", "Test Top Poam", "TOP")), Poam.class);
-		Poam action = httpQuery("/poams/new", author)
+		Poam action = httpQuery("/api/poams/new", author)
 				.post(Entity.json(Poam.create("test-1-1", "Test Poam Action", "Action", top)), Poam.class);
 		
 		//Create a Location that this Report was written at
-		Location loc = httpQuery("/locations/new", author)
+		Location loc = httpQuery("/api/locations/new", author)
 				.post(Entity.json(Location.create("The Boat Dock", new LatLng(1.23,4.56))), Location.class);
 		
 		//Write a Report
@@ -138,7 +138,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		r.setIntent("A testing report to test that reporting reports");
 		r.setReportText("Report Text goes here, asdfjk");
 		r.setNextSteps("This is the next steps on a report");
-		Report created = httpQuery("/reports/new", author)
+		Report created = httpQuery("/api/reports/new", author)
 				.post(Entity.json(r), Report.class);
 		assertThat(created.getId()).isNotNull();
 		assertThat(created.getState()).isEqualTo(ReportState.DRAFT);
@@ -158,7 +158,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		//TODO: verify the poams on this report
 		
 		//Verify this shows up on the approvers list of pending documents
-		List<Report> pending = httpQuery("/reports/pendingMyApproval", approver1).get(new GenericType<List<Report>>() {});
+		List<Report> pending = httpQuery("/api/reports/pendingMyApproval", approver1).get(new GenericType<List<Report>>() {});
 		assertThat(pending).contains(returned);
 		
 		//Check on Report status for who needs to approve
@@ -254,7 +254,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		author.setStatus(Person.Status.ACTIVE);
 		author.setDomainUsername("newGuy");
 		author.setEmailAddress("newGuy@example.com");
-		author = httpQuery("/people/new", jack).post(Entity.json(author), Person.class);
+		author = httpQuery("/api/people/new", jack).post(Entity.json(author), Person.class);
 		assertThat(author.getId()).isNotNull();
 		
 		//Write a report as that person
@@ -264,23 +264,23 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		r.setAtmosphere(Atmosphere.NEUTRAL);
 		r.setReportText("I just got here in town and am writing a report for the first time, but have no reporting structure set up");
 		r.setEngagementDate(DateTime.now());
-		r = httpQuery("/reports/new", jack).post(Entity.json(r), Report.class);
+		r = httpQuery("/api/reports/new", jack).post(Entity.json(r), Report.class);
 		assertThat(r.getId()).isNotNull();
 		
 		//Submit the report
-		Response resp = httpQuery("/reports/" + r.getId() + "/submit", jack)
+		Response resp = httpQuery("/api/reports/" + r.getId() + "/submit", jack)
 				.get();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
 		//Check the approval Step
-		Report returned = httpQuery("/reports/" + r.getId(), jack).get(Report.class);
+		Report returned = httpQuery("/api/reports/" + r.getId(), jack).get(Report.class);
 		assertThat(returned.getId()).isEqualTo(r.getId());
 		assertThat(returned.getState()).isEqualTo(Report.ReportState.PENDING_APPROVAL);
 		
 		//Find the default ApprovalSteps
 		Integer defaultOrgId = Integer.parseInt(AnetObjectEngine.getInstance().getAdminSetting(AdminSettingKeys.DEFAULT_APPROVAL_ORGANIZATION));
 		assertThat(defaultOrgId).isNotNull();
-		List<ApprovalStep> steps = httpQuery("/approvalSteps/byOrganization?id=" + defaultOrgId, jack)
+		List<ApprovalStep> steps = httpQuery("/api/approvalSteps/byOrganization?id=" + defaultOrgId, jack)
 				.get(new GenericType<List<ApprovalStep>>() {});
 		assertThat(steps).isNotNull();
 		assertThat(steps).hasSize(1);
@@ -295,23 +295,23 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		billet.setName("EF1 new advisor");
 		billet.setType(Position.PositionType.ADVISOR);
 		
-		billet = httpQuery("/positions/new", nick)
+		billet = httpQuery("/api/positions/new", nick)
 				.post(Entity.json(billet), Position.class);
 		assertThat(billet.getId()).isNotNull();
 		
 		//Put Author in the billet
-		resp = httpQuery("/positions/" + billet.getId() + "/person", nick)
+		resp = httpQuery("/api/positions/" + billet.getId() + "/person", nick)
 				.post(Entity.json(author));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
 		//Have Super User kick the report, it should be re-assigned to the default approval path because the billet has no Org
-		resp = httpQuery("/reports/" + r.getId() + "/submit", nick).get();
+		resp = httpQuery("/api/reports/" + r.getId() + "/submit", nick).get();
 		assertThat(resp.getStatus()).isEqualTo(200);
-		returned = httpQuery("/reports/" + r.getId(), jack).get(Report.class);
+		returned = httpQuery("/api/reports/" + r.getId(), jack).get(Report.class);
 		assertThat(returned.getApprovalStepJson().getId()).isEqualTo(steps.get(0).getId());
 		
 		//Put billet in EF1
-		List<Organization> results = httpQuery("/organizations/search?q=EF1&type=ADVISOR_ORG", nick).get(new GenericType<List<Organization>>() {});
+		List<Organization> results = httpQuery("/api/organizations/search?q=EF1&type=ADVISOR_ORG", nick).get(new GenericType<List<Organization>>() {});
 		assertThat(results.size()).isGreaterThan(0);
 		Organization ef1 = null;
 		for (Organization org : results) { 
@@ -324,15 +324,15 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		assertThat(billet.getOrganization()).isNotNull();
 		assertThat(ef1).isNotNull();
 		
-		resp = httpQuery("/positions/update", nick).post(Entity.json(billet));
+		resp = httpQuery("/api/positions/update", nick).post(Entity.json(billet));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
 		//Nick should kick the report
-		resp = httpQuery("/reports/" + r.getId() + "/submit", nick).get();
+		resp = httpQuery("/api/reports/" + r.getId() + "/submit", nick).get();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
 		//Report should now be up for review by EF1 approvers
-		Report returned2 = httpQuery("/reports/" + r.getId(), jack).get(Report.class);
+		Report returned2 = httpQuery("/api/reports/" + r.getId(), jack).get(Report.class);
 		assertThat(returned2.getId()).isEqualTo(r.getId());
 		assertThat(returned2.getState()).isEqualTo(Report.ReportState.PENDING_APPROVAL);
 		assertThat(returned2.getApprovalStepJson().getId()).isNotEqualTo(returned.getApprovalStepJson().getId());		
@@ -347,12 +347,12 @@ public class ReportsResourceTest extends AbstractResourceTest {
         Person bob = getBobBobtown();
         
         //Fetch some objects from the DB that we'll use later. 
-        List<Location> locSearchResults = httpQuery("/locations/search?q=Police", elizabeth)
+        List<Location> locSearchResults = httpQuery("/api/locations/search?q=Police", elizabeth)
                 .get(new GenericType<List<Location>>() {});
         assertThat(locSearchResults.size()).isGreaterThan(0);
         Location loc = locSearchResults.get(0);
         
-        List<Poam> poamSearchResults = httpQuery("/poams/search?q=Budgeting", elizabeth)
+        List<Poam> poamSearchResults = httpQuery("/api/poams/search?q=Budgeting", elizabeth)
         		.get(new GenericType<List<Poam>>() {});
         assertThat(poamSearchResults.size()).isGreaterThan(2);    
         
@@ -365,18 +365,18 @@ public class ReportsResourceTest extends AbstractResourceTest {
         r.setReportText("This report was generated by ReportsResourceTest#reportEditTest");
         r.setAttendees(ImmutableList.of(PersonTest.personToReportPerson(roger)));
         r.setPoams(ImmutableList.of(poamSearchResults.get(0)));
-        Report returned = httpQuery("/reports/new", elizabeth).post(Entity.json(r), Report.class);
+        Report returned = httpQuery("/api/reports/new", elizabeth).post(Entity.json(r), Report.class);
         assertThat(returned.getId()).isNotNull();
 
         //Elizabeth edits the report (update locationId, addPerson, remove a Poam)
         returned.setLocation(loc);
         returned.setAttendees(ImmutableList.of(PersonTest.personToReportPerson(roger), PersonTest.personToReportPerson(nick)));
         returned.setPoams(ImmutableList.of());
-        Response resp = httpQuery("/reports/" + returned.getId() + "/edit", elizabeth).post(Entity.json(returned));
+        Response resp = httpQuery("/api/reports/" + returned.getId() + "/edit", elizabeth).post(Entity.json(returned));
         assertThat(resp.getStatus()).isEqualTo(200);
         
         //Verify the report changed
-        Report returned2 = httpQuery("/reports/" + returned.getId(), elizabeth).get(Report.class);
+        Report returned2 = httpQuery("/api/reports/" + returned.getId(), elizabeth).get(Report.class);
         assertThat(returned2.getIntent()).isEqualTo(r.getIntent());
         assertThat(returned2.getLocationJson().getId()).isEqualTo(loc.getId());
         assertThat(returned2.getPoams()).isEmpty(); //yes this does a DB load :(
@@ -384,35 +384,35 @@ public class ReportsResourceTest extends AbstractResourceTest {
         assertThat(returned2.getAttendees().contains(roger));
         
         //Elizabeth submits the report
-        resp = httpQuery("/reports/" + returned.getId() + "/submit", elizabeth).get();
+        resp = httpQuery("/api/reports/" + returned.getId() + "/submit", elizabeth).get();
         assertThat(resp.getStatus()).isEqualTo(200);
-        Report returned3 = httpQuery("/reports/" + returned.getId(), elizabeth).get(Report.class);
+        Report returned3 = httpQuery("/api/reports/" + returned.getId(), elizabeth).get(Report.class);
         assertThat(returned3.getState()).isEqualTo(ReportState.PENDING_APPROVAL);
         
         //Bob gets the approval (EF1 Approvers)
-        List<Report> pendingBobsApproval = httpQuery("/reports/pendingMyApproval", bob).get(new GenericType<List<Report>>() {});
+        List<Report> pendingBobsApproval = httpQuery("/api/reports/pendingMyApproval", bob).get(new GenericType<List<Report>>() {});
         assertThat(pendingBobsApproval.stream().anyMatch(rpt -> rpt.getId().equals(returned3.getId()))).isTrue();
         
         //Bob edits the report (change reportText, remove Person, add a Poam)
         returned3.setReportText(r.getReportText() + ", edited by Bob!!");
         returned3.setAttendees(ImmutableList.of(PersonTest.personToReportPerson(nick)));
         returned3.setPoams(ImmutableList.of(poamSearchResults.get(1), poamSearchResults.get(2)));
-        resp = httpQuery("/reports/" + returned.getId() + "/edit", bob).post(Entity.json(returned3));
+        resp = httpQuery("/api/reports/" + returned.getId() + "/edit", bob).post(Entity.json(returned3));
         
-        Report returned4 = httpQuery("/reports/" + returned.getId(), elizabeth).get(Report.class);
+        Report returned4 = httpQuery("/api/reports/" + returned.getId(), elizabeth).get(Report.class);
         assertThat(returned4.getReportText()).endsWith("Bob!!");
         assertThat(returned4.getAttendees()).hasSize(1);
         assertThat(returned4.getAttendees()).contains(PersonTest.personToReportPerson(nick));
         assertThat(returned4.getPoams()).hasSize(2);
         
-        resp = httpQuery("/reports/" + returned.getId() + "/approve", bob).get();
+        resp = httpQuery("/api/reports/" + returned.getId() + "/approve", bob).get();
         assertThat(resp.getStatus()).isEqualTo(200);
 	}
 	
 	@Test
 	public void viewTest() { 
 		Person jack = getJackJackson();
-		Response resp = httpQuery("/reports/", jack)
+		Response resp = httpQuery("/areports/", jack)
 			.header("Accept", "text/html").get();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		String respBody = getResponseBody(resp);

@@ -32,32 +32,32 @@ public class ApprovalStepResourceTest extends AbstractResourceTest {
 	public void approvalTest() {
 		Person jack = getJackJackson(); //Get an authenticated user. 
 		//Create an Advisor Organization
-		Organization org = httpQuery("/organizations/new", jack)
+		Organization org = httpQuery("api/organizations/new", jack)
 				.post(Entity.json(OrganizationTest.getTestAO()), Organization.class);
 		assertThat(org.getId()).isNotNull();
 		
 		//Create a group to do the approvals
-		Group g = httpQuery("/groups/new", jack)
+		Group g = httpQuery("/api/groups/new", jack)
 				.post(Entity.json(Group.create("Test Approval Group")), Group.class);
 		assertThat(g.getId()).isNotNull();
 		
 		//Create 3 steps in order for this AO
-		ApprovalStep as1 = httpQuery("/approvalSteps/new", jack)
+		ApprovalStep as1 = httpQuery("/api/approvalSteps/new", jack)
 				.post(Entity.json(ApprovalStep.create(null, g, null, org.getId())), ApprovalStep.class);
 		assertThat(as1.getId()).isNotNull();
 		
-		ApprovalStep as2 = httpQuery("/approvalSteps/new", jack)
+		ApprovalStep as2 = httpQuery("/api/approvalSteps/new", jack)
 				.post(Entity.json(ApprovalStep.create(null, g, null, org.getId())), ApprovalStep.class);
 		assertThat(as1.getId()).isNotNull();
 		
-		ApprovalStep as3 = httpQuery("/approvalSteps/new", jack)
+		ApprovalStep as3 = httpQuery("/api/approvalSteps/new", jack)
 				.post(Entity.json(ApprovalStep.create(null, g, null, org.getId())), ApprovalStep.class);
 		assertThat(as1.getId()).isNotNull();
 		
 		as1.setNextStepId(as2.getId());
 		as2.setNextStepId(as3.getId());
 		List<ApprovalStep> asList = Lists.newArrayList(as1, as2, as3);
-		Response resp = httpQuery("/approvalSteps/update", jack).post(Entity.json(asList));
+		Response resp = httpQuery("/api/approvalSteps/update", jack).post(Entity.json(asList));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
 		//Get them back in order
@@ -81,17 +81,17 @@ public class ApprovalStepResourceTest extends AbstractResourceTest {
 		assertThat(returned).contains(as3, atIndex(1));
 		
 		//Create a new step and put in the middle
-		ApprovalStep as4 = httpQuery("/approvalSteps/new", jack)
+		ApprovalStep as4 = httpQuery("/api/approvalSteps/new", jack)
 				.post(Entity.json(ApprovalStep.create(null, g, null, org.getId())), ApprovalStep.class);
 		assertThat(as1.getId()).isNotNull();
 		as2.setNextStepId(as4.getId());
 		as4.setNextStepId(as3.getId());
 		asList = Lists.newArrayList(as2, as3, as4);
-		resp = httpQuery("/approvalSteps/update", jack).post(Entity.json(asList));
+		resp = httpQuery("/api/approvalSteps/update", jack).post(Entity.json(asList));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
 		//Get them back in order 2 -> 4 -> 3
-		returned = httpQuery("/approvalSteps/byOrganization?id=" + org.getId(), jack)
+		returned = httpQuery("/api/approvalSteps/byOrganization?id=" + org.getId(), jack)
 				.get(new GenericType<List<ApprovalStep>>() {});
 		assertThat(returned.size()).isEqualTo(3);
 		assertThat(returned).contains(as2, atIndex(0));

@@ -24,7 +24,7 @@ import mil.dds.anet.beans.Poam;
 import mil.dds.anet.database.PoamDao;
 import mil.dds.anet.views.ObjectListView;
 
-@Path("/poams")
+@Path("/api/poams")
 @Produces(MediaType.APPLICATION_JSON)
 @PermitAll
 public class PoamResource {

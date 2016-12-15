@@ -39,7 +39,7 @@ import mil.dds.anet.database.AdminDao.AdminSettingKeys;
 import mil.dds.anet.utils.ResponseUtils;
 import mil.dds.anet.views.ObjectListView;
 
-@Path("/reports")
+@Path("/api/reports")
 @Produces(MediaType.APPLICATION_JSON)
 @PermitAll
 public class ReportResource {
@@ -56,7 +56,7 @@ public class ReportResource {
 
 	@GET
 	@Path("/")
-	@Produces(MediaType.TEXT_HTML)
+	@Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON})
 	public ObjectListView<Report> getAllReportsView(@Auth Person p, @DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
 		ObjectListView<Report> view = new ObjectListView<Report>(dao.getAll(pageNum, pageSize), Report.class);
 		List<Report> myApprovals = AnetObjectEngine.getInstance().getReportDao().getReportsForMyApproval(p);
@@ -92,8 +92,8 @@ public class ReportResource {
 	@POST
 	@Path("/new")
 	public Report createNewReport(@Auth Person author, Report r) {
-		if (r.getState() == null) { r.setState(ReportState.DRAFT); } //TODO: don't do this long term.
-		if (r.getAuthor() == null) { r.setAuthor(author); } //TODO: don't do this long term. 
+		if (r.getState() == null) { r.setState(ReportState.DRAFT); }
+		if (r.getAuthor() == null) { r.setAuthor(author); }
 		return dao.insert(r);
 	}
 
@@ -152,15 +152,15 @@ public class ReportResource {
 		for (Integer id : existingPplIds) {
 			dao.removeAttendeeFromReport(Person.createWithId(id), r);
 		}
-		
+
 		//Update Poams:
 		List<Poam> existingPoams = dao.getPoamsForReport(r);
 		List<Integer> existingPoamIds = existingPoams.stream().map( p -> p.getId()).collect(Collectors.toList());
-		for (Poam p : r.getPoamsJson()) { 
+		for (Poam p : r.getPoamsJson()) {
 			int idx = existingPoamIds.indexOf(p.getId());
 			if (idx == -1) { dao.addPoamToReport(p, r); } else {  existingPoamIds.remove(idx); }
 		}
-		for (Integer id : existingPoamIds) { 
+		for (Integer id : existingPoamIds) {
 			dao.removePoamFromReport(Poam.createWithId(id), r);
 		}
 		return Response.ok().build();
@@ -174,12 +174,12 @@ public class ReportResource {
 	public Response submitReport(@PathParam("id") int id) {
 		Report r = dao.getById(id);
 		//TODO: this needs to be done by either the Author, a Superuser for the AO, or an Administrator
-		
+
 		Organization org = engine.getOrganizationForPerson(r.getAuthor());
 		if (org == null ) {
 			// Author missing Org, use the Default Approval Workflow
 			org = Organization.createWithId(
-				Integer.parseInt(engine.getAdminSetting(AdminSettingKeys.DEFAULT_APPROVAL_ORGANIZATION))); 
+				Integer.parseInt(engine.getAdminSetting(AdminSettingKeys.DEFAULT_APPROVAL_ORGANIZATION)));
 		}
 		List<ApprovalStep> steps = engine.getApprovalStepsForOrg(org);
 		if (steps == null || steps.size() == 0) {

@@ -54,6 +54,7 @@ public class AnetApplication extends Application<AnetConfiguration> {
 
 	@Override
 	public void initialize(Bootstrap<AnetConfiguration> bootstrap) {
+		//Allow the anet.yml configuration to pull from Environment Variables. 
 		bootstrap.setConfigurationSourceProvider(
 			new SubstitutingSourceProvider(
 				bootstrap.getConfigurationSourceProvider(),
@@ -61,6 +62,7 @@ public class AnetApplication extends Application<AnetConfiguration> {
 			)
 		);
 
+		//Add the db migration commands
 		bootstrap.addBundle(new MigrationsBundle<AnetConfiguration>() {
 	        @Override
 	        public DataSourceFactory getDataSourceFactory(AnetConfiguration configuration) {
@@ -69,8 +71,10 @@ public class AnetApplication extends Application<AnetConfiguration> {
 	        }
 	    });
 
+		//Serve assets on /assets
 		bootstrap.addBundle(new AssetsBundle("/assets", "/assets", "index.html"));
 
+		//Use Freemarker to handle rendering TEXT_HTML views. 
 		bootstrap.addBundle(new ViewBundle<AnetConfiguration>() {
 			@Override
 			public Map<String, Map<String, String>> getViewConfiguration(AnetConfiguration configuration) {
