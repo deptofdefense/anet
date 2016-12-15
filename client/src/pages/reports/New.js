@@ -20,7 +20,7 @@ export default class ReportNew extends React.Component {
 
 	render() {
 		return (
-			<div ref="container">
+			<div>
 				<ContentForHeader>
 					<h2>Create a new Report</h2>
 				</ContentForHeader>

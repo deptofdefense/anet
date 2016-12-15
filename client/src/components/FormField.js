@@ -8,13 +8,11 @@ let activeFormContext = []
 export class Form extends React.Component {
 	componentWillMount() {
 		activeFormContext.push(this.props.formFor)
-		console.log(activeFormContext);
 	}
 
 	componentWillUnmount() {
 		while (activeFormContext.indexOf(this.props.formFor) !== -1)
 			activeFormContext.pop()
-		console.log(activeFormContext);
 	}
 
 	componentDidMount() {
