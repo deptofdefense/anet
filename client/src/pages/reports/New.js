@@ -1,5 +1,5 @@
 import React from 'react'
-import {ControlLabel, InputGroup} from 'react-bootstrap'
+import {ControlLabel, InputGroup, ButtonGroup, Button} from 'react-bootstrap'
 
 import DatePicker from 'react-bootstrap-date-picker'
 
@@ -42,6 +42,14 @@ export default class ReportNew extends React.Component {
 						</HorizontalFormField>
 
 						<HorizontalFormField id="engagementLocation" placeholder="Where did it happen?" addon="📍" />
+
+						<HorizontalFormField id="atmosphere">
+							<ButtonGroup bsSize="large">
+								<Button>👍</Button>
+								<Button>😐</Button>
+								<Button>👎</Button>
+							</ButtonGroup>
+						</HorizontalFormField>
 					</fieldset>
 
 					<fieldset>
