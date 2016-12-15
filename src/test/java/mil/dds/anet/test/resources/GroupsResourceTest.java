@@ -34,7 +34,7 @@ public class GroupsResourceTest extends AbstractResourceTest {
 		Group g = new Group();
 		g.setName("A Test Group");
 		
-		Group created = httpQuery("/groups/new", jack).post(Entity.json(g), Group.class);
+		Group created = httpQuery("/api/groups/new", jack).post(Entity.json(g), Group.class);
 		assertThat(created.getName()).isEqualTo(g.getName());
 		
 		Group returned = httpQuery(String.format("/groups/%d", created.getId()), jack).get(Group.class);
@@ -69,7 +69,7 @@ public class GroupsResourceTest extends AbstractResourceTest {
 		g = new Group();
 		g.setName("A Test Group with  members already");
 		g.setMembers(Lists.newArrayList(elizabeth, jack, roger));
-		created = httpQuery("/groups/new", jack).post(Entity.json(g), Group.class);
+		created = httpQuery("/api/groups/new", jack).post(Entity.json(g), Group.class);
 		assertThat(created.getName()).isEqualTo(g.getName());
 		returned = httpQuery(String.format("/groups/%d", created.getId()), jack)
 				.get(Group.class);
@@ -84,11 +84,11 @@ public class GroupsResourceTest extends AbstractResourceTest {
 		
 		Person jack = getJackJackson();
 		
-		Group created = httpQuery("/groups/new", jack).post(Entity.json(g), Group.class);
+		Group created = httpQuery("/api/groups/new", jack).post(Entity.json(g), Group.class);
 		assertThat(created.getName()).isEqualTo(g.getName());
 		
 		created.setName("A Changed Name");
-		Response resp = httpQuery("/groups/rename", jack).post(Entity.json(created));
+		Response resp = httpQuery("/api/groups/rename", jack).post(Entity.json(created));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
 		Group returned = httpQuery(String.format("/groups/%d", created.getId()), jack)
@@ -104,7 +104,7 @@ public class GroupsResourceTest extends AbstractResourceTest {
 		g.setName("A Group to Delete");
 		Person jack = getJackJackson();
 		
-		Group created = httpQuery("/groups/new", jack).post(Entity.json(g), Group.class);
+		Group created = httpQuery("/api/groups/new", jack).post(Entity.json(g), Group.class);
 		assertThat(created.getName()).isEqualTo(g.getName());
 		
 		Response resp = httpQuery(String.format("/groups/%d", created.getId()), jack).delete();
@@ -117,7 +117,7 @@ public class GroupsResourceTest extends AbstractResourceTest {
 	@Test
 	public void viewTest() { 
 		Person jack = getJackJackson();
-		Response resp = httpQuery("/groups/", jack, MediaType.TEXT_HTML_TYPE).get();
+		Response resp = httpQuery("groups/", jack, MediaType.TEXT_HTML_TYPE).get();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		String respBody = getResponseBody(resp);
 		assertThat(respBody).as("FreeMarker error").doesNotContain("FreeMarker template error");
@@ -127,16 +127,16 @@ public class GroupsResourceTest extends AbstractResourceTest {
 		assertThat(groupIdMat.find());
 		int groupId = Integer.parseInt(groupIdMat.group(1));
 		
-		resp = httpQuery("/groups/new", jack, MediaType.TEXT_HTML_TYPE).get();
+		resp = httpQuery("groups/new", jack, MediaType.TEXT_HTML_TYPE).get();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
 		
-		resp = httpQuery("/groups/" + groupId, jack, MediaType.TEXT_HTML_TYPE).get();
+		resp = httpQuery("groups/" + groupId, jack, MediaType.TEXT_HTML_TYPE).get();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
 		
 		//TODO: build a group edit page?? 
-//		resp = httpQuery("/groups/1/edit", steve)
+//		resp = httpQuery("/api/groups/1/edit", steve)
 //				.header("Accept", "text/html").get();
 //		assertThat(resp.getStatus()).isEqualTo(200);
 //		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");

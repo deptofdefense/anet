@@ -5,7 +5,7 @@ import javax.ws.rs.Path;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.database.AdminDao;
 
-@Path("/admin")
+@Path("/api/admin")
 public class AdminResource {
 
 	private AdminDao dao;

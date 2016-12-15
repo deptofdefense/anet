@@ -27,7 +27,7 @@ import mil.dds.anet.beans.Position.PositionType;
 import mil.dds.anet.database.PositionDao;
 import mil.dds.anet.views.ObjectListView;
 
-@Path("/positions")
+@Path("/api/positions")
 @Produces(MediaType.APPLICATION_JSON)
 @PermitAll
 public class PositionResource {

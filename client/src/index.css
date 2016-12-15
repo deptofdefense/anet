@@ -1,0 +1,27 @@
+body {
+	background: #f7f7f7;
+}
+
+fieldset {
+	background: white;
+	border: 1px solid #eee;
+	padding: 3rem;
+	margin: 3rem 0;
+}
+
+fieldset legend small {
+	float: right;
+	font-size: 1.4rem;
+	font-weight: bold;
+	color: #333;
+	margin: 0.5rem;
+}
+
+.header-content {
+	margin-left: 142px;
+}
+
+.header-content > * {
+	margin: 0;
+	padding: 0;
+}
