@@ -1,19 +1,21 @@
 import React from 'react'
-import {Form, ControlLabel, InputGroup} from 'react-bootstrap'
+import {ControlLabel, InputGroup} from 'react-bootstrap'
 
 import DatePicker from 'react-bootstrap-date-picker'
 
 import {ContentForHeader} from '../../components/Header'
-import {HorizontalFormField} from '../../components/FormField'
+import {Form, HorizontalFormField} from '../../components/FormField'
 import Breadcrumbs from '../../components/Breadcrumbs'
 import TextEditor from '../../components/TextEditor'
 
 export default class ReportNew extends React.Component {
 	static useNavigation = false
 
-	componentDidMount() {
-		let input = this.refs.container.querySelector('[data-focus]')
-		if (input) input.focus()
+	constructor(props) {
+		super(props)
+		this.state = {report: {engagementIntent: ''}}
+
+		this.onFormChange = this.onFormChange.bind(this)
 	}
 
 	render() {
@@ -25,11 +27,13 @@ export default class ReportNew extends React.Component {
 
 				<Breadcrumbs items={[['EF4', '/organizations/ef4'], ['Submit a report', '/reports/new']]} />
 
-				<Form horizontal>
+				<Form formFor={this.state.report} onChange={this.onFormChange} horizontal>
 					<fieldset>
 						<legend>Engagement details <small>Required</small></legend>
 
-						<HorizontalFormField id="engagementIntent" label="Meeting subject" placeholder="What happened?" data-focus />
+						<HorizontalFormField id="engagementIntent" label="Meeting subject" placeholder="What happened?" data-focus>
+							<HorizontalFormField.Col>{this.subjectCharactersRemaining()}</HorizontalFormField.Col>
+						</HorizontalFormField>
 
 						<HorizontalFormField id="engagementDate">
 							<DatePicker placeholder="When did it happen?">
@@ -60,5 +64,14 @@ export default class ReportNew extends React.Component {
 				</Form>
 			</div>
 		)
+	}
+
+	onFormChange(event) {
+		this.setState({report: this.state.report})
+	}
+
+	subjectCharactersRemaining() {
+		let charactersRemaining = 250 - this.state.report.engagementIntent.length
+		return charactersRemaining + " characters remaining"
 	}
 }
