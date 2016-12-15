@@ -40,8 +40,7 @@ public class PersonMapper implements ResultSetMapper<Person> {
 		a.setDomainUsername(r.getString("people_domainUsername"));
 		a.setPendingVerification(r.getBoolean("people_pendingVerification"));
 		a.setCreatedAt(new DateTime(r.getTimestamp("people_createdAt")));
-		a.setUpdatedAt(new DateTime(r.getTimestamp("people_updatedAt")));
-		
+		a.setUpdatedAt(new DateTime(r.getTimestamp("people_updatedAt")));	
 		
 		a.setLoadLevel(LoadLevel.PROPERTIES);
 		return a;

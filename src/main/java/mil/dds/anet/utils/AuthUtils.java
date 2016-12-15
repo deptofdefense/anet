@@ -24,7 +24,8 @@ public class AuthUtils {
 		Position position = user.getPositionJson();
 		if (position != null && 
 				position.getType() == PositionType.SUPER_USER &&
-				position.getId().equals(org.getId())) { 
+				position.getOrganizationJson() != null && 
+				position.getOrganizationJson().getId().equals(org.getId())) { 
 			return;
 		} else if (position != null && 
 				position.getType() == PositionType.ADMINISTRATOR) { 

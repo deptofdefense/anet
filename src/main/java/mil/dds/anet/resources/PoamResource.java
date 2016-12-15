@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -62,6 +63,7 @@ public class PoamResource {
 	
 	@POST
 	@Path("/new")
+	@RolesAllowed("ADMINISTRATOR")
 	public Poam createNewPoam(Poam p) { 
 		return dao.insert(p);
 	}
@@ -69,6 +71,7 @@ public class PoamResource {
 	/* Updates shortName, longName, category, and parentPoamId */
 	@POST
 	@Path("/update")
+	@RolesAllowed("ADMINISTRATOR")
 	public Response updatePoam(Poam p) { 
 		int numRows = dao.update(p);
 		if (numRows == 0) { 
