@@ -33,8 +33,9 @@ public class PersonResourceTest extends AbstractResourceTest {
 	@Test
 	public void testCreatePerson() {
 		Person jack = getJackJackson();
-		//Creation is handled by the parent class, which really does a search... :D. 
-		Person retPerson = httpQuery(String.format("/people/%d", jack.getId()), jack).get(Person.class); 	
+		Person admin = getArthurDmin();
+		
+		Person retPerson = httpQuery(String.format("/api/people/%d", jack.getId()), jack).get(Person.class); 	
     	assertThat(retPerson).isEqualTo(jack);
     	assertThat(retPerson.getId()).isEqualTo(jack.getId());
     	
@@ -43,17 +44,17 @@ public class PersonResourceTest extends AbstractResourceTest {
     	newPerson.setRole(Role.PRINCIPAL);
     	newPerson.setStatus(Status.ACTIVE);
     	newPerson.setBiography("Created buy the PersonResourceTest#testCreatePerson");
-    	newPerson = httpQuery("/api/people/new", jack).post(Entity.json(newPerson), Person.class);
+    	newPerson = httpQuery("/api/people/new", admin).post(Entity.json(newPerson), Person.class);
     	assertThat(newPerson.getId()).isNotNull();
     	assertThat(newPerson.getName()).isEqualTo("testCreatePerson Person");
     	
     	
     	newPerson.setName("testCreatePerson updated name");
-    	Response resp = httpQuery("/api/people/update", retPerson)
+    	Response resp = httpQuery("/api/people/update", admin)
     			.post(Entity.json(newPerson));
     	assertThat(resp.getStatus()).isEqualTo(200);
     	
-    	retPerson = httpQuery(String.format("/people/%d", newPerson.getId()), jack).get(Person.class);
+    	retPerson = httpQuery(String.format("/api/people/%d", newPerson.getId()), jack).get(Person.class);
     	assertThat(retPerson.getName()).isEqualTo(newPerson.getName());
     }
 	

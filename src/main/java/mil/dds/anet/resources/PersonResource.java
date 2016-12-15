@@ -16,8 +16,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.eclipse.jetty.util.log.Log;
+import org.eclipse.jetty.util.log.Logger;
+
 import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
+import mil.dds.anet.auth.AnetAuthenticationFilter;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.beans.Position.PositionType;
@@ -30,6 +34,8 @@ import mil.dds.anet.views.ObjectListView;
 @PermitAll
 public class PersonResource {
 
+	private static Logger log = Log.getLogger(PersonResource.class);
+	
 	private PersonDao dao;
 	
 	public PersonResource(AnetObjectEngine engine) { 

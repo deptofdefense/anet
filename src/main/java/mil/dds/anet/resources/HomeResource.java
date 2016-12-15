@@ -5,7 +5,9 @@ import java.util.List;
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 
 import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
@@ -19,6 +21,7 @@ public class HomeResource {
 
 	@GET
 	@Path("{path: .*}")
+	@Produces(MediaType.TEXT_HTML)
 	public SimpleView reactIndex(@Auth Person p) {
 		//Get a list of any reports this person wrote that need to be approved, and reports that this person can approve.
 		List<Report> myApprovals = AnetObjectEngine.getInstance().getReportDao().getReportsForMyApproval(p);

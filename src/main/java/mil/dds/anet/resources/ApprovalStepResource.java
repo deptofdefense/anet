@@ -2,6 +2,7 @@ package mil.dds.anet.resources;
 
 import java.util.List;
 
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -25,6 +26,7 @@ import mil.dds.anet.utils.AuthUtils;
 
 @Path("/api/approvalSteps")
 @Produces(MediaType.APPLICATION_JSON)
+@PermitAll
 public class ApprovalStepResource {
 
 	AnetObjectEngine engine;

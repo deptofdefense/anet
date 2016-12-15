@@ -54,14 +54,14 @@ public abstract class AbstractResourceTest {
 		return httpQuery(path, authUser, MediaType.APPLICATION_JSON_TYPE);
 	}
 	
-	public Person findOrPutPersonInDb(Person stub) { 
-		List<Person> ret = httpQuery("/people/search?q=" + URLEncoder.encode(stub.getName()), PersonTest.getJackJacksonStub()).get(new GenericType<List<Person>>() {});
+	public Person findOrPutPersonInDb(Person stub) {
+		List<Person> ret = httpQuery("/api/people/search?q=" + URLEncoder.encode(stub.getName()), PersonTest.getJackJacksonStub()).get(new GenericType<List<Person>>() {});
 		for (Person p : ret) { 
 			if (p.getEmailAddress().equals(stub.getEmailAddress())) { return p; } 
 		}
 		
 		//Create insert into DB, Steve Steveson should AWAYS be in the database. 
-		Person newPerson = httpQuery("/people/new", PersonTest.getJackJacksonStub()).post(Entity.json(stub), Person.class);
+		Person newPerson = httpQuery("/api/people/new", PersonTest.getJackJacksonStub()).post(Entity.json(stub), Person.class);
 		return newPerson;
 	}
 	

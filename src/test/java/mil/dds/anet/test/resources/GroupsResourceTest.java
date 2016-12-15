@@ -37,32 +37,32 @@ public class GroupsResourceTest extends AbstractResourceTest {
 		Group created = httpQuery("/api/groups/new", jack).post(Entity.json(g), Group.class);
 		assertThat(created.getName()).isEqualTo(g.getName());
 		
-		Group returned = httpQuery(String.format("/groups/%d", created.getId()), jack).get(Group.class);
+		Group returned = httpQuery(String.format("/api/groups/%d", created.getId()), jack).get(Group.class);
 		assertThat(created).isEqualTo(returned);
 		
 		//Create a couple people and add them to the group
 		
-		Response resp = httpQuery(String.format("/groups/%d/addMember?personId=%d", returned.getId(), jack.getId()), jack)
+		Response resp = httpQuery(String.format("/api/groups/%d/addMember?personId=%d", returned.getId(), jack.getId()), jack)
 				.get();
 		assertThat(resp.getStatus()).isEqualTo(200);
-		resp = httpQuery(String.format("/groups/%d/addMember?personId=%d", returned.getId(), elizabeth.getId()), jack).get();
+		resp = httpQuery(String.format("/api/groups/%d/addMember?personId=%d", returned.getId(), elizabeth.getId()), jack).get();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
 		//Verify that adding the same person to the group again fails
-		resp = httpQuery(String.format("/groups/%d/addMember?personId=%d", returned.getId(), jack.getId()), jack)
+		resp = httpQuery(String.format("/api/groups/%d/addMember?personId=%d", returned.getId(), jack.getId()), jack)
 				.get();
 		assertThat(resp.getStatus()).isEqualTo(500);
 		
 		//Verify that users are in the group
-		returned = httpQuery(String.format("/groups/%d", created.getId()), jack)
+		returned = httpQuery(String.format("/api/groups/%d", created.getId()), jack)
 				.get(Group.class);
 		assertThat(returned.getMembers().size()).isEqualTo(2);
 		assertThat(returned.getMembers()).contains(elizabeth, jack);
 		
 		//Remove a user from the group, verify they are no longer there
-		resp = httpQuery(String.format("/groups/%d/removeMember?personId=%d", returned.getId(), elizabeth.getId()), jack).get();
+		resp = httpQuery(String.format("/api/groups/%d/removeMember?personId=%d", returned.getId(), elizabeth.getId()), jack).get();
 		assertThat(resp.getStatus()).isEqualTo(200);
-		returned = httpQuery(String.format("/groups/%d", created.getId()), jack).get(Group.class);
+		returned = httpQuery(String.format("/api/groups/%d", created.getId()), jack).get(Group.class);
 		assertThat(returned.getMembers().size()).isEqualTo(1);
 		assertThat(returned.getMembers()).doesNotContain(elizabeth);
 		
@@ -71,7 +71,7 @@ public class GroupsResourceTest extends AbstractResourceTest {
 		g.setMembers(Lists.newArrayList(elizabeth, jack, roger));
 		created = httpQuery("/api/groups/new", jack).post(Entity.json(g), Group.class);
 		assertThat(created.getName()).isEqualTo(g.getName());
-		returned = httpQuery(String.format("/groups/%d", created.getId()), jack)
+		returned = httpQuery(String.format("/api/groups/%d", created.getId()), jack)
 				.get(Group.class);
 		assertThat(returned.getMembers().size()).isEqualTo(3);
 		assertThat(returned.getMembers()).contains(elizabeth, jack, roger);
@@ -91,7 +91,7 @@ public class GroupsResourceTest extends AbstractResourceTest {
 		Response resp = httpQuery("/api/groups/rename", jack).post(Entity.json(created));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
-		Group returned = httpQuery(String.format("/groups/%d", created.getId()), jack)
+		Group returned = httpQuery(String.format("/api/groups/%d", created.getId()), jack)
 				.get(Group.class);
 		created.getCreatedAt();
 		returned.getCreatedAt();
@@ -107,10 +107,10 @@ public class GroupsResourceTest extends AbstractResourceTest {
 		Group created = httpQuery("/api/groups/new", jack).post(Entity.json(g), Group.class);
 		assertThat(created.getName()).isEqualTo(g.getName());
 		
-		Response resp = httpQuery(String.format("/groups/%d", created.getId()), jack).delete();
+		Response resp = httpQuery(String.format("/api/groups/%d", created.getId()), jack).delete();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
-		Group returned = httpQuery(String.format("/groups/%d", created.getId()), jack).get(Group.class);
+		Group returned = httpQuery(String.format("/api/groups/%d", created.getId()), jack).get(Group.class);
 		assertThat(returned).isNull();
 	}
 	

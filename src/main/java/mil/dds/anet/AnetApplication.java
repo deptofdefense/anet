@@ -8,6 +8,7 @@ import javax.servlet.Filter;
 import javax.servlet.FilterRegistration;
 
 import org.eclipse.jetty.server.session.SessionHandler;
+import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.joda.time.DateTimeZone;
 import org.skife.jdbi.v2.DBI;
 
@@ -112,6 +113,8 @@ public class AnetApplication extends Application<AnetConfiguration> {
 		
 	    //If you want to use @Auth to inject a custom Principal type into your resource
 	    environment.jersey().register(new AuthValueFactoryProvider.Binder<>(Person.class));
+	    //If you want to use @RolesAllowed to do authorization.
+	    environment.jersey().register(RolesAllowedDynamicFeature.class);
 	    environment.jersey().register(new WebExceptionMapper());
 
 		TestingResource test = new TestingResource(engine, configuration);

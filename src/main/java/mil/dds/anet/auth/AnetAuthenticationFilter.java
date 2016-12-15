@@ -10,6 +10,9 @@ import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
 
+import org.eclipse.jetty.util.log.Log;
+import org.eclipse.jetty.util.log.Logger;
+
 import io.dropwizard.auth.Authorizer;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
@@ -20,6 +23,7 @@ import mil.dds.anet.beans.Position;
 public class AnetAuthenticationFilter implements ContainerRequestFilter, Authorizer<Person> {
 
 	AnetObjectEngine engine;
+	private static Logger log = Log.getLogger(AnetAuthenticationFilter.class);
 	
 	public AnetAuthenticationFilter(AnetObjectEngine engine) { 
 		this.engine = engine;
@@ -60,17 +64,25 @@ public class AnetAuthenticationFilter implements ContainerRequestFilter, Authori
 	@Override
 	public boolean authorize(Person principal, String role) {
 		Position position = principal.getPosition();
-		if (position == null) { return false; }
+		if (position == null) {
+			log.debug("Authorizing {} for role {} FAILED due to null position", principal.getDomainUsername(), role);
+			return false; 
+		}
 		
 		//Administrators can do anything
-		if (position.getType() == PositionType.ADMINISTRATOR) { return true; } 
+		if (position.getType() == PositionType.ADMINISTRATOR) {
+			log.debug("Authorizing {} for role {} SUCCESS", principal.getDomainUsername(), role);
+			return true; 
+		} 
 		
 		//Verify the user is a super user. 
 		if (PositionType.SUPER_USER.toString().equals(role)) { 
 			if (position.getType() == PositionType.SUPER_USER) { 
+				log.debug("Authorizing {} for role {} SUCCESS", principal.getDomainUsername(), role);
 				return true;
 			}
 		}
+		log.debug("Authorizing {} for role {} FAILED", principal.getDomainUsername(), role);
 		return false;
 	}
 

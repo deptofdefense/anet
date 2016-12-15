@@ -51,15 +51,17 @@ public class OrganizationResourceTest extends AbstractResourceTest {
 		assertThat(updated.getName()).isEqualTo(created.getName());
 
 		//Create a position and put then in this AO
-		Position b1 = httpQuery("/api/positions/new", jack).post(Entity.json(PositionTest.getTestPosition()), Position.class);
+		Position b1 = PositionTest.getTestPosition();
+		b1.setOrganization(updated);
+		b1 = httpQuery("/api/positions/new", admin).post(Entity.json(b1), Position.class);
 		assertThat(b1.getId()).isNotNull();
-		assertThat(b1.getOrganization()).isNull();
+		assertThat(b1.getOrganization().getId()).isEqualTo(updated.getId());
 
 		b1.setOrganization(updated);
-		resp = httpQuery("/api/positions/update", jack).post(Entity.json(b1));
+		resp = httpQuery("/api/positions/update", admin).post(Entity.json(b1));
 		assertThat(resp.getStatus()).isEqualTo(200);
 
-		Position ret = httpQuery(String.format("/api/positions/%d", b1.getId()), jack).get(Position.class);
+		Position ret = httpQuery(String.format("/api/positions/%d", b1.getId()), admin).get(Position.class);
 		assertThat(ret.getOrganization()).isNotNull();
 		assertThat(ret.getOrganization().getId()).isEqualTo(updated.getId());
 
@@ -68,11 +70,11 @@ public class OrganizationResourceTest extends AbstractResourceTest {
 		child.setParentOrg(Organization.createWithId(created.getId()));
 		child.setName("Child McAo");
 		child.setType(OrganizationType.ADVISOR_ORG);
-		child = httpQuery("/api/organizations/new", jack)
+		child = httpQuery("/api/organizations/new", admin)
 				.post(Entity.json(child), Organization.class);
 		assertThat(child.getId()).isNotNull();
 
-		List<Organization> children = httpQuery(String.format("/organizations/%d/children", created.getId()), jack)
+		List<Organization> children = httpQuery(String.format("/api/organizations/%d/children", created.getId()), admin)
 			.get(new GenericType<List<Organization>>() {});
 		assertThat(children).hasSize(1).contains(child);
 	}

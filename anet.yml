@@ -42,12 +42,12 @@ logging:
   level: INFO
   loggers:
     "io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper" : DEBUG
-    "org.skife.jdbi.v2.DBI" : TRACE
-    "org.skife.jdbi.v2" : TRACE
-    "org.sqlite.JDBC" : TRACE
+    "org.skife.jdbi.v2.DBI" : INFO
+    "org.sqlite.JDBC" : INFO
     "io.dropwizard.assets.AssetsBundle" : TRACE
     "io.dropwizard.assets.*" : TRACE
     "waffle.servlet.NegotiateSecurityFilter" : TRACE
+    "mil.dds.anet.auth.AnetAuthenticationFilter" : TRACE
     "mil.dds.anet.resources.TestingResource" :
       level: INFO
       appenders:
