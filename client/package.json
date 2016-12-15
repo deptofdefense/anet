@@ -59,7 +59,7 @@
     "moment": "^2.17.1",
     "react": "^15.4.1",
     "react-bootstrap": "^0.30.7",
-    "react-bootstrap-date-picker": "^4.0.0",
+    "react-bootstrap-date-picker": "nickjs/react-bootstrap-date-picker",
     "react-dom": "^15.4.1",
     "react-injectables": "^4.0.2",
     "react-router": "^3.0.0",
