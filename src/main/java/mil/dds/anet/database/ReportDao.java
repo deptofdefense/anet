@@ -276,7 +276,7 @@ public class ReportDao implements IAnetDao<Report> {
 			.list();
 	}
 
-	public List<Location> getRecentLocations(Person p) {
+	public List<Location> getRecentLocations(Person author) {
 		String sql;
 		if (DaoUtils.isMsSql(dbHandle)) {
 			sql = "SELECT TOP 10 locations.* FROM reports, locations "
@@ -290,7 +290,7 @@ public class ReportDao implements IAnetDao<Report> {
 					+ "ORDER BY reports.createdAt DESC LIMIT 10";
 		}
 		return dbHandle.createQuery(sql)
-				.bind("authorId", p.getId())
+				.bind("authorId", author.getId())
 				.map(new LocationMapper())
 				.list();
 	}
