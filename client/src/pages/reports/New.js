@@ -7,6 +7,7 @@ import {ContentForHeader} from '../../components/Header'
 import {Form, HorizontalFormField} from '../../components/FormField'
 import RadioGroup from '../../components/RadioGroup'
 import Breadcrumbs from '../../components/Breadcrumbs'
+import Autocomplete from '../../components/Autocomplete'
 import TextEditor from '../../components/TextEditor'
 
 export default class ReportNew extends React.Component {
@@ -14,7 +15,11 @@ export default class ReportNew extends React.Component {
 
 	constructor(props) {
 		super(props)
-		this.state = {report: {engagementIntent: ''}, reportAtmosphere: 'positive'}
+		this.state = {
+			report: {engagementIntent: '', location: ''},
+			reportAtmosphere: 'positive',
+			suggestions: []
+		}
 
 		this.onFormChange = this.onFormChange.bind(this)
 		this.onAtmosphereChange = this.onAtmosphereChange.bind(this)
@@ -43,7 +48,9 @@ export default class ReportNew extends React.Component {
 							</DatePicker>
 						</HorizontalFormField>
 
-						<HorizontalFormField id="engagementLocation" placeholder="Where did it happen?" addon="📍" />
+						<HorizontalFormField id="engagementLocation" addon="📍">
+							<Autocomplete value={this.state.report.location} placeholder="Where did it happen?" url="/api/locations/search" />
+						</HorizontalFormField>
 
 						<HorizontalFormField id="atmosphere">
 							<RadioGroup onChange={this.onAtmosphereChange}>
