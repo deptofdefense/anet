@@ -1,4 +1,6 @@
 import React from 'react'
+import moment from 'moment'
+
 import {Radio, Table, Button} from 'react-bootstrap'
 import {Link} from 'react-router'
 
@@ -85,11 +87,13 @@ export default class Search extends React.Component {
 				</tr>
 			</thead>
 			<tbody>
-				{this.state.results && this.state.results.reports.map(report => <tr key={report.id}>
-					<td>{report.engagementDate}</td>
-					<td>TODO</td>
-					<td>{report.intent}</td>
-				</tr>)}
+				{this.state.results && this.state.results.reports.map(report =>
+					<tr key={report.id}>
+						<td><Link to={"/reports/" + report.id}>{moment(report.engagementDate).format('L')}</Link></td>
+						<td>TODO</td>
+						<td>{report.intent}</td>
+					</tr>
+				)}
 			</tbody>
 		</Table>
 	}
