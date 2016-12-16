@@ -3,6 +3,7 @@ package mil.dds.anet.resources;
 import java.util.List;
 
 import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -15,18 +16,26 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.eclipse.jetty.util.log.Log;
+import org.eclipse.jetty.util.log.Logger;
+
+import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
+import mil.dds.anet.auth.AnetAuthenticationFilter;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Person.Role;
+import mil.dds.anet.beans.Position.PositionType;
 import mil.dds.anet.beans.Position;
 import mil.dds.anet.database.PersonDao;
 import mil.dds.anet.views.ObjectListView;
 
-@Path("/people")
+@Path("/api/people")
 @Produces(MediaType.APPLICATION_JSON)
 @PermitAll
 public class PersonResource {
 
+	private static Logger log = Log.getLogger(PersonResource.class);
+	
 	private PersonDao dao;
 	
 	public PersonResource(AnetObjectEngine engine) { 
@@ -95,6 +104,7 @@ public class PersonResource {
 	 */
 	@POST
 	@Path("/new")
+	@RolesAllowed("SUPER_USER")
 	public Person createNewPerson(Person p) { 
 		return dao.insert(p);
 	}
@@ -109,14 +119,40 @@ public class PersonResource {
 	}
 	
 	/**
-	 * Will update a person record with the {@link Person} entity provided in the http entity. All fields will be updated, so you must pass the complete Person object. 
+	 * Will update a person record with the {@link Person} entity provided in the http entity. All fields will be updated, so you must pass the complete Person object.
+	 * Must be 
+	 *   1) The person editing yourself
+	 *   2) A super user for the person's organization
+	 *   3) An administrator 
 	 * @return HTTP/200 on success, HTTP/404 on any error. 
 	 */
 	@POST
 	@Path("/update")
-	public Response updatePerson(Person p) { 
+	public Response updatePerson(@Auth Person user, Person p) {
+		if (canEditPerson(user, p) == false) { 
+			throw new WebApplicationException("You are not permitted to do this", Status.UNAUTHORIZED);
+		}
 		int numRows = dao.update(p);
 		return (numRows == 1) ? Response.ok().build() : Response.status(Status.NOT_FOUND).build();
+	}
+	
+	private boolean canEditPerson(Person editor, Person subject) { 
+		if (editor.getId().equals(subject.getId())) { 
+			return true;
+		}
+		Position editorPos = editor.getPositionJson();
+		if (editorPos == null) { return false; } 
+		if (editorPos.getType() == PositionType.ADMINISTRATOR) { return true; } 
+		if (editorPos.getType() == PositionType.SUPER_USER) { 
+			//Ensure that the editor is the Super User for the subject's organization.
+			Position subjectPos = subject.getPosition();
+			if (subjectPos != null && subjectPos.getOrganizationJson() != null &&
+					editorPos.getOrganizationJson() != null && 
+					subjectPos.getOrganizationJson().getId().equals(editorPos.getOrganizationJson().getId())) { 
+				return true;
+			}
+		}
+		return false;
 	}
 	
 //	@DELETE

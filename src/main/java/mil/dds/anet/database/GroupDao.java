@@ -1,17 +1,26 @@
 package mil.dds.anet.database;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.joda.time.DateTime;
 import org.skife.jdbi.v2.GeneratedKeys;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.PreparedBatch;
 import org.skife.jdbi.v2.Query;
+import org.skife.jdbi.v2.sqlobject.Transaction;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
+import mil.dds.anet.beans.ApprovalStep;
 import mil.dds.anet.beans.Group;
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.database.mappers.ApprovalStepMapper;
 import mil.dds.anet.database.mappers.GroupMapper;
 import mil.dds.anet.database.mappers.PersonMapper;
 import mil.dds.anet.utils.DaoUtils;
@@ -49,7 +58,7 @@ public class GroupDao implements IAnetDao<Group> {
 		if (groups.size() == 0) { return null; } 
 		Group g = groups.get(0);
 		
-		Query<Person> membersQuery = dbHandle.createQuery("SELECT people.* " + 
+		Query<Person> membersQuery = dbHandle.createQuery("SELECT " + PersonDao.PERSON_FIELDS + " " +  
 				"FROM people, groupMemberships " + 
 				"WHERE groupMemberships.groupId = :groupId " +
 				"AND groupMemberships.personId = people.id")
@@ -69,9 +78,6 @@ public class GroupDao implements IAnetDao<Group> {
 			.bind("name",g.getName())
 			.bind("createdAt", g.getCreatedAt())
 			.executeAndReturnGeneratedKeys();
-		
-		//"generated_keys"
-
 		g.setId(DaoUtils.getGeneratedId(keys));
 		
 		if (g.getMembers() != null && g.getMembers().size() > 0 ) { 
@@ -126,7 +132,20 @@ public class GroupDao implements IAnetDao<Group> {
 		return deleteGroup(g.getId());
 	}
 	
-	public int deleteGroup(int groupId) { 
+	@Transaction
+	public int deleteGroup(int groupId) {
+		//Check to see if this group is used in any approval steps and if so return an error. 
+		List<ApprovalStep> steps = dbHandle.createQuery("SELECT * from approvalSteps where approverGroupId = :groupId")
+			.bind("groupId", groupId)
+			.map(new ApprovalStepMapper())
+			.list();
+		if (steps.size() > 0) { 
+			HashMap<String,Object> r = new HashMap<String,Object>();
+			r.put("msg", "Cannot delete group, it is used as part of an approval workflow");
+			r.put("workflowStepIds", steps.stream().map(s -> s.getId()).collect(Collectors.toList()));
+			throw new WebApplicationException(Response.status(Status.BAD_REQUEST).entity(r).build());
+		}
+		
 		dbHandle.createStatement("DELETE FROM groupMemberships WHERE groupId = :groupId")
 			.bind("groupId", groupId)
 			.execute();

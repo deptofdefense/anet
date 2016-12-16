@@ -24,6 +24,12 @@ import mil.dds.anet.utils.DaoUtils;
 
 public class ReportDao implements IAnetDao<Report> {
 
+	private static String[] fields = { "id", "state", "createdAt", "updatedAt", "engagementDate",
+			"locationId", "approvalStepId", "intent", "exsum", "atmosphere", 
+			"atmosphereDetails", "text", "nextSteps", "authorId"};
+	private static String tableName = "reports";
+	public static String REPORT_FIELDS = DaoUtils.buildFieldAliases(tableName, fields);
+	
 	Handle dbHandle;
 	
 	public ReportDao(Handle db) {
@@ -33,9 +39,15 @@ public class ReportDao implements IAnetDao<Report> {
 	public List<Report> getAll(int pageNum, int pageSize) {
 		String sql;
 		if (DaoUtils.isMsSql(dbHandle)) {
-			sql = "SELECT * FROM reports ORDER BY createdAt ASC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY";
+			sql = "SELECT " + REPORT_FIELDS + ", " + PersonDao.PERSON_FIELDS
+					+ "FROM reports, people "
+					+ "WHERE reports.authorId = people.id "
+					+ "ORDER BY reports.createdAt DESC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY";
 		} else { 
-			sql = "SELECT * from reports ORDER BY createdAt ASC LIMIT :limit OFFSET :offset";
+			sql = "SELECT " + REPORT_FIELDS + ", " + PersonDao.PERSON_FIELDS
+					+ "FROM reports, people "
+					+ "WHERE reports.authorId = people.id "
+					+ "ORDER BY reports.createdAt DESC LIMIT :limit OFFSET :offset";
 		}
 		Query<Report> query = dbHandle.createQuery(sql)
 			.bind("limit", pageSize)
@@ -96,7 +108,10 @@ public class ReportDao implements IAnetDao<Report> {
 	}
 
 	public Report getById(int id) { 
-		Query<Report> query = dbHandle.createQuery("SELECT * from reports WHERE id = :id")
+		Query<Report> query = dbHandle.createQuery("SELECT " + REPORT_FIELDS + ", " + PersonDao.PERSON_FIELDS
+				+ "FROM reports, people "
+				+ "WHERE reports.id = :id "
+				+ "AND reports.authorId = people.id")
 				.bind("id", id)
 				.map(new ReportMapper());
 		List<Report> results = query.list();
@@ -140,27 +155,47 @@ public class ReportDao implements IAnetDao<Report> {
 			.execute();
 	}
 	
-	public int removeAttendeeFromReport(int personId, Report r) { 
+	public int removeAttendeeFromReport(Person p, Report r) { 
 		return dbHandle.createStatement("DELETE FROM reportPeople WHERE reportId = :reportId AND personId = :personId")
 			.bind("reportId", r.getId())
-			.bind("personId", personId)
+			.bind("personId", p.getId())
 			.execute();
+	}
+	
+	public int addPoamToReport(Poam p, Report r) { 
+		return dbHandle.createStatement("INSERT INTO reportPoams (poamId, reportId) VALUES (:poamId, :reportId)")
+			.bind("reportId", r.getId())
+			.bind("poamId", p.getId())
+			.execute();
+	}
+	
+	public int removePoamFromReport(Poam p, Report r) { 
+		return dbHandle.createStatement("DELETE FROM reportPoams WHERE reportId = :reportId AND poamId = :poamId")
+				.bind("reportId", r.getId())
+				.bind("poamId", p.getId())
+				.execute();
 	}
 	
 	/* Returns reports that the given person can currently approve */
 	public List<Report> getReportsForMyApproval(Person p) { 
-		return dbHandle.createQuery("SELECT reports.* FROM reports, groupMemberships, approvalSteps " + 
-				"WHERE groupMemberships.personId = :personId AND " + 
-				"groupMemberships.groupId = approvalSteps.approverGroupId AND " + 
-				"approvalSteps.id = reports.approvalStepId")
+		return dbHandle.createQuery("SELECT " + REPORT_FIELDS + ", " + PersonDao.PERSON_FIELDS
+				+ "FROM reports, groupMemberships, approvalSteps, people " 
+				+ "WHERE groupMemberships.personId = :personId "
+				+ "AND groupMemberships.groupId = approvalSteps.approverGroupId "
+				+ "AND approvalSteps.id = reports.approvalStepId "
+				+ "AND reports.authorId = people.id")
 			.bind("personId", p.getId())
 			.map(new ReportMapper())
 			.list();
 	}
 	
 	public List<Report> getMyReportsPendingApproval(Person p) { 
-		return dbHandle.createQuery("SELECT * from reports WHERE authorId = :authorId "
-				+ "AND state IN (:pending, :draft) ORDER BY createdAt DESC")
+		return dbHandle.createQuery("SELECT " + REPORT_FIELDS + ", " + PersonDao.PERSON_FIELDS
+				+ "FROM reports, people "
+				+ "WHERE reports.authorId = :authorId "
+				+ "AND reports.state IN (:pending, :draft) "
+				+ "AND reports.authorId = people.id "
+				+ "ORDER BY reports.createdAt DESC")
 			.bind("authorId", p.getId())
 			.bind("pending", ReportState.PENDING_APPROVAL.ordinal())
 			.bind("draft", ReportState.DRAFT.ordinal())
@@ -169,7 +204,7 @@ public class ReportDao implements IAnetDao<Report> {
 	}
 	
 	public List<ReportPerson> getAttendeesForReport(int reportId) { 
-		return dbHandle.createQuery("SELECT * FROM reportPeople "
+		return dbHandle.createQuery("SELECT " + PersonDao.PERSON_FIELDS + ", reportPeople.isPrimary FROM reportPeople "
 				+ "LEFT JOIN people ON reportPeople.personId = people.id "
 				+ "WHERE reportPeople.reportId = :reportId")
 			.bind("reportId", reportId)
@@ -189,9 +224,14 @@ public class ReportDao implements IAnetDao<Report> {
 	public List<Report> search(String query) {
 		String sql;
 		if (DaoUtils.isMsSql(dbHandle)) { 
-			sql = "SELECT * FROM reports WHERE FREETEXT ((text, nextSteps, intent, atmosphereDetails),:query)";
+			sql = "SELECT " + REPORT_FIELDS + ", " + PersonDao.PERSON_FIELDS 
+				+ "FROM reports, people "
+				+ "WHERE FREETEXT ((text, nextSteps, intent, atmosphereDetails),:query) "
+				+ "AND reports.authorId = people.id";
 		} else { 
-			sql = "SELECT * FROM reports WHERE text LIKE '%' || :query || '%'";
+			sql = "SELECT " + REPORT_FIELDS + ", " + PersonDao.PERSON_FIELDS 
+				+ "FROM reports WHERE text LIKE '%' || :query || '%' "
+				+ "AND reports.authorId = people.id";
 		}
 		return dbHandle.createQuery(sql)
 			.bind("query", query)
@@ -200,8 +240,10 @@ public class ReportDao implements IAnetDao<Report> {
 	}
 
 	public List<Report> getReportsByAuthorPosition(Position position) {
-		return dbHandle.createQuery("SELECT reports.* from peoplePositions "
+		return dbHandle.createQuery("SELECT " + REPORT_FIELDS + ", " + PersonDao.PERSON_FIELDS
+				+ "FROM peoplePositions "
 				+ "INNER JOIN reports ON peoplePositions.personId = reports.authorId "
+				+ "LEFT JOIN people on reports.authorId = people.id "
 				+ "WHERE peoplePositions.positionId = :positionId "
 				+ "AND peoplePositions.personId IS NOT NULL "
 				+ "ORDER BY reports.engagementDate DESC")
@@ -211,10 +253,12 @@ public class ReportDao implements IAnetDao<Report> {
 	}
 
 	public Object getReportsAboutThisPosition(Position position) {
-		return dbHandle.createQuery("SELECT reports.* from reports, peoplePositions, reportPeople "
+		return dbHandle.createQuery("SELECT " + REPORT_FIELDS + ", " + PersonDao.PERSON_FIELDS
+				+ "FROM reports, peoplePositions, reportPeople, people "
 				+ "WHERE peoplePositions.positionId = :positionId "
 				+ "AND reportPeople.personId = peoplePositions.personId "
 				+ "AND reports.id = reportPeople.reportId "
+				+ "AND reports.authorId = people.id "
 				+ "ORDER BY reports.engagementDate DESC")
 			.bind("positionId", position.getId())
 			.map(new ReportMapper())
@@ -222,7 +266,11 @@ public class ReportDao implements IAnetDao<Report> {
 	}
 
 	public List<Report> getReportsByAuthor(Person p) {
-		return dbHandle.createQuery("SELECT reports.* from reports where authorId = :personId ORDER BY engagementDate DESC")
+		return dbHandle.createQuery("SELECT " + REPORT_FIELDS + ", " + PersonDao.PERSON_FIELDS
+				+ "FROM reports "
+				+ "LEFT JOIN people WHERE reports.authorId = people.id "
+				+ "WHERE authorId = :personId "
+				+ "ORDER BY engagementDate DESC")
 			.bind("personId", p.getId())
 			.map(new ReportMapper())
 			.list();
@@ -243,8 +291,8 @@ public class ReportDao implements IAnetDao<Report> {
 		}
 		return dbHandle.createQuery(sql)
 				.bind("authorId", p.getId())
-		.map(new LocationMapper())
-		.list();
+				.map(new LocationMapper())
+				.list();
 	}
 
 	public List<Person> getRecentPeople(Person author) {
@@ -266,8 +314,31 @@ public class ReportDao implements IAnetDao<Report> {
 		}
 		return dbHandle.createQuery(sql)
 				.bind("authorId", author.getId())
-		.map(new PersonMapper())
-		.list();
+				.map(new PersonMapper())
+				.list();
+	}
+
+	public List<Poam> getRecentPoams(Person author) {
+		String sql;
+		if (DaoUtils.isMsSql(dbHandle)) {
+			sql = "SELECT TOP 10 poams.* "
+					+ "FROM poams "
+					+ "JOIN reportPoams ON poams.id = reportPoams.poamId "
+					+ "JOIN reports ON reportPoams.reportId = reports.id "
+					+ "WHERE reports.authorId = :authorId "
+					+ "ORDER BY reports.createdAt DESC";
+		} else {
+			sql = "SELECT poams.* "
+					+ "FROM poams "
+					+ "JOIN reportPoams ON poams.id = reportPoams.poamId "
+					+ "JOIN reports ON reportPoams.reportId = reports.id "
+					+ "WHERE reports.authorId = :authorId "
+					+ "ORDER BY reports.createdAt DESC LIMIT 10";
+		}
+		return dbHandle.createQuery(sql)
+				.bind("authorId", author.getId())
+				.map(new PoamMapper())
+				.list();
 	}
 	
 }

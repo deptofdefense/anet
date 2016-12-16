@@ -1,13 +1,12 @@
-developmentMode: false
-securityMarking: DEMO USE ONLY
-securityColor: "green"
+developmentMode: true
 
 smtp:
   hostname: ${ANET_SMTP_SERVER}
-  port: 587
+  port: 25
   username: ${ANET_SMTP_USERNAME}
   password: ${ANET_SMTP_PASSWORD}
   startTLS: true
+emailFromAddr: "Anet Testing <hunter+anet@dds.mil>"
 
 database:
   driverClass: ${ANET_DB_DRIVER}
@@ -17,6 +16,16 @@ database:
   properties:
    date_string_format: ${ANET_DB_DATE_STRING_FORMAT}
    date_class: ${ANET_DB_DATE_CLASS}
+waffleConfig:
+  principalFormat: fqn
+  roleFormat: both
+  allowGuestLogin: false
+  impersonate: false
+  securityFilterProviders: waffle.servlet.spi.BasicSecurityFilterProvider
+  #securityFilterProviders: "waffle.servlet.spi.BasicSecurityFilterProvider waffle.servlet.spi.NegotiateSecurityFilterProvider"
+  #"waffle.servlet.spi.NegotiateSecurityFilterProvider/protocols": Negotiate NTLM
+  "waffle.servlet.spi.BasicSecurityFilterProvider/realm": ANET
+
 
 server:
   applicationConnectors:
@@ -34,11 +43,13 @@ logging:
   level: INFO
   loggers:
     "io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper" : DEBUG
-    "org.skife.jdbi.v2.DBI" : TRACE
-    "org.skife.jdbi.v2" : TRACE
-    "org.sqlite.JDBC" : TRACE
+    "org.skife.jdbi.v2.DBI" : INFO
+    "org.sqlite.JDBC" : INFO
     "io.dropwizard.assets.AssetsBundle" : TRACE
     "io.dropwizard.assets.*" : TRACE
+    "waffle.servlet.NegotiateSecurityFilter" : TRACE
+    "mil.dds.anet.auth.AnetAuthenticationFilter" : TRACE
+    "mil.dds.anet.AnetEmailWorker" : DEBUG
     "mil.dds.anet.resources.TestingResource" :
       level: INFO
       appenders:

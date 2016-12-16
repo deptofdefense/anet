@@ -15,6 +15,10 @@ import mil.dds.anet.utils.DaoUtils;
 
 public class OrganizationDao implements IAnetDao<Organization> {
 
+	private static String[] fields = {"id", "name", "type", "createdAt", "updatedAt", "parentOrgId"};
+	private static String tableName = "organizations";
+	public static String ORGANIZATION_FIELDS = DaoUtils.buildFieldAliases(tableName, fields);
+	
 	Handle dbHandle;
 	GroupDao groupDao;
 	
@@ -28,7 +32,7 @@ public class OrganizationDao implements IAnetDao<Organization> {
 	}
 	
 	public List<Organization> getAll(int pageNum, int pageSize, OrganizationType type) {
-		StringBuilder queryBuilder = new StringBuilder("SELECT * from organizations ");
+		StringBuilder queryBuilder = new StringBuilder("SELECT " + ORGANIZATION_FIELDS + " from organizations ");
 		if (type != null) { 
 			queryBuilder.append("AND type = :type ");
 		}
@@ -49,7 +53,7 @@ public class OrganizationDao implements IAnetDao<Organization> {
 	
 	public Organization getById(int id) { 
 		Query<Organization> query = dbHandle.createQuery(
-				"Select * from organizations where id = :id")
+				"Select " + ORGANIZATION_FIELDS + " from organizations where id = :id")
 			.bind("id",id)
 			.map(new OrganizationMapper());
 		List<Organization> results = query.list();
@@ -57,8 +61,8 @@ public class OrganizationDao implements IAnetDao<Organization> {
 	}
 	
 	public List<Organization> getByParentOrgId(Integer parentId) { 
-		String query = (parentId == null) ? "SELECT * FROM organizations WHERE parentOrgId IS NULL" : 
-			"SELECT * FROM organizations WHERE parentOrgId = :parentId";
+		String query = (parentId == null) ? "SELECT " + ORGANIZATION_FIELDS + " FROM organizations WHERE parentOrgId IS NULL" : 
+			"SELECT " + ORGANIZATION_FIELDS + " FROM organizations WHERE parentOrgId = :parentId";
 		return dbHandle.createQuery(query)
 			.bind("parentId",parentId)
 			.map(new OrganizationMapper())
@@ -103,9 +107,9 @@ public class OrganizationDao implements IAnetDao<Organization> {
 		String sql;
 		if (DaoUtils.isMsSql(dbHandle)) { 
 			name = "\"" + name + "*\"";
-			sql = "SELECT * FROM organizations WHERE CONTAINS (name, :name) AND type = :type";
+			sql = "SELECT " + ORGANIZATION_FIELDS + " FROM organizations WHERE CONTAINS (name, :name) AND type = :type";
 		} else { 
-			sql = "SELECT * FROM organizations WHERE type = :type AND name LIKE '%' || :name || '%'";
+			sql = "SELECT " + ORGANIZATION_FIELDS + " FROM organizations WHERE type = :type AND name LIKE '%' || :name || '%'";
 		}
 		return dbHandle.createQuery(sql)
 			.bind("type", DaoUtils.getEnumId(type))

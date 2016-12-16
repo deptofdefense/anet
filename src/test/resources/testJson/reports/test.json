@@ -50,7 +50,8 @@
 		"emailAddress": "foobar@example.com",
 		"phoneNumber": "123-456-78960",
 		"rank": "OF-9",
-		"biography": "this is a sample biography"
+		"biography": "this is a sample biography",
+		"domainUsername" : "jack"
 	},
 	"comments": [{
 		"id": null,
@@ -62,7 +63,8 @@
 			"emailAddress": "foobar@example.com",
 			"phoneNumber": "123-456-78960",
 			"rank": "OF-9",
-			"biography": "this is a sample biography"
+			"biography": "this is a sample biography",
+			"domainUsername" : "jack"
 		},
 		"createdAt": 1453815803000,
 		"updatedAt": null,

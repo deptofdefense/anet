@@ -193,6 +193,7 @@
 		</sql>
 	</changeSet>
 
+	<!-- Liquidbase uses datetime, but SQLServer recommends using datetime2 instead -->
 	<changeSet id="5" author="hpitelka" >
 		<sql dbms="mssql">
 			ALTER TABLE people ALTER COLUMN createdAt datetime2;
@@ -223,6 +224,176 @@
 			ALTER TABLE locations ALTER COLUMN updatedAt datetime2;
 			
 			ALTER TABLE approvalActions ALTER COLUMN createdAt datetime2;
+		</sql>
+	</changeSet>
+
+	<changeSet id="6" author="hpitelka">
+		<addColumn tableName="people">
+			<column name="domainUsername" type="varchar(500)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="7" author="hpitelka">
+		<sql dbms="mssql">
+			<!-- really frustrating that I didn't do the not-null constraint above in changeset 5
+			  but I didn't so it's here.  If we ever nuke the database, would be nice to clean this up -->
+			ALTER TABLE groups ALTER COLUMN createdAt datetime2 NOT NULL;
+			
+			ALTER TABLE organizations ALTER COLUMN createdAt datetime2 NOT NULL;
+			ALTER TABLE organizations ALTER COLUMN updatedAt datetime2 NOT NULL;
+
+			ALTER TABLE people ALTER COLUMN createdAt datetime2 NOT NULL;
+			ALTER TABLE people ALTER COLUMN updatedAt datetime2 NOT NULL;
+			
+			ALTER TABLE reports ALTER COLUMN createdAt datetime2 NOT NULL;
+			ALTER TABLE reports ALTER COLUMN updatedAt datetime2 NOT NULL;
+			
+			ALTER TABLE poams ALTER COLUMN createdAt datetime2 NOT NULL;
+			ALTER TABLE poams ALTER COLUMN updatedAt datetime2 NOT NULL;
+			
+			ALTER TABLE positions ALTER COLUMN createdAt datetime2 NOT NULL;
+			ALTER TABLE positions ALTER COLUMN updatedAt datetime2 NOT NULL;
+			
+			ALTER TABLE comments ALTER COLUMN createdAt datetime2 NOT NULL;
+			ALTER TABLE comments ALTER COLUMN updatedAt datetime2 NOT NULL;
+			
+			ALTER TABLE locations ALTER COLUMN createdAt datetime2 NOT NULL;
+			ALTER TABLE locations ALTER COLUMN updatedAt datetime2 NOT NULL;
+
+			ALTER TABLE positionRelationships ALTER COLUMN createdAt datetime2 NOT NULL;
+			ALTER TABLE positionRelationships ALTER COLUMN updatedAt datetime2 NOT NULL;
+			ALTER TABLE approvalActions ALTER COLUMN createdAt datetime2 NOT NULL;
+		</sql>
+	</changeSet>
+
+	<changeSet id="8" author="hpitelka" dbms="mssql" >
+		<!-- Groups -->
+		<addUniqueConstraint tableName="groupMemberships" columnNames="groupId, personId" constraintName="uniqueGroupMembership" />
+		<addNotNullConstraint tableName="groups" columnName="name" columnDataType="varchar(512)" />
+		<addForeignKeyConstraint baseColumnNames="groupId" baseTableName="groupMemberships" 
+			constraintName="fk_groupMember_group" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="groups" />
+		<addForeignKeyConstraint baseColumnNames="personId" baseTableName="groupMemberships" 
+			constraintName="fk_groupMember_person" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="people" />
+
+		<!-- Approval Steps -->
+		<addForeignKeyConstraint baseColumnNames="approverGroupId" baseTableName="approvalSteps"
+			constraintName="fk_approvalSteps_group" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="groups" />
+		<addForeignKeyConstraint baseColumnNames="advisorOrganizationId" baseTableName="approvalSteps"
+			constraintName="fk_approvalSteps_orgId" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="organizations" /> 
+
+		<!-- Approval Actions -->
+		<addForeignKeyConstraint baseColumnNames="approvalStepId" baseTableName="approvalActions"
+			constraintName="fk_approvalActions_step" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="approvalSteps" />
+		<addForeignKeyConstraint baseColumnNames="personId" baseTableName="approvalActions"
+			constraintName="fk_approvalActions_person" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="people" />
+
+		<!-- Reports -->
+		<addNotNullConstraint tableName="reports" columnName="authorId" columnDataType="int" />
+		<addNotNullConstraint tableName="reports" columnName="state" columnDataType="int" />
+		<addForeignKeyConstraint baseColumnNames="authorId" baseTableName="reports"
+			constraintName="fk_reports_author" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="people" />
+		<addForeignKeyConstraint baseColumnNames="locationId" baseTableName="reports"
+			constraintName="fk_reports_location" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="locations" />
+		<addForeignKeyConstraint baseColumnNames="approvalStepId" baseTableName="reports"
+			constraintName="fk_reports_approvalStep" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="approvalSteps" />
+
+		<!-- Report People -->
+		<addUniqueConstraint tableName="reportPeople" columnNames="personId, reportId" constraintName="uniqueReportPerson" />
+		<addForeignKeyConstraint baseColumnNames="personId" baseTableName="reportPeople"
+			constraintName="fk_reportPeople_person" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="people" />
+		<addForeignKeyConstraint baseColumnNames="reportId" baseTableName="reportPeople"
+			constraintName="fk_reportPeople_report" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="reports" />
+
+		<!-- Report Poams -->
+		<addUniqueConstraint tableName="reportPoams" columnNames="poamId, reportId" constraintName="uniqueReportPoam" />
+		<addForeignKeyConstraint baseColumnNames="poamId" baseTableName="reportPoams"
+			constraintName="fk_reportPoams_poam" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="poams" />
+		<addForeignKeyConstraint baseColumnNames="reportId" baseTableName="reportPoams"
+			constraintName="fk_reportPoams_report" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="reports" />
+	
+		<!-- Poams -->
+		<addForeignKeyConstraint baseColumnNames="parentPoamId" baseTableName="poams"
+			constraintName="fk_poams_parent" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="poams" />
+
+		<!-- Locations -->
+		<addNotNullConstraint tableName="locations" columnName="name" columnDataType="varchar(500)" />
+
+		<!-- Positions -->
+		<addNotNullConstraint tableName="positions" columnName="name" columnDataType="varchar(512)" />
+		<addForeignKeyConstraint baseColumnNames="currentPersonId" baseTableName="positions"
+			constraintName="fk_positions_currPerson" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="people" />
+		<addForeignKeyConstraint baseColumnNames="organizationId" baseTableName="positions"
+			constraintName="fk_positions_org" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="organizations" />
+		<addForeignKeyConstraint baseColumnNames="locationId" baseTableName="positions"
+			constraintName="fk_positions_location" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="locations" />
+
+		<!-- Organizations -->
+		<addForeignKeyConstraint baseColumnNames="parentOrgId" baseTableName="organizations"
+			constraintName="fk_organizations_parentOrg" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="organizations" />
+
+		<!-- Comments -->
+		<addForeignKeyConstraint baseColumnNames="authorId" baseTableName="comments"
+			constraintName="fk_comments_author" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="people" />
+		<addForeignKeyConstraint baseColumnNames="reportId" baseTableName="comments"
+			constraintName="fk_comments_report" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="reports" />
+
+		<!-- People Positions -->
+		<addForeignKeyConstraint baseColumnNames="positionId" baseTableName="peoplePositions"
+			constraintName="fk_peoplePositions_position" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="positions" />
+		<addForeignKeyConstraint baseColumnNames="personId" baseTableName="peoplePositions"
+			constraintName="fk_peoplePositions_person" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="people" />
+
+		<!-- Position Relationships -->
+		<addForeignKeyConstraint baseColumnNames="positionId_a" baseTableName="positionRelationships"
+			constraintName="fk_positionsRelationships_idA" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="positions" />
+		<addForeignKeyConstraint baseColumnNames="positionId_b" baseTableName="positionRelationships"
+			constraintName="fk_positionsRelationships_idB" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="positions" />
+	</changeSet>
+
+	<changeSet id="9" author="hpitelka" >
+		<createTable tableName="adminSettings">
+            <column name="key" type="varchar(255)" />
+            <column name="value" type="text" />
+		</createTable>
+	</changeSet>
+	<changeSet id="10" author="hpitelka" dbms="mssql" >
+		<addUniqueConstraint tableName="adminSettings" columnNames="key" constraintName="adminSettingKey" />
+	</changeSet>
+
+	<changeSet id="11" author="hpitelka" >
+		<createTable tableName="pendingEmails">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+			<column name="jobSpec" type="text" />
+			<column name="createdAt" type="datetime" />
+		</createTable>
+		<sql dbms="mssql">
+			ALTER TABLE pendingEmails ALTER COLUMN createdAt datetime2 NOT NULL;
 		</sql>
 	</changeSet>
 </databaseChangeLog>

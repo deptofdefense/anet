@@ -18,9 +18,11 @@ import mil.dds.anet.utils.DaoUtils;
 
 public class PositionDao implements IAnetDao<Position> {
 
-	private static String POSITIONS_FIELDS  = "positions.id AS pos_id, positions.name AS pos_name, positions.code AS pos_code, positions.type AS pos_type, "
-			+ "positions.createdAt AS pos_createdAt, positions.updatedAt AS pos_updatedAt, positions.organizationId AS pos_organizationId, " 
-			+ "positions.currentPersonId AS pos_currentPersonId, positions.locationId AS pos_locationId ";
+	private static String[] fields = {"id", "name", "code", "createdAt", 
+			"updatedAt", "organizationId", "currentPersonId", "type", 
+			"locationId" };
+	private static String tableName = "positions";
+	public static String POSITIONS_FIELDS  = DaoUtils.buildFieldAliases(tableName, fields);
 	
 	Handle dbHandle;
 	
@@ -42,7 +44,7 @@ public class PositionDao implements IAnetDao<Position> {
 		return query.list();
 	}
 	
-	public Position insert(Position p) { 
+	public Position insert(Position p) {
 		p.setCreatedAt(DateTime.now());
 		p.setUpdatedAt(p.getCreatedAt());
 		GeneratedKeys<Map<String,Object>> keys = dbHandle.createStatement(
@@ -150,7 +152,7 @@ public class PositionDao implements IAnetDao<Position> {
 	
 	public Person getPersonInPositionNow(Position p) { 
 		if (p.getPersonJson() == null) { return null; } //No person currently in position.
-		List<Person> people = dbHandle.createQuery("SELECT people.* FROM people WHERE id = :personId")
+		List<Person> people = dbHandle.createQuery("SELECT " + PersonDao.PERSON_FIELDS + " FROM people WHERE id = :personId")
 			.bind("personId", p.getPersonJson().getId())
 			.map(new PersonMapper())
 			.list();
@@ -160,14 +162,14 @@ public class PositionDao implements IAnetDao<Position> {
 	
 	public Person getPersonInPosition(Position b, DateTime dtg) { 
 		String sql;
-		if (DaoUtils.isMsSql(dbHandle)) { 
-			sql = "SELECT TOP(1)people.* FROM peoplePositions " +
+		if (DaoUtils.isMsSql(dbHandle)) {
+			sql = "SELECT TOP(1) " + PersonDao.PERSON_FIELDS + " FROM peoplePositions " +
 					" LEFT JOIN people ON people.id = peoplePositions.personId " +
 					"WHERE peoplePositions.positionId = :positionId " +
 					"AND peoplePositions.createdAt < :dtg " + 
 					"ORDER BY peoplePositions.createdAt DESC";
-		} else { 
-			sql = "SELECT people.* FROM peoplePositions " +
+		} else {
+			sql = "SELECT " + PersonDao.PERSON_FIELDS + " FROM peoplePositions " +
 				" LEFT JOIN people ON people.id = peoplePositions.personId " +
 				"WHERE peoplePositions.positionId = :positionId " +
 				"AND peoplePositions.createdAt < :dtg " + 

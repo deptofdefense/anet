@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.mail.Authenticator;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
@@ -24,14 +25,19 @@ import javax.ws.rs.core.MediaType;
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+
 import io.dropwizard.auth.Auth;
+import mil.dds.anet.AnetEmailWorker;
+import mil.dds.anet.AnetEmailWorker.AnetEmail;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.config.AnetConfiguration;
 import mil.dds.anet.config.AnetConfiguration.SmtpConfiguration;
 import mil.dds.anet.views.SimpleView;
 
-@Path("/testing")
+@Path("/api/testing")
 @Produces(MediaType.APPLICATION_JSON)
 public class TestingResource {
 
@@ -82,20 +88,23 @@ public class TestingResource {
 	public void email(@QueryParam("from") String from, @QueryParam("to") String to) { 
 		SmtpConfiguration smtp = config.getSmtp();
 		Properties props = new Properties();
-		props.put("mail.smtp.auth", "true");
 		props.put("mail.smtp.starttls.enable", smtp.getStartTLS().toString());
 		props.put("mail.smtp.host", smtp.getHostname());
 		props.put("mail.smtp.port", smtp.getPort().toString());
-
-		Session session = Session.getInstance(props,
-			new javax.mail.Authenticator() {
+		Authenticator auth = null;
+		
+		if (smtp.getUsername() != null && smtp.getUsername().trim().length() > 0) { 
+			props.put("mail.smtp.auth", "true");
+			auth = new javax.mail.Authenticator() {
 				protected PasswordAuthentication getPasswordAuthentication() {
 					return new PasswordAuthentication(smtp.getUsername(), smtp.getPassword());
 				}
-			});
+			};
+		}
+		
+		Session session = Session.getInstance(props, auth);
 
 		try {
-
 			Message message = new MimeMessage(session);
 			message.setFrom(new InternetAddress(from));
 			message.setRecipients(Message.RecipientType.TO,
@@ -110,5 +119,16 @@ public class TestingResource {
 		} catch (MessagingException e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	@GET
+	@Path("/email2")
+	public void email(@QueryParam("to") String to) { 
+		AnetEmail email = new AnetEmail();
+		email.setToAddresses(ImmutableList.of(to));
+		email.setContext(ImmutableMap.of("toAddr",to));
+		email.setTemplateName("emails/test.ftl");
+		email.setSubject("A Test Email from /api/testing/email2");
+		AnetEmailWorker.sendEmailAsync(email);
 	}
 }

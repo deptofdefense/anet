@@ -34,7 +34,7 @@ public class ApprovalActionDao implements IAnetDao<ApprovalAction> {
 
 	public List<ApprovalAction> getActionsForReport(int reportId) {
 		Query<ApprovalAction> query = dbHandle.createQuery("SELECT * FROM approvalActions " + 
-				"WHERE reportId = :reportId")
+				"WHERE reportId = :reportId ORDER BY createdAt ASC")
 			.bind("reportId", reportId)
 			.map(new ApprovalActionMapper());
 		return query.list();

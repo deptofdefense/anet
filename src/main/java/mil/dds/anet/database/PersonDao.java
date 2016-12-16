@@ -22,6 +22,13 @@ import mil.dds.anet.utils.DaoUtils;
 
 public class PersonDao implements IAnetDao<Person> {
 
+	private static String[] fields = {"id","name","status","role",
+			"emailAddress","phoneNumber","rank","biography",
+			"domainUsername","pendingVerification","createdAt",
+			"updatedAt"};
+	private static String tableName = "people";
+	public static String PERSON_FIELDS = DaoUtils.buildFieldAliases(tableName, fields);
+	
 	Handle dbHandle;
 	
 	public PersonDao(Handle h) { 
@@ -31,9 +38,9 @@ public class PersonDao implements IAnetDao<Person> {
 	public List<Person> getAll(int pageNum, int pageSize) {
 		String sql;
 		if (DaoUtils.isMsSql(dbHandle)) { 
-			sql = "SELECT * FROM people ORDER BY createdAt ASC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY";
+			sql = "SELECT " + PERSON_FIELDS + " FROM people ORDER BY createdAt ASC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY";
 		} else { 
-			sql = "SELECT * from people ORDER BY createdAt ASC LIMIT :limit OFFSET :offset";
+			sql = "SELECT " + PERSON_FIELDS + " from people ORDER BY createdAt ASC LIMIT :limit OFFSET :offset";
 		}
 		Query<Person> query = dbHandle.createQuery(sql)
 			.bind("limit", pageSize)
@@ -43,7 +50,7 @@ public class PersonDao implements IAnetDao<Person> {
 	}
 
 	public Person getById(int id) { 
-		Query<Person> query = dbHandle.createQuery("select * from people where id = :id")
+		Query<Person> query = dbHandle.createQuery("SELECT " + PERSON_FIELDS + " FROM people WHERE id = :id")
 				.bind("id",  id)
 				.map(new PersonMapper());
 		List<Person> rs = query.list();
@@ -55,8 +62,10 @@ public class PersonDao implements IAnetDao<Person> {
 		p.setCreatedAt(DateTime.now());
 		p.setUpdatedAt(DateTime.now());
 		GeneratedKeys<Map<String, Object>> keys = dbHandle.createStatement("INSERT INTO people " +
-				"(name, status, role, emailAddress, phoneNumber, rank, pendingVerification, biography, createdAt, updatedAt) " +
-				"VALUES (:name, :status, :role, :emailAddress, :phoneNumber, :rank, :pendingVerification, :biography, :createdAt, :updatedAt);")
+				"(name, status, role, emailAddress, phoneNumber, rank, pendingVerification, "
+				+ "biography, domainUsername, createdAt, updatedAt) " +
+				"VALUES (:name, :status, :role, :emailAddress, :phoneNumber, :rank, :pendingVerification, "
+				+ ":biography, :domainUsername, :createdAt, :updatedAt);")
 			.bindFromProperties(p)
 			.bind("status", DaoUtils.getEnumId(p.getStatus()))
 			.bind("role", DaoUtils.getEnumId(p.getRole()))
@@ -86,7 +95,7 @@ public class PersonDao implements IAnetDao<Person> {
 	}
 	
 	public List<Person> searchByName(String searchQuery, Role role) {
-		StringBuilder queryBuilder = new StringBuilder("SELECT * FROM people WHERE ");
+		StringBuilder queryBuilder = new StringBuilder("SELECT " + PERSON_FIELDS + " FROM people WHERE ");
 		if (DaoUtils.isMsSql(dbHandle)) { 
 			searchQuery = "\"" + searchQuery + "*\"";
 			queryBuilder.append("CONTAINS (name, :query)");
@@ -103,16 +112,16 @@ public class PersonDao implements IAnetDao<Person> {
 		return query.list();
 	}
 	
-	public Organization getOrganizationForPerson(int personId) { 
+	public Organization getOrganizationForPerson(int personId) {
 		String sql;
 		if (DaoUtils.isMsSql(dbHandle)) { 
-			sql = "SELECT TOP(1)organizations.* " +
+			sql = "SELECT TOP(1) " + OrganizationDao.ORGANIZATION_FIELDS +
 					"FROM organizations, positions, peoplePositions WHERE " + 
 					"peoplePositions.personId = :personId AND peoplePositions.positionId = positions.id " + 
 					"AND positions.organizationId = organizations.id " + 
 					"ORDER BY peoplePositions.createdAt DESC";
 		} else { 
-			sql = "SELECT organizations.* " +
+			sql = "SELECT " + OrganizationDao.ORGANIZATION_FIELDS +
 					"FROM organizations, positions, peoplePositions WHERE " + 
 					"peoplePositions.personId = :personId AND peoplePositions.positionId = positions.id " + 
 					"AND positions.organizationId = organizations.id " + 
@@ -129,15 +138,17 @@ public class PersonDao implements IAnetDao<Person> {
 
 	public List<Person> findByProperty(String ...strings) {
 		if (strings.length % 2 != 0 ) { throw new RuntimeException("Illegal number of arguments to findByProperty: " + strings.toString()); }
-		HashSet<String> props = Sets.newHashSet("name","emailAddress","rank","phoneNumber","status");
+		HashSet<String> props = Sets.newHashSet("name","emailAddress","rank","phoneNumber","status", "domainUsername");
 		List<String> conditions = new ArrayList<String>();
 		
 		for (int i=0;i<strings.length;i+=2) { 
 			if (props.contains(strings[i])) { 
-				conditions.add(strings[i] + " = ? ");
+				conditions.add(String.format("%s.%s = ?", tableName, strings[i]));
 			}
 		}
-		String queryString = "SELECT * from people WHERE " + Joiner.on(" AND ").join(conditions);
+		String queryString = "SELECT " + PERSON_FIELDS + "," + PositionDao.POSITIONS_FIELDS 
+				+ "FROM people LEFT JOIN positions ON people.id = positions.currentPersonId "
+				+ "WHERE " + Joiner.on(" AND ").join(conditions);
 		Query<Map<String, Object>> query = dbHandle.createQuery(queryString);
 		for (int i=0;i<strings.length;i+=2) { 
 			query.bind((i/2), strings[i+1]);

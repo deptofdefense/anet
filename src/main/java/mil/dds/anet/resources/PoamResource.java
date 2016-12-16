@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -23,7 +24,7 @@ import mil.dds.anet.beans.Poam;
 import mil.dds.anet.database.PoamDao;
 import mil.dds.anet.views.ObjectListView;
 
-@Path("/poams")
+@Path("/api/poams")
 @Produces(MediaType.APPLICATION_JSON)
 @PermitAll
 public class PoamResource {
@@ -62,6 +63,7 @@ public class PoamResource {
 	
 	@POST
 	@Path("/new")
+	@RolesAllowed("ADMINISTRATOR")
 	public Poam createNewPoam(Poam p) { 
 		return dao.insert(p);
 	}
@@ -69,6 +71,7 @@ public class PoamResource {
 	/* Updates shortName, longName, category, and parentPoamId */
 	@POST
 	@Path("/update")
+	@RolesAllowed("ADMINISTRATOR")
 	public Response updatePoam(Poam p) { 
 		int numRows = dao.update(p);
 		if (numRows == 0) { 
@@ -103,6 +106,12 @@ public class PoamResource {
 			}
 		}
 		return topPoams;		
+	}
+	
+	@GET
+	@Path("/search")
+	public List<Poam> search(@QueryParam("q") String query) { 
+		return dao.search(query);
 	}
 	
 	//TODO: You should never be able to delete a POAM, right?  

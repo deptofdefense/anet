@@ -21,12 +21,17 @@ import javax.ws.rs.core.Response.Status;
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;
 
+import com.google.common.collect.ImmutableMap;
+
 import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
+import mil.dds.anet.AnetEmailWorker;
+import mil.dds.anet.AnetEmailWorker.AnetEmail;
 import mil.dds.anet.beans.ApprovalAction;
 import mil.dds.anet.beans.ApprovalAction.ApprovalType;
 import mil.dds.anet.beans.ApprovalStep;
 import mil.dds.anet.beans.Comment;
+import mil.dds.anet.beans.Group;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
@@ -35,10 +40,12 @@ import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
 import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.database.ReportDao;
+import mil.dds.anet.database.AdminDao.AdminSettingKeys;
 import mil.dds.anet.utils.ResponseUtils;
 import mil.dds.anet.views.ObjectListView;
+import mil.dds.anet.views.AbstractAnetView.LoadLevel;
 
-@Path("/reports")
+@Path("/api/reports")
 @Produces(MediaType.APPLICATION_JSON)
 @PermitAll
 public class ReportResource {
@@ -55,7 +62,7 @@ public class ReportResource {
 
 	@GET
 	@Path("/")
-	@Produces(MediaType.TEXT_HTML)
+	@Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON})
 	public ObjectListView<Report> getAllReportsView(@Auth Person p, @DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
 		ObjectListView<Report> view = new ObjectListView<Report>(dao.getAll(pageNum, pageSize), Report.class);
 		List<Report> myApprovals = AnetObjectEngine.getInstance().getReportDao().getReportsForMyApproval(p);
@@ -83,10 +90,12 @@ public class ReportResource {
 		List<Poam> milestones = engine.getPoamDao().getPoamsByCategory("EF");
 		List<Location> recentLocations = engine.getReportDao().getRecentLocations(author);
 		List<Person> recentPeople = engine.getReportDao().getRecentPeople(author);
+		List<Poam> recentPoams = engine.getReportDao().getRecentPoams(author);
 		Report r = (new Report()).render("form.ftl");
 		r.addToContext("efs", milestones);
 		r.addToContext("recentLocations", recentLocations);
 		r.addToContext("recentPeople", recentPeople);
+		r.addToContext("recentPoams", recentPoams);
 		return r;
 	}
 
@@ -94,7 +103,7 @@ public class ReportResource {
 	@Path("/new")
 	public Report createNewReport(@Auth Person author, Report r) {
 		if (r.getState() == null) { r.setState(ReportState.DRAFT); }
-		if (r.getAuthor() == null) { r.setAuthor(author); } 
+		if (r.getAuthor() == null) { r.setAuthor(author); }
 		return dao.insert(r);
 	}
 
@@ -125,7 +134,7 @@ public class ReportResource {
 			break;
 		case PENDING_APPROVAL:
 			//Either the author, or the approver
-			if (!existing.getAuthorJson().getId().equals(editor.getId())) {
+			if (existing.getAuthorJson().getId().equals(editor.getId())) {
 				//This is okay, but move it back to draft
 				r.setState(ReportState.DRAFT);
 				r.setApprovalStep(null);
@@ -141,23 +150,28 @@ public class ReportResource {
 		}
 		r.setAuthor(existing.getAuthorJson());
 		dao.update(r);
-		//Fetch the people associated with this report
+		//Update Attendees: Fetch the people associated with this report
 		List<ReportPerson> existingPeople = dao.getAttendeesForReport(r.getId());
 		List<Integer> existingPplIds = existingPeople.stream().map( rp -> rp.getId()).collect(Collectors.toList());
 		//Find any differences and fix them.
 		for (ReportPerson rp : r.getAttendees()) {
 			int idx = existingPplIds.indexOf(rp.getId());
-			if (idx == -1) {
-				//Add this person s
-				dao.addAttendeeToReport(rp, r);
-			} else {
-				//This person already is in the DB
-				existingPplIds.remove(idx);
-			}
+			if (idx == -1) { dao.addAttendeeToReport(rp, r); } else { existingPplIds.remove(idx);}
 		}
 		//Any ids left in existingPplIds needs to be removed.
 		for (Integer id : existingPplIds) {
-			dao.removeAttendeeFromReport(id, r);
+			dao.removeAttendeeFromReport(Person.createWithId(id), r);
+		}
+
+		//Update Poams:
+		List<Poam> existingPoams = dao.getPoamsForReport(r);
+		List<Integer> existingPoamIds = existingPoams.stream().map( p -> p.getId()).collect(Collectors.toList());
+		for (Poam p : r.getPoamsJson()) {
+			int idx = existingPoamIds.indexOf(p.getId());
+			if (idx == -1) { dao.addPoamToReport(p, r); } else {  existingPoamIds.remove(idx); }
+		}
+		for (Integer id : existingPoamIds) {
+			dao.removePoamFromReport(Poam.createWithId(id), r);
 		}
 		return Response.ok().build();
 	}
@@ -169,23 +183,41 @@ public class ReportResource {
 	@Path("/{id}/submit")
 	public Response submitReport(@PathParam("id") int id) {
 		Report r = dao.getById(id);
+		//TODO: this needs to be done by either the Author, a Superuser for the AO, or an Administrator
 
 		Organization org = engine.getOrganizationForPerson(r.getAuthor());
 		if (org == null ) {
-			return ResponseUtils.withMsg("Unable to find Org for Report Author", Status.BAD_REQUEST);
+			// Author missing Org, use the Default Approval Workflow
+			org = Organization.createWithId(
+				Integer.parseInt(engine.getAdminSetting(AdminSettingKeys.DEFAULT_APPROVAL_ORGANIZATION)));
 		}
 		List<ApprovalStep> steps = engine.getApprovalStepsForOrg(org);
 		if (steps == null || steps.size() == 0) {
-			return ResponseUtils.withMsg("Unable to find approval steps for Org", Status.BAD_REQUEST);
+			//Missing approval steps for this organization
+			steps = engine.getApprovalStepsForOrg(Organization.createWithId(-1));
 		}
 
 		//Push the report into the first step of this workflow
 		r.setApprovalStep(steps.get(0));
 		r.setState(ReportState.PENDING_APPROVAL);
 		int numRows = dao.update(r);
+		sendApprovalNeededEmail(r);
+		
 		return (numRows == 1) ? Response.ok().build() : ResponseUtils.withMsg("No records updated", Status.BAD_REQUEST);
 	}
 
+	private void sendApprovalNeededEmail(Report r) { 
+		ApprovalStep as = r.getApprovalStep();
+		Group approvalGroup = r.getApprovalStep().getApproverGroup();
+		List<Person> approvers = approvalGroup.getMembers();
+		AnetEmail approverEmail = new AnetEmail();
+		approverEmail.setTemplateName("/emails/approvalNeeded.ftl");
+		approverEmail.setSubject("ANET Report needs your approval");
+		approverEmail.setToAddresses(approvers.stream().map(a -> a.getEmailAddress()).collect(Collectors.toList()));
+		approverEmail.setContext(ImmutableMap.of("report", r, "approvalGroup", approvalGroup));
+		AnetEmailWorker.sendEmailAsync(approverEmail);
+	}
+	
 	/*
 	 * Approve this report for the current step.
 	 * TODO: this should run common approval code that checks if any previous approving users can approve the future steps
@@ -224,6 +256,8 @@ public class ReportResource {
 		r.setApprovalStep(ApprovalStep.createWithId(step.getNextStepId()));
 		if (step.getNextStepId() == null) {
 			r.setState(ReportState.RELEASED);
+		} else { 
+			sendApprovalNeededEmail(r);
 		}
 		dao.update(r);
 		//TODO: close the transaction.
@@ -266,6 +300,7 @@ public class ReportResource {
 			r.setState(ReportState.DRAFT);
 		} else {
 			r.setApprovalStep(prevStep);
+			sendApprovalNeededEmail(r);
 		}
 		dao.update(r);
 

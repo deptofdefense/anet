@@ -50,8 +50,9 @@ public class PoamDao implements IAnetDao<Poam> {
 	public Poam insert(Poam p){
 		p.setCreatedAt(DateTime.now());
 		p.setUpdatedAt(DateTime.now());
-		GeneratedKeys<Map<String, Object>> keys = dbHandle.createStatement("INSERT INTO poams (longName, shortName, category, parentPoamId) " + 
-				"VALUES (:longName, :shortName, :category, :parentPoamId)")
+		GeneratedKeys<Map<String, Object>> keys = dbHandle.createStatement("INSERT INTO poams "
+				+ "(longName, shortName, category, parentPoamId, createdAt, updatedAt) " 
+				+ "VALUES (:longName, :shortName, :category, :parentPoamId, :createdAt, :updatedAt)")
 			.bindFromProperties(p)
 			.bind("parentPoamId", (p.getParentPoam() == null) ? null : p.getParentPoam().getId())
 			.executeAndReturnGeneratedKeys();
@@ -63,7 +64,7 @@ public class PoamDao implements IAnetDao<Poam> {
 	public int update(Poam p) { 
 		p.setUpdatedAt(DateTime.now());
 		return dbHandle.createStatement("UPDATE poams set longName = :longName, shortName = :shortName, " + 
-				"category = :category, parentPoamId = :parentPoamId " + 
+				"category = :category, parentPoamId = :parentPoamId, updatedAt = :updatedAt " + 
 				"WHERE id = :id")
 			.bindFromProperties(p)
 			.bind("parentPoamId", DaoUtils.getId(p.getParentPoamJson()))

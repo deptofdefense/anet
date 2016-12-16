@@ -3,6 +3,7 @@ package mil.dds.anet.resources;
 import java.util.List;
 
 import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -14,13 +15,16 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Organization.OrganizationType;
+import mil.dds.anet.beans.Person;
 import mil.dds.anet.database.OrganizationDao;
+import mil.dds.anet.utils.AuthUtils;
 import mil.dds.anet.views.ObjectListView;
 
-@Path("/organizations")
+@Path("/api/organizations")
 @Produces(MediaType.APPLICATION_JSON)
 @PermitAll
 public class OrganizationResource {
@@ -47,7 +51,9 @@ public class OrganizationResource {
 	
 	@POST
 	@Path("/new")
-	public Organization createNewAdvisorOrganization(Organization ao) {
+	@RolesAllowed("ADMINISTRATOR")
+	public Organization createNewAdvisorOrganization(Organization ao, @Auth Person user) {
+		AuthUtils.assertAdministrator(user);
 		return dao.insert(ao);
 	}
 	
@@ -67,7 +73,11 @@ public class OrganizationResource {
 	
 	@POST
 	@Path("/update")
-	public Response updateAdvisorOrganizationName(Organization ao) { 
+	@RolesAllowed("SUPER_USER")
+	public Response updateAdvisorOrganizationName(Organization ao, @Auth Person user) { 
+		//Verify correct Organization 
+		AuthUtils.assertSuperUserForOrg(user, ao);
+		
 		int numRows = dao.update(ao);
 		return (numRows == 1) ? Response.ok().build() : Response.status(Status.NOT_FOUND).build();
 	}

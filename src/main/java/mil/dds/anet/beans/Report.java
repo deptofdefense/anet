@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.geo.Location;
+import mil.dds.anet.database.AdminDao.AdminSettingKeys;
 import mil.dds.anet.views.AbstractAnetView;
 
 public class Report extends AbstractAnetView<Report> {
@@ -255,16 +256,31 @@ public class Report extends AbstractAnetView<Report> {
 		AnetObjectEngine engine = AnetObjectEngine.getInstance();
 		List<ApprovalAction> actions = engine.getApprovalActionDao().getActionsForReport(this.getId());
 		
+		if (this.getState() == ReportState.RELEASED) {
+			//Compact to only get the most recent event for each step.
+			ApprovalAction last = actions.get(0);
+			List<ApprovalAction> compacted = new LinkedList<ApprovalAction>();
+			for (ApprovalAction action : actions) { 
+				if (action.getStepJson().getId().equals(last.getStepJson().getId()) == false) { 
+					compacted.add(last);
+				}
+				last = action;
+			}
+			compacted.add(actions.get(actions.size() - 1));
+			return compacted;
+		}
+		
 		Organization ao = engine.getOrganizationForPerson(getAuthor());
-		if (ao == null) { 
-			//TODO: return the default approval steps if in PENDING. 
-			return actions;
+		if (ao == null) {
+			//use the default approval workflow. 
+			ao = Organization.createWithId(
+					Integer.parseInt(engine.getAdminSetting(AdminSettingKeys.DEFAULT_APPROVAL_ORGANIZATION)));
 		}
 		
 		List<ApprovalStep> steps = engine.getApprovalStepsForOrg(ao);
 		if (steps == null || steps.size() == 0) {
-			//TODO: return the default approval steps if in PENDING. 
-			return actions;
+			//No approval steps for this organization
+			steps = engine.getApprovalStepsForOrg(Organization.createWithId(-1));
 		}
 				
 		List<ApprovalAction> workflow = new LinkedList<ApprovalAction>();

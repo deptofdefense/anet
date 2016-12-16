@@ -2,15 +2,21 @@ package mil.dds.anet.beans;
 
 import java.security.Principal;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.joda.time.DateTime;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSetter;
+
+import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.views.AbstractAnetView;
 
 public class Person extends AbstractAnetView<Person> implements Principal{
 
 	public static enum Status { ACTIVE, INACTIVE }
-	public static enum Role { ADVISOR, PRINCIPAL, SUPER_USER }
+	public static enum Role { ADVISOR, PRINCIPAL }
 	
 	private String name;
 	private Status status;
@@ -22,9 +28,12 @@ public class Person extends AbstractAnetView<Person> implements Principal{
 	
 	private String rank;
 	private String biography;
+	private String domainUsername;
 	
 	private DateTime createdAt;
 	private DateTime updatedAt;
+	
+	private Optional<Position> position;
 	
 	public Person() { 
 		this.pendingVerification = false; //Defaults 
@@ -83,6 +92,14 @@ public class Person extends AbstractAnetView<Person> implements Principal{
 		this.biography = biography;
 	}
 
+	public String getDomainUsername() {
+		return domainUsername;
+	}
+
+	public void setDomainUsername(String domainUsername) {
+		this.domainUsername = domainUsername;
+	}
+
 	public DateTime getCreatedAt() {
 		return createdAt;
 	}
@@ -97,6 +114,25 @@ public class Person extends AbstractAnetView<Person> implements Principal{
 
 	public void setUpdatedAt(DateTime updatedAt) {
 		this.updatedAt = updatedAt;
+	}
+	
+	@JsonIgnore
+	public Position getPosition() { 
+		if (position == null) {
+			position = Optional.ofNullable(AnetObjectEngine.getInstance()
+					.getPositionDao().getCurrentPositionForPerson(this));
+		}
+		return position.orElse(null);
+	}
+	
+	@JsonGetter("position")
+	public Position getPositionJson() {
+		return (position == null) ? null : position.orElse(null);
+	}
+	
+	@JsonSetter("position")
+	public void setPosition(Position p) { 
+		this.position = Optional.ofNullable(p);
 	}
 	
 	@Override

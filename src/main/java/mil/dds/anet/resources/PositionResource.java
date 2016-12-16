@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -19,15 +20,17 @@ import javax.ws.rs.core.Response.Status;
 
 import org.joda.time.DateTime;
 
+import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Position.PositionType;
 import mil.dds.anet.database.PositionDao;
+import mil.dds.anet.utils.AuthUtils;
 import mil.dds.anet.views.ObjectListView;
 
-@Path("/positions")
+@Path("/api/positions")
 @Produces(MediaType.APPLICATION_JSON)
 @PermitAll
 public class PositionResource {
@@ -102,8 +105,18 @@ public class PositionResource {
 	
 	@POST
 	@Path("/new")
-	public Position createPosition(Position p) {
+	@RolesAllowed("SUPER_USER")
+	public Position createPosition(@Auth Person user, Position p) {
+		if (p.getName() == null || p.getName().trim().length() == 0) { 
+			throw new WebApplicationException("Position Name must not be null", Status.BAD_REQUEST);
+		}
+		if (p.getType() == null) { throw new WebApplicationException("Position type must be defined", Status.BAD_REQUEST); }
+		if (p.getOrganizationJson() == null) { throw new WebApplicationException("A Position must belong to an organization", Status.BAD_REQUEST); } 
+		
+		AuthUtils.assertSuperUserForOrg(user, p.getOrganizationJson());
+		
 		return dao.insert(p);
+		
 	}
 	
 	@GET
@@ -116,8 +129,10 @@ public class PositionResource {
 	
 	@POST
 	@Path("/update")
-	public Response updatePosition(Position b) { 
-		int numRows = dao.update(b);
+	@RolesAllowed("SUPER_USER")
+	public Response updatePosition(@Auth Person user, Position pos) {
+		AuthUtils.assertSuperUserForOrg(user, pos.getOrganizationJson());
+		int numRows = dao.update(pos);
 		return (numRows == 1) ? Response.ok().build() : Response.status(Status.NOT_FOUND).build();
 	}
 	
@@ -132,16 +147,18 @@ public class PositionResource {
 	
 	@POST
 	@Path("/{id}/person")
-	public Response putPersonInPosition(@PathParam("id") int positionId, Person p) {
-		Position b = new Position();
-		b.setId(positionId);
-		dao.setPersonInPosition(p, b);
+	@RolesAllowed("SUPER_USER")
+	public Response putPersonInPosition(@Auth Person user, @PathParam("id") int positionId, Person p) {
+		Position pos = engine.getPositionDao().getById(positionId);
+		AuthUtils.assertSuperUserForOrg(user, pos.getOrganizationJson());
+		
+		dao.setPersonInPosition(p, pos);
 		return Response.ok().build();
 	}
 	
 	@DELETE
 	@Path("/{id}/person")
-	public Response deletePersonFromPosition(@PathParam("id") int id) { 
+	public Response deletePersonFromPosition(@PathParam("id") int id) {
 		dao.removePersonFromPosition(Position.createWithId(id));
 		return Response.ok().build();
 	}

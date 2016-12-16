@@ -1,6 +1,7 @@
 package mil.dds.anet.database.mappers;
 
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 public class MapperUtils {
@@ -29,6 +30,16 @@ public class MapperUtils {
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	public static boolean containsColumnNamed(ResultSet rs, String colName) throws SQLException {
+		ResultSetMetaData metaData = rs.getMetaData();
+		for (int i=1;i<=metaData.getColumnCount(); i++ ) { 
+			if (colName.equals(metaData.getColumnName(i))) { 
+				return true;
+			}
+		}
+		return false;
 	}
 	
 }

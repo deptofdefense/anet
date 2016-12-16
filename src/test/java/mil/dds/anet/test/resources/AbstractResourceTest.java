@@ -44,7 +44,7 @@ public abstract class AbstractResourceTest {
 	
 	public Builder httpQuery(String path, Person authUser, MediaType acceptType) { 
 		String authString = Base64.getEncoder().encodeToString(
-				(authUser.getName().split(" ")[0] + ":" + authUser.getName().split(" ")[1]).getBytes());
+				(authUser.getDomainUsername() + ":").getBytes());
 		return httpQuery(path)
 				.header("Authorization", "Basic " + authString)
 				.header("Accept", acceptType.toString());
@@ -54,14 +54,14 @@ public abstract class AbstractResourceTest {
 		return httpQuery(path, authUser, MediaType.APPLICATION_JSON_TYPE);
 	}
 	
-	public Person findOrPutPersonInDb(Person stub) { 
-		List<Person> ret = httpQuery("/people/search?q=" + URLEncoder.encode(stub.getName()), PersonTest.getSteveStevesonStub()).get(new GenericType<List<Person>>() {});
+	public Person findOrPutPersonInDb(Person stub) {
+		List<Person> ret = httpQuery("/api/people/search?q=" + URLEncoder.encode(stub.getName()), PersonTest.getJackJacksonStub()).get(new GenericType<List<Person>>() {});
 		for (Person p : ret) { 
 			if (p.getEmailAddress().equals(stub.getEmailAddress())) { return p; } 
 		}
 		
 		//Create insert into DB, Steve Steveson should AWAYS be in the database. 
-		Person newPerson = httpQuery("/people/new", PersonTest.getSteveStevesonStub()).post(Entity.json(stub), Person.class);
+		Person newPerson = httpQuery("/api/people/new", PersonTest.getJackJacksonStub()).post(Entity.json(stub), Person.class);
 		return newPerson;
 	}
 	
@@ -79,6 +79,18 @@ public abstract class AbstractResourceTest {
 	
 	public Person getElizabethElizawell() { 
 		return findOrPutPersonInDb(PersonTest.getElizabethElizawell());
+	}
+	
+	public Person getNickNicholson() { 
+		return findOrPutPersonInDb(PersonTest.getNickNicholson());
+	}
+	
+	public Person getBobBobtown() { 
+		return findOrPutPersonInDb(PersonTest.getBobBobtown());
+	}
+	
+	public Person getArthurDmin() { 
+		return findOrPutPersonInDb(PersonTest.getArthurDmin());
 	}
 	
 	public String getResponseBody(Response resp) {

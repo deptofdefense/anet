@@ -2,6 +2,8 @@ package mil.dds.anet.config;
 
 import java.util.Map;
 import java.util.Collections;
+import java.util.HashMap;
+
 import com.google.common.collect.ImmutableMap;
 
 import javax.validation.Valid;
@@ -15,11 +17,13 @@ import io.dropwizard.db.DataSourceFactory;
 public class AnetConfiguration extends Configuration {
 
 	private boolean developmentMode;
-	private String securityMarking;
-	private String securityColor;
-	
+
 	private SmtpConfiguration smtp;
-	
+	private String emailFromAddr;
+
+	@NotNull
+	private Map<String,String> waffleConfig = new HashMap<String,String>();
+
 	@Valid
     @NotNull
     private DataSourceFactory database = new DataSourceFactory();
@@ -45,22 +49,6 @@ public class AnetConfiguration extends Configuration {
 		this.developmentMode = developmentMode;
 	}
 
-	public String getSecurityMarking() {
-		return securityMarking;
-	}
-
-	public void setSecurityMarking(String securityMarking) {
-		this.securityMarking = securityMarking;
-	}
-
-	public String getSecurityColor() {
-		return securityColor;
-	}
-
-	public void setSecurityColor(String securityColor) {
-		this.securityColor = securityColor;
-	}
-
 	@JsonProperty("views")
 	public Map<String, Map<String, String>> getViews() {
 		return views;
@@ -74,7 +62,15 @@ public class AnetConfiguration extends Configuration {
 		}
 		this.views = builder.build();
 	}
-	
+
+	public Map<String, String> getWaffleConfig() {
+		return waffleConfig;
+	}
+
+	public void setWaffleConfig(Map<String,String> config) {
+		this.waffleConfig = config;
+	}
+
 	public SmtpConfiguration getSmtp() {
 		return smtp;
 	}
@@ -83,7 +79,15 @@ public class AnetConfiguration extends Configuration {
 		this.smtp = smtp;
 	}
 
-	public static class SmtpConfiguration { 
+	public String getEmailFromAddr() {
+		return emailFromAddr;
+	}
+
+	public void setEmailFromAddr(String emailFromAddr) {
+		this.emailFromAddr = emailFromAddr;
+	}
+	
+	public static class SmtpConfiguration {
 		private String hostname;
 		private Integer port = 587;
 		private String username;
@@ -120,4 +124,6 @@ public class AnetConfiguration extends Configuration {
 			this.startTLS = startTLS;
 		}
 	}
+
+
 }

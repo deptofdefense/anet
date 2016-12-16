@@ -15,7 +15,7 @@ import mil.dds.anet.views.AbstractAnetView;
 
 public class Position extends AbstractAnetView<Position> {
 
-	public static enum PositionType { ADVISOR, PRINCIPAL }
+	public static enum PositionType { ADVISOR, PRINCIPAL, SUPER_USER, ADMINISTRATOR }
 	
 	String name;
 	String code;
