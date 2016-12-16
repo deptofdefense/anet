@@ -1,6 +1,6 @@
 export default {
 	fetch(url) {
-		return fetch(url, {
+		return fetch('/api/' + url, {
 			headers: {
 				accept: "application/json",
 				authorization: "Basic " + btoa("nick:Nicholson")
