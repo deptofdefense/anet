@@ -18,12 +18,14 @@ export default class ReportNew extends React.Component {
 		this.state = {
 			report: {engagementIntent: '', location: ''},
 			reportAtmosphere: 'positive',
-			attendees: []
+			attendees: [],
+			poams: [],
 		}
 
 		this.onFormChange = this.onFormChange.bind(this)
 		this.onAtmosphereChange = this.onAtmosphereChange.bind(this)
 		this.addAttendee = this.addAttendee.bind(this)
+		this.addPoam = this.addPoam.bind(this)
 	}
 
 	render() {
@@ -101,6 +103,35 @@ export default class ReportNew extends React.Component {
 					</fieldset>
 
 					<fieldset>
+						<legend>Milestones</legend>
+
+						<HorizontalFormField id="poams">
+							<Autocomplete value="" url="/api/poams/search" onChange={this.addPoam} template={poam =>
+								<span>{poam.shortName} - {poam.longName}</span>
+							} clearOnSelect={true} />
+
+							<Table hover striped>
+								<thead>
+									<tr>
+										<th></th>
+										<th>Name</th>
+										<th>AO</th>
+									</tr>
+								</thead>
+								<tbody>
+									{this.state.poams.map(poam => <tr key={poam.id}>
+										<td onClick={this.removePoam.bind(this, poam)}>
+											<Glyphicon glyph="remove-sign" style={{cursor: 'pointer'}} />
+										</td>
+										<td>{poam.longName}</td>
+										<td>{poam.shortName}</td>
+									</tr>)}
+								</tbody>
+							</Table>
+						</HorizontalFormField>
+					</fieldset>
+
+					<fieldset>
 						<legend>Meeting discussion <small>Required</small></legend>
 
 						<TextEditor label="Discussion outcome" />
@@ -134,5 +165,17 @@ export default class ReportNew extends React.Component {
 		let attendees = this.state.attendees.slice(0)
 		attendees.splice(attendees.indexOf(attendee), 1)
 		this.setState({attendees})
+	}
+
+	addPoam(poam) {
+		let poams = this.state.poams.slice(0)
+		poams.push(poam)
+		this.setState({poams})
+	}
+
+	removePoam(poam) {
+		let poams = this.state.poams.slice(0)
+		poams.splice(poams.indexOf(poam), 1)
+		this.setState({poams})
 	}
 }
