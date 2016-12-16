@@ -21,12 +21,17 @@ import javax.ws.rs.core.Response.Status;
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;
 
+import com.google.common.collect.ImmutableMap;
+
 import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
+import mil.dds.anet.AnetEmailWorker;
+import mil.dds.anet.AnetEmailWorker.AnetEmail;
 import mil.dds.anet.beans.ApprovalAction;
 import mil.dds.anet.beans.ApprovalAction.ApprovalType;
 import mil.dds.anet.beans.ApprovalStep;
 import mil.dds.anet.beans.Comment;
+import mil.dds.anet.beans.Group;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
@@ -38,6 +43,7 @@ import mil.dds.anet.database.ReportDao;
 import mil.dds.anet.database.AdminDao.AdminSettingKeys;
 import mil.dds.anet.utils.ResponseUtils;
 import mil.dds.anet.views.ObjectListView;
+import mil.dds.anet.views.AbstractAnetView.LoadLevel;
 
 @Path("/api/reports")
 @Produces(MediaType.APPLICATION_JSON)
@@ -191,9 +197,23 @@ public class ReportResource {
 		r.setApprovalStep(steps.get(0));
 		r.setState(ReportState.PENDING_APPROVAL);
 		int numRows = dao.update(r);
+		sendApprovalNeededEmail(r);
+		
 		return (numRows == 1) ? Response.ok().build() : ResponseUtils.withMsg("No records updated", Status.BAD_REQUEST);
 	}
 
+	private void sendApprovalNeededEmail(Report r) { 
+		ApprovalStep as = r.getApprovalStep();
+		Group approvalGroup = r.getApprovalStep().getApproverGroup();
+		List<Person> approvers = approvalGroup.getMembers();
+		AnetEmail approverEmail = new AnetEmail();
+		approverEmail.setTemplateName("/emails/approvalNeeded.ftl");
+		approverEmail.setSubject("ANET Report needs your approval");
+		approverEmail.setToAddresses(approvers.stream().map(a -> a.getEmailAddress()).collect(Collectors.toList()));
+		approverEmail.setContext(ImmutableMap.of("report", r, "approvalGroup", approvalGroup));
+		AnetEmailWorker.sendEmailAsync(approverEmail);
+	}
+	
 	/*
 	 * Approve this report for the current step.
 	 * TODO: this should run common approval code that checks if any previous approving users can approve the future steps
@@ -232,6 +252,8 @@ public class ReportResource {
 		r.setApprovalStep(ApprovalStep.createWithId(step.getNextStepId()));
 		if (step.getNextStepId() == null) {
 			r.setState(ReportState.RELEASED);
+		} else { 
+			sendApprovalNeededEmail(r);
 		}
 		dao.update(r);
 		//TODO: close the transaction.
@@ -274,6 +296,7 @@ public class ReportResource {
 			r.setState(ReportState.DRAFT);
 		} else {
 			r.setApprovalStep(prevStep);
+			sendApprovalNeededEmail(r);
 		}
 		dao.update(r);
 

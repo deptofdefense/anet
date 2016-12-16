@@ -117,6 +117,9 @@ public class AnetApplication extends Application<AnetConfiguration> {
 	    environment.jersey().register(RolesAllowedDynamicFeature.class);
 	    environment.jersey().register(new WebExceptionMapper());
 
+	    Thread emailThread = new Thread(new AnetEmailWorker(jdbi.open(), configuration));
+	    emailThread.start();
+	    
 		TestingResource test = new TestingResource(engine, configuration);
 		PersonResource personResource = new PersonResource(engine);
 		GroupResource groupResource = new GroupResource(engine);

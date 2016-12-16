@@ -384,4 +384,16 @@
 		<addUniqueConstraint tableName="adminSettings" columnNames="key" constraintName="adminSettingKey" />
 	</changeSet>
 
+	<changeSet id="11" author="hpitelka" >
+		<createTable tableName="pendingEmails">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+			<column name="jobSpec" type="text" />
+			<column name="createdAt" type="datetime" />
+		</createTable>
+		<sql dbms="mssql">
+			ALTER TABLE pendingEmails ALTER COLUMN createdAt datetime2 NOT NULL;
+		</sql>
+	</changeSet>
 </databaseChangeLog>

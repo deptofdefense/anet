@@ -2,10 +2,11 @@ developmentMode: true
 
 smtp:
   hostname: ${ANET_SMTP_SERVER}
-  port: 587
+  port: 25
   username: ${ANET_SMTP_USERNAME}
   password: ${ANET_SMTP_PASSWORD}
   startTLS: true
+emailFromAddr: hunter+anet@dds.mil
 
 database:
   driverClass: ${ANET_DB_DRIVER}
@@ -48,6 +49,7 @@ logging:
     "io.dropwizard.assets.*" : TRACE
     "waffle.servlet.NegotiateSecurityFilter" : TRACE
     "mil.dds.anet.auth.AnetAuthenticationFilter" : TRACE
+    "mil.dds.anet.AnetEmailWorker" : DEBUG
     "mil.dds.anet.resources.TestingResource" :
       level: INFO
       appenders:
