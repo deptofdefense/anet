@@ -126,7 +126,7 @@ public class TestingResource {
 	public void email(@QueryParam("to") String to) { 
 		AnetEmail email = new AnetEmail();
 		email.setToAddresses(ImmutableList.of(to));
-		email.setContext(ImmutableMap.of("hello","world"));
+		email.setContext(ImmutableMap.of("toAddr",to));
 		email.setTemplateName("emails/test.ftl");
 		email.setSubject("A Test Email from /api/testing/email2");
 		AnetEmailWorker.sendEmailAsync(email);

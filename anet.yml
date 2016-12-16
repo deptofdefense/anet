@@ -6,7 +6,7 @@ smtp:
   username: ${ANET_SMTP_USERNAME}
   password: ${ANET_SMTP_PASSWORD}
   startTLS: true
-emailFromAddr: hunter+anet@dds.mil
+emailFromAddr: "Anet Testing <hunter+anet@dds.mil>"
 
 database:
   driverClass: ${ANET_DB_DRIVER}

@@ -25,7 +25,7 @@ export default class Search extends React.Component {
 	}
 
 	componentDidMount() {
-		API.fetch('search/?q=' + this.state.query).then(results => {
+		API.fetch('/api/search/?q=' + this.state.query).then(results => {
 			this.setState({results: {
 				reports: results.reports,
 				people: results.people,
@@ -103,7 +103,7 @@ export default class Search extends React.Component {
 			{this.state.results.reports.map(report =>
 				<li key={report.id}>
 					<Link to={"/reports/" + report.id}>Report #{report.id}</Link><br />
-					At {moment(report.engagementDate).format('L LT')}, {report.author.rank.toUpperCase()} {report.author.name}
+					At {moment(report.engagementDate).format('L LT')}, {report.author.rank} {report.author.name}
 					 met with {report.attendees && report.attendees.length} Afghan principals. They discussed {report.intent}.
 					 THIS IS AN IMPROPERLY FORMATTED EXSUM.
 				</li>
@@ -123,7 +123,7 @@ export default class Search extends React.Component {
 			</thead>
 			<tbody>
 				{this.state.results && this.state.results.people.map(person => <tr key={person.id}>
-					<td>{person.name} {person.rank.toUpperCase()}</td>
+					<td>{person.name} {person.rank}</td>
 					<td>{person.role}</td>
 					<td>{person.phoneNumber}</td>
 					<td>{person.emailAddress}</td>
