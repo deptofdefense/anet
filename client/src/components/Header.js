@@ -8,11 +8,15 @@ import SearchBar from './SearchBar.js'
 import logo from '../resources/logo.png'
 
 const backgroundCss = {
-	background: 'white',
+	position: 'fixed',
+	top: 0,
+	left: 0,
+	right: 0,
+	background: '#fff',
 	paddingTop: '58px',
 	height: '132px',
 	boxShadow: '0 4px 3px 0 rgba(0,0,0,0.1)',
-	marginBottom: '32px',
+	zIndex: 100
 }
 
 const logoCss = {
