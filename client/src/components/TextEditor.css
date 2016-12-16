@@ -1,22 +1,20 @@
 .RichEditor-root {
-  background: #fff;
+  background: #eee;
   border: 1px solid #ddd;
-  font-family: 'Georgia', serif;
   font-size: 14px;
-  padding: 15px;
+}
+
+.RichEditor-root label {
+  margin: 3px 10px;
 }
 
 .RichEditor-editor {
+  clear: both;
   border-top: 1px solid #ddd;
   cursor: text;
   font-size: 16px;
-  margin-top: 10px;
-}
-
-.RichEditor-editor .public-DraftEditorPlaceholder-root,
-.RichEditor-editor .public-DraftEditor-content {
-  margin: 0 -15px -15px;
   padding: 15px;
+  background: #fff;
 }
 
 .RichEditor-editor .public-DraftEditor-content {
@@ -44,11 +42,9 @@
 }
 
 .RichEditor-controls {
-  font-family: 'Helvetica', sans-serif;
   font-size: 14px;
-  margin-bottom: 5px;
   user-select: none;
-  display: inline-block;
+  float: right;
 }
 
 .RichEditor-styleButton {

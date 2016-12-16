@@ -98,11 +98,8 @@ export default class ReportNew extends React.Component {
 					<fieldset>
 						<legend>Meeting discussion <small>Required</small></legend>
 
-						<ControlLabel>Discussion outcome</ControlLabel>
-						<TextEditor />
-
-						<ControlLabel>Next steps</ControlLabel>
-						<TextEditor />
+						<TextEditor label="Discussion outcome" />
+						<TextEditor label="Next steps" style={{marginTop: '5rem'}} />
 					</fieldset>
 				</Form>
 			</div>

@@ -75,7 +75,8 @@ export default class TextEditor extends React.Component {
           }
 
           return (
-            <div className="RichEditor-root">
+            <div className="RichEditor-root" style={this.props.style}>
+              {this.props.label && <label>{this.props.label}</label>}
               <BlockStyleControls
                 editorState={editorState}
                 onToggle={this.toggleBlockType}
