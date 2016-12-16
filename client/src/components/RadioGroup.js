@@ -4,7 +4,7 @@ import {ButtonGroup, Button, Radio} from 'react-bootstrap'
 export default class RadioGroup extends React.Component {
 	constructor(props) {
 		super(props)
-		this.state = {selected: null}
+		this.state = {selected: props.value}
 
 		this.onRadioChange = this.onRadioChange.bind(this)
 		this.onButtonClick = this.onButtonClick.bind(this)
