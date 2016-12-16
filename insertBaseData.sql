@@ -33,8 +33,6 @@ DELETE FROM organizations;
 DELETE FROM groups;
 DELETE FROM adminSettings;
 
-
-
 --Advisors
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, createdAt, updatedAt) 
 	VALUES ('Jack Jackson', 0, 0, 'hunter+foobar@dds.mil', '123-456-78960', 'OF-9', 'this is a sample biography', 'jack', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
@@ -311,6 +309,13 @@ INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 	(SELECT id FROM people where emailAddress='hunter+steve@dds.mil'), (SELECT max(id) from reports), 1);
 INSERT INTO reportPoams (poamId, reportId) VALUES ((SELECT id from poams where shortName = '1.1.C'), (SELECT max(id) from reports));
 
+INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, nextSteps, authorId, state, engagementDate, atmosphere) VALUES
+	(CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from locations where name='General Hospital'), 'Discuss discrepancies in monthly budgets',
+	'Back to the hospital this week to test the recent locations feature of ANET, and also to look at math and numbers and budgets and things',
+	'Meet with the dude again next week',(SELECT id FROM people where emailAddress='hunter+foobar@dds.mil'), 1, '2016-06-25', 0);
+INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
+	(SELECT id FROM people where emailAddress='hunter+steve@dds.mil'), (SELECT max(id) FROM reports), 1);
+INSERT INTO reportPoams (poamId, reportId) VALUES ((SELECT id from poams where shortName = '1.1.A'), (SELECT max(id) from reports));
 
 --Create the default Approval Group
 INSERT INTO groups (name, createdAt) VALUES ('Default Approvers', CURRENT_TIMESTAMP);

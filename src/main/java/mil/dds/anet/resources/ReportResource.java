@@ -24,9 +24,9 @@ import org.eclipse.jetty.util.log.Logger;
 import com.google.common.collect.ImmutableMap;
 
 import io.dropwizard.auth.Auth;
-import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.AnetEmailWorker;
 import mil.dds.anet.AnetEmailWorker.AnetEmail;
+import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.ApprovalAction;
 import mil.dds.anet.beans.ApprovalAction.ApprovalType;
 import mil.dds.anet.beans.ApprovalStep;
@@ -39,11 +39,10 @@ import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
 import mil.dds.anet.beans.geo.Location;
-import mil.dds.anet.database.ReportDao;
 import mil.dds.anet.database.AdminDao.AdminSettingKeys;
+import mil.dds.anet.database.ReportDao;
 import mil.dds.anet.utils.ResponseUtils;
 import mil.dds.anet.views.ObjectListView;
-import mil.dds.anet.views.AbstractAnetView.LoadLevel;
 
 @Path("/api/reports")
 @Produces(MediaType.APPLICATION_JSON)

@@ -279,15 +279,21 @@ public class ReportDao implements IAnetDao<Report> {
 	public List<Location> getRecentLocations(Person author) {
 		String sql;
 		if (DaoUtils.isMsSql(dbHandle)) {
-			sql = "SELECT TOP 10 locations.* FROM reports, locations "
-					+ "WHERE reports.locationid = locations.id "
-					+ "AND reports.authorId = :authorId "
-					+ "ORDER BY reports.createdAt DESC";
+			sql = "SELECT locations.* FROM locations WHERE id IN ( "
+					+ "SELECT TOP(3) reports.locationId "
+					+ "FROM reports "
+					+ "WHERE authorid = :authorId "
+					+ "GROUP BY locationId "
+					+ "ORDER BY MAX(reports.createdAt) DESC"
+				+ ")";
 		} else {
-			sql = "SELECT locations.* FROM reports, locations "
-					+ "WHERE reports.locationid = locations.id "
-					+ "AND reports.authorId = :authorId "
-					+ "ORDER BY reports.createdAt DESC LIMIT 10";
+			sql = "SELECT locations.* FROM locations WHERE id IN ( "
+					+ "SELECT reports.locationId "
+					+ "FROM reports "
+					+ "WHERE authorid = :authorId "
+					+ "GROUP BY locationId "
+					+ "ORDER BY MAX(reports.createdAt) DESC LIMIT 3"
+				+ ")";
 		}
 		return dbHandle.createQuery(sql)
 				.bind("authorId", author.getId())
@@ -298,19 +304,24 @@ public class ReportDao implements IAnetDao<Report> {
 	public List<Person> getRecentPeople(Person author) {
 		String sql;
 		if (DaoUtils.isMsSql(dbHandle)) {
-			sql = "SELECT TOP 10 people.* "
-					+ "FROM people "
-					+ "JOIN reportPeople ON people.id = reportPeople.personId "
-					+ "JOIN reports ON reportPeople.reportId = reports.id "
-					+ "WHERE reports.authorId = :authorId "
-					+ "ORDER BY reports.createdAt DESC";
+			sql = "SELECT " + PersonDao.PERSON_FIELDS
+				+ "FROM people WHERE people.id IN ( "
+					+ "SELECT top(3) reportPeople.personId "
+					+ "FROM reports JOIN reportPeople ON reports.id = reportPeople.reportId " 
+					+ "WHERE authorId = :authorId "
+					+ "GROUP BY personId "
+					+ "ORDER BY MAX(reports.createdAt) DESC"
+				+ ")";
 		} else {
-			sql = "SELECT people.* "
-					+ "FROM people "
-					+ "JOIN reportPeople ON people.id = reportPeople.personId "
-					+ "JOIN reports ON reportPeople.reportId = reports.id "
-					+ "WHERE reports.authorId = :authorId "
-					+ "ORDER BY reports.createdAt DESC LIMIT 10";
+			sql = "SELECT " + PersonDao.PERSON_FIELDS
+				+ "FROM people WHERE people.id IN ( "
+					+ "SELECT top(3) reportPeople.personId "
+					+ "FROM reports JOIN reportPeople ON reports.id = reportPeople.reportId " 
+					+ "WHERE authorId = :authorId "
+					+ "GROUP BY personId "
+					+ "ORDER BY MAX(reports.createdAt) DESC "
+					+ "LIMIT 3"
+				+ ")";
 		}
 		return dbHandle.createQuery(sql)
 				.bind("authorId", author.getId())
@@ -321,19 +332,22 @@ public class ReportDao implements IAnetDao<Report> {
 	public List<Poam> getRecentPoams(Person author) {
 		String sql;
 		if (DaoUtils.isMsSql(dbHandle)) {
-			sql = "SELECT TOP 10 poams.* "
-					+ "FROM poams "
-					+ "JOIN reportPoams ON poams.id = reportPoams.poamId "
-					+ "JOIN reports ON reportPoams.reportId = reports.id "
-					+ "WHERE reports.authorId = :authorId "
-					+ "ORDER BY reports.createdAt DESC";
+			sql = "SELECT poams.* FROM poams WHERE poams.id IN ("
+					+ "SELECT TOP(3) reportPoams.poamId"
+					+ "FROM reports JOIN reportPoams ON reports.id = reportPoams.reportId" 
+					+ "WHERE authorId = :authorId"
+					+ "GROUP BY poamId"
+					+ "ORDER BY MAX(reports.createdAt) DESC"
+				+ ")";
 		} else {
-			sql = "SELECT poams.* "
-					+ "FROM poams "
-					+ "JOIN reportPoams ON poams.id = reportPoams.poamId "
-					+ "JOIN reports ON reportPoams.reportId = reports.id "
-					+ "WHERE reports.authorId = :authorId "
-					+ "ORDER BY reports.createdAt DESC LIMIT 10";
+			sql =  "SELECT poams.* FROM poams WHERE poams.id IN ("
+					+ "SELECT reportPoams.poamId"
+					+ "FROM reports JOIN reportPoams ON reports.id = reportPoams.reportId" 
+					+ "WHERE authorId = :authorId"
+					+ "GROUP BY poamId"
+					+ "ORDER BY MAX(reports.createdAt) DESC "
+					+ "LIMIT 3"
+				+ ")";
 		}
 		return dbHandle.createQuery(sql)
 				.bind("authorId", author.getId())
