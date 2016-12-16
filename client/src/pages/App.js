@@ -22,7 +22,7 @@ export default class App extends React.Component {
 						<Grid>
 							<Row>
 								<Col sm={3}>
-									<Nav />
+									{this.props.children.type.useNavigation || <Nav />}
 								</Col>
 								<Col sm={9}>
 									{this.props.children}
