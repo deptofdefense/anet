@@ -67,7 +67,7 @@ export default class Autcomplete extends React.Component {
 	}
 
 	onSuggestionSelected(event, value) {
-		if (this.props.onChange) this.props.onChange(event, value.suggestion)
+		if (this.props.onChange) this.props.onChange(value.suggestion)
 		if (this.props.clearOnSelect) this.setState({suggestion: [], value: ''})
 	}
 

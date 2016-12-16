@@ -39,7 +39,7 @@ Form.propTypes = Object.assign({}, BSForm.propTypes, {
 
 class HorizontalFormFieldCol extends React.Component {
 	render() {
-		return <Col {...this.props} />
+		return <Col sm={3} {...this.props} />
 	}
 }
 
@@ -58,6 +58,7 @@ class HorizontalFormField extends React.Component {
 
 		let extra
 		if (Array.isArray(children)) {
+			children = children.slice(0)
 			extra = children.find((child) => child.type === HorizontalFormFieldCol)
 			if (extra) children.splice(children.indexOf(extra), 1)
 		} else if (typeof children === 'object' && children.type === HorizontalFormFieldCol) {

@@ -1,5 +1,5 @@
 import React from 'react'
-import {ControlLabel, InputGroup, Radio, Table, Glyphicon} from 'react-bootstrap'
+import {InputGroup, Radio, Table, Glyphicon, Button} from 'react-bootstrap'
 
 import DatePicker from 'react-bootstrap-date-picker'
 
@@ -71,9 +71,7 @@ export default class ReportNew extends React.Component {
 							<Autocomplete value="" placeholder="Who was there?" url="/api/people/search" onChange={this.addAttendee} template={person =>
 								<span>{person.name} {person.rank.toUpperCase()}</span>
 							} clearOnSelect={true} />
-						</HorizontalFormField>
 
-						<HorizontalFormField>
 							<Table hover striped>
 								<thead>
 									<tr>
@@ -92,6 +90,13 @@ export default class ReportNew extends React.Component {
 									</tr>)}
 								</tbody>
 							</Table>
+
+							<HorizontalFormField.Col>
+								<h5 style={{textDecoration: 'underline'}}>Shortcuts</h5>
+								<Button bsStyle="link">Add myself</Button>
+								<Button bsStyle="link">Add my principal (Aarash Aarif)</Button>
+								<Button bsStyle="link">Mohammad Aaron (Recent)</Button>
+							</HorizontalFormField.Col>
 						</HorizontalFormField>
 					</fieldset>
 
@@ -119,7 +124,7 @@ export default class ReportNew extends React.Component {
 		return charactersRemaining + " characters remaining"
 	}
 
-	addAttendee(event, attendee) {
+	addAttendee(attendee) {
 		let attendees = this.state.attendees.slice(0)
 		attendees.push(attendee)
 		this.setState({attendees})
