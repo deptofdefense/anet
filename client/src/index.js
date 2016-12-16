@@ -10,6 +10,7 @@ import {InjectablesProvider} from 'react-injectables'
 
 import App from './pages/App'
 import Home from './pages/Home'
+import Search from './pages/Search'
 import ReportsIndex from './pages/reports/Index'
 import ReportNew from './pages/reports/New'
 import ReportShow from './pages/reports/Show'
@@ -19,6 +20,7 @@ ReactDOM.render((
 		<Router history={browserHistory}>
 			<Route path="/" component={App}>
 				<IndexRoute component={Home} />
+				<Route path="search" component={Search} />
 
 				<Route path="reports">
 					<IndexRoute component={ReportsIndex} />
