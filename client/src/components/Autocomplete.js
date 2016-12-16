@@ -4,6 +4,8 @@ import {FormControl} from 'react-bootstrap'
 
 import API from '../api'
 
+import './Autocomplete.css'
+
 export default class Autcomplete extends React.Component {
 	constructor(props) {
 		super(props)
