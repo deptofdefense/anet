@@ -12,10 +12,12 @@ export default class Breadcrumbs extends React.Component {
 	}
 
 	render() {
+		let {items, ...props} = this.props
+
 		return (
-			<Breadcrumb>
+			<Breadcrumb {...props}>
 				{this.makeItem(['ANET', '/'])}
-				{this.props.items.map(this.makeItem)}
+				{items.map(this.makeItem)}
 			</Breadcrumb>
 		)
 	}
