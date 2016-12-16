@@ -12,6 +12,7 @@ export default class Autcomplete extends React.Component {
 		this.onChange = this.onChange.bind(this)
 		this.fetchSuggestions = this.fetchSuggestions.bind(this)
 		this.clearSuggestions = this.clearSuggestions.bind(this)
+		this.onSuggestionSelected = this.onSuggestionSelected.bind(this)
 		this.renderInputComponent = this.renderInputComponent.bind(this)
 	}
 
@@ -29,6 +30,7 @@ export default class Autcomplete extends React.Component {
 				renderSuggestion={this.renderSuggestion}
 				inputProps={{...inputProps, value, onChange}}
 				renderInputComponent={this.renderInputComponent}
+				onSuggestionSelected={this.onSuggestionSelected}
 			/>
 		)
 	}
@@ -58,8 +60,11 @@ export default class Autcomplete extends React.Component {
 		return suggestion.name
 	}
 
+	onSuggestionSelected(event, value) {
+		if (this.props.onChange) this.props.onChange(event, value.suggestion)
+	}
+
 	onChange(event, {newValue}) {
 		this.setState({value: newValue})
-		if (this.props.onChange) this.props.onChange(event, newValue)
 	}
 }

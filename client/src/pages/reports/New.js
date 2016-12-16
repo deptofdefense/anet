@@ -1,5 +1,5 @@
 import React from 'react'
-import {ControlLabel, InputGroup, Radio} from 'react-bootstrap'
+import {ControlLabel, InputGroup, Radio, Table} from 'react-bootstrap'
 
 import DatePicker from 'react-bootstrap-date-picker'
 
@@ -18,11 +18,12 @@ export default class ReportNew extends React.Component {
 		this.state = {
 			report: {engagementIntent: '', location: ''},
 			reportAtmosphere: 'positive',
-			suggestions: []
+			attendees: []
 		}
 
 		this.onFormChange = this.onFormChange.bind(this)
 		this.onAtmosphereChange = this.onAtmosphereChange.bind(this)
+		this.addAttendee = this.addAttendee.bind(this)
 	}
 
 	render() {
@@ -66,9 +67,24 @@ export default class ReportNew extends React.Component {
 					<fieldset>
 						<legend>Meeting attendance <small>Required</small></legend>
 
-						<HorizontalFormField id="addAttendee" placeholder="Who was there?">
-
+						<HorizontalFormField id="addAttendee">
+							<Autocomplete value="" placeholder="Who was there?" url="/api/people/search" onChange={this.addAttendee} />
 						</HorizontalFormField>
+
+						<Table responsive hover striped>
+							<thead>
+								<tr>
+									<th>Name</th>
+									<th>Position</th>
+								</tr>
+							</thead>
+							<tbody>
+								{this.state.attendees.map(person => <tr>
+									<td>{person.name}</td>
+									<td>{person.position}</td>
+								</tr>)}
+							</tbody>
+						</Table>
 					</fieldset>
 
 					<fieldset>
@@ -96,5 +112,11 @@ export default class ReportNew extends React.Component {
 	subjectCharactersRemaining() {
 		let charactersRemaining = 250 - this.state.report.engagementIntent.length
 		return charactersRemaining + " characters remaining"
+	}
+
+	addAttendee(event, attendee) {
+		let attendees = this.state.attendees.slice(0)
+		attendees.push(attendee)
+		this.setState({attendees: attendees})
 	}
 }
