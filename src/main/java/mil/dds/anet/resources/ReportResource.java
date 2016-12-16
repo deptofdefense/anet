@@ -1,7 +1,9 @@
 package mil.dds.anet.resources;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.PermitAll;
@@ -38,7 +40,6 @@ import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
-import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.database.AdminDao.AdminSettingKeys;
 import mil.dds.anet.database.ReportDao;
 import mil.dds.anet.utils.ResponseUtils;
@@ -61,19 +62,16 @@ public class ReportResource {
 
 	@GET
 	@Path("/")
-	@Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON})
-	public ObjectListView<Report> getAllReportsView(@Auth Person p, @DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
-		ObjectListView<Report> view = new ObjectListView<Report>(dao.getAll(pageNum, pageSize), Report.class);
-		List<Report> myApprovals = AnetObjectEngine.getInstance().getReportDao().getReportsForMyApproval(p);
-		List<Report> myPending = AnetObjectEngine.getInstance().getReportDao().getMyReportsPendingApproval(p);
-		view.addToContext("myApprovals", myApprovals);
-		view.addToContext("myPending", myPending);
-		return view;
+	public Map<String,Object> getAllReportsView(@Auth Person p, @DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
+		Map<String,Object> result = new HashMap<String,Object>();
+		result.put("reports", dao.getAll(pageNum, pageSize));
+		result.put("myApprovals", AnetObjectEngine.getInstance().getReportDao().getReportsForMyApproval(p));
+		result.put("myPending", AnetObjectEngine.getInstance().getReportDao().getMyReportsPendingApproval(p));
+		return result;
 	}
 
 	@GET
 	@Path("/{id}")
-	@Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON})
 	public Report getById(@PathParam("id") int id) {
 		Report r =  dao.getById(id);
 		if (r == null) { throw new WebApplicationException("No such report", Status.NOT_FOUND); }
@@ -84,18 +82,13 @@ public class ReportResource {
 
 	@GET
 	@Path("/new")
-	@Produces(MediaType.TEXT_HTML)
-	public Report createNewReportForm(@Auth Person author) {
-		List<Poam> milestones = engine.getPoamDao().getPoamsByCategory("EF");
-		List<Location> recentLocations = engine.getReportDao().getRecentLocations(author);
-		List<Person> recentPeople = engine.getReportDao().getRecentPeople(author);
-		List<Poam> recentPoams = engine.getReportDao().getRecentPoams(author);
-		Report r = (new Report()).render("form.ftl");
-		r.addToContext("efs", milestones);
-		r.addToContext("recentLocations", recentLocations);
-		r.addToContext("recentPeople", recentPeople);
-		r.addToContext("recentPoams", recentPoams);
-		return r;
+	public Map<String,Object> createNewReportForm(@Auth Person author) {
+		Map<String,Object> result = new HashMap<String,Object>();
+		result.put("efs", engine.getPoamDao().getPoamsByCategory("EF"));
+		result.put("recentLocations", engine.getReportDao().getRecentLocations(author));
+		result.put("recentPeople", engine.getReportDao().getRecentPeople(author));
+		result.put("recentPoams", engine.getReportDao().getRecentPoams(author));
+		return result;
 	}
 
 	@POST
@@ -104,16 +97,6 @@ public class ReportResource {
 		if (r.getState() == null) { r.setState(ReportState.DRAFT); }
 		if (r.getAuthor() == null) { r.setAuthor(author); }
 		return dao.insert(r);
-	}
-
-	@GET
-	@Path("/{id}/edit")
-	@Produces(MediaType.TEXT_HTML)
-	public Report editReportForm(@PathParam("id") int id) {
-		Report r = dao.getById(id);
-		List<Poam> milestones = engine.getPoamDao().getPoamsByCategory("EF");
-		r.addToContext("efs", milestones);
-		return r.render("form.ftl");
 	}
 
 	@POST
@@ -206,8 +189,8 @@ public class ReportResource {
 	}
 
 	private void sendApprovalNeededEmail(Report r) { 
-		ApprovalStep as = r.getApprovalStep();
-		Group approvalGroup = r.getApprovalStep().getApproverGroup();
+		ApprovalStep step = r.getApprovalStep();
+		Group approvalGroup = step.getApproverGroup();
 		List<Person> approvers = approvalGroup.getMembers();
 		AnetEmail approverEmail = new AnetEmail();
 		approverEmail.setTemplateName("/emails/approvalNeeded.ftl");

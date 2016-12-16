@@ -70,7 +70,8 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		Person approver1 = new Person();
 		approver1.setDomainUsername("bob");
 		approver1.setName("Bob Bobtown");
-		approver1.setEmailAddress("bob@example.com");
+		approver1.setEmailAddress("hunter+bob@dds.mil");
+		approver1.setRole(Role.ADVISOR);
 		approver1 = findOrPutPersonInDb(approver1);
 		Person approver2 = getElizabethElizawell();
 		

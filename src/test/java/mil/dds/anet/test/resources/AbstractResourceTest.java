@@ -61,7 +61,7 @@ public abstract class AbstractResourceTest {
 		}
 		
 		//Create insert into DB, Steve Steveson should AWAYS be in the database. 
-		Person newPerson = httpQuery("/api/people/new", PersonTest.getJackJacksonStub()).post(Entity.json(stub), Person.class);
+		Person newPerson = httpQuery("/api/people/new", PersonTest.getArthurDmin()).post(Entity.json(stub), Person.class);
 		return newPerson;
 	}
 	
