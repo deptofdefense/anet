@@ -73,20 +73,22 @@ export default class ReportNew extends React.Component {
 							} clearOnSelect={true} />
 						</HorizontalFormField>
 
-						<Table responsive hover striped>
-							<thead>
-								<tr>
-									<th>Name</th>
-									<th>Position</th>
-								</tr>
-							</thead>
-							<tbody>
-								{this.state.attendees.map(person => <tr key={person.id}>
-									<td>{person.name} {person.rank.toUpperCase()}</td>
-									<td>{person.role}</td>
-								</tr>)}
-							</tbody>
-						</Table>
+						<HorizontalFormField>
+							<Table hover striped>
+								<thead>
+									<tr>
+										<th>Name</th>
+										<th>Position</th>
+									</tr>
+								</thead>
+								<tbody>
+									{this.state.attendees.map(person => <tr key={person.id}>
+										<td>{person.name} {person.rank.toUpperCase()}</td>
+										<td>{person.role}</td>
+									</tr>)}
+								</tbody>
+							</Table>
+						</HorizontalFormField>
 					</fieldset>
 
 					<fieldset>
