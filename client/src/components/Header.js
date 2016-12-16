@@ -3,6 +3,8 @@ import {Link} from 'react-router'
 import {Button} from 'react-bootstrap'
 import {Injectable, Injector} from 'react-injectables'
 
+import SearchBar from './SearchBar.js'
+
 import logo from '../resources/logo.png'
 
 const backgroundCss = {
@@ -27,7 +29,7 @@ class Header extends React.Component {
 					</Link>
 
 					<div className="pull-left header-content">
-						{this.props.injections}
+						{this.props.injections.length ? this.props.injections : <SearchBar />}
 					</div>
 
 					<Button bsStyle="primary" className="pull-right">Create</Button>

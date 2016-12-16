@@ -27,7 +27,8 @@ fieldset legend small {
 }
 
 .header-content {
-	margin-left: 142px;
+	margin-left: 10%;
+	width: 55%;
 }
 
 .header-content > * {
