@@ -13,9 +13,25 @@ const FORMAT_TABLE = 'table'
 export default class Search extends React.Component {
 	constructor(props) {
 		super(props)
-		this.state = {query: props.location.query.q, viewFormat: FORMAT_EXSUM}
+		this.state = {
+			query: props.location.query.q,
+			viewFormat: FORMAT_TABLE,
+			results: {reports: [], people: []}
+		}
 
 		this.changeViewFormat = this.changeViewFormat.bind(this)
+	}
+
+	componentDidMount() {
+		API.fetch('search/?q=' + this.state.query).then(results => {
+			this.setState({results: {
+				reports: results.reports,
+				people: results.people,
+				positions: results.positions,
+				poams: results.poams,
+				locations: results.locations,
+			}})
+		})
 	}
 
 	static useNavigation = <div>
@@ -34,26 +50,73 @@ export default class Search extends React.Component {
 	render() {
 		return (
 			<div>
-				<Breadcrumbs items={[['Searching for "' + this.state.query + '"', '/search']]} className="pull-left" />
+				<Breadcrumbs items={[['Searching for "' + this.state.query + '"', '/search']]} />
 
-				<div className="pull-right">
-					<RadioGroup value={this.state.viewFormat} onChange={this.changeViewFormat}>
-						<Radio value={FORMAT_EXSUM}>EXSUM</Radio>
-						<Radio value={FORMAT_TABLE}>Table</Radio>
-					</RadioGroup>
-				</div>
+				{this.state.results.reports.length &&
+				<fieldset>
+					<legend>
+						Reports
+						<RadioGroup value={this.state.viewFormat} onChange={this.changeViewFormat} className="pull-right">
+							<Radio value={FORMAT_EXSUM}>EXSUM</Radio>
+							<Radio value={FORMAT_TABLE}>Table</Radio>
+						</RadioGroup>
+					</legend>
+					{this.state.viewFormat === FORMAT_TABLE ? this.renderTable() : this.renderExsums()}
+				</fieldset>
+				}
 
-				{this.state.viewFormat === FORMAT_TABLE ? this.renderTable() : this.renderExsums()}
+				{this.state.results.people.length &&
+					<fieldset>
+						<legend>People</legend>
+						{this.renderPeople()}
+					</fieldset>
+				}
 			</div>
 		)
 	}
 
 	renderTable() {
-		return <div></div>
+		return <Table responsive hover striped>
+			<thead>
+				<tr>
+					<th>Date</th>
+					<th>AO</th>
+					<th>Summary</th>
+				</tr>
+			</thead>
+			<tbody>
+				{this.state.results && this.state.results.reports.map(report => <tr key={report.id}>
+					<td>{report.engagementDate}</td>
+					<td>TODO</td>
+					<td>{report.intent}</td>
+				</tr>)}
+			</tbody>
+		</Table>
 	}
 
 	renderExsums() {
 		return <div></div>
+	}
+
+	renderPeople() {
+		return <Table responsive hover striped>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Role</th>
+					<th>Phone</th>
+					<th>Email</th>
+				</tr>
+			</thead>
+			<tbody>
+				{this.state.results && this.state.results.people.map(person => <tr key={person.id}>
+					<td>{person.name} {person.rank.toUpperCase()}</td>
+					<td>{person.role}</td>
+					<td>{person.phoneNumber}</td>
+					<td>{person.emailAddress}</td>
+				</tr>)}
+			</tbody>
+		</Table>
 	}
 
 	changeViewFormat(newFormat) {
