@@ -1,5 +1,5 @@
 import React from 'react'
-import {ControlLabel, InputGroup, Radio, Table} from 'react-bootstrap'
+import {ControlLabel, InputGroup, Radio, Table, Glyphicon} from 'react-bootstrap'
 
 import DatePicker from 'react-bootstrap-date-picker'
 
@@ -77,12 +77,16 @@ export default class ReportNew extends React.Component {
 							<Table hover striped>
 								<thead>
 									<tr>
+										<th></th>
 										<th>Name</th>
 										<th>Position</th>
 									</tr>
 								</thead>
 								<tbody>
 									{this.state.attendees.map(person => <tr key={person.id}>
+										<td onClick={this.removeAttendee.bind(this, person)}>
+											<Glyphicon glyph="remove-sign" style={{cursor: 'pointer'}} />
+										</td>
 										<td>{person.name} {person.rank.toUpperCase()}</td>
 										<td>{person.role}</td>
 									</tr>)}
@@ -121,6 +125,12 @@ export default class ReportNew extends React.Component {
 	addAttendee(event, attendee) {
 		let attendees = this.state.attendees.slice(0)
 		attendees.push(attendee)
-		this.setState({attendees: attendees})
+		this.setState({attendees})
+	}
+
+	removeAttendee(attendee) {
+		let attendees = this.state.attendees.slice(0)
+		attendees.splice(attendees.indexOf(attendee), 1)
+		this.setState({attendees})
 	}
 }
