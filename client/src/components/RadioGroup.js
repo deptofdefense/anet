@@ -11,7 +11,7 @@ export default class RadioGroup extends React.Component {
 	}
 
 	render() {
-		let size = this.props.size || "large"
+		let size = this.props.size
 		let id = this.getId()
 
 		return (
