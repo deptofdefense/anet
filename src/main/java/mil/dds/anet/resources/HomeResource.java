@@ -1,6 +1,7 @@
 package mil.dds.anet.resources;
 
 import java.util.List;
+import java.util.HashMap;
 
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.GET;
@@ -48,26 +49,29 @@ public class HomeResource {
 
 	@GET
 	@Path("/api/search")
-	public SimpleView search(@QueryParam("q") String query, @QueryParam("types") String types) {
+	@Produces(MediaType.APPLICATION_JSON)
+	public HashMap<String, Object> search(@QueryParam("q") String query, @QueryParam("types") String types) {
 		if (types == null) { types = ALL_TYPES;}
 		types = types.toLowerCase();
 
-		SimpleView view = new SimpleView("/views/search.ftl");
+		HashMap<String, Object> result = new HashMap<String, Object>();
+
 		if (types.contains("people")) {
-			view.addToContext("people", AnetObjectEngine.getInstance().getPersonDao().searchByName(query));
+			result.put("people", AnetObjectEngine.getInstance().getPersonDao().searchByName(query));
 		}
 		if (types.contains("reports")) {
-			view.addToContext("reports", AnetObjectEngine.getInstance().getReportDao().search(query));
+			result.put("reports", AnetObjectEngine.getInstance().getReportDao().search(query));
 		}
 		if (types.contains("positions")) {
-			view.addToContext("positions", AnetObjectEngine.getInstance().getPositionDao().search(query));
+			result.put("positions", AnetObjectEngine.getInstance().getPositionDao().search(query));
 		}
 		if (types.contains("poams")) {
-			view.addToContext("poams", AnetObjectEngine.getInstance().getPoamDao().search(query));
+			result.put("poams", AnetObjectEngine.getInstance().getPoamDao().search(query));
 		}
 		if (types.contains("locations")) {
-			view.addToContext("locations", AnetObjectEngine.getInstance().getLocationDao().searchByName(query));
+			result.put("locations", AnetObjectEngine.getInstance().getLocationDao().searchByName(query));
 		}
-		return view;
+
+		return result;
 	}
 }
