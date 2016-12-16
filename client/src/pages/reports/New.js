@@ -70,7 +70,7 @@ export default class ReportNew extends React.Component {
 						<HorizontalFormField id="addAttendee">
 							<Autocomplete value="" placeholder="Who was there?" url="/api/people/search" onChange={this.addAttendee} template={person =>
 								<span>{person.name} {person.rank.toUpperCase()}</span>
-							} />
+							} clearOnSelect={true} />
 						</HorizontalFormField>
 
 						<Table responsive hover striped>
@@ -81,7 +81,7 @@ export default class ReportNew extends React.Component {
 								</tr>
 							</thead>
 							<tbody>
-								{this.state.attendees.map(person => <tr>
+								{this.state.attendees.map(person => <tr key={person.id}>
 									<td>{person.name} {person.rank.toUpperCase()}</td>
 									<td>{person.role}</td>
 								</tr>)}

@@ -27,8 +27,6 @@ export class Form extends React.Component {
 			...formProps
 		} = this.props
 
-		console.log('formFor', formFor)
-
 		return (
 			<BSForm {...formProps} ref="container" />
 		)
