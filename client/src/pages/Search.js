@@ -87,7 +87,7 @@ export default class Search extends React.Component {
 				</tr>
 			</thead>
 			<tbody>
-				{this.state.results && this.state.results.reports.map(report =>
+				{this.state.results.reports.map(report =>
 					<tr key={report.id}>
 						<td><Link to={"/reports/" + report.id}>{moment(report.engagementDate).format('L')}</Link></td>
 						<td>TODO</td>
@@ -99,7 +99,16 @@ export default class Search extends React.Component {
 	}
 
 	renderExsums() {
-		return <div></div>
+		return <ul>
+			{this.state.results.reports.map(report =>
+				<li key={report.id}>
+					<Link to={"/reports/" + report.id}>Report #{report.id}</Link><br />
+					At {moment(report.engagementDate).format('L LT')}, {report.author.rank.toUpperCase()} {report.author.name}
+					 met with {report.attendees && report.attendees.length} Afghan principals. They discussed {report.intent}.
+					 THIS IS AN IMPROPERLY FORMATTED EXSUM.
+				</li>
+			)}
+		</ul>
 	}
 
 	renderPeople() {
