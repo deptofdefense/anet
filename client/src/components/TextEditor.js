@@ -1,5 +1,6 @@
 import React from 'react'
 import {Editor, EditorState, RichUtils} from 'draft-js'
+import {Glyphicon} from 'react-bootstrap'
 
 import './TextEditor.css'
 
@@ -125,15 +126,18 @@ export default class TextEditor extends React.Component {
 
           return (
             <span className={className} onMouseDown={this.onToggle}>
-              {this.props.label}
+              {this.props.icon ?
+                  <Glyphicon glyph={this.props.icon} /> :
+                  this.props.label
+              }
             </span>
           );
         }
       }
 
       const BLOCK_TYPES = [
-        {label: 'UL', style: 'unordered-list-item'},
-        {label: 'OL', style: 'ordered-list-item'},
+        {label: "Unordered list", icon: 'list', style: 'unordered-list-item'},
+        {label: "Numbered list", icon: 'sound-5-1', style: 'ordered-list-item'},
       ];
 
       const BlockStyleControls = (props) => {
@@ -153,6 +157,7 @@ export default class TextEditor extends React.Component {
                 label={type.label}
                 onToggle={props.onToggle}
                 style={type.style}
+                icon={type.icon}
               />
             )}
           </div>
@@ -160,9 +165,9 @@ export default class TextEditor extends React.Component {
       };
 
       var INLINE_STYLES = [
-        {label: 'Bold', style: 'BOLD'},
-        {label: 'Italic', style: 'ITALIC'},
-        {label: 'Underline', style: 'UNDERLINE'},
+        {label: 'Bold', icon: 'bold', style: 'BOLD'},
+        {label: 'Italic', icon: 'italic', style: 'ITALIC'},
+        {label: 'Underline', icon: 'text-color', style: 'UNDERLINE'},
       ];
 
       const InlineStyleControls = (props) => {
@@ -176,6 +181,7 @@ export default class TextEditor extends React.Component {
                 label={type.label}
                 onToggle={props.onToggle}
                 style={type.style}
+                icon={type.icon}
               />
             )}
           </div>
