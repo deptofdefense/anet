@@ -11,11 +11,10 @@ export default class RadioGroup extends React.Component {
 	}
 
 	render() {
-		let size = this.props.size
 		let id = this.getId()
 
 		return (
-			<ButtonGroup bsSize={size} data-toggle="buttons">
+			<ButtonGroup vertical={this.props.vertical} style={this.props.style} bsSize={this.props.size} data-toggle="buttons">
 				{this.props.children.map((child, index) =>
 					<Button key={child.props.value} active={this.state.selected === child.props.value} onClick={this.onButtonClick}>
 						<Radio onChange={this.onRadioChange} {...child.props} inline id={id + '-' + child.props.value} name={id} />

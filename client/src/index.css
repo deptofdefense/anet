@@ -17,12 +17,12 @@ fieldset legend small {
 	margin: 0.5rem;
 }
 
-.btn-group .radio-inline {
+.btn-group .radio-inline, .btn-group-vertical .radio-inline {
 	padding: 0;
 	margin: 0;
 }
 
-.btn-group .radio-inline input {
+.btn-group .radio-inline input, .btn-group-vertical .radio-inline input {
 	display: none;
 }
 
