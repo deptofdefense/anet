@@ -93,7 +93,7 @@ export default class ReportNew extends React.Component {
 								</tbody>
 							</Table>
 
-							<HorizontalFormField.Col>
+							<HorizontalFormField.Col style={{marginTop: '-28px'}}>
 								<h5 style={{textDecoration: 'underline'}}>Shortcuts</h5>
 								<Button bsStyle="link">Add myself</Button>
 								<Button bsStyle="link">Add my principal (Aarash Aarif)</Button>
@@ -128,6 +128,12 @@ export default class ReportNew extends React.Component {
 									</tr>)}
 								</tbody>
 							</Table>
+
+							<HorizontalFormField.Col style={{marginTop: '-28px'}}>
+								<h5 style={{textDecoration: 'underline'}}>Shortcuts</h5>
+								<Button bsStyle="link">Add "Tracking your expenses"</Button>
+								<Button bsStyle="link">Add "Getting a budget in place"</Button>
+							</HorizontalFormField.Col>
 						</HorizontalFormField>
 					</fieldset>
 
