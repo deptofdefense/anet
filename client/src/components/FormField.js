@@ -27,6 +27,8 @@ export class Form extends React.Component {
 			...formProps
 		} = this.props
 
+		console.log('formFor', formFor)
+
 		return (
 			<BSForm {...formProps} ref="container" />
 		)
@@ -47,6 +49,7 @@ class HorizontalFormField extends React.Component {
 	render() {
 		let {
 			id,
+			className,
 			label,
 			addon,
 			children,
@@ -71,7 +74,7 @@ class HorizontalFormField extends React.Component {
 			content = children || <FormControl {...childProps} value={this.getValue(id)} onChange={this.onChange.bind(this, id)} />
 
 		return (
-			<FormGroup controlId={id}>
+			<FormGroup controlId={id} className={className}>
 				<Col sm={2} componentClass={ControlLabel}>
 					{label}
 				</Col>

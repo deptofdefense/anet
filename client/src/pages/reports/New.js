@@ -1,10 +1,11 @@
 import React from 'react'
-import {ControlLabel, InputGroup, ButtonGroup, Button} from 'react-bootstrap'
+import {ControlLabel, InputGroup, Radio} from 'react-bootstrap'
 
 import DatePicker from 'react-bootstrap-date-picker'
 
 import {ContentForHeader} from '../../components/Header'
 import {Form, HorizontalFormField} from '../../components/FormField'
+import RadioGroup from '../../components/RadioGroup'
 import Breadcrumbs from '../../components/Breadcrumbs'
 import TextEditor from '../../components/TextEditor'
 
@@ -13,9 +14,10 @@ export default class ReportNew extends React.Component {
 
 	constructor(props) {
 		super(props)
-		this.state = {report: {engagementIntent: ''}}
+		this.state = {report: {engagementIntent: ''}, reportAtmosphere: 'positive'}
 
 		this.onFormChange = this.onFormChange.bind(this)
+		this.onAtmosphereChange = this.onAtmosphereChange.bind(this)
 	}
 
 	render() {
@@ -44,12 +46,14 @@ export default class ReportNew extends React.Component {
 						<HorizontalFormField id="engagementLocation" placeholder="Where did it happen?" addon="📍" />
 
 						<HorizontalFormField id="atmosphere">
-							<ButtonGroup bsSize="large">
-								<Button>👍</Button>
-								<Button>😐</Button>
-								<Button>👎</Button>
-							</ButtonGroup>
+							<RadioGroup onChange={this.onAtmosphereChange}>
+								<Radio value="positive">👍</Radio>
+								<Radio value="neutral">😐</Radio>
+								<Radio value="negative">👎</Radio>
+							</RadioGroup>
 						</HorizontalFormField>
+
+						<HorizontalFormField id="atmosphereDetails" className={this.state.reportAtmosphere === 'positive' && 'hide'} />
 					</fieldset>
 
 					<fieldset>
@@ -76,6 +80,10 @@ export default class ReportNew extends React.Component {
 
 	onFormChange(event) {
 		this.setState({report: this.state.report})
+	}
+
+	onAtmosphereChange(atmosphere) {
+		this.setState({reportAtmosphere: atmosphere})
 	}
 
 	subjectCharactersRemaining() {
