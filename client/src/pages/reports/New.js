@@ -138,7 +138,7 @@ export default class ReportNew extends React.Component {
 					</fieldset>
 
 					<fieldset>
-						<legend>Meeting discussion <small>Required</small></legend>
+						<legend>Meeting discussion</legend>
 
 						<TextEditor label="Discussion outcome" />
 						<TextEditor label="Next steps" style={{marginTop: '5rem'}} />
