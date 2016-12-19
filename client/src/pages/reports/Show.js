@@ -47,7 +47,7 @@ export default class ReportShow extends React.Component {
 					<fieldset>
 						<legend>Meeting attendees</legend>
 						{report.attendees && report.attendees.map(person =>
-							{person.name}
+							person.name
 						)}
 					</fieldset>
 

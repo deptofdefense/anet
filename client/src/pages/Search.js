@@ -1,7 +1,7 @@
 import React from 'react'
 import moment from 'moment'
 
-import {Radio, Table, Button} from 'react-bootstrap'
+import {Radio, Table} from 'react-bootstrap'
 import {Link} from 'react-router'
 
 import RadioGroup from '../components/RadioGroup'
