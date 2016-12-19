@@ -60,11 +60,14 @@ export default class ReportShow extends React.Component {
 						<legend>Meeting attendees</legend>
 						{report.attendees && report.attendees.map(person =>
 							person.name
-						)}
+						) || "This report does not specify any attendees."}
 					</fieldset>
 
 					<fieldset>
 						<legend>Milestones</legend>
+						{report.poams && report.poams.map(poam =>
+							poam.longName
+						) || "This report does not specify any milestones."}
 					</fieldset>
 				</Form>
 			</div>
