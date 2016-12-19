@@ -74,10 +74,10 @@ export default class ReportShow extends React.Component {
 						<legend>Meeting discussion</legend>
 
 						<h5>Key outcomes</h5>
-						<p>{report.reportText}</p>
+						<div dangerouslySetInnerHTML={{__html: report.reportText}} />
 
 						<h5>Next steps</h5>
-						<p>{report.nextSteps}</p>
+						<div dangerouslySetInnerHTML={{__html: report.nextSteps}} />
 					</fieldset>
 				</Form>
 			</div>
