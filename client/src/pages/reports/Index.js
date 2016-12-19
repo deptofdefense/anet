@@ -15,7 +15,7 @@ export default class ReportsIndex extends React.Component {
 
 	componentDidMount() {
 		API.fetch('/api/reports')
-			.then(data => this.setState({reports: data.list}))
+			.then(data => this.setState({reports: data.reports}))
 	}
 
 	render() {
