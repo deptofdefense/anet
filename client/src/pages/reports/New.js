@@ -10,6 +10,8 @@ import Breadcrumbs from '../../components/Breadcrumbs'
 import Autocomplete from '../../components/Autocomplete'
 import TextEditor from '../../components/TextEditor'
 
+import API from '../../api'
+
 export default class ReportNew extends React.Component {
 	static useNavigation = false
 
@@ -20,12 +22,18 @@ export default class ReportNew extends React.Component {
 			reportAtmosphere: 'positive',
 			attendees: [],
 			poams: [],
+			recentPeople: [],
 		}
 
 		this.onFormChange = this.onFormChange.bind(this)
 		this.onAtmosphereChange = this.onAtmosphereChange.bind(this)
 		this.addAttendee = this.addAttendee.bind(this)
 		this.addPoam = this.addPoam.bind(this)
+	}
+
+	componentDidMount() {
+		API.fetch('/api/reports/new')
+			.then(data => this.setState(data))
 	}
 
 	render() {
@@ -96,8 +104,9 @@ export default class ReportNew extends React.Component {
 							<HorizontalFormField.Col style={{marginTop: '-28px'}}>
 								<h5 style={{textDecoration: 'underline'}}>Shortcuts</h5>
 								<Button bsStyle="link">Add myself</Button>
-								<Button bsStyle="link">Add my principal (Aarash Aarif)</Button>
-								<Button bsStyle="link">Mohammad Aaron (Recent)</Button>
+								{this.state.recentPeople.map(person =>
+									<Button key={person.id} bsStyle="link" onClick={this.addAttendee.bind(this, person)}>Add {person.name}</Button>
+								)}
 							</HorizontalFormField.Col>
 						</HorizontalFormField>
 					</fieldset>
