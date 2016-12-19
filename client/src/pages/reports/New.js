@@ -102,7 +102,7 @@ export default class ReportNew extends React.Component {
 								</tbody>
 							</Table>
 
-							<HorizontalFormField.Col style={{marginTop: '-28px'}}>
+							<HorizontalFormField.Col className="shortcut-list">
 								<h5 style={{textDecoration: 'underline'}}>Shortcuts</h5>
 								<Button bsStyle="link">Add myself</Button>
 								{this.state.recentPeople.map(person =>
@@ -139,7 +139,7 @@ export default class ReportNew extends React.Component {
 								</tbody>
 							</Table>
 
-							<HorizontalFormField.Col style={{marginTop: '-28px'}}>
+							<HorizontalFormField.Col className="shortcut-list">
 								<h5 style={{textDecoration: 'underline'}}>Shortcuts</h5>
 								{this.state.recentPoams.map(poam =>
 									<Button key={poam.id} bsStyle="link" onClick={this.addPoam.bind(this, poam)}>Add "{poam.longName}"</Button>
