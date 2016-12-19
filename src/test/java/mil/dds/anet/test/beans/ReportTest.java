@@ -16,7 +16,7 @@ import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
 import mil.dds.anet.beans.geo.LatLng;
 import mil.dds.anet.beans.geo.Location;
-import mil.dds.anet.views.AbstractAnetView.LoadLevel;
+import mil.dds.anet.views.AbstractAnetBean.LoadLevel;
 
 public class ReportTest extends BeanTester<Report> {
 

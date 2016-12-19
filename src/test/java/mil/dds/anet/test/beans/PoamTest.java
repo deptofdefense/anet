@@ -1,10 +1,11 @@
 package mil.dds.anet.test.beans;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.Test;
 
 import mil.dds.anet.beans.Poam;
-import mil.dds.anet.views.AbstractAnetView.LoadLevel;
+import mil.dds.anet.views.AbstractAnetBean.LoadLevel;
 
 public class PoamTest extends BeanTester<Poam> {
 
