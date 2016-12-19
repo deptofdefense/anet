@@ -103,7 +103,7 @@ export default class ReportNew extends React.Component {
 							</Table>
 
 							<HorizontalFormField.Col className="shortcut-list">
-								<h5 style={{textDecoration: 'underline'}}>Shortcuts</h5>
+								<h5>Shortcuts</h5>
 								<Button bsStyle="link">Add myself</Button>
 								{this.state.recentPeople.map(person =>
 									<Button key={person.id} bsStyle="link" onClick={this.addAttendee.bind(this, person)}>Add {person.name}</Button>
@@ -140,7 +140,7 @@ export default class ReportNew extends React.Component {
 							</Table>
 
 							<HorizontalFormField.Col className="shortcut-list">
-								<h5 style={{textDecoration: 'underline'}}>Shortcuts</h5>
+								<h5>Shortcuts</h5>
 								{this.state.recentPoams.map(poam =>
 									<Button key={poam.id} bsStyle="link" onClick={this.addPoam.bind(this, poam)}>Add "{poam.longName}"</Button>
 								)}

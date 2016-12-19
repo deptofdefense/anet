@@ -3,11 +3,19 @@ body {
 	margin-top: 152px;
 }
 
+h5 {
+	text-decoration: underline;
+}
+
 fieldset {
 	background: white;
 	border: 1px solid #eee;
-	padding: 3rem;
+	padding: 1.7rem 3rem 1.9rem 3rem;
 	margin: 3rem 0;
+}
+
+fieldset legend {
+	margin-bottom: 0;
 }
 
 fieldset legend small {
@@ -20,7 +28,7 @@ fieldset legend small {
 
 .shortcut-list {
 	padding: 0;
-	margin-top: -28px;
+	margin-top: -4px;
 }
 
 .shortcut-list .btn-link {

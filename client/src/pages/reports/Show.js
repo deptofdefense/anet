@@ -69,6 +69,16 @@ export default class ReportShow extends React.Component {
 							poam.longName
 						) || "This report does not specify any milestones."}
 					</fieldset>
+
+					<fieldset>
+						<legend>Meeting discussion</legend>
+
+						<h5>Key outcomes</h5>
+						<p>{report.reportText}</p>
+
+						<h5>Next steps</h5>
+						<p>{report.nextSteps}</p>
+					</fieldset>
 				</Form>
 			</div>
 		)
