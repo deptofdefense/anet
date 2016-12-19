@@ -23,6 +23,7 @@ export default class ReportNew extends React.Component {
 			attendees: [],
 			poams: [],
 			recentPeople: [],
+			recentPoams: [],
 		}
 
 		this.onFormChange = this.onFormChange.bind(this)
@@ -140,8 +141,9 @@ export default class ReportNew extends React.Component {
 
 							<HorizontalFormField.Col style={{marginTop: '-28px'}}>
 								<h5 style={{textDecoration: 'underline'}}>Shortcuts</h5>
-								<Button bsStyle="link">Add "Tracking your expenses"</Button>
-								<Button bsStyle="link">Add "Getting a budget in place"</Button>
+								{this.state.recentPoams.map(poam =>
+									<Button key={poam.id} bsStyle="link" onClick={this.addPoam.bind(this, poam)}>Add "{poam.longName}"</Button>
+								)}
 							</HorizontalFormField.Col>
 						</HorizontalFormField>
 					</fieldset>
