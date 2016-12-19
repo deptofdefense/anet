@@ -6,9 +6,9 @@ import java.util.Objects;
 
 import org.joda.time.DateTime;
 
-import mil.dds.anet.views.AbstractAnetView;
+import mil.dds.anet.views.AbstractAnetBean;
 
-public class Group extends AbstractAnetView<Group> {
+public class Group extends AbstractAnetBean {
 
 	String name;
 	List<Person> members;

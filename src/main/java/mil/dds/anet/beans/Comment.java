@@ -2,18 +2,13 @@ package mil.dds.anet.beans;
 
 import java.util.Objects;
 
-import org.joda.time.DateTime;
+import mil.dds.anet.views.AbstractAnetBean;
 
-import mil.dds.anet.views.AbstractAnetView;
-
-public class Comment extends AbstractAnetView<Comment> {
+public class Comment extends AbstractAnetBean {
 
 	private Integer reportId;
 	
 	private Person author;
-	private DateTime createdAt;
-	private DateTime updatedAt;
-	
 	private String text;
 
 	public Integer getReportId() {
@@ -32,21 +27,7 @@ public class Comment extends AbstractAnetView<Comment> {
 		this.author = author;
 	}
 
-	public DateTime getCreatedAt() {
-		return createdAt;
-	}
-
-	public void setCreatedAt(DateTime createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	public DateTime getUpdatedAt() {
-		return updatedAt;
-	}
-
-	public void setUpdatedAt(DateTime updatedAt) {
-		this.updatedAt = updatedAt;
-	}
+	
 
 	public String getText() {
 		return text;

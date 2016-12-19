@@ -22,7 +22,6 @@ import javax.ws.rs.core.Response.Status;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.database.PoamDao;
-import mil.dds.anet.views.ObjectListView;
 
 @Path("/api/poams")
 @Produces(MediaType.APPLICATION_JSON)
@@ -33,15 +32,6 @@ public class PoamResource {
 	
 	public PoamResource(AnetObjectEngine engine) {
 		this.dao = engine.getPoamDao();
-	}
-	
-	@GET
-	@Path("/")
-	@Produces(MediaType.TEXT_HTML)
-	public ObjectListView<Poam> index() { 
-		List<Poam> tree = getFullPoamTree();
-		ObjectListView<Poam> view = new ObjectListView<Poam>(tree, Poam.class);
-		return view;
 	}
 	
 	@GET

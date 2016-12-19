@@ -8,9 +8,9 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.utils.DaoUtils;
-import mil.dds.anet.views.AbstractAnetView;
+import mil.dds.anet.views.AbstractAnetBean;
 
-public class ApprovalStep extends AbstractAnetView<ApprovalStep> {
+public class ApprovalStep extends AbstractAnetBean {
 
 	Group approverGroup;
 	Integer nextStepId;

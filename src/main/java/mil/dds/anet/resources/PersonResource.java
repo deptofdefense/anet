@@ -16,25 +16,18 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.eclipse.jetty.util.log.Log;
-import org.eclipse.jetty.util.log.Logger;
-
 import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
-import mil.dds.anet.auth.AnetAuthenticationFilter;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Person.Role;
-import mil.dds.anet.beans.Position.PositionType;
 import mil.dds.anet.beans.Position;
+import mil.dds.anet.beans.Position.PositionType;
 import mil.dds.anet.database.PersonDao;
-import mil.dds.anet.views.ObjectListView;
 
 @Path("/api/people")
 @Produces(MediaType.APPLICATION_JSON)
 @PermitAll
 public class PersonResource {
-
-	private static Logger log = Log.getLogger(PersonResource.class);
 	
 	private PersonDao dao;
 	
@@ -55,17 +48,6 @@ public class PersonResource {
 	}
 	
 	/**
-	 * same as {@link #getAllPeople(int, int)} but generates the HTML view (/person/view/index.ftl)
-	 */
-	@GET
-	@Path("/")
-	@Produces(MediaType.TEXT_HTML)
-	public ObjectListView<Person> getAllPeopleView(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
-		return new ObjectListView<Person>(dao.getAll(pageNum, pageSize), Person.class);
-	}
-	
-	
-	/**
 	 * Returns a single person entry based on ID. 
 	 */
 	@GET
@@ -77,26 +59,6 @@ public class PersonResource {
 		return p;
 	}
 	
-	@GET
-	@Path("/{id}")
-	@Produces(MediaType.TEXT_HTML)
-	public Person getPersonView(@PathParam("id") int id) { 
-		Person p = dao.getById(id);
-		if (p == null) { throw new WebApplicationException("No such person", Status.NOT_FOUND); }
-		List<Position> positions = AnetObjectEngine.getInstance().getPositionDao().getAllPositionsForPerson(p);
-		p.addToContext("positions", positions);
-		//What reports has this person written. 
-		p.addToContext("personReports", AnetObjectEngine.getInstance().getReportDao().getReportsByAuthor(p));
-		return p.render("show.ftl");
-		
-	}
-	
-	@GET
-	@Path("/new")
-	@Produces(MediaType.TEXT_HTML)
-	public Person getPersonForm() { 
-		return (new Person()).render("form.ftl");
-	}
 	
 	/**
 	 * Creates a new {@link Person} object as supplied in http entity. 
@@ -107,15 +69,6 @@ public class PersonResource {
 	@RolesAllowed("SUPER_USER")
 	public Person createNewPerson(Person p) { 
 		return dao.insert(p);
-	}
-	
-	
-	@GET
-	@Path("/{id}/edit")
-	@Produces(MediaType.TEXT_HTML)
-	public Person getPersonEditForm(@PathParam("id") int id) { 
-		Person p = dao.getById(id);
-		return p.render("form.ftl");
 	}
 	
 	/**

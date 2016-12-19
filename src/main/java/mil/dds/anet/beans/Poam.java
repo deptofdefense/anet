@@ -3,26 +3,21 @@ package mil.dds.anet.beans;
 import java.util.List;
 import java.util.Objects;
 
-import org.joda.time.DateTime;
-
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.utils.DaoUtils;
-import mil.dds.anet.views.AbstractAnetView;
+import mil.dds.anet.views.AbstractAnetBean;
 
-public class Poam extends AbstractAnetView<Poam> {
+public class Poam extends AbstractAnetBean {
 
 	String shortName;
 	String longName;
 	String category;
 	Poam parentPoam;
 	List<Poam> childrenPoams;
-
-	DateTime createdAt;
-	DateTime updatedAt;
 
 	public String getShortName() {
 		return shortName;
@@ -83,18 +78,6 @@ public class Poam extends AbstractAnetView<Poam> {
 		this.childrenPoams = childrenPoams;
 	}
 	
-	public DateTime getCreatedAt() {
-		return createdAt;
-	}
-	public void setCreatedAt(DateTime createdAt) {
-		this.createdAt = createdAt;
-	}
-	public DateTime getUpdatedAt() {
-		return updatedAt;
-	}
-	public void setUpdatedAt(DateTime updatedAt) {
-		this.updatedAt = updatedAt;
-	}
 	public static Poam create(String shortName, String longName, String category) { 
 		return create(shortName, longName, category, null);
 	}

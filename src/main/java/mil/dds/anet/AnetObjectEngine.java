@@ -32,8 +32,8 @@ import mil.dds.anet.database.PoamDao;
 import mil.dds.anet.database.PositionDao;
 import mil.dds.anet.database.ReportDao;
 import mil.dds.anet.database.TestingDao;
-import mil.dds.anet.views.AbstractAnetView;
-import mil.dds.anet.views.AbstractAnetView.LoadLevel;
+import mil.dds.anet.views.AbstractAnetBean;
+import mil.dds.anet.views.AbstractAnetBean.LoadLevel;
 
 //TODO: change this name
 public class AnetObjectEngine {
@@ -51,7 +51,7 @@ public class AnetObjectEngine {
 	CommentDao commentDao;
 	AdminDao adminDao;
 
-	private static Map<Class<? extends AbstractAnetView<?>>, IAnetDao<?>> daoMap;
+	private static Map<Class<? extends AbstractAnetBean>, IAnetDao<?>> daoMap;
 	private static AnetObjectEngine instance; 
 	
 	Handle dbHandle;
@@ -71,7 +71,7 @@ public class AnetObjectEngine {
 		commentDao = new CommentDao(dbHandle);
 		adminDao = new AdminDao(dbHandle);
 		
-		daoMap = new HashMap<Class<? extends AbstractAnetView<?>>, IAnetDao<?>>();
+		daoMap = new HashMap<Class<? extends AbstractAnetBean>, IAnetDao<?>>();
 		daoMap.put(Person.class, personDao);
 		daoMap.put(Group.class, groupDao);
 		daoMap.put(Location.class, locationDao);
@@ -170,9 +170,9 @@ public class AnetObjectEngine {
 		return instance;
 	}
 	
-	public static AbstractAnetView<?> loadBeanTo(AbstractAnetView<?> bean, LoadLevel ll) {
+	public static AbstractAnetBean loadBeanTo(AbstractAnetBean bean, LoadLevel ll) {
 		@SuppressWarnings("unchecked")
-		IAnetDao<? extends AbstractAnetView<?>> dao = (IAnetDao<? extends AbstractAnetView<?>>) daoMap.get(bean.getClass());
+		IAnetDao<? extends AbstractAnetBean> dao = (IAnetDao<? extends AbstractAnetBean>) daoMap.get(bean.getClass());
 		if ( dao == null) { throw new UnsupportedOperationException("No dao loaded for " + bean.getClass()); }
 		//TODO: support load levels above PROPERTIES. 
 		return dao.getById(bean.getId());

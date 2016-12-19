@@ -1,6 +1,5 @@
 package mil.dds.anet.resources;
 
-import java.util.List;
 import java.util.HashMap;
 
 import javax.annotation.security.PermitAll;
@@ -13,7 +12,6 @@ import javax.ws.rs.core.MediaType;
 import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
-import mil.dds.anet.beans.Report;
 import mil.dds.anet.views.SimpleView;
 
 @Path("")
@@ -25,23 +23,11 @@ public class HomeResource {
 	@Produces(MediaType.TEXT_HTML)
 	public SimpleView reactIndex(@Auth Person p) {
 		//Get a list of any reports this person wrote that need to be approved, and reports that this person can approve.
-		List<Report> myApprovals = AnetObjectEngine.getInstance().getReportDao().getReportsForMyApproval(p);
-		List<Report> myPending = AnetObjectEngine.getInstance().getReportDao().getMyReportsPendingApproval(p);
+//		List<Report> myApprovals = AnetObjectEngine.getInstance().getReportDao().getReportsForMyApproval(p);
+//		List<Report> myPending = AnetObjectEngine.getInstance().getReportDao().getMyReportsPendingApproval(p);
 		SimpleView view = new SimpleView("/views/react.ftl");
-		view.addToContext("myApprovals", myApprovals);
-		view.addToContext("myPending", myPending);
-		return view;
-	}
-
-	@GET
-	@Path("/legacy")
-	public SimpleView index(@Auth Person p) {
-		//Get a list of any reports this person wrote that need to be approved, and reports that this person can approve.
-		List<Report> myApprovals = AnetObjectEngine.getInstance().getReportDao().getReportsForMyApproval(p);
-		List<Report> myPending = AnetObjectEngine.getInstance().getReportDao().getMyReportsPendingApproval(p);
-		SimpleView view = new SimpleView("/views/index.ftl");
-		view.addToContext("myApprovals", myApprovals);
-		view.addToContext("myPending", myPending);
+//		view.addToContext("myApprovals", myApprovals);
+//		view.addToContext("myPending", myPending);
 		return view;
 	}
 

@@ -2,18 +2,13 @@ package mil.dds.anet.beans.geo;
 
 import java.util.Objects;
 
-import org.joda.time.DateTime;
+import mil.dds.anet.views.AbstractAnetBean;
 
-import mil.dds.anet.views.AbstractAnetView;
-
-public class Location extends AbstractAnetView<Location> {
+public class Location extends AbstractAnetBean {
 
 	private String name;
 	private LatLng latLng;
-	
-	private DateTime createdAt;
-	private DateTime updatedAt;
-	
+		
 	public String getName() {
 		return name;
 	}
@@ -27,19 +22,6 @@ public class Location extends AbstractAnetView<Location> {
 		this.latLng = latLng;
 	}
 	
-	public DateTime getCreatedAt() {
-		return createdAt;
-	}
-	public void setCreatedAt(DateTime createdAt) {
-		this.createdAt = createdAt;
-	}
-	
-	public DateTime getUpdatedAt() {
-		return updatedAt;
-	}
-	public void setUpdatedAt(DateTime updatedAt) {
-		this.updatedAt = updatedAt;
-	}
 	@Override
 	public boolean equals(Object o) { 
 		if (o == null || o.getClass() != Location.class) { 

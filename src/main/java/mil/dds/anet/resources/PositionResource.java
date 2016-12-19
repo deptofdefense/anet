@@ -44,13 +44,6 @@ public class PositionResource {
 	}
 	
 	@GET
-	@Path("/")
-	@Produces(MediaType.TEXT_HTML)
-	public ObjectListView<Position> getAllPositionsView(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
-		return new ObjectListView<Position>(dao.getAll(pageNum, pageSize), Position.class);
-	}
-	
-	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Position getPosition(@PathParam("id") int id) {
@@ -62,7 +55,7 @@ public class PositionResource {
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.TEXT_HTML)
-	public Position getPositionView(@PathParam("id") int id) { 
+	public Position getPositionView(@PathParam("id") int id) {
 		Position p = dao.getById(id);
 		if (p == null) { throw new WebApplicationException("Not Found", Status.NOT_FOUND); } 
 
@@ -90,19 +83,6 @@ public class PositionResource {
 		return p.render("show.ftl");
 	}
 	
-	@GET
-	@Path("/new{type}")
-	@Produces(MediaType.TEXT_HTML)
-	public Position getPositionForm(@PathParam("type") String type) { 
-		Position b = (new Position());
-		if (type.equalsIgnoreCase("BILLET")) { 
-			b.setType(PositionType.ADVISOR);
-		} else { 
-			b.setType(PositionType.PRINCIPAL);
-		}
-		return b.render("form.ftl");
-	}
-	
 	@POST
 	@Path("/new")
 	@RolesAllowed("SUPER_USER")
@@ -117,14 +97,6 @@ public class PositionResource {
 		
 		return dao.insert(p);
 		
-	}
-	
-	@GET
-	@Path("/{id}/edit")
-	@Produces(MediaType.TEXT_HTML)
-	public Position getPositionEditForm(@PathParam("id") int id) { 
-		Position b = dao.getById(id);
-		return b.render("form.ftl");
 	}
 	
 	@POST

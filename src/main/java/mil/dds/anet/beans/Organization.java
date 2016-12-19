@@ -10,18 +10,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
 import mil.dds.anet.AnetObjectEngine;
-import mil.dds.anet.views.AbstractAnetView;
+import mil.dds.anet.views.AbstractAnetBean;
 
-public class Organization extends AbstractAnetView<Organization> {
+public class Organization extends AbstractAnetBean {
 
 	public static enum OrganizationType { ADVISOR_ORG, PRINCIPAL_ORG }
 	
 	String name;
 	Organization parentOrg;
 	OrganizationType type;
-	
-	DateTime createdAt;
-	DateTime updatedAt;
 	
 	List<Position> positions; /*Positions in this AO, lazy loaded*/
 	List<ApprovalStep> approvalSteps; /*Approval process for this AO, lazy loaded */
@@ -53,7 +50,6 @@ public class Organization extends AbstractAnetView<Organization> {
 	public void setParentOrg(Organization parentOrg) {
 		this.parentOrg = parentOrg;
 	}
-	
 	
 	public OrganizationType getType() {
 		return type;

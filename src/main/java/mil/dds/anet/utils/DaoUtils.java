@@ -13,13 +13,13 @@ import org.skife.jdbi.v2.Handle;
 
 import com.google.common.base.Joiner;
 
-import mil.dds.anet.views.AbstractAnetView;
+import mil.dds.anet.views.AbstractAnetBean;
 
 public class DaoUtils {
 
 	public static String MSSQL_SERVER_NAME = "Microsoft SQL Server";
 	
-	public static Integer getId(AbstractAnetView<?> obj) { 
+	public static Integer getId(AbstractAnetBean obj) { 
 		if (obj == null) { return null; }
 		return obj.getId();
 	}

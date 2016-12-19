@@ -11,7 +11,7 @@ import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.beans.Person.Status;
 import mil.dds.anet.beans.Position;
-import mil.dds.anet.views.AbstractAnetView.LoadLevel;
+import mil.dds.anet.views.AbstractAnetBean.LoadLevel;
 
 public class PersonMapper implements ResultSetMapper<Person> {
 

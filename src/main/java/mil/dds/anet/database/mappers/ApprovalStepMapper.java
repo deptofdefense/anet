@@ -8,7 +8,7 @@ import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
 import mil.dds.anet.beans.ApprovalStep;
 import mil.dds.anet.beans.Group;
-import mil.dds.anet.views.AbstractAnetView.LoadLevel;
+import mil.dds.anet.views.AbstractAnetBean.LoadLevel;
 
 public class ApprovalStepMapper implements ResultSetMapper<ApprovalStep>{
 

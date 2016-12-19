@@ -22,7 +22,6 @@ import mil.dds.anet.beans.Organization.OrganizationType;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.database.OrganizationDao;
 import mil.dds.anet.utils.AuthUtils;
-import mil.dds.anet.views.ObjectListView;
 
 @Path("/api/organizations")
 @Produces(MediaType.APPLICATION_JSON)
@@ -37,17 +36,10 @@ public class OrganizationResource {
 	
 	@GET
 	@Path("/")
-	@Produces(MediaType.TEXT_HTML)
-	public ObjectListView<Organization> getAllOrgsView(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
-		return new ObjectListView<Organization>(dao.getAll(pageNum, pageSize), Organization.class);
+	public List<Organization> getAllOrgsView(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
+		return dao.getAll(pageNum, pageSize);
 	} 
 	
-	@GET
-	@Path("/new")
-	@Produces(MediaType.TEXT_HTML)
-	public Organization getOrganizationForm() { 
-		return (new Organization()).render("form.ftl");
-	}
 	
 	@POST
 	@Path("/new")
@@ -59,16 +51,8 @@ public class OrganizationResource {
 	
 	@GET
 	@Path("/{id}")
-	@Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON})
 	public Organization getById(@PathParam("id") int id) {
-		return dao.getById(id).render("show.ftl");
-	}
-	
-	@GET
-	@Path("/{id}/edit")
-	@Produces(MediaType.TEXT_HTML)
-	public Organization getEditForm(@PathParam("id") int id) { 
-		return dao.getById(id).render("form.ftl");
+		return dao.getById(id);
 	}
 	
 	@POST

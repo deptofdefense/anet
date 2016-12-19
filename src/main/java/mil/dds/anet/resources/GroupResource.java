@@ -19,7 +19,6 @@ import javax.ws.rs.core.Response.Status;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Group;
 import mil.dds.anet.database.GroupDao;
-import mil.dds.anet.views.ObjectListView;
 
 @Path("/api/groups")
 @Produces(MediaType.APPLICATION_JSON)
@@ -34,25 +33,14 @@ public class GroupResource {
 	
 	@GET
 	@Path("/")
-	@Produces(MediaType.TEXT_HTML)
-	public ObjectListView<Group> getAllReportsView(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
-		return new ObjectListView<Group>(dao.getAll(pageNum, pageSize), Group.class);
+	public List<Group> getAllReportsView(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
+		return dao.getAll(pageNum, pageSize);
 	}
 	
 	@GET
 	@Path("/{id}")
-	@Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON})
 	public Group getById(@PathParam("id") int id) { 
-		Group g = dao.getById(id);
-		if (g == null) { return null; }
-		return g.render("show.ftl");
-	}
-	
-	@GET
-	@Path("/new")
-	@Produces(MediaType.TEXT_HTML)
-	public Group createNewGroupForm() {
-		return new Group().render("form.ftl");
+		return dao.getById(id);
 	}
 	
 	@POST

@@ -3,27 +3,22 @@ package mil.dds.anet.beans;
 import java.util.List;
 import java.util.Objects;
 
-import org.joda.time.DateTime;
-
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.geo.Location;
-import mil.dds.anet.views.AbstractAnetView;
+import mil.dds.anet.views.AbstractAnetBean;
 
-public class Position extends AbstractAnetView<Position> {
+public class Position extends AbstractAnetBean {
 
 	public static enum PositionType { ADVISOR, PRINCIPAL, SUPER_USER, ADMINISTRATOR }
 	
 	String name;
 	String code;
 	PositionType type;
-	
-	DateTime createdAt;
-	DateTime updatedAt;
-	
+		
 	//Lazy Loaded
 	Organization organization;
 	Person person; //The Current person.
@@ -51,28 +46,12 @@ public class Position extends AbstractAnetView<Position> {
 		this.code = code;
 	}
 
-	public DateTime getCreatedAt() {
-		return createdAt;
-	}
-
 	public PositionType getType() {
 		return type;
 	}
 
 	public void setType(PositionType type) {
 		this.type = type;
-	}
-
-	public void setCreatedAt(DateTime createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	public DateTime getUpdatedAt() {
-		return updatedAt;
-	}
-
-	public void setUpdatedAt(DateTime updatedAt) {
-		this.updatedAt = updatedAt;
 	}
 
 	@JsonIgnore

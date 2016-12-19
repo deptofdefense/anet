@@ -9,8 +9,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
 import mil.dds.anet.AnetObjectEngine;
-import mil.dds.anet.views.AbstractAnetView;
-import mil.dds.anet.views.AbstractAnetView.LoadLevel;
+import mil.dds.anet.views.AbstractAnetBean;
+import mil.dds.anet.views.AbstractAnetBean.LoadLevel;
 
 public class ApprovalAction {
 
@@ -21,7 +21,6 @@ public class ApprovalAction {
 	Report report;
 	DateTime createdAt;
 	ApprovalType type;
-	
 	
 	@JsonIgnore
 	public ApprovalStep getStep() {
@@ -86,7 +85,7 @@ public class ApprovalAction {
 		}
 		ApprovalAction other = (ApprovalAction) o;
 		return Objects.equals(step, other.getStepJson()) &&
-				AbstractAnetView.idEqual(person, other.getPersonJson()) &&
+				AbstractAnetBean.idEqual(person, other.getPersonJson()) &&
 				Objects.equals(report, other.getReport()) &&
 				Objects.equals(createdAt, other.getCreatedAt()) &&
 				Objects.equals(type, other.getType());

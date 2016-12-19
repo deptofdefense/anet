@@ -1,7 +1,9 @@
 package mil.dds.anet.views;
 
-public class SimpleView extends AbstractAnetView<SimpleView> {
+import io.dropwizard.views.View;
+
+public class SimpleView extends View {
 	public SimpleView(String path) {
-		render(path);
+		super(path);
 	}
 }

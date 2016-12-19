@@ -1,6 +1,5 @@
 package mil.dds.anet.resources;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +42,6 @@ import mil.dds.anet.beans.ReportPerson;
 import mil.dds.anet.database.AdminDao.AdminSettingKeys;
 import mil.dds.anet.database.ReportDao;
 import mil.dds.anet.utils.ResponseUtils;
-import mil.dds.anet.views.ObjectListView;
 
 @Path("/api/reports")
 @Produces(MediaType.APPLICATION_JSON)
@@ -73,11 +71,7 @@ public class ReportResource {
 	@GET
 	@Path("/{id}")
 	public Report getById(@PathParam("id") int id) {
-		Report r =  dao.getById(id);
-		if (r == null) { throw new WebApplicationException("No such report", Status.NOT_FOUND); }
-		r.render("show.ftl");
-		r.addToContext("hello", "world");
-		return r;
+		return dao.getById(id);
 	}
 
 	@GET
@@ -329,14 +323,8 @@ public class ReportResource {
 
 	@GET
 	@Path("/search")
-	@Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON})
-	public ObjectListView<Report> searchReports(@QueryParam("q") String query) {
-		List<Report> list = Collections.emptyList();
-		if (query != null && query.trim().length() > 0) {
-			list = dao.search(query);
-		}
-		ObjectListView<Report> view = new ObjectListView<Report>(list, Report.class);
-		return view.render("/views/report/search.ftl");
+	public List<Report> searchReports(@QueryParam("q") String query) {
+		return dao.search(query);
 	}
 
 }

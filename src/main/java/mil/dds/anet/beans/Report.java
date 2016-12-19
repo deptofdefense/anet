@@ -15,9 +15,9 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.database.AdminDao.AdminSettingKeys;
-import mil.dds.anet.views.AbstractAnetView;
+import mil.dds.anet.views.AbstractAnetBean;
 
-public class Report extends AbstractAnetView<Report> {
+public class Report extends AbstractAnetBean {
 
 	public enum ReportState { DRAFT, PENDING_APPROVAL, RELEASED }
 	public enum Atmosphere { POSITIVE, NEUTRAL, NEGATIVE }
@@ -25,8 +25,6 @@ public class Report extends AbstractAnetView<Report> {
 	ApprovalStep approvalStep;
 	ReportState state;
 	
-	DateTime createdAt;
-	DateTime updatedAt;
 	DateTime engagementDate;
 	Location location;
 	String intent;
@@ -66,26 +64,10 @@ public class Report extends AbstractAnetView<Report> {
 	
 	public ReportState getState() {
 		return state;
-	}
+	}	
 
 	public void setState(ReportState state) {
 		this.state = state;
-	}
-
-	public DateTime getCreatedAt() {
-		return createdAt;
-	}
-
-	public void setCreatedAt(DateTime createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	public DateTime getUpdatedAt() {
-		return updatedAt;
-	}
-
-	public void setUpdatedAt(DateTime updatedAt) {
-		this.updatedAt = updatedAt;
 	}
 
 	public DateTime getEngagementDate() {
