@@ -15,6 +15,10 @@ import API from '../../api'
 export default class ReportNew extends React.Component {
 	static useNavigation = false
 
+	static contextTypes = {
+		router: React.PropTypes.object.isRequired
+	}
+
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -181,7 +185,11 @@ export default class ReportNew extends React.Component {
 			poams: this.state.poams.map(poam => { return {id: poam.id}}),
 		}
 
-		API.send('/api/reports/new', data).then(function(report) {console.log(report)})
+		API.send('/api/reports/new', data)
+			.then(report => {
+				console.log(report);
+				this.context.router.push('/reports/' + report.id)
+			})
 	}
 
 	onFormChange(event) {
