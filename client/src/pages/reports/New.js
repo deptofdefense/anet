@@ -27,9 +27,11 @@ export default class ReportNew extends React.Component {
 		}
 
 		this.onFormChange = this.onFormChange.bind(this)
+		this.onSubmit = this.onSubmit.bind(this)
 		this.onAtmosphereChange = this.onAtmosphereChange.bind(this)
 		this.addAttendee = this.addAttendee.bind(this)
 		this.addPoam = this.addPoam.bind(this)
+		this.setLocation = this.setLocation.bind(this)
 	}
 
 	componentDidMount() {
@@ -46,7 +48,7 @@ export default class ReportNew extends React.Component {
 
 				<Breadcrumbs items={[['EF4', '/organizations/ef4'], ['Submit a report', '/reports/new']]} />
 
-				<Form formFor={this.state.report} onChange={this.onFormChange} horizontal>
+				<Form formFor={this.state.report} onChange={this.onFormChange} onSubmit={this.onSubmit} horizontal>
 					<fieldset>
 						<legend>Engagement details <small>Required</small></legend>
 
@@ -61,7 +63,7 @@ export default class ReportNew extends React.Component {
 						</HorizontalFormField>
 
 						<HorizontalFormField id="engagementLocation" addon="📍">
-							<Autocomplete value={this.state.report.location} placeholder="Where did it happen?" url="/api/locations/search" />
+							<Autocomplete value={this.state.report.location} onChange={this.setLocation} placeholder="Where did it happen?" url="/api/locations/search" />
 						</HorizontalFormField>
 
 						<HorizontalFormField id="atmosphere">
@@ -154,9 +156,32 @@ export default class ReportNew extends React.Component {
 						<TextEditor label="Discussion outcome" />
 						<TextEditor label="Next steps" style={{marginTop: '5rem'}} />
 					</fieldset>
+
+					<fieldset>
+						<Button bsSize="large" bsStyle="primary" type="submit" className="pull-right">Create report</Button>
+					</fieldset>
 				</Form>
 			</div>
 		)
+	}
+
+	onSubmit(event) {
+		event.stopPropagation()
+		event.preventDefault()
+
+		let report = this.state.report
+		let data = {
+			intent: report.engagementIntent,
+			reportText: report.reportText,
+			nextSteps: report.nextSteps,
+			engagementDate: report.engagementDate,
+
+			location: this.state.location ? {id: this.state.location.id} : null,
+			attendees: this.state.attendees.map(person => { return {id: person.id}}),
+			poams: this.state.poams.map(poam => { return {id: poam.id}}),
+		}
+
+		API.send('/api/reports/new', data).then(function(report) {console.log(report)})
 	}
 
 	onFormChange(event) {
@@ -195,5 +220,9 @@ export default class ReportNew extends React.Component {
 		let poams = this.state.poams.slice(0)
 		poams.splice(poams.indexOf(poam), 1)
 		this.setState({poams})
+	}
+
+	setLocation(location) {
+		this.setState({location})
 	}
 }
