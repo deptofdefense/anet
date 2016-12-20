@@ -56,15 +56,10 @@ class HorizontalFormField extends React.Component {
 
 		label = label || _.upperFirst(_.startCase(id).toLowerCase())
 
-		let extra
-		if (Array.isArray(children)) {
-			children = children.slice(0)
-			extra = children.find((child) => child.type === HorizontalFormFieldCol)
-			if (extra) children.splice(children.indexOf(extra), 1)
-		} else if (typeof children === 'object' && children.type === HorizontalFormFieldCol) {
-			extra = children
-			children = null
-		}
+		children = React.Children.toArray(children)
+		let extra = children.find((child) => child.type === HorizontalFormFieldCol)
+		if (extra) children.splice(children.indexOf(extra), 1)
+		if (children.length === 0) children = null
 
 		let content
 		if (this.props.type === 'static')
