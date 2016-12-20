@@ -185,7 +185,7 @@ export default class ReportNew extends React.Component {
 
 			location: this.state.location ? {id: this.state.location.id} : null,
 			attendees: this.state.attendees.map(person => { return {id: person.id}}),
-			poanss: this.state.poams.map(poam => { return {id: poam.id}}),
+			poams: this.state.poams.map(poam => { return {id: poam.id}}),
 		}
 
 		API.send('/api/reports/new', data)
