@@ -13,12 +13,8 @@ export default class App extends React.Component {
 
 				<Header />
 
-				<div className="container">
-					{this.props.children.type.useNavigation === false ? (
-						<Col xs={12}>
-							{this.props.children}
-						</Col>
-					) : (
+				<div className={this.props.children.type.fluidContainer ? "container-fluid" : "container"}>
+					{this.props.children.type.useNavigation === false ? this.props.children : (
 						<Grid>
 							<Row>
 								<Col sm={3}>

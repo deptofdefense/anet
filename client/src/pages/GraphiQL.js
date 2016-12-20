@@ -7,6 +7,7 @@ import Breadcrumbs from '../components/Breadcrumbs'
 
 export default class extends React.Component {
 	static useNavigation = false
+	static fluidContainer = true
 
 	fetch(params) {
 		return fetch('/graphql', {
