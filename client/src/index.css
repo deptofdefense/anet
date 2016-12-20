@@ -36,3 +36,7 @@ fieldset legend small {
 	margin: 0;
 	padding: 0;
 }
+
+.graphiql-container {
+	min-height: 600px;
+}
