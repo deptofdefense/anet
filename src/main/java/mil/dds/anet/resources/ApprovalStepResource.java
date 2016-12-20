@@ -22,6 +22,7 @@ import mil.dds.anet.beans.ApprovalStep;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.database.ApprovalStepDao;
+import mil.dds.anet.graphql.GraphQLFetcher;
 import mil.dds.anet.graphql.IGraphQLResource;
 import mil.dds.anet.utils.AuthUtils;
 
@@ -45,10 +46,11 @@ public class ApprovalStepResource implements IGraphQLResource{
 	public String getDescription() { return "Approval Steps"; } 
 	
 	@GET
+	@GraphQLFetcher
 	@Path("/byOrganization")
-	public List<ApprovalStep> getStepsForOrg(@QueryParam("id") int id) {
+	public List<ApprovalStep> getStepsForOrg(@QueryParam("orgId") int orgId) {
 		Organization ao = new Organization();
-		ao.setId(id);
+		ao.setId(orgId);
 		return engine.getApprovalStepsForOrg(ao);
 	}
 	

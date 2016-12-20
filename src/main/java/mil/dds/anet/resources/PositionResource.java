@@ -21,10 +21,12 @@ import org.joda.time.DateTime;
 
 import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
+import mil.dds.anet.beans.Group;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Position.PositionType;
 import mil.dds.anet.database.PositionDao;
+import mil.dds.anet.graphql.GraphQLFetcher;
 import mil.dds.anet.graphql.IGraphQLResource;
 import mil.dds.anet.utils.AuthUtils;
 
@@ -48,9 +50,16 @@ public class PositionResource implements IGraphQLResource {
 	public Class<Position> getBeanClass() { return Position.class; }
 	
 	@GET
+	@GraphQLFetcher
+	@Path("/")
+	public List<Position> getAll(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
+		return dao.getAll(pageNum, pageSize);
+	}
+	
+	@GET
 	@Path("/{id}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Position getPosition(@PathParam("id") int id) {
+	@GraphQLFetcher
+	public Position getById(@PathParam("id") int id) {
 		Position p = dao.getById(id);
 		if (p == null) { throw new WebApplicationException("Not Found", Status.NOT_FOUND); } 
 		return p;
@@ -69,7 +78,6 @@ public class PositionResource implements IGraphQLResource {
 		AuthUtils.assertSuperUserForOrg(user, p.getOrganizationJson());
 		
 		return dao.insert(p);
-		
 	}
 	
 	@POST
@@ -145,5 +153,11 @@ public class PositionResource implements IGraphQLResource {
 		return dao.getByCode(code, prefixMatch, type);
 	}
 
-
+	@GET
+	@GraphQLFetcher
+	@Path("/search")
+	public List<Position> search(@QueryParam("p") String query) { 
+		return dao.search(query);
+	}
+	
 }

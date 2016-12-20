@@ -16,10 +16,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 
-import graphql.Scalars;
 import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
 import graphql.schema.GraphQLArgument;
+import graphql.schema.GraphQLEnumType;
 import graphql.schema.GraphQLInputType;
 import io.dropwizard.auth.Auth;
 import mil.dds.anet.utils.GraphQLUtils;
@@ -35,6 +35,7 @@ public class AnetResourceDataFetcher implements DataFetcher {
 	Map<Set<String>,String> fetchersByArguments;
 	Map<String, GraphQLArgument> arguments;
 	IGraphQLResource resource;
+	List<GraphQLArgument> validArgs;
 	
 	public AnetResourceDataFetcher(IGraphQLResource resource) { 
 		this(resource, false);
@@ -86,6 +87,8 @@ public class AnetResourceDataFetcher implements DataFetcher {
 				fetchersByArguments.put(argNames,  functionName);
 			}
 		}
+		
+		buildValidArgs(isListFetcher);
 	}
 	
 	private boolean shouldUseMethod(Method m, boolean isListFetcher) { 
@@ -105,16 +108,25 @@ public class AnetResourceDataFetcher implements DataFetcher {
 				m.getName(), resource.getClass().getSimpleName(), resource.getBeanClass().getSimpleName()));
 	}
 	
-	public List<GraphQLArgument> validArguments() {
-		List<GraphQLArgument> validArgs = new LinkedList<GraphQLArgument>();
+	private void buildValidArgs(boolean isListFetcher) { 
+		validArgs = new LinkedList<GraphQLArgument>();
 		validArgs.addAll(arguments.values());
 		//Only accept the f argument if we can actually do anything with it. 
-		if (fetchers.size() > 0) { 
+		if (fetchers.size() > 0) {
+			String enumName = resource.getBeanClass().getSimpleName() + (isListFetcher ? "s" :"") + "_functions";
+			GraphQLEnumType.Builder functionNamesEnum = GraphQLEnumType.newEnum()
+				.name(enumName);
+			for (String functionName : fetchers.keySet()) { 
+				functionNamesEnum.value(functionName);
+			}
 			validArgs.add(GraphQLArgument.newArgument()
 				.name("f")
-				.type(Scalars.GraphQLString)
+				.type(functionNamesEnum.build())
 				.build());
 		}
+	}
+	
+	public List<GraphQLArgument> validArguments() {
 		return validArgs;
 	}
 	

@@ -23,6 +23,7 @@ import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Position.PositionType;
 import mil.dds.anet.database.PersonDao;
+import mil.dds.anet.graphql.GraphQLFetcher;
 import mil.dds.anet.graphql.IGraphQLResource;
 
 @Path("/api/people")
@@ -49,8 +50,9 @@ public class PersonResource implements IGraphQLResource {
 	 * @return List of People objects in the system
 	 */
 	@GET
+	@GraphQLFetcher
 	@Path("/")
-	public List<Person> getAllPeople(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
+	public List<Person> getAll(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
 		return dao.getAll(pageNum, pageSize);
 	}
 	
@@ -59,6 +61,7 @@ public class PersonResource implements IGraphQLResource {
 	 */
 	@GET
 	@Path("/{id}")
+	@GraphQLFetcher
 	@Produces(MediaType.APPLICATION_JSON)
 	public Person getById(@PathParam("id") int id) { 
 		Person p = dao.getById(id);
@@ -131,6 +134,7 @@ public class PersonResource implements IGraphQLResource {
 	 * @return a list of people objects
 	 */
 	@GET
+	@GraphQLFetcher
 	@Path("/search")
 	public List<Person> searchByName(@QueryParam("q") String query, @QueryParam("role") Role role) {
 		return dao.searchByName(query, role);
