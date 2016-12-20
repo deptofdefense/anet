@@ -36,7 +36,7 @@ export default class ReportsIndex extends React.Component {
 					<tbody>
 						{this.state.reports.map(report =>
 							<tr key={report.id}>
-								<td>{report.author.name}</td>
+								<td>{report.author && report.author.name}</td>
 								<td><Link to={"/reports/" + report.id}>{report.intent}</Link></td>
 								<td>{report.state}</td>
 								<td>{moment(report.updatedAt).fromNow()}</td>

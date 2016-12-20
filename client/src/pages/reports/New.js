@@ -80,7 +80,7 @@ export default class ReportNew extends React.Component {
 
 						<HorizontalFormField id="addAttendee">
 							<Autocomplete value="" placeholder="Who was there?" url="/api/people/search" onChange={this.addAttendee} template={person =>
-								<span>{person.name} {person.rank.toUpperCase()}</span>
+								<span>{person.name} {person.rank && person.rank.toUpperCase()}</span>
 							} clearOnSelect={true} />
 
 							<Table hover striped>
@@ -96,7 +96,7 @@ export default class ReportNew extends React.Component {
 										<td onClick={this.removeAttendee.bind(this, person)}>
 											<Glyphicon glyph="remove-sign" style={{cursor: 'pointer'}} />
 										</td>
-										<td>{person.name} {person.rank.toUpperCase()}</td>
+										<td>{person.name} {person.rank && person.rank.toUpperCase()}</td>
 										<td>{person.role}</td>
 									</tr>)}
 								</tbody>
@@ -117,7 +117,7 @@ export default class ReportNew extends React.Component {
 
 						<HorizontalFormField id="poams">
 							<Autocomplete value="" url="/api/poams/search" onChange={this.addPoam} template={poam =>
-								<span>{poam.shortName} - {poam.longName}</span>
+								<span>{[poam.shortName, poam.longName].join(' - ')}</span>
 							} clearOnSelect={true} />
 
 							<Table hover striped>
@@ -174,6 +174,7 @@ export default class ReportNew extends React.Component {
 
 	addAttendee(attendee) {
 		let attendees = this.state.attendees.slice(0)
+
 		attendees.push(attendee)
 		this.setState({attendees})
 	}
