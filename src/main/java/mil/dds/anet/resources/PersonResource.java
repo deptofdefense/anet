@@ -114,7 +114,7 @@ public class PersonResource implements IGraphQLResource {
 		}
 		return false;
 	}
-	
+
 //	@DELETE
 //	@Path("/{id}")
 //	public Response deletePerson(@PathParam("id") int id) {

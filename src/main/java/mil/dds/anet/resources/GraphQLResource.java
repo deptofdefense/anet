@@ -1,9 +1,11 @@
 package mil.dds.anet.resources;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -15,12 +17,14 @@ import org.eclipse.jetty.util.log.Logger;
 
 import graphql.ExecutionResult;
 import graphql.GraphQL;
-import graphql.Scalars;
 import graphql.schema.GraphQLFieldDefinition;
+import graphql.schema.GraphQLList;
 import graphql.schema.GraphQLObjectType;
 import graphql.schema.GraphQLSchema;
+import io.dropwizard.auth.Auth;
 import mil.dds.anet.beans.ApprovalAction;
 import mil.dds.anet.beans.Comment;
+import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.ReportPerson;
 import mil.dds.anet.graphql.AnetResourceDataFetcher;
 import mil.dds.anet.graphql.GraphQLIgnore;
@@ -62,6 +66,20 @@ public class GraphQLResource {
 				.argument(fetcher.validArguments())
 				.dataFetcher(fetcher);
 			queryTypeBuilder.field(fieldBuilder.build());
+			
+			
+			AnetResourceDataFetcher listFetcher = new AnetResourceDataFetcher(resource, true);
+			if (listFetcher.validArguments().size() > 0) { 
+				GraphQLFieldDefinition listField = GraphQLFieldDefinition.newFieldDefinition()
+					.type(new GraphQLList(objectType))
+					.name(name + "s")
+					.argument(listFetcher.validArguments())
+					.dataFetcher(listFetcher)
+					.build();
+				queryTypeBuilder.field(listField);
+			}
+			
+				
 		}
 		
 		//TODO: find a way to not have to do this. 
@@ -103,14 +121,21 @@ public class GraphQLResource {
 	}
 	
 	@POST
-	public Map<String,Object> graphql(Map<String,Object> body) {
+	public Map<String,Object> graphql(@Auth Person user, Map<String,Object> body) {
 		buildGraph();
 		String query = (String) body.get("query");
 	    Map<String, Object> variables = (Map<String, Object>) body.get("variables");
-	    ExecutionResult executionResult = graphql.execute(query, (Object) null, variables);
+	    if (variables == null) { variables = new HashMap<String,Object>(); }
+	    
+	    Map<String, Object> context = new HashMap<String,Object>();
+	    context.put("auth", user);
+	    
+	    ExecutionResult executionResult = graphql.execute(query, context, variables);
 	    Map<String, Object> result = new LinkedHashMap<>();
 	    if (executionResult.getErrors().size() > 0) {
-	        result.put("errors", executionResult.getErrors());
+	        result.put("errors", executionResult.getErrors().stream()
+	        		.map(e -> e.getMessage())
+	        		.collect(Collectors.toList()));
 	        log.warn("Errors: {}", executionResult.getErrors());
 	    }
 	    result.put("data", executionResult.getData());

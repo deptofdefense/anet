@@ -9,4 +9,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface GraphQLFetcher {
 
+	String value() default ""; //The name of this method that the user can explicity refer to. 
+	
 }

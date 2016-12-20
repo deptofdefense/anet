@@ -325,6 +325,7 @@ public class ReportResource implements IGraphQLResource {
 	}
 
 	@GET
+	@GraphQLFetcher("pendingMyApproval")
 	@Path("/pendingMyApproval")
 	public List<Report> getReportsPendingMyApproval(@Auth Person approver) {
 		return dao.getReportsForMyApproval(approver);
