@@ -14,9 +14,14 @@ export default class ReportsIndex extends React.Component {
 	}
 
 	componentDidMount() {
-		API.query('reports(f:getAll, pageSize:100, pageNum:0) { id }')
-			.log()
-			.then(data => this.setState({reports: data.reports}))
+		API.query(`
+			reports(f:getAll, pageSize:100, pageNum:0) {
+				id, intent, state
+				author {
+					name
+				}
+			}
+		`).then(data => this.setState({reports: data.reports}))
 	}
 
 	render() {
