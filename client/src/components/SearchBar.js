@@ -1,5 +1,5 @@
 import React from 'react'
-import {Form, Button, InputGroup, FormControl, Glyphicon} from 'react-bootstrap'
+import {Form, Button, InputGroup, FormControl} from 'react-bootstrap'
 
 export default class SearchBar extends React.Component {
 	static contextTypes = {
@@ -20,7 +20,7 @@ export default class SearchBar extends React.Component {
 				<InputGroup>
 					<FormControl value={this.state.query} placeholder="Search for people, reports, positions, or locations" onChange={this.onChange}/>
 					<InputGroup.Button>
-						<Button><Glyphicon glyph="search" /></Button>
+						<Button>🔍</Button>
 					</InputGroup.Button>
 				</InputGroup>
 			</Form>

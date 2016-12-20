@@ -36,7 +36,7 @@ class Header extends React.Component {
 						{this.props.injections.length ? this.props.injections : <SearchBar />}
 					</div>
 
-					<Button bsStyle="primary" className="pull-right">Create</Button>
+					{/*<Button bsStyle="primary" className="pull-right">Create</Button>*/}
 				</div>
 			</div>
 		)

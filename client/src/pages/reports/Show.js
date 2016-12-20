@@ -10,16 +10,28 @@ import {HorizontalFormField} from '../../components/FormField'
 export default class ReportShow extends React.Component {
 	constructor(props) {
 		super(props)
-		this.state = {report: {}}
+		this.state = {
+			report: {},
+			location: {},
+		}
 	}
 
 	componentDidMount() {
 		API.fetch('/api/reports/' + this.props.params.id)
 			.then(data => this.setState({report: data}))
+			.then(() => {
+				let location = this.state.report.location
+				if (location && location.id && !location.name) {
+					API.fetch('/api/locations/' + location.id)
+						.then(data => this.setState({location: data}))
+				} else {
+					this.setState({location})
+				}
+			})
 	}
 
 	render() {
-		let report = this.state.report
+		let {report, location} = this.state
 		let breadcrumbName = report.intent || 'Report'
 		let breadcrumbUrl = '/reports/' + (report.id || this.props.params.id)
 
@@ -35,7 +47,7 @@ export default class ReportShow extends React.Component {
 						<legend>Report #{report.id}</legend>
 						<HorizontalFormField label="Subject" type="static" value={report.intent} />
 						<HorizontalFormField label="Date" type="static" value={moment(report.engagementDate).format("L LT")} />
-						<HorizontalFormField label="Location" type="static" value={report.location && report.location.name} extra="📍"/>
+						<HorizontalFormField label="Location" type="static" value={location && location.name} extra="📍"/>
 						<HorizontalFormField label="Atmospherics" type="static" value={atmosphereString} />
 						<HorizontalFormField label="Report author" type="static">
 							{report.author &&
@@ -46,13 +58,26 @@ export default class ReportShow extends React.Component {
 
 					<fieldset>
 						<legend>Meeting attendees</legend>
-						{report.attendees && report.attendees.map(person =>
-							{person.name}
-						)}
+						{(report.attendees && report.attendees.map(person =>
+							person.name
+						)) || "This report does not specify any attendees."}
 					</fieldset>
 
 					<fieldset>
 						<legend>Milestones</legend>
+						{(report.poams && report.poams.map(poam =>
+							poam.longName
+						)) || "This report does not specify any milestones."}
+					</fieldset>
+
+					<fieldset>
+						<legend>Meeting discussion</legend>
+
+						<h5>Key outcomes</h5>
+						<div dangerouslySetInnerHTML={{__html: report.reportText}} />
+
+						<h5>Next steps</h5>
+						<div dangerouslySetInnerHTML={{__html: report.nextSteps}} />
 					</fieldset>
 				</Form>
 			</div>
