@@ -1,5 +1,5 @@
 import React from 'react'
-import {InputGroup, Radio, Table, Glyphicon, Button} from 'react-bootstrap'
+import {InputGroup, Radio, Table, Button} from 'react-bootstrap'
 
 import DatePicker from 'react-bootstrap-date-picker'
 
@@ -94,7 +94,7 @@ export default class ReportNew extends React.Component {
 								<tbody>
 									{this.state.attendees.map(person => <tr key={person.id}>
 										<td onClick={this.removeAttendee.bind(this, person)}>
-											<Glyphicon glyph="remove-sign" style={{cursor: 'pointer'}} />
+											<span style={{cursor: 'pointer'}}>⛔️</span>
 										</td>
 										<td>{person.name} {person.rank && person.rank.toUpperCase()}</td>
 										<td>{person.role}</td>
@@ -131,7 +131,7 @@ export default class ReportNew extends React.Component {
 								<tbody>
 									{this.state.poams.map(poam => <tr key={poam.id}>
 										<td onClick={this.removePoam.bind(this, poam)}>
-											<Glyphicon glyph="remove-sign" style={{cursor: 'pointer'}} />
+											<span style={{cursor: 'pointer'}}>⛔️</span>
 										</td>
 										<td>{poam.longName}</td>
 										<td>{poam.shortName}</td>
