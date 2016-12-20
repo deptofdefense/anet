@@ -3,16 +3,13 @@ import ReactDOM from 'react-dom'
 import _ from 'lodash'
 import {Form as BSForm, FormGroup, Col, ControlLabel, FormControl, InputGroup} from 'react-bootstrap'
 
-let activeFormContext = []
-
 export class Form extends React.Component {
-	componentWillMount() {
-		activeFormContext.push(this.props.formFor)
+	static childContextTypes = {
+		formFor: React.PropTypes.object
 	}
 
-	componentWillUnmount() {
-		while (activeFormContext.indexOf(this.props.formFor) !== -1)
-			activeFormContext.pop()
+	getChildContext() {
+		return {formFor: this.props.formFor}
 	}
 
 	componentDidMount() {
@@ -44,6 +41,10 @@ class HorizontalFormFieldCol extends React.Component {
 }
 
 class HorizontalFormField extends React.Component {
+	static contextTypes = {
+		formFor: React.PropTypes.object
+	}
+
 	render() {
 		let {
 			id,
@@ -81,13 +82,15 @@ class HorizontalFormField extends React.Component {
 	}
 
 	getValue(key) {
-		let formContext = activeFormContext[activeFormContext.length - 1]
-		return formContext[key]
+		let formContext = this.context.formFor
+		if (formContext) return formContext[key]
 	}
 
 	onChange(key, event) {
-		let formContext = activeFormContext[activeFormContext.length - 1]
-		return formContext[key] = event.target.value
+		let value = event.target.value
+		let formContext = this.context.formFor
+		if (formContext) formContext[key] = value
+		return value
 	}
 }
 
