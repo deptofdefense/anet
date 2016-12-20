@@ -1,27 +1,37 @@
-export default {
-	fetch(url) {
-		return fetch(url, {
-			credentials: "same-origin",
-			headers: {
-				"Accept": "application/json"
-			}
-		}).then(response => response.json())
-		  .then(function(data) {
-			  console.log(data);
-			  return data;
-		  })
+const methods = {
+	fetch(url, params) {
+		params = params || {}
+		params.credentials = 'same-origin'
+
+		params.headers = params.headers || {}
+		params.headers['Accept'] = 'application/json'
+
+		return window.fetch(url, params).then(response => response.json())
 	},
 
-	send(url, data) {
-		return fetch(url, {
-			method: "POST",
-			body: JSON.stringify(data),
-			credentials: "same-origin",
-			headers: {
-				"Content-Type": "application/json",
-				"Accept": "application/json",
+	send(url, data, params) {
+		params = params || {}
+		params.method = params.method || 'POST'
+		params.body = JSON.stringify(data)
 
-			}
-		}).then(response => response.json())
+		params.headers = params.headers || {}
+		params.headers['Content-Type'] = 'application/json'
+
+		return methods.fetch(url, params)
+	},
+
+	query(query, variables) {
+		query = 'query { ' + query + ' }'
+		variables = variables || {}
+		return methods.send('/graphql', {query, variables}).then(json => json.data)
 	}
+}
+
+export default methods
+
+Promise.prototype.log = function() {
+	return this.then(function(data) {
+		console.log(data)
+		return data
+	})
 }

@@ -14,8 +14,9 @@ export default class ReportsIndex extends React.Component {
 	}
 
 	componentDidMount() {
-		API.fetch('/api/reports')
-			.then(reports => this.setState({reports}))
+		API.query('reports(f:getAll, pageSize:100, pageNum:0) { id }')
+			.log()
+			.then(data => this.setState({reports: data.reports}))
 	}
 
 	render() {
