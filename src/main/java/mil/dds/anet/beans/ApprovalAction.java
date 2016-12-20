@@ -2,6 +2,8 @@ package mil.dds.anet.beans;
 
 import java.util.Objects;
 
+import javax.ws.rs.WebApplicationException;
+
 import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
@@ -9,10 +11,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
 import mil.dds.anet.AnetObjectEngine;
+import mil.dds.anet.graphql.GraphQLIgnore;
 import mil.dds.anet.views.AbstractAnetBean;
-import mil.dds.anet.views.AbstractAnetBean.LoadLevel;
 
-public class ApprovalAction {
+public class ApprovalAction extends AbstractAnetBean {
 
 	public enum ApprovalType {APPROVE, REJECT}
 	
@@ -21,6 +23,13 @@ public class ApprovalAction {
 	Report report;
 	DateTime createdAt;
 	ApprovalType type;
+	
+	@Override
+	@JsonIgnore
+	@GraphQLIgnore
+	public Integer getId() { 
+		throw new WebApplicationException("no ID field on Approval Action");
+	}
 	
 	@JsonIgnore
 	public ApprovalStep getStep() {
@@ -37,11 +46,13 @@ public class ApprovalAction {
 		this.step = step;
 	}
 	
+	@GraphQLIgnore
 	@JsonGetter("step")
 	public ApprovalStep getStepJson() { 
 		return step;
 	}
 	
+	@GraphQLIgnore
 	@JsonGetter("person")
 	public Person getPersonJson() {
 		return person;

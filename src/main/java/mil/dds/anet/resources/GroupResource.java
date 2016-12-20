@@ -19,17 +19,24 @@ import javax.ws.rs.core.Response.Status;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Group;
 import mil.dds.anet.database.GroupDao;
+import mil.dds.anet.graphql.IGraphQLResource;
 
 @Path("/api/groups")
 @Produces(MediaType.APPLICATION_JSON)
 @PermitAll
-public class GroupResource {
+public class GroupResource implements IGraphQLResource{
 
 	private GroupDao dao;
 	
 	public GroupResource(AnetObjectEngine engine) { 
 		this.dao = engine.getGroupDao();
 	}
+	
+	@Override
+	public Class<Group> getBeanClass() { return Group.class; } 
+	
+	@Override
+	public String getDescription() { return "Groups"; } 
 	
 	@GET
 	@Path("/")

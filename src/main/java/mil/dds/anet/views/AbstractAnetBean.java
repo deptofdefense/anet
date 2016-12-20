@@ -7,6 +7,7 @@ import org.joda.time.DateTime;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import mil.dds.anet.AnetObjectEngine;
+import mil.dds.anet.graphql.GraphQLIgnore;
 
 public abstract class AbstractAnetBean {
 
@@ -25,6 +26,7 @@ public abstract class AbstractAnetBean {
 		}
 	}
 	
+	@GraphQLIgnore
 	@JsonIgnore
 	public LoadLevel getLoadLevel() { 
 		return loadLevel;

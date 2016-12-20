@@ -23,17 +23,24 @@ import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Position.PositionType;
 import mil.dds.anet.database.PersonDao;
+import mil.dds.anet.graphql.IGraphQLResource;
 
 @Path("/api/people")
 @Produces(MediaType.APPLICATION_JSON)
 @PermitAll
-public class PersonResource {
+public class PersonResource implements IGraphQLResource {
 	
 	private PersonDao dao;
 	
 	public PersonResource(AnetObjectEngine engine) { 
 		this.dao = engine.getPersonDao();
 	}
+	
+	@Override
+	public Class<Person> getBeanClass() { return Person.class; } 
+	
+	@Override
+	public String getDescription() { return "People"; } 
 	
 	/**
 	 * Returns all people objects in the ANET system. Does no filtering on role/status/etc. 

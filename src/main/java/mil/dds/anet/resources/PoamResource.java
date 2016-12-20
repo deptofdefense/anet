@@ -22,17 +22,24 @@ import javax.ws.rs.core.Response.Status;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.database.PoamDao;
+import mil.dds.anet.graphql.IGraphQLResource;
 
 @Path("/api/poams")
 @Produces(MediaType.APPLICATION_JSON)
 @PermitAll
-public class PoamResource {
+public class PoamResource implements IGraphQLResource {
 
 	PoamDao dao;
 	
 	public PoamResource(AnetObjectEngine engine) {
 		this.dao = engine.getPoamDao();
 	}
+	
+	@Override
+	public Class<Poam> getBeanClass() { return Poam.class; } 
+	
+	@Override
+	public String getDescription() { return "Poams"; } 
 	
 	@GET
 	@Path("/{id}")

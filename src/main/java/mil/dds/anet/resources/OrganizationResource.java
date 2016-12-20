@@ -21,18 +21,25 @@ import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Organization.OrganizationType;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.database.OrganizationDao;
+import mil.dds.anet.graphql.IGraphQLResource;
 import mil.dds.anet.utils.AuthUtils;
 
 @Path("/api/organizations")
 @Produces(MediaType.APPLICATION_JSON)
 @PermitAll
-public class OrganizationResource {
+public class OrganizationResource implements IGraphQLResource {
 
 	private OrganizationDao dao;
 	
 	public OrganizationResource(AnetObjectEngine engine) {
 		this.dao = engine.getOrganizationDao(); 
 	}
+	
+	@Override
+	public Class<Organization> getBeanClass() { return Organization.class; } 
+	
+	@Override
+	public String getDescription() { return "Organizations"; } 
 	
 	@GET
 	@Path("/")

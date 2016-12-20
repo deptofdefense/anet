@@ -7,7 +7,6 @@ import org.joda.time.DateTime;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
-import mil.dds.anet.beans.geo.LatLng;
 import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.views.AbstractAnetBean.LoadLevel;
 
@@ -18,7 +17,8 @@ public class LocationMapper implements ResultSetMapper<Location> {
 		Location l = new Location();
 		l.setId(r.getInt("id"));
 		l.setName(r.getString("name"));
-		l.setLatLng(new LatLng(r.getDouble("lat"), r.getDouble("lng")));
+		l.setLat(r.getDouble("lat"));
+		l.setLng(r.getDouble("lng"));
 		l.setCreatedAt(new DateTime(r.getTimestamp("createdAt")));
 		l.setUpdatedAt(new DateTime(r.getTimestamp("updatedAt")));
 		l.setLoadLevel(LoadLevel.PROPERTIES);

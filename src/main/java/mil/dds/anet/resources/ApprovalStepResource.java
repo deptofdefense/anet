@@ -22,12 +22,13 @@ import mil.dds.anet.beans.ApprovalStep;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.database.ApprovalStepDao;
+import mil.dds.anet.graphql.IGraphQLResource;
 import mil.dds.anet.utils.AuthUtils;
 
 @Path("/api/approvalSteps")
 @Produces(MediaType.APPLICATION_JSON)
 @PermitAll
-public class ApprovalStepResource {
+public class ApprovalStepResource implements IGraphQLResource{
 
 	AnetObjectEngine engine;
 	ApprovalStepDao dao;
@@ -36,6 +37,12 @@ public class ApprovalStepResource {
 		this.engine = engine;
 		this.dao = engine.getApprovalStepDao();
 	}
+	
+	@Override
+	public Class<ApprovalStep> getBeanClass() { return ApprovalStep.class; } 
+	
+	@Override
+	public String getDescription() { return "Approval Steps"; } 
 	
 	@GET
 	@Path("/byOrganization")

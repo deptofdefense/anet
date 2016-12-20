@@ -16,10 +16,12 @@ import javax.ws.rs.core.Response.Status;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.database.LocationDao;
+import mil.dds.anet.graphql.GraphQLFetcher;
+import mil.dds.anet.graphql.IGraphQLResource;
 
 @Path("/api/locations")
 @Produces(MediaType.APPLICATION_JSON)
-public class LocationResource {
+public class LocationResource implements IGraphQLResource {
 
 	private LocationDao dao;
 	
@@ -28,6 +30,7 @@ public class LocationResource {
 	}
 	
 	@GET
+	@GraphQLFetcher
 	@Path("/{id}")
 	public Location getById(@PathParam("id") int id) { 
 		return dao.getById(id);
@@ -55,5 +58,11 @@ public class LocationResource {
 		int numRows = dao.update(l);
 		return (numRows == 1) ? Response.ok().build() : Response.status(Status.NOT_FOUND).build();
 	}
+
+	@Override
+	public String getDescription() { return "Locations"; }
+
+	@Override
+	public Class<Location> getBeanClass() { return Location.class;}
 	
 }

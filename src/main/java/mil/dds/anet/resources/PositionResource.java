@@ -25,12 +25,13 @@ import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Position.PositionType;
 import mil.dds.anet.database.PositionDao;
+import mil.dds.anet.graphql.IGraphQLResource;
 import mil.dds.anet.utils.AuthUtils;
 
 @Path("/api/positions")
 @Produces(MediaType.APPLICATION_JSON)
 @PermitAll
-public class PositionResource {
+public class PositionResource implements IGraphQLResource {
 
 	PositionDao dao;
 	AnetObjectEngine engine;
@@ -39,6 +40,12 @@ public class PositionResource {
 		this.dao = engine.getPositionDao();
 		this.engine = engine;
 	}
+	
+	@Override
+	public String getDescription() { return "Positions"; }
+
+	@Override
+	public Class<Position> getBeanClass() { return Position.class; }
 	
 	@GET
 	@Path("/{id}")
@@ -137,4 +144,6 @@ public class PositionResource {
 	public List<Position> getByCode(@QueryParam("code") String code, @QueryParam("prefixMatch") @DefaultValue("false") Boolean prefixMatch, @QueryParam("type") PositionType type) {
 		return dao.getByCode(code, prefixMatch, type);
 	}
+
+
 }

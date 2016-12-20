@@ -41,12 +41,14 @@ import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
 import mil.dds.anet.database.AdminDao.AdminSettingKeys;
 import mil.dds.anet.database.ReportDao;
+import mil.dds.anet.graphql.GraphQLFetcher;
+import mil.dds.anet.graphql.IGraphQLResource;
 import mil.dds.anet.utils.ResponseUtils;
 
 @Path("/api/reports")
 @Produces(MediaType.APPLICATION_JSON)
 @PermitAll
-public class ReportResource {
+public class ReportResource implements IGraphQLResource {
 
 	ReportDao dao;
 	AnetObjectEngine engine;
@@ -57,7 +59,13 @@ public class ReportResource {
 		this.engine = engine;
 		this.dao = engine.getReportDao();
 	}
-
+	
+	@Override
+	public String getDescription() { return "Reports"; } 
+	
+	@Override
+	public Class<Report> getBeanClass() { return Report.class; } 
+	
 	@GET
 	@Path("/")
 	public Map<String,Object> getAllReportsView(@Auth Person p, @DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
@@ -70,9 +78,11 @@ public class ReportResource {
 
 	@GET
 	@Path("/{id}")
-	public Report getById(@PathParam("id") int id) {
+	@GraphQLFetcher
+	public Report getById(@PathParam("id") Integer id) {
 		return dao.getById(id);
 	}
+	
 
 	@GET
 	@Path("/new")
