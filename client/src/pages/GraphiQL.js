@@ -3,6 +3,8 @@ import React from 'react'
 import GraphiQL from 'graphiql'
 import 'graphiql/graphiql.css'
 
+import Breadcrumbs from '../components/Breadcrumbs'
+
 export default class extends React.Component {
 	static useNavigation = false
 
@@ -16,6 +18,9 @@ export default class extends React.Component {
 	}
 
 	render() {
-		return <GraphiQL fetcher={this.fetch} />
+		return <div>
+			<Breadcrumbs items={[['Run GraphQL queries', '/graphiql']]} />
+			<GraphiQL fetcher={this.fetch} />
+		</div>
 	}
 }
