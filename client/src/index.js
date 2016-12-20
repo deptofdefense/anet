@@ -20,6 +20,7 @@ import ReportShow from './pages/reports/Show'
 
 function gqlFetcher(params) {
 	return fetch('/graphql', {
+		credentials: 'same-origin',
 		method: 'POST',
 		headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
 		body: JSON.stringify(params),
