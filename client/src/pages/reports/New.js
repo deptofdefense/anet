@@ -13,10 +13,12 @@ import TextEditor from '../../components/TextEditor'
 import API from '../../api'
 
 export default class ReportNew extends React.Component {
-	static useNavigation = false
-
 	static contextTypes = {
 		router: React.PropTypes.object.isRequired
+	}
+
+	static pageProps = {
+		useNavigation: false
 	}
 
 	constructor(props) {

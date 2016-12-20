@@ -36,18 +36,21 @@ export default class Search extends React.Component {
 		})
 	}
 
-	static useNavigation = <div>
-		<Link to="/">&lt; Return to previous page</Link>
+	static pageProps = {
+		navElement:
+			<div>
+				<Link to="/">&lt; Return to previous page</Link>
 
-		<RadioGroup vertical size="large" style={{width: '100%'}}>
-			<Radio value="all">Everything</Radio>
-			<Radio value="reports">Reports</Radio>
-			<Radio value="people">People</Radio>
-			<Radio value="positions">Positions</Radio>
-			<Radio value="locations">Locations</Radio>
-			<Radio value="organizations">Organizations</Radio>
-		</RadioGroup>
-	</div>
+				<RadioGroup vertical size="large" style={{width: '100%'}}>
+					<Radio value="all">Everything</Radio>
+					<Radio value="reports">Reports</Radio>
+					<Radio value="people">People</Radio>
+					<Radio value="positions">Positions</Radio>
+					<Radio value="locations">Locations</Radio>
+					<Radio value="organizations">Organizations</Radio>
+				</RadioGroup>
+			</div>
+	}
 
 	render() {
 		return (

@@ -6,8 +6,10 @@ import 'graphiql/graphiql.css'
 import Breadcrumbs from '../components/Breadcrumbs'
 
 export default class extends React.Component {
-	static useNavigation = false
-	static fluidContainer = true
+	static pageProps = {
+		useNavigation: false,
+		fluidContainer: true,
+	}
 
 	fetch(params) {
 		return fetch('/graphql', {
