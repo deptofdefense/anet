@@ -72,7 +72,7 @@ export default class ReportNew extends React.Component {
 						</HorizontalFormField>
 
 						<HorizontalFormField id="atmosphere">
-							<RadioGroup size="large" onChange={this.onAtmosphereChange}>
+							<RadioGroup bsSize="large" onChange={this.onAtmosphereChange}>
 								<Radio value="positive">👍</Radio>
 								<Radio value="neutral">😐</Radio>
 								<Radio value="negative">👎</Radio>

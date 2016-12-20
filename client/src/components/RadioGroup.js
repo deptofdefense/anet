@@ -2,6 +2,10 @@ import React from 'react'
 import {ButtonGroup, Button, Radio} from 'react-bootstrap'
 
 export default class RadioGroup extends React.Component {
+	static contextTypes = {
+		$bs_formGroup: React.PropTypes.object,
+	}
+
 	constructor(props) {
 		super(props)
 		this.state = {selected: props.value}
@@ -12,10 +16,11 @@ export default class RadioGroup extends React.Component {
 
 	render() {
 		let id = this.getId()
+		let {children, ...props} = this.props
 
 		return (
-			<ButtonGroup vertical={this.props.vertical} style={this.props.style} className={this.props.className} bsSize={this.props.size} data-toggle="buttons">
-				{this.props.children.map((child, index) =>
+			<ButtonGroup vertical={this.props.vertical} data-toggle="buttons" {...props}>
+				{children.map((child, index) =>
 					<Button key={child.props.value} active={this.state.selected === child.props.value} onClick={this.onButtonClick}>
 						<Radio onChange={this.onRadioChange} {...child.props} inline id={id + '-' + child.props.value} name={id} />
 					</Button>
@@ -45,5 +50,3 @@ export default class RadioGroup extends React.Component {
 		}
 	}
 }
-
-RadioGroup.contextTypes = {$bs_formGroup: React.PropTypes.object}
