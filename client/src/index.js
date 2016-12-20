@@ -8,12 +8,27 @@ import ReactDOM from 'react-dom'
 import {Router, Route, IndexRoute, browserHistory} from 'react-router'
 import {InjectablesProvider} from 'react-injectables'
 
+import GraphiQL from 'graphiql'
+import 'graphiql/graphiql.css'
+
 import App from './pages/App'
 import Home from './pages/Home'
 import Search from './pages/Search'
 import ReportsIndex from './pages/reports/Index'
 import ReportNew from './pages/reports/New'
 import ReportShow from './pages/reports/Show'
+
+function gqlFetcher(params) {
+	return fetch('/graphql', {
+		method: 'POST',
+		headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+		body: JSON.stringify(params),
+	}).then(response => response.json())
+}
+
+function GQL(props) {
+	return <GraphiQL fetcher={gqlFetcher} />
+}
 
 ReactDOM.render((
 	<InjectablesProvider>
@@ -27,6 +42,8 @@ ReactDOM.render((
 					<Route path="new" component={ReportNew} />
 					<Route path=":id" component={ReportShow} />
 				</Route>
+
+				<Route path="/graphiql" component={GQL} />
 			</Route>
 		</Router>
 	</InjectablesProvider>
