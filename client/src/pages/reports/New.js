@@ -1,5 +1,5 @@
 import React from 'react'
-import {InputGroup, Radio, Table, Glyphicon, Button} from 'react-bootstrap'
+import {InputGroup, Radio, Table, Button} from 'react-bootstrap'
 
 import DatePicker from 'react-bootstrap-date-picker'
 
@@ -9,6 +9,8 @@ import RadioGroup from '../../components/RadioGroup'
 import Breadcrumbs from '../../components/Breadcrumbs'
 import Autocomplete from '../../components/Autocomplete'
 import TextEditor from '../../components/TextEditor'
+
+import API from '../../api'
 
 export default class ReportNew extends React.Component {
 	static useNavigation = false
@@ -20,12 +22,21 @@ export default class ReportNew extends React.Component {
 			reportAtmosphere: 'positive',
 			attendees: [],
 			poams: [],
+			recentPeople: [],
+			recentPoams: [],
 		}
 
 		this.onFormChange = this.onFormChange.bind(this)
+		this.onSubmit = this.onSubmit.bind(this)
 		this.onAtmosphereChange = this.onAtmosphereChange.bind(this)
 		this.addAttendee = this.addAttendee.bind(this)
 		this.addPoam = this.addPoam.bind(this)
+		this.setLocation = this.setLocation.bind(this)
+	}
+
+	componentDidMount() {
+		API.fetch('/api/reports/new')
+			.then(data => this.setState(data))
 	}
 
 	render() {
@@ -37,7 +48,7 @@ export default class ReportNew extends React.Component {
 
 				<Breadcrumbs items={[['EF4', '/organizations/ef4'], ['Submit a report', '/reports/new']]} />
 
-				<Form formFor={this.state.report} onChange={this.onFormChange} horizontal>
+				<Form formFor={this.state.report} onChange={this.onFormChange} onSubmit={this.onSubmit} horizontal>
 					<fieldset>
 						<legend>Engagement details <small>Required</small></legend>
 
@@ -52,7 +63,7 @@ export default class ReportNew extends React.Component {
 						</HorizontalFormField>
 
 						<HorizontalFormField id="engagementLocation" addon="📍">
-							<Autocomplete value={this.state.report.location} placeholder="Where did it happen?" url="/api/locations/search" />
+							<Autocomplete value={this.state.report.location} onChange={this.setLocation} placeholder="Where did it happen?" url="/api/locations/search" />
 						</HorizontalFormField>
 
 						<HorizontalFormField id="atmosphere">
@@ -71,7 +82,7 @@ export default class ReportNew extends React.Component {
 
 						<HorizontalFormField id="addAttendee">
 							<Autocomplete value="" placeholder="Who was there?" url="/api/people/search" onChange={this.addAttendee} template={person =>
-								<span>{person.name} {person.rank.toUpperCase()}</span>
+								<span>{person.name} {person.rank && person.rank.toUpperCase()}</span>
 							} clearOnSelect={true} />
 
 							<Table hover striped>
@@ -85,19 +96,20 @@ export default class ReportNew extends React.Component {
 								<tbody>
 									{this.state.attendees.map(person => <tr key={person.id}>
 										<td onClick={this.removeAttendee.bind(this, person)}>
-											<Glyphicon glyph="remove-sign" style={{cursor: 'pointer'}} />
+											<span style={{cursor: 'pointer'}}>⛔️</span>
 										</td>
-										<td>{person.name} {person.rank.toUpperCase()}</td>
+										<td>{person.name} {person.rank && person.rank.toUpperCase()}</td>
 										<td>{person.role}</td>
 									</tr>)}
 								</tbody>
 							</Table>
 
-							<HorizontalFormField.Col style={{marginTop: '-28px'}}>
-								<h5 style={{textDecoration: 'underline'}}>Shortcuts</h5>
+							<HorizontalFormField.Col className="shortcut-list">
+								<h5>Shortcuts</h5>
 								<Button bsStyle="link">Add myself</Button>
-								<Button bsStyle="link">Add my principal (Aarash Aarif)</Button>
-								<Button bsStyle="link">Mohammad Aaron (Recent)</Button>
+								{this.state.recentPeople.map(person =>
+									<Button key={person.id} bsStyle="link" onClick={this.addAttendee.bind(this, person)}>Add {person.name}</Button>
+								)}
 							</HorizontalFormField.Col>
 						</HorizontalFormField>
 					</fieldset>
@@ -107,7 +119,7 @@ export default class ReportNew extends React.Component {
 
 						<HorizontalFormField id="poams">
 							<Autocomplete value="" url="/api/poams/search" onChange={this.addPoam} template={poam =>
-								<span>{poam.shortName} - {poam.longName}</span>
+								<span>{[poam.shortName, poam.longName].join(' - ')}</span>
 							} clearOnSelect={true} />
 
 							<Table hover striped>
@@ -121,7 +133,7 @@ export default class ReportNew extends React.Component {
 								<tbody>
 									{this.state.poams.map(poam => <tr key={poam.id}>
 										<td onClick={this.removePoam.bind(this, poam)}>
-											<Glyphicon glyph="remove-sign" style={{cursor: 'pointer'}} />
+											<span style={{cursor: 'pointer'}}>⛔️</span>
 										</td>
 										<td>{poam.longName}</td>
 										<td>{poam.shortName}</td>
@@ -129,10 +141,11 @@ export default class ReportNew extends React.Component {
 								</tbody>
 							</Table>
 
-							<HorizontalFormField.Col style={{marginTop: '-28px'}}>
-								<h5 style={{textDecoration: 'underline'}}>Shortcuts</h5>
-								<Button bsStyle="link">Add "Tracking your expenses"</Button>
-								<Button bsStyle="link">Add "Getting a budget in place"</Button>
+							<HorizontalFormField.Col className="shortcut-list">
+								<h5>Shortcuts</h5>
+								{this.state.recentPoams.map(poam =>
+									<Button key={poam.id} bsStyle="link" onClick={this.addPoam.bind(this, poam)}>Add "{poam.longName}"</Button>
+								)}
 							</HorizontalFormField.Col>
 						</HorizontalFormField>
 					</fieldset>
@@ -143,9 +156,32 @@ export default class ReportNew extends React.Component {
 						<TextEditor label="Discussion outcome" />
 						<TextEditor label="Next steps" style={{marginTop: '5rem'}} />
 					</fieldset>
+
+					<fieldset>
+						<Button bsSize="large" bsStyle="primary" type="submit" className="pull-right">Create report</Button>
+					</fieldset>
 				</Form>
 			</div>
 		)
+	}
+
+	onSubmit(event) {
+		event.stopPropagation()
+		event.preventDefault()
+
+		let report = this.state.report
+		let data = {
+			intent: report.engagementIntent,
+			reportText: report.reportText,
+			nextSteps: report.nextSteps,
+			engagementDate: report.engagementDate,
+
+			location: this.state.location ? {id: this.state.location.id} : null,
+			attendees: this.state.attendees.map(person => { return {id: person.id}}),
+			poams: this.state.poams.map(poam => { return {id: poam.id}}),
+		}
+
+		API.send('/api/reports/new', data).then(function(report) {console.log(report)})
 	}
 
 	onFormChange(event) {
@@ -163,6 +199,7 @@ export default class ReportNew extends React.Component {
 
 	addAttendee(attendee) {
 		let attendees = this.state.attendees.slice(0)
+
 		attendees.push(attendee)
 		this.setState({attendees})
 	}
@@ -183,5 +220,9 @@ export default class ReportNew extends React.Component {
 		let poams = this.state.poams.slice(0)
 		poams.splice(poams.indexOf(poam), 1)
 		this.setState({poams})
+	}
+
+	setLocation(location) {
+		this.setState({location})
 	}
 }

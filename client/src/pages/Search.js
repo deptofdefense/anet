@@ -1,7 +1,7 @@
 import React from 'react'
 import moment from 'moment'
 
-import {Radio, Table, Button} from 'react-bootstrap'
+import {Radio, Table} from 'react-bootstrap'
 import {Link} from 'react-router'
 
 import RadioGroup from '../components/RadioGroup'
@@ -100,14 +100,16 @@ export default class Search extends React.Component {
 
 	renderExsums() {
 		return <ul>
-			{this.state.results.reports.map(report =>
-				<li key={report.id}>
+			{this.state.results.reports.map(report => {
+				let author = report.author || {}
+				let attendees = report.attendees || []
+				return <li key={report.id}>
 					<Link to={"/reports/" + report.id}>Report #{report.id}</Link><br />
-					At {moment(report.engagementDate).format('L LT')}, {report.author.rank} {report.author.name}
-					 met with {report.attendees && report.attendees.length} Afghan principals. They discussed {report.intent}.
+					At {moment(report.engagementDate).format('L LT')}, {author.rank} {author.name}
+					 met with {attendees.length} Afghan principals. They discussed {report.intent}.
 					 THIS IS AN IMPROPERLY FORMATTED EXSUM.
 				</li>
-			)}
+			})}
 		</ul>
 	}
 

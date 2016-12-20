@@ -43,7 +43,7 @@ export default class Autcomplete extends React.Component {
 		if (this.props.template)
 			return this.props.template(suggestion)
 
-		return <span>{suggestion.name}</span>
+		return <span>{suggestion && suggestion.name}</span>
 	}
 
 	renderInputComponent(inputProps) {
