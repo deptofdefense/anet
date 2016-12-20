@@ -15,6 +15,10 @@ import API from '../../api'
 export default class ReportNew extends React.Component {
 	static useNavigation = false
 
+	static contextTypes = {
+		router: React.PropTypes.object.isRequired
+	}
+
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -49,6 +53,7 @@ export default class ReportNew extends React.Component {
 				<Breadcrumbs items={[['EF4', '/organizations/ef4'], ['Submit a report', '/reports/new']]} />
 
 				<Form formFor={this.state.report} onChange={this.onFormChange} onSubmit={this.onSubmit} horizontal>
+					{this.state.error && <fieldset><p>There was a problem saving this report.</p><p>{this.state.error}</p></fieldset>}
 					<fieldset>
 						<legend>Engagement details <small>Required</small></legend>
 
@@ -178,10 +183,18 @@ export default class ReportNew extends React.Component {
 
 			location: this.state.location ? {id: this.state.location.id} : null,
 			attendees: this.state.attendees.map(person => { return {id: person.id}}),
-			poams: this.state.poams.map(poam => { return {id: poam.id}}),
+			poanss: this.state.poams.map(poam => { return {id: poam.id}}),
 		}
 
-		API.send('/api/reports/new', data).then(function(report) {console.log(report)})
+		API.send('/api/reports/new', data)
+			.then(report => {
+				if (report.code) throw report.code
+				console.log(report);
+				this.context.router.push('/reports/' + report.id)
+			}).catch(error => {
+				this.setState({error: error})
+				window.scrollTo(0, 0)
+			})
 	}
 
 	onFormChange(event) {
