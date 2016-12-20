@@ -7,21 +7,28 @@ import mil.dds.anet.views.AbstractAnetBean;
 public class Location extends AbstractAnetBean {
 
 	private String name;
-	private LatLng latLng;
-		
+	private Double lat;
+	private Double lng;
+	
 	public String getName() {
 		return name;
 	}
 	public void setName(String name) {
 		this.name = name;
 	}
-	public LatLng getLatLng() {
-		return latLng;
+	public Double getLat() {
+		return lat;
 	}
-	public void setLatLng(LatLng latLng) {
-		this.latLng = latLng;
+	public void setLat(Double lat) {
+		this.lat = lat;
 	}
-	
+	public Double getLng() {
+		return lng;
+	}
+	public void setLng(Double lng) {
+		this.lng = lng;
+	}
+
 	@Override
 	public boolean equals(Object o) { 
 		if (o == null || o.getClass() != Location.class) { 
@@ -30,24 +37,26 @@ public class Location extends AbstractAnetBean {
 		Location l = (Location) o;
 		return Objects.equals(l.getId(), id) &&
 				Objects.equals(l.getName(), name) &&
-				Objects.equals(l.getLatLng(), latLng) &&
+				Objects.equals(l.getLat(), lat) &&
+				Objects.equals(l.getLng(), lng) &&
 				Objects.equals(l.getCreatedAt(), createdAt);
 	}
 	
 	@Override
 	public int hashCode() { 
-		return Objects.hash(id, name, latLng, createdAt);
+		return Objects.hash(id, name, lat, lng, createdAt);
 	}
 	
 	@Override
 	public String toString() { 
-		return String.format("(%d) - %s [%f, %f]", id, name, latLng.getLat(), latLng.getLng()); 
+		return String.format("(%d) - %s [%f, %f]", id, name, lat, lng); 
 	}
 	
-	public static Location create(String name, LatLng latLng) { 
+	public static Location create(String name, Double lat, Double lng) { 
 		Location l = new Location();
 		l.setName(name);
-		l.setLatLng(latLng);
+		l.setLat(lat);
+		l.setLng(lng);
 		return l;
 	}
 	

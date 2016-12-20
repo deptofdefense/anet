@@ -41,12 +41,14 @@ import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
 import mil.dds.anet.database.AdminDao.AdminSettingKeys;
 import mil.dds.anet.database.ReportDao;
+import mil.dds.anet.graphql.GraphQLFetcher;
+import mil.dds.anet.graphql.IGraphQLResource;
 import mil.dds.anet.utils.ResponseUtils;
 
 @Path("/api/reports")
 @Produces(MediaType.APPLICATION_JSON)
 @PermitAll
-public class ReportResource {
+public class ReportResource implements IGraphQLResource {
 
 	ReportDao dao;
 	AnetObjectEngine engine;
@@ -57,20 +59,24 @@ public class ReportResource {
 		this.engine = engine;
 		this.dao = engine.getReportDao();
 	}
-
+	
+	@Override
+	public String getDescription() { return "Reports"; } 
+	
+	@Override
+	public Class<Report> getBeanClass() { return Report.class; } 
+	
 	@GET
+	@GraphQLFetcher
 	@Path("/")
-	public Map<String,Object> getAllReportsView(@Auth Person p, @DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
-		Map<String,Object> result = new HashMap<String,Object>();
-		result.put("reports", dao.getAll(pageNum, pageSize));
-		result.put("myApprovals", AnetObjectEngine.getInstance().getReportDao().getReportsForMyApproval(p));
-		result.put("myPending", AnetObjectEngine.getInstance().getReportDao().getMyReportsPendingApproval(p));
-		return result;
+	public List<Report> getAll(@Auth Person p, @DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
+		return dao.getAll(pageNum, pageSize);
 	}
 
 	@GET
 	@Path("/{id}")
-	public Report getById(@PathParam("id") int id) {
+	@GraphQLFetcher
+	public Report getById(@PathParam("id") Integer id) {
 		return dao.getById(id);
 	}
 
@@ -287,8 +293,6 @@ public class ReportResource {
 
 		//TODO: close the transaction.
 
-
-
 		return Response.ok().build();
 	}
 
@@ -315,15 +319,16 @@ public class ReportResource {
 	}
 
 	@GET
+	@GraphQLFetcher("pendingMyApproval")
 	@Path("/pendingMyApproval")
 	public List<Report> getReportsPendingMyApproval(@Auth Person approver) {
 		return dao.getReportsForMyApproval(approver);
 	}
 
-
 	@GET
+	@GraphQLFetcher
 	@Path("/search")
-	public List<Report> searchReports(@QueryParam("q") String query) {
+	public List<Report> search(@QueryParam("q") String query) {
 		return dao.search(query);
 	}
 

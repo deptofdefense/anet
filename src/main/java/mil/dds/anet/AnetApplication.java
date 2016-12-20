@@ -12,6 +12,8 @@ import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.joda.time.DateTimeZone;
 import org.skife.jdbi.v2.DBI;
 
+import com.google.common.collect.ImmutableList;
+
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.auth.AuthDynamicFeature;
@@ -31,6 +33,7 @@ import mil.dds.anet.beans.Person;
 import mil.dds.anet.config.AnetConfiguration;
 import mil.dds.anet.resources.AdminResource;
 import mil.dds.anet.resources.ApprovalStepResource;
+import mil.dds.anet.resources.GraphQLResource;
 import mil.dds.anet.resources.GroupResource;
 import mil.dds.anet.resources.HomeResource;
 import mil.dds.anet.resources.LocationResource;
@@ -143,6 +146,11 @@ public class AnetApplication extends Application<AnetConfiguration> {
 		environment.jersey().register(adminResource);
 		environment.jersey().register(new HomeResource());
 		environment.jersey().register(new ViewResponseFilter(configuration));
+		environment.jersey().register(new GraphQLResource(
+			ImmutableList.of(reportResource, personResource, 
+				positionResource, locationResource,
+				orgResource, asResource, poamResource, 
+				groupResource)));
 
 	}
 

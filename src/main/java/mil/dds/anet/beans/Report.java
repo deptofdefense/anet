@@ -15,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.database.AdminDao.AdminSettingKeys;
+import mil.dds.anet.graphql.GraphQLIgnore;
 import mil.dds.anet.views.AbstractAnetBean;
 
 public class Report extends AbstractAnetBean {
@@ -42,6 +43,7 @@ public class Report extends AbstractAnetBean {
 	
 	List<Comment> comments;
 
+	@GraphQLIgnore
 	@JsonGetter("approvalStep")
 	public ApprovalStep getApprovalStepJson() {
 		return approvalStep;
@@ -94,6 +96,7 @@ public class Report extends AbstractAnetBean {
 	}
 	
 	@JsonGetter("location")
+	@GraphQLIgnore
 	public Location getLocationJson() { 
 		return location;
 	}
@@ -138,6 +141,7 @@ public class Report extends AbstractAnetBean {
 		return attendees;
 	}
 	
+	@GraphQLIgnore
 	@JsonGetter("attendees")
 	public List<ReportPerson> getAttendeesJson() {
 		return attendees;
@@ -170,6 +174,7 @@ public class Report extends AbstractAnetBean {
 		this.poams = poams;
 	}
 	
+	@GraphQLIgnore
 	@JsonGetter("poams")
 	public List<Poam> getPoamsJson() { 
 		return poams;
@@ -193,8 +198,7 @@ public class Report extends AbstractAnetBean {
 
 	@JsonIgnore
 	public Person getAuthor() {
-		if (author == null ) { return null; } 
-		if (author.getLoadLevel() == null) { return author; } 
+		if (author == null || author.getLoadLevel() == null) { return author; } 
 		if (author.getLoadLevel().contains(LoadLevel.PROPERTIES) == false) { 
 			this.author = getBeanAtLoadLevel(author, LoadLevel.PROPERTIES);
 		}
@@ -206,6 +210,7 @@ public class Report extends AbstractAnetBean {
 		this.author = author;
 	}
 	
+	@GraphQLIgnore
 	@JsonGetter("author")
 	public Person getAuthorJson() { 
 		return author;
@@ -224,6 +229,7 @@ public class Report extends AbstractAnetBean {
 		this.comments = comments;
 	}
 	
+	@GraphQLIgnore
 	@JsonGetter("comments")
 	public List<Comment> getCommentsJson() { 
 		return comments;

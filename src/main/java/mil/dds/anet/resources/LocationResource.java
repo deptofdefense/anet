@@ -2,6 +2,7 @@ package mil.dds.anet.resources;
 
 import java.util.List;
 
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -16,10 +17,12 @@ import javax.ws.rs.core.Response.Status;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.database.LocationDao;
+import mil.dds.anet.graphql.GraphQLFetcher;
+import mil.dds.anet.graphql.IGraphQLResource;
 
 @Path("/api/locations")
 @Produces(MediaType.APPLICATION_JSON)
-public class LocationResource {
+public class LocationResource implements IGraphQLResource {
 
 	private LocationDao dao;
 	
@@ -28,12 +31,21 @@ public class LocationResource {
 	}
 	
 	@GET
+	@GraphQLFetcher
+	@Path("/")
+	public List<Location> getAll(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
+		return dao.getAll(pageNum, pageSize);
+	}
+	
+	@GET
+	@GraphQLFetcher
 	@Path("/{id}")
 	public Location getById(@PathParam("id") int id) { 
 		return dao.getById(id);
 	}
 	
 	@GET
+	@GraphQLFetcher
 	@Path("/search")
 	public List<Location> search(@QueryParam("q") String name) {
 		return dao.searchByName(name);
@@ -55,5 +67,11 @@ public class LocationResource {
 		int numRows = dao.update(l);
 		return (numRows == 1) ? Response.ok().build() : Response.status(Status.NOT_FOUND).build();
 	}
+
+	@Override
+	public String getDescription() { return "Locations"; }
+
+	@Override
+	public Class<Location> getBeanClass() { return Location.class;}
 	
 }

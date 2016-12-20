@@ -21,12 +21,14 @@ import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Organization.OrganizationType;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.database.OrganizationDao;
+import mil.dds.anet.graphql.GraphQLFetcher;
+import mil.dds.anet.graphql.IGraphQLResource;
 import mil.dds.anet.utils.AuthUtils;
 
 @Path("/api/organizations")
 @Produces(MediaType.APPLICATION_JSON)
 @PermitAll
-public class OrganizationResource {
+public class OrganizationResource implements IGraphQLResource {
 
 	private OrganizationDao dao;
 	
@@ -34,9 +36,16 @@ public class OrganizationResource {
 		this.dao = engine.getOrganizationDao(); 
 	}
 	
+	@Override
+	public Class<Organization> getBeanClass() { return Organization.class; } 
+	
+	@Override
+	public String getDescription() { return "Organizations"; } 
+	
 	@GET
+	@GraphQLFetcher
 	@Path("/")
-	public List<Organization> getAllOrgsView(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
+	public List<Organization> getAllOrgs(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
 		return dao.getAll(pageNum, pageSize);
 	} 
 	
@@ -50,6 +59,7 @@ public class OrganizationResource {
 	}
 	
 	@GET
+	@GraphQLFetcher
 	@Path("/{id}")
 	public Organization getById(@PathParam("id") int id) {
 		return dao.getById(id);
@@ -67,6 +77,7 @@ public class OrganizationResource {
 	}
 	
 	@GET
+	@GraphQLFetcher
 	@Path("/search")
 	public List<Organization> search(@QueryParam("q") String name, @QueryParam("type") OrganizationType type) {
 		return dao.searchByName(name, type);

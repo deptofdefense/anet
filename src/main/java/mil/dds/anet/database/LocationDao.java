@@ -49,8 +49,8 @@ public class LocationDao implements IAnetDao<Location> {
 				"INSERT INTO locations (name, lat, lng, createdAt, updatedAt) " + 
 				"VALUES (:name, :lat, :lng, :createdAt, :updatedAt)")
 			.bind("name", l.getName())
-			.bind("lat", l.getLatLng().getLat())
-			.bind("lng", l.getLatLng().getLng())
+			.bind("lat", l.getLat())
+			.bind("lng", l.getLng())
 			.bind("createdAt", l.getCreatedAt())
 			.bind("updatedAt", l.getUpdatedAt())
 			.executeAndReturnGeneratedKeys();
@@ -58,14 +58,13 @@ public class LocationDao implements IAnetDao<Location> {
 		return l;
 	}
 	
-	
 	@Override
 	public int update(Location l) {
 		return dbHandle.createStatement("UPDATE locations SET name = :name, lat = :lat, lng = :lng, updatedAt = :updatedAt WHERE id = :id")
 				.bind("id", l.getId())
 				.bind("name", l.getName())
-				.bind("lat", l.getLatLng().getLat())
-				.bind("lng", l.getLatLng().getLng())
+				.bind("lat", l.getLat())
+				.bind("lng", l.getLng())
 				.bind("updatedAt", DateTime.now()	)
 				.execute();
 	}

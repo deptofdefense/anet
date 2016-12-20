@@ -13,7 +13,6 @@ import javax.ws.rs.core.Response;
 import org.junit.Test;
 
 import io.dropwizard.client.JerseyClientBuilder;
-import mil.dds.anet.beans.geo.LatLng;
 import mil.dds.anet.beans.geo.Location;
 
 public class LocationResourceTest extends AbstractResourceTest {
@@ -27,7 +26,7 @@ public class LocationResourceTest extends AbstractResourceTest {
 	
 	@Test
 	public void locationTest() throws UnsupportedEncodingException { 
-		Location l = Location.create("The Boat Dock", new LatLng(12.34,-56.78));
+		Location l = Location.create("The Boat Dock", 12.34,-56.78);
 		
 		Location created = httpQuery("/api/locations/new")
 				.post(Entity.json(l), Location.class);

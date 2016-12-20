@@ -22,11 +22,13 @@ import javax.ws.rs.core.Response.Status;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.database.PoamDao;
+import mil.dds.anet.graphql.GraphQLFetcher;
+import mil.dds.anet.graphql.IGraphQLResource;
 
 @Path("/api/poams")
 @Produces(MediaType.APPLICATION_JSON)
 @PermitAll
-public class PoamResource {
+public class PoamResource implements IGraphQLResource {
 
 	PoamDao dao;
 	
@@ -34,9 +36,16 @@ public class PoamResource {
 		this.dao = engine.getPoamDao();
 	}
 	
+	@Override
+	public Class<Poam> getBeanClass() { return Poam.class; } 
+	
+	@Override
+	public String getDescription() { return "Poams"; } 
+	
 	@GET
+	@GraphQLFetcher
 	@Path("/{id}")
-	public Poam getPoamById(@PathParam("id") int id) {
+	public Poam getById(@PathParam("id") int id) {
 		return dao.getById(id);
 	}
 	
@@ -77,6 +86,7 @@ public class PoamResource {
 	}
 	
 	@GET
+	@GraphQLFetcher
 	@Path("/tree")
 	public List<Poam> getFullPoamTree() { 
 		List<Poam> poams = dao.getAll(0, Integer.MAX_VALUE);
@@ -99,6 +109,7 @@ public class PoamResource {
 	}
 	
 	@GET
+	@GraphQLFetcher
 	@Path("/search")
 	public List<Poam> search(@QueryParam("q") String query) { 
 		return dao.search(query);

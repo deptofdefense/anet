@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
 import mil.dds.anet.AnetObjectEngine;
+import mil.dds.anet.graphql.GraphQLIgnore;
 import mil.dds.anet.views.AbstractAnetBean;
 
 public class Person extends AbstractAnetBean implements Principal{
@@ -104,6 +105,7 @@ public class Person extends AbstractAnetBean implements Principal{
 		return position.orElse(null);
 	}
 	
+	@GraphQLIgnore
 	@JsonGetter("position")
 	public Position getPositionJson() {
 		return (position == null) ? null : position.orElse(null);

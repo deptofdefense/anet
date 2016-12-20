@@ -34,7 +34,6 @@ import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.Atmosphere;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
-import mil.dds.anet.beans.geo.LatLng;
 import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.database.AdminDao.AdminSettingKeys;
 import mil.dds.anet.test.beans.CommentTest;
@@ -126,7 +125,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		
 		//Create a Location that this Report was written at
 		Location loc = httpQuery("/api/locations/new", admin)
-				.post(Entity.json(Location.create("The Boat Dock", new LatLng(1.23,4.56))), Location.class);
+				.post(Entity.json(Location.create("The Boat Dock", 1.23,4.56)), Location.class);
 		
 		//Write a Report
 		Report r = new Report();

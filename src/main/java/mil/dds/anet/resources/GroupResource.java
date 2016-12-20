@@ -19,11 +19,13 @@ import javax.ws.rs.core.Response.Status;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Group;
 import mil.dds.anet.database.GroupDao;
+import mil.dds.anet.graphql.GraphQLFetcher;
+import mil.dds.anet.graphql.IGraphQLResource;
 
 @Path("/api/groups")
 @Produces(MediaType.APPLICATION_JSON)
 @PermitAll
-public class GroupResource {
+public class GroupResource implements IGraphQLResource{
 
 	private GroupDao dao;
 	
@@ -31,13 +33,21 @@ public class GroupResource {
 		this.dao = engine.getGroupDao();
 	}
 	
+	@Override
+	public Class<Group> getBeanClass() { return Group.class; } 
+	
+	@Override
+	public String getDescription() { return "Groups"; } 
+	
 	@GET
+	@GraphQLFetcher
 	@Path("/")
-	public List<Group> getAllReportsView(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
+	public List<Group> getAll(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
 		return dao.getAll(pageNum, pageSize);
 	}
 	
 	@GET
+	@GraphQLFetcher
 	@Path("/{id}")
 	public Group getById(@PathParam("id") int id) { 
 		return dao.getById(id);
@@ -78,6 +88,7 @@ public class GroupResource {
 	}
 	
 	@GET
+	@GraphQLFetcher
 	@Path("/search")
 	public List<Group> search(@QueryParam("q") String query) { 
 		return dao.searchGroupName(query);

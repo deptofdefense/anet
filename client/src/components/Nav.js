@@ -17,6 +17,10 @@ export default class extends React.Component {
 				<Link to="/reports">
 					<NavItem>Reports</NavItem>
 				</Link>
+
+				{process.env.NODE_ENV === 'development' && <Link to="/graphiql">
+					<NavItem>GraphQL</NavItem>
+				</Link>}
 			</Nav>
 		)
 	}

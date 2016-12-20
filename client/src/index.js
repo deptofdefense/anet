@@ -14,6 +14,7 @@ import Search from './pages/Search'
 import ReportsIndex from './pages/reports/Index'
 import ReportNew from './pages/reports/New'
 import ReportShow from './pages/reports/Show'
+import GraphiQL from './pages/GraphiQL'
 
 ReactDOM.render((
 	<InjectablesProvider>
@@ -27,6 +28,8 @@ ReactDOM.render((
 					<Route path="new" component={ReportNew} />
 					<Route path=":id" component={ReportShow} />
 				</Route>
+
+				<Route path="/graphiql" component={GraphiQL} />
 			</Route>
 		</Router>
 	</InjectablesProvider>

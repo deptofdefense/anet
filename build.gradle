@@ -33,7 +33,8 @@ dependencies {
 	compile 'org.xerial:sqlite-jdbc:3.14.2.1' //If using SQLite
 	compile 'javax.mail:mail:1.4.7'
 	compile 'com.github.dblock.waffle:waffle-distro:1.8.1'
-	
+	compile 'com.graphql-java:graphql-java:2.2.0'
+
 	compile files('lib/sqljdbc42.jar')
 	
 	testCompile group: 'io.dropwizard', name: 'dropwizard-testing', version: '1.0.2'

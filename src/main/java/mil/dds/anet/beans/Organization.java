@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
 import mil.dds.anet.AnetObjectEngine;
+import mil.dds.anet.graphql.GraphQLIgnore;
 import mil.dds.anet.views.AbstractAnetBean;
 
 public class Organization extends AbstractAnetBean {
@@ -41,6 +42,7 @@ public class Organization extends AbstractAnetBean {
 		return parentOrg;
 	}
 	
+	@GraphQLIgnore
 	@JsonGetter("parentOrg")
 	public Organization getParentOrgJson() {
 		return parentOrg;
@@ -96,6 +98,7 @@ public class Organization extends AbstractAnetBean {
 		return childrenOrgs;
 	}
 	
+	@GraphQLIgnore
 	@JsonGetter("childrenOrganizations")
 	public List<Organization> getChildrenOrganizationsJson() { 
 		return childrenOrgs;

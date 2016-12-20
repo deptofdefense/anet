@@ -27,8 +27,6 @@ public class Comment extends AbstractAnetBean {
 		this.author = author;
 	}
 
-	
-
 	public String getText() {
 		return text;
 	}

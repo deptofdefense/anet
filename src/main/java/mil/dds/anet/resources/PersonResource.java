@@ -23,17 +23,25 @@ import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Position.PositionType;
 import mil.dds.anet.database.PersonDao;
+import mil.dds.anet.graphql.GraphQLFetcher;
+import mil.dds.anet.graphql.IGraphQLResource;
 
 @Path("/api/people")
 @Produces(MediaType.APPLICATION_JSON)
 @PermitAll
-public class PersonResource {
+public class PersonResource implements IGraphQLResource {
 	
 	private PersonDao dao;
 	
 	public PersonResource(AnetObjectEngine engine) { 
 		this.dao = engine.getPersonDao();
 	}
+	
+	@Override
+	public Class<Person> getBeanClass() { return Person.class; } 
+	
+	@Override
+	public String getDescription() { return "People"; } 
 	
 	/**
 	 * Returns all people objects in the ANET system. Does no filtering on role/status/etc. 
@@ -42,8 +50,9 @@ public class PersonResource {
 	 * @return List of People objects in the system
 	 */
 	@GET
+	@GraphQLFetcher
 	@Path("/")
-	public List<Person> getAllPeople(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
+	public List<Person> getAll(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
 		return dao.getAll(pageNum, pageSize);
 	}
 	
@@ -52,6 +61,7 @@ public class PersonResource {
 	 */
 	@GET
 	@Path("/{id}")
+	@GraphQLFetcher
 	@Produces(MediaType.APPLICATION_JSON)
 	public Person getById(@PathParam("id") int id) { 
 		Person p = dao.getById(id);
@@ -107,7 +117,7 @@ public class PersonResource {
 		}
 		return false;
 	}
-	
+
 //	@DELETE
 //	@Path("/{id}")
 //	public Response deletePerson(@PathParam("id") int id) {
@@ -124,6 +134,7 @@ public class PersonResource {
 	 * @return a list of people objects
 	 */
 	@GET
+	@GraphQLFetcher
 	@Path("/search")
 	public List<Person> searchByName(@QueryParam("q") String query, @QueryParam("role") Role role) {
 		return dao.searchByName(query, role);

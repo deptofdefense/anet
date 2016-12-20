@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.geo.Location;
+import mil.dds.anet.graphql.GraphQLIgnore;
 import mil.dds.anet.views.AbstractAnetBean;
 
 public class Position extends AbstractAnetBean {
@@ -72,6 +73,7 @@ public class Position extends AbstractAnetBean {
 		this.organization = ao;
 	}
 	
+	@GraphQLIgnore
 	@JsonGetter("organization")
 	public Organization getOrganizationJson() { 
 		return organization;
@@ -87,6 +89,7 @@ public class Position extends AbstractAnetBean {
 		return person;
 	}
 	
+	@GraphQLIgnore
 	@JsonGetter("person")
 	public Person getPersonJson() { 
 		return person;
@@ -116,6 +119,7 @@ public class Position extends AbstractAnetBean {
 		return location;
 	}
 	
+	@GraphQLIgnore
 	@JsonGetter("location")
 	public Location getLocationJson() { 
 		return location;
