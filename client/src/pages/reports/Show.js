@@ -5,7 +5,7 @@ import moment from 'moment'
 
 import API from '../../api'
 import Breadcrumbs from '../../components/Breadcrumbs'
-import {HorizontalFormField} from '../../components/FormField'
+import {FormField} from '../../components/FormField'
 
 const atmosphereStyle = {
 	fontSize: '2rem',
@@ -53,18 +53,18 @@ export default class ReportShow extends React.Component {
 				<Form horizontal>
 					<fieldset>
 						<legend>Report #{report.id}</legend>
-						<HorizontalFormField label="Subject" type="static" value={report.intent} />
-						<HorizontalFormField label="Date 📆" type="static" value={moment(+report.engagementDate).format("L LT")} />
-						<HorizontalFormField label="Location 📍" type="static" value={report.location && report.location.name} />
-						<HorizontalFormField label="Atmospherics" type="static">
+						<FormField label="Subject" type="static" value={report.intent} />
+						<FormField label="Date 📆" type="static" value={moment(+report.engagementDate).format("L LT")} />
+						<FormField label="Location 📍" type="static" value={report.location && report.location.name} />
+						<FormField label="Atmospherics" type="static">
 							<span style={atmosphereStyle}>{atmosphereIcons[report.atmosphere]}</span>
 							{report.atmosphereDetails && " " + report.atmosphereDetails}
-						</HorizontalFormField>
-						<HorizontalFormField label="Report author" type="static">
+						</FormField>
+						<FormField label="Report author" type="static">
 							{report.author &&
 								<Link to={"/users/" + report.author.id}>{report.author.name}</Link>
 							}
-						</HorizontalFormField>
+						</FormField>
 					</fieldset>
 
 					<fieldset>

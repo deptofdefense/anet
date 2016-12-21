@@ -4,7 +4,7 @@ import {InputGroup, Radio, Table, Button} from 'react-bootstrap'
 import DatePicker from 'react-bootstrap-date-picker'
 
 import {ContentForHeader} from '../../components/Header'
-import {Form, HorizontalFormField} from '../../components/FormField'
+import {Form, FormField} from '../../components/FormField'
 import RadioGroup from '../../components/RadioGroup'
 import Breadcrumbs from '../../components/Breadcrumbs'
 import Autocomplete from '../../components/Autocomplete'
@@ -59,35 +59,35 @@ export default class ReportNew extends React.Component {
 					<fieldset>
 						<legend>Engagement details <small>Required</small></legend>
 
-						<HorizontalFormField id="engagementIntent" label="Meeting subject" placeholder="What happened?" data-focus>
-							<HorizontalFormField.Col>{this.subjectCharactersRemaining()}</HorizontalFormField.Col>
-						</HorizontalFormField>
+						<FormField id="engagementIntent" label="Meeting subject" placeholder="What happened?" data-focus>
+							<FormField.Col>{this.subjectCharactersRemaining()}</FormField.Col>
+						</FormField>
 
-						<HorizontalFormField id="engagementDate">
+						<FormField id="engagementDate">
 							<DatePicker placeholder="When did it happen?">
 								<InputGroup.Addon>📆</InputGroup.Addon>
 							</DatePicker>
-						</HorizontalFormField>
+						</FormField>
 
-						<HorizontalFormField id="engagementLocation" addon="📍">
+						<FormField id="engagementLocation" addon="📍">
 							<Autocomplete value={this.state.report.location} onChange={this.setLocation} placeholder="Where did it happen?" url="/api/locations/search" />
-						</HorizontalFormField>
+						</FormField>
 
-						<HorizontalFormField id="atmosphere">
+						<FormField id="atmosphere">
 							<RadioGroup bsSize="large" onChange={this.onAtmosphereChange}>
 								<Radio value="positive">👍</Radio>
 								<Radio value="neutral">😐</Radio>
 								<Radio value="negative">👎</Radio>
 							</RadioGroup>
-						</HorizontalFormField>
+						</FormField>
 
-						<HorizontalFormField id="atmosphereDetails" className={this.state.reportAtmosphere === 'positive' && 'hide'} />
+						<FormField id="atmosphereDetails" className={this.state.reportAtmosphere === 'positive' && 'hide'} />
 					</fieldset>
 
 					<fieldset>
 						<legend>Meeting attendance <small>Required</small></legend>
 
-						<HorizontalFormField id="addAttendee">
+						<FormField id="addAttendee">
 							<Autocomplete value="" placeholder="Who was there?" url="/api/people/search" onChange={this.addAttendee} template={person =>
 								<span>{person.name} {person.rank && person.rank.toUpperCase()}</span>
 							} clearOnSelect={true} />
@@ -111,20 +111,20 @@ export default class ReportNew extends React.Component {
 								</tbody>
 							</Table>
 
-							<HorizontalFormField.Col className="shortcut-list">
+							<FormField.Col className="shortcut-list">
 								<h5>Shortcuts</h5>
 								<Button bsStyle="link">Add myself</Button>
 								{this.state.recentPeople.map(person =>
 									<Button key={person.id} bsStyle="link" onClick={this.addAttendee.bind(this, person)}>Add {person.name}</Button>
 								)}
-							</HorizontalFormField.Col>
-						</HorizontalFormField>
+							</FormField.Col>
+						</FormField>
 					</fieldset>
 
 					<fieldset>
 						<legend>Milestones</legend>
 
-						<HorizontalFormField id="poams">
+						<FormField id="poams">
 							<Autocomplete value="" url="/api/poams/search" onChange={this.addPoam} template={poam =>
 								<span>{[poam.shortName, poam.longName].join(' - ')}</span>
 							} clearOnSelect={true} />
@@ -148,13 +148,13 @@ export default class ReportNew extends React.Component {
 								</tbody>
 							</Table>
 
-							<HorizontalFormField.Col className="shortcut-list">
+							<FormField.Col className="shortcut-list">
 								<h5>Shortcuts</h5>
 								{this.state.recentPoams.map(poam =>
 									<Button key={poam.id} bsStyle="link" onClick={this.addPoam.bind(this, poam)}>Add "{poam.longName}"</Button>
 								)}
-							</HorizontalFormField.Col>
-						</HorizontalFormField>
+							</FormField.Col>
+						</FormField>
 					</fieldset>
 
 					<fieldset>

@@ -34,15 +34,15 @@ Form.propTypes = Object.assign({}, BSForm.propTypes, {
 	formFor: React.PropTypes.object
 })
 
-class HorizontalFormFieldCol extends React.Component {
+class FormFieldExtraCol extends React.Component {
 	render() {
 		return <Col sm={3} {...this.props} />
 	}
 }
 
-class HorizontalFormField extends React.Component {
+class FormField extends React.Component {
 	static contextTypes = {
-		formFor: React.PropTypes.object
+		formFor: React.PropTypes.object,
 	}
 
 	render() {
@@ -58,7 +58,7 @@ class HorizontalFormField extends React.Component {
 		label = label || _.upperFirst(_.startCase(id).toLowerCase())
 
 		children = React.Children.toArray(children)
-		let extra = children.find((child) => child.type === HorizontalFormFieldCol)
+		let extra = children.find((child) => child.type === FormFieldExtraCol)
 		if (extra) children.splice(children.indexOf(extra), 1)
 		if (children.length === 0) children = null
 
@@ -94,6 +94,6 @@ class HorizontalFormField extends React.Component {
 	}
 }
 
-HorizontalFormField.Col = HorizontalFormFieldCol
+FormField.Col = FormFieldExtraCol
 
-export {HorizontalFormField}
+export {FormField}
