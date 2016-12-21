@@ -1,6 +1,5 @@
 import React from 'react'
 import {Link} from 'react-router'
-import {Button} from 'react-bootstrap'
 import {Injectable, Injector} from 'react-injectables'
 
 import SearchBar from './SearchBar.js'
@@ -35,8 +34,6 @@ class Header extends React.Component {
 					<div className="pull-left header-content">
 						{this.props.injections.length ? this.props.injections : <SearchBar />}
 					</div>
-
-					{/*<Button bsStyle="primary" className="pull-right">Create</Button>*/}
 				</div>
 			</header>
 		)

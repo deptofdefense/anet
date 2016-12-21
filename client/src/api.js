@@ -51,10 +51,3 @@ const API = {
 }
 
 export default API
-
-Promise.prototype.log = function() {
-	return this.then(function(data) {
-		console.log(data)
-		return data
-	})
-}

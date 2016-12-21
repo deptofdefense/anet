@@ -20,9 +20,9 @@ export default class Autcomplete extends React.Component {
 	}
 
 	render() {
-		let {url, value, onChange, template, clearOnSelect, ...inputProps} = this.props
-		value = this.state.value
-		onChange = this.onChange
+		const inputProps = Object.without(this.props, 'url', 'template', 'clearOnSelect', 'value, onChange')
+		inputProps.value = this.state.value
+		inputProps.onChange = this.onChange
 
 		return (
 			<Autosuggest
@@ -31,7 +31,7 @@ export default class Autcomplete extends React.Component {
 				onSuggestionsClearRequested={this.clearSuggestions}
 				getSuggestionValue={this.suggestionValue}
 				renderSuggestion={this.renderSuggestion}
-				inputProps={{...inputProps, value, onChange}}
+				inputProps={inputProps}
 				renderInputComponent={this.renderInputComponent}
 				onSuggestionSelected={this.onSuggestionSelected}
 				focusInputOnSuggestionClick={false}
