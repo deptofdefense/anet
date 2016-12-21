@@ -156,4 +156,32 @@ public class PersonDao implements IAnetDao<Person> {
 		return query.map(new PersonMapper()).list();
 	}
 
+	public List<Person> getRecentPeople(Person author) {
+		String sql;
+		if (DaoUtils.isMsSql(dbHandle)) {
+			sql = "SELECT " + PersonDao.PERSON_FIELDS
+				+ "FROM people WHERE people.id IN ( "
+					+ "SELECT top(3) reportPeople.personId "
+					+ "FROM reports JOIN reportPeople ON reports.id = reportPeople.reportId "
+					+ "WHERE authorId = :authorId "
+					+ "GROUP BY personId "
+					+ "ORDER BY MAX(reports.createdAt) DESC"
+				+ ")";
+		} else {
+			sql = "SELECT " + PersonDao.PERSON_FIELDS
+				+ "FROM people WHERE people.id IN ( "
+					+ "SELECT top(3) reportPeople.personId "
+					+ "FROM reports JOIN reportPeople ON reports.id = reportPeople.reportId "
+					+ "WHERE authorId = :authorId "
+					+ "GROUP BY personId "
+					+ "ORDER BY MAX(reports.createdAt) DESC "
+					+ "LIMIT 3"
+				+ ")";
+		}
+		return dbHandle.createQuery(sql)
+				.bind("authorId", author.getId())
+				.map(new PersonMapper())
+				.list();
+	}
+	
 }

@@ -10,12 +10,12 @@ public class GraphQLDateTimeType extends GraphQLScalarType {
 	private static final Coercing coercing = new Coercing() {
         @Override
         public Object serialize(Object input) {
-            return Long.toString(((DateTime) input).getMillis());
+            return ((DateTime) input).getMillis();
         }
 
         @Override
         public Object parseValue(Object input) {
-        	return new DateTime(Long.parseLong((String)input));
+        	return new DateTime((Long)input);
         }
 
         @Override

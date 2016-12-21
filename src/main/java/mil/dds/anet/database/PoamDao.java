@@ -9,6 +9,7 @@ import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.Query;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
+import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.database.mappers.PoamMapper;
 import mil.dds.anet.utils.DaoUtils;
@@ -122,5 +123,31 @@ public class PoamDao implements IAnetDao<Poam> {
 			.map(new PoamMapper())
 			.bind("q", query)
 			.list();
+	}
+	
+	public List<Poam> getRecentPoams(Person author) {
+		String sql;
+		if (DaoUtils.isMsSql(dbHandle)) {
+			sql = "SELECT poams.* FROM poams WHERE poams.id IN ("
+					+ "SELECT TOP(3) reportPoams.poamId "
+					+ "FROM reports JOIN reportPoams ON reports.id = reportPoams.reportId "
+					+ "WHERE authorId = :authorId "
+					+ "GROUP BY poamId "
+					+ "ORDER BY MAX(reports.createdAt) DESC"
+				+ ")";
+		} else {
+			sql =  "SELECT poams.* FROM poams WHERE poams.id IN ("
+					+ "SELECT reportPoams.poamId "
+					+ "FROM reports JOIN reportPoams ON reports.id = reportPoams.reportId "
+					+ "WHERE authorId = :authorId "
+					+ "GROUP BY poamId "
+					+ "ORDER BY MAX(reports.createdAt) DESC "
+					+ "LIMIT 3"
+				+ ")";
+		}
+		return dbHandle.createQuery(sql)
+				.bind("authorId", author.getId())
+				.map(new PoamMapper())
+				.list();
 	}
 }

@@ -150,4 +150,12 @@ public class PersonResource implements IGraphQLResource {
 		return AnetObjectEngine.getInstance().getPositionDao().getCurrentPositionForPerson(Person.createWithId(personId));
 	}
 	
+	@GET
+	@GraphQLFetcher
+	@Path("/recent")
+	public List<Person> recents(@Auth Person user) { 
+		return dao.getRecentPeople(user);
+	}
+	
+	
 }

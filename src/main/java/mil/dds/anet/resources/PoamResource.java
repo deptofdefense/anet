@@ -19,7 +19,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
+import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.database.PoamDao;
 import mil.dds.anet.graphql.GraphQLFetcher;
@@ -115,7 +117,15 @@ public class PoamResource implements IGraphQLResource {
 		return dao.search(query);
 	}
 	
+	@GET
+	@GraphQLFetcher
+	@Path("/recents")
+	public List<Poam> recents(@Auth Person user) { 
+		return dao.getRecentPoams(user);
+	}
+	
 	//TODO: You should never be able to delete a POAM, right?  
+	
 	
 	
 }

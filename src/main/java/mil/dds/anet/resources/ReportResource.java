@@ -80,17 +80,6 @@ public class ReportResource implements IGraphQLResource {
 		return dao.getById(id);
 	}
 
-	@GET
-	@Path("/new")
-	public Map<String,Object> createNewReportForm(@Auth Person author) {
-		Map<String,Object> result = new HashMap<String,Object>();
-		result.put("efs", engine.getPoamDao().getPoamsByCategory("EF"));
-		result.put("recentLocations", engine.getReportDao().getRecentLocations(author));
-		result.put("recentPeople", engine.getReportDao().getRecentPeople(author));
-		result.put("recentPoams", engine.getReportDao().getRecentPoams(author));
-		return result;
-	}
-
 	@POST
 	@Path("/new")
 	public Report createNewReport(@Auth Person author, Report r) {

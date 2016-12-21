@@ -10,6 +10,7 @@ import org.skife.jdbi.v2.Query;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
+import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.database.mappers.LocationMapper;
 import mil.dds.anet.utils.DaoUtils;
@@ -81,6 +82,31 @@ public class LocationDao implements IAnetDao<Location> {
 			.bind("name", name)
 			.map(new LocationMapper());
 		return query.list();
+	}
+	
+	public List<Location> getRecentLocations(Person author) {
+		String sql;
+		if (DaoUtils.isMsSql(dbHandle)) {
+			sql = "SELECT locations.* FROM locations WHERE id IN ( "
+					+ "SELECT TOP(3) reports.locationId "
+					+ "FROM reports "
+					+ "WHERE authorid = :authorId "
+					+ "GROUP BY locationId "
+					+ "ORDER BY MAX(reports.createdAt) DESC"
+				+ ")";
+		} else {
+			sql = "SELECT locations.* FROM locations WHERE id IN ( "
+					+ "SELECT reports.locationId "
+					+ "FROM reports "
+					+ "WHERE authorid = :authorId "
+					+ "GROUP BY locationId "
+					+ "ORDER BY MAX(reports.createdAt) DESC LIMIT 3"
+				+ ")";
+		}
+		return dbHandle.createQuery(sql)
+				.bind("authorId", author.getId())
+				.map(new LocationMapper())
+				.list();
 	}
 	
 	//TODO: Don't delete any location if any references exist. 

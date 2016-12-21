@@ -14,8 +14,6 @@ import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
-import mil.dds.anet.beans.geo.Location;
-import mil.dds.anet.database.mappers.LocationMapper;
 import mil.dds.anet.database.mappers.PersonMapper;
 import mil.dds.anet.database.mappers.PoamMapper;
 import mil.dds.anet.database.mappers.ReportMapper;
@@ -276,31 +274,6 @@ public class ReportDao implements IAnetDao<Report> {
 			.list();
 	}
 
-	public List<Location> getRecentLocations(Person author) {
-		String sql;
-		if (DaoUtils.isMsSql(dbHandle)) {
-			sql = "SELECT locations.* FROM locations WHERE id IN ( "
-					+ "SELECT TOP(3) reports.locationId "
-					+ "FROM reports "
-					+ "WHERE authorid = :authorId "
-					+ "GROUP BY locationId "
-					+ "ORDER BY MAX(reports.createdAt) DESC"
-				+ ")";
-		} else {
-			sql = "SELECT locations.* FROM locations WHERE id IN ( "
-					+ "SELECT reports.locationId "
-					+ "FROM reports "
-					+ "WHERE authorid = :authorId "
-					+ "GROUP BY locationId "
-					+ "ORDER BY MAX(reports.createdAt) DESC LIMIT 3"
-				+ ")";
-		}
-		return dbHandle.createQuery(sql)
-				.bind("authorId", author.getId())
-				.map(new LocationMapper())
-				.list();
-	}
-
 	public List<Person> getRecentPeople(Person author) {
 		String sql;
 		if (DaoUtils.isMsSql(dbHandle)) {
@@ -326,32 +299,6 @@ public class ReportDao implements IAnetDao<Report> {
 		return dbHandle.createQuery(sql)
 				.bind("authorId", author.getId())
 				.map(new PersonMapper())
-				.list();
-	}
-
-	public List<Poam> getRecentPoams(Person author) {
-		String sql;
-		if (DaoUtils.isMsSql(dbHandle)) {
-			sql = "SELECT poams.* FROM poams WHERE poams.id IN ("
-					+ "SELECT TOP(3) reportPoams.poamId "
-					+ "FROM reports JOIN reportPoams ON reports.id = reportPoams.reportId "
-					+ "WHERE authorId = :authorId "
-					+ "GROUP BY poamId "
-					+ "ORDER BY MAX(reports.createdAt) DESC"
-				+ ")";
-		} else {
-			sql =  "SELECT poams.* FROM poams WHERE poams.id IN ("
-					+ "SELECT reportPoams.poamId "
-					+ "FROM reports JOIN reportPoams ON reports.id = reportPoams.reportId "
-					+ "WHERE authorId = :authorId "
-					+ "GROUP BY poamId "
-					+ "ORDER BY MAX(reports.createdAt) DESC "
-					+ "LIMIT 3"
-				+ ")";
-		}
-		return dbHandle.createQuery(sql)
-				.bind("authorId", author.getId())
-				.map(new PoamMapper())
 				.list();
 	}
 

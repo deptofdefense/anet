@@ -14,7 +14,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
+import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.database.LocationDao;
 import mil.dds.anet.graphql.GraphQLFetcher;
@@ -68,6 +70,13 @@ public class LocationResource implements IGraphQLResource {
 		return (numRows == 1) ? Response.ok().build() : Response.status(Status.NOT_FOUND).build();
 	}
 
+	@GET
+	@GraphQLFetcher
+	@Path("/recents")
+	public List<Location> recents(@Auth Person user) { 
+		return dao.getRecentLocations(user);
+	}
+	
 	@Override
 	public String getDescription() { return "Locations"; }
 
