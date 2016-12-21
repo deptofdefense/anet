@@ -1,4 +1,11 @@
-const methods = {
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
+
+NProgress.configure({
+	parent: '.header'
+})
+
+const API = {
 	fetch(url, params) {
 		params = params || {}
 		params.credentials = 'same-origin'
@@ -6,7 +13,14 @@ const methods = {
 		params.headers = params.headers || {}
 		params.headers['Accept'] = 'application/json'
 
-		return window.fetch(url, params).then(response => response.json())
+		API.startLoading()
+
+		return window.fetch(url, params)
+					.then(response => response.json())
+					.then(response => {
+						API.stopLoading()
+						return response
+					})
 	},
 
 	send(url, data, params) {
@@ -17,17 +31,26 @@ const methods = {
 		params.headers = params.headers || {}
 		params.headers['Content-Type'] = 'application/json'
 
-		return methods.fetch(url, params)
+		return API.fetch(url, params)
 	},
 
 	query(query, variables) {
 		query = 'query { ' + query + ' }'
 		variables = variables || {}
-		return methods.send('/graphql', {query, variables}).then(json => json.data)
-	}
+		return API.send('/graphql', {query, variables}).then(json => json.data)
+	},
+
+	startLoading() {
+		NProgress.start()
+		NProgress.set(0.5)
+	},
+
+	stopLoading() {
+		NProgress.done()
+	},
 }
 
-export default methods
+export default API
 
 Promise.prototype.log = function() {
 	return this.then(function(data) {

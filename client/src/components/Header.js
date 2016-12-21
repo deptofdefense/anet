@@ -26,7 +26,7 @@ const logoCss = {
 class Header extends React.Component {
 	render() {
 		return (
-			<div style={backgroundCss}>
+			<header style={backgroundCss} className="header">
 				<div className="container">
 					<Link to="/" className="pull-left">
 						<img src={logo} alt="ANET logo" style={logoCss} />
@@ -38,7 +38,7 @@ class Header extends React.Component {
 
 					{/*<Button bsStyle="primary" className="pull-right">Create</Button>*/}
 				</div>
-			</div>
+			</header>
 		)
 	}
 }
