@@ -25,12 +25,14 @@ export default class ReportNew extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			report: {engagementIntent: '', location: ''},
-			reportAtmosphere: 'positive',
-			attendees: [],
-			poams: [],
-			recentPeople: [],
-			recentPoams: [],
+			report: {
+				engagementIntent: '',
+				atmosphere: '',
+				location: {},
+				attendees: [],
+				poams: [],
+			},
+			recents: {persons: [], locations: [], poams: []}
 		}
 
 		this.onFormChange = this.onFormChange.bind(this)
@@ -42,11 +44,23 @@ export default class ReportNew extends React.Component {
 	}
 
 	componentDidMount() {
-		API.fetch('/api/reports/new')
-			.then(data => this.setState(data))
+		API.query(`
+			locations(f:recents) {
+				id, name
+			}
+			persons(f:recents) {
+				id, name, rank, role
+			}
+			poams(f:recents) {
+				id, shortName, longName
+			}
+		`).then(data => this.setState({recents: data}))
 	}
 
 	render() {
+		let report = this.state.report
+		let recents = this.state.recents
+
 		return (
 			<div>
 				<ContentForHeader>
@@ -55,7 +69,7 @@ export default class ReportNew extends React.Component {
 
 				<Breadcrumbs items={[['EF4', '/organizations/ef4'], ['Submit a report', '/reports/new']]} />
 
-				<Form formFor={this.state.report} onChange={this.onFormChange} onSubmit={this.onSubmit} horizontal>
+				<Form formFor={report} onSubmit={this.onSubmit} horizontal>
 					{this.state.error && <fieldset><p>There was a problem saving this report.</p><p>{this.state.error}</p></fieldset>}
 					<fieldset>
 						<legend>Engagement details <small>Required</small></legend>
@@ -71,7 +85,7 @@ export default class ReportNew extends React.Component {
 						</FormField>
 
 						<FormField id="engagementLocation" addon="📍">
-							<Autocomplete value={this.state.report.location} onChange={this.setLocation} placeholder="Where did it happen?" url="/api/locations/search" />
+							<Autocomplete value="" onChange={this.setLocation} placeholder="Where did it happen?" url="/api/locations/search" />
 						</FormField>
 
 						<FormField id="atmosphere">
@@ -102,7 +116,7 @@ export default class ReportNew extends React.Component {
 									</tr>
 								</thead>
 								<tbody>
-									{this.state.attendees.map(person => <tr key={person.id}>
+									{report.attendees.map(person => <tr key={person.id}>
 										<td onClick={this.removeAttendee.bind(this, person)}>
 											<span style={{cursor: 'pointer'}}>⛔️</span>
 										</td>
@@ -115,7 +129,7 @@ export default class ReportNew extends React.Component {
 							<FormField.ExtraCol className="shortcut-list">
 								<h5>Shortcuts</h5>
 								<Button bsStyle="link">Add myself</Button>
-								{this.state.recentPeople.map(person =>
+								{recents.persons.map(person =>
 									<Button key={person.id} bsStyle="link" onClick={this.addAttendee.bind(this, person)}>Add {person.name}</Button>
 								)}
 							</FormField.ExtraCol>
@@ -139,7 +153,7 @@ export default class ReportNew extends React.Component {
 									</tr>
 								</thead>
 								<tbody>
-									{this.state.poams.map(poam => <tr key={poam.id}>
+									{report.poams.map(poam => <tr key={poam.id}>
 										<td onClick={this.removePoam.bind(this, poam)}>
 											<span style={{cursor: 'pointer'}}>⛔️</span>
 										</td>
@@ -151,7 +165,7 @@ export default class ReportNew extends React.Component {
 
 							<FormField.ExtraCol className="shortcut-list">
 								<h5>Shortcuts</h5>
-								{this.state.recentPoams.map(poam =>
+								{recents.poams.map(poam =>
 									<Button key={poam.id} bsStyle="link" onClick={this.addPoam.bind(this, poam)}>Add "{poam.longName}"</Button>
 								)}
 							</FormField.ExtraCol>
