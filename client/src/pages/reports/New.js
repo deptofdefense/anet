@@ -26,7 +26,7 @@ export default class ReportNew extends React.Component {
 		super(props)
 		this.state = {
 			report: {
-				engagementIntent: '',
+				intent: '',
 				atmosphere: '',
 				location: {},
 				attendees: [],
@@ -35,8 +35,8 @@ export default class ReportNew extends React.Component {
 			recents: {persons: [], locations: [], poams: []}
 		}
 
-		this.onFormChange = this.onFormChange.bind(this)
 		this.onSubmit = this.onSubmit.bind(this)
+		this.onIntentChanged = this.onIntentChanged.bind(this)
 		this.onAtmosphereChange = this.onAtmosphereChange.bind(this)
 		this.addAttendee = this.addAttendee.bind(this)
 		this.addPoam = this.addPoam.bind(this)
@@ -74,8 +74,8 @@ export default class ReportNew extends React.Component {
 					<fieldset>
 						<legend>Engagement details <small>Required</small></legend>
 
-						<FormField id="engagementIntent" label="Meeting subject" placeholder="What happened?" data-focus>
-							<FormField.ExtraCol>{this.subjectCharactersRemaining()}</FormField.ExtraCol>
+						<FormField id="intent" label="Meeting subject" placeholder="What happened?" data-focus onChange={this.onIntentChanged}>
+							<FormField.ExtraCol>{250 - report.intent.length} characters remaining</FormField.ExtraCol>
 						</FormField>
 
 						<FormField id="engagementDate">
@@ -84,7 +84,7 @@ export default class ReportNew extends React.Component {
 							</DatePicker>
 						</FormField>
 
-						<FormField id="engagementLocation" addon="📍">
+						<FormField id="location" addon="📍">
 							<Autocomplete value="" onChange={this.setLocation} placeholder="Where did it happen?" url="/api/locations/search" />
 						</FormField>
 
@@ -214,17 +214,14 @@ export default class ReportNew extends React.Component {
 			})
 	}
 
-	onFormChange(event) {
-		this.setState({report: this.state.report})
+	onIntentChanged(event) {
+		let report = this.state.report
+		report.intent = event.target.value
+		this.setState({report})
 	}
 
 	onAtmosphereChange(atmosphere) {
 		this.setState({reportAtmosphere: atmosphere})
-	}
-
-	subjectCharactersRemaining() {
-		let charactersRemaining = 250 - this.state.report.engagementIntent.length
-		return charactersRemaining + " characters remaining"
 	}
 
 	addAttendee(attendee) {

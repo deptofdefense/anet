@@ -37,7 +37,7 @@ export default class FormField extends React.Component {
 		if (this.props.type === 'static')
 			content = <FormControl.Static>{children || this.props.value}</FormControl.Static>
 		else
-			content = children || <FormControl {...childProps} value={this.getValue(id)} onChange={this.onChange.bind(this, id)} />
+			content = children || <FormControl {...childProps} value={this.getValue()} />
 
 		content = addon ? (<InputGroup>{content}<InputGroup.Addon>{addon}</InputGroup.Addon></InputGroup>) : content
 
@@ -54,16 +54,10 @@ export default class FormField extends React.Component {
 		)
 	}
 
-	getValue(key) {
+	getValue() {
 		let formContext = this.context.formFor
+		let key = this.props.id
 		if (formContext) return formContext[key]
-	}
-
-	onChange(key, event) {
-		let value = event.target.value
-		let formContext = this.context.formFor
-		if (formContext) formContext[key] = value
-		return value
 	}
 }
 
