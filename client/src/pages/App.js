@@ -5,15 +5,15 @@ import SecurityBanner from '../components/SecurityBanner'
 import Header from '../components/Header'
 import Nav from '../components/Nav'
 
-const PagePropTypes = {
-	useNavigation: React.PropTypes.bool,
-	navElement: React.PropTypes.element,
-	fluidContainer: React.PropTypes.bool,
-}
-
 export default class App extends React.Component {
 	static propTypes = {
 		children: React.PropTypes.element.isRequired,
+	}
+
+	static PagePropTypes = {
+		useNavigation: React.PropTypes.bool,
+		navElement: React.PropTypes.element,
+		fluidContainer: React.PropTypes.bool,
 	}
 
 	render() {

@@ -15,7 +15,7 @@ export default class Form extends React.Component {
 	getChildContext() {
 		return {
 			formFor: this.props.formFor,
-			form: this
+			form: this,
 		}
 	}
 
@@ -26,10 +26,7 @@ export default class Form extends React.Component {
 	}
 
 	render() {
-		const {
-			formFor,
-			...formProps
-		} = this.props
+		const formProps = Object.without(this.props, 'formFor')
 
 		return (
 			<BSForm {...formProps} ref="container" />
