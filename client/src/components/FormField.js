@@ -5,11 +5,15 @@ import {Form as BSForm, FormGroup, Col, ControlLabel, FormControl, InputGroup} f
 
 export class Form extends React.Component {
 	static childContextTypes = {
-		formFor: React.PropTypes.object
+		formFor: React.PropTypes.object,
+		form: React.PropTypes.object,
 	}
 
 	getChildContext() {
-		return {formFor: this.props.formFor}
+		return {
+			formFor: this.props.formFor,
+			form: this
+		}
 	}
 
 	componentDidMount() {
@@ -43,6 +47,7 @@ class FormFieldExtraCol extends React.Component {
 class FormField extends React.Component {
 	static contextTypes = {
 		formFor: React.PropTypes.object,
+		form: React.PropTypes.object,
 	}
 
 	render() {
@@ -54,6 +59,8 @@ class FormField extends React.Component {
 			children,
 			...childProps
 		} = this.props
+
+		let horizontal = this.context.form && this.context.form.props.horizontal
 
 		label = label || _.upperFirst(_.startCase(id).toLowerCase())
 
@@ -68,14 +75,16 @@ class FormField extends React.Component {
 		else
 			content = children || <FormControl {...childProps} value={this.getValue(id)} onChange={this.onChange.bind(this, id)} />
 
+		content = addon ? (<InputGroup>{content}<InputGroup.Addon>{addon}</InputGroup.Addon></InputGroup>) : content
+
 		return (
 			<FormGroup controlId={id} className={className}>
-				<Col sm={2} componentClass={ControlLabel}>
-					{label}
-				</Col>
-				<Col sm={7}>
-					{addon ? (<InputGroup>{content}<InputGroup.Addon>{addon}</InputGroup.Addon></InputGroup>) : content}
-				</Col>
+				{horizontal
+					? <Col sm={2} componentClass={ControlLabel}>{label}</Col>
+					: <ControlLabel>{label}</ControlLabel> }
+				{horizontal
+					? <Col sm={7}>{content}</Col>
+					: content }
 				{extra}
 			</FormGroup>
 		)

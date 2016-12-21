@@ -1,11 +1,10 @@
 import React from 'react'
-import {Form} from 'react-bootstrap'
 import {Link} from 'react-router'
 import moment from 'moment'
 
 import API from '../../api'
 import Breadcrumbs from '../../components/Breadcrumbs'
-import {FormField} from '../../components/FormField'
+import {Form, FormField} from '../../components/FormField'
 
 const atmosphereStyle = {
 	fontSize: '2rem',
