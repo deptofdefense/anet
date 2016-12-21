@@ -165,13 +165,21 @@ public class AnetResourceDataFetcher implements DataFetcher {
 			if (fetcher == null) { 
 				throw new WebApplicationException("No such fetcher for name " + functionName);
 			}
-			Set<String> args = fetchersByArguments.entrySet().stream()
-					.filter(e -> e.getValue().equals(functionName)).findFirst().get().getKey();
-			for (String arg : args) { 
-				if (environment.getArgument(arg) == null) { 
-					throw new WebApplicationException("Missing argument for function " + functionName + ".  Required args are " + args);
+
+			for (Parameter param : fetcher.getParameters()) { 
+				String argName = null;
+				if (param.isAnnotationPresent(PathParam.class)) { 
+					argName = param.getAnnotation(PathParam.class).value();
+				} else if (param.isAnnotationPresent(QueryParam.class)) { 
+					argName = param.getAnnotation(QueryParam.class).value();
+				} else {  
+					continue;
+				}
+				if (environment.getArgument(argName) == null) { 
+					throw new WebApplicationException("Missing argument for function " + functionName + ", arg: " + argName);
 				}
 			}
+			return fetcher;
 		}
 		
 		//Try to find the function that exactly matches the arguments the client provided
