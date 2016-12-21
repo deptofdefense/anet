@@ -140,7 +140,7 @@ public class AnetResourceDataFetcher implements DataFetcher {
 		
 		List<Object> args = new LinkedList<Object>();
 		for (Parameter param : method.getParameters()) { 
-			if (param.isAnnotationPresent(PathParam.class)) { 
+			if (param.isAnnotationPresent(PathParam.class)) {
 				args.add(environment.getArgument(param.getAnnotation(PathParam.class).value()));
 			} else if (param.isAnnotationPresent(QueryParam.class)) { 
 				args.add(environment.getArgument(param.getAnnotation(QueryParam.class).value()));
@@ -159,8 +159,19 @@ public class AnetResourceDataFetcher implements DataFetcher {
 	}
 
 	private Method findFetcher(DataFetchingEnvironment environment) {
-		if (environment.getArgument("f") != null) { 
-			return fetchers.get(environment.getArgument("f"));
+		if (environment.getArgument("f") != null) {
+			String functionName = environment.getArgument("f");
+			Method fetcher = fetchers.get(functionName);
+			if (fetcher == null) { 
+				throw new WebApplicationException("No such fetcher for name " + functionName);
+			}
+			Set<String> args = fetchersByArguments.entrySet().stream()
+					.filter(e -> e.getValue().equals(functionName)).findFirst().get().getKey();
+			for (String arg : args) { 
+				if (environment.getArgument(arg) == null) { 
+					throw new WebApplicationException("Missing argument for function " + functionName + ".  Required args are " + args);
+				}
+			}
 		}
 		
 		//Try to find the function that exactly matches the arguments the client provided
@@ -171,7 +182,7 @@ public class AnetResourceDataFetcher implements DataFetcher {
 		args.remove("f");
 		
 		if (args.size() == 0) { 
-			throw new WebApplicationException("You cannot call no-argument fetchers by default. You must use the 'f' argument to specify a function name");
+			throw new WebApplicationException("You must use the 'f' argument to specify a function name");
 		}
 		
 		//Track which functions match the arguments we have. 
