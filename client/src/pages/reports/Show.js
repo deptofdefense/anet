@@ -4,7 +4,8 @@ import moment from 'moment'
 
 import API from '../../api'
 import Breadcrumbs from '../../components/Breadcrumbs'
-import {Form, FormField} from '../../components/FormField'
+import Form from '../../components/Form'
+import FormField from '../../components/FormField'
 
 const atmosphereStyle = {
 	fontSize: '2rem',

@@ -1,42 +1,6 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
 import _ from 'lodash'
-import {Form as BSForm, FormGroup, Col, ControlLabel, FormControl, InputGroup} from 'react-bootstrap'
-
-export class Form extends React.Component {
-	static childContextTypes = {
-		formFor: React.PropTypes.object,
-		form: React.PropTypes.object,
-	}
-
-	getChildContext() {
-		return {
-			formFor: this.props.formFor,
-			form: this
-		}
-	}
-
-	componentDidMount() {
-		let container = ReactDOM.findDOMNode(this.refs.container)
-		let focusElement = container.querySelector('[data-focus]')
-		if (focusElement) focusElement.focus()
-	}
-
-	render() {
-		const {
-			formFor,
-			...formProps
-		} = this.props
-
-		return (
-			<BSForm {...formProps} ref="container" />
-		)
-	}
-}
-
-Form.propTypes = Object.assign({}, BSForm.propTypes, {
-	formFor: React.PropTypes.object
-})
+import {FormGroup, Col, ControlLabel, FormControl, InputGroup} from 'react-bootstrap'
 
 class FormFieldExtraCol extends React.Component {
 	render() {
@@ -44,7 +8,7 @@ class FormFieldExtraCol extends React.Component {
 	}
 }
 
-class FormField extends React.Component {
+export default class FormField extends React.Component {
 	static contextTypes = {
 		formFor: React.PropTypes.object,
 		form: React.PropTypes.object,
@@ -104,5 +68,3 @@ class FormField extends React.Component {
 }
 
 FormField.Col = FormFieldExtraCol
-
-export {FormField}
