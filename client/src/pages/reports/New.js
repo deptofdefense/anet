@@ -61,7 +61,7 @@ export default class ReportNew extends React.Component {
 						<legend>Engagement details <small>Required</small></legend>
 
 						<FormField id="engagementIntent" label="Meeting subject" placeholder="What happened?" data-focus>
-							<FormField.Col>{this.subjectCharactersRemaining()}</FormField.Col>
+							<FormField.ExtraCol>{this.subjectCharactersRemaining()}</FormField.ExtraCol>
 						</FormField>
 
 						<FormField id="engagementDate">
@@ -112,13 +112,13 @@ export default class ReportNew extends React.Component {
 								</tbody>
 							</Table>
 
-							<FormField.Col className="shortcut-list">
+							<FormField.ExtraCol className="shortcut-list">
 								<h5>Shortcuts</h5>
 								<Button bsStyle="link">Add myself</Button>
 								{this.state.recentPeople.map(person =>
 									<Button key={person.id} bsStyle="link" onClick={this.addAttendee.bind(this, person)}>Add {person.name}</Button>
 								)}
-							</FormField.Col>
+							</FormField.ExtraCol>
 						</FormField>
 					</fieldset>
 
@@ -149,12 +149,12 @@ export default class ReportNew extends React.Component {
 								</tbody>
 							</Table>
 
-							<FormField.Col className="shortcut-list">
+							<FormField.ExtraCol className="shortcut-list">
 								<h5>Shortcuts</h5>
 								{this.state.recentPoams.map(poam =>
 									<Button key={poam.id} bsStyle="link" onClick={this.addPoam.bind(this, poam)}>Add "{poam.longName}"</Button>
 								)}
-							</FormField.Col>
+							</FormField.ExtraCol>
 						</FormField>
 					</fieldset>
 

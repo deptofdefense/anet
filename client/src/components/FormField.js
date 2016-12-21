@@ -67,4 +67,4 @@ export default class FormField extends React.Component {
 	}
 }
 
-FormField.Col = FormFieldExtraCol
+FormField.ExtraCol = FormFieldExtraCol
