@@ -54,7 +54,7 @@ export default class ReportShow extends React.Component {
 					<fieldset>
 						<legend>Report #{report.id}</legend>
 						<FormField label="Subject" type="static" value={report.intent} />
-						<FormField label="Date 📆" type="static" value={moment(+report.engagementDate).format("L LT")} />
+						<FormField label="Date 📆" type="static" value={moment(report.engagementDate).format("L LT")} />
 						<FormField label="Location 📍" type="static" value={report.location && report.location.name} />
 						<FormField label="Atmospherics" type="static">
 							<span style={atmosphereStyle}>{atmosphereIcons[report.atmosphere]}</span>
