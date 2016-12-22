@@ -13,7 +13,9 @@ const API = {
 		params.headers = params.headers || {}
 		params.headers['Accept'] = 'application/json'
 
-		API.startLoading()
+		if (params.showLoader !== false)
+			API.startLoading()
+		delete params.showLoader
 
 		return window.fetch(url, params)
 					.then(response => response.json())
