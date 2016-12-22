@@ -1,5 +1,6 @@
 import React from 'react'
 import {InputGroup, Radio, Table, Button} from 'react-bootstrap'
+import autobind from 'autobind-decorator'
 
 import DatePicker from 'react-bootstrap-date-picker'
 
@@ -24,6 +25,7 @@ export default class ReportNew extends React.Component {
 
 	constructor(props) {
 		super(props)
+
 		this.state = {
 			report: {
 				intent: '',
@@ -34,13 +36,6 @@ export default class ReportNew extends React.Component {
 			},
 			recents: {persons: [], locations: [], poams: []}
 		}
-
-		this.onSubmit = this.onSubmit.bind(this)
-		this.onIntentChanged = this.onIntentChanged.bind(this)
-		this.onAtmosphereChange = this.onAtmosphereChange.bind(this)
-		this.addAttendee = this.addAttendee.bind(this)
-		this.addPoam = this.addPoam.bind(this)
-		this.setLocation = this.setLocation.bind(this)
 	}
 
 	componentDidMount() {
@@ -187,6 +182,7 @@ export default class ReportNew extends React.Component {
 		)
 	}
 
+	@autobind
 	onSubmit(event) {
 		event.stopPropagation()
 		event.preventDefault()
@@ -214,16 +210,19 @@ export default class ReportNew extends React.Component {
 			})
 	}
 
+	@autobind
 	onIntentChanged(event) {
 		let report = this.state.report
 		report.intent = event.target.value
 		this.setState({report})
 	}
 
+	@autobind
 	onAtmosphereChange(atmosphere) {
 		this.setState({reportAtmosphere: atmosphere})
 	}
 
+	@autobind
 	addAttendee(attendee) {
 		let attendees = this.state.attendees.slice(0)
 
@@ -237,6 +236,7 @@ export default class ReportNew extends React.Component {
 		this.setState({attendees})
 	}
 
+	@autobind
 	addPoam(poam) {
 		let poams = this.state.poams.slice(0)
 		poams.push(poam)
@@ -249,6 +249,7 @@ export default class ReportNew extends React.Component {
 		this.setState({poams})
 	}
 
+	@autobind
 	setLocation(location) {
 		this.setState({location})
 	}
