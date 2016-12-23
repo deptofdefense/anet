@@ -26,8 +26,13 @@ export default class FormField extends React.Component {
 		} = this.props
 
 		let horizontal = this.context.form && this.context.form.props.horizontal
+		if (typeof this.props.horizontal !== 'undefined') {
+			horizontal = this.props.horizontal
+		}
 
-		label = label || _.upperFirst(_.startCase(id).toLowerCase())
+		if (typeof label === 'undefined') {
+			label = _.upperFirst(_.startCase(id).toLowerCase())
+		}
 
 		// Remove an ExtraCol from children first so we can manually append it
 		// as a column

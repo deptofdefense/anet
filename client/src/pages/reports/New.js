@@ -34,6 +34,8 @@ export default class ReportNew extends React.Component {
 				location: {},
 				attendees: [],
 				poams: [],
+				reportText: '',
+				nextSteps: '',
 			},
 
 			recents: {
@@ -178,8 +180,13 @@ export default class ReportNew extends React.Component {
 					<fieldset>
 						<legend>Meeting discussion</legend>
 
-						<TextEditor label="Discussion outcome" />
-						<TextEditor label="Next steps" style={{marginTop: '5rem'}} />
+						<FormField id="reportText" label="" horizontal={false}>
+							<TextEditor label="Discussion outcome" />
+						</FormField>
+
+						<FormField id="nextSteps" label="" horizontal={false} style={{marginTop: '5rem'}}>
+							<TextEditor label="Next steps" />
+						</FormField>
 					</fieldset>
 
 					<fieldset>

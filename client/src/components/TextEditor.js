@@ -1,5 +1,5 @@
 import React from 'react'
-import {Editor, EditorState, RichUtils} from 'draft-js'
+import {Editor, EditorState, RichUtils, ContentState} from 'draft-js'
 
 import './TextEditor.css'
 
@@ -16,10 +16,18 @@ CODE: {
 export default class TextEditor extends React.Component {
         constructor(props) {
           super(props);
-          this.state = {editorState: EditorState.createEmpty()};
+
+          this.state = {
+              editorState: props.value ? EditorState.createWithContent(ContentState.createFromText(props.value)) : EditorState.createEmpty()
+          }
 
           this.focus = () => this.refs.editor.focus();
-          this.onChange = (editorState) => this.setState({editorState});
+          this.onChange = (editorState) => {
+              this.setState({editorState});
+              if (props.onChange) {
+                props.onChange(editorState.getCurrentContent().getPlainText())
+              }
+          }
 
           this.handleKeyCommand = (command) => this._handleKeyCommand(command);
           this.onTab = (e) => this._onTab(e);
