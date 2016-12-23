@@ -1,77 +1,93 @@
 import React from 'react'
 import Autosuggest from 'react-autosuggest'
 import {FormControl} from 'react-bootstrap'
+import autobind from 'autobind-decorator'
 
 import API from '../api'
 
 import './Autocomplete.css'
 
 export default class Autcomplete extends React.Component {
+	static propTypes = {
+		value: React.PropTypes.object,
+		valueKey: React.PropTypes.string,
+		clearOnSelect: React.PropTypes.bool,
+		url: React.PropTypes.string.isRequired,
+		template: React.PropTypes.func,
+	}
+
 	constructor(props) {
 		super(props)
-		this.state = {suggestions: [], value: this.props.value}
 
-		this.onChange = this.onChange.bind(this)
-		this.fetchSuggestions = this.fetchSuggestions.bind(this)
-		this.clearSuggestions = this.clearSuggestions.bind(this)
-		this.onSuggestionSelected = this.onSuggestionSelected.bind(this)
-		this.renderInputComponent = this.renderInputComponent.bind(this)
-		this.renderSuggestion = this.renderSuggestion.bind(this)
+		let value = props.value || {}
+		this.state = {
+			suggestions: [],
+			value: value,
+			stringValue: this.getStringValue(value),
+		}
 	}
 
 	render() {
-		const inputProps = Object.without(this.props, 'url', 'template', 'clearOnSelect', 'value, onChange')
-		inputProps.value = this.state.value
-		inputProps.onChange = this.onChange
+		let inputProps = Object.without(this.props, 'url', 'clearOnSelect', 'valueKey', 'template')
+		inputProps.value = this.state.stringValue
+		inputProps.onChange = this.onInputChange
 
 		return (
 			<Autosuggest
 				suggestions={this.state.suggestions}
 				onSuggestionsFetchRequested={this.fetchSuggestions}
 				onSuggestionsClearRequested={this.clearSuggestions}
-				getSuggestionValue={this.suggestionValue}
-				renderSuggestion={this.renderSuggestion}
-				inputProps={inputProps}
-				renderInputComponent={this.renderInputComponent}
 				onSuggestionSelected={this.onSuggestionSelected}
+				getSuggestionValue={this.getStringValue}
+				inputProps={inputProps}
+				renderInputComponent={inputProps => <FormControl {...inputProps} />}
+				renderSuggestion={this.renderSuggestion}
 				focusInputOnSuggestionClick={false}
 			/>
 		)
 	}
 
+	@autobind
 	renderSuggestion(suggestion) {
-		if (this.props.template)
-			return this.props.template(suggestion)
-
-		return <span>{suggestion && suggestion.name}</span>
+		let template = this.props.template
+		if (template)
+			return template(suggestion)
+		else
+			return <span>{this.getStringValue(suggestion)}</span>
 	}
 
-	renderInputComponent(inputProps) {
-		return <FormControl {...inputProps} inputRef={input => this.input = input} />
+	@autobind
+	getStringValue(suggestion) {
+		return suggestion[this.props.valueKey] || ""
 	}
 
+	@autobind
 	fetchSuggestions(value) {
 		if (this.props.url) {
-			API.fetch(this.props.url + '?q=' + value.value).then(data =>
+			let url = this.props.url + '?q=' + value.value
+			API.fetch(url, {showLoader: false}).then(data =>
 				this.setState({suggestions: data})
 			)
 		}
 	}
 
+	@autobind
 	clearSuggestions() {
 		this.setState({suggestions: []})
 	}
 
-	suggestionValue(suggestion) {
-		return suggestion.name
+	@autobind
+	onSuggestionSelected(event, {suggestion, suggestionValue}) {
+		let stringValue = this.props.clearOnSelect ? '' : suggestionValue
+		this.setState({value: suggestion, stringValue})
+
+		if (this.props.onChange)
+			this.props.onChange(suggestion)
 	}
 
-	onSuggestionSelected(event, value) {
-		if (this.props.onChange) this.props.onChange(value.suggestion)
-		if (this.props.clearOnSelect) this.setState({suggestion: [], value: ''})
-	}
-
-	onChange(event, {newValue}) {
-		this.setState({value: newValue})
+	@autobind
+	onInputChange(event) {
+		this.setState({stringValue: event.target.value})
+		event.stopPropagation()
 	}
 }
