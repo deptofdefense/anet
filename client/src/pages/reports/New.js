@@ -181,7 +181,7 @@ export default class ReportNew extends React.Component {
 						<legend>Meeting discussion</legend>
 
 						<FormField id="reportText" label="" horizontal={false}>
-							<TextEditor label="Discussion outcome" />
+							<TextEditor label="Key outcomes" />
 						</FormField>
 
 						<FormField id="nextSteps" label="" horizontal={false} style={{marginTop: '5rem'}}>
