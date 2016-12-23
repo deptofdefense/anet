@@ -1,5 +1,6 @@
 import React from 'react'
 import _ from 'lodash'
+import autobind from 'autobind-decorator'
 import {FormGroup, Col, ControlLabel, FormControl, InputGroup} from 'react-bootstrap'
 
 class FormFieldExtraCol extends React.Component {
@@ -28,20 +29,32 @@ export default class FormField extends React.Component {
 
 		label = label || _.upperFirst(_.startCase(id).toLowerCase())
 
+		// Remove an ExtraCol from children first so we can manually append it
+		// as a column
 		children = React.Children.toArray(children)
-		let extra = children.find((child) => child.type === FormFieldExtraCol)
-		if (extra) children.splice(children.indexOf(extra), 1)
-		if (children.length === 0) children = null
+		let extra = children.find(child => child.type === FormFieldExtraCol)
+		if (extra)
+			children.splice(children.indexOf(extra), 1)
 
-		let content
-		if (this.props.type === 'static')
-			content = <FormControl.Static>{children || this.props.value}</FormControl.Static>
-		else
-			content = children || <FormControl {...childProps} defaultValue={this.getValue()} />
+		// If type is static, render out a static value
+		if (this.props.type === 'static') {
+			children = <FormControl.Static>{children || this.props.value}</FormControl.Static>
+		} else if (children.length) {
+			children = children.map(child => {
+				let propTypes = child.type.propTypes
+				if (propTypes && !propTypes.onChange)
+					return child
 
+				return React.cloneElement(child, {onChange: this.onChange})
+			})
+		} else {
+			children = <FormControl {...childProps} defaultValue={this.getValue()} onChange={this.onChange} />
+		}
+
+		// if there's an addon we need to use an InputGroup
 		if (addon) {
-			content = <InputGroup>
-				{content}
+			children = <InputGroup>
+				{children}
 				<InputGroup.Addon>{addon}</InputGroup.Addon>
 			</InputGroup>
 		}
@@ -52,8 +65,8 @@ export default class FormField extends React.Component {
 					? <Col sm={2} componentClass={ControlLabel}>{label}</Col>
 					: <ControlLabel>{label}</ControlLabel> }
 				{horizontal
-					? <Col sm={7}>{content}</Col>
-					: content }
+					? <Col sm={7}>{children}</Col>
+					: children }
 				{extra}
 			</FormGroup>
 		)
@@ -61,8 +74,19 @@ export default class FormField extends React.Component {
 
 	getValue() {
 		let formContext = this.context.formFor
-		let key = this.props.id
-		if (formContext) return formContext[key]
+		let id = this.props.id
+		if (formContext)
+			return formContext[id]
+	}
+
+	@autobind
+	onChange(event) {
+		let id = this.props.id
+		let value = event && event.target ? event.target.value : event
+		let formContext = this.context.formFor
+		if (formContext)
+			formContext[id] = value
+		console.log(id, value, formContext);
 	}
 }
 

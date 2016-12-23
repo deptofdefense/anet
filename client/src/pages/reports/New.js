@@ -81,7 +81,7 @@ export default class ReportNew extends React.Component {
 						</FormField>
 
 						<FormField id="location" addon="📍">
-							<Autocomplete value={report.location} valueKey="name" placeholder="Where did it happen?" url="/api/locations/search" onChange={this.setLocation} />
+							<Autocomplete value={report.location} valueKey="name" placeholder="Where did it happen?" url="/api/locations/search" />
 						</FormField>
 
 						<FormField id="atmosphere">
@@ -184,10 +184,8 @@ export default class ReportNew extends React.Component {
 	}
 
 	@autobind
-	onChange({id, value}) {
+	onChange() {
 		let report = this.state.report
-		report[id] = value
-
 		this.setState({report})
 	}
 

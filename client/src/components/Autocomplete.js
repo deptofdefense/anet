@@ -14,6 +14,7 @@ export default class Autcomplete extends React.Component {
 		clearOnSelect: React.PropTypes.bool,
 		url: React.PropTypes.string.isRequired,
 		template: React.PropTypes.func,
+		onChange: React.PropTypes.func,
 	}
 
 	constructor(props) {
