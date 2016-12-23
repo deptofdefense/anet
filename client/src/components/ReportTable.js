@@ -25,6 +25,7 @@ export default class ReportTable extends React.Component {
 			<thead>
 				<tr>
 					{showAuthors && <th>Author</th>}
+					<th>AO</th>
 					<th>Summary</th>
 					<th>Status</th>
 					<th>Last updated</th>
@@ -35,6 +36,7 @@ export default class ReportTable extends React.Component {
 				{this.props.reports.map(report =>
 					<tr key={report.id}>
 						{showAuthors && <td><Link to={"/people/" + report.author.id}>{report.author.name}</Link></td>}
+						<td>{report.organization && <Link to={"/organizations/" + report.organization.id}></Link>}</td>
 						<td><Link to={"/reports/" + report.id}>{report.intent}</Link></td>
 						<td>{report.state}</td>
 						<td>{moment(report.updatedAt).fromNow()}</td>
