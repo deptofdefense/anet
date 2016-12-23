@@ -71,17 +71,29 @@ export default class ReportShow extends React.Component {
 					<fieldset>
 						<legend>Meeting attendees</legend>
 
-						{(report.attendees && report.attendees.map(person =>
-							person.name
-						)) || "This report does not specify any attendees."}
+						<ul>
+							{(report.attendees && report.attendees.map(person =>
+								<li key={person.id}>
+									<Link to={"/users/" + person.id}>
+										{person.name}
+									</Link>
+								</li>
+							)) || "This report does not specify any attendees."}
+						</ul>
 					</fieldset>
 
 					<fieldset>
 						<legend>Milestones</legend>
 
-						{(report.poams && report.poams.map(poam =>
-							poam.longName
-						)) || "This report does not specify any milestones."}
+						<ul>
+							{(report.poams && report.poams.map(poam =>
+								<li key={poam.id}>
+									<Link to={"/milestones/" + poam.id}>
+										{poam.shortName} {poam.longName}
+									</Link>
+								</li>
+							)) || "This report does not specify any milestones."}
+						</ul>
 					</fieldset>
 
 					<fieldset>
