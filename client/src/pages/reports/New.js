@@ -196,6 +196,8 @@ export default class ReportNew extends React.Component {
 		event.stopPropagation()
 		event.preventDefault()
 
+		document.querySelectorAll('form [type=submit]').forEach(button => button.disabled = true)
+
 		let report = this.state.report
 		let data = {
 			intent: report.engagementIntent,
