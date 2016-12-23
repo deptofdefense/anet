@@ -18,6 +18,7 @@ export default class ReportsIndex extends React.Component {
 			reports(f:getAll, pageSize:100, pageNum:0) {
 				id, intent, state
 				author {
+					id
 					name
 				}
 			}
@@ -42,7 +43,7 @@ export default class ReportsIndex extends React.Component {
 					<tbody>
 						{this.state.reports.map(report =>
 							<tr key={report.id}>
-								<td>{report.author && report.author.name}</td>
+								<td><Link to={"/people/" + report.author.id}>{report.author.name}</Link></td>
 								<td><Link to={"/reports/" + report.id}>{report.intent}</Link></td>
 								<td>{report.state}</td>
 								<td>{moment(report.updatedAt).fromNow()}</td>
