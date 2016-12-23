@@ -62,14 +62,14 @@ export default class PersonShow extends React.Component {
 
 		return (
 			<div>
-				<Form horizontal>
+				<Form formFor={person} horizontal>
 					<fieldset>
 						<legend>{person.rank} {person.name}</legend>
-						<FormField label="Rank" type="static" value={person.rank} />
-						<FormField label="Role" type="static" value={person.role} />
-						<FormField label="Phone" type="static" value={person.phoneNumber} />
-						<FormField label="Email" type="static" value={person.emailAddress} />
-						<FormField label="Bio" type="static" value={person.biography} />
+						<FormField label="Rank" type="static" id="rank" />
+						<FormField label="Role" type="static" id="role" />
+						<FormField label="Phone" type="static" id="phoneNumber" />
+						<FormField label="Email" type="static" id="emailAddress" />
+						<FormField label="Bio" type="static" id="person.biography" />
 					</fieldset>
 
 					<fieldset>
@@ -80,7 +80,7 @@ export default class PersonShow extends React.Component {
 							</thead>
 							<tbody>
 								{position}
-								<tr><td colSpan="3">TODO: Previous Positions</td></tr>
+								<tr><td colSpan="3" className="todo">TODO: Previous Positions</td></tr>
 							</tbody>
 						</Table>
 					</fieldset>
