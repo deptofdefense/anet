@@ -86,7 +86,12 @@ export default class FormField extends React.Component {
 		let formContext = this.context.formFor
 		if (formContext)
 			formContext[id] = value
-		console.log(id, value, formContext);
+
+		let form = this.context.form
+		if (form && form.props.onChange) {
+			form.props.onChange(event)
+			event && event.stopPropagation && event.stopPropagation()
+		}
 	}
 }
 

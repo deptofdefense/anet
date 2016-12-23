@@ -29,8 +29,8 @@ export default class ReportNew extends React.Component {
 		this.state = {
 			report: {
 				intent: '',
-				engagementDate: '',
-				atmosphere: '',
+				engagementDate: null,
+				atmosphere: null,
 				location: {},
 				attendees: [],
 				poams: [],
@@ -85,14 +85,16 @@ export default class ReportNew extends React.Component {
 						</FormField>
 
 						<FormField id="atmosphere">
-							<RadioGroup bsSize="large">
+							<RadioGroup value={report.atmosphere} bsSize="large">
 								<Radio value="positive">👍</Radio>
 								<Radio value="neutral">😐</Radio>
 								<Radio value="negative">👎</Radio>
 							</RadioGroup>
 						</FormField>
 
-						<FormField id="atmosphereDetails" className={this.state.reportAtmosphere === 'positive' && 'hide'} />
+						{report.atmosphere && report.atmosphere !== 'positive' &&
+							<FormField id="atmosphereDetails" />
+						}
 					</fieldset>
 
 					<fieldset>
