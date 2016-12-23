@@ -10,7 +10,8 @@ import FormField from '../../components/FormField'
 const atmosphereIconStyle = {
 	fontSize: '2rem',
 	display: 'inline-block',
-	marginTop: '-4px'
+	marginTop: '-4px',
+	marginRight: '1rem',
 }
 
 const atmosphereIcons = {
@@ -59,7 +60,7 @@ export default class ReportShow extends React.Component {
 						<FormField id="location" label="Location 📍" type="static" value={report.location && report.location.name} />
 						<FormField id="atmosphere" label="Atmospherics" type="static">
 							<span style={atmosphereIconStyle}>{atmosphereIcons[report.atmosphere]}</span>
-							{report.atmosphereDetails && " " + report.atmosphereDetails}
+							{report.atmosphereDetails}
 						</FormField>
 						<FormField id="author" label="Report author" type="static">
 							{report.author &&
