@@ -42,10 +42,13 @@ export default class FormField extends React.Component {
 		} else if (children.length) {
 			children = children.map(child => {
 				let propTypes = child.type.propTypes
+
+				// check to see if this is some kind of element where we
+				// can register an onChange handler, otherwise skip it
 				if (propTypes && !propTypes.onChange)
 					return child
 
-				return React.cloneElement(child, {onChange: this.onChange})
+				return React.cloneElement(child, {value: this.getValue(), onChange: this.onChange})
 			})
 		} else {
 			children = <FormControl {...childProps} defaultValue={this.getValue()} onChange={this.onChange} />

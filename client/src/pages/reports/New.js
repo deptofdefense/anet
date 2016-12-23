@@ -35,7 +35,12 @@ export default class ReportNew extends React.Component {
 				attendees: [],
 				poams: [],
 			},
-			recents: {persons: [], locations: [], poams: []}
+
+			recents: {
+				persons: [],
+				locations: [],
+				poams: [],
+			}
 		}
 	}
 
@@ -75,17 +80,17 @@ export default class ReportNew extends React.Component {
 						</FormField>
 
 						<FormField id="engagementDate">
-							<DatePicker placeholder="When did it happen?" value={report.engagementDate}>
+							<DatePicker placeholder="When did it happen?">
 								<InputGroup.Addon>📆</InputGroup.Addon>
 							</DatePicker>
 						</FormField>
 
 						<FormField id="location" addon="📍">
-							<Autocomplete value={report.location} valueKey="name" placeholder="Where did it happen?" url="/api/locations/search" />
+							<Autocomplete valueKey="name" placeholder="Where did it happen?" url="/api/locations/search" />
 						</FormField>
 
 						<FormField id="atmosphere">
-							<RadioGroup value={report.atmosphere} bsSize="large">
+							<RadioGroup bsSize="large">
 								<Radio value="positive">👍</Radio>
 								<Radio value="neutral">😐</Radio>
 								<Radio value="negative">👎</Radio>
@@ -100,7 +105,7 @@ export default class ReportNew extends React.Component {
 					<fieldset>
 						<legend>Meeting attendance <small>Required</small></legend>
 
-						<FormField id="addAttendee">
+						<FormField>
 							<Autocomplete placeholder="Who was there?" url="/api/people/search" template={person =>
 								<span>{person.name} {person.rank && person.rank.toUpperCase()}</span>
 							} onChange={this.addAttendee} clearOnSelect={true} />
@@ -137,7 +142,7 @@ export default class ReportNew extends React.Component {
 					<fieldset>
 						<legend>Milestones</legend>
 
-						<FormField id="poams">
+						<FormField>
 							<Autocomplete url="/api/poams/search" template={poam =>
 								<span>{[poam.shortName, poam.longName].join(' - ')}</span>
 							} onChange={this.addPoam} clearOnSelect={true} />
