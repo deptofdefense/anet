@@ -36,11 +36,11 @@ export default class FormField extends React.Component {
 		if (extra)
 			children.splice(children.indexOf(extra), 1)
 
-		let initialValue = this.getValue()
+		let defaultValue = this.props.value || this.getValue()
 
 		// if type is static, render out a static value
 		if (this.props.type === 'static') {
-			children = <FormControl.Static>{(children.length && children) || this.props.value || initialValue}</FormControl.Static>
+			children = <FormControl.Static>{(children.length && children) || defaultValue}</FormControl.Static>
 
 		// if children are provided, render those, but special case them to
 		// automatically set value and children props
@@ -53,12 +53,12 @@ export default class FormField extends React.Component {
 				if (propTypes && !propTypes.onChange)
 					return child
 
-				return React.cloneElement(child, {value: initialValue, onChange: this.onChange})
+				return React.cloneElement(child, {value: defaultValue, onChange: this.onChange})
 			})
 
 		// otherwise render out a default FormControl input element
 		} else {
-			children = <FormControl {...childProps} defaultValue={initialValue} onChange={this.onChange} />
+			children = <FormControl {...childProps} defaultValue={defaultValue} onChange={this.onChange} />
 		}
 
 		// if there's an addon we need to use an InputGroup
