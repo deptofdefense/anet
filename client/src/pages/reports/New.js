@@ -105,7 +105,7 @@ export default class ReportNew extends React.Component {
 					<fieldset>
 						<legend>Meeting attendance <small>Required</small></legend>
 
-						<FormField>
+						<FormField id="attendees">
 							<Autocomplete placeholder="Who was there?" url="/api/people/search" template={person =>
 								<span>{person.name} {person.rank && person.rank.toUpperCase()}</span>
 							} onChange={this.addAttendee} clearOnSelect={true} />
@@ -142,7 +142,7 @@ export default class ReportNew extends React.Component {
 					<fieldset>
 						<legend>Milestones</legend>
 
-						<FormField>
+						<FormField id="poams">
 							<Autocomplete url="/api/poams/search" template={poam =>
 								<span>{[poam.shortName, poam.longName].join(' - ')}</span>
 							} onChange={this.addPoam} clearOnSelect={true} />

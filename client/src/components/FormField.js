@@ -53,7 +53,7 @@ export default class FormField extends React.Component {
 				if (propTypes && !propTypes.onChange)
 					return child
 
-				return React.cloneElement(child, {value: defaultValue, onChange: this.onChange})
+				return React.cloneElement(child, {value: defaultValue, onChange: child.props.onChange || this.onChange})
 			})
 
 		// otherwise render out a default FormControl input element
