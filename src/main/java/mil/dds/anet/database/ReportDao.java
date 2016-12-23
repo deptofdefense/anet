@@ -263,43 +263,37 @@ public class ReportDao implements IAnetDao<Report> {
 			.list();
 	}
 
-	public List<Report> getReportsByAuthor(Person p) {
+	public List<Report> getReportsByAuthor(Person p, int pageNum, int pageSize) {
+		String sql = "SELECT " + REPORT_FIELDS + ", " + PersonDao.PERSON_FIELDS
+				+ "FROM reports "
+				+ "LEFT JOIN people ON reports.authorId = people.id "
+				+ "WHERE authorId = :personId "
+				+ "ORDER BY engagementDate DESC";	
+		if (DaoUtils.isMsSql(dbHandle)) { 
+			sql += " OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY";
+		} else { 
+			sql += " LIMIT :limit OFFSET :offset";
+		}
+		
+		return dbHandle.createQuery(sql)
+			.bind("personId", p.getId())
+			.bind("limit", pageSize)
+			.bind("offset", pageNum * pageSize)
+			.map(new ReportMapper())
+			.list();
+	}
+	
+	public List<Report> getReportsByAttendee(Person p) {
 		return dbHandle.createQuery("SELECT " + REPORT_FIELDS + ", " + PersonDao.PERSON_FIELDS
 				+ "FROM reports "
-				+ "LEFT JOIN people WHERE reports.authorId = people.id "
-				+ "WHERE authorId = :personId "
+				+ "JOIN reportPeople ON reports.id = reportPeople.reportId "
+				+ "JOIN people ON reports.authorId = people.id "
+				+ "WHERE reportPeople.personId = :personId "
 				+ "ORDER BY engagementDate DESC")
 			.bind("personId", p.getId())
 			.map(new ReportMapper())
 			.list();
-	}
+	} 
 
-	public List<Person> getRecentPeople(Person author) {
-		String sql;
-		if (DaoUtils.isMsSql(dbHandle)) {
-			sql = "SELECT " + PersonDao.PERSON_FIELDS
-				+ "FROM people WHERE people.id IN ( "
-					+ "SELECT top(3) reportPeople.personId "
-					+ "FROM reports JOIN reportPeople ON reports.id = reportPeople.reportId "
-					+ "WHERE authorId = :authorId "
-					+ "GROUP BY personId "
-					+ "ORDER BY MAX(reports.createdAt) DESC"
-				+ ")";
-		} else {
-			sql = "SELECT " + PersonDao.PERSON_FIELDS
-				+ "FROM people WHERE people.id IN ( "
-					+ "SELECT top(3) reportPeople.personId "
-					+ "FROM reports JOIN reportPeople ON reports.id = reportPeople.reportId "
-					+ "WHERE authorId = :authorId "
-					+ "GROUP BY personId "
-					+ "ORDER BY MAX(reports.createdAt) DESC "
-					+ "LIMIT 3"
-				+ ")";
-		}
-		return dbHandle.createQuery(sql)
-				.bind("authorId", author.getId())
-				.map(new PersonMapper())
-				.list();
-	}
 
 }

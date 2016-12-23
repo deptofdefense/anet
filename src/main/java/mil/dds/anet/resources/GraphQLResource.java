@@ -1,6 +1,7 @@
 package mil.dds.anet.resources;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -12,6 +13,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang3.mutable.MutableInt;
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;
 
@@ -108,15 +110,37 @@ public class GraphQLResource {
 		GraphQLObjectType.Builder builder = GraphQLObjectType.newObject()
 			.name(name);
 
-		//Find all of the 'getter' methods to use as Fields. 
-		for (Method m : beanClazz.getMethods()) { 
+		//Find all of the 'getter' methods to use as Fields.
+		//Need to find all unique method names, and figure out which ones require arguments
+		//If there are multiple methods named getXYZ, only want to register a single Field. 
+		Map<String,MutableInt> getMethods = new HashMap<String,MutableInt>();
+		Map<String,Type> methodReturnTypes = new HashMap<String,Type>();
+		for (Method m : beanClazz.getMethods()) {
 			if (m.getName().startsWith("get")) {
 				if (m.getName().equalsIgnoreCase("getClass")) { continue; } 
 				if (m.isAnnotationPresent(GraphQLIgnore.class)) { continue; }
-				String fieldName = GraphQLUtils.lowerCaseFirstLetter(m.getName().substring(3));
-				builder.field(GraphQLUtils.buildField(fieldName, m.getGenericReturnType()));
+				MutableInt ct = getMethods.get(m.getName());
+				if (ct == null) { 
+					ct = new MutableInt(0);
+					getMethods.put(m.getName(), ct);
+				}
+				ct.add(1 + m.getParameterCount());
+				methodReturnTypes.put(m.getName(), m.getGenericReturnType());
 			}
 		}
+		
+		//For any method with a count over 1, we need to support arguments
+		for (Map.Entry<String, MutableInt> entry : getMethods.entrySet()) { 
+			String fieldName = GraphQLUtils.lowerCaseFirstLetter(entry.getKey().substring(3));
+			Type retType = methodReturnTypes.get(entry.getKey());
+			if (entry.getValue().intValue() > 1) { 
+				builder.field(GraphQLUtils.buildFieldWithArgs(fieldName, retType, beanClazz));
+			} else { 
+				//If count == 1 then this should be a no arguent method with a unique name.
+				builder.field(GraphQLUtils.buildField(fieldName, retType));
+			}
+		}
+		
 		return builder.build();
 	}
 	
