@@ -210,19 +210,7 @@ export default class ReportNew extends React.Component {
 
 		document.querySelectorAll('form [type=submit]').forEach(button => button.disabled = true)
 
-		let report = this.state.report
-		let data = {
-			intent: report.engagementIntent,
-			reportText: report.reportText,
-			nextSteps: report.nextSteps,
-			engagementDate: report.engagementDate,
-
-			location: this.state.location ? {id: this.state.location.id} : null,
-			attendees: this.state.attendees.map(person => { return {id: person.id}}),
-			poams: this.state.poams.map(poam => { return {id: poam.id}}),
-		}
-
-		API.send('/api/reports/new', data)
+		API.send('/api/reports/new', this.state.report)
 			.then(report => {
 				if (report.code) throw report.code
 				console.log(report);
