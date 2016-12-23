@@ -227,18 +227,22 @@ export default class ReportNew extends React.Component {
 	}
 
 	@autobind
-	addAttendee(attendee) {
+	addAttendee(newAttendee) {
 		let report = this.state.report
-		report.attendees.push(attendee)
+		let attendees = report.attendees
+
+		if (!attendees.find(attendee => attendee.id === newAttendee.id)) {
+			attendees.push(newAttendee)
+		}
 
 		this.setState({report})
 	}
 
 	@autobind
-	removeAttendee(attendee) {
+	removeAttendee(oldAttendee) {
 		let report = this.state.report
 		let attendees = report.attendees
-		let index = attendees.indexOf(attendee)
+		let index = attendees.findIndex(attendee => attendee.id === oldAttendee.id)
 
 		if (index !== -1) {
 			attendees.splice(index, 1)
@@ -247,18 +251,22 @@ export default class ReportNew extends React.Component {
 	}
 
 	@autobind
-	addPoam(poam) {
+	addPoam(newPoam) {
 		let report = this.state.report
-		report.poams.push(poam)
+		let poams = report.poams
+
+		if (!poams.find(poam => poam.id === newPoam.id)) {
+			poams.push(newPoam)
+		}
 
 		this.setState({report})
 	}
 
 	@autobind
-	removePoam(poam) {
+	removePoam(oldPoam) {
 		let report = this.state.report
 		let poams = report.poams
-		let index = poams.indexOf(poam)
+		let index = poams.findIndex(poam => poam.id === oldPoam.id)
 
 		if (index !== -1) {
 			poams.splice(index, 1)
