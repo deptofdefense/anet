@@ -37,9 +37,14 @@ export default class FormField extends React.Component {
 		if (this.props.type === 'static')
 			content = <FormControl.Static>{children || this.props.value}</FormControl.Static>
 		else
-			content = children || <FormControl {...childProps} value={this.getValue()} />
+			content = children || <FormControl {...childProps} defaultValue={this.getValue()} />
 
-		content = addon ? (<InputGroup>{content}<InputGroup.Addon>{addon}</InputGroup.Addon></InputGroup>) : content
+		if (addon) {
+			content = <InputGroup>
+				{content}
+				<InputGroup.Addon>{addon}</InputGroup.Addon>
+			</InputGroup>
+		}
 
 		return (
 			<FormGroup controlId={id} className={className}>

@@ -29,6 +29,7 @@ export default class ReportNew extends React.Component {
 		this.state = {
 			report: {
 				intent: '',
+				engagementDate: '',
 				atmosphere: '',
 				location: {},
 				attendees: [],
@@ -64,27 +65,27 @@ export default class ReportNew extends React.Component {
 
 				<Breadcrumbs items={[['EF4', '/organizations/ef4'], ['Submit a report', '/reports/new']]} />
 
-				<Form formFor={report} onSubmit={this.onSubmit} horizontal>
+				<Form formFor={report} onChange={this.onChange} onSubmit={this.onSubmit} horizontal>
 					{this.state.error && <fieldset><p>There was a problem saving this report.</p><p>{this.state.error}</p></fieldset>}
 					<fieldset>
 						<legend>Engagement details <small>Required</small></legend>
 
-						<FormField id="intent" label="Meeting subject" placeholder="What happened?" data-focus onChange={this.onIntentChanged}>
+						<FormField id="intent" label="Meeting subject" placeholder="What happened?" data-focus>
 							<FormField.ExtraCol>{250 - report.intent.length} characters remaining</FormField.ExtraCol>
 						</FormField>
 
 						<FormField id="engagementDate">
-							<DatePicker placeholder="When did it happen?">
+							<DatePicker placeholder="When did it happen?" value={report.engagementDate}>
 								<InputGroup.Addon>📆</InputGroup.Addon>
 							</DatePicker>
 						</FormField>
 
 						<FormField id="location" addon="📍">
-							<Autocomplete value="" onChange={this.setLocation} placeholder="Where did it happen?" url="/api/locations/search" />
+							<Autocomplete value={report.location} valueKey="name" placeholder="Where did it happen?" url="/api/locations/search" onChange={this.setLocation} />
 						</FormField>
 
 						<FormField id="atmosphere">
-							<RadioGroup bsSize="large" onChange={this.onAtmosphereChange}>
+							<RadioGroup bsSize="large">
 								<Radio value="positive">👍</Radio>
 								<Radio value="neutral">😐</Radio>
 								<Radio value="negative">👎</Radio>
@@ -98,9 +99,9 @@ export default class ReportNew extends React.Component {
 						<legend>Meeting attendance <small>Required</small></legend>
 
 						<FormField id="addAttendee">
-							<Autocomplete value="" placeholder="Who was there?" url="/api/people/search" onChange={this.addAttendee} template={person =>
+							<Autocomplete placeholder="Who was there?" url="/api/people/search" template={person =>
 								<span>{person.name} {person.rank && person.rank.toUpperCase()}</span>
-							} clearOnSelect={true} />
+							} onChange={this.addAttendee} clearOnSelect={true} />
 
 							<Table hover striped>
 								<thead>
@@ -135,9 +136,9 @@ export default class ReportNew extends React.Component {
 						<legend>Milestones</legend>
 
 						<FormField id="poams">
-							<Autocomplete value="" url="/api/poams/search" onChange={this.addPoam} template={poam =>
+							<Autocomplete url="/api/poams/search" template={poam =>
 								<span>{[poam.shortName, poam.longName].join(' - ')}</span>
-							} clearOnSelect={true} />
+							} onChange={this.addPoam} clearOnSelect={true} />
 
 							<Table hover striped>
 								<thead>
@@ -183,6 +184,14 @@ export default class ReportNew extends React.Component {
 	}
 
 	@autobind
+	onChange({id, value}) {
+		let report = this.state.report
+		report[id] = value
+
+		this.setState({report})
+	}
+
+	@autobind
 	onSubmit(event) {
 		event.stopPropagation()
 		event.preventDefault()
@@ -211,42 +220,48 @@ export default class ReportNew extends React.Component {
 	}
 
 	@autobind
-	onIntentChanged(event) {
-		let report = this.state.report
-		report.intent = event.target.value
-		this.setState({report})
-	}
-
-	@autobind
 	onAtmosphereChange(atmosphere) {
 		this.setState({reportAtmosphere: atmosphere})
 	}
 
 	@autobind
 	addAttendee(attendee) {
-		let attendees = this.state.attendees.slice(0)
+		let report = this.state.report
+		report.attendees.push(attendee)
 
-		attendees.push(attendee)
-		this.setState({attendees})
+		this.setState({report})
 	}
 
+	@autobind
 	removeAttendee(attendee) {
-		let attendees = this.state.attendees.slice(0)
-		attendees.splice(attendees.indexOf(attendee), 1)
-		this.setState({attendees})
+		let report = this.state.report
+		let attendees = report.attendees
+		let index = attendees.indexOf(attendee)
+
+		if (index !== -1) {
+			attendees.splice(index, 1)
+			this.setState({report})
+		}
 	}
 
 	@autobind
 	addPoam(poam) {
-		let poams = this.state.poams.slice(0)
-		poams.push(poam)
-		this.setState({poams})
+		let report = this.state.report
+		report.poams.push(poam)
+
+		this.setState({report})
 	}
 
+	@autobind
 	removePoam(poam) {
-		let poams = this.state.poams.slice(0)
-		poams.splice(poams.indexOf(poam), 1)
-		this.setState({poams})
+		let report = this.state.report
+		let poams = report.poams
+		let index = poams.indexOf(poam)
+
+		if (index !== -1) {
+			poams.splice(index, 1)
+			this.setState({report})
+		}
 	}
 
 	@autobind
