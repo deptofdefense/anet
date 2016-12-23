@@ -140,7 +140,19 @@ Here's a sample GraphQL query and how ANET processes it:
 	}
 }`
 
-1. First because you POST this to /graphql, Dropwizard will take the JSON and deserialize it into a Map<String,Object> and pass it to the graphql method. 
+1. Because you POST'd this to /graphql, Dropwizard will take the JSON and deserialize it into a Map<String,Object> and pass it to the graphql method. 
+2. The `graphql-java` library will parse the structure and validate the input. 
+3. The `person` keyword will tell GraphQL that you want to access the `person` object type at the root level. This goes to the `PersonResource`. 
+4. The `AnetResourceDataFetcher` is the class that will get asked to load the person object. It looks at all of the methods on `PersonResource` that are annotated with `@GraphQLFetcher` and figures out which one it has the right arguments to call. In this case it will be `getById(int id)`.  That method is called and it will do a database load and return the person. 
+5. GraphQL next looks at the fields on the Person that we need to load, in this case `id, name, position, authoredReports`.  For each of these fields, they were defined on the person type by the `GraphQLResource.buildTypeFromBean` method, which scans a Bean class for getter methods and wires them up to be used later.  In this case it will look for methods called `getId()`, `getName()`, `getPosition()` and `getAuthoredReports()`.  Each of these exist except for the `getAuthoredReports()`, we'll get to that. 
+6. Each of these other methods are called and the values returned.  For `getPosition()` this causes a DB query to fire, which loads the Position (if necessary).  
+7. For `getAuthoredReports`, when `buildTypeFromBean()` was scanning the Person Bean it noticed that this method required arguments, so it kept track of those.  When you try to call this method it will inspect the query to see if you passed the correct arguments. If so it will pass those arguments, and if not then it will throw an error. 
+    - Bottom line: All `get*()` methods on Beans are exposed. If they require arguments, you *MUST* annotate them with `@GraphQLParam`.  
+	- You can use `@GraphQLIgnore` to tell GraphQL to not expose a getter method. 
+
+
+* Note: GraphQL does _not_ use Jackson to serialize anything into JSON, it individually fetches the exact fields the client requests and transforms those into JSON using its own type system. 
+* Note: While GraphQL does technically support writing data to the server through mutations, we do not have any of that implemented.  You must still use the REST api to write any data to ANET. 
 
 ## How the frontend works
 
