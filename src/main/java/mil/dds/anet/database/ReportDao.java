@@ -14,7 +14,6 @@ import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
-import mil.dds.anet.database.mappers.PersonMapper;
 import mil.dds.anet.database.mappers.PoamMapper;
 import mil.dds.anet.database.mappers.ReportMapper;
 import mil.dds.anet.database.mappers.ReportPersonMapper;
@@ -283,14 +282,22 @@ public class ReportDao implements IAnetDao<Report> {
 			.list();
 	}
 	
-	public List<Report> getReportsByAttendee(Person p) {
-		return dbHandle.createQuery("SELECT " + REPORT_FIELDS + ", " + PersonDao.PERSON_FIELDS
+	public List<Report> getReportsByAttendee(Person p, int pageNum, int pageSize) {
+		String sql = "SELECT " + REPORT_FIELDS + ", " + PersonDao.PERSON_FIELDS
 				+ "FROM reports "
 				+ "JOIN reportPeople ON reports.id = reportPeople.reportId "
 				+ "JOIN people ON reports.authorId = people.id "
 				+ "WHERE reportPeople.personId = :personId "
-				+ "ORDER BY engagementDate DESC")
+				+ "ORDER BY engagementDate DESC";
+		if (DaoUtils.isMsSql(dbHandle)) { 
+			sql += " OFFSET :ofset ROWS FETCH NEXT :limit ROWS ONLY";
+		} else { 
+			sql += " LIMIT :limit OFFSET :offset";
+		}
+		return dbHandle.createQuery(sql)
 			.bind("personId", p.getId())
+			.bind("limit", pageSize)
+			.bind("offset", pageNum * pageSize)
 			.map(new ReportMapper())
 			.list();
 	} 

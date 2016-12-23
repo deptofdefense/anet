@@ -29,7 +29,7 @@ export default class PersonShow extends React.Component {
 						name 
 					}
 				},
-				authoredReports { 
+				authoredReports(pageNum:0,pageSize:10) { 
 					id,
 					engagementDate,
 					intent,
@@ -38,7 +38,7 @@ export default class PersonShow extends React.Component {
 						name
 					}
 				},
-				attendedReports { 
+				attendedReports(pageNum:0, pageSize:10) { 
 					id,
 					engagementDate,
 					intent,

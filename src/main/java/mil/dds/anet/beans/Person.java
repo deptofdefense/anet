@@ -124,8 +124,8 @@ public class Person extends AbstractAnetBean implements Principal{
 	}
 	
 	@JsonIgnore
-	public List<Report> getAttendedReports() { 
-		return AnetObjectEngine.getInstance().getReportDao().getReportsByAttendee(this);
+	public List<Report> getAttendedReports(@GraphQLParam("pageNum") Integer pageNum, @GraphQLParam("pageSize") Integer pageSize) { 
+		return AnetObjectEngine.getInstance().getReportDao().getReportsByAttendee(this, pageNum, pageSize);
 	}
 	
 	@Override
