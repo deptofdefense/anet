@@ -227,11 +227,6 @@ export default class ReportNew extends React.Component {
 	}
 
 	@autobind
-	onAtmosphereChange(atmosphere) {
-		this.setState({reportAtmosphere: atmosphere})
-	}
-
-	@autobind
 	addAttendee(attendee) {
 		let report = this.state.report
 		report.attendees.push(attendee)
@@ -269,10 +264,5 @@ export default class ReportNew extends React.Component {
 			poams.splice(index, 1)
 			this.setState({report})
 		}
-	}
-
-	@autobind
-	setLocation(location) {
-		this.setState({location})
 	}
 }
