@@ -9,7 +9,10 @@ import './Autocomplete.css'
 
 export default class Autcomplete extends React.Component {
 	static propTypes = {
-		value: React.PropTypes.object,
+		value: React.PropTypes.oneOfType([
+			React.PropTypes.object,
+			React.PropTypes.array,
+		]),
 		valueKey: React.PropTypes.string,
 		clearOnSelect: React.PropTypes.bool,
 		url: React.PropTypes.string.isRequired,
@@ -20,12 +23,24 @@ export default class Autcomplete extends React.Component {
 	constructor(props) {
 		super(props)
 
-		let value = props.value || {}
+		let value = this.componentWillReceiveProps(props)
+
 		this.state = {
 			suggestions: [],
 			value: value,
 			stringValue: this.getStringValue(value),
 		}
+	}
+
+	componentWillReceiveProps(props) {
+		let value = props.value
+
+		if (Array.isArray(value)) {
+			this.selectedIds = value.map(object => object.id)
+			value = {}
+		}
+
+		return value
 	}
 
 	render() {
@@ -66,9 +81,14 @@ export default class Autcomplete extends React.Component {
 	fetchSuggestions(value) {
 		if (this.props.url) {
 			let url = this.props.url + '?q=' + value.value
-			API.fetch(url, {showLoader: false}).then(data =>
+			let selectedIds = this.selectedIds
+
+			API.fetch(url, {showLoader: false}).then(data => {
+				if (selectedIds)
+					data = data.filter(suggestion => suggestion && suggestion.id && selectedIds.indexOf(suggestion.id) === -1)
+
 				this.setState({suggestions: data})
-			)
+			})
 		}
 	}
 
