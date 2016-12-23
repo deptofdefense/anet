@@ -4,15 +4,15 @@ import autobind from 'autobind-decorator'
 
 import DatePicker from 'react-bootstrap-date-picker'
 
-import {ContentForHeader} from '../../components/Header'
-import Form from '../../components/Form'
-import FormField from '../../components/FormField'
-import RadioGroup from '../../components/RadioGroup'
-import Breadcrumbs from '../../components/Breadcrumbs'
-import Autocomplete from '../../components/Autocomplete'
-import TextEditor from '../../components/TextEditor'
+import {ContentForHeader} from 'components/Header'
+import Form from 'components/Form'
+import FormField from 'components/FormField'
+import RadioGroup from 'components/RadioGroup'
+import Breadcrumbs from 'components/Breadcrumbs'
+import Autocomplete from 'components/Autocomplete'
+import TextEditor from 'components/TextEditor'
 
-import API from '../../api'
+import API from 'api'
 
 export default class ReportNew extends React.Component {
 	static contextTypes = {

@@ -2,10 +2,10 @@ import React from 'react'
 import {Link} from 'react-router'
 import moment from 'moment'
 
-import API from '../../api'
-import Breadcrumbs from '../../components/Breadcrumbs'
-import Form from '../../components/Form'
-import FormField from '../../components/FormField'
+import API from 'api'
+import Breadcrumbs from 'components/Breadcrumbs'
+import Form from 'components/Form'
+import FormField from 'components/FormField'
 
 const atmosphereIconStyle = {
 	fontSize: '2rem',

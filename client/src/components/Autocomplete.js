@@ -3,7 +3,7 @@ import Autosuggest from 'react-autosuggest'
 import {FormControl} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
-import API from '../api'
+import API from 'api'
 
 import './Autocomplete.css'
 

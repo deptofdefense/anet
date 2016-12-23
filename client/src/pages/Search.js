@@ -4,10 +4,10 @@ import moment from 'moment'
 import {Radio, Table} from 'react-bootstrap'
 import {Link} from 'react-router'
 
-import RadioGroup from '../components/RadioGroup'
-import Breadcrumbs from '../components/Breadcrumbs'
+import RadioGroup from 'components/RadioGroup'
+import Breadcrumbs from 'components/Breadcrumbs'
 
-import API from '../api'
+import API from 'api'
 
 const FORMAT_EXSUM = 'exsum'
 const FORMAT_TABLE = 'table'

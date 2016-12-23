@@ -3,7 +3,7 @@ import React from 'react'
 import GraphiQL from 'graphiql'
 import 'graphiql/graphiql.css'
 
-import Breadcrumbs from '../components/Breadcrumbs'
+import Breadcrumbs from 'components/Breadcrumbs'
 
 export default class extends React.Component {
 	static pageProps = {

@@ -2,8 +2,8 @@ import React from 'react'
 import {Table} from 'react-bootstrap'
 import {Link} from 'react-router'
 
-import API from '../../api'
-import Breadcrumbs from '../../components/Breadcrumbs'
+import API from 'api'
+import Breadcrumbs from 'components/Breadcrumbs'
 
 import moment from 'moment'
 

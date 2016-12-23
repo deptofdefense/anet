@@ -2,7 +2,7 @@ import React from 'react'
 import {Nav, NavItem, NavDropdown, MenuItem} from 'react-bootstrap'
 import {IndexLinkContainer as Link} from 'react-router-bootstrap'
 
-import API from '../api'
+import API from 'api'
 
 export default class extends React.Component {
 	constructor(props) {
