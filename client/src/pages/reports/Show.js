@@ -7,7 +7,7 @@ import Breadcrumbs from '../../components/Breadcrumbs'
 import Form from '../../components/Form'
 import FormField from '../../components/FormField'
 
-const atmosphereStyle = {
+const atmosphereIconStyle = {
 	fontSize: '2rem',
 	display: 'inline-block',
 	marginTop: '-4px'
@@ -42,7 +42,7 @@ export default class ReportShow extends React.Component {
 	}
 
 	render() {
-		let {report} = this.state
+		let report = this.state.report
 		let breadcrumbName = report.intent || 'Report'
 		let breadcrumbUrl = '/reports/' + (report.id || this.props.params.id)
 
@@ -50,17 +50,18 @@ export default class ReportShow extends React.Component {
 			<div>
 				<Breadcrumbs items={[['Reports', '/reports'], [breadcrumbName, breadcrumbUrl]]} />
 
-				<Form horizontal>
+				<Form formFor={report} horizontal>
 					<fieldset>
 						<legend>Report #{report.id}</legend>
-						<FormField label="Subject" type="static" value={report.intent} />
-						<FormField label="Date 📆" type="static" value={moment(report.engagementDate).format("L LT")} />
-						<FormField label="Location 📍" type="static" value={report.location && report.location.name} />
-						<FormField label="Atmospherics" type="static">
-							<span style={atmosphereStyle}>{atmosphereIcons[report.atmosphere]}</span>
+
+						<FormField id="intent" label="Subject" type="static" />
+						<FormField id="engagementDate" label="Date 📆" type="static" value={moment(report.engagementDate).format("L LT")} />
+						<FormField id="location" label="Location 📍" type="static" value={report.location && report.location.name} />
+						<FormField id="atmosphere" label="Atmospherics" type="static">
+							<span style={atmosphereIconStyle}>{atmosphereIcons[report.atmosphere]}</span>
 							{report.atmosphereDetails && " " + report.atmosphereDetails}
 						</FormField>
-						<FormField label="Report author" type="static">
+						<FormField id="author" label="Report author" type="static">
 							{report.author &&
 								<Link to={"/users/" + report.author.id}>{report.author.name}</Link>
 							}
@@ -69,6 +70,7 @@ export default class ReportShow extends React.Component {
 
 					<fieldset>
 						<legend>Meeting attendees</legend>
+
 						{(report.attendees && report.attendees.map(person =>
 							person.name
 						)) || "This report does not specify any attendees."}
@@ -76,6 +78,7 @@ export default class ReportShow extends React.Component {
 
 					<fieldset>
 						<legend>Milestones</legend>
+
 						{(report.poams && report.poams.map(poam =>
 							poam.longName
 						)) || "This report does not specify any milestones."}
