@@ -19,6 +19,7 @@ import io.dropwizard.util.Duration;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.beans.Person.Status;
+import mil.dds.anet.beans.search.PersonSearch;
 
 public class PersonResourceTest extends AbstractResourceTest {
 		
@@ -113,4 +114,31 @@ public class PersonResourceTest extends AbstractResourceTest {
 		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
 	}
 	
+	@Test
+	public void searchPerson() { 
+		Person jack = getJackJackson();
+		
+		PersonSearch query = new PersonSearch();
+		query.setText("bob");
+		
+		List<Person> searchResults = httpQuery("/api/people/search", jack).post(Entity.json(query), new GenericType<List<Person>>() {});
+		assertThat(searchResults.size()).isGreaterThan(0);
+		assertThat(searchResults.stream().filter(p -> p.getName().equals("Bob Bobtown")).findFirst()).isNotEmpty();
+		
+		query.setText(null);
+		query.setOrgId(45);
+		searchResults = httpQuery("/api/people/search", jack).post(Entity.json(query), new GenericType<List<Person>>() {});
+		assertThat(searchResults).isNotEmpty();
+		
+		query.setOrgId(null);
+		query.setText("sample"); //Search against biographies
+		searchResults = httpQuery("/api/people/search", jack).post(Entity.json(query), new GenericType<List<Person>>() {});
+		assertThat(searchResults.size()).isGreaterThan(1);
+		
+		query.setText(null);
+		query.setRole(Role.ADVISOR);
+		searchResults = httpQuery("/api/people/search", jack).post(Entity.json(query), new GenericType<List<Person>>() {});
+		assertThat(searchResults.size()).isGreaterThan(1);
+		
+	}
 }

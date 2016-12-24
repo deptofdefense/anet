@@ -55,6 +55,10 @@ public abstract class AbstractResourceTest {
 	}
 	
 	public Person findOrPutPersonInDb(Person stub) {
+		if (stub.getDomainUsername() != null) { 
+			Person user = httpQuery("/api/people/me", stub).get(Person.class);
+			return user;
+		}
 		List<Person> ret = httpQuery("/api/people/search?q=" + URLEncoder.encode(stub.getName()), PersonTest.getJackJacksonStub()).get(new GenericType<List<Person>>() {});
 		for (Person p : ret) { 
 			if (p.getEmailAddress().equals(stub.getEmailAddress())) { return p; } 

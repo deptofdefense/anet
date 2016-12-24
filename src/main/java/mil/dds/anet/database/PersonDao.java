@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.DateTime;
 import org.skife.jdbi.v2.GeneratedKeys;
 import org.skife.jdbi.v2.Handle;
@@ -15,7 +16,7 @@ import com.google.common.collect.Sets;
 
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
-import mil.dds.anet.beans.Person.Role;
+import mil.dds.anet.beans.search.PersonSearch;
 import mil.dds.anet.database.mappers.OrganizationMapper;
 import mil.dds.anet.database.mappers.PersonMapper;
 import mil.dds.anet.utils.DaoUtils;
@@ -87,29 +88,16 @@ public class PersonDao implements IAnetDao<Person> {
 			.execute();
 	}
 	
-	/**
-	 * Searches all people by name regardless of role in the system. 
-	 */
-	public List<Person> searchByName(String searchQuery) { 
-		return searchByName(searchQuery, null);
-	}
-	
-	public List<Person> searchByName(String searchQuery, Role role) {
-		StringBuilder queryBuilder = new StringBuilder("SELECT " + PERSON_FIELDS + " FROM people WHERE ");
-		if (DaoUtils.isMsSql(dbHandle)) { 
-			searchQuery = "\"" + searchQuery + "*\"";
-			queryBuilder.append("CONTAINS (name, :query)");
-		} else { 
-			queryBuilder.append("name LIKE '%' || :query || '%' ");
-		}
-		if (role != null ) { 
-			queryBuilder.append(" AND role = :role");
-		}
-		Query<Person> query = dbHandle.createQuery(queryBuilder.toString())
-			.bind("query", searchQuery)
-			.bind("role", (role != null) ? role.ordinal() : null)
-			.map(new PersonMapper());
-		return query.list();
+	public List<Person> search(PersonSearch query) {
+		StringBuilder queryBuilder = new StringBuilder("SELECT " + PERSON_FIELDS + " FROM people WHERE people.id IN (");
+		Pair<String,Map<String,Object>> searchData = query.getQuery(dbHandle);
+		queryBuilder.append(searchData.getLeft());
+		queryBuilder.append(")");
+		
+		return dbHandle.createQuery(queryBuilder.toString())
+			.bindFromMap(searchData.getRight())
+			.map(new PersonMapper())
+			.list();
 	}
 	
 	public Organization getOrganizationForPerson(int personId) {
