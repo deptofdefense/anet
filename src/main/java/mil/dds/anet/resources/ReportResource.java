@@ -1,8 +1,6 @@
 package mil.dds.anet.resources;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.PermitAll;
@@ -39,6 +37,7 @@ import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
+import mil.dds.anet.beans.search.ReportSearch;
 import mil.dds.anet.database.AdminDao.AdminSettingKeys;
 import mil.dds.anet.database.ReportDao;
 import mil.dds.anet.graphql.GraphQLFetcher;
@@ -173,6 +172,8 @@ public class ReportResource implements IGraphQLResource {
 		r.setState(ReportState.PENDING_APPROVAL);
 		int numRows = dao.update(r);
 		sendApprovalNeededEmail(r);
+		log.info("Putting report {} into step {} because of org {} on author {}",
+				r.getId(), steps.get(0).getId(), org.getId(), r.getAuthor().getId());
 		
 		return (numRows == 1) ? Response.ok().build() : ResponseUtils.withMsg("No records updated", Status.BAD_REQUEST);
 	}
@@ -314,10 +315,10 @@ public class ReportResource implements IGraphQLResource {
 		return dao.getReportsForMyApproval(approver);
 	}
 
-	@GET
+	@POST
 	@GraphQLFetcher
 	@Path("/search")
-	public List<Report> search(@QueryParam("q") String query) {
+	public List<Report> search(ReportSearch query) {
 		return dao.search(query);
 	}
 

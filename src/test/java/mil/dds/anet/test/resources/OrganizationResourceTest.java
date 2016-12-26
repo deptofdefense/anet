@@ -78,35 +78,4 @@ public class OrganizationResourceTest extends AbstractResourceTest {
 			.get(new GenericType<List<Organization>>() {});
 		assertThat(children).hasSize(1).contains(child);
 	}
-
-
-	@Test
-	public void viewTest() {
-		Person jack = getJackJackson();
-		Response resp = httpQuery("/organizations/", jack)
-			.header("Accept", "text/html").get();
-		assertThat(resp.getStatus()).isEqualTo(200);
-		String respBody = getResponseBody(resp);
-		assertThat(respBody).as("FreeMarker error").doesNotContain("FreeMarker template error");
-
-		Pattern idPat = Pattern.compile("href=\"/organizations/([0-9]+)\"");
-		Matcher idMat = idPat.matcher(respBody);
-		assertThat(idMat.find());
-		int orgId = Integer.parseInt(idMat.group(1));
-
-		resp = httpQuery("/organizations/new", jack)
-				.header("Accept", "text/html").get();
-		assertThat(resp.getStatus()).isEqualTo(200);
-		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
-
-		resp = httpQuery("/organizations/" + orgId, jack)
-				.header("Accept", "text/html").get();
-		assertThat(resp.getStatus()).isEqualTo(200);
-		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
-
-		resp = httpQuery("/organizations/" + orgId + "/edit", jack)
-				.header("Accept", "text/html").get();
-		assertThat(resp.getStatus()).isEqualTo(200);
-		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
-	}
 }

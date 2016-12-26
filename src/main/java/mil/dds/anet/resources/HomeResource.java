@@ -45,9 +45,9 @@ public class HomeResource {
 		if (types.contains("people")) {
 //			result.put("people", AnetObjectEngine.getInstance().getPersonDao().searchByName(query));
 		}
-		if (types.contains("reports")) {
-			result.put("reports", AnetObjectEngine.getInstance().getReportDao().search(query));
-		}
+//		if (types.contains("reports")) {
+//			result.put("reports", AnetObjectEngine.getInstance().getReportDao().search(query));
+//		}
 		if (types.contains("positions")) {
 			result.put("positions", AnetObjectEngine.getInstance().getPositionDao().search(query));
 		}

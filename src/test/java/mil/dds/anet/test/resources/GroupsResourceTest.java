@@ -113,32 +113,4 @@ public class GroupsResourceTest extends AbstractResourceTest {
 		Group returned = httpQuery(String.format("/api/groups/%d", created.getId()), jack).get(Group.class);
 		assertThat(returned).isNull();
 	}
-	
-	@Test
-	public void viewTest() { 
-		Person jack = getJackJackson();
-		Response resp = httpQuery("groups/", jack, MediaType.TEXT_HTML_TYPE).get();
-		assertThat(resp.getStatus()).isEqualTo(200);
-		String respBody = getResponseBody(resp);
-		assertThat(respBody).as("FreeMarker error").doesNotContain("FreeMarker template error");
-		
-		Pattern groupIdPat = Pattern.compile("<a href=\"/groups/([0-9]+)\">");
-		Matcher groupIdMat = groupIdPat.matcher(respBody);
-		assertThat(groupIdMat.find());
-		int groupId = Integer.parseInt(groupIdMat.group(1));
-		
-		resp = httpQuery("groups/new", jack, MediaType.TEXT_HTML_TYPE).get();
-		assertThat(resp.getStatus()).isEqualTo(200);
-		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
-		
-		resp = httpQuery("groups/" + groupId, jack, MediaType.TEXT_HTML_TYPE).get();
-		assertThat(resp.getStatus()).isEqualTo(200);
-		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
-		
-		//TODO: build a group edit page?? 
-//		resp = httpQuery("/api/groups/1/edit", steve)
-//				.header("Accept", "text/html").get();
-//		assertThat(resp.getStatus()).isEqualTo(200);
-//		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
-	}
 }

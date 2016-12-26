@@ -35,9 +35,13 @@ DELETE FROM adminSettings;
 
 --Advisors
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, createdAt, updatedAt) 
-	VALUES ('Jack Jackson', 0, 0, 'hunter+foobar@dds.mil', '123-456-78960', 'OF-9', 'this is a sample biography', 'jack', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	VALUES ('Jack Jackson', 0, 0, 'hunter+jack@dds.mil', '123-456-78960', 'OF-9', 'Jack is an advisor in EF2.1', 'jack', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, createdAt, updatedAt) 
 	VALUES ('Elizabeth Elizawell', 0, 0, 'hunter+liz@dds.mil', '+1-777-7777', 'Capt', 'elizabeth is another test person we have in the database', 'elizabeth', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, createdAt, updatedAt) 
+	VALUES ('Erin Erinson', 0, 0, 'hunter+erin@dds.mil', '+9-23-2323-2323', 'Civ', 'Erin is an Advisor in EF2.2', 'erin', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt) 
+	VALUES ('Reina Reinton', 0, 1, 'hunter+reina@dds.mil', '+23-23-11222', 'CIV', 'Reina is an Advisor in EF2.2', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 -- Principals
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt) 
 	VALUES ('Steve Steveson', 0, 1, 'hunter+steve@dds.mil', '+011-232-12324', 'LtCol', 'this is a sample person who could be a Principal!', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
@@ -45,9 +49,9 @@ INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biograp
 	VALUES ('Roger Rogewell', 0, 1, 'hunter+roger@dds.mil', '+1-412-7324', 'Maj', 'Roger is another test person we have in the database', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 -- Super Users
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, createdAt, updatedAt) 
-	VALUES ('Bob Bobtown', 0, 0, 'hunter+bob@dds.mil', '+1-444-7324', 'Civ', 'Bob is yet another test person we have in the database', 'bob', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	VALUES ('Bob Bobtown', 0, 0, 'hunter+bob@dds.mil', '+1-444-7324', 'Civ', 'Bob is a Super User in EF1.1', 'bob', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, createdAt, updatedAt) 
-	VALUES ('Henry Henderson', 0, 0, 'hunter+henry@dds.mil', '+2-456-7324', 'BGen', 'Henry is a SUPER USER', 'henry', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	VALUES ('Henry Henderson', 0, 0, 'hunter+henry@dds.mil', '+2-456-7324', 'BGen', 'Henry is a Super User in EF2.1', 'henry', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 -- Administrator
 INSERT INTO people (name, status, role, emailAddress, domainUsername, createdAt, updatedAt) 
 	VALUES ('Arthur Dmin', '0', '0', 'hunter+arthur@dds.mil', 'arthur', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
@@ -63,40 +67,46 @@ INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biograp
 	VALUES ('Shardul Sharton', 0, 1, 'hunter+shardul@dds.mil', '+99-9999-9999', 'CIV', '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('ANET Administrator', 3, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF1 Advisor 04532', 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF1 SuperUser', 2, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF2 Advisor 4987', 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF2 SuperUser', 2, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF3 Advisor 427', 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF4 Advisor 3', 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF1.1 Advisor A', 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF1.1 SuperUser', 2, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF2.1 Advisor B', 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF2.1 SuperUser', 2, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF2.2 Advisor C', 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF2.2 Advisor D', 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Put Bob into the Super User Billet in EF1
 INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES 
 	((SELECT id from positions where name = 'EF1 SuperUser'), (SELECT id from people where emailAddress = 'hunter+bob@dds.mil'), CURRENT_TIMESTAMP);
-UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'hunter+bob@dds.mil') WHERE name = 'EF1 SuperUser';
+UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'hunter+bob@dds.mil') WHERE name = 'EF1.1 SuperUser';
 
 -- Put Henry into the Super User Billet in EF2
 INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES 
 	((SELECT id from positions where name = 'EF2 SuperUser'), (SELECT id from people where emailAddress = 'hunter+henry@dds.mil'), CURRENT_TIMESTAMP);
-UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'hunter+henry@dds.mil') WHERE name = 'EF2 SuperUser';
+UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'hunter+henry@dds.mil') WHERE name = 'EF2.1 SuperUser';
 
 -- Rotate an advisor through a billet ending up with Jack in the EF2 Advisor Billet
 INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES
-	((SELECT id from positions where name = 'EF2 Advisor 4987'), (SELECT id from people where emailAddress = 'hunter+reina@dds.mil'), CURRENT_TIMESTAMP);
-UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'hunter+reina@dds.mil') WHERE name = 'EF2 Advisor 4987';
+	((SELECT id from positions where name = 'EF2.1 Advisor B'), (SELECT id from people where emailAddress = 'hunter+erin@dds.mil'), CURRENT_TIMESTAMP);
+UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'hunter+erin@dds.mil') WHERE name = 'EF2.1 Advisor B';
 INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES
-	((SELECT id from positions where name = 'EF2 Advisor 4987'), (SELECT id from people where emailAddress = 'hunter+foobar@dds.mil'), CURRENT_TIMESTAMP);
-UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'hunter+foobar@dds.mil') WHERE name = 'EF2 Advisor 4987';
+	((SELECT id from positions where name = 'EF2.1 Advisor B'), (SELECT id from people where emailAddress = 'hunter+jack@dds.mil'), CURRENT_TIMESTAMP);
+UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'hunter+jack@dds.mil') WHERE name = 'EF2.1 Advisor 4987';
 
 -- Put Elizabeth into the EF1 Advisor Billet
 INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES 
-	((SELECT id from positions where name = 'EF1 Advisor 04532'), (SELECT id from people where emailAddress = 'hunter+liz@dds.mil'), CURRENT_TIMESTAMP);
-UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'hunter+liz@dds.mil') WHERE name = 'EF1 Advisor 04532';
+	((SELECT id from positions where name = 'EF1.1 Advisor A'), (SELECT id from people where emailAddress = 'hunter+liz@dds.mil'), CURRENT_TIMESTAMP);
+UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'hunter+liz@dds.mil') WHERE name = 'EF1.1 Advisor A';
 
--- Put Reina into the EF3 Advisor Billet
+-- Put Reina into the EF2.2 Advisor Billet
 INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES 
-	((SELECT id from positions where name = 'EF3 Advisor 427'), (SELECT id from people where emailAddress = 'hunter+reina@dds.mil'), CURRENT_TIMESTAMP);
-UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'hunter+reina@dds.mil') WHERE name = 'EF3 Advisor 427';
+	((SELECT id from positions where name = 'EF2.2 Advisor C'), (SELECT id from people where emailAddress = 'hunter+reina@dds.mil'), CURRENT_TIMESTAMP);
+UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'hunter+reina@dds.mil') WHERE name = 'EF2.2 Advisor C';
+
+-- Put Erin into the EF2.2 Advisor Billet
+INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES 
+	((SELECT id from positions where name = 'EF2.2 Advisor D'), (SELECT id from people where emailAddress = 'hunter+erin@dds.mil'), CURRENT_TIMESTAMP);
+UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'hunter+erin@dds.mil') WHERE name = 'EF2.2 Advisor D';
+
 
 -- Put Arthur into the Admin Billet
 INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES 
@@ -106,7 +116,10 @@ UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress
 
 INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('ANET Administrators', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('EF1', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	INSERT INTO organizations (name, type, parentOrgId, createdAt, updatedAt) VALUES ('EF1.1', 0, (SELECT id from organizations WHERE name ='EF1'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('EF2', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	INSERT INTO organizations (name, type, parentOrgId, createdAt, updatedAt) VALUES ('EF2.1', 0, (SELECT id from organizations WHERE name ='EF2'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	INSERT INTO organizations (name, type, parentOrgId, createdAt, updatedAt) VALUES ('EF2.2', 0, (SELECT id from organizations WHERE name ='EF2'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('EF3', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('EF4', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 	INSERT INTO organizations (name, type, parentOrgId, createdAt, updatedAt) VALUES ('EF 4.1', 0 , (SELECT id FROM organizations WHERE name = 'EF4'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
@@ -125,17 +138,18 @@ INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('TAAC-E', 0
 INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('TAAC-C', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('TAAC Air', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
-UPDATE positions SET organizationId = (SELECT id FROM organizations WHERE name ='EF1') WHERE name LIKE 'EF1%';
-UPDATE positions SET organizationId = (SELECT id FROM organizations WHERE name ='EF2') WHERE name LIKE 'EF2%';
+UPDATE positions SET organizationId = (SELECT id FROM organizations WHERE name ='EF1.1') WHERE name LIKE 'EF1.1%';
+UPDATE positions SET organizationId = (SELECT id FROM organizations WHERE name ='EF2.1') WHERE name LIKE 'EF2.1%';
+UPDATE positions SET organizationId = (SELECT id FROM organizations WHERE name ='EF2.2') WHERE name LIKE 'EF2.2%';
 UPDATE positions SET organizationId = (SELECT id FROM organizations WHERE name ='EF3') WHERE name LIKE 'EF3%';
 UPDATE positions SET organizationId = (SELECT id FROM organizations WHERE name ='EF4') WHERE name LIKE 'EF4%';
 UPDATE positions SET organizationId = (SELECT id FROM organizations WHERE name='ANET Administrators') where name = 'ANET Administrator';
 
-INSERT INTO groups (name, createdAt) VALUES ('EF1 Approvers', CURRENT_TIMESTAMP);
+INSERT INTO groups (name, createdAt) VALUES ('EF1.1 Approvers', CURRENT_TIMESTAMP);
 INSERT INTO approvalSteps (approverGroupId, advisorOrganizationId) VALUES 
-	((SELECT id from groups WHERE name = 'EF1 Approvers'), (SELECT id from organizations where name='EF1'));
+	((SELECT id from groups WHERE name = 'EF1.1 Approvers'), (SELECT id from organizations where name='EF1.1'));
 INSERT INTO groupMemberships (groupId, personId) VALUES 
-	((SELECT id from groups WHERE name='EF1 Approvers'), (SELECT id from people where emailAddress = 'hunter+bob@dds.mil'));
+	((SELECT id from groups WHERE name='EF1.1 Approvers'), (SELECT id from people where emailAddress = 'hunter+bob@dds.mil'));
 
 
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt)	VALUES ('EF1', 'Budget and Planning', 'EF', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
@@ -231,7 +245,7 @@ INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES
 	((SELECT id from positions where name = 'Cost Adder - MoD'), (SELECT id from people where emailAddress = 'hunter+steve@dds.mil'), CURRENT_TIMESTAMP);
 UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'hunter+steve@dds.mil') WHERE name = 'Cost Adder - MoD';
 INSERT INTO positionRelationships (positionId_a, positionId_b, createdAt, updatedAt, deleted) VALUES
-	((SELECT id from positions WHERE name ='EF1 Advisor 04532'), 
+	((SELECT id from positions WHERE name ='EF1.1 Advisor A'), 
 	(SELECT id FROM positions WHERE name='Cost Adder - MoD'), 
 	CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0);
 
@@ -241,7 +255,7 @@ INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES
 UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'hunter+roger@dds.mil') WHERE name = 'Chief of Police';
 INSERT INTO positionRelationships (positionId_a, positionId_b, createdAt, updatedAt, deleted) VALUES
 	((SELECT id from positions WHERE name ='Chief of Police'), 
-	(SELECT id FROM positions WHERE name='EF2 Advisor 4987'), 
+	(SELECT id FROM positions WHERE name='EF2.1 Advisor B'), 
 	CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0);
 
 UPDATE positions SET locationId = (SELECT id from LOCATIONS where name = 'Kabul Police Academy') WHERE name = 'Chief of Police';
@@ -252,7 +266,7 @@ INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, nextSteps, 
 	(CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from locations where name='General Hospital'), 'Discuss improvements in Annual Budgeting process',
 	'Today I met with this dude to tell him all the great things that he can do to improve his budgeting process. I hope he listened to me',
 	'Meet with the dude again next week',
-	(SELECT id FROM people where emailAddress='hunter+foobar@dds.mil'), 2, '2016-05-25', 0);
+	(SELECT id FROM people where emailAddress='hunter+jack@dds.mil'), 2, '2016-05-25', 0);
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 	(SELECT id FROM people where emailAddress='hunter+steve@dds.mil'), (SELECT max(id) FROM reports), 1);
 
@@ -298,7 +312,7 @@ INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, nextSteps, 
 	'Went over to the fort to look at the beds and the spreadsheets and the numbers and the whiteboards and the planning and all of the budgets. It was GREAT!',
 	'I plan to go down to Cabot Tower next week and do the same', (SELECT id FROM people where domainUsername='jack'), 2, '2016-06-13', 0);
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
-	(SELECT id FROM people where emailAddress='hunter+steve@dds.mil'), (SELECT max(id) from reports), 1);
+	(SELECT id FROM people where emailAddress='hunter+roger@dds.mil'), (SELECT max(id) from reports), 1);
 INSERT INTO reportPoams (poamId, reportId) VALUES ((SELECT id from poams where shortName = '1.1.A'), (SELECT max(id) from reports));
 
 INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, nextSteps, authorId, state, engagementDate, atmosphere) VALUES
@@ -312,10 +326,28 @@ INSERT INTO reportPoams (poamId, reportId) VALUES ((SELECT id from poams where s
 INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, nextSteps, authorId, state, engagementDate, atmosphere) VALUES
 	(CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from locations where name='General Hospital'), 'Discuss discrepancies in monthly budgets',
 	'Back to the hospital this week to test the recent locations feature of ANET, and also to look at math and numbers and budgets and things',
-	'Meet with the dude again next week',(SELECT id FROM people where emailAddress='hunter+foobar@dds.mil'), 1, '2016-06-25', 0);
+	'Meet with the dude again next week',(SELECT id FROM people where emailAddress='hunter+jack@dds.mil'), 1, '2016-06-25', 0);
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 	(SELECT id FROM people where emailAddress='hunter+steve@dds.mil'), (SELECT max(id) FROM reports), 1);
 INSERT INTO reportPoams (poamId, reportId) VALUES ((SELECT id from poams where shortName = '1.1.A'), (SELECT max(id) from reports));
+
+INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, nextSteps, authorId, state, engagementDate, atmosphere) VALUES
+	(CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from locations where name='St Johns Airport'), 'Inspect Air Operations Capabilities',
+	'We went to the Aiport and looked at the planes, and the hangers, and the other things that airports have. ',
+	'Go over to the Airport next week to look at the helicopters',(SELECT id FROM people where domainUsername='elizabeth'), 2, '2016-05-20', 0);
+INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
+	(SELECT id FROM people where emailAddress='hunter+roger@dds.mil'), (SELECT max(id) FROM reports), 1);
+INSERT INTO reportPoams (poamId, reportId) VALUES ((SELECT id from poams where shortName = '2.A'), (SELECT max(id) from reports));
+
+INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, nextSteps, authorId, state, engagementDate, atmosphere) VALUES
+	(CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from locations where name='St Johns Airport'), 'Inspect Helicopter Capabilities',
+	'Today we looked at the helicopters at the aiport and talked in depth about how they were not in good condition and the AAF needed new equipment.  I expressed my concerns to the pilots and promised to see what we can do.',
+	'Figure out what can be done about the helicopters',(SELECT id FROM people where domainUsername='elizabeth'), 2, '2016-05-22', 0);
+INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
+	(SELECT id FROM people where emailAddress='hunter+roger@dds.mil'), (SELECT max(id) FROM reports), 1);
+INSERT INTO reportPoams (poamId, reportId) VALUES ((SELECT id from poams where shortName = '2.A'), (SELECT max(id) from reports));
+
+
 
 --Create the default Approval Group
 INSERT INTO groups (name, createdAt) VALUES ('Default Approvers', CURRENT_TIMESTAMP);

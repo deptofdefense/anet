@@ -127,36 +127,6 @@ public class PositionResourceTest extends AbstractResourceTest {
 	}
 	
 	@Test
-	public void viewTest() { 
-		Person jack = getJackJackson();
-		Response resp = httpQuery("/positions/", jack)
-			.header("Accept", "text/html").get();
-		assertThat(resp.getStatus()).isEqualTo(200);
-		String respBody = getResponseBody(resp);
-		assertThat(respBody).as("FreeMarker error").doesNotContain("FreeMarker template error");
-		
-		Pattern positionIdPat = Pattern.compile("<a href=\"/positions/([0-9]+)\">");
-		Matcher positionIdMat = positionIdPat.matcher(respBody);
-		assertThat(positionIdMat.find());
-		int positionId = Integer.parseInt(positionIdMat.group(1));
-		
-		resp = httpQuery("/positions/newBillet", jack)
-				.header("Accept", "text/html").get();
-		assertThat(resp.getStatus()).isEqualTo(200);
-		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
-		
-		resp = httpQuery("/positions/" + positionId, jack)
-				.header("Accept", "text/html").get();
-		assertThat(resp.getStatus()).isEqualTo(200);
-		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
-		
-		resp = httpQuery("/positions/" + positionId + "/edit", jack)
-				.header("Accept", "text/html").get();
-		assertThat(resp.getStatus()).isEqualTo(200);
-		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
-	}
-	
-	@Test
 	public void tashkilTest() {
 		Person jack = getJackJackson();
 		Person admin = getArthurDmin();

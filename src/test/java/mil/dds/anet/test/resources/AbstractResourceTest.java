@@ -20,6 +20,7 @@ import io.dropwizard.testing.junit.DropwizardAppRule;
 import io.dropwizard.util.Duration;
 import mil.dds.anet.AnetApplication;
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.search.PersonSearch;
 import mil.dds.anet.config.AnetConfiguration;
 import mil.dds.anet.test.beans.PersonTest;
 
@@ -56,15 +57,20 @@ public abstract class AbstractResourceTest {
 	
 	public Person findOrPutPersonInDb(Person stub) {
 		if (stub.getDomainUsername() != null) { 
-			Person user = httpQuery("/api/people/me", stub).get(Person.class);
-			return user;
+			try { 
+				Person user = httpQuery("/api/people/me", stub).get(Person.class);
+				if (user != null) { return user; }
+			} catch (Exception e) { };
+		} else { 
+			PersonSearch query = new PersonSearch();
+			query.setText(stub.getName());
+			List<Person> ret = httpQuery("/api/people/search",PersonTest.getJackJacksonStub()).post(Entity.json(query),new GenericType<List<Person>>() {});
+			for (Person p : ret) { 
+				if (p.getEmailAddress().equals(stub.getEmailAddress())) { return p; } 
+			}
 		}
-		List<Person> ret = httpQuery("/api/people/search?q=" + URLEncoder.encode(stub.getName()), PersonTest.getJackJacksonStub()).get(new GenericType<List<Person>>() {});
-		for (Person p : ret) { 
-			if (p.getEmailAddress().equals(stub.getEmailAddress())) { return p; } 
-		}
-		
-		//Create insert into DB, Steve Steveson should AWAYS be in the database. 
+
+		//Create insert into DB
 		Person newPerson = httpQuery("/api/people/new", PersonTest.getArthurDmin()).post(Entity.json(stub), Person.class);
 		return newPerson;
 	}

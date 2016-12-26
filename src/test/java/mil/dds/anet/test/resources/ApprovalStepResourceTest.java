@@ -63,7 +63,7 @@ public class ApprovalStepResourceTest extends AbstractResourceTest {
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
 		//Get them back in order
-		List<ApprovalStep> returned = httpQuery(String.format("/api/approvalSteps/byOrganization?id=%d", org.getId()), jack)
+		List<ApprovalStep> returned = httpQuery(String.format("/api/approvalSteps/byOrganization?orgId=%d", org.getId()), jack)
 				.get(new GenericType<List<ApprovalStep>>() {});
 		assertThat(returned.size()).isEqualTo(3);
 		System.out.println(as1);
@@ -76,7 +76,7 @@ public class ApprovalStepResourceTest extends AbstractResourceTest {
 		resp = httpQuery(String.format("/api/approvalSteps/%d", as1.getId()), admin).delete();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
-		returned = httpQuery(String.format("/api/approvalSteps/byOrganization?id=%d", org.getId()), jack)
+		returned = httpQuery(String.format("/api/approvalSteps/byOrganization?orgId=%d", org.getId()), jack)
 				.get(new GenericType<List<ApprovalStep>>() {});
 		assertThat(returned.size()).isEqualTo(2);
 		assertThat(returned).contains(as2, atIndex(0));
@@ -93,7 +93,7 @@ public class ApprovalStepResourceTest extends AbstractResourceTest {
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
 		//Get them back in order 2 -> 4 -> 3
-		returned = httpQuery("/api/approvalSteps/byOrganization?id=" + org.getId(), admin)
+		returned = httpQuery("/api/approvalSteps/byOrganization?orgId=" + org.getId(), admin)
 				.get(new GenericType<List<ApprovalStep>>() {});
 		assertThat(returned.size()).isEqualTo(3);
 		assertThat(returned).contains(as2, atIndex(0));

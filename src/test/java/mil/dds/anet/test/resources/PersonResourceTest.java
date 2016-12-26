@@ -2,20 +2,17 @@ package mil.dds.anet.test.resources;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.net.URLEncoder;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.junit.Test;
 
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.util.Duration;
+import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.beans.Person.Status;
@@ -77,43 +74,7 @@ public class PersonResourceTest extends AbstractResourceTest {
 //        assertThat(response.getStatus()).isEqualTo(404);
 //       
 //	}
-	
-	@Test
-	public void testSearchPerson() { 
-		Person jack = getJackJackson();
-			
-		String query = "Bobtown";
-		List<Person> searchResults = httpQuery("/api/people/search?q=" + URLEncoder.encode(query), jack)
-				.get(new GenericType<List<Person>>() {});
-		assertThat(searchResults.size()).isGreaterThan(0);
-	}
-    
-	@Test
-	public void viewTest() { 
-		Person jack = getJackJackson();
-		Response resp = httpQuery("/people/", jack, MediaType.TEXT_HTML_TYPE).get();
-		assertThat(resp.getStatus()).isEqualTo(200);
-		String respBody = getResponseBody(resp);
-		assertThat(respBody).as("FreeMarker error").doesNotContain("FreeMarker template error");
-		
-		Pattern personIdPat = Pattern.compile("href=\"/people/([0-9]+)\"");
-		Matcher personIdMat = personIdPat.matcher(respBody);
-		assertThat(personIdMat.find());
-		int personId = Integer.parseInt(personIdMat.group(1));
-		
-		resp = httpQuery("/people/new", jack, MediaType.TEXT_HTML_TYPE).get();
-		assertThat(resp.getStatus()).isEqualTo(200);
-		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
-		
-		resp = httpQuery("/people/" + personId, jack, MediaType.TEXT_HTML_TYPE).get();
-		assertThat(resp.getStatus()).isEqualTo(200);
-		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
-		
-		resp = httpQuery("/people/" + personId + "/edit", jack, MediaType.TEXT_HTML_TYPE).get();
-		assertThat(resp.getStatus()).isEqualTo(200);
-		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
-	}
-	
+
 	@Test
 	public void searchPerson() { 
 		Person jack = getJackJackson();
@@ -125,13 +86,17 @@ public class PersonResourceTest extends AbstractResourceTest {
 		assertThat(searchResults.size()).isGreaterThan(0);
 		assertThat(searchResults.stream().filter(p -> p.getName().equals("Bob Bobtown")).findFirst()).isNotEmpty();
 		
+		List<Organization> orgs = httpQuery("/api/organizations/search?q=EF1.1&type=ADVISOR_ORG", jack).get(new GenericType<List<Organization>>() {});
+		assertThat(orgs.size()).isGreaterThan(0);
+		Organization org = orgs.get(0);
+		
 		query.setText(null);
-		query.setOrgId(45);
+		query.setOrgId(org.getId());
 		searchResults = httpQuery("/api/people/search", jack).post(Entity.json(query), new GenericType<List<Person>>() {});
 		assertThat(searchResults).isNotEmpty();
 		
 		query.setOrgId(null);
-		query.setText("sample"); //Search against biographies
+		query.setText("advisor"); //Search against biographies
 		searchResults = httpQuery("/api/people/search", jack).post(Entity.json(query), new GenericType<List<Person>>() {});
 		assertThat(searchResults.size()).isGreaterThan(1);
 		
