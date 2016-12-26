@@ -71,11 +71,11 @@ public class PersonSearch {
 		if (orgId != null) { 
 			if (includeChildOrgs != null && includeChildOrgs) { 
 				whereClauses.add(" positions.organizationId IN ( "
-						+ "WITH RECURSIVE parent_orgs(id) AS ( "
-							+ "SELECT id FROM organizations WHERE id = :orgId "
-						+ "UNION ALL "
-							+ "SELECT o.id from parent_orgs po, organizations o WHERE o.parentOrgId = po.id "
-						+ ") SELECT id from parent_orgs)");
+					+ "WITH RECURSIVE parent_orgs(id) AS ( "
+						+ "SELECT id FROM organizations WHERE id = :orgId "
+					+ "UNION ALL "
+						+ "SELECT o.id from parent_orgs po, organizations o WHERE o.parentOrgId = po.id "
+					+ ") SELECT id from parent_orgs)");
 			} else { 
 				sql.append(" positions.organizationId = :orgId " );
 			}

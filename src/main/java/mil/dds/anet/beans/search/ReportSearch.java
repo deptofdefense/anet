@@ -79,6 +79,40 @@ public class ReportSearch {
 			args.put("poamId", poamId);
 		}
 		
+		if (authorOrgId != null) { 
+			//TODO: this is known to be wrong when the author has moved positions or when the author is not from the Advisor Organization
+			// need to coordinate with the team on if the later happens and if it's worth either
+			// a) storing the advisorOrg and principalOrg on the report table
+			// b) running an indexing job that stores this somewhere else and takes the time to do the past math. 
+			//    (is it even possible? ie: does a position get removed from an orgaization and then the fact that it was connected then lost forever?)
+			if (includeAuthorOrgChildren) { 
+				whereClauses.add("reports.authorId IN "
+					+ "(SELECT currentPersonId FROM positions WHERE organizationId IN "
+						+ "(WITH RECURSIVE parent_orgs(id) AS ( "
+							+ "SELECT id FROM organizations WHERE id = :authorOrgId "
+						+ "UNION ALL "
+							+ "SELECT o.id from parent_orgs po, organizations o WHERE o.parentOrgId = po.id "
+						+ ") SELECT id from parent_orgs))");
+				args.put("authorOrgId", authorOrgId);
+			} else { 
+				whereClauses.add("reports.authorId in (select currentPersonId from positions where organizationId = :authorOrgId)");
+				args.put("authorOrgId", authorOrgId);
+			}
+		}
+		
+		if (principalOrgId != null) { 
+			if (includePrincipalOrgChildren) { 
+				//TODO
+			} else { 
+				//TODO
+			}
+		}
+		
+		if (locationId != null) { 
+			whereClauses.add("locationId = :locationId");
+			args.put("locationId", locationId);
+		}
+		
 		sql.append(" WHERE ");
 		sql.append(Joiner.on(" AND ").join(whereClauses));
 		return Pair.of(sql.toString(), args);

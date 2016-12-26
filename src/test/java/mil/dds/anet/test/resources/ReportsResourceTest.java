@@ -469,9 +469,54 @@ public class ReportsResourceTest extends AbstractResourceTest {
 			)).hasSameSizeAs(searchResults);
 		
 		//Search by direct organization
+		List<Organization> orgs = httpQuery("/api/organizations/search?type=ADVISOR_ORG&q=ef1.1", jack).get(new GenericType<List<Organization>>() {});
+		assertThat(orgs.size()).isGreaterThan(0);
+		Organization ef11 = orgs.get(0);
+		assertThat(ef11.getName()).isEqualToIgnoringCase("EF1.1");
+		
+		query.setPoamId(null);
+		query.setAuthorOrgId(ef11.getId());
+		query.setIncludeAuthorOrgChildren(false);
+		searchResults = httpQuery("/api/reports/search", jack).post(Entity.json(query), new GenericType<List<Report>>() {});
+		assertThat(searchResults).isNotEmpty();
+		for (Report r : searchResults) {
+			System.out.println(r.getAuthor());
+			System.out.println(r.getAuthor().getPosition());
+			System.out.println(r.getAuthor().getPosition().getOrganization());
+			System.out.println(r.getAuthor().getPosition().getOrganization().getId());
+		}
+		assertThat(searchResults.stream().filter(r -> 
+				r.getAuthor().getPosition().getOrganization().getId().equals(ef11.getId())
+			)).hasSameSizeAs(searchResults);
 		
 		//Search by parent organization
+		orgs = httpQuery("/api/organizations/search?type=ADVISOR_ORG&q=ef1", jack).get(new GenericType<List<Organization>>() {});
+		assertThat(orgs.size()).isGreaterThan(0);
+		Organization ef1 = orgs.stream().filter(o -> o.getName().equalsIgnoreCase("ef1")).findFirst().get();
+		assertThat(ef1.getName()).isEqualToIgnoringCase("EF1");
+		
+		query.setPoamId(null);
+		query.setAuthorOrgId(ef1.getId());
+		query.setIncludeAuthorOrgChildren(true);
+		searchResults = httpQuery("/api/reports/search", jack).post(Entity.json(query), new GenericType<List<Report>>() {});
+		assertThat(searchResults).isNotEmpty();
+		//#TODO: figure out how to verify the results? 
 		
 		//Search by location
+		List<Location> locs = httpQuery("/api/locations/search?q=Cabot", jack).get(new GenericType<List<Location>>() {});
+		assertThat(locs.size() == 0);
+		Location cabot = locs.get(0);
+		
+		query.setAuthorOrgId(null);
+		query.setLocationId(cabot.getId());
+		searchResults = httpQuery("/api/reports/search", jack).post(Entity.json(query), new GenericType<List<Report>>() {});
+		assertThat(searchResults).isNotEmpty();
+		assertThat(searchResults.stream().filter(r -> 
+				r.getLocation().getId().equals(cabot.getId())
+			)).hasSameSizeAs(searchResults);
+		
+		//Search by Principal Organization
+		
+		//Search by Principal Parent Organization
 	}
 }
