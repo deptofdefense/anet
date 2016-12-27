@@ -1,4 +1,4 @@
-package mil.dds.anet.beans.search.sqlite;
+package mil.dds.anet.search.sqlite;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -9,10 +9,10 @@ import org.skife.jdbi.v2.Handle;
 
 import jersey.repackaged.com.google.common.base.Joiner;
 import mil.dds.anet.beans.Person;
-import mil.dds.anet.beans.search.IPersonSearcher;
 import mil.dds.anet.beans.search.PersonSearchQuery;
 import mil.dds.anet.database.PersonDao;
 import mil.dds.anet.database.mappers.PersonMapper;
+import mil.dds.anet.search.IPersonSearcher;
 import mil.dds.anet.utils.DaoUtils;
 
 public class SqlitePersonSearcher implements IPersonSearcher {

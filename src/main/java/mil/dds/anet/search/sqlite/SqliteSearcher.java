@@ -1,8 +1,8 @@
-package mil.dds.anet.beans.search.sqlite;
+package mil.dds.anet.search.sqlite;
 
-import mil.dds.anet.beans.search.IPersonSearcher;
-import mil.dds.anet.beans.search.IReportSearcher;
-import mil.dds.anet.beans.search.ISearcher;
+import mil.dds.anet.search.IPersonSearcher;
+import mil.dds.anet.search.IReportSearcher;
+import mil.dds.anet.search.ISearcher;
 
 public class SqliteSearcher implements ISearcher {
 

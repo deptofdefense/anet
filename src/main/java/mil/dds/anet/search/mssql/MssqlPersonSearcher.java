@@ -1,4 +1,4 @@
-package mil.dds.anet.beans.search.mssql;
+package mil.dds.anet.search.mssql;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -9,10 +9,10 @@ import org.skife.jdbi.v2.Handle;
 
 import jersey.repackaged.com.google.common.base.Joiner;
 import mil.dds.anet.beans.Person;
-import mil.dds.anet.beans.search.IPersonSearcher;
 import mil.dds.anet.beans.search.PersonSearchQuery;
 import mil.dds.anet.database.PersonDao;
 import mil.dds.anet.database.mappers.PersonMapper;
+import mil.dds.anet.search.IPersonSearcher;
 import mil.dds.anet.utils.DaoUtils;
 
 public class MssqlPersonSearcher implements IPersonSearcher {
@@ -22,6 +22,7 @@ public class MssqlPersonSearcher implements IPersonSearcher {
 		StringBuilder sql = new StringBuilder("SELECT " + PersonDao.PERSON_FIELDS 
 				+ " FROM people WHERE people.id IN (SELECT people.id FROM people ");
 		Map<String,Object> sqlArgs = new HashMap<String,Object>();
+		String commonTableExpression = null;
 		
 		if (query.getOrgId() != null || query.getLocationId() != null) { 
 			sql.append(" LEFT JOIN positions ON people.id = positions.currentPersonId ");
@@ -58,13 +59,13 @@ public class MssqlPersonSearcher implements IPersonSearcher {
 		}
 		
 		if (query.getOrgId() != null) { 
-			if (query.getIncludeChildOrgs() != null && query.getIncludeChildOrgs()) { 
-				whereClauses.add(" positions.organizationId IN ( "
-					+ "WITH RECURSIVE parent_orgs(id) AS ( "
+			if (query.getIncludeChildOrgs() != null && query.getIncludeChildOrgs()) {
+				commonTableExpression = "WITH parent_orgs(id) AS ( "
 						+ "SELECT id FROM organizations WHERE id = :orgId "
 					+ "UNION ALL "
 						+ "SELECT o.id from parent_orgs po, organizations o WHERE o.parentOrgId = po.id "
-					+ ") SELECT id from parent_orgs)");
+					+ ") ";
+				whereClauses.add(" positions.organizationId IN (SELECT id from parent_orgs)");
 			} else { 
 				sql.append(" positions.organizationId = :orgId " );
 			}
@@ -79,6 +80,10 @@ public class MssqlPersonSearcher implements IPersonSearcher {
 		sql.append(Joiner.on(" AND ").join(whereClauses));
 		
 		sql.append(")");
+		
+		if (commonTableExpression != null) { 
+			sql.insert(0, commonTableExpression);
+		}
 		
 		return dbHandle.createQuery(sql.toString())
 			.bindFromMap(sqlArgs)

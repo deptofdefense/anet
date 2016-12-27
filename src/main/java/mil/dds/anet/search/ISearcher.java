@@ -1,4 +1,4 @@
-package mil.dds.anet.beans.search;
+package mil.dds.anet.search;
 
 public interface ISearcher {
 

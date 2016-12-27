@@ -1,8 +1,8 @@
-package mil.dds.anet.beans.search.mssql;
+package mil.dds.anet.search.mssql;
 
-import mil.dds.anet.beans.search.IPersonSearcher;
-import mil.dds.anet.beans.search.IReportSearcher;
-import mil.dds.anet.beans.search.ISearcher;
+import mil.dds.anet.search.IPersonSearcher;
+import mil.dds.anet.search.IReportSearcher;
+import mil.dds.anet.search.ISearcher;
 
 public class MssqlSearcher implements ISearcher {
 

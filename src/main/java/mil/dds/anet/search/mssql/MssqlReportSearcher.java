@@ -1,4 +1,4 @@
-package mil.dds.anet.beans.search.mssql;
+package mil.dds.anet.search.mssql;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -9,11 +9,11 @@ import org.skife.jdbi.v2.Handle;
 
 import jersey.repackaged.com.google.common.base.Joiner;
 import mil.dds.anet.beans.Report;
-import mil.dds.anet.beans.search.IReportSearcher;
 import mil.dds.anet.beans.search.ReportSearchQuery;
 import mil.dds.anet.database.PersonDao;
 import mil.dds.anet.database.ReportDao;
 import mil.dds.anet.database.mappers.ReportMapper;
+import mil.dds.anet.search.IReportSearcher;
 
 public class MssqlReportSearcher implements IReportSearcher {
 	

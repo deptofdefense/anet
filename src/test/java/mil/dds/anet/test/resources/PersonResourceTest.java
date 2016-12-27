@@ -95,6 +95,21 @@ public class PersonResourceTest extends AbstractResourceTest {
 		searchResults = httpQuery("/api/people/search", jack).post(Entity.json(query), new GenericType<List<Person>>() {});
 		assertThat(searchResults).isNotEmpty();
 		
+		//Search with children orgs
+		org = orgs.stream().filter(o -> o.getName().equalsIgnoreCase("EF1")).findFirst().get();
+		query.setOrgId(org.getId());
+		//First don't include child orgs and then increase the scope and verify results increase.
+		List<Person> parentOnlyResults = httpQuery("/api/people/search", jack).post(Entity.json(query), new GenericType<List<Person>>() {});
+		
+		query.setIncludeChildOrgs(true);
+		searchResults = httpQuery("/api/people/search", jack).post(Entity.json(query), new GenericType<List<Person>>() {});
+		assertThat(searchResults).isNotEmpty();
+		assertThat(searchResults).containsAll(parentOnlyResults);
+		
+		query.setIncludeChildOrgs(true);
+		searchResults = httpQuery("/api/people/search", jack).post(Entity.json(query), new GenericType<List<Person>>() {});
+		assertThat(searchResults).isNotEmpty();
+		
 		query.setOrgId(null);
 		query.setText("advisor"); //Search against biographies
 		searchResults = httpQuery("/api/people/search", jack).post(Entity.json(query), new GenericType<List<Person>>() {});
