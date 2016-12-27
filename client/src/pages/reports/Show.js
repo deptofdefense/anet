@@ -63,7 +63,7 @@ export default class ReportShow extends React.Component {
 						</Form.Field>
 						<Form.Field id="author" label="Report author" type="static">
 							{report.author &&
-								<Link to={"/users/" + report.author.id}>{report.author.name}</Link>
+								<Link to={"/people/" + report.author.id}>{report.author.name}</Link>
 							}
 						</Form.Field>
 					</fieldset>
@@ -74,7 +74,7 @@ export default class ReportShow extends React.Component {
 						<ul>
 							{(report.attendees && report.attendees.map(person =>
 								<li key={person.id}>
-									<Link to={"/users/" + person.id}>
+									<Link to={"/people/" + person.id}>
 										{person.name}
 									</Link>
 								</li>

@@ -290,7 +290,7 @@ public class ReportDao implements IAnetDao<Report> {
 				+ "WHERE reportPeople.personId = :personId "
 				+ "ORDER BY engagementDate DESC";
 		if (DaoUtils.isMsSql(dbHandle)) { 
-			sql += " OFFSET :ofset ROWS FETCH NEXT :limit ROWS ONLY";
+			sql += " OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY";
 		} else { 
 			sql += " LIMIT :limit OFFSET :offset";
 		}

@@ -3,16 +3,16 @@ import {Link} from 'react-router'
 import {Table} from 'react-bootstrap'
 import moment from 'moment'
 
-import API from '../../api'
-import Breadcrumbs from '../../components/Breadcrumbs'
-import Form from '../../components/Form'
-import FormField from '../../components/FormField'
+import API from 'api'
+import Breadcrumbs from 'components/Breadcrumbs'
+import Form from 'components/Form'
+import ReportTable from 'components/ReportTable'
 
 export default class PersonShow extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			person: {},
+			person: { authoredReports: [], attendedReports: []},
 		}
 	}
 
@@ -55,21 +55,22 @@ export default class PersonShow extends React.Component {
 	render() {
 		let {person} = this.state
 
-		let position = "This person is not assigned to a position";
+		let position = <tr><td>This person is not assigned to a position</td></tr>;
 		if (person.position) { 
 			position = <tr><td>Now</td><td>{person.position.organization && person.position.organization.name}</td><td>{person.position.name}</td></tr>;
 		}
 
 		return (
 			<div>
+				<Breadcrumbs items={[[person.name, "/people/" + person.id ]]} />
 				<Form formFor={person} horizontal>
 					<fieldset>
 						<legend>{person.rank} {person.name}</legend>
-						<FormField label="Rank" type="static" id="rank" />
-						<FormField label="Role" type="static" id="role" />
-						<FormField label="Phone" type="static" id="phoneNumber" />
-						<FormField label="Email" type="static" id="emailAddress" />
-						<FormField label="Bio" type="static" id="person.biography" />
+						<Form.Field label="Rank" type="static" id="rank" />
+						<Form.Field label="Role" type="static" id="role" />
+						<Form.Field label="Phone" type="static" id="phoneNumber" />
+						<Form.Field label="Email" type="static" id="emailAddress" />
+						<Form.Field label="Bio" type="static" id="person.biography" />
 					</fieldset>
 
 					<fieldset>
@@ -86,25 +87,13 @@ export default class PersonShow extends React.Component {
 					</fieldset>
 
 					<fieldset>
-						<legend>Reports</legend>
-						<Table>
-							<thead>
-								<tr>
-									<th>Date</th>
-									<th>AO</th>
-									<th>Summary</th>
-								</tr>
-							</thead>
-							<tbody>
-							{person.authoredReports && person.authoredReports.map( report =>
-								<tr key={report.id} >
-									<td><Link to={"/reports/" + report.id}>{moment(report.engagementDate).format('L')}</Link></td>
-									<td>TODO</td>
-									<td>{report.intent}</td>
-								</tr>
-							)}
-							</tbody>
-						</Table>
+						<legend>Reports Authored</legend>
+						<ReportTable reports={person.authoredReports} showAuthors={false} />
+					</fieldset>
+
+					<fieldset>
+						<legend>Reports involving this person</legend>
+						<ReportTable reports={person.attendedReports} showAuthors={true} />
 					</fieldset>
 				</Form>
 			</div>
