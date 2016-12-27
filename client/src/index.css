@@ -77,3 +77,7 @@ fieldset legend small {
 .graphiql-container {
 	min-height: 600px;
 }
+
+.todo { 
+	background-color: red;
+}

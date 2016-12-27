@@ -1,6 +1,7 @@
 package mil.dds.anet.beans;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -10,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.graphql.GraphQLIgnore;
+import mil.dds.anet.graphql.GraphQLParam;
 import mil.dds.anet.views.AbstractAnetBean;
 
 public class Person extends AbstractAnetBean implements Principal{
@@ -114,6 +116,16 @@ public class Person extends AbstractAnetBean implements Principal{
 	@JsonSetter("position")
 	public void setPosition(Position p) { 
 		this.position = Optional.ofNullable(p);
+	}
+	
+	@JsonIgnore
+	public List<Report> getAuthoredReports(@GraphQLParam("pageNum") Integer pageNum, @GraphQLParam("pageSize") Integer pageSize) { 
+		return AnetObjectEngine.getInstance().getReportDao().getReportsByAuthor(this, pageNum, pageSize);
+	}
+	
+	@JsonIgnore
+	public List<Report> getAttendedReports(@GraphQLParam("pageNum") Integer pageNum, @GraphQLParam("pageSize") Integer pageSize) { 
+		return AnetObjectEngine.getInstance().getReportDao().getReportsByAttendee(this, pageNum, pageSize);
 	}
 	
 	@Override

@@ -15,6 +15,7 @@ export default class ReportsIndex extends React.Component {
 			reports(f:getAll, pageSize:100, pageNum:0) {
 				id, intent, state
 				author {
+					id
 					name
 				}
 			}
@@ -25,7 +26,6 @@ export default class ReportsIndex extends React.Component {
 		return (
 			<div>
 				<Breadcrumbs items={[['My reports', '/reports']]} />
-
 				<ReportTable reports={this.state.reports} showAuthors={true} />
 			</div>
 		)

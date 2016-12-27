@@ -17,6 +17,8 @@ import Search from './pages/Search'
 import ReportsIndex from './pages/reports/Index'
 import ReportNew from './pages/reports/New'
 import ReportShow from './pages/reports/Show'
+import PersonShow from './pages/people/Show'
+
 import GraphiQL from './pages/GraphiQL'
 
 function showLoader() {
@@ -38,6 +40,10 @@ ReactDOM.render((
 					<IndexRoute component={ReportsIndex} />
 					<Route path="new" component={ReportNew} />
 					<Route path=":id" component={ReportShow} />
+				</Route>
+
+				<Route path="people">
+					<Route path=":id" component={PersonShow} />
 				</Route>
 
 				<Route path="/graphiql" component={GraphiQL} />
