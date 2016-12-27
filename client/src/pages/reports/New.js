@@ -207,9 +207,7 @@ export default class ReportNew extends React.Component {
 		event.stopPropagation()
 		event.preventDefault()
 
-		document.querySelectorAll('form [type=submit]').forEach(button => button.disabled = true)
-
-		API.send('/api/reports/new', this.state.report)
+		API.send('/api/reports/new', this.state.report, {disableSubmits: true})
 			.then(report => {
 				if (report.code) throw report.code
 				console.log(report);

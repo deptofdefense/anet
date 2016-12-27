@@ -33,6 +33,13 @@ const API = {
 		params.headers = params.headers || {}
 		params.headers['Content-Type'] = 'application/json'
 
+		if (params.disableSubmits) {
+			let buttons = document.querySelectorAll('form [type=submit]')
+			for (var button of buttons) {
+				button.disabled = true
+			}
+		}
+
 		return API.fetch(url, params)
 	},
 
