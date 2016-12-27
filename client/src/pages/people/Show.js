@@ -67,7 +67,9 @@ export default class PersonShow extends React.Component {
 						<Form.Field label="Rank" type="static" id="rank" />
 						<Form.Field label="Role" type="static" id="role" />
 						<Form.Field label="Phone" type="static" id="phoneNumber" />
-						<Form.Field label="Email" type="static" id="emailAddress" />
+						<Form.Field label="Email" type="static" id="emailAddress">
+							<a href={`mailto:${person.emailAddress}`}>{person.emailAddress}</a>
+						</Form.Field>
 						<Form.Field label="Bio" type="static" id="person.biography" />
 					</fieldset>
 
