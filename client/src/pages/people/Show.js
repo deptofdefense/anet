@@ -1,7 +1,5 @@
 import React from 'react'
-import {Link} from 'react-router'
 import {Table} from 'react-bootstrap'
-import moment from 'moment'
 
 import API from 'api'
 import Breadcrumbs from 'components/Breadcrumbs'
@@ -21,29 +19,29 @@ export default class PersonShow extends React.Component {
 			person(id:${this.props.params.id}) {
 				id,
 				name, rank, role, emailAddress, phoneNumber, biography,
-				position { 
-					id, 
-					name, 
-					organization { 
-						id, 
-						name 
-					}
-				},
-				authoredReports(pageNum:0,pageSize:10) { 
+				position {
 					id,
-					engagementDate,
-					intent,
-					author { 
-						id, 
+					name,
+					organization {
+						id,
 						name
 					}
 				},
-				attendedReports(pageNum:0, pageSize:10) { 
+				authoredReports(pageNum:0,pageSize:10) {
 					id,
 					engagementDate,
 					intent,
-					author { 
-						id, 
+					author {
+						id,
+						name
+					}
+				},
+				attendedReports(pageNum:0, pageSize:10) {
+					id,
+					engagementDate,
+					intent,
+					author {
+						id,
 						name
 					}
 				}
@@ -56,7 +54,7 @@ export default class PersonShow extends React.Component {
 		let {person} = this.state
 
 		let position = <tr><td>This person is not assigned to a position</td></tr>;
-		if (person.position) { 
+		if (person.position) {
 			position = <tr><td>Now</td><td>{person.position.organization && person.position.organization.name}</td><td>{person.position.name}</td></tr>;
 		}
 
@@ -87,7 +85,7 @@ export default class PersonShow extends React.Component {
 					</fieldset>
 
 					<fieldset>
-						<legend>Reports Authored</legend>
+						<legend>Reports authored</legend>
 						<ReportTable reports={person.authoredReports} showAuthors={false} />
 					</fieldset>
 
