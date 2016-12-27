@@ -33,7 +33,7 @@ import mil.dds.anet.beans.Report.Atmosphere;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
 import mil.dds.anet.beans.geo.Location;
-import mil.dds.anet.beans.search.ReportSearch;
+import mil.dds.anet.beans.search.ReportSearchQuery;
 import mil.dds.anet.database.AdminDao.AdminSettingKeys;
 import mil.dds.anet.test.beans.CommentTest;
 import mil.dds.anet.test.beans.OrganizationTest;
@@ -413,7 +413,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 	public void searchTest() { 
 		Person jack =  getJackJackson();
 		Person steve = getSteveSteveson();
-		ReportSearch query = new ReportSearch();
+		ReportSearchQuery query = new ReportSearchQuery();
 		
 		//Search based on report Text body
 		query.setText("spreadsheet");

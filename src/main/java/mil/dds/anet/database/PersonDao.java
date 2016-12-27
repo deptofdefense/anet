@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.DateTime;
 import org.skife.jdbi.v2.GeneratedKeys;
 import org.skife.jdbi.v2.Handle;
@@ -14,9 +13,10 @@ import org.skife.jdbi.v2.Query;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 
+import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
-import mil.dds.anet.beans.search.PersonSearch;
+import mil.dds.anet.beans.search.PersonSearchQuery;
 import mil.dds.anet.database.mappers.OrganizationMapper;
 import mil.dds.anet.database.mappers.PersonMapper;
 import mil.dds.anet.utils.DaoUtils;
@@ -88,16 +88,10 @@ public class PersonDao implements IAnetDao<Person> {
 			.execute();
 	}
 	
-	public List<Person> search(PersonSearch query) {
-		StringBuilder queryBuilder = new StringBuilder("SELECT " + PERSON_FIELDS + " FROM people WHERE people.id IN (");
-		Pair<String,Map<String,Object>> searchData = query.getQuery(dbHandle);
-		queryBuilder.append(searchData.getLeft());
-		queryBuilder.append(")");
+	public List<Person> search(PersonSearchQuery query) {
+		return AnetObjectEngine.getInstance().getSearcher()
+				.getPersonSearcher().runSearch(query, dbHandle);
 		
-		return dbHandle.createQuery(queryBuilder.toString())
-			.bindFromMap(searchData.getRight())
-			.map(new PersonMapper())
-			.list();
 	}
 	
 	public Organization getOrganizationForPerson(int personId) {

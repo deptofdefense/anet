@@ -106,15 +106,22 @@ public class OrganizationDao implements IAnetDao<Organization> {
 	public List<Organization> searchByName(String name, OrganizationType type) {
 		String sql;
 		if (DaoUtils.isMsSql(dbHandle)) { 
-			name = "\"" + name + "*\"";
-			sql = "SELECT " + ORGANIZATION_FIELDS + " FROM organizations WHERE CONTAINS (name, :name) AND type = :type";
+			return dbHandle.createQuery("SELECT " + ORGANIZATION_FIELDS 
+					+ " FROM organizations "
+					+ "WHERE ( CONTAINS (name, :name) OR name LIKE :likeQuery) "
+					+ "AND type = :type")
+				.bind("type", DaoUtils.getEnumId(type))
+				.bind("name", "\"" + name + "*\"")
+				.bind("likeQuery", name + "%")
+				.map(new OrganizationMapper())
+				.list();
 		} else { 
 			sql = "SELECT " + ORGANIZATION_FIELDS + " FROM organizations WHERE type = :type AND name LIKE '%' || :name || '%'";
+			return dbHandle.createQuery(sql)
+					.bind("type", DaoUtils.getEnumId(type))
+					.bind("name", name)
+					.map(new OrganizationMapper())
+					.list();
 		}
-		return dbHandle.createQuery(sql)
-			.bind("type", DaoUtils.getEnumId(type))
-			.bind("name", name)
-			.map(new OrganizationMapper())
-			.list();
 	} 
 }

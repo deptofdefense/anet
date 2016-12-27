@@ -1,7 +1,6 @@
 package mil.dds.anet.test.resources;
 
 import java.io.InputStream;
-import java.net.URLEncoder;
 import java.util.Base64;
 import java.util.List;
 
@@ -20,7 +19,7 @@ import io.dropwizard.testing.junit.DropwizardAppRule;
 import io.dropwizard.util.Duration;
 import mil.dds.anet.AnetApplication;
 import mil.dds.anet.beans.Person;
-import mil.dds.anet.beans.search.PersonSearch;
+import mil.dds.anet.beans.search.PersonSearchQuery;
 import mil.dds.anet.config.AnetConfiguration;
 import mil.dds.anet.test.beans.PersonTest;
 
@@ -62,7 +61,7 @@ public abstract class AbstractResourceTest {
 				if (user != null) { return user; }
 			} catch (Exception e) { };
 		} else { 
-			PersonSearch query = new PersonSearch();
+			PersonSearchQuery query = new PersonSearchQuery();
 			query.setText(stub.getName());
 			List<Person> ret = httpQuery("/api/people/search",PersonTest.getJackJacksonStub()).post(Entity.json(query),new GenericType<List<Person>>() {});
 			for (Person p : ret) { 

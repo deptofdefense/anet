@@ -16,7 +16,7 @@ import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.beans.Person.Status;
-import mil.dds.anet.beans.search.PersonSearch;
+import mil.dds.anet.beans.search.PersonSearchQuery;
 
 public class PersonResourceTest extends AbstractResourceTest {
 		
@@ -79,16 +79,16 @@ public class PersonResourceTest extends AbstractResourceTest {
 	public void searchPerson() { 
 		Person jack = getJackJackson();
 		
-		PersonSearch query = new PersonSearch();
+		PersonSearchQuery query = new PersonSearchQuery();
 		query.setText("bob");
 		
 		List<Person> searchResults = httpQuery("/api/people/search", jack).post(Entity.json(query), new GenericType<List<Person>>() {});
 		assertThat(searchResults.size()).isGreaterThan(0);
 		assertThat(searchResults.stream().filter(p -> p.getName().equals("Bob Bobtown")).findFirst()).isNotEmpty();
 		
-		List<Organization> orgs = httpQuery("/api/organizations/search?q=EF1.1&type=ADVISOR_ORG", jack).get(new GenericType<List<Organization>>() {});
+		List<Organization> orgs = httpQuery("/api/organizations/search?q=EF1&type=ADVISOR_ORG", jack).get(new GenericType<List<Organization>>() {});
 		assertThat(orgs.size()).isGreaterThan(0);
-		Organization org = orgs.get(0);
+		Organization org = orgs.stream().filter(o -> o.getName().equalsIgnoreCase("EF1.1")).findFirst().get();
 		
 		query.setText(null);
 		query.setOrgId(org.getId());

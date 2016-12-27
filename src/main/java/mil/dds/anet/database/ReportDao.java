@@ -3,19 +3,19 @@ package mil.dds.anet.database;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.DateTime;
 import org.skife.jdbi.v2.GeneratedKeys;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.Query;
 
+import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
-import mil.dds.anet.beans.search.ReportSearch;
+import mil.dds.anet.beans.search.ReportSearchQuery;
 import mil.dds.anet.database.mappers.PersonMapper;
 import mil.dds.anet.database.mappers.PoamMapper;
 import mil.dds.anet.database.mappers.ReportMapper;
@@ -221,19 +221,9 @@ public class ReportDao implements IAnetDao<Report> {
 				.list();
 	}
 
-	public List<Report> search(ReportSearch query) {
-		StringBuilder queryBuilder = new StringBuilder(
-				"SELECT " + REPORT_FIELDS + "," + PersonDao.PERSON_FIELDS 
-				+ " FROM reports, people WHERE reports.authorId = people.id "
-				+ "AND reports.id IN (");
-		Pair<String,Map<String,Object>> searchData = query.getQuery(dbHandle);
-		queryBuilder.append(searchData.getLeft());
-		queryBuilder.append(")");
-		
-		return dbHandle.createQuery(queryBuilder.toString())
-			.bindFromMap(searchData.getRight())
-			.map(new ReportMapper())
-			.list();
+	public List<Report> search(ReportSearchQuery query) {
+		return AnetObjectEngine.getInstance().getSearcher().getReportSearcher()
+			.runSearch(query, dbHandle);
 	}
 
 	public List<Report> getReportsByAuthorPosition(Position position) {

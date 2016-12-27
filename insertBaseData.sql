@@ -37,7 +37,7 @@ DELETE FROM adminSettings;
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, createdAt, updatedAt) 
 	VALUES ('Jack Jackson', 0, 0, 'hunter+jack@dds.mil', '123-456-78960', 'OF-9', 'Jack is an advisor in EF2.1', 'jack', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, createdAt, updatedAt) 
-	VALUES ('Elizabeth Elizawell', 0, 0, 'hunter+liz@dds.mil', '+1-777-7777', 'Capt', 'elizabeth is another test person we have in the database', 'elizabeth', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	VALUES ('Elizabeth Elizawell', 0, 0, 'hunter+liz@dds.mil', '+1-777-7777', 'Capt', 'Elizabeth is a test advisor we have in the database who is in EF1.1', 'elizabeth', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, createdAt, updatedAt) 
 	VALUES ('Erin Erinson', 0, 0, 'hunter+erin@dds.mil', '+9-23-2323-2323', 'Civ', 'Erin is an Advisor in EF2.2', 'erin', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt) 
@@ -76,12 +76,12 @@ INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES
 
 -- Put Bob into the Super User Billet in EF1
 INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES 
-	((SELECT id from positions where name = 'EF1 SuperUser'), (SELECT id from people where emailAddress = 'hunter+bob@dds.mil'), CURRENT_TIMESTAMP);
+	((SELECT id from positions where name = 'EF1.1 SuperUser'), (SELECT id from people where emailAddress = 'hunter+bob@dds.mil'), CURRENT_TIMESTAMP);
 UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'hunter+bob@dds.mil') WHERE name = 'EF1.1 SuperUser';
 
 -- Put Henry into the Super User Billet in EF2
 INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES 
-	((SELECT id from positions where name = 'EF2 SuperUser'), (SELECT id from people where emailAddress = 'hunter+henry@dds.mil'), CURRENT_TIMESTAMP);
+	((SELECT id from positions where name = 'EF2.1 SuperUser'), (SELECT id from people where emailAddress = 'hunter+henry@dds.mil'), CURRENT_TIMESTAMP);
 UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'hunter+henry@dds.mil') WHERE name = 'EF2.1 SuperUser';
 
 -- Rotate an advisor through a billet ending up with Jack in the EF2 Advisor Billet
