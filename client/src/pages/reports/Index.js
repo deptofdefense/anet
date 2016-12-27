@@ -1,11 +1,8 @@
 import React from 'react'
-import {Table} from 'react-bootstrap'
-import {Link} from 'react-router'
 
-import API from '../../api'
-import Breadcrumbs from '../../components/Breadcrumbs'
-
-import moment from 'moment'
+import API from 'api'
+import Breadcrumbs from 'components/Breadcrumbs'
+import ReportTable from 'components/ReportTable'
 
 export default class ReportsIndex extends React.Component {
 	constructor(props) {
@@ -18,6 +15,7 @@ export default class ReportsIndex extends React.Component {
 			reports(f:getAll, pageSize:100, pageNum:0) {
 				id, intent, state
 				author {
+					id
 					name
 				}
 			}
@@ -28,28 +26,7 @@ export default class ReportsIndex extends React.Component {
 		return (
 			<div>
 				<Breadcrumbs items={[['My reports', '/reports']]} />
-
-				<Table striped>
-					<thead>
-						<tr>
-							<th>Reporter</th>
-							<th>Summary</th>
-							<th>Status</th>
-							<th>Last updated</th>
-						</tr>
-					</thead>
-
-					<tbody>
-						{this.state.reports.map(report =>
-							<tr key={report.id}>
-								<td>{report.author && report.author.name}</td>
-								<td><Link to={"/reports/" + report.id}>{report.intent}</Link></td>
-								<td>{report.state}</td>
-								<td>{moment(report.updatedAt).fromNow()}</td>
-							</tr>
-						)}
-					</tbody>
-				</Table>
+				<ReportTable reports={this.state.reports} showAuthors={true} />
 			</div>
 		)
 	}

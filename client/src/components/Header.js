@@ -2,9 +2,9 @@ import React from 'react'
 import {Link} from 'react-router'
 import {Injectable, Injector} from 'react-injectables'
 
-import SearchBar from './SearchBar.js'
+import SearchBar from 'components/SearchBar.js'
 
-import logo from '../resources/logo.png'
+import logo from 'resources/logo.png'
 
 const backgroundCss = {
 	position: 'fixed',

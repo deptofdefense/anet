@@ -2,6 +2,8 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import {Form as BSForm} from 'react-bootstrap'
 
+import FormField from 'components/FormField'
+
 export default class Form extends React.Component {
 	static propTypes = Object.assign({}, BSForm.propTypes, {
 		formFor: React.PropTypes.object
@@ -33,3 +35,6 @@ export default class Form extends React.Component {
 		)
 	}
 }
+
+// just a little sugar to make importing and building forms easier
+Form.Field = FormField

@@ -5,7 +5,7 @@ import {IndexLinkContainer as Link} from 'react-router-bootstrap'
 export default class Breadcrumbs extends React.Component {
 	makeItem(item) {
 		return (
-			<Link key={item[0]} to={item[1]}>
+			<Link key={item[1]} to={item[1]}>
 				<Breadcrumb.Item>{item[0]}</Breadcrumb.Item>
 			</Link>
 		)

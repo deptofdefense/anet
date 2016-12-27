@@ -4,15 +4,14 @@ import autobind from 'autobind-decorator'
 
 import DatePicker from 'react-bootstrap-date-picker'
 
-import {ContentForHeader} from '../../components/Header'
-import Form from '../../components/Form'
-import FormField from '../../components/FormField'
-import RadioGroup from '../../components/RadioGroup'
-import Breadcrumbs from '../../components/Breadcrumbs'
-import Autocomplete from '../../components/Autocomplete'
-import TextEditor from '../../components/TextEditor'
+import {ContentForHeader} from 'components/Header'
+import Form from 'components/Form'
+import RadioGroup from 'components/RadioGroup'
+import Breadcrumbs from 'components/Breadcrumbs'
+import Autocomplete from 'components/Autocomplete'
+import TextEditor from 'components/TextEditor'
 
-import API from '../../api'
+import API from 'api'
 
 export default class ReportNew extends React.Component {
 	static contextTypes = {
@@ -77,37 +76,37 @@ export default class ReportNew extends React.Component {
 					<fieldset>
 						<legend>Engagement details <small>Required</small></legend>
 
-						<FormField id="intent" label="Meeting subject" placeholder="What happened?" data-focus>
-							<FormField.ExtraCol>{250 - report.intent.length} characters remaining</FormField.ExtraCol>
-						</FormField>
+						<Form.Field id="intent" label="Meeting subject" placeholder="What happened?" data-focus>
+							<Form.Field.ExtraCol>{250 - report.intent.length} characters remaining</Form.Field.ExtraCol>
+						</Form.Field>
 
-						<FormField id="engagementDate">
+						<Form.Field id="engagementDate">
 							<DatePicker placeholder="When did it happen?">
 								<InputGroup.Addon>📆</InputGroup.Addon>
 							</DatePicker>
-						</FormField>
+						</Form.Field>
 
-						<FormField id="location" addon="📍">
+						<Form.Field id="location" addon="📍">
 							<Autocomplete valueKey="name" placeholder="Where did it happen?" url="/api/locations/search" />
-						</FormField>
+						</Form.Field>
 
-						<FormField id="atmosphere">
+						<Form.Field id="atmosphere">
 							<RadioGroup bsSize="large">
 								<Radio value="positive">👍</Radio>
 								<Radio value="neutral">😐</Radio>
 								<Radio value="negative">👎</Radio>
 							</RadioGroup>
-						</FormField>
+						</Form.Field>
 
 						{report.atmosphere && report.atmosphere !== 'positive' &&
-							<FormField id="atmosphereDetails" />
+							<Form.Field id="atmosphereDetails" />
 						}
 					</fieldset>
 
 					<fieldset>
 						<legend>Meeting attendance <small>Required</small></legend>
 
-						<FormField id="attendees">
+						<Form.Field id="attendees">
 							<Autocomplete placeholder="Who was there?" url="/api/people/search" template={person =>
 								<span>{person.name} {person.rank && person.rank.toUpperCase()}</span>
 							} onChange={this.addAttendee} clearOnSelect={true} />
@@ -131,20 +130,20 @@ export default class ReportNew extends React.Component {
 								</tbody>
 							</Table>
 
-							<FormField.ExtraCol className="shortcut-list">
+							<Form.Field.ExtraCol className="shortcut-list">
 								<h5>Shortcuts</h5>
 								<Button bsStyle="link">Add myself</Button>
 								{recents.persons.map(person =>
 									<Button key={person.id} bsStyle="link" onClick={this.addAttendee.bind(this, person)}>Add {person.name}</Button>
 								)}
-							</FormField.ExtraCol>
-						</FormField>
+							</Form.Field.ExtraCol>
+						</Form.Field>
 					</fieldset>
 
 					<fieldset>
 						<legend>Milestones</legend>
 
-						<FormField id="poams">
+						<Form.Field id="poams">
 							<Autocomplete url="/api/poams/search" template={poam =>
 								<span>{[poam.shortName, poam.longName].join(' - ')}</span>
 							} onChange={this.addPoam} clearOnSelect={true} />
@@ -168,25 +167,25 @@ export default class ReportNew extends React.Component {
 								</tbody>
 							</Table>
 
-							<FormField.ExtraCol className="shortcut-list">
+							<Form.Field.ExtraCol className="shortcut-list">
 								<h5>Shortcuts</h5>
 								{recents.poams.map(poam =>
 									<Button key={poam.id} bsStyle="link" onClick={this.addPoam.bind(this, poam)}>Add "{poam.longName}"</Button>
 								)}
-							</FormField.ExtraCol>
-						</FormField>
+							</Form.Field.ExtraCol>
+						</Form.Field>
 					</fieldset>
 
 					<fieldset>
 						<legend>Meeting discussion</legend>
 
-						<FormField id="reportText" label="" horizontal={false}>
+						<Form.Field id="reportText" label="" horizontal={false}>
 							<TextEditor label="Key outcomes" />
-						</FormField>
+						</Form.Field>
 
-						<FormField id="nextSteps" label="" horizontal={false} style={{marginTop: '5rem'}}>
+						<Form.Field id="nextSteps" label="" horizontal={false} style={{marginTop: '5rem'}}>
 							<TextEditor label="Next steps" />
-						</FormField>
+						</Form.Field>
 					</fieldset>
 
 					<fieldset>
@@ -208,9 +207,7 @@ export default class ReportNew extends React.Component {
 		event.stopPropagation()
 		event.preventDefault()
 
-		document.querySelectorAll('form [type=submit]').forEach(button => button.disabled = true)
-
-		API.send('/api/reports/new', this.state.report)
+		API.send('/api/reports/new', this.state.report, {disableSubmits: true})
 			.then(report => {
 				if (report.code) throw report.code
 				console.log(report);

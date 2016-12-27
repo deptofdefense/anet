@@ -108,15 +108,62 @@ This is an attempt to describe the complete start to finish of how a request mak
 8. After a Resource method returns, any registered post filters will run
 	- Currently `mil.dds.anet.views.ViewResponseFilter` is the only filter.  This filter will attach the user principal as well as the current URL onto the view object if that's part of the response.
 
+## How the GraphQL API Works
+GraphQL (http://graphql.org/) is a query language developed by Facebook to allow API consumers to explore a 'Graph' without requiring the server to have implemented every possible API call ahead of time.  The client developer can ask for what data they want, and the GraphQL layer w
+ill figure out what data it needs to fetch and then fetch specifcally that data.  This reduces the number of round-trip HTTP calls that need to be done between a client and a server.
+
+In ANET, we implemented GraphQL using the graphql-java (https://github.com/graphql-java/graphql-java) implementation on top of our REST interface.  Here is a brief run-through of how a graphql query gets executed:
+
+1. All GraphQL queries go to the `GraphQLResource#graphql()` method.  This resource is initalized by being passed all of the other REST Resources within ANET.
+2. The GraphQLResource will scan through all of the other REST Resources and look for methods that are annotated with the `@GraphQLFetcher` annotation. This annotation tells GraphQL that it can use this method as a "entry point" into the ANET Graph. 
+    - "The Anet Graph" is the term we'll use to describe all of the data within ANET and the relationships between the different object types.  ie: A Person with id 123 has a Position which belongs to an Organization... and so on.
+	- You can always pass the `f:` argument to call a Resource method, this will use either the value passed to the `@GraphQLFetcher`, or the name of the method if no value is passed.
+3. Once you have an object that was returned from a Resource (these are the Beans), you can call any of the 'get' methods on that object to fetch fields.  To put this all together, the query `person(id:123) { id, name}` will look for a method on PersonResource that takes a parameter of name `id`, and then when it gets the `Person` object back, it will call the `getId()` and `getName()` methods on that Person object to fetch those fields.
+4. Each of the primary objects within ANET (The Beans, or Person, Position, Organization, Report, Poam), knows about its relationships to other objects.  Similar to the above example, if you query graphql with `person(id:123) { postion {name }}` it will find the person with id 123, and then call the `getPosition()` method on the Person object to fetch that relationship.
+    - This is an example of how GraphQL saves us a round-trip to the server versus using a strict REST api, where the client would have to call '/people/123' and then '/positions/XXX'.
+5. For any method where arguments are required, the GraphQLResource scans all of the methods in Resources and Bean classes to look for what arguments are required and then will look for those arguments passed via the GraphQL query.
+    - In a REST Resource, we use the existing `@PathParam` and `@QueryParam` annotations to pull the name of the parameters.
+    - In the Bean classes, we use `@GraphQLParam` to annotate the name of the parameters.
+
+
+Here's a sample GraphQL query and how ANET processes it: 
+` person(id:123) {
+	id,
+	name,
+	position { 
+		id,
+		name,
+	},
+	authoredReports(pageNum:0, pageSize:10) { 
+		id, 
+		intent
+	}
+}`
+
+1. Because you POST'd this to /graphql, Dropwizard will take the JSON and deserialize it into a Map<String,Object> and pass it to the graphql method. 
+2. The `graphql-java` library will parse the structure and validate the input. 
+3. The `person` keyword will tell GraphQL that you want to access the `person` object type at the root level. This goes to the `PersonResource`. 
+4. The `AnetResourceDataFetcher` is the class that will get asked to load the person object. It looks at all of the methods on `PersonResource` that are annotated with `@GraphQLFetcher` and figures out which one it has the right arguments to call. In this case it will be `getById(int id)`.  That method is called and it will do a database load and return the person. 
+5. GraphQL next looks at the fields on the Person that we need to load, in this case `id, name, position, authoredReports`.  For each of these fields, they were defined on the person type by the `GraphQLResource.buildTypeFromBean` method, which scans a Bean class for getter methods and wires them up to be used later.  In this case it will look for methods called `getId()`, `getName()`, `getPosition()` and `getAuthoredReports()`.  Each of these exist except for the `getAuthoredReports()`, we'll get to that. 
+6. Each of these other methods are called and the values returned.  For `getPosition()` this causes a DB query to fire, which loads the Position (if necessary).  
+7. For `getAuthoredReports`, when `buildTypeFromBean()` was scanning the Person Bean it noticed that this method required arguments, so it kept track of those.  When you try to call this method it will inspect the query to see if you passed the correct arguments. If so it will pass those arguments, and if not then it will throw an error. 
+    - Bottom line: All `get*()` methods on Beans are exposed. If they require arguments, you *MUST* annotate them with `@GraphQLParam`.  
+	- You can use `@GraphQLIgnore` to tell GraphQL to not expose a getter method. 
+
+
+* Note: GraphQL does _not_ use Jackson to serialize anything into JSON, it individually fetches the exact fields the client requests and transforms those into JSON using its own type system. 
+* Note: While GraphQL does technically support writing data to the server through mutations, we do not have any of that implemented.  You must still use the REST api to write any data to ANET. 
+
 ## How the frontend works
 
 React structures the application into components instead of technologies. This means that everything that gets rendered on the
 page has its own file based on its functionality instead of regular html, css, and js files. For example, the new report form
-lives in `client/pages/reports/New.js` and contains everything needed to render that form (all the CSS, HTML, and JS). It
-composes a number of other components, for example the HorizontalFormField which lives in `client/components/FormField.js`,
-which likewise contains everything needed to render a form field to the screen. This makes it very easy to figure out where
-any given element on screen comes from; it's either in `client/pages` or `client/components`. Pages are just compositions of
-components written in HTML syntax, and components can also compose other components for reusability.
+lives in `client/src/pages/reports/New.js` and contains everything needed to render that form (all the CSS, HTML, and JS). It
+composes a number of other components, for example the Form and FormField components which live in `client/src/components/Form.js`
+and `client/src/components/FormField.js`, which likewise contains everything needed to render a form field to the screen. This
+makes it very easy to figure out where any given element on screen comes from; it's either in `client/src/pages` or
+`client/src/components`. Pages are just compositions of components written in HTML syntax, and components can also compose
+other components for reusability.
 
 ## Deploying to production
 

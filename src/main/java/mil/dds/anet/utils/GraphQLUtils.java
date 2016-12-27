@@ -14,19 +14,33 @@ import graphql.schema.GraphQLOutputType;
 import graphql.schema.GraphQLType;
 import graphql.schema.GraphQLTypeReference;
 import mil.dds.anet.graphql.GraphQLDateTimeType;
+import mil.dds.anet.graphql.PropertyDataFetcherWithArgs;
 import mil.dds.anet.views.AbstractAnetBean;
 
 public class GraphQLUtils {
 
 	public static GraphQLFieldDefinition buildField(String name, Type type) {		
-		return buildField(name, GraphQLUtils.getGraphQLTypeForJavaType(type));
-		
+		return buildField(name, GraphQLUtils.getGraphQLTypeForJavaType(type));		
 	}
 
 	public static GraphQLFieldDefinition buildField(String name, GraphQLType type) { 
 		return GraphQLFieldDefinition.newFieldDefinition()
 			.type((GraphQLOutputType) type)
 			.name(name)
+			.build();
+	}
+	
+	public static GraphQLFieldDefinition buildFieldWithArgs(String name, Type type, Class<?> beanClazz) {		
+		return buildFieldWithArgs(name, GraphQLUtils.getGraphQLTypeForJavaType(type), beanClazz);		
+	}
+	
+	public static GraphQLFieldDefinition buildFieldWithArgs(String fieldName, GraphQLType type, Class<?> beanClazz) {
+		PropertyDataFetcherWithArgs dataFetcher = new PropertyDataFetcherWithArgs(fieldName, beanClazz);
+		return GraphQLFieldDefinition.newFieldDefinition()
+			.type((GraphQLOutputType) type)
+			.name(fieldName)
+			.dataFetcher(dataFetcher)
+			.argument(dataFetcher.getValidArguments())
 			.build();
 	}
 	
