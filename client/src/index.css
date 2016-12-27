@@ -1,5 +1,5 @@
 body {
-	background: #f7f7f7;
+	background: #f2f2f2;
 	margin-top: 152px;
 }
 
@@ -7,15 +7,20 @@ h5 {
 	text-decoration: underline;
 }
 
+.breadcrumb {
+	background: #f9f9f9;
+}
+
 fieldset {
-	background: white;
-	border: 1px solid #eee;
+	background: #fff;
+	border: 1px solid #e0e0e0;
 	padding: 1.7rem 3rem 1.9rem 3rem;
 	margin: 3rem 0;
 }
 
 fieldset legend {
 	margin-bottom: 0;
+	border: none;
 }
 
 fieldset legend small {
@@ -78,6 +83,6 @@ fieldset legend small {
 	min-height: 600px;
 }
 
-.todo { 
+.todo {
 	background-color: red;
 }
