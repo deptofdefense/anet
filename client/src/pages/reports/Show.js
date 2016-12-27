@@ -2,15 +2,15 @@ import React from 'react'
 import {Link} from 'react-router'
 import moment from 'moment'
 
-import API from '../../api'
-import Breadcrumbs from '../../components/Breadcrumbs'
-import Form from '../../components/Form'
-import FormField from '../../components/FormField'
+import API from 'api'
+import Breadcrumbs from 'components/Breadcrumbs'
+import Form from 'components/Form'
 
 const atmosphereIconStyle = {
 	fontSize: '2rem',
 	display: 'inline-block',
-	marginTop: '-4px'
+	marginTop: '-4px',
+	marginRight: '1rem',
 }
 
 const atmosphereIcons = {
@@ -54,18 +54,18 @@ export default class ReportShow extends React.Component {
 					<fieldset>
 						<legend>Report #{report.id}</legend>
 
-						<FormField id="intent" label="Subject" type="static" />
-						<FormField id="engagementDate" label="Date 📆" type="static" value={moment(report.engagementDate).format("L")} />
-						<FormField id="location" label="Location 📍" type="static" value={report.location && report.location.name} />
-						<FormField id="atmosphere" label="Atmospherics" type="static">
+						<Form.Field id="intent" label="Subject" type="static" />
+						<Form.Field id="engagementDate" label="Date 📆" type="static" value={moment(report.engagementDate).format("L")} />
+						<Form.Field id="location" label="Location 📍" type="static" value={report.location && report.location.name} />
+						<Form.Field id="atmosphere" label="Atmospherics" type="static">
 							<span style={atmosphereIconStyle}>{atmosphereIcons[report.atmosphere]}</span>
-							{report.atmosphereDetails && " " + report.atmosphereDetails}
-						</FormField>
-						<FormField id="author" label="Report author" type="static">
+							{report.atmosphereDetails}
+						</Form.Field>
+						<Form.Field id="author" label="Report author" type="static">
 							{report.author &&
 								<Link to={"/users/" + report.author.id}>{report.author.name}</Link>
 							}
-						</FormField>
+						</Form.Field>
 					</fieldset>
 
 					<fieldset>

@@ -1,7 +1,7 @@
 import React from 'react'
 import {Button, Modal} from 'react-bootstrap'
 
-import Breadcrumbs from '../components/Breadcrumbs'
+import Breadcrumbs from 'components/Breadcrumbs'
 
 export default class Home extends React.Component {
 	constructor(props) {

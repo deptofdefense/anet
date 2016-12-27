@@ -158,11 +158,12 @@ Here's a sample GraphQL query and how ANET processes it:
 
 React structures the application into components instead of technologies. This means that everything that gets rendered on the
 page has its own file based on its functionality instead of regular html, css, and js files. For example, the new report form
-lives in `client/pages/reports/New.js` and contains everything needed to render that form (all the CSS, HTML, and JS). It
-composes a number of other components, for example the HorizontalFormField which lives in `client/components/FormField.js`,
-which likewise contains everything needed to render a form field to the screen. This makes it very easy to figure out where
-any given element on screen comes from; it's either in `client/pages` or `client/components`. Pages are just compositions of
-components written in HTML syntax, and components can also compose other components for reusability.
+lives in `client/src/pages/reports/New.js` and contains everything needed to render that form (all the CSS, HTML, and JS). It
+composes a number of other components, for example the Form and FormField components which live in `client/src/components/Form.js`
+and `client/src/components/FormField.js`, which likewise contains everything needed to render a form field to the screen. This
+makes it very easy to figure out where any given element on screen comes from; it's either in `client/src/pages` or
+`client/src/components`. Pages are just compositions of components written in HTML syntax, and components can also compose
+other components for reusability.
 
 ## Deploying to production
 
