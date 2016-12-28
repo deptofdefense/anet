@@ -41,6 +41,7 @@ import mil.dds.anet.beans.search.ReportSearchQuery;
 import mil.dds.anet.database.AdminDao.AdminSettingKeys;
 import mil.dds.anet.database.ReportDao;
 import mil.dds.anet.graphql.GraphQLFetcher;
+import mil.dds.anet.graphql.GraphQLParam;
 import mil.dds.anet.graphql.IGraphQLResource;
 import mil.dds.anet.utils.ResponseUtils;
 
@@ -318,7 +319,7 @@ public class ReportResource implements IGraphQLResource {
 	@POST
 	@GraphQLFetcher
 	@Path("/search")
-	public List<Report> search(ReportSearchQuery query) {
+	public List<Report> search(@GraphQLParam("query") ReportSearchQuery query) {
 		return dao.search(query);
 	}
 

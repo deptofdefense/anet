@@ -3,7 +3,7 @@ package mil.dds.anet.beans.search;
 import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.beans.Person.Status;
 
-public class PersonSearchQuery {
+public class PersonSearchQuery implements ISearchQuery {
 
 	String text;
 	Integer orgId;

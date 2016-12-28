@@ -24,6 +24,7 @@ import mil.dds.anet.beans.Position.PositionType;
 import mil.dds.anet.beans.search.PersonSearchQuery;
 import mil.dds.anet.database.PersonDao;
 import mil.dds.anet.graphql.GraphQLFetcher;
+import mil.dds.anet.graphql.GraphQLParam;
 import mil.dds.anet.graphql.IGraphQLResource;
 
 @Path("/api/people")
@@ -136,7 +137,7 @@ public class PersonResource implements IGraphQLResource {
 	@POST
 	@GraphQLFetcher
 	@Path("/search")
-	public List<Person> searchByName(PersonSearchQuery query) {
+	public List<Person> search(@GraphQLParam("query") PersonSearchQuery query) {
 		return dao.search(query);
 	}
 	

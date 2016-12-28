@@ -2,7 +2,7 @@ package mil.dds.anet.beans.search;
 
 import org.joda.time.DateTime;
 
-public class ReportSearchQuery {
+public class ReportSearchQuery implements ISearchQuery {
 
 	Integer authorId;
 	String text;
