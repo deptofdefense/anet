@@ -99,6 +99,8 @@ export default class FormField extends React.Component {
 		let id = this.props.id
 		let value = event && event.target ? event.target.value : event
 		let formContext = this.context.formFor
+		console.log(id)
+		console.log(value)
 		if (formContext)
 			formContext[id] = value
 

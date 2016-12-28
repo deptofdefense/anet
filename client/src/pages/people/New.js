@@ -30,11 +30,10 @@ export default class PersonNew extends React.Component {
 				role: 'PRINCIPAL',
 				emailAddress: '',
 				phoneNumber: '',
-				rank: '',
 				biography: '',
 				gender: 'MALE',
 				country: 'Afghanistan',
-				Rank: 'OF-4',
+				rank: 'OF-4',
 				endOfTourDate: ''
 			}
 		}
@@ -56,8 +55,8 @@ export default class PersonNew extends React.Component {
 					<fieldset>
 						<legend>Create a new Person</legend>
 						<Form.Field id="name" label="Name" />
-						<Form.Field label="Role" >
-							<FormControl componentClass="select" defaultValue={person.role} id="role">
+						<Form.Field label="Role" id="role" >
+							<FormControl componentClass="select" >
 								<option value="ADVISOR">Advisor</option>
 								<option value="PRINCIPAL">Principal</option>
 							</FormControl>
@@ -68,8 +67,8 @@ export default class PersonNew extends React.Component {
 						<legend>Additional Information</legend>
 						<Form.Field id="emailAddress" label="Email" />
 						<Form.Field id="phoneNumber" label="Phone Number" />
-						<Form.Field label="Rank" >
-							<FormControl componentClass="select" defaultValue={person.rank} id="rank" >
+						<Form.Field label="Rank" id="rank" >
+							<FormControl componentClass="select" > 
 								<option value="OF-1" >OF-1</option>
 								<option value="OF-2" >OF-2</option>
 								<option value="OF-3" >OF-3</option>
