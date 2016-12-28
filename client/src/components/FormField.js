@@ -49,7 +49,7 @@ export default class FormField extends React.Component {
 
 		// if children are provided, render those, but special case them to
 		// automatically set value and children props
-		} else if (children.length) {
+		} else if (!this.props.componentClass && children.length) {
 			children = children.map(child => {
 				let propTypes = child.type.propTypes
 
@@ -63,6 +63,9 @@ export default class FormField extends React.Component {
 
 		// otherwise render out a default FormControl input element
 		} else {
+			if (children.length)
+				childProps.children = children
+
 			children = <FormControl {...childProps} defaultValue={defaultValue} onChange={this.onChange} />
 		}
 
@@ -98,9 +101,8 @@ export default class FormField extends React.Component {
 	onChange(event) {
 		let id = this.props.id
 		let value = event && event.target ? event.target.value : event
+		console.log('CHANGE', id, value);
 		let formContext = this.context.formFor
-		console.log(id)
-		console.log(value)
 		if (formContext)
 			formContext[id] = value
 
