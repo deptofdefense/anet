@@ -6,7 +6,7 @@ public interface ISearcher {
 	
 	public IPersonSearcher getPersonSearcher();
 	
-//	public IOrganizationSearcher getOrganizationSearcher();
+	public IOrganizationSearcher getOrganizationSearcher();
 	
 //	public IPositionSearcher getPositionSearcher();
 	

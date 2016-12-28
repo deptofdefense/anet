@@ -15,6 +15,7 @@ import org.junit.Test;
 import io.dropwizard.client.JerseyClientBuilder;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Organization.OrganizationType;
+import mil.dds.anet.beans.search.OrganizationSearchQuery;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Position;
 import mil.dds.anet.test.beans.OrganizationTest;
@@ -77,5 +78,25 @@ public class OrganizationResourceTest extends AbstractResourceTest {
 		List<Organization> children = httpQuery(String.format("/api/organizations/%d/children", created.getId()), admin)
 			.get(new GenericType<List<Organization>>() {});
 		assertThat(children).hasSize(1).contains(child);
+	}
+	
+	@Test
+	public void searchTest() { 
+		Person jack = getJackJackson();
+		
+		//Search by name
+		OrganizationSearchQuery query = new OrganizationSearchQuery();
+		query.setText("Ministry");
+		List<Organization> results = httpQuery("/api/organizations/search", jack).post(Entity.json(query), new GenericType<List<Organization>>() {});
+		assertThat(results).isNotEmpty();
+		
+		//Search by name and type
+		query.setType(OrganizationType.ADVISOR_ORG);
+		results = httpQuery("/api/organizations/search", jack).post(Entity.json(query), new GenericType<List<Organization>>() {});
+		assertThat(results).isEmpty(); //Should be empty!
+		
+		query.setType(OrganizationType.PRINCIPAL_ORG);
+		results = httpQuery("/api/organizations/search", jack).post(Entity.json(query), new GenericType<List<Organization>>() {});
+		assertThat(results).isNotEmpty();
 	}
 }

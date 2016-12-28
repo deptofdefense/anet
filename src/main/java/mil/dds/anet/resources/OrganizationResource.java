@@ -18,10 +18,11 @@ import javax.ws.rs.core.Response.Status;
 import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Organization;
-import mil.dds.anet.beans.Organization.OrganizationType;
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.search.OrganizationSearchQuery;
 import mil.dds.anet.database.OrganizationDao;
 import mil.dds.anet.graphql.GraphQLFetcher;
+import mil.dds.anet.graphql.GraphQLParam;
 import mil.dds.anet.graphql.IGraphQLResource;
 import mil.dds.anet.utils.AuthUtils;
 
@@ -49,7 +50,6 @@ public class OrganizationResource implements IGraphQLResource {
 		return dao.getAll(pageNum, pageSize);
 	} 
 	
-	
 	@POST
 	@Path("/new")
 	@RolesAllowed("ADMINISTRATOR")
@@ -76,11 +76,11 @@ public class OrganizationResource implements IGraphQLResource {
 		return (numRows == 1) ? Response.ok().build() : Response.status(Status.NOT_FOUND).build();
 	}
 	
-	@GET
+	@POST
 	@GraphQLFetcher
 	@Path("/search")
-	public List<Organization> search(@QueryParam("q") String name, @QueryParam("type") OrganizationType type) {
-		return dao.searchByName(name, type);
+	public List<Organization> search(@GraphQLParam("query") OrganizationSearchQuery query ) {
+		return dao.search(query);
 	}
 	
 	@GET
