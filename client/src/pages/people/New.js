@@ -1,5 +1,5 @@
 import React from 'react'
-import {InputGroup, Button, FormControl} from 'react-bootstrap'
+import {InputGroup, Button} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
 import DatePicker from 'react-bootstrap-date-picker'
