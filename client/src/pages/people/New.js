@@ -55,11 +55,9 @@ export default class PersonNew extends React.Component {
 					<fieldset>
 						<legend>Create a new Person</legend>
 						<Form.Field id="name" label="Name" />
-						<Form.Field label="Role" id="role" >
-							<FormControl componentClass="select" >
-								<option value="ADVISOR">Advisor</option>
-								<option value="PRINCIPAL">Principal</option>
-							</FormControl>
+						<Form.Field id="role" label="Role" componentClass="select">
+							<option value="ADVISOR">Advisor</option>
+							<option value="PRINCIPAL">Principal</option>
 						</Form.Field>
 					</fieldset>
 
@@ -67,43 +65,41 @@ export default class PersonNew extends React.Component {
 						<legend>Additional Information</legend>
 						<Form.Field id="emailAddress" label="Email" />
 						<Form.Field id="phoneNumber" label="Phone Number" />
-						<Form.Field label="Rank" id="rank" >
-							<FormControl componentClass="select" > 
-								<option value="OF-1" >OF-1</option>
-								<option value="OF-2" >OF-2</option>
-								<option value="OF-3" >OF-3</option>
-								<option value="OF-4" >OF-4</option>
-								<option value="OF-5" >OF-5</option>
-								<option value="OF-6" >OF-6</option>
-							</FormControl>
+						<Form.Field id="rank" label="Rank" componentClass="select">
+							<option value="OF-1" >OF-1</option>
+							<option value="OF-2" >OF-2</option>
+							<option value="OF-3" >OF-3</option>
+							<option value="OF-4" >OF-4</option>
+							<option value="OF-5" >OF-5</option>
+							<option value="OF-6" >OF-6</option>
 						</Form.Field>
-						<Form.Field id="gender" label="Gender" >
-							<FormControl componentClass="select" >
-								<option>Male</option>
-								<option>Female</option>
-							</FormControl>
+
+						<Form.Field id="gender" label="Gender" componentClass="select">
+							<option>Male</option>
+							<option>Female</option>
 						</Form.Field>
-						<Form.Field id="country" label="Country" >
-							<FormControl componentClass="select" >
-								<option>Afghanistan</option>
-								<option>Australia</option>
-								<option>Romania</option>
-								<option>Turkey</option>
-								<option>United States of America</option>
-								<option>United Kingdom</option>
-								<option>Germany</option>
-							</FormControl>
+
+						<Form.Field id="country" label="Country" componentClass="select">
+							<option>Afghanistan</option>
+							<option>Australia</option>
+							<option>Romania</option>
+							<option>Turkey</option>
+							<option>United States of America</option>
+							<option>United Kingdom</option>
+							<option>Germany</option>
 						</Form.Field>
-						<Form.Field id="endOfTourDate" >
+
+						<Form.Field id="endOfTourDate">
 							<DatePicker placeholder="End of Tour Date">
 								<InputGroup.Addon>📆</InputGroup.Addon>
 							</DatePicker>
 						</Form.Field>
-						<Form.Field id="biography" label="Biography" >
+
+						<Form.Field id="biography" label="Biography">
 							<TextEditor label="" />
 						</Form.Field>
 					</fieldset>
-					
+
 					<fieldset>
 						<Button bsSize="large" bsStyle="primary" type="submit" className="pull-right">Create person</Button>
 					</fieldset>
