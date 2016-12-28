@@ -18,6 +18,7 @@ import ReportsIndex from './pages/reports/Index'
 import ReportNew from './pages/reports/New'
 import ReportShow from './pages/reports/Show'
 import PersonShow from './pages/people/Show'
+import PersonNew from './pages/people/New'
 
 import GraphiQL from './pages/GraphiQL'
 
@@ -43,6 +44,7 @@ ReactDOM.render((
 				</Route>
 
 				<Route path="people">
+					<Route path="new" component={PersonNew} />
 					<Route path=":id" component={PersonShow} />
 				</Route>
 
