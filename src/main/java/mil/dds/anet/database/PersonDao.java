@@ -152,7 +152,7 @@ public class PersonDao implements IAnetDao<Person> {
 		} else {
 			sql = "SELECT " + PersonDao.PERSON_FIELDS
 				+ "FROM people WHERE people.id IN ( "
-					+ "SELECT top(3) reportPeople.personId "
+					+ "SELECT reportPeople.personId "
 					+ "FROM reports JOIN reportPeople ON reports.id = reportPeople.reportId "
 					+ "WHERE authorId = :authorId "
 					+ "GROUP BY personId "

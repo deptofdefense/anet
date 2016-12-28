@@ -187,7 +187,7 @@ public class AnetResourceDataFetcher implements DataFetcher {
 			return method.invoke(resource, args.toArray());
 		} catch (Exception e) { 
 			if (e.getCause() != null) { 
-				throw new WebApplicationException(e.getCause().getMessage());
+				throw new WebApplicationException(e.getCause().getMessage(), e);
 			} else {
 				throw new WebApplicationException(e.getMessage());
 			}
