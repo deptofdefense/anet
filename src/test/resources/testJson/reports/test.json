@@ -8,10 +8,8 @@
 	"location": {
 		"id": null,
 		"name": "The Boat Dock",
-		"latLng": {
-			"lat": 32.456,
-			"lng": -123.4999
-		}
+		"lat": 32.456,
+		"lng": -123.4999
 	},
 	"intent": "Check up with Steve",
 	"attendees": [{

@@ -19,11 +19,12 @@ import javax.ws.rs.core.Response.Status;
 import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
-import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Position.PositionType;
+import mil.dds.anet.beans.search.PersonSearchQuery;
 import mil.dds.anet.database.PersonDao;
 import mil.dds.anet.graphql.GraphQLFetcher;
+import mil.dds.anet.graphql.GraphQLParam;
 import mil.dds.anet.graphql.IGraphQLResource;
 
 @Path("/api/people")
@@ -133,11 +134,11 @@ public class PersonResource implements IGraphQLResource {
 	 * @param role either PRINCIPAL, or ADVISOR will search people with that role. 
 	 * @return a list of people objects
 	 */
-	@GET
+	@POST
 	@GraphQLFetcher
 	@Path("/search")
-	public List<Person> searchByName(@QueryParam("q") String query, @QueryParam("role") Role role) {
-		return dao.searchByName(query, role);
+	public List<Person> search(@GraphQLParam("query") PersonSearchQuery query) {
+		return dao.search(query);
 	}
 	
 	/**
@@ -157,5 +158,11 @@ public class PersonResource implements IGraphQLResource {
 		return dao.getRecentPeople(user);
 	}
 	
+	@GET
+	@GraphQLFetcher("me")
+	@Path("/me")
+	public Person getCurrentUser(@Auth Person user) { 
+		return user;
+	}
 	
 }

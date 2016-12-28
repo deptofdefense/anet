@@ -8,12 +8,15 @@ import org.skife.jdbi.v2.GeneratedKeys;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.Query;
 
+import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
+import mil.dds.anet.beans.search.ReportSearchQuery;
+import mil.dds.anet.database.mappers.PersonMapper;
 import mil.dds.anet.database.mappers.PoamMapper;
 import mil.dds.anet.database.mappers.ReportMapper;
 import mil.dds.anet.database.mappers.ReportPersonMapper;
@@ -218,22 +221,9 @@ public class ReportDao implements IAnetDao<Report> {
 				.list();
 	}
 
-	public List<Report> search(String query) {
-		String sql;
-		if (DaoUtils.isMsSql(dbHandle)) {
-			sql = "SELECT " + REPORT_FIELDS + ", " + PersonDao.PERSON_FIELDS
-				+ "FROM reports, people "
-				+ "WHERE FREETEXT ((text, nextSteps, intent, atmosphereDetails),:query) "
-				+ "AND reports.authorId = people.id";
-		} else {
-			sql = "SELECT " + REPORT_FIELDS + ", " + PersonDao.PERSON_FIELDS
-				+ "FROM reports WHERE text LIKE '%' || :query || '%' "
-				+ "AND reports.authorId = people.id";
-		}
-		return dbHandle.createQuery(sql)
-			.bind("query", query)
-			.map(new ReportMapper())
-			.list();
+	public List<Report> search(ReportSearchQuery query) {
+		return AnetObjectEngine.getInstance().getSearcher().getReportSearcher()
+			.runSearch(query, dbHandle);
 	}
 
 	public List<Report> getReportsByAuthorPosition(Position position) {
