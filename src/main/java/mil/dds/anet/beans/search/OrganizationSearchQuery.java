@@ -2,7 +2,7 @@ package mil.dds.anet.beans.search;
 
 import mil.dds.anet.beans.Organization.OrganizationType;
 
-public class OrganizationSearchQuery {
+public class OrganizationSearchQuery implements ISearchQuery {
 
 	String text;
 	OrganizationType type;

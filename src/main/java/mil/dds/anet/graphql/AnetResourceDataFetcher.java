@@ -159,20 +159,22 @@ public class AnetResourceDataFetcher implements DataFetcher {
 			}
 		
 			//Handle missing arguments but @DefaultValue annotations.
-			if (arg == null || param.isAnnotationPresent(DefaultValue.class)) { 
+			if (arg == null && param.isAnnotationPresent(DefaultValue.class)) { 
 				arg = param.getAnnotation(DefaultValue.class).value();
 			}
-			
+			System.out.println("a: Arg is " + arg.getClass() + " and param is " + param.getType());
 			//Verify the types are correct. 
 			if (param.getType().isAssignableFrom(arg.getClass()) == false) {
 				//If the argument passed was a Map, but we need a bean, try to convert it? 
+				System.out.println("b: Arg is " + arg.getClass() + " and param is " + param.getType());
 				if (Map.class.isAssignableFrom(arg.getClass())) { 
 					try { 
 						arg = mapper.convertValue(arg, param.getType());
 					} catch (IllegalArgumentException e) { 
 						throw new WebApplicationException("Unable to convert Map into " + param.getType() + ": " + e.getMessage(), e);
 					}
-				} else { 
+				} else {
+					System.out.println("c: Arg is " + arg.getClass() + " and param is " + param.getType());
 					//Otherwise just throw an exception that we got the wrong arg type. 
 					throw new WebApplicationException("Type mismatch on arg, wanted " + param.getType() + " got " + arg.getClass());
 				}

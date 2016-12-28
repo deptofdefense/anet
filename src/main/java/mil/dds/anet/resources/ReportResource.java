@@ -69,7 +69,7 @@ public class ReportResource implements IGraphQLResource {
 	@GET
 	@GraphQLFetcher
 	@Path("/")
-	public List<Report> getAll(@Auth Person p, @DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
+	public List<Report> getAll(@Auth Person p, @DefaultValue("0") @QueryParam("pageNum") Integer pageNum, @DefaultValue("100") @QueryParam("pageSize") Integer pageSize) {
 		return dao.getAll(pageNum, pageSize);
 	}
 
