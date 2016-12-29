@@ -28,7 +28,7 @@ export default class ReportShow extends React.Component {
 	}
 
 	componentDidMount() {
-		API.query(`
+		API.query(/* GraphQL */`
 			report(id:${this.props.params.id}) {
 				id, intent, engagementDate, atmosphere, atmosphereDetails
 				reportText, nextSteps
