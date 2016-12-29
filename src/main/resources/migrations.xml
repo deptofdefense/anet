@@ -396,4 +396,19 @@
 			ALTER TABLE pendingEmails ALTER COLUMN createdAt datetime2 NOT NULL;
 		</sql>
 	</changeSet>
+
+	<changeSet id="12" author="hpitelka" >
+		<addColumn tableName="people">
+			<column name="country" type="varchar(500)" />
+		</addColumn>
+		<addColumn tableName="people">
+			<column name="gender" type="integer" />
+		</addColumn>
+		<addColumn tableName="people">
+			<column name="endOfTourDate" type="datetime" />
+		</addColumn>
+		<sql dbms="mssql">
+			ALTER TABLE people ALTER COLUMN endOfTourDate datetime2;
+		</sql>
+	</changeSet>
 </databaseChangeLog>

@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.joda.time.DateTime;
+
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
@@ -18,6 +20,7 @@ public class Person extends AbstractAnetBean implements Principal{
 
 	public static enum Status { ACTIVE, INACTIVE }
 	public static enum Role { ADVISOR, PRINCIPAL }
+	public static enum Gender { MALE, FEMALE }
 	
 	private String name;
 	private Status status;
@@ -26,6 +29,9 @@ public class Person extends AbstractAnetBean implements Principal{
 	
 	private String emailAddress;
 	private String phoneNumber;
+	private Gender gender;
+	private String country;
+	private DateTime endOfTourDate;
 	
 	private String rank;
 	private String biography;
@@ -77,6 +83,30 @@ public class Person extends AbstractAnetBean implements Principal{
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
+	public Gender getGender() {
+		return gender;
+	}
+
+	public void setGender(Gender gender) {
+		this.gender = gender;
+	}
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
+	public DateTime getEndOfTourDate() {
+		return endOfTourDate;
+	}
+
+	public void setEndOfTourDate(DateTime endOfTourDate) {
+		this.endOfTourDate = endOfTourDate;
+	}
+
 	public String getRank() {
 		return rank;
 	}

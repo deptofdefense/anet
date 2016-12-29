@@ -24,6 +24,7 @@ public class PersonDao implements IAnetDao<Person> {
 
 	private static String[] fields = {"id","name","status","role",
 			"emailAddress","phoneNumber","rank","biography",
+			"country", "gender", "endOfTourDate",
 			"domainUsername","pendingVerification","createdAt",
 			"updatedAt"};
 	private static String tableName = "people";
@@ -63,12 +64,13 @@ public class PersonDao implements IAnetDao<Person> {
 		p.setUpdatedAt(DateTime.now());
 		GeneratedKeys<Map<String, Object>> keys = dbHandle.createStatement("INSERT INTO people " +
 				"(name, status, role, emailAddress, phoneNumber, rank, pendingVerification, "
-				+ "biography, domainUsername, createdAt, updatedAt) " +
+				+ "gender, country, endOfTourDate, biography, domainUsername, createdAt, updatedAt) " +
 				"VALUES (:name, :status, :role, :emailAddress, :phoneNumber, :rank, :pendingVerification, "
-				+ ":biography, :domainUsername, :createdAt, :updatedAt);")
+				+ ":gender, :country, :endOfTourDate, :biography, :domainUsername, :createdAt, :updatedAt);")
 			.bindFromProperties(p)
 			.bind("status", DaoUtils.getEnumId(p.getStatus()))
 			.bind("role", DaoUtils.getEnumId(p.getRole()))
+			.bind("gender", DaoUtils.getEnumId(p.getGender()))
 			.executeAndReturnGeneratedKeys();
 		p.setId(DaoUtils.getGeneratedId(keys));
 		return p;
@@ -78,12 +80,14 @@ public class PersonDao implements IAnetDao<Person> {
 		p.setUpdatedAt(DateTime.now());
 		return dbHandle.createStatement("UPDATE people " + 
 				"SET name = :name, status = :status, role = :role, " + 
+				"gender = :gender, country = :country, endOfTourDate = :endOfTourDate, " + 
 				"phoneNumber = :phoneNumber, rank = :rank, biography = :biography, " +
 				"pendingVerification = :pendingVerification, updatedAt = :updatedAt "
 				+ "WHERE id = :id")
 			.bindFromProperties(p)
 			.bind("status", DaoUtils.getEnumId(p.getStatus()))
 			.bind("role", DaoUtils.getEnumId(p.getRole()))
+			.bind("gender", DaoUtils.getEnumId(p.getGender()))
 			.execute();
 	}
 	

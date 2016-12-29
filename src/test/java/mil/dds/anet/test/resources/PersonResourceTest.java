@@ -12,11 +12,13 @@ import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.joda.time.DateTime;
 import org.junit.Test;
 
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.util.Duration;
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.Person.Gender;
 import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.beans.Person.Status;
 
@@ -44,12 +46,15 @@ public class PersonResourceTest extends AbstractResourceTest {
     	newPerson.setRole(Role.PRINCIPAL);
     	newPerson.setStatus(Status.ACTIVE);
     	newPerson.setBiography("Created buy the PersonResourceTest#testCreatePerson");
+    	newPerson.setGender(Gender.FEMALE);
+    	newPerson.setCountry("Canada");
+    	newPerson.setEndOfTourDate(new DateTime(2020,4,1,0,0,0));
     	newPerson = httpQuery("/api/people/new", admin).post(Entity.json(newPerson), Person.class);
     	assertThat(newPerson.getId()).isNotNull();
     	assertThat(newPerson.getName()).isEqualTo("testCreatePerson Person");
     	
-    	
     	newPerson.setName("testCreatePerson updated name");
+    	newPerson.setCountry("The Commonwealth of Canada");
     	Response resp = httpQuery("/api/people/update", admin)
     			.post(Entity.json(newPerson));
     	assertThat(resp.getStatus()).isEqualTo(200);
@@ -87,30 +92,6 @@ public class PersonResourceTest extends AbstractResourceTest {
 		assertThat(searchResults.size()).isGreaterThan(0);
 	}
     
-	@Test
-	public void viewTest() { 
-		Person jack = getJackJackson();
-		Response resp = httpQuery("/people/", jack, MediaType.TEXT_HTML_TYPE).get();
-		assertThat(resp.getStatus()).isEqualTo(200);
-		String respBody = getResponseBody(resp);
-		assertThat(respBody).as("FreeMarker error").doesNotContain("FreeMarker template error");
-		
-		Pattern personIdPat = Pattern.compile("href=\"/people/([0-9]+)\"");
-		Matcher personIdMat = personIdPat.matcher(respBody);
-		assertThat(personIdMat.find());
-		int personId = Integer.parseInt(personIdMat.group(1));
-		
-		resp = httpQuery("/people/new", jack, MediaType.TEXT_HTML_TYPE).get();
-		assertThat(resp.getStatus()).isEqualTo(200);
-		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
-		
-		resp = httpQuery("/people/" + personId, jack, MediaType.TEXT_HTML_TYPE).get();
-		assertThat(resp.getStatus()).isEqualTo(200);
-		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
-		
-		resp = httpQuery("/people/" + personId + "/edit", jack, MediaType.TEXT_HTML_TYPE).get();
-		assertThat(resp.getStatus()).isEqualTo(200);
-		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
-	}
+
 	
 }

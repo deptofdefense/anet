@@ -1,8 +1,10 @@
 package mil.dds.anet.test.beans;
 
+import org.joda.time.DateTime;
 import org.junit.Test;
 
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.Person.Gender;
 import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.beans.Person.Status;
 import mil.dds.anet.beans.ReportPerson;
@@ -19,6 +21,9 @@ public class PersonTest extends BeanTester<Person> {
 		person.setRole(Role.ADVISOR);
 		person.setBiography("this is a sample biography");
 		person.setDomainUsername("jack");
+		person.setGender(Gender.MALE);
+		person.setCountry("United States of America");
+		person.setEndOfTourDate(new DateTime(2017,6,30,0,0,0));
 		return person;
 	}
 
@@ -31,6 +36,8 @@ public class PersonTest extends BeanTester<Person> {
 		person.setStatus(Status.ACTIVE);
 		person.setRole(Role.PRINCIPAL);
 		person.setBiography("this is a sample person who could be a Principal!");
+		person.setGender(Gender.MALE);
+		person.setCountry("Afghanistan");
 		return person;
 	}
 	
@@ -53,6 +60,8 @@ public class PersonTest extends BeanTester<Person> {
 		person.setStatus(Status.ACTIVE);
 		person.setRole(Role.PRINCIPAL);
 		person.setBiography("roger is another test person that we have in the database. ");
+		person.setGender(Gender.MALE);
+		person.setCountry("Afghanistan");
 		return person;
 	}
 
@@ -66,6 +75,9 @@ public class PersonTest extends BeanTester<Person> {
 		person.setRole(Role.ADVISOR);
 		person.setBiography("elizabeth is another test person we have in the database");
 		person.setDomainUsername("elizabeth");
+		person.setGender(Gender.FEMALE);
+		person.setCountry("United States of America");
+		person.setEndOfTourDate(new DateTime(2017,3,22,0,0,0));
 		return person;
 	}
 
@@ -79,6 +91,9 @@ public class PersonTest extends BeanTester<Person> {
 		p.setRole(Role.ADVISOR);
 		p.setBiography("");
 		p.setDomainUsername("nick");
+		p.setGender(Gender.MALE);
+		p.setCountry("United States of America");
+		p.setEndOfTourDate(new DateTime(2017,8,1,0,0,0));
 		return p;
 	}
 	
@@ -92,6 +107,9 @@ public class PersonTest extends BeanTester<Person> {
 		p.setRole(Role.ADVISOR);
 		p.setBiography("Bob is the EF1 Super User");
 		p.setDomainUsername("bob");
+		p.setGender(Gender.MALE);
+		p.setCountry("Germany");
+		p.setEndOfTourDate(new DateTime(2017,2,12,0,0,0));
 		return p;
 	}
 	
@@ -119,6 +137,9 @@ public class PersonTest extends BeanTester<Person> {
 		p.setStatus(Status.ACTIVE);
 		p.setRole(Role.ADVISOR);
 		p.setDomainUsername("arthur");
+		p.setGender(Gender.MALE);
+		p.setCountry("United States of America");
+		p.setEndOfTourDate(new DateTime(2020,1,1,0,0,0));
 		return p;
 	}
 
