@@ -91,7 +91,7 @@ public class PersonResourceTest extends AbstractResourceTest {
 		assertThat(searchResults.size()).isGreaterThan(0);
 		assertThat(searchResults.stream().filter(p -> p.getName().equals("Bob Bobtown")).findFirst()).isNotEmpty();
 		
-		List<Organization> orgs = httpQuery("/api/organizations/search?q=EF1&type=ADVISOR_ORG", jack).get(new GenericType<List<Organization>>() {});
+		List<Organization> orgs = httpQuery("/api/organizations/search?text=EF1&type=ADVISOR_ORG", jack).get(new GenericType<List<Organization>>() {});
 		assertThat(orgs.size()).isGreaterThan(0);
 		Organization org = orgs.stream().filter(o -> o.getName().equalsIgnoreCase("EF1.1")).findFirst().get();
 		

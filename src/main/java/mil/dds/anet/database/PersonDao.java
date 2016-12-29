@@ -63,11 +63,21 @@ public class PersonDao implements IAnetDao<Person> {
 	public Person insert(Person p){
 		p.setCreatedAt(DateTime.now());
 		p.setUpdatedAt(DateTime.now());
-		GeneratedKeys<Map<String, Object>> keys = dbHandle.createStatement("INSERT INTO people " +
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO people " +
 				"(name, status, role, emailAddress, phoneNumber, rank, pendingVerification, "
 				+ "gender, country, endOfTourDate, biography, domainUsername, createdAt, updatedAt) " +
 				"VALUES (:name, :status, :role, :emailAddress, :phoneNumber, :rank, :pendingVerification, "
-				+ ":gender, :country, :endOfTourDate, :biography, :domainUsername, :createdAt, :updatedAt);")
+				+ ":gender, :country, ");
+		if (DaoUtils.isMsSql(dbHandle)) {
+			//MsSql requires an explicit CAST when datetime2 might be NULL. 
+			sql.append("CAST(:endOfTourDate AS datetime2), ");
+		} else {
+			sql.append(":endOfTourDate, ");
+		}
+		sql.append(":biography, :domainUsername, :createdAt, :updatedAt);");
+
+		GeneratedKeys<Map<String, Object>> keys = dbHandle.createStatement(sql.toString())
 			.bindFromProperties(p)
 			.bind("status", DaoUtils.getEnumId(p.getStatus()))
 			.bind("role", DaoUtils.getEnumId(p.getRole()))

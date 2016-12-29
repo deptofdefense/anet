@@ -10,7 +10,7 @@ import org.skife.jdbi.v2.Handle;
 import jersey.repackaged.com.google.common.base.Joiner;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.search.OrganizationSearchQuery;
-import mil.dds.anet.database.PersonDao;
+import mil.dds.anet.database.OrganizationDao;
 import mil.dds.anet.database.mappers.OrganizationMapper;
 import mil.dds.anet.search.IOrganizationSearcher;
 import mil.dds.anet.utils.DaoUtils;
@@ -19,8 +19,8 @@ public class MssqlOrganizationSearcher implements IOrganizationSearcher {
 
 	@Override
 	public List<Organization> runSearch(OrganizationSearchQuery query, Handle dbHandle) {
-		StringBuilder sql = new StringBuilder("SELECT " + PersonDao.PERSON_FIELDS 
-				+ " FROM people WHERE people.id IN (SELECT people.id FROM people ");
+		StringBuilder sql = new StringBuilder("SELECT " + OrganizationDao.ORGANIZATION_FIELDS
+				+ " FROM organizations WHERE organizations.id IN (SELECT organizations.id FROM organizations ");
 		Map<String,Object> sqlArgs = new HashMap<String,Object>();
 		
 		sql.append(" WHERE ");

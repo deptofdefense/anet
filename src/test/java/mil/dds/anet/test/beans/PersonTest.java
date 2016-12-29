@@ -126,6 +126,9 @@ public class PersonTest extends BeanTester<Person> {
 		rp.setRank(p.getRank());
 		rp.setRole(p.getRole());
 		rp.setPendingVerification(p.getPendingVerification());
+		rp.setGender(p.getGender());
+		rp.setCountry(p.getCountry());
+		rp.setEndOfTourDate(p.getEndOfTourDate());
 		rp.setStatus(p.getStatus());
 		return rp;
 	}
