@@ -326,13 +326,11 @@ public class ReportResource implements IGraphQLResource {
 	@GET
 	@Path("/search")
 	public List<Report> search(@Context HttpServletRequest request) {
-		Map<String,String[]> paramsRaw = request.getParameterMap();
-		Map<String,String> params = new HashMap<String,String>();
-		for (Map.Entry<String,String[]> entry : paramsRaw.entrySet()) { 
-			params.put(entry.getKey(), entry.getValue()[0]);
+		try { 
+			return search(ResponseUtils.convertParamsToBean(request, ReportSearchQuery.class));
+		} catch (IllegalArgumentException e) { 
+			throw new WebApplicationException(e.getMessage(), e.getCause(), Status.BAD_REQUEST);
 		}
-		ReportSearchQuery query = mapper.convertValue(params, ReportSearchQuery.class);
-		return search(query);
 	}
 	
 	@POST

@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -12,6 +13,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -20,12 +22,15 @@ import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Position;
+import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Position.PositionType;
 import mil.dds.anet.beans.search.PersonSearchQuery;
+import mil.dds.anet.beans.search.ReportSearchQuery;
 import mil.dds.anet.database.PersonDao;
 import mil.dds.anet.graphql.GraphQLFetcher;
 import mil.dds.anet.graphql.GraphQLParam;
 import mil.dds.anet.graphql.IGraphQLResource;
+import mil.dds.anet.utils.ResponseUtils;
 
 @Path("/api/people")
 @Produces(MediaType.APPLICATION_JSON)
@@ -139,6 +144,16 @@ public class PersonResource implements IGraphQLResource {
 	@Path("/search")
 	public List<Person> search(@GraphQLParam("query") PersonSearchQuery query) {
 		return dao.search(query);
+	}
+	
+	@GET
+	@Path("/search")
+	public List<Person> search(@Context HttpServletRequest request) {
+		try { 
+			return search(ResponseUtils.convertParamsToBean(request, PersonSearchQuery.class));
+		} catch (IllegalArgumentException e) { 
+			throw new WebApplicationException(e.getMessage(), e.getCause(), Status.BAD_REQUEST);
+		}
 	}
 	
 	/**
