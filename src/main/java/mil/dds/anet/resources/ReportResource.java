@@ -1,9 +1,12 @@
 package mil.dds.anet.resources;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.PermitAll;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -13,6 +16,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -20,6 +24,7 @@ import javax.ws.rs.core.Response.Status;
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 
 import io.dropwizard.auth.Auth;
@@ -52,12 +57,14 @@ public class ReportResource implements IGraphQLResource {
 
 	ReportDao dao;
 	AnetObjectEngine engine;
+	ObjectMapper mapper;
 
 	private static Logger log = Log.getLogger(ReportResource.class);
 
 	public ReportResource(AnetObjectEngine engine) {
 		this.engine = engine;
 		this.dao = engine.getReportDao();
+		this.mapper = new ObjectMapper();
 	}
 	
 	@Override
@@ -316,6 +323,18 @@ public class ReportResource implements IGraphQLResource {
 		return dao.getReportsForMyApproval(approver);
 	}
 
+	@GET
+	@Path("/search")
+	public List<Report> search(@Context HttpServletRequest request) {
+		Map<String,String[]> paramsRaw = request.getParameterMap();
+		Map<String,String> params = new HashMap<String,String>();
+		for (Map.Entry<String,String[]> entry : paramsRaw.entrySet()) { 
+			params.put(entry.getKey(), entry.getValue()[0]);
+		}
+		ReportSearchQuery query = mapper.convertValue(params, ReportSearchQuery.class);
+		return search(query);
+	}
+	
 	@POST
 	@GraphQLFetcher
 	@Path("/search")
