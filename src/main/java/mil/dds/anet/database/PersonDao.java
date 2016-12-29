@@ -13,9 +13,10 @@ import org.skife.jdbi.v2.Query;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 
+import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
-import mil.dds.anet.beans.Person.Role;
+import mil.dds.anet.beans.search.PersonSearchQuery;
 import mil.dds.anet.database.mappers.OrganizationMapper;
 import mil.dds.anet.database.mappers.PersonMapper;
 import mil.dds.anet.utils.DaoUtils;
@@ -91,29 +92,10 @@ public class PersonDao implements IAnetDao<Person> {
 			.execute();
 	}
 	
-	/**
-	 * Searches all people by name regardless of role in the system. 
-	 */
-	public List<Person> searchByName(String searchQuery) { 
-		return searchByName(searchQuery, null);
-	}
-	
-	public List<Person> searchByName(String searchQuery, Role role) {
-		StringBuilder queryBuilder = new StringBuilder("SELECT " + PERSON_FIELDS + " FROM people WHERE ");
-		if (DaoUtils.isMsSql(dbHandle)) { 
-			searchQuery = "\"" + searchQuery + "*\"";
-			queryBuilder.append("CONTAINS (name, :query)");
-		} else { 
-			queryBuilder.append("name LIKE '%' || :query || '%' ");
-		}
-		if (role != null ) { 
-			queryBuilder.append(" AND role = :role");
-		}
-		Query<Person> query = dbHandle.createQuery(queryBuilder.toString())
-			.bind("query", searchQuery)
-			.bind("role", (role != null) ? role.ordinal() : null)
-			.map(new PersonMapper());
-		return query.list();
+	public List<Person> search(PersonSearchQuery query) {
+		return AnetObjectEngine.getInstance().getSearcher()
+				.getPersonSearcher().runSearch(query, dbHandle);
+		
 	}
 	
 	public Organization getOrganizationForPerson(int personId) {
@@ -174,7 +156,7 @@ public class PersonDao implements IAnetDao<Person> {
 		} else {
 			sql = "SELECT " + PersonDao.PERSON_FIELDS
 				+ "FROM people WHERE people.id IN ( "
-					+ "SELECT top(3) reportPeople.personId "
+					+ "SELECT reportPeople.personId "
 					+ "FROM reports JOIN reportPeople ON reports.id = reportPeople.reportId "
 					+ "WHERE authorId = :authorId "
 					+ "GROUP BY personId "

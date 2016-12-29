@@ -145,7 +145,9 @@ public class Person extends AbstractAnetBean implements Principal{
 	
 	@JsonSetter("position")
 	public void setPosition(Position p) { 
-		this.position = Optional.ofNullable(p);
+		if (p != null) { 
+			this.position = Optional.of(p);
+		}
 	}
 	
 	@JsonIgnore

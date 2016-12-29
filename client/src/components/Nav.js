@@ -11,7 +11,7 @@ export default class extends React.Component {
 	}
 
 	componentDidMount() {
-		API.query(`
+		API.query(/* GraphQL */`
 			organizations(f:getAllOrgs, pageNum:0, pageSize:200) {
 				id, name
 				parentOrg { id }

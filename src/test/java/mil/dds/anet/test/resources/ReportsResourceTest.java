@@ -3,8 +3,6 @@ package mil.dds.anet.test.resources;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
@@ -35,6 +33,7 @@ import mil.dds.anet.beans.Report.Atmosphere;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
 import mil.dds.anet.beans.geo.Location;
+import mil.dds.anet.beans.search.ReportSearchQuery;
 import mil.dds.anet.database.AdminDao.AdminSettingKeys;
 import mil.dds.anet.test.beans.CommentTest;
 import mil.dds.anet.test.beans.OrganizationTest;
@@ -67,12 +66,19 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		
 		//Create leadership people in the AO who can approve this report
 		Person approver1 = new Person();
-		approver1.setDomainUsername("bob");
-		approver1.setName("Bob Bobtown");
-		approver1.setEmailAddress("hunter+bob@dds.mil");
+		approver1.setDomainUsername("testApprover1");
+		approver1.setEmailAddress("hunter+testApprover1@dds.mil");
+		approver1.setName("Test Approver 1");
 		approver1.setRole(Role.ADVISOR);
+		approver1.setStatus(Person.Status.ACTIVE);
 		approver1 = findOrPutPersonInDb(approver1);
-		Person approver2 = getElizabethElizawell();
+		Person approver2 = new Person();
+		approver2.setDomainUsername("testApprover2");
+		approver2.setEmailAddress("hunter+testApprover2@dds.mil");
+		approver2.setName("Test Approver 2");
+		approver2.setRole(Person.Role.ADVISOR);
+		approver2.setStatus(Person.Status.ACTIVE);
+		approver2 = findOrPutPersonInDb(approver2);
 		
 		//Create a billet for the author
 		Position authorBillet = new Position();
@@ -109,7 +115,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		assertThat(releaseApproval.getId()).isNotNull();
 		
 		//Pull the approval workflow for this AO
-		List<ApprovalStep> steps = httpQuery("/api/approvalSteps/byOrganization?id=" + org.getId(), admin)
+		List<ApprovalStep> steps = httpQuery("/api/approvalSteps/byOrganization?orgId=" + org.getId(), admin)
 				.get(new GenericType<List<ApprovalStep>>() {});
 		assertThat(steps.size()).isEqualTo(2);
 		assertThat(steps.get(0).getId()).isEqualTo(approval.getId());
@@ -283,7 +289,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		//Find the default ApprovalSteps
 		Integer defaultOrgId = Integer.parseInt(AnetObjectEngine.getInstance().getAdminSetting(AdminSettingKeys.DEFAULT_APPROVAL_ORGANIZATION));
 		assertThat(defaultOrgId).isNotNull();
-		List<ApprovalStep> steps = httpQuery("/api/approvalSteps/byOrganization?id=" + defaultOrgId, jack)
+		List<ApprovalStep> steps = httpQuery("/api/approvalSteps/byOrganization?orgId=" + defaultOrgId, jack)
 				.get(new GenericType<List<ApprovalStep>>() {});
 		assertThat(steps).isNotNull();
 		assertThat(steps).hasSize(1);
@@ -295,7 +301,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		
 		//Create billet for Author
 		Position billet = new Position();
-		billet.setName("EF1 new advisor");
+		billet.setName("EF1.1 new advisor");
 		billet.setType(Position.PositionType.ADVISOR);
 		
 		//Put billet in EF1
@@ -303,7 +309,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		assertThat(results.size()).isGreaterThan(0);
 		Organization ef1 = null;
 		for (Organization org : results) { 
-			if (org.getName().trim().equalsIgnoreCase("ef1")) { 
+			if (org.getName().trim().equalsIgnoreCase("ef1.1")) { 
 				billet.setOrganization(Organization.createWithId(org.getId()));
 				ef1 = org;
 				break;
@@ -404,32 +410,113 @@ public class ReportsResourceTest extends AbstractResourceTest {
 	}
 	
 	@Test
-	public void viewTest() { 
-		Person jack = getJackJackson();
-		Response resp = httpQuery("/reports/", jack)
-			.header("Accept", "text/html").get();
-		assertThat(resp.getStatus()).isEqualTo(200);
-		String respBody = getResponseBody(resp);
-		assertThat(respBody).as("FreeMarker error").doesNotContain("FreeMarker template error");
+	public void searchTest() { 
+		Person jack =  getJackJackson();
+		Person steve = getSteveSteveson();
+		ReportSearchQuery query = new ReportSearchQuery();
 		
-		Pattern reportIdPat = Pattern.compile("href=\"/reports/([0-9]+)\"");
-		Matcher reportIdMat = reportIdPat.matcher(respBody);
-		assertThat(reportIdMat.find());
-		int reportId = Integer.parseInt(reportIdMat.group(1));
+		//Search based on report Text body
+		query.setText("spreadsheet");
+		List<Report> searchResults = httpQuery("/api/reports/search", jack).post(Entity.json(query), new GenericType<List<Report>>() {});
+		assertThat(searchResults).isNotEmpty();
 		
-		resp = httpQuery("/reports/new", jack)
-				.header("Accept", "text/html").get();
-		assertThat(resp.getStatus()).isEqualTo(200);
-		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
+		//Search based on summary
+		query.setText("Amherst");
+		searchResults = httpQuery("/api/reports/search", jack).post(Entity.json(query), new GenericType<List<Report>>() {});
+		assertThat(searchResults).isNotEmpty();
 		
-		resp = httpQuery("/reports/" + reportId, jack)
-				.header("Accept", "text/html").get();
-		assertThat(resp.getStatus()).isEqualTo(200);
-		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
+		//Search by Author
+		query.setText(null);
+		query.setAuthorId(jack.getId());
+		searchResults = httpQuery("/api/reports/search", jack).post(Entity.json(query), new GenericType<List<Report>>() {});
+		assertThat(searchResults).isNotEmpty();
+		assertThat(searchResults.stream()
+				.filter(r -> (r.getAuthorJson().getId().equals(jack.getId()))).count())
+			.isEqualTo(searchResults.size());
+		int numResults = searchResults.size();
 		
-		resp = httpQuery("/reports/" + reportId + "/edit", jack)
-				.header("Accept", "text/html").get();
-		assertThat(resp.getStatus()).isEqualTo(200);
-		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
+		//Search by Author with Date Filtering
+		query.setEngagementDateStart(new DateTime(2016,6,1,0,0));
+		query.setEngagementDateEnd(new DateTime(2016,6,15,0,0,0));
+		searchResults = httpQuery("/api/reports/search", jack).post(Entity.json(query), new GenericType<List<Report>>() {});
+		assertThat(searchResults).isNotEmpty();
+		assertThat(searchResults.size()).isLessThan(numResults);
+		
+		//Search by Attendee
+		query.setEngagementDateStart(null);
+		query.setEngagementDateEnd(null);
+		query.setAuthorId(null);
+		query.setAttendeeId(steve.getId());
+		searchResults = httpQuery("/api/reports/search", jack).post(Entity.json(query), new GenericType<List<Report>>() {});
+		assertThat(searchResults).isNotEmpty();
+		assertThat(searchResults.stream().filter(r -> 
+			r.getAttendees().stream().anyMatch(rp -> 
+				(rp.getId().equals(steve.getId()))
+			))).hasSameSizeAs(searchResults);
+		
+		List<Poam> poamResults = httpQuery("/api/poams/search?q=1.1.A", jack).get(new GenericType<List<Poam>>() {});
+		assertThat(poamResults).isNotEmpty();
+		Poam poam = poamResults.get(0);
+		
+		//Search by Poam
+		query.setAttendeeId(null);
+		query.setPoamId(poam.getId());
+		searchResults = httpQuery("/api/reports/search", jack).post(Entity.json(query), new GenericType<List<Report>>() {});
+		assertThat(searchResults).isNotEmpty();
+		assertThat(searchResults.stream().filter(r -> 
+				r.getPoams().stream().anyMatch(p -> 
+					p.getId().equals(poam.getId()))	
+			)).hasSameSizeAs(searchResults);
+		
+		//Search by direct organization
+		List<Organization> orgs = httpQuery("/api/organizations/search?type=ADVISOR_ORG&q=ef1.1", jack).get(new GenericType<List<Organization>>() {});
+		assertThat(orgs.size()).isGreaterThan(0);
+		Organization ef11 = orgs.get(0);
+		assertThat(ef11.getName()).isEqualToIgnoringCase("EF1.1");
+		
+		query.setPoamId(null);
+		query.setAuthorOrgId(ef11.getId());
+		query.setIncludeAuthorOrgChildren(false);
+		searchResults = httpQuery("/api/reports/search", jack).post(Entity.json(query), new GenericType<List<Report>>() {});
+		assertThat(searchResults).isNotEmpty();
+		for (Report r : searchResults) {
+			System.out.println(r.getAuthor());
+			System.out.println(r.getAuthor().getPosition());
+			System.out.println(r.getAuthor().getPosition().getOrganization());
+			System.out.println(r.getAuthor().getPosition().getOrganization().getId());
+		}
+		assertThat(searchResults.stream().filter(r -> 
+				r.getAuthor().getPosition().getOrganization().getId().equals(ef11.getId())
+			)).hasSameSizeAs(searchResults);
+		
+		//Search by parent organization
+		orgs = httpQuery("/api/organizations/search?type=ADVISOR_ORG&q=ef1", jack).get(new GenericType<List<Organization>>() {});
+		assertThat(orgs.size()).isGreaterThan(0);
+		Organization ef1 = orgs.stream().filter(o -> o.getName().equalsIgnoreCase("ef1")).findFirst().get();
+		assertThat(ef1.getName()).isEqualToIgnoringCase("EF1");
+		
+		query.setPoamId(null);
+		query.setAuthorOrgId(ef1.getId());
+		query.setIncludeAuthorOrgChildren(true);
+		searchResults = httpQuery("/api/reports/search", jack).post(Entity.json(query), new GenericType<List<Report>>() {});
+		assertThat(searchResults).isNotEmpty();
+		//#TODO: figure out how to verify the results? 
+		
+		//Search by location
+		List<Location> locs = httpQuery("/api/locations/search?q=Cabot", jack).get(new GenericType<List<Location>>() {});
+		assertThat(locs.size() == 0);
+		Location cabot = locs.get(0);
+		
+		query.setAuthorOrgId(null);
+		query.setLocationId(cabot.getId());
+		searchResults = httpQuery("/api/reports/search", jack).post(Entity.json(query), new GenericType<List<Report>>() {});
+		assertThat(searchResults).isNotEmpty();
+		assertThat(searchResults.stream().filter(r -> 
+				r.getLocation().getId().equals(cabot.getId())
+			)).hasSameSizeAs(searchResults);
+		
+		//Search by Principal Organization
+		
+		//Search by Principal Parent Organization
 	}
 }

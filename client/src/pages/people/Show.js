@@ -15,7 +15,7 @@ export default class PersonShow extends React.Component {
 	}
 
 	componentDidMount() {
-		API.query(`
+		API.query(/* GraphQL */`
 			person(id:${this.props.params.id}) {
 				id,
 				name, rank, role, emailAddress, phoneNumber, biography,

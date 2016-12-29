@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -11,6 +12,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -18,12 +21,16 @@ import javax.ws.rs.core.Response.Status;
 import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Organization;
-import mil.dds.anet.beans.Organization.OrganizationType;
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.Report;
+import mil.dds.anet.beans.search.OrganizationSearchQuery;
+import mil.dds.anet.beans.search.ReportSearchQuery;
 import mil.dds.anet.database.OrganizationDao;
 import mil.dds.anet.graphql.GraphQLFetcher;
+import mil.dds.anet.graphql.GraphQLParam;
 import mil.dds.anet.graphql.IGraphQLResource;
 import mil.dds.anet.utils.AuthUtils;
+import mil.dds.anet.utils.ResponseUtils;
 
 @Path("/api/organizations")
 @Produces(MediaType.APPLICATION_JSON)
@@ -45,10 +52,9 @@ public class OrganizationResource implements IGraphQLResource {
 	@GET
 	@GraphQLFetcher
 	@Path("/")
-	public List<Organization> getAllOrgs(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
+	public List<Organization> getAllOrgs(@DefaultValue("0") @QueryParam("pageNum") Integer pageNum, @DefaultValue("100") @QueryParam("pageSize") Integer pageSize) {
 		return dao.getAll(pageNum, pageSize);
 	} 
-	
 	
 	@POST
 	@Path("/new")
@@ -76,11 +82,21 @@ public class OrganizationResource implements IGraphQLResource {
 		return (numRows == 1) ? Response.ok().build() : Response.status(Status.NOT_FOUND).build();
 	}
 	
-	@GET
+	@POST
 	@GraphQLFetcher
 	@Path("/search")
-	public List<Organization> search(@QueryParam("q") String name, @QueryParam("type") OrganizationType type) {
-		return dao.searchByName(name, type);
+	public List<Organization> search(@GraphQLParam("query") OrganizationSearchQuery query ) {
+		return dao.search(query);
+	}
+	
+	@GET
+	@Path("/search")
+	public List<Organization> search(@Context HttpServletRequest request) {
+		try { 
+			return search(ResponseUtils.convertParamsToBean(request, OrganizationSearchQuery.class));
+		} catch (IllegalArgumentException e) { 
+			throw new WebApplicationException(e.getMessage(), e.getCause(), Status.BAD_REQUEST);
+		}
 	}
 	
 	@GET

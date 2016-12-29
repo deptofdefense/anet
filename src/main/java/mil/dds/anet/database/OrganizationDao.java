@@ -8,8 +8,10 @@ import org.skife.jdbi.v2.GeneratedKeys;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.Query;
 
+import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Organization.OrganizationType;
+import mil.dds.anet.beans.search.OrganizationSearchQuery;
 import mil.dds.anet.database.mappers.OrganizationMapper;
 import mil.dds.anet.utils.DaoUtils;
 
@@ -103,18 +105,8 @@ public class OrganizationDao implements IAnetDao<Organization> {
 			.execute();
 	}
 
-	public List<Organization> searchByName(String name, OrganizationType type) {
-		String sql;
-		if (DaoUtils.isMsSql(dbHandle)) { 
-			name = "\"" + name + "*\"";
-			sql = "SELECT " + ORGANIZATION_FIELDS + " FROM organizations WHERE CONTAINS (name, :name) AND type = :type";
-		} else { 
-			sql = "SELECT " + ORGANIZATION_FIELDS + " FROM organizations WHERE type = :type AND name LIKE '%' || :name || '%'";
-		}
-		return dbHandle.createQuery(sql)
-			.bind("type", DaoUtils.getEnumId(type))
-			.bind("name", name)
-			.map(new OrganizationMapper())
-			.list();
+	public List<Organization> search(OrganizationSearchQuery query) {
+		return AnetObjectEngine.getInstance().getSearcher().getOrganizationSearcher()
+				.runSearch(query, dbHandle);
 	} 
 }

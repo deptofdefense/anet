@@ -15,6 +15,7 @@ import org.junit.Test;
 import io.dropwizard.client.JerseyClientBuilder;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Organization.OrganizationType;
+import mil.dds.anet.beans.search.OrganizationSearchQuery;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Position;
 import mil.dds.anet.test.beans.OrganizationTest;
@@ -78,35 +79,24 @@ public class OrganizationResourceTest extends AbstractResourceTest {
 			.get(new GenericType<List<Organization>>() {});
 		assertThat(children).hasSize(1).contains(child);
 	}
-
-
+	
 	@Test
-	public void viewTest() {
+	public void searchTest() { 
 		Person jack = getJackJackson();
-		Response resp = httpQuery("/organizations/", jack)
-			.header("Accept", "text/html").get();
-		assertThat(resp.getStatus()).isEqualTo(200);
-		String respBody = getResponseBody(resp);
-		assertThat(respBody).as("FreeMarker error").doesNotContain("FreeMarker template error");
-
-		Pattern idPat = Pattern.compile("href=\"/organizations/([0-9]+)\"");
-		Matcher idMat = idPat.matcher(respBody);
-		assertThat(idMat.find());
-		int orgId = Integer.parseInt(idMat.group(1));
-
-		resp = httpQuery("/organizations/new", jack)
-				.header("Accept", "text/html").get();
-		assertThat(resp.getStatus()).isEqualTo(200);
-		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
-
-		resp = httpQuery("/organizations/" + orgId, jack)
-				.header("Accept", "text/html").get();
-		assertThat(resp.getStatus()).isEqualTo(200);
-		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
-
-		resp = httpQuery("/organizations/" + orgId + "/edit", jack)
-				.header("Accept", "text/html").get();
-		assertThat(resp.getStatus()).isEqualTo(200);
-		assertThat(getResponseBody(resp)).as("FreeMarker error").doesNotContain("FreeMarker template error");
+		
+		//Search by name
+		OrganizationSearchQuery query = new OrganizationSearchQuery();
+		query.setText("Ministry");
+		List<Organization> results = httpQuery("/api/organizations/search", jack).post(Entity.json(query), new GenericType<List<Organization>>() {});
+		assertThat(results).isNotEmpty();
+		
+		//Search by name and type
+		query.setType(OrganizationType.ADVISOR_ORG);
+		results = httpQuery("/api/organizations/search", jack).post(Entity.json(query), new GenericType<List<Organization>>() {});
+		assertThat(results).isEmpty(); //Should be empty!
+		
+		query.setType(OrganizationType.PRINCIPAL_ORG);
+		results = httpQuery("/api/organizations/search", jack).post(Entity.json(query), new GenericType<List<Organization>>() {});
+		assertThat(results).isNotEmpty();
 	}
 }

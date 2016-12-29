@@ -11,7 +11,7 @@ export default class ReportsIndex extends React.Component {
 	}
 
 	componentDidMount() {
-		API.query(`
+		API.query(/* GraphQL */`
 			reports(f:getAll, pageSize:100, pageNum:0) {
 				id, intent, state
 				author {

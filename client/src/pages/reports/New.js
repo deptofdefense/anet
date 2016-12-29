@@ -46,7 +46,7 @@ export default class ReportNew extends React.Component {
 	}
 
 	componentDidMount() {
-		API.query(`
+		API.query(/* GraphQL */`
 			locations(f:recents) {
 				id, name
 			}

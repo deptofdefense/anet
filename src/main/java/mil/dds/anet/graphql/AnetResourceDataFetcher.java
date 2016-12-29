@@ -12,9 +12,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
@@ -36,6 +39,8 @@ public class AnetResourceDataFetcher implements DataFetcher {
 	Map<String, GraphQLArgument> arguments;
 	IGraphQLResource resource;
 	List<GraphQLArgument> validArgs;
+	
+	public static ObjectMapper mapper = new ObjectMapper();
 	
 	public AnetResourceDataFetcher(IGraphQLResource resource) { 
 		this(resource, false);
@@ -67,6 +72,8 @@ public class AnetResourceDataFetcher implements DataFetcher {
 						argName = param.getAnnotation(PathParam.class).value();
 					} else if (param.isAnnotationPresent(QueryParam.class)) { 
 						argName = param.getAnnotation(QueryParam.class).value();
+					} else if (param.isAnnotationPresent(GraphQLParam.class)) { 
+						argName = param.getAnnotation(GraphQLParam.class).value();
 					} else if (param.isAnnotationPresent(Auth.class)) { 
 						continue;
 					}
@@ -139,22 +146,51 @@ public class AnetResourceDataFetcher implements DataFetcher {
 		}
 		
 		List<Object> args = new LinkedList<Object>();
-		for (Parameter param : method.getParameters()) { 
+		for (Parameter param : method.getParameters()) {
+			Object arg = null;
 			if (param.isAnnotationPresent(PathParam.class)) {
-				args.add(environment.getArgument(param.getAnnotation(PathParam.class).value()));
+				arg = environment.getArgument(param.getAnnotation(PathParam.class).value());
 			} else if (param.isAnnotationPresent(QueryParam.class)) { 
-				args.add(environment.getArgument(param.getAnnotation(QueryParam.class).value()));
+				arg = environment.getArgument(param.getAnnotation(QueryParam.class).value());
+			} else if (param.isAnnotationPresent(GraphQLParam.class)) { 
+				arg = environment.getArgument(param.getAnnotation(GraphQLParam.class).value());
 			} else if (param.isAnnotationPresent(Auth.class)) { 
-				args.add(((Map<String,Object>)environment.getContext()).get("auth"));
+				arg = ((Map<String,Object>)environment.getContext()).get("auth");
 			}
+		
+			//Handle missing arguments but @DefaultValue annotations.
+			if (arg == null && param.isAnnotationPresent(DefaultValue.class)) { 
+				arg = param.getAnnotation(DefaultValue.class).value();
+			}
+			System.out.println("a: Arg is " + arg.getClass() + " and param is " + param.getType());
+			//Verify the types are correct. 
+			if (param.getType().isAssignableFrom(arg.getClass()) == false) {
+				//If the argument passed was a Map, but we need a bean, try to convert it? 
+				System.out.println("b: Arg is " + arg.getClass() + " and param is " + param.getType());
+				if (Map.class.isAssignableFrom(arg.getClass())) { 
+					try { 
+						arg = mapper.convertValue(arg, param.getType());
+					} catch (IllegalArgumentException e) { 
+						throw new WebApplicationException("Unable to convert Map into " + param.getType() + ": " + e.getMessage(), e);
+					}
+				} else {
+					System.out.println("c: Arg is " + arg.getClass() + " and param is " + param.getType());
+					//Otherwise just throw an exception that we got the wrong arg type. 
+					throw new WebApplicationException("Type mismatch on arg, wanted " + param.getType() + " got " + arg.getClass());
+				}
+			}
+			args.add(arg);
 			
-			//TODO: DefaultValues
 		}
 		
 		try { 
 			return method.invoke(resource, args.toArray());
 		} catch (Exception e) { 
-			throw new WebApplicationException(e);
+			if (e.getCause() != null) { 
+				throw new WebApplicationException(e.getCause().getMessage(), e);
+			} else {
+				throw new WebApplicationException(e.getMessage());
+			}
 		}
 	}
 
@@ -172,6 +208,8 @@ public class AnetResourceDataFetcher implements DataFetcher {
 					argName = param.getAnnotation(PathParam.class).value();
 				} else if (param.isAnnotationPresent(QueryParam.class)) { 
 					argName = param.getAnnotation(QueryParam.class).value();
+				} else if (param.isAnnotationPresent(GraphQLParam.class)) { 
+					argName = param.getAnnotation(GraphQLParam.class).value();
 				} else {  
 					continue;
 				}

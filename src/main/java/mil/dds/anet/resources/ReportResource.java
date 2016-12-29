@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.PermitAll;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -15,6 +16,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -22,6 +24,7 @@ import javax.ws.rs.core.Response.Status;
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 
 import io.dropwizard.auth.Auth;
@@ -39,9 +42,11 @@ import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
+import mil.dds.anet.beans.search.ReportSearchQuery;
 import mil.dds.anet.database.AdminDao.AdminSettingKeys;
 import mil.dds.anet.database.ReportDao;
 import mil.dds.anet.graphql.GraphQLFetcher;
+import mil.dds.anet.graphql.GraphQLParam;
 import mil.dds.anet.graphql.IGraphQLResource;
 import mil.dds.anet.utils.ResponseUtils;
 
@@ -52,12 +57,14 @@ public class ReportResource implements IGraphQLResource {
 
 	ReportDao dao;
 	AnetObjectEngine engine;
+	ObjectMapper mapper;
 
 	private static Logger log = Log.getLogger(ReportResource.class);
 
 	public ReportResource(AnetObjectEngine engine) {
 		this.engine = engine;
 		this.dao = engine.getReportDao();
+		this.mapper = new ObjectMapper();
 	}
 	
 	@Override
@@ -69,7 +76,7 @@ public class ReportResource implements IGraphQLResource {
 	@GET
 	@GraphQLFetcher
 	@Path("/")
-	public List<Report> getAll(@Auth Person p, @DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
+	public List<Report> getAll(@Auth Person p, @DefaultValue("0") @QueryParam("pageNum") Integer pageNum, @DefaultValue("100") @QueryParam("pageSize") Integer pageSize) {
 		return dao.getAll(pageNum, pageSize);
 	}
 
@@ -173,6 +180,8 @@ public class ReportResource implements IGraphQLResource {
 		r.setState(ReportState.PENDING_APPROVAL);
 		int numRows = dao.update(r);
 		sendApprovalNeededEmail(r);
+		log.info("Putting report {} into step {} because of org {} on author {}",
+				r.getId(), steps.get(0).getId(), org.getId(), r.getAuthor().getId());
 		
 		return (numRows == 1) ? Response.ok().build() : ResponseUtils.withMsg("No records updated", Status.BAD_REQUEST);
 	}
@@ -315,9 +324,19 @@ public class ReportResource implements IGraphQLResource {
 	}
 
 	@GET
+	@Path("/search")
+	public List<Report> search(@Context HttpServletRequest request) {
+		try { 
+			return search(ResponseUtils.convertParamsToBean(request, ReportSearchQuery.class));
+		} catch (IllegalArgumentException e) { 
+			throw new WebApplicationException(e.getMessage(), e.getCause(), Status.BAD_REQUEST);
+		}
+	}
+	
+	@POST
 	@GraphQLFetcher
 	@Path("/search")
-	public List<Report> search(@QueryParam("q") String query) {
+	public List<Report> search(@GraphQLParam("query") ReportSearchQuery query) {
 		return dao.search(query);
 	}
 

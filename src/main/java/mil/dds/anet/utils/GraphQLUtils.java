@@ -1,19 +1,29 @@
 package mil.dds.anet.utils;
 
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.joda.time.DateTime;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import graphql.Scalars;
 import graphql.schema.GraphQLEnumType;
 import graphql.schema.GraphQLFieldDefinition;
+import graphql.schema.GraphQLInputObjectField;
+import graphql.schema.GraphQLInputObjectType;
+import graphql.schema.GraphQLInputType;
 import graphql.schema.GraphQLList;
 import graphql.schema.GraphQLOutputType;
 import graphql.schema.GraphQLType;
 import graphql.schema.GraphQLTypeReference;
+import mil.dds.anet.beans.search.ISearchQuery;
 import mil.dds.anet.graphql.GraphQLDateTimeType;
+import mil.dds.anet.graphql.GraphQLIgnore;
 import mil.dds.anet.graphql.PropertyDataFetcherWithArgs;
 import mil.dds.anet.views.AbstractAnetBean;
 
@@ -71,6 +81,8 @@ public class GraphQLUtils {
 			gType = new GraphQLList(getGraphQLTypeForJavaType(innerType));
 		} else if (DateTime.class.equals(clazz)) { 
 			gType = new GraphQLDateTimeType();
+		} else if (clazz != null && ISearchQuery.class.isAssignableFrom(clazz)) { 
+			gType = getGraphQLTypeForSearch(clazz);
 		} else {
 			throw new RuntimeException("Type: " + type + " is not supported in GraphQL!");
 		}
@@ -90,4 +102,21 @@ public class GraphQLUtils {
 		return str.substring(0, 1).toLowerCase() + str.substring(1);
 	}
 	
+	public static GraphQLInputObjectType getGraphQLTypeForSearch(Class<?> clazz) { 
+		List<GraphQLInputObjectField> fields = new LinkedList<GraphQLInputObjectField>();
+		for (Method m : clazz.getMethods()) { 
+			if (m.getName().startsWith("get")) { 
+				if (m.isAnnotationPresent(GraphQLIgnore.class)) { continue; } 
+				if (m.getName().equalsIgnoreCase("getClass")) { continue; } 
+				String name = lowerCaseFirstLetter(m.getName().substring(3));
+				fields.add(GraphQLInputObjectField.newInputObjectField()
+					.name(name)
+					.type((GraphQLInputType) getGraphQLTypeForJavaType(m.getGenericReturnType()))
+					.build());
+			}
+		}
+		
+		return new GraphQLInputObjectType(clazz.getSimpleName(), "", fields);
+	}
+
 }

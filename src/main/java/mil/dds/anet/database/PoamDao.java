@@ -114,15 +114,19 @@ public class PoamDao implements IAnetDao<Poam> {
 	public List<Poam> search(String query) {
 		String sql;
 		if (DaoUtils.isMsSql(dbHandle)) { 
-			query = "\"" + query + "*\"";
-			sql = "SELECT * FROM poams WHERE CONTAINS((longName, shortName), :q)";
+			sql = "SELECT * FROM poams WHERE CONTAINS(longName, :q) OR shortName LIKE :likeQuery";
+			return dbHandle.createQuery(sql)
+					.map(new PoamMapper())
+					.bind("q", "\"" + query + "*\"")
+					.bind("likeQuery", query + "%")
+					.list();
 		} else { 
 			sql = "SELECT * FROM poams WHERE longName LIKE '%' || :q || '%' OR shortName LIKE '%' || :q || '%'";
+			return dbHandle.createQuery(sql)
+				.map(new PoamMapper())
+				.bind("q", query)
+				.list();
 		}
-		return dbHandle.createQuery(sql)
-			.map(new PoamMapper())
-			.bind("q", query)
-			.list();
 	}
 	
 	public List<Poam> getRecentPoams(Person author) {

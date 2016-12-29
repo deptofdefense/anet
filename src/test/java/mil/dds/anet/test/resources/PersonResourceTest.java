@@ -2,14 +2,10 @@ package mil.dds.anet.test.resources;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.net.URLEncoder;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.joda.time.DateTime;
@@ -17,10 +13,12 @@ import org.junit.Test;
 
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.util.Duration;
+import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Person.Gender;
 import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.beans.Person.Status;
+import mil.dds.anet.beans.search.PersonSearchQuery;
 
 public class PersonResourceTest extends AbstractResourceTest {
 		
@@ -81,17 +79,51 @@ public class PersonResourceTest extends AbstractResourceTest {
 //        assertThat(response.getStatus()).isEqualTo(404);
 //       
 //	}
-	
-	@Test
-	public void testSearchPerson() { 
-		Person jack = getJackJackson();
-			
-		String query = "Bobtown";
-		List<Person> searchResults = httpQuery("/api/people/search?q=" + URLEncoder.encode(query), jack)
-				.get(new GenericType<List<Person>>() {});
-		assertThat(searchResults.size()).isGreaterThan(0);
-	}
-    
 
-	
+	@Test
+	public void searchPerson() { 
+		Person jack = getJackJackson();
+		
+		PersonSearchQuery query = new PersonSearchQuery();
+		query.setText("bob");
+		
+		List<Person> searchResults = httpQuery("/api/people/search", jack).post(Entity.json(query), new GenericType<List<Person>>() {});
+		assertThat(searchResults.size()).isGreaterThan(0);
+		assertThat(searchResults.stream().filter(p -> p.getName().equals("Bob Bobtown")).findFirst()).isNotEmpty();
+		
+		List<Organization> orgs = httpQuery("/api/organizations/search?q=EF1&type=ADVISOR_ORG", jack).get(new GenericType<List<Organization>>() {});
+		assertThat(orgs.size()).isGreaterThan(0);
+		Organization org = orgs.stream().filter(o -> o.getName().equalsIgnoreCase("EF1.1")).findFirst().get();
+		
+		query.setText(null);
+		query.setOrgId(org.getId());
+		searchResults = httpQuery("/api/people/search", jack).post(Entity.json(query), new GenericType<List<Person>>() {});
+		assertThat(searchResults).isNotEmpty();
+		
+		//Search with children orgs
+		org = orgs.stream().filter(o -> o.getName().equalsIgnoreCase("EF1")).findFirst().get();
+		query.setOrgId(org.getId());
+		//First don't include child orgs and then increase the scope and verify results increase.
+		List<Person> parentOnlyResults = httpQuery("/api/people/search", jack).post(Entity.json(query), new GenericType<List<Person>>() {});
+		
+		query.setIncludeChildOrgs(true);
+		searchResults = httpQuery("/api/people/search", jack).post(Entity.json(query), new GenericType<List<Person>>() {});
+		assertThat(searchResults).isNotEmpty();
+		assertThat(searchResults).containsAll(parentOnlyResults);
+		
+		query.setIncludeChildOrgs(true);
+		searchResults = httpQuery("/api/people/search", jack).post(Entity.json(query), new GenericType<List<Person>>() {});
+		assertThat(searchResults).isNotEmpty();
+		
+		query.setOrgId(null);
+		query.setText("advisor"); //Search against biographies
+		searchResults = httpQuery("/api/people/search", jack).post(Entity.json(query), new GenericType<List<Person>>() {});
+		assertThat(searchResults.size()).isGreaterThan(1);
+		
+		query.setText(null);
+		query.setRole(Role.ADVISOR);
+		searchResults = httpQuery("/api/people/search", jack).post(Entity.json(query), new GenericType<List<Person>>() {});
+		assertThat(searchResults.size()).isGreaterThan(1);
+		
+	}
 }

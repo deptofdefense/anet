@@ -32,6 +32,10 @@ import mil.dds.anet.database.PoamDao;
 import mil.dds.anet.database.PositionDao;
 import mil.dds.anet.database.ReportDao;
 import mil.dds.anet.database.TestingDao;
+import mil.dds.anet.search.ISearcher;
+import mil.dds.anet.search.mssql.MssqlSearcher;
+import mil.dds.anet.search.sqlite.SqliteSearcher;
+import mil.dds.anet.utils.DaoUtils;
 import mil.dds.anet.views.AbstractAnetBean;
 import mil.dds.anet.views.AbstractAnetBean.LoadLevel;
 
@@ -51,6 +55,8 @@ public class AnetObjectEngine {
 	CommentDao commentDao;
 	AdminDao adminDao;
 
+	ISearcher searcher;
+	
 	private static Map<Class<? extends AbstractAnetBean>, IAnetDao<?>> daoMap;
 	private static AnetObjectEngine instance; 
 	
@@ -85,6 +91,13 @@ public class AnetObjectEngine {
 		daoMap.put(Comment.class, commentDao);
 		
 		instance = this;
+		
+		//TODO: maybe do this differently!
+		if (DaoUtils.isMsSql(dbHandle)) { 
+			searcher = new MssqlSearcher();
+		} else { 
+			searcher = new SqliteSearcher();
+		}
 	}
 	
 	public PersonDao getPersonDao() { 
@@ -135,6 +148,10 @@ public class AnetObjectEngine {
 		return adminDao;
 	}
 	
+	public ISearcher getSearcher() {
+		return searcher;
+	}
+
 	public Organization getOrganizationForPerson(Person p) { 
 		return personDao.getOrganizationForPerson(p.getId());
 	}
