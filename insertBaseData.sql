@@ -15,6 +15,7 @@
 --DROP TABLE groups;
 --DROP TABLE DATABASECHANGELOG;
 --DROP TABLE adminSettings;
+--DROP TABLE pendingEmails;
 
 TRUNCATE TABLE peoplePositions;
 TRUNCATE TABLE groupMemberships;

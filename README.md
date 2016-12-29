@@ -173,11 +173,11 @@ Coming soon.
 
 ### How to add a new field to an object
 
-1) Create a migration to add it to the database tables
-2) Edit the bean object to add the field and getter/setters
-3) Edit the Mapper class to map the field when it comes out of the database
-4) Edit the Dao class to 
-	a) add it to the list of Columns in the *_FIELDS variable for the class. ( ie PersonDao.PERSON_FIELDS)
-	b) update any SQL to ensure the value gets INSERTed and UPDATEd correctly. 
-6) update the bean tests to include having this property and update the src/test/resources/testJson to include the property. 
-5) Update the resource unit tests to try setting, fetching, and updating the property. 
+1. Create a migration to add it to the database tables
+2. Edit the bean object to add the field and getter/setters
+3. Edit the Mapper class to map the field when it comes out of the database
+4. Edit the Dao class to 
+	a. add it to the list of Columns in the *_FIELDS variable for the class. ( ie PersonDao.PERSON_FIELDS)
+	b. update any SQL to ensure the value gets INSERTed and UPDATEd correctly. 
+6. update the bean tests to include having this property and update the src/test/resources/testJson to include the property. 
+5. Update the resource unit tests to try setting, fetching, and updating the property. 

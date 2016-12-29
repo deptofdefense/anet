@@ -15,7 +15,6 @@ import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.util.Duration;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
-import mil.dds.anet.beans.Person.Gender;
 import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.beans.Person.Status;
 import mil.dds.anet.beans.search.PersonSearchQuery;
@@ -44,7 +43,7 @@ public class PersonResourceTest extends AbstractResourceTest {
     	newPerson.setRole(Role.PRINCIPAL);
     	newPerson.setStatus(Status.ACTIVE);
     	newPerson.setBiography("Created buy the PersonResourceTest#testCreatePerson");
-    	newPerson.setGender(Gender.FEMALE);
+    	newPerson.setGender("Female");
     	newPerson.setCountry("Canada");
     	newPerson.setEndOfTourDate(new DateTime(2020,4,1,0,0,0));
     	newPerson = httpQuery("/api/people/new", admin).post(Entity.json(newPerson), Person.class);

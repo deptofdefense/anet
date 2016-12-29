@@ -54,8 +54,8 @@ export default class PersonNew extends React.Component {
 					{this.state.error && <fieldset><p>There was a problem saving this person</p><p>{this.state.error}</p></fieldset>}
 					<fieldset>
 						<legend>Create a new Person</legend>
-						<Form.Field id="name" label="Name" />
-						<Form.Field id="role" label="Role" componentClass="select">
+						<Form.Field id="name" />
+						<Form.Field id="role" componentClass="select">
 							<option value="ADVISOR">Advisor</option>
 							<option value="PRINCIPAL">Principal</option>
 						</Form.Field>
@@ -65,7 +65,7 @@ export default class PersonNew extends React.Component {
 						<legend>Additional Information</legend>
 						<Form.Field id="emailAddress" label="Email" />
 						<Form.Field id="phoneNumber" label="Phone Number" />
-						<Form.Field id="rank" label="Rank" componentClass="select">
+						<Form.Field id="rank"  componentClass="select">
 							<option value="OF-1" >OF-1</option>
 							<option value="OF-2" >OF-2</option>
 							<option value="OF-3" >OF-3</option>
@@ -74,12 +74,12 @@ export default class PersonNew extends React.Component {
 							<option value="OF-6" >OF-6</option>
 						</Form.Field>
 
-						<Form.Field id="gender" label="Gender" componentClass="select">
+						<Form.Field id="gender" componentClass="select">
 							<option>Male</option>
 							<option>Female</option>
 						</Form.Field>
 
-						<Form.Field id="country" label="Country" componentClass="select">
+						<Form.Field id="country" componentClass="select">
 							<option>Afghanistan</option>
 							<option>Australia</option>
 							<option>Romania</option>
@@ -95,7 +95,7 @@ export default class PersonNew extends React.Component {
 							</DatePicker>
 						</Form.Field>
 
-						<Form.Field id="biography" label="Biography">
+						<Form.Field id="biography" >
 							<TextEditor label="" />
 						</Form.Field>
 					</fieldset>
@@ -111,7 +111,6 @@ export default class PersonNew extends React.Component {
 	@autobind
 	onChange() {
 		let person = this.state.person
-		console.log(person);
 		this.setState({person})
 	}
 
@@ -123,7 +122,6 @@ export default class PersonNew extends React.Component {
 		API.send('/api/people/new', this.state.person, {disableSubmits: true})
 			.then(person => {
 				if (person.code) throw person.code
-				console.log(person);
 				this.context.router.push('/people/' + person.id)
 			}).catch(error => {
 				this.setState({error: error})

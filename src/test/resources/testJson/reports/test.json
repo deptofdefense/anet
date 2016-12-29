@@ -21,7 +21,7 @@
 		"phoneNumber": "+011-258-32895",
 		"rank": "LtCol",
 		"biography": "this is a sample person who could be a Principal!",
-		"gender" : "MALE",
+		"gender" : "Male",
 		"country" : "Afghanistan",
 		"primary" : true
 	}],
@@ -52,7 +52,7 @@
 		"rank": "OF-9",
 		"biography": "this is a sample biography",
 		"domainUsername" : "jack",
-		"gender" : "MALE",
+		"gender" : "Male",
 		"country" : "United States of America",
 		"endOfTourDate" : 1498795200000
 	},
@@ -68,7 +68,7 @@
 			"rank": "OF-9",
 			"biography": "this is a sample biography",
 			"domainUsername" : "jack",
-			"gender" : "MALE",
+			"gender" : "Male",
 			"country" : "United States of America",
 			"endOfTourDate" : 1498795200000
 		},

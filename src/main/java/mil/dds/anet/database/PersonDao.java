@@ -81,7 +81,6 @@ public class PersonDao implements IAnetDao<Person> {
 			.bindFromProperties(p)
 			.bind("status", DaoUtils.getEnumId(p.getStatus()))
 			.bind("role", DaoUtils.getEnumId(p.getRole()))
-			.bind("gender", DaoUtils.getEnumId(p.getGender()))
 			.executeAndReturnGeneratedKeys();
 		p.setId(DaoUtils.getGeneratedId(keys));
 		return p;
@@ -98,7 +97,6 @@ public class PersonDao implements IAnetDao<Person> {
 			.bindFromProperties(p)
 			.bind("status", DaoUtils.getEnumId(p.getStatus()))
 			.bind("role", DaoUtils.getEnumId(p.getRole()))
-			.bind("gender", DaoUtils.getEnumId(p.getGender()))
 			.execute();
 	}
 	

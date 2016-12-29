@@ -402,7 +402,7 @@
 			<column name="country" type="varchar(500)" />
 		</addColumn>
 		<addColumn tableName="people">
-			<column name="gender" type="integer" />
+			<column name="gender" type="varchar(64)" />
 		</addColumn>
 		<addColumn tableName="people">
 			<column name="endOfTourDate" type="datetime" />

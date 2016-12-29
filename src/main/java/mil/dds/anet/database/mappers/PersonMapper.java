@@ -9,7 +9,6 @@ import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
 import mil.dds.anet.beans.Person;
-import mil.dds.anet.beans.Person.Gender;
 import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.beans.Person.Status;
 import mil.dds.anet.beans.Position;
@@ -38,7 +37,7 @@ public class PersonMapper implements ResultSetMapper<Person> {
 		a.setEmailAddress(r.getString("people_emailAddress"));
 		a.setPhoneNumber(r.getString("people_phoneNumber"));
 		a.setCountry(r.getString("people_country"));
-		a.setGender(MapperUtils.getEnumIdx(r, "people_gender", Gender.class));
+		a.setGender(r.getString("people_gender"));
 		
 		Timestamp endOfTourDate = r.getTimestamp("people_endOfTourDate");
 		if (endOfTourDate != null) { 

@@ -20,7 +20,6 @@ public class Person extends AbstractAnetBean implements Principal{
 
 	public static enum Status { ACTIVE, INACTIVE }
 	public static enum Role { ADVISOR, PRINCIPAL }
-	public static enum Gender { MALE, FEMALE }
 	
 	private String name;
 	private Status status;
@@ -29,7 +28,7 @@ public class Person extends AbstractAnetBean implements Principal{
 	
 	private String emailAddress;
 	private String phoneNumber;
-	private Gender gender;
+	private String gender;
 	private String country;
 	private DateTime endOfTourDate;
 	
@@ -83,11 +82,11 @@ public class Person extends AbstractAnetBean implements Principal{
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
-	public Gender getGender() {
+	public String getGender() {
 		return gender;
 	}
 
-	public void setGender(Gender gender) {
+	public void setGender(String gender) {
 		this.gender = gender;
 	}
 

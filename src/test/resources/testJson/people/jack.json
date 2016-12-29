@@ -7,7 +7,7 @@
 	"rank" : "OF-9",
 	"biography" : "this is a sample biography",
 	"domainUsername" : "jack",
-	"gender" : "MALE",
+	"gender" : "Male",
 	"country" : "United States of America",
 	"endOfTourDate" : 1498795200000
 }
