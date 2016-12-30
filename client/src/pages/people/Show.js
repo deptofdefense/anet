@@ -69,14 +69,14 @@ export default class PersonShow extends Page {
 				<Form formFor={person} horizontal>
 					<fieldset>
 						<legend>{person.rank} {person.name}</legend>
-						<Form.Field label="Rank" type="static" id="rank" />
-						<Form.Field label="Role" type="static" id="role" />
+						<Form.Field type="static" id="rank" />
+						<Form.Field type="static" id="role" />
 						<Form.Field label="Phone" type="static" id="phoneNumber" />
 						<Form.Field label="Email" type="static" id="emailAddress">
 							<a href={`mailto:${person.emailAddress}`}>{person.emailAddress}</a>
 						</Form.Field>
-						<Form.Field label="Country" type="static" id="country" />
-						<Form.Field label="Gender" type="static" id="gender" />
+						<Form.Field type="static" id="country" />
+						<Form.Field type="static" id="gender" />
 						<Form.Field label="End of Tour Date" type="static" id="endOfTourDate" value={moment(person.endOfTourDate).format("L")} />
 						<Form.Field label="Bio" type="static" id="person.biography" />
 					</fieldset>
