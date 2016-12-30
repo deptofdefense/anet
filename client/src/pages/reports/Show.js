@@ -1,7 +1,7 @@
 import React from 'react'
 import Page from 'components/Page'
 import {Link} from 'react-router'
-import {Table} from 'react-bootstrap'
+import {Table, Button} from 'react-bootstrap'
 import moment from 'moment'
 
 import API from 'api'
@@ -30,7 +30,12 @@ export default class ReportShow extends Page {
 				id: props.params.id,
 				attendees: [],
 				poams: [],
+				comments: [],
 			},
+
+			newComment: {
+				text: "",
+			}
 		}
 	}
 
@@ -39,13 +44,21 @@ export default class ReportShow extends Page {
 			report(id:${props.params.id}) {
 				id, intent, engagementDate, atmosphere, atmosphereDetails
 				reportText, nextSteps
+
 				location { id, name }
 				author { id, name }
+
 				attendees {
 					id, name
 					position { id, name }
 				}
+
 				poams { id, shortName, longName }
+
+				comments {
+					id, text, createdAt, updatedAt
+					author { id, name, rank }
+				}
 
 			}
 		`).then(data => this.setState({report: data.report}))
@@ -130,6 +143,28 @@ export default class ReportShow extends Page {
 
 						<h5>Next steps</h5>
 						<div dangerouslySetInnerHTML={{__html: report.nextSteps}} />
+					</fieldset>
+
+					<fieldset>
+						<legend>Comments</legend>
+
+						{report.comments.map(comment =>
+							<p key={comment.id}>
+								<Link to={`/people/${comment.author.id}`}>{comment.author.name}</Link>
+								<small>said</small>
+								"{comment.text}"
+							</p>
+						)}
+
+						{!report.comments.length && "There are no comments yet."}
+
+						<Form formFor={this.state.newComment} horizontal style={{marginTop: "52px"}}>
+							<Form.Field id="text" placeholder="Type a comment here" label="">
+								<Form.Field.ExtraCol>
+									<Button bsStyle="primary" type="submit">Save comment</Button>
+								</Form.Field.ExtraCol>
+							</Form.Field>
+						</Form>
 					</fieldset>
 				</Form>
 			</div>
