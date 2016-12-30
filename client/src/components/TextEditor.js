@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {Component} from 'react'
 import {Editor, EditorState, RichUtils, ContentState} from 'draft-js'
 
 import './TextEditor.css'
@@ -13,7 +13,7 @@ CODE: {
 },
 };
 
-export default class TextEditor extends React.Component {
+export default class TextEditor extends Component {
         constructor(props) {
           super(props);
 
@@ -117,7 +117,7 @@ export default class TextEditor extends React.Component {
         }
       }
 
-      class StyleButton extends React.Component {
+      class StyleButton extends Component {
         constructor() {
           super();
           this.onToggle = (e) => {

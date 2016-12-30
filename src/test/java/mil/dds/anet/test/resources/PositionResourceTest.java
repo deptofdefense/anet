@@ -3,8 +3,7 @@ package mil.dds.anet.test.resources;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
@@ -18,7 +17,9 @@ import io.dropwizard.util.Duration;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Position;
+import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Position.PositionType;
+import mil.dds.anet.beans.search.PositionSearchQuery;
 import mil.dds.anet.test.beans.OrganizationTest;
 import mil.dds.anet.test.beans.PositionTest;
 
@@ -164,6 +165,63 @@ public class PositionResourceTest extends AbstractResourceTest {
 		
 		//TODO: Change the Principal
 		
+	}
+	
+	@Test
+	public void searchTest() { 
+		Person jack = getJackJackson();
+		PositionSearchQuery query = new PositionSearchQuery();
+		
+		//Search by name
+		query.setText("Advisor");
+		List<Position> searchResults = httpQuery("/api/positions/search", jack).post(Entity.json(query), new GenericType<List<Position>>() {});
+		assertThat(searchResults).isNotEmpty();
+		
+		//Search by name & is not filled
+		query.setIsFilled(false);
+		searchResults = httpQuery("/api/positions/search", jack).post(Entity.json(query), new GenericType<List<Position>>() {});
+		assertThat(searchResults).isNotEmpty();
+		assertThat(searchResults.stream().filter(p -> (p.getPersonJson() == null)).collect(Collectors.toList()))
+			.hasSameElementsAs(searchResults);
+		
+		//Search by name and is filled and type
+		query.setIsFilled(true);
+		query.setType(PositionType.ADVISOR);
+		searchResults = httpQuery("/api/positions/search", jack).post(Entity.json(query), new GenericType<List<Position>>() {});
+		assertThat(searchResults).isNotEmpty();
+		assertThat(searchResults.stream()
+				.filter(p -> (p.getPersonJson() != null))
+				.filter(p -> p.getType().equals(PositionType.ADVISOR))
+				.collect(Collectors.toList()))
+			.hasSameElementsAs(searchResults);
+		
+		query.setType(PositionType.ADMINISTRATOR);
+		searchResults = httpQuery("/api/positions/search", jack).post(Entity.json(query), new GenericType<List<Position>>() {});
+		assertThat(searchResults).isEmpty();
+		
+		query.setText("Administrator");
+		searchResults = httpQuery("/api/positions/search", jack).post(Entity.json(query), new GenericType<List<Position>>() {});
+		assertThat(searchResults).isNotEmpty();
+		
+		//Search by organization
+		List<Organization> orgs = httpQuery("/api/organizations/search?type=ADVISOR_ORG&text=ef1", jack).get(new GenericType<List<Organization>>() {});
+		assertThat(orgs.size()).isGreaterThan(0);
+		Organization ef11 = orgs.stream().filter(o -> o.getName().equalsIgnoreCase("ef1.1")).findFirst().get();
+		Organization ef1 = orgs.stream().filter(o -> o.getName().equalsIgnoreCase("ef1")).findFirst().get();
+		assertThat(ef11.getName()).isEqualToIgnoringCase("EF1.1");
+		assertThat(ef1.getName()).isEqualTo("EF1");
+		
+		query.setText("Advisor");
+		query.setType(null);
+		query.setOrganizationId(ef1.getId());
+		searchResults = httpQuery("/api/positions/search", jack).post(Entity.json(query), new GenericType<List<Position>>() {});
+		assertThat(searchResults).isEmpty();
+		
+		query.setIncludeChildrenOrgs(true);
+		searchResults = httpQuery("/api/positions/search", jack).post(Entity.json(query), new GenericType<List<Position>>() {});
+		assertThat(searchResults).isNotEmpty();
+		
+		//Search by location
 	}
 	
 }

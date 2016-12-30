@@ -8,7 +8,7 @@ public interface ISearcher {
 	
 	public IOrganizationSearcher getOrganizationSearcher();
 	
-//	public IPositionSearcher getPositionSearcher();
+	public IPositionSearcher getPositionSearcher();
 	
 //	public IPoamSearcher getPoamSearcher();
 	

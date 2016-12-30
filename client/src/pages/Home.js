@@ -1,9 +1,9 @@
-import React from 'react'
+import React, {Component} from 'react'
 import {Button, Modal} from 'react-bootstrap'
 
 import Breadcrumbs from 'components/Breadcrumbs'
 
-export default class Home extends React.Component {
+export default class Home extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {showModal: false}

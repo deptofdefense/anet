@@ -1,11 +1,11 @@
-import React from 'react'
+import React, {Component} from 'react'
 import {Grid, Row, Col} from 'react-bootstrap'
 
 import SecurityBanner from 'components/SecurityBanner'
 import Header from 'components/Header'
 import Nav from 'components/Nav'
 
-export default class App extends React.Component {
+export default class App extends Component {
 	static propTypes = {
 		children: React.PropTypes.element.isRequired,
 	}

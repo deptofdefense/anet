@@ -1,4 +1,5 @@
 import React from 'react'
+import Page from 'components/Page'
 import moment from 'moment'
 
 import {Radio, Table} from 'react-bootstrap'
@@ -12,26 +13,31 @@ import API from 'api'
 const FORMAT_EXSUM = 'exsum'
 const FORMAT_TABLE = 'table'
 
-export default class Search extends React.Component {
+export default class Search extends Page {
 	constructor(props) {
 		super(props)
 		this.state = {
 			query: props.location.query.q,
 			viewFormat: FORMAT_TABLE,
-			results: {reports: [], people: []}
+			results: {
+				reports: [],
+				people: []
+			}
 		}
 
 		this.changeViewFormat = this.changeViewFormat.bind(this)
 	}
 
-	componentDidMount() {
-		API.fetch('/api/search/?q=' + this.state.query).then(results => {
+	fetchData(props) {
+		let query = props.location.query.q
+		this.setState({query})
+		API.fetch(`/api/search/?q=${query}`).then(results => {
 			this.setState({results: {
-				reports: results.reports,
-				people: results.people,
-				positions: results.positions,
-				poams: results.poams,
-				locations: results.locations,
+				reports: results.reports || [],
+				people: results.people || [],
+				positions: results.positions || [],
+				poams: results.poams || [],
+				locations: results.locations || [],
 			}})
 		})
 	}

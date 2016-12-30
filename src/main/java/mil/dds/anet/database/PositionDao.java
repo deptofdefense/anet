@@ -8,10 +8,12 @@ import org.skife.jdbi.v2.GeneratedKeys;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.Query;
 
+import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Position.PositionType;
+import mil.dds.anet.beans.search.PositionSearchQuery;
 import mil.dds.anet.database.mappers.PersonMapper;
 import mil.dds.anet.database.mappers.PositionMapper;
 import mil.dds.anet.utils.DaoUtils;
@@ -291,19 +293,9 @@ public class PositionDao implements IAnetDao<Position> {
 			.list();
 	}
 	
-	public List<Position> search(String query) { 
-		String sql;
-		if (DaoUtils.isMsSql(dbHandle)) {
-			query = "\"" + query + "*\"";
-			sql = "SELECT " + POSITIONS_FIELDS + " FROM positions WHERE CONTAINS ((name, code), :query)";
-		} else { 
-			sql = "SELECT " + POSITIONS_FIELDS + " FROM positions WHERE name LIKE '%' || :query || '%' "
-				+ "OR code LIKE '%' || :query || '%'";
-		}
-		return dbHandle.createQuery(sql)
-			.bind("query", query)
-			.map(new PositionMapper())
-			.list();
+	public List<Position> search(PositionSearchQuery query) { 
+		return AnetObjectEngine.getInstance().getSearcher()
+				.getPositionSearcher().runSearch(query, dbHandle);
 	}
 
 }

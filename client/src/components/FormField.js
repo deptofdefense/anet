@@ -1,15 +1,15 @@
-import React from 'react'
+import React, {Component} from 'react'
 import _ from 'lodash'
 import autobind from 'autobind-decorator'
 import {FormGroup, Col, ControlLabel, FormControl, InputGroup} from 'react-bootstrap'
 
-class FormFieldExtraCol extends React.Component {
+class FormFieldExtraCol extends Component {
 	render() {
 		return <Col sm={3} {...this.props} />
 	}
 }
 
-export default class FormField extends React.Component {
+export default class FormField extends Component {
 	static contextTypes = {
 		formFor: React.PropTypes.object,
 		form: React.PropTypes.object,

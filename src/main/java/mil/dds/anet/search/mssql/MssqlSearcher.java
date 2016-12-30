@@ -2,6 +2,7 @@ package mil.dds.anet.search.mssql;
 
 import mil.dds.anet.search.IOrganizationSearcher;
 import mil.dds.anet.search.IPersonSearcher;
+import mil.dds.anet.search.IPositionSearcher;
 import mil.dds.anet.search.IReportSearcher;
 import mil.dds.anet.search.ISearcher;
 
@@ -10,11 +11,13 @@ public class MssqlSearcher implements ISearcher {
 	MssqlReportSearcher reportSearcher;
 	MssqlPersonSearcher personSearcher;
 	MssqlOrganizationSearcher orgSearcher;
+	MssqlPositionSearcher positionSearcher;
 	
 	public MssqlSearcher() { 
 		this.reportSearcher = new MssqlReportSearcher();
 		this.personSearcher = new MssqlPersonSearcher();
 		this.orgSearcher = new MssqlOrganizationSearcher();
+		this.positionSearcher = new MssqlPositionSearcher();
 	}
 	
 	@Override
@@ -30,6 +33,11 @@ public class MssqlSearcher implements ISearcher {
 	@Override
 	public IOrganizationSearcher getOrganizationSearcher() {
 		return orgSearcher;
+	}
+
+	@Override
+	public IPositionSearcher getPositionSearcher() {
+		return positionSearcher;
 	}
 
 }

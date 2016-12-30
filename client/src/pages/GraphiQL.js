@@ -1,11 +1,11 @@
-import React from 'react'
+import React, {Component} from 'react'
 
 import GraphiQL from 'graphiql'
 import 'graphiql/graphiql.css'
 
 import Breadcrumbs from 'components/Breadcrumbs'
 
-export default class extends React.Component {
+export default class extends Component {
 	static pageProps = {
 		useNavigation: false,
 		fluidContainer: true,

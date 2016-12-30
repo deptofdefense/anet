@@ -45,11 +45,11 @@ public class HomeResource {
 		if (types.contains("people")) {
 //			result.put("people", AnetObjectEngine.getInstance().getPersonDao().searchByName(query));
 		}
-//		if (types.contains("reports")) {
+		if (types.contains("reports")) {
 //			result.put("reports", AnetObjectEngine.getInstance().getReportDao().search(query));
-//		}
+		}
 		if (types.contains("positions")) {
-			result.put("positions", AnetObjectEngine.getInstance().getPositionDao().search(query));
+//			result.put("positions", AnetObjectEngine.getInstance().getPositionDao().search(query));
 		}
 		if (types.contains("poams")) {
 			result.put("poams", AnetObjectEngine.getInstance().getPoamDao().search(query));

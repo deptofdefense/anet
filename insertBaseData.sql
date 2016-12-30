@@ -74,6 +74,9 @@ INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES
 INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF2.1 SuperUser', 2, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF2.2 Advisor C', 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF2.2 Advisor D', 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF4.1 Advisor E', 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF9 Advisor <empty>', 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
 
 -- Put Bob into the Super User Billet in EF1
 INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES 
