@@ -1,10 +1,10 @@
-import React from 'react'
+import React, {Component} from 'react'
 import {Nav, NavItem, NavDropdown, MenuItem} from 'react-bootstrap'
 import {IndexLinkContainer as Link} from 'react-router-bootstrap'
 
 import API from 'api'
 
-export default class extends React.Component {
+export default class extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {organizations: []}

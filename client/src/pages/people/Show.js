@@ -1,4 +1,5 @@
 import React from 'react'
+import Page from 'components/Page'
 import {Table} from 'react-bootstrap'
 
 import API from 'api'
@@ -6,17 +7,20 @@ import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
 import ReportTable from 'components/ReportTable'
 
-export default class PersonShow extends React.Component {
+export default class PersonShow extends Page {
 	constructor(props) {
 		super(props)
 		this.state = {
-			person: { authoredReports: [], attendedReports: []},
+			person: {
+				authoredReports: [],
+				attendedReports: []
+			},
 		}
 	}
 
-	componentDidMount() {
+	fetchData(props) {
 		API.query(/* GraphQL */`
-			person(id:${this.props.params.id}) {
+			person(id:${props.params.id}) {
 				id,
 				name, rank, role, emailAddress, phoneNumber, biography,
 				position {

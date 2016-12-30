@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {Component} from 'react'
 
 const css = {
 	background: process.env.REACT_APP_SECURITY_COLOR,
@@ -12,7 +12,7 @@ const css = {
 	zIndex: 101
 }
 
-export default class SecurityBanner extends React.Component {
+export default class SecurityBanner extends Component {
 	render() {
 		return (
 			<div className="security" style={css}>

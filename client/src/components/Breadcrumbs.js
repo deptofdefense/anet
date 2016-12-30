@@ -1,8 +1,8 @@
-import React from 'react'
+import React, {Component} from 'react'
 import {Breadcrumb} from 'react-bootstrap'
 import {IndexLinkContainer as Link} from 'react-router-bootstrap'
 
-export default class Breadcrumbs extends React.Component {
+export default class Breadcrumbs extends Component {
 	makeItem(item) {
 		return (
 			<Link key={item[1]} to={item[1]}>

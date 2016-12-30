@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {Component} from 'react'
 import {Link} from 'react-router'
 import {Injectable, Injector} from 'react-injectables'
 
@@ -22,7 +22,7 @@ const logoCss = {
 	width: '164px',
 }
 
-class Header extends React.Component {
+class Header extends Component {
 	render() {
 		return (
 			<header style={backgroundCss} className="header">
@@ -32,7 +32,11 @@ class Header extends React.Component {
 					</Link>
 
 					<div className="pull-left header-content">
-						{this.props.injections.length ? this.props.injections : <SearchBar />}
+						{this.props.injections[0] || <SearchBar />}
+					</div>
+
+					<div className="pull-right">
+						{this.props.injections[1]}
 					</div>
 				</div>
 			</header>
@@ -43,11 +47,11 @@ class Header extends React.Component {
 // this is some magic around the Injectable library to allow
 // components further down the tree to inject children into the header
 const InjectableHeader = Injectable(Header)
-const HeaderInjector = Injector({into: InjectableHeader})
 export default InjectableHeader
+
+const HeaderInjector = Injector({into: InjectableHeader})
 export function ContentForHeader(props) {
-	let Injector = HeaderInjector(function() {
-		return props.children
-	})
-	return <Injector />
+	let {children, ...childProps} = props
+	let Component = HeaderInjector(function() { return children })
+	return <Component {...childProps} />
 }

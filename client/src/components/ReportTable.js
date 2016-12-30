@@ -1,10 +1,10 @@
-import React from 'react'
+import React, {Component} from 'react'
 import {Link} from 'react-router'
 import {Table} from 'react-bootstrap'
 
 import moment from 'moment'
 
-export default class ReportTable extends React.Component {
+export default class ReportTable extends Component {
 	static propTypes = {
 		showAuthors: React.PropTypes.bool,
 		reports: React.PropTypes.array.isRequired,

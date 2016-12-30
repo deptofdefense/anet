@@ -1,4 +1,5 @@
 import React from 'react'
+import Page from 'components/Page'
 import {InputGroup, Radio, Table, Button} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
@@ -13,7 +14,7 @@ import TextEditor from 'components/TextEditor'
 
 import API from 'api'
 
-export default class ReportNew extends React.Component {
+export default class ReportNew extends Page {
 	static contextTypes = {
 		router: React.PropTypes.object.isRequired
 	}
@@ -45,7 +46,7 @@ export default class ReportNew extends React.Component {
 		}
 	}
 
-	componentDidMount() {
+	fetchData() {
 		API.query(/* GraphQL */`
 			locations(f:recents) {
 				id, name
@@ -71,7 +72,7 @@ export default class ReportNew extends React.Component {
 
 				<Breadcrumbs items={[['EF4', '/organizations/ef4'], ['Submit a report', '/reports/new']]} />
 
-				<Form formFor={report} onChange={this.onChange} onSubmit={this.onSubmit} horizontal>
+				<Form formFor={report} onChange={this.onChange} onSubmit={this.onSubmit} actionText="Create report" horizontal>
 					{this.state.error && <fieldset><p>There was a problem saving this report.</p><p>{this.state.error}</p></fieldset>}
 					<fieldset>
 						<legend>Engagement details <small>Required</small></legend>
@@ -186,10 +187,6 @@ export default class ReportNew extends React.Component {
 						<Form.Field id="nextSteps" label="" horizontal={false} style={{marginTop: '5rem'}}>
 							<TextEditor label="Next steps" />
 						</Form.Field>
-					</fieldset>
-
-					<fieldset>
-						<Button bsSize="large" bsStyle="primary" type="submit" className="pull-right">Create report</Button>
 					</fieldset>
 				</Form>
 			</div>

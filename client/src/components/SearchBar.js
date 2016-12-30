@@ -1,7 +1,7 @@
-import React from 'react'
+import React, {Component} from 'react'
 import {Form, Button, InputGroup, FormControl} from 'react-bootstrap'
 
-export default class SearchBar extends React.Component {
+export default class SearchBar extends Component {
 	static contextTypes = {
 		router: React.PropTypes.object.isRequired
 	}
