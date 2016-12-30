@@ -305,7 +305,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		billet.setType(Position.PositionType.ADVISOR);
 		
 		//Put billet in EF1
-		List<Organization> results = httpQuery("/api/organizations/search?q=EF1&type=ADVISOR_ORG", nick).get(new GenericType<List<Organization>>() {});
+		List<Organization> results = httpQuery("/api/organizations/search?text=EF1&type=ADVISOR_ORG", nick).get(new GenericType<List<Organization>>() {});
 		assertThat(results.size()).isGreaterThan(0);
 		Organization ef1 = null;
 		for (Organization org : results) { 
@@ -469,7 +469,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 			)).hasSameSizeAs(searchResults);
 		
 		//Search by direct organization
-		List<Organization> orgs = httpQuery("/api/organizations/search?type=ADVISOR_ORG&q=ef1.1", jack).get(new GenericType<List<Organization>>() {});
+		List<Organization> orgs = httpQuery("/api/organizations/search?type=ADVISOR_ORG&text=ef1.1", jack).get(new GenericType<List<Organization>>() {});
 		assertThat(orgs.size()).isGreaterThan(0);
 		Organization ef11 = orgs.get(0);
 		assertThat(ef11.getName()).isEqualToIgnoringCase("EF1.1");
@@ -490,7 +490,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 			)).hasSameSizeAs(searchResults);
 		
 		//Search by parent organization
-		orgs = httpQuery("/api/organizations/search?type=ADVISOR_ORG&q=ef1", jack).get(new GenericType<List<Organization>>() {});
+		orgs = httpQuery("/api/organizations/search?type=ADVISOR_ORG&text=ef1", jack).get(new GenericType<List<Organization>>() {});
 		assertThat(orgs.size()).isGreaterThan(0);
 		Organization ef1 = orgs.stream().filter(o -> o.getName().equalsIgnoreCase("ef1")).findFirst().get();
 		assertThat(ef1.getName()).isEqualToIgnoringCase("EF1");

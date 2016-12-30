@@ -134,7 +134,7 @@ public class PositionResourceTest extends AbstractResourceTest {
 		
 		//Create Position
 		Position t = PositionTest.getTestPosition();
-		List<Organization> orgs = httpQuery("/api/organizations/search?q=Ministry&type=PRINCIPAL_ORG", admin)
+		List<Organization> orgs = httpQuery("/api/organizations/search?text=Ministry&type=PRINCIPAL_ORG", admin)
 			.get(new GenericType<List<Organization>>() {});
 		assertThat(orgs.size()).isGreaterThan(0);
 		
