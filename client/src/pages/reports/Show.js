@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {Component} from 'react'
 import {Link} from 'react-router'
 import moment from 'moment'
 
@@ -19,7 +19,7 @@ const atmosphereIcons = {
 	'NEGATIVE': "👎",
 }
 
-export default class ReportShow extends React.Component {
+export default class ReportShow extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {

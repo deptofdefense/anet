@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {Component} from 'react'
 import {Table} from 'react-bootstrap'
 
 import API from 'api'
@@ -6,7 +6,7 @@ import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
 import ReportTable from 'components/ReportTable'
 
-export default class PersonShow extends React.Component {
+export default class PersonShow extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {

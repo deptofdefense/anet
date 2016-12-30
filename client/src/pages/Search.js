@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {Component} from 'react'
 import moment from 'moment'
 
 import {Radio, Table} from 'react-bootstrap'
@@ -12,7 +12,7 @@ import API from 'api'
 const FORMAT_EXSUM = 'exsum'
 const FORMAT_TABLE = 'table'
 
-export default class Search extends React.Component {
+export default class Search extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {

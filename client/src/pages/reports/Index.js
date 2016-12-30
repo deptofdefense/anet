@@ -1,10 +1,10 @@
-import React from 'react'
+import React, {Component} from 'react'
 
 import API from 'api'
 import Breadcrumbs from 'components/Breadcrumbs'
 import ReportTable from 'components/ReportTable'
 
-export default class ReportsIndex extends React.Component {
+export default class ReportsIndex extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {reports: []}

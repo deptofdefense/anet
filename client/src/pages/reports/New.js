@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {Component} from 'react'
 import {InputGroup, Radio, Table, Button} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
@@ -13,7 +13,7 @@ import TextEditor from 'components/TextEditor'
 
 import API from 'api'
 
-export default class ReportNew extends React.Component {
+export default class ReportNew extends Component {
 	static contextTypes = {
 		router: React.PropTypes.object.isRequired
 	}

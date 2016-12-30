@@ -1,11 +1,11 @@
-import React from 'react'
+import React, {Component} from 'react'
 import ReactDOM from 'react-dom'
 import {Form as BSForm, Button} from 'react-bootstrap'
 
 import {ContentForHeader} from 'components/Header'
 import FormField from 'components/FormField'
 
-export default class Form extends React.Component {
+export default class Form extends Component {
 	static propTypes = Object.assign({}, BSForm.propTypes, {
 		formFor: React.PropTypes.object,
 		actionText: React.PropTypes.string,

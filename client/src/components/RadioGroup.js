@@ -1,8 +1,8 @@
-import React from 'react'
+import React, {Component} from 'react'
 import autobind from 'autobind-decorator'
 import {ButtonGroup, Button, Radio} from 'react-bootstrap'
 
-export default class RadioGroup extends React.Component {
+export default class RadioGroup extends Component {
 	static contextTypes = {
 		$bs_formGroup: React.PropTypes.object,
 	}

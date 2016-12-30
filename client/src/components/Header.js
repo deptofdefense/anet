@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {Component} from 'react'
 import {Link} from 'react-router'
 import {Injectable, Injector} from 'react-injectables'
 
@@ -22,7 +22,7 @@ const logoCss = {
 	width: '164px',
 }
 
-class Header extends React.Component {
+class Header extends Component {
 	render() {
 		return (
 			<header style={backgroundCss} className="header">

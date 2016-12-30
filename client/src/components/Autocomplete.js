@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {Component} from 'react'
 import Autosuggest from 'react-autosuggest'
 import {FormControl} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
@@ -7,7 +7,7 @@ import API from 'api'
 
 import './Autocomplete.css'
 
-export default class Autcomplete extends React.Component {
+export default class Autcomplete extends Component {
 	static propTypes = {
 		value: React.PropTypes.oneOfType([
 			React.PropTypes.object,
