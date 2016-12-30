@@ -17,7 +17,10 @@ import Search from './pages/Search'
 import ReportsIndex from './pages/reports/Index'
 import ReportNew from './pages/reports/New'
 import ReportShow from './pages/reports/Show'
+
 import PersonShow from './pages/people/Show'
+
+import OrganizationShow from './pages/organizations/Show'
 
 import GraphiQL from './pages/GraphiQL'
 
@@ -44,6 +47,10 @@ ReactDOM.render((
 
 				<Route path="people">
 					<Route path=":id" component={PersonShow} />
+				</Route>
+
+				<Route path="organizations">
+					<Route path=":id" component={OrganizationShow} />
 				</Route>
 
 				<Route path="/graphiql" component={GraphiQL} />

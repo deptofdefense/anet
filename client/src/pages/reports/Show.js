@@ -23,13 +23,13 @@ export default class ReportShow extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			report: {},
+			report: {id: props.params.id},
 		}
 	}
 
 	componentDidMount() {
 		API.query(/* GraphQL */`
-			report(id:${this.props.params.id}) {
+			report(id:${this.state.report.id}) {
 				id, intent, engagementDate, atmosphere, atmosphereDetails
 				reportText, nextSteps
 				location { id, name }
