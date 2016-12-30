@@ -29,6 +29,7 @@ export default class ReportShow extends Page {
 			report: {
 				id: props.params.id,
 				attendees: [],
+				poams: [],
 			},
 		}
 	}
@@ -102,15 +103,23 @@ export default class ReportShow extends Page {
 					<fieldset>
 						<legend>Milestones</legend>
 
-						<ul>
-							{(report.poams && report.poams.map(poam =>
-								<li key={poam.id}>
-									<Link to={"/milestones/" + poam.id}>
-										{poam.shortName} {poam.longName}
-									</Link>
-								</li>
-							)) || "This report does not specify any milestones."}
-						</ul>
+						<Table>
+							<thead>
+								<tr>
+									<th>Name</th>
+									<th>Organization</th>
+								</tr>
+							</thead>
+
+							<tbody>
+								{report.poams.map(poam =>
+									<tr key={poam.id}>
+										<td><Link to={`/poams/${poam.id}`}>{poam.longName}</Link></td>
+										<td className="todo"><Link to={`/organizations/${poam.shortName}`}>{poam.shortName}</Link> FIXME</td>
+									</tr>
+								)}
+							</tbody>
+						</Table>
 					</fieldset>
 
 					<fieldset>
