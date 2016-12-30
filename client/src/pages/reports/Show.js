@@ -1,10 +1,12 @@
-import React, {Component} from 'react'
+import React from 'react'
+import Page from 'components/Page'
 import {Link} from 'react-router'
 import moment from 'moment'
 
 import API from 'api'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
+
 
 const atmosphereIconStyle = {
 	fontSize: '2rem',
@@ -19,7 +21,7 @@ const atmosphereIcons = {
 	'NEGATIVE': "👎",
 }
 
-export default class ReportShow extends Component {
+export default class ReportShow extends Page {
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -27,9 +29,9 @@ export default class ReportShow extends Component {
 		}
 	}
 
-	componentDidMount() {
+	fetchData(props) {
 		API.query(/* GraphQL */`
-			report(id:${this.state.report.id}) {
+			report(id:${props.params.id}) {
 				id, intent, engagementDate, atmosphere, atmosphereDetails
 				reportText, nextSteps
 				location { id, name }
@@ -44,7 +46,7 @@ export default class ReportShow extends Component {
 	render() {
 		let report = this.state.report
 		let breadcrumbName = report.intent || 'Report'
-		let breadcrumbUrl = '/reports/' + (report.id || this.props.params.id)
+		let breadcrumbUrl = `/reports/${report.id}`
 
 		return (
 			<div>

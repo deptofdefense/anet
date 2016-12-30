@@ -1,4 +1,5 @@
-import React, {Component} from 'react'
+import React from 'react'
+import Page from 'components/Page'
 import {InputGroup, Radio, Table, Button} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
@@ -13,7 +14,7 @@ import TextEditor from 'components/TextEditor'
 
 import API from 'api'
 
-export default class ReportNew extends Component {
+export default class ReportNew extends Page {
 	static contextTypes = {
 		router: React.PropTypes.object.isRequired
 	}
@@ -45,7 +46,7 @@ export default class ReportNew extends Component {
 		}
 	}
 
-	componentDidMount() {
+	fetchData() {
 		API.query(/* GraphQL */`
 			locations(f:recents) {
 				id, name

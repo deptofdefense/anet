@@ -1,16 +1,17 @@
-import React, {Component} from 'react'
+import React from 'react'
+import Page from 'components/Page'
 
 import API from 'api'
 import Breadcrumbs from 'components/Breadcrumbs'
 import ReportTable from 'components/ReportTable'
 
-export default class ReportsIndex extends Component {
+export default class ReportsIndex extends Page {
 	constructor(props) {
 		super(props)
 		this.state = {reports: []}
 	}
 
-	componentDidMount() {
+	fetchData() {
 		API.query(/* GraphQL */`
 			reports(f:getAll, pageSize:100, pageNum:0) {
 				id, intent, state

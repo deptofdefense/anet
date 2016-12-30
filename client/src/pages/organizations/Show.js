@@ -1,13 +1,13 @@
-import React, {Component} from 'react'
+import React from 'react'
+import Page from 'components/Page'
 import {Link} from 'react-router'
 import {Table} from 'react-bootstrap'
-import moment from 'moment'
 
 import API from 'api'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
 
-export default class OrganizationShow extends Component {
+export default class OrganizationShow extends Page {
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -15,9 +15,9 @@ export default class OrganizationShow extends Component {
 		}
 	}
 
-	componentDidMount() {
+	fetchData(props) {
 		API.query(/* GraphQL */`
-			organization(id:${this.state.organization.id}) {
+			organization(id:${props.params.id}) {
 				id, name, type
 				parentOrg { id, name }
 				positions {
