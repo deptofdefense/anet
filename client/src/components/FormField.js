@@ -15,6 +15,36 @@ export default class FormField extends Component {
 		form: React.PropTypes.object,
 	}
 
+	static propTypes = {
+		// Specifying an id prop on a FormField contained inside a Form with
+		// a formFor prop will cause the FormField to be autobound to the formFor
+		// value. That is to say, its value will be set to formForObject[idProp],
+		// and when the FormField changes, formForObject[idProp] will automatically
+		// be updated. The form will then have its own onChange fired to allow
+		// you to update state or rerender.
+		id: React.PropTypes.string.isRequired,
+		label: React.PropTypes.string,
+
+		// This will cause the FormField to be rendered as an InputGroup,
+		// with the node specified by addon appended on the right of the group.
+		addon: React.PropTypes.node,
+
+		// If you pass children, we will try to autobind them to the id key
+		// if any of the children have propTypes that include onChange
+		children: React.PropTypes.node,
+
+		// If you don't pass children, we will automatically create a FormControl.
+		// You can use componentClass to override its type (for example, for a select).
+		componentClass: React.PropTypes.oneOfType([
+			React.PropTypes.string,
+			React.PropTypes.object,
+		]),
+
+		// If you don't want autobinding behavior, you can override them here
+		value: React.PropTypes.string,
+		onChange: React.PropTypes.func,
+	}
+
 	render() {
 		let {
 			id,
@@ -49,7 +79,7 @@ export default class FormField extends Component {
 
 		// if children are provided, render those, but special case them to
 		// automatically set value and children props
-		} else if (children.length) {
+		} else if (!this.props.componentClass && children.length) {
 			children = children.map(child => {
 				let propTypes = child.type.propTypes
 
@@ -63,6 +93,9 @@ export default class FormField extends Component {
 
 		// otherwise render out a default FormControl input element
 		} else {
+			if (children.length)
+				childProps.children = children
+
 			children = <FormControl {...childProps} defaultValue={defaultValue} onChange={this.onChange} />
 		}
 

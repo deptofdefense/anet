@@ -8,6 +8,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 
+import org.joda.time.DateTime;
 import org.junit.Test;
 
 import io.dropwizard.client.JerseyClientBuilder;
@@ -42,12 +43,15 @@ public class PersonResourceTest extends AbstractResourceTest {
     	newPerson.setRole(Role.PRINCIPAL);
     	newPerson.setStatus(Status.ACTIVE);
     	newPerson.setBiography("Created buy the PersonResourceTest#testCreatePerson");
+    	newPerson.setGender("Female");
+    	newPerson.setCountry("Canada");
+    	newPerson.setEndOfTourDate(new DateTime(2020,4,1,0,0,0));
     	newPerson = httpQuery("/api/people/new", admin).post(Entity.json(newPerson), Person.class);
     	assertThat(newPerson.getId()).isNotNull();
     	assertThat(newPerson.getName()).isEqualTo("testCreatePerson Person");
     	
-    	
     	newPerson.setName("testCreatePerson updated name");
+    	newPerson.setCountry("The Commonwealth of Canada");
     	Response resp = httpQuery("/api/people/update", admin)
     			.post(Entity.json(newPerson));
     	assertThat(resp.getStatus()).isEqualTo(200);

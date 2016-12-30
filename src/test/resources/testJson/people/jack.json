@@ -6,5 +6,8 @@
 	"phoneNumber" : "123-456-78960",
 	"rank" : "OF-9",
 	"biography" : "this is a sample biography",
-	"domainUsername" : "jack"
+	"domainUsername" : "jack",
+	"gender" : "Male",
+	"country" : "United States of America",
+	"endOfTourDate" : 1498795200000
 }

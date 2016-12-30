@@ -21,6 +21,8 @@
 		"phoneNumber": "+011-258-32895",
 		"rank": "LtCol",
 		"biography": "this is a sample person who could be a Principal!",
+		"gender" : "Male",
+		"country" : "Afghanistan",
 		"primary" : true
 	}],
 	"poams": [{
@@ -49,7 +51,10 @@
 		"phoneNumber": "123-456-78960",
 		"rank": "OF-9",
 		"biography": "this is a sample biography",
-		"domainUsername" : "jack"
+		"domainUsername" : "jack",
+		"gender" : "Male",
+		"country" : "United States of America",
+		"endOfTourDate" : 1498795200000
 	},
 	"comments": [{
 		"id": null,
@@ -62,7 +67,10 @@
 			"phoneNumber": "123-456-78960",
 			"rank": "OF-9",
 			"biography": "this is a sample biography",
-			"domainUsername" : "jack"
+			"domainUsername" : "jack",
+			"gender" : "Male",
+			"country" : "United States of America",
+			"endOfTourDate" : 1498795200000
 		},
 		"createdAt": 1453815803000,
 		"updatedAt": null,

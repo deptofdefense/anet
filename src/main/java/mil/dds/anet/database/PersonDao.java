@@ -25,6 +25,7 @@ public class PersonDao implements IAnetDao<Person> {
 
 	private static String[] fields = {"id","name","status","role",
 			"emailAddress","phoneNumber","rank","biography",
+			"country", "gender", "endOfTourDate",
 			"domainUsername","pendingVerification","createdAt",
 			"updatedAt"};
 	private static String tableName = "people";
@@ -62,11 +63,21 @@ public class PersonDao implements IAnetDao<Person> {
 	public Person insert(Person p){
 		p.setCreatedAt(DateTime.now());
 		p.setUpdatedAt(DateTime.now());
-		GeneratedKeys<Map<String, Object>> keys = dbHandle.createStatement("INSERT INTO people " +
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO people " +
 				"(name, status, role, emailAddress, phoneNumber, rank, pendingVerification, "
-				+ "biography, domainUsername, createdAt, updatedAt) " +
+				+ "gender, country, endOfTourDate, biography, domainUsername, createdAt, updatedAt) " +
 				"VALUES (:name, :status, :role, :emailAddress, :phoneNumber, :rank, :pendingVerification, "
-				+ ":biography, :domainUsername, :createdAt, :updatedAt);")
+				+ ":gender, :country, ");
+		if (DaoUtils.isMsSql(dbHandle)) {
+			//MsSql requires an explicit CAST when datetime2 might be NULL. 
+			sql.append("CAST(:endOfTourDate AS datetime2), ");
+		} else {
+			sql.append(":endOfTourDate, ");
+		}
+		sql.append(":biography, :domainUsername, :createdAt, :updatedAt);");
+
+		GeneratedKeys<Map<String, Object>> keys = dbHandle.createStatement(sql.toString())
 			.bindFromProperties(p)
 			.bind("status", DaoUtils.getEnumId(p.getStatus()))
 			.bind("role", DaoUtils.getEnumId(p.getRole()))
@@ -79,6 +90,7 @@ public class PersonDao implements IAnetDao<Person> {
 		p.setUpdatedAt(DateTime.now());
 		return dbHandle.createStatement("UPDATE people " + 
 				"SET name = :name, status = :status, role = :role, " + 
+				"gender = :gender, country = :country, endOfTourDate = :endOfTourDate, " + 
 				"phoneNumber = :phoneNumber, rank = :rank, biography = :biography, " +
 				"pendingVerification = :pendingVerification, updatedAt = :updatedAt "
 				+ "WHERE id = :id")

@@ -1,6 +1,7 @@
 import React from 'react'
 import Page from 'components/Page'
 import {Table} from 'react-bootstrap'
+import moment from 'moment'
 
 import API from 'api'
 import Breadcrumbs from 'components/Breadcrumbs'
@@ -22,7 +23,7 @@ export default class PersonShow extends Page {
 		API.query(/* GraphQL */`
 			person(id:${props.params.id}) {
 				id,
-				name, rank, role, emailAddress, phoneNumber, biography,
+				name, rank, role, emailAddress, phoneNumber, biography, country, gender, endOfTourDate
 				position {
 					id,
 					name,
@@ -68,12 +69,15 @@ export default class PersonShow extends Page {
 				<Form formFor={person} horizontal>
 					<fieldset>
 						<legend>{person.rank} {person.name}</legend>
-						<Form.Field label="Rank" type="static" id="rank" />
-						<Form.Field label="Role" type="static" id="role" />
+						<Form.Field type="static" id="rank" />
+						<Form.Field type="static" id="role" />
 						<Form.Field label="Phone" type="static" id="phoneNumber" />
 						<Form.Field label="Email" type="static" id="emailAddress">
 							<a href={`mailto:${person.emailAddress}`}>{person.emailAddress}</a>
 						</Form.Field>
+						<Form.Field type="static" id="country" />
+						<Form.Field type="static" id="gender" />
+						<Form.Field label="End of Tour Date" type="static" id="endOfTourDate" value={moment(person.endOfTourDate).format("L")} />
 						<Form.Field label="Bio" type="static" id="person.biography" />
 					</fieldset>
 

@@ -19,6 +19,7 @@ import ReportNew from './pages/reports/New'
 import ReportShow from './pages/reports/Show'
 
 import PersonShow from './pages/people/Show'
+import PersonNew from './pages/people/New'
 
 import OrganizationShow from './pages/organizations/Show'
 
@@ -46,6 +47,7 @@ ReactDOM.render((
 				</Route>
 
 				<Route path="people">
+					<Route path="new" component={PersonNew} />
 					<Route path=":id" component={PersonShow} />
 				</Route>
 

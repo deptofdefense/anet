@@ -162,11 +162,10 @@ public class AnetResourceDataFetcher implements DataFetcher {
 			if (arg == null && param.isAnnotationPresent(DefaultValue.class)) { 
 				arg = param.getAnnotation(DefaultValue.class).value();
 			}
-			System.out.println("a: Arg is " + arg.getClass() + " and param is " + param.getType());
-			//Verify the types are correct. 
-			if (param.getType().isAssignableFrom(arg.getClass()) == false) {
+
+			//Verify the types are correct. (ignore primitives) 
+			if ((!param.getType().isPrimitive()) && param.getType().isAssignableFrom(arg.getClass()) == false) {
 				//If the argument passed was a Map, but we need a bean, try to convert it? 
-				System.out.println("b: Arg is " + arg.getClass() + " and param is " + param.getType());
 				if (Map.class.isAssignableFrom(arg.getClass())) { 
 					try { 
 						arg = mapper.convertValue(arg, param.getType());
@@ -175,7 +174,6 @@ public class AnetResourceDataFetcher implements DataFetcher {
 					}
 				} else {
 					System.out.println("c: Arg is " + arg.getClass() + " and param is " + param.getType());
-					//Otherwise just throw an exception that we got the wrong arg type. 
 					throw new WebApplicationException("Type mismatch on arg, wanted " + param.getType() + " got " + arg.getClass());
 				}
 			}

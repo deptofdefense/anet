@@ -469,9 +469,9 @@ public class ReportsResourceTest extends AbstractResourceTest {
 			)).hasSameSizeAs(searchResults);
 		
 		//Search by direct organization
-		List<Organization> orgs = httpQuery("/api/organizations/search?type=ADVISOR_ORG&text=ef1.1", jack).get(new GenericType<List<Organization>>() {});
+		List<Organization> orgs = httpQuery("/api/organizations/search?type=ADVISOR_ORG&text=EF1", jack).get(new GenericType<List<Organization>>() {});
 		assertThat(orgs.size()).isGreaterThan(0);
-		Organization ef11 = orgs.get(0);
+		Organization ef11 = orgs.stream().filter(o -> o.getName().equals("EF1.1")).findFirst().get();
 		assertThat(ef11.getName()).isEqualToIgnoringCase("EF1.1");
 		
 		query.setPoamId(null);
@@ -479,12 +479,6 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		query.setIncludeAuthorOrgChildren(false);
 		searchResults = httpQuery("/api/reports/search", jack).post(Entity.json(query), new GenericType<List<Report>>() {});
 		assertThat(searchResults).isNotEmpty();
-		for (Report r : searchResults) {
-			System.out.println(r.getAuthor());
-			System.out.println(r.getAuthor().getPosition());
-			System.out.println(r.getAuthor().getPosition().getOrganization());
-			System.out.println(r.getAuthor().getPosition().getOrganization().getId());
-		}
 		assertThat(searchResults.stream().filter(r -> 
 				r.getAuthor().getPosition().getOrganization().getId().equals(ef11.getId())
 			)).hasSameSizeAs(searchResults);
