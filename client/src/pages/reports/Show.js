@@ -1,6 +1,7 @@
 import React from 'react'
 import Page from 'components/Page'
 import {Link} from 'react-router'
+import {Table} from 'react-bootstrap'
 import moment from 'moment'
 
 import API from 'api'
@@ -25,7 +26,10 @@ export default class ReportShow extends Page {
 	constructor(props) {
 		super(props)
 		this.state = {
-			report: {id: props.params.id},
+			report: {
+				id: props.params.id,
+				attendees: [],
+			},
 		}
 	}
 
@@ -36,7 +40,10 @@ export default class ReportShow extends Page {
 				reportText, nextSteps
 				location { id, name }
 				author { id, name }
-				attendees { id, name }
+				attendees {
+					id, name
+					position { id, name }
+				}
 				poams { id, shortName, longName }
 
 			}
@@ -73,15 +80,23 @@ export default class ReportShow extends Page {
 					<fieldset>
 						<legend>Meeting attendees</legend>
 
-						<ul>
-							{(report.attendees && report.attendees.map(person =>
-								<li key={person.id}>
-									<Link to={"/people/" + person.id}>
-										{person.name}
-									</Link>
-								</li>
-							)) || "This report does not specify any attendees."}
-						</ul>
+						<Table>
+							<thead>
+								<tr>
+									<th>Name</th>
+									<th>Position</th>
+								</tr>
+							</thead>
+
+							<tbody>
+								{report.attendees.map(person =>
+									<tr key={person.id}>
+										<td><Link to={`/people/${person.id}`}>{person.name}</Link></td>
+										<td><Link to={`/positions/${person.position.id}`}>{person.position.name}</Link></td>
+									</tr>
+								)}
+							</tbody>
+						</Table>
 					</fieldset>
 
 					<fieldset>
