@@ -13,6 +13,7 @@ import Autocomplete from 'components/Autocomplete'
 import TextEditor from 'components/TextEditor'
 
 import API from 'api'
+import Report from 'models/Report'
 
 export default class ReportNew extends Page {
 	static contextTypes = {
@@ -27,16 +28,7 @@ export default class ReportNew extends Page {
 		super(props)
 
 		this.state = {
-			report: {
-				intent: '',
-				engagementDate: null,
-				atmosphere: null,
-				location: {},
-				attendees: [],
-				poams: [],
-				reportText: '',
-				nextSteps: '',
-			},
+			report: new Report(),
 
 			recents: {
 				persons: [],
@@ -204,13 +196,12 @@ export default class ReportNew extends Page {
 		event.stopPropagation()
 		event.preventDefault()
 
-		API.send('/api/reports/new', this.state.report, {disableSubmits: true})
+		this.state.report.save({disableSubmits: true})
 			.then(report => {
-				if (report.code) throw report.code
-				console.log(report);
-				this.context.router.push('/reports/' + report.id)
-			}).catch(error => {
-				this.setState({error: error})
+				this.context.router.push(report.toPath())
+			})
+			.catch(error => {
+				this.setState({errors: error})
 				window.scrollTo(0, 0)
 			})
 	}
