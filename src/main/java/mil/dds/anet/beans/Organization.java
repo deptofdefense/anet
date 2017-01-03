@@ -91,7 +91,7 @@ public class Organization extends AbstractAnetBean {
 	}
 	
 	@JsonIgnore
-	public List<Organization> getChildrenOrganizations() { 
+	public List<Organization> getChildrenOrgs() { 
 		if (childrenOrgs == null) { 
 			childrenOrgs = AnetObjectEngine.getInstance().getOrganizationDao().getByParentOrgId(id);
 		}
@@ -99,13 +99,13 @@ public class Organization extends AbstractAnetBean {
 	}
 	
 	@GraphQLIgnore
-	@JsonGetter("childrenOrganizations")
-	public List<Organization> getChildrenOrganizationsJson() { 
+	@JsonGetter("childrenOrgss")
+	public List<Organization> getChildrenOrgsJson() { 
 		return childrenOrgs;
 	}
 	
-	@JsonSetter("childrenOrganizations")
-	public void setChildrenOrganizations(List<Organization> childrenOrgs) { 
+	@JsonSetter("childrenOrgs")
+	public void setChildrenOrgss(List<Organization> childrenOrgs) { 
 		this.childrenOrgs = childrenOrgs;
 	}
 	
