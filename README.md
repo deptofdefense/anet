@@ -35,12 +35,12 @@ but cannot garauntee that the SQLite code will exactly match the SQL Server.
 	run.environment("ANET_DB_NAME","database name")
 ```
 
-4. Open anet.yml and make sure the port settings look good for you.
+4. Open anet.yml and make sure the port settings look good for you. If you change the port, also update the "proxy" field in client/package.json.
 5. Run `./gradlew build` to download all dependencies and build the project
 6. Run `./gradlew dbMigrate` to build and migrate the database
 	- The database schema is stored in src/main/resources/migrations.xml
 7. Seed the initial data:
-	- SQLite: `sqlite3 development.db < lite_insertBaseData.sql`
+	- SQLite: `cat insertBaseData.sql | ./mssql2sqlite.sh | sqlite3 development.db`
 	- MSSQL: You'll need to manually connect to your sqlserver instance and run `insertBaseData.sql`
 
 ### Developing

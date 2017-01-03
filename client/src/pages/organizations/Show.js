@@ -11,7 +11,10 @@ export default class OrganizationShow extends Page {
 	constructor(props) {
 		super(props)
 		this.state = {
-			organization: {id: props.params.id},
+			organization: {
+				id: props.params.id,
+				positions: [],
+			},
 		}
 	}
 
@@ -37,6 +40,9 @@ export default class OrganizationShow extends Page {
 		let breadcrumbName = org.name || 'Organization'
 		let breadcrumbUrl = '/organizations/' + org.id
 
+		let positionsNeedingAttention = org.positions.filter(position => !position.person || !position.code || !position.associatedPositions.length)
+		let supportedPositions = org.positions.filter(position => positionsNeedingAttention.indexOf(position) === -1)
+
 		return (
 			<div>
 				<Breadcrumbs items={[[breadcrumbName, breadcrumbUrl]]} />
@@ -57,32 +63,68 @@ export default class OrganizationShow extends Page {
 					</fieldset>
 
 					<fieldset>
-						<legend>Positions</legend>
+						<legend>Positions needing attention</legend>
+						{this.renderPositionTable(positionsNeedingAttention)}
+					</fieldset>
 
-						<Table>
-							<thead>
-								<tr>
-									<th>NATO billet</th>
-									<th>Advisor</th>
-									<th>Afghan billet</th>
-									<th>Afghan</th>
-								</tr>
-							</thead>
-							<tbody>
-								{org.positions && org.positions.map(position => {
-									let other = position.associatedPositions[0] || {person:{}}
-									return <tr key={position.id}>
-										<td>{position.code}</td>
-										<td><Link to={`/people/${position.person.id}`}>{position.person.name}</Link></td>
-										<td>{other.code}</td>
-										<td><Link to={`/people/${other.person.id}`}>{other.person.name}</Link></td>
-									</tr>
-								})}
-							</tbody>
-						</Table>
+					<fieldset>
+						<legend>Supported laydown</legend>
+						{this.renderPositionTable(supportedPositions)}
 					</fieldset>
 				</Form>
 			</div>
 		)
+	}
+
+	renderPositionTable(positions) {
+		return <Table>
+			<thead>
+				<tr>
+					<th>NATO billet</th>
+					<th>Advisor</th>
+					<th>Afghan billet</th>
+					<th>Afghan</th>
+				</tr>
+			</thead>
+			<tbody>
+				{positions.map(position =>
+					position.associatedPositions.length
+					? position.associatedPositions.map(other => this.renderPositionRow(position, other))
+					: this.renderPositionRow(position)
+				)}
+			</tbody>
+		</Table>
+	}
+
+	renderPositionRow(position, other) {
+		let key = position.id
+		let otherCodeCol, otherNameCol
+		if (other) {
+			key += '.' + other.id
+			otherCodeCol = <td>
+				<Link to={`/positions/${other.id}`}>{other.code || "Uncoded"}</Link>
+			</td>
+
+			otherNameCol = other.person
+				? <td><Link to={`/people/${other.person.id}`}>{other.person.name}</Link></td>
+				: <td className="text-danger">Unfilled</td>
+		}
+
+		otherCodeCol = otherCodeCol || <td></td>
+		otherNameCol = otherNameCol || <td></td>
+
+		return <tr key={key}>
+			<td>
+				<Link to={`/positions/${position.id}`}>{position.code || "Uncoded"}</Link>
+			</td>
+
+			{position.person
+				? <td><Link to={`/people/${position.person.id}`}>{position.person.name}</Link></td>
+				: <td className="text-danger">Unfilled</td>
+			}
+
+			{otherCodeCol}
+			{otherNameCol}
+		</tr>
 	}
 }

@@ -1,6 +1,7 @@
 import React from 'react'
 import Page from 'components/Page'
 import {Table} from 'react-bootstrap'
+import {Link} from 'react-router'
 import moment from 'moment'
 
 import API from 'api'
@@ -57,10 +58,17 @@ export default class PersonShow extends Page {
 
 	render() {
 		let {person} = this.state
+		let position = person.position
+		let org = position && position.organization
 
-		let position = <tr><td>This person is not assigned to a position</td></tr>;
-		if (person.position) {
-			position = <tr><td>Now</td><td>{person.position.organization && person.position.organization.name}</td><td>{person.position.name}</td></tr>;
+		let currentPositionRow = <tr><td>This person is not assigned to a position</td></tr>;
+
+		if (position) {
+			currentPositionRow = <tr>
+				<td>Now</td>
+				<td>{org && <Link to={`/organizations/${org.id}`}>{org.name}</Link>}</td>
+				<td>{position.name}</td>
+			</tr>
 		}
 
 		return (
@@ -88,7 +96,7 @@ export default class PersonShow extends Page {
 							<tr><th>Date</th><th>Org</th><th>Position</th></tr>
 							</thead>
 							<tbody>
-								{position}
+								{currentPositionRow}
 								<tr><td colSpan="3" className="todo">TODO: Previous Positions</td></tr>
 							</tbody>
 						</Table>
