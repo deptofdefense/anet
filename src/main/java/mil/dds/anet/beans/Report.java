@@ -13,6 +13,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
 import mil.dds.anet.AnetObjectEngine;
+import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.database.AdminDao.AdminSettingKeys;
 import mil.dds.anet.graphql.GraphQLIgnore;
@@ -156,12 +157,19 @@ public class Report extends AbstractAnetBean {
 	}
 
 	@JsonIgnore
-	public ReportPerson getPrimaryAttendee() { 
+	public ReportPerson getPrimaryAdvisor() { 
 		getAttendees(); //Force the load of attendees
-		for (ReportPerson rp : attendees) { 
-			if (rp.isPrimary()) { return rp; } 
-		}
-		return null;
+		return attendees.stream().filter(p ->
+				p.isPrimary() && p.getRole().equals(Role.ADVISOR)
+			).findFirst().orElse(null);
+	}
+	
+	@JsonIgnore
+	public ReportPerson getPrimaryPrincipal() { 
+		getAttendees(); //Force the load of attendees
+		return attendees.stream().filter(p ->
+				p.isPrimary() && p.getRole().equals(Role.PRINCIPAL)
+			).findFirst().orElse(null);
 	}
 	
 	@JsonIgnore

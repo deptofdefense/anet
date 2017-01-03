@@ -90,6 +90,12 @@ export default class ReportShow extends Page {
 								<Link to={"/people/" + report.author.id}>{report.author.name}</Link>
 							}
 						</Form.Field>
+						<Form.Field id="advisorOrg" label="Advisor Org">
+							{report.advisorOrg && <Link to={"/organizations" + report.advisorOrg.id}>{report.advisorOrg.name}</Link>}
+						</Form.Field>
+						<Form.Field id="principalOrg" label="Principal Org">
+							{report.principalOrg && <Link to={"/organizations" + report.principalOrg.id}>{report.principalOrg.name}</Link>}
+						</Form.Field>
 					</fieldset>
 
 					<fieldset>

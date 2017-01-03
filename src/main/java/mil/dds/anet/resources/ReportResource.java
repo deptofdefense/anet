@@ -161,6 +161,25 @@ public class ReportResource implements IGraphQLResource {
 		Report r = dao.getById(id);
 		//TODO: this needs to be done by either the Author, a Superuser for the AO, or an Administrator
 
+		if (r.getAdvisorOrgJson() == null) { 
+			ReportPerson advisor = r.getPrimaryAdvisor();
+			if (advisor == null) { 
+				throw new WebApplicationException("Report missing primary advisor", Status.BAD_REQUEST);
+			}
+			r.setAdvisorOrg(engine.getOrganizationForPerson(advisor));
+		}
+		if (r.getPrincipalOrgJson() == null) { 
+			ReportPerson principal = r.getPrimaryPrincipal();
+			if (principal == null) {
+				throw new WebApplicationException("Report missing primary principal", Status.BAD_REQUEST);
+			}
+			r.setPrincipalOrg(engine.getOrganizationForPerson(principal));
+		}
+		
+		if (r.getEngagementDate() == null) { 
+			throw new WebApplicationException("Missing engagement date", Status.BAD_REQUEST);
+		}
+		
 		Organization org = engine.getOrganizationForPerson(r.getAuthor());
 		if (org == null ) {
 			// Author missing Org, use the Default Approval Workflow
