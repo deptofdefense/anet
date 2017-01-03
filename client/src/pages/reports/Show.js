@@ -59,7 +59,8 @@ export default class ReportShow extends Page {
 					id, text, createdAt, updatedAt
 					author { id, name, rank }
 				}
-
+				advisorOrg { id, name }
+				principalOrg {id, name}
 			}
 		`).then(data => this.setState({report: data.report}))
 	}

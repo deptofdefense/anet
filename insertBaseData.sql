@@ -157,41 +157,41 @@ INSERT INTO groupMemberships (groupId, personId) VALUES
 
 
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt)	VALUES ('EF1', 'Budget and Planning', 'EF', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId) 
+	VALUES ('1.1', 'Budgeting in the MoD', 'Sub-EF', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1'));
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId, organizationId) 
-	VALUES ('EF1.1', 'Budgeting in the MoD', 'Sub-EF', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1'), (SELECT id from organizations where name='EF1.1'));
-INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId) 
-	VALUES ('1.1.A', 'Milestone the First in EF1.1', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1.1'));
-INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId) 
-	VALUES ('1.1.B', 'Milestone the Second in EF1.1', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1.1'));
-INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId) 
-	VALUES ('1.1.C', 'Milestone the Third in EF1.1', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1.1'));
+	VALUES ('1.1.A', 'Milestone the First in EF1.1', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1.1'), (SELECT id from organizations where name='EF1.1'));
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId, organizationId) 
+	VALUES ('1.1.B', 'Milestone the Second in EF1.1', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1.1'), (SELECT id from organizations where name='EF1.1'));
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId, organizationId) 
+	VALUES ('1.1.C', 'Milestone the Third in EF1.1', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1.1'), (SELECT id from organizations where name='EF1.1'));
 
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId, organizationId) 
 	VALUES ('EF1.2', 'Budgeting in the MoI', 'Sub-EF', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1'), (SELECT id from organizations WHERE name='EF1.2'));
-INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId) 
-	VALUES ('1.2.A', 'Milestone the First in EF1.2', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1.2'));
-INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId) 
-	VALUES ('1.2.B', 'Milestone the Second in EF1.2', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1.2'));
-INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId) 
-	VALUES ('1.2.C', 'Milestone the Third in EF1.2', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1.2'));
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId, organizationId) 
+	VALUES ('1.2.A', 'Milestone the First in EF1.2', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1.2'), (SELECT id from organizations where name='EF1.2'));
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId, organizationId) 
+	VALUES ('1.2.B', 'Milestone the Second in EF1.2', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1.2'), (SELECT id from organizations where name='EF1.2'));
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId, organizationId) 
+	VALUES ('1.2.C', 'Milestone the Third in EF1.2', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1.2'), (SELECT id from organizations where name='EF1.2'));
 
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId, organizationId) 
 	VALUES ('EF1.3', 'Budgeting in the Police?', 'Sub-EF', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1'), (SELECT id FROM organizations WHERE name='EF1.3'));
-INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId) 
-	VALUES ('1.3.A', 'Getting a budget in place', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1.3'));
-INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId) 
-	VALUES ('1.3.B', 'Tracking your expenses', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1.3'));
-INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId) 
-	VALUES ('1.3.C', 'Knowing when you run out of money', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1.3'));
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId, organizationId) 
+	VALUES ('1.3.A', 'Getting a budget in place', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1.3'), (SELECT id from organizations where name='EF1.3'));
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId, organizationId) 
+	VALUES ('1.3.B', 'Tracking your expenses', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1.3'), (SELECT id from organizations where name='EF1.3'));
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId, organizationId) 
+	VALUES ('1.3.C', 'Knowing when you run out of money', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1.3'), (SELECT id from organizations where name='EF1.3'));
 
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, organizationId) 
 	VALUES ('EF2', 'Transparency, Accountability, O (TAO)', 'EF', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from organizations where name='EF2'));
-INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId) 
-	VALUES ('2.A', 'This is the first Milestone in EF2', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF2'));
-INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId) 
-	VALUES ('2.B', 'This is the second Milestone in EF2', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF2'));
-INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId) 
-	VALUES ('2.C', 'This is the third Milestone in EF2', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF2'));
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId, organizationId) 
+	VALUES ('2.A', 'This is the first Milestone in EF2', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF2'), (SELECT id from organizations where name='EF2'));
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId, organizationId) 
+	VALUES ('2.B', 'This is the second Milestone in EF2', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF2'), (SELECT id from organizations where name='EF2'));
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId, organizationId) 
+	VALUES ('2.C', 'This is the third Milestone in EF2', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF2'), (SELECT id from organizations where name='EF2'));
 
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt) VALUES ('EF3', 'Rule of Law', 'EF', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt) VALUES ('EF4', 'Force Gen (Training)', 'EF', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
