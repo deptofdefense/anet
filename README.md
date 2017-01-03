@@ -40,7 +40,7 @@ but cannot garauntee that the SQLite code will exactly match the SQL Server.
 6. Run `./gradlew dbMigrate` to build and migrate the database
 	- The database schema is stored in src/main/resources/migrations.xml
 7. Seed the initial data:
-	- SQLite: `sqlite3 development.db < lite_insertBaseData.sql`
+	- SQLite: `cat insertBaseData.sql | ./mssql2sqlite.sh | sqlite3 development.db`
 	- MSSQL: You'll need to manually connect to your sqlserver instance and run `insertBaseData.sql`
 
 ### Developing
