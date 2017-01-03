@@ -43,6 +43,10 @@ export default class Model {
 		return path.join('/')
 	}
 
+	toString() {
+		return this.toPath()
+	}
+
 	toJSON() {
 		return Object.without(this, '_meta')
 	}
