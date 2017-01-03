@@ -15,6 +15,7 @@ import TextEditor from 'components/TextEditor'
 
 import API from 'api'
 import Report from 'models/Report'
+import Person from 'models/Person'
 
 export default class ReportNew extends Page {
 	static pageProps = {
@@ -110,7 +111,7 @@ export default class ReportNew extends Page {
 									</tr>
 								</thead>
 								<tbody>
-									{report.attendees.map(person => <tr key={person.id}>
+									{report.attendees.map(person => <tr key={person}>
 										<td onClick={this.removeAttendee.bind(this, person)}>
 											<span style={{cursor: 'pointer'}}>⛔️</span>
 										</td>
@@ -209,7 +210,7 @@ export default class ReportNew extends Page {
 		let attendees = report.attendees
 
 		if (!attendees.find(attendee => attendee.id === newAttendee.id)) {
-			attendees.push(newAttendee)
+			attendees.push(new Person(newAttendee))
 		}
 
 		this.setState({report})
