@@ -9,6 +9,7 @@ import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
 import mil.dds.anet.beans.ApprovalStep;
+import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.Atmosphere;
@@ -55,6 +56,16 @@ public class ReportMapper implements ResultSetMapper<Report> {
 		PersonMapper.fillInFields(author, rs);
 		r.setAuthor(author);
 		r.setLoadLevel(LoadLevel.PROPERTIES);
+		
+		Integer advisorOrgId = MapperUtils.getInteger(rs, "reports_advisorOrganizationId");
+		if (advisorOrgId != null) { 
+			r.setAdvisorOrg(Organization.createWithId(advisorOrgId));
+		}
+		
+		Integer principalOrgId = MapperUtils.getInteger(rs, "reports_principalOrganizationId");
+		if (principalOrgId != null) { 
+			r.setPrincipalOrg(Organization.createWithId(principalOrgId));
+		}
 		
 		return r;
 	}

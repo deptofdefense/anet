@@ -7,6 +7,7 @@ import org.joda.time.DateTime;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
+import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Poam;
 
 public class PoamMapper implements ResultSetMapper<Poam> {
@@ -23,6 +24,12 @@ public class PoamMapper implements ResultSetMapper<Poam> {
 		if (parentPoamId != null) { 
 			p.setParentPoam(Poam.createWithId(parentPoamId));
 		}
+		
+		Integer responsibleOrgId = MapperUtils.getInteger(r, "organizationId");
+		if (responsibleOrgId != null) { 
+			p.setResponsibleOrg(Organization.createWithId(responsibleOrgId));
+		}
+		
 		p.setCreatedAt(new DateTime(r.getTimestamp("createdAt")));
 		p.setUpdatedAt(new DateTime(r.getTimestamp("updatedAt")));
 		return p;

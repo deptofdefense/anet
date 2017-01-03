@@ -41,6 +41,9 @@ public class Report extends AbstractAnetBean {
 	
 	Person author;	
 	
+	Organization advisorOrg;
+	Organization principalOrg;
+	
 	List<Comment> comments;
 
 	@GraphQLIgnore
@@ -216,9 +219,48 @@ public class Report extends AbstractAnetBean {
 		return author;
 	}
 
+	
+	@JsonGetter("advisorOrg")
+	public Organization getAdvisorOrgJson() {
+		return advisorOrg;
+	}
+
+	@JsonSetter("advisorOrg")
+	public void setAdvisorOrg(Organization advisorOrg) {
+		this.advisorOrg = advisorOrg;
+	}
+
+	@JsonIgnore
+	public Organization getAdvisorOrg() { 
+		if (advisorOrg == null || advisorOrg.getLoadLevel() == null) { return advisorOrg; } 
+		if (advisorOrg.getLoadLevel().contains(LoadLevel.PROPERTIES) == false) { 
+			this.advisorOrg = getBeanAtLoadLevel(advisorOrg, LoadLevel.PROPERTIES);
+		}
+		return advisorOrg;
+	}
+	
+	@JsonGetter("principalOrg")
+	public Organization getPrincipalOrgJson() {
+		return principalOrg;
+	}
+
+	@JsonSetter("principalOrg")
+	public void setPrincipalOrg(Organization principalOrg) {
+		this.principalOrg = principalOrg;
+	}
+
+	@JsonIgnore
+	public Organization getPrincipalOrg() { 
+		if (principalOrg == null || principalOrg.getLoadLevel() == null) { return principalOrg; } 
+		if (principalOrg.getLoadLevel().contains(LoadLevel.PROPERTIES) == false) { 
+			this.principalOrg = getBeanAtLoadLevel(principalOrg, LoadLevel.PROPERTIES);
+		}
+		return principalOrg;
+	}
+	
 	@JsonIgnore
 	public List<Comment> getComments() {
-		if (comments == null) {  
+		if (comments == null) {
 			comments = AnetObjectEngine.getInstance().getCommentDao().getCommentsForReport(this);
 		}
 		return comments;
@@ -331,5 +373,10 @@ public class Report extends AbstractAnetBean {
 		r.setId(id);
 		r.setLoadLevel(LoadLevel.ID_ONLY);
 		return r;
+	}
+	
+	@Override
+	public String toString() { 
+		return String.format("[Report id#%d]", id);
 	}
 }
