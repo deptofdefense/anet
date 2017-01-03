@@ -17,7 +17,6 @@ import io.dropwizard.util.Duration;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Position;
-import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Position.PositionType;
 import mil.dds.anet.beans.search.PositionSearchQuery;
 import mil.dds.anet.test.beans.OrganizationTest;
@@ -66,6 +65,7 @@ public class PositionResourceTest extends AbstractResourceTest {
 		
 		//change the person in this position
 		Person steve = getSteveSteveson();
+		Position stevesCurrentPosition = steve.getPosition();
 		resp = httpQuery(String.format("/api/positions/%d/person", returned.getId()), admin).post(Entity.json(steve));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
@@ -83,6 +83,13 @@ public class PositionResourceTest extends AbstractResourceTest {
 		
 		curr = httpQuery(String.format("/api/positions/%d/person",created.getId()), jack).get(Person.class);
 		assertThat(curr).isNull();
+		
+		//Put steve back in his old position
+		resp = httpQuery(String.format("/api/positions/%d/person", stevesCurrentPosition.getId()), admin).post(Entity.json(steve));
+		assertThat(resp.getStatus()).isEqualTo(200);
+		
+		curr = httpQuery(String.format("/api/positions/%d/person",stevesCurrentPosition.getId()), jack).get(Person.class);
+		assertThat(curr.getId()).isEqualTo(steve.getId());
 		
 		//pull for the person at a previous time. 
 		Person prev = httpQuery(String.format("/api/positions/%d/person?atTime=%d", created.getId(), jacksTime.getMillis()), jack)
@@ -155,15 +162,25 @@ public class PositionResourceTest extends AbstractResourceTest {
 		assertThat(returned.getCode()).isEqualTo(created.getCode());
 		
 		//Assign Principal
-		Person principal = getSteveSteveson();
+		Person steve = getSteveSteveson();
+		Position stevesCurrPos = steve.getPosition();
+		assertThat(stevesCurrPos).isNotNull();
 		
-		resp = httpQuery(String.format("/api/positions/%d/person",created.getId()), admin).post(Entity.json(principal));
+		resp = httpQuery(String.format("/api/positions/%d/person",created.getId()), admin).post(Entity.json(steve));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
 		Person returnedPrincipal = httpQuery(String.format("/api/positions/%d/person", created.getId()), admin).get(Person.class);
-		assertThat(returnedPrincipal.getId()).isEqualTo(principal.getId());
+		assertThat(returnedPrincipal.getId()).isEqualTo(steve.getId());
 		
-		//TODO: Change the Principal
+		//Put steve back in his originial position
+		resp = httpQuery(String.format("/api/positions/%d/person",stevesCurrPos.getId()), admin).post(Entity.json(steve));
+		assertThat(resp.getStatus()).isEqualTo(200);
+		
+		//Ensure the old position is now empty
+		returnedPrincipal = httpQuery(String.format("/api/positions/%d/person", created.getId()), admin).get(Person.class);
+		assertThat(returnedPrincipal).isNull();
+		
+		
 		
 	}
 	

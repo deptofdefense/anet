@@ -24,6 +24,7 @@ public class Organization extends AbstractAnetBean {
 	List<Position> positions; /*Positions in this AO, lazy loaded*/
 	List<ApprovalStep> approvalSteps; /*Approval process for this AO, lazy loaded */
 	List<Organization> childrenOrgs; /* Lazy loaded */
+	List<Poam> poams; /* Lazy Loaded */
 	
 	public String getName() {
 		return name;
@@ -107,6 +108,14 @@ public class Organization extends AbstractAnetBean {
 	@JsonSetter("childrenOrgs")
 	public void setChildrenOrgss(List<Organization> childrenOrgs) { 
 		this.childrenOrgs = childrenOrgs;
+	}
+	
+	@JsonIgnore
+	public List<Poam> getPoams() { 
+		if (poams == null) { 
+			poams = AnetObjectEngine.getInstance().getPoamDao().getPoamsByOrganizationId(this.getId());
+		}
+		return poams;
 	}
 	
 	public static Organization create(String name, OrganizationType type) { 

@@ -411,4 +411,30 @@
 			ALTER TABLE people ALTER COLUMN endOfTourDate datetime2;
 		</sql>
 	</changeSet>
+
+	<changeSet id="13" author="hpitelka" >
+		<addColumn tableName="poams">
+			<column name="organizationId" type="int" />
+		</addColumn>
+		<addColumn tableName="reports">
+			<column name="advisorOrganizationId" type="int" />
+		</addColumn>
+		<addColumn tableName="reports">
+			<column name="principalOrganizationId" type="int" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="14" author="hpitelka"  dbms="mssql" >
+		<addForeignKeyConstraint baseColumnNames="organizationId" baseTableName="poams"
+			constraintName="fk_poams_org" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="organizations" />
+		
+		<addForeignKeyConstraint baseColumnNames="advisorOrganizationId" baseTableName="reports"
+			constraintName="fk_reports_advisorOrg" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="organizations" />
+
+		<addForeignKeyConstraint baseColumnNames="principalOrganizationId" baseTableName="reports"
+			constraintName="fk_reports_principalOrg" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="organizations" />
+	</changeSet>
 </databaseChangeLog>

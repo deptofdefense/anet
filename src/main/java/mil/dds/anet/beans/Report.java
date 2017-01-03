@@ -13,6 +13,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
 import mil.dds.anet.AnetObjectEngine;
+import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.database.AdminDao.AdminSettingKeys;
 import mil.dds.anet.graphql.GraphQLIgnore;
@@ -40,6 +41,9 @@ public class Report extends AbstractAnetBean {
 	String nextSteps;
 	
 	Person author;	
+	
+	Organization advisorOrg;
+	Organization principalOrg;
 	
 	List<Comment> comments;
 
@@ -153,12 +157,19 @@ public class Report extends AbstractAnetBean {
 	}
 
 	@JsonIgnore
-	public ReportPerson getPrimaryAttendee() { 
+	public ReportPerson getPrimaryAdvisor() { 
 		getAttendees(); //Force the load of attendees
-		for (ReportPerson rp : attendees) { 
-			if (rp.isPrimary()) { return rp; } 
-		}
-		return null;
+		return attendees.stream().filter(p ->
+				p.isPrimary() && p.getRole().equals(Role.ADVISOR)
+			).findFirst().orElse(null);
+	}
+	
+	@JsonIgnore
+	public ReportPerson getPrimaryPrincipal() { 
+		getAttendees(); //Force the load of attendees
+		return attendees.stream().filter(p ->
+				p.isPrimary() && p.getRole().equals(Role.PRINCIPAL)
+			).findFirst().orElse(null);
 	}
 	
 	@JsonIgnore
@@ -216,9 +227,48 @@ public class Report extends AbstractAnetBean {
 		return author;
 	}
 
+	
+	@JsonGetter("advisorOrg")
+	public Organization getAdvisorOrgJson() {
+		return advisorOrg;
+	}
+
+	@JsonSetter("advisorOrg")
+	public void setAdvisorOrg(Organization advisorOrg) {
+		this.advisorOrg = advisorOrg;
+	}
+
+	@JsonIgnore
+	public Organization getAdvisorOrg() { 
+		if (advisorOrg == null || advisorOrg.getLoadLevel() == null) { return advisorOrg; } 
+		if (advisorOrg.getLoadLevel().contains(LoadLevel.PROPERTIES) == false) { 
+			this.advisorOrg = getBeanAtLoadLevel(advisorOrg, LoadLevel.PROPERTIES);
+		}
+		return advisorOrg;
+	}
+	
+	@JsonGetter("principalOrg")
+	public Organization getPrincipalOrgJson() {
+		return principalOrg;
+	}
+
+	@JsonSetter("principalOrg")
+	public void setPrincipalOrg(Organization principalOrg) {
+		this.principalOrg = principalOrg;
+	}
+
+	@JsonIgnore
+	public Organization getPrincipalOrg() { 
+		if (principalOrg == null || principalOrg.getLoadLevel() == null) { return principalOrg; } 
+		if (principalOrg.getLoadLevel().contains(LoadLevel.PROPERTIES) == false) { 
+			this.principalOrg = getBeanAtLoadLevel(principalOrg, LoadLevel.PROPERTIES);
+		}
+		return principalOrg;
+	}
+	
 	@JsonIgnore
 	public List<Comment> getComments() {
-		if (comments == null) {  
+		if (comments == null) {
 			comments = AnetObjectEngine.getInstance().getCommentDao().getCommentsForReport(this);
 		}
 		return comments;
@@ -331,5 +381,10 @@ public class Report extends AbstractAnetBean {
 		r.setId(id);
 		r.setLoadLevel(LoadLevel.ID_ONLY);
 		return r;
+	}
+	
+	@Override
+	public String toString() { 
+		return String.format("[Report id#%d]", id);
 	}
 }

@@ -18,6 +18,8 @@ public class Poam extends AbstractAnetBean {
 	String category;
 	Poam parentPoam;
 	List<Poam> childrenPoams;
+	
+	Organization responsibleOrg;
 
 	public String getShortName() {
 		return shortName;
@@ -78,16 +80,37 @@ public class Poam extends AbstractAnetBean {
 		this.childrenPoams = childrenPoams;
 	}
 	
-	public static Poam create(String shortName, String longName, String category) { 
-		return create(shortName, longName, category, null);
+	@JsonSetter("responsibleOrg")
+	public void setResponsibleOrg(Organization org) { 
+		this.responsibleOrg = org;
 	}
 	
-	public static Poam create(String shortName, String longName, String category, Poam parent) { 
+	@JsonIgnore
+	public Organization getResponsibleOrg() {
+		if (responsibleOrg == null || responsibleOrg.getLoadLevel() == null) { return responsibleOrg; } 
+		if (responsibleOrg.getLoadLevel().contains(LoadLevel.PROPERTIES) == false) { 
+			this.responsibleOrg = AnetObjectEngine.getInstance()
+					.getOrganizationDao().getById(responsibleOrg.getId());
+		}
+		return responsibleOrg;
+	}
+	
+	@JsonGetter("responsibleOrg")
+	public Organization getResponsibleOrgJson() { 
+		return responsibleOrg;
+	}
+	
+	public static Poam create(String shortName, String longName, String category) { 
+		return create(shortName, longName, category, null, null);
+	}
+	
+	public static Poam create(String shortName, String longName, String category, Poam parent, Organization responsibleOrg) { 
 		Poam p = new Poam();
 		p.setShortName(shortName);
 		p.setLongName(longName);
 		p.setCategory(category);
 		p.setParentPoam(parent);
+		p.setResponsibleOrg(responsibleOrg);
 		return p;
 	}
 	
