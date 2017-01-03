@@ -1,5 +1,6 @@
 import React from 'react'
 import Page from 'components/Page'
+import History from 'components/History'
 import {InputGroup, Radio, Table, Button} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
@@ -16,10 +17,6 @@ import API from 'api'
 import Report from 'models/Report'
 
 export default class ReportNew extends Page {
-	static contextTypes = {
-		router: React.PropTypes.object.isRequired
-	}
-
 	static pageProps = {
 		useNavigation: false
 	}
@@ -198,7 +195,7 @@ export default class ReportNew extends Page {
 
 		this.state.report.save({disableSubmits: true})
 			.then(report => {
-				this.context.router.push(report.toPath())
+				History.push(report.toPath())
 			})
 			.catch(error => {
 				this.setState({errors: error})
