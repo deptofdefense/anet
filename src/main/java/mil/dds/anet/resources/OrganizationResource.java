@@ -22,9 +22,8 @@ import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
-import mil.dds.anet.beans.Report;
+import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.search.OrganizationSearchQuery;
-import mil.dds.anet.beans.search.ReportSearchQuery;
 import mil.dds.anet.database.OrganizationDao;
 import mil.dds.anet.graphql.GraphQLFetcher;
 import mil.dds.anet.graphql.GraphQLParam;
@@ -103,5 +102,11 @@ public class OrganizationResource implements IGraphQLResource {
 	@Path("/{id}/children")
 	public List<Organization> getChildren(@PathParam("id") Integer id) { 
 		return dao.getByParentOrgId(id);
+	}
+	
+	@GET
+	@Path("/{id}/poams")
+	public List<Poam> getPoams(@PathParam("id") Integer orgId) { 
+		return AnetObjectEngine.getInstance().getPoamDao().getPoamsByOrganizationId(orgId);
 	}
 }

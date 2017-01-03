@@ -16,7 +16,6 @@ import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
 import mil.dds.anet.beans.search.ReportSearchQuery;
-import mil.dds.anet.database.mappers.PersonMapper;
 import mil.dds.anet.database.mappers.PoamMapper;
 import mil.dds.anet.database.mappers.ReportMapper;
 import mil.dds.anet.database.mappers.ReportPersonMapper;
@@ -26,6 +25,7 @@ public class ReportDao implements IAnetDao<Report> {
 
 	private static String[] fields = { "id", "state", "createdAt", "updatedAt", "engagementDate",
 			"locationId", "approvalStepId", "intent", "exsum", "atmosphere",
+			"advisorOrganizationId", "principalOrganizationId",
 			"atmosphereDetails", "text", "nextSteps", "authorId"};
 	private static String tableName = "reports";
 	public static String REPORT_FIELDS = DaoUtils.buildFieldAliases(tableName, fields);
@@ -61,18 +61,19 @@ public class ReportDao implements IAnetDao<Report> {
 		r.setUpdatedAt(r.getCreatedAt());
 
 		//MSSQL requires explicit CAST when a datetime2 might be NULL.
-		StringBuilder sql = new StringBuilder("INSERT INTO reports " +
-				"(state, createdAt, updatedAt, locationId, intent, exsum, " +
-				"text, nextSteps, authorId, engagementDate, atmosphere, " +
-				"atmosphereDetails) VALUES " +
-				"(:state, :createdAt, :updatedAt, :locationId, :intent, " +
-				":exsum, :reportText, :nextSteps, :authorId, ");
+		StringBuilder sql = new StringBuilder("INSERT INTO reports " 
+				+ "(state, createdAt, updatedAt, locationId, intent, exsum, " 
+				+ "text, nextSteps, authorId, engagementDate, atmosphere, " 
+				+ "atmosphereDetails, advisorOrganizationId, "
+				+ "principalOrganizationId) VALUES " 
+				+ "(:state, :createdAt, :updatedAt, :locationId, :intent, " 
+				+ ":exsum, :reportText, :nextSteps, :authorId, ");
 		if (DaoUtils.isMsSql(dbHandle)) {
 			sql.append("CAST(:engagementDate AS datetime2), ");
 		} else {
 			sql.append(":engagementDate, ");
 		}
-		sql.append(":atmosphere, :atmosphereDetails)");
+		sql.append(":atmosphere, :atmosphereDetails, :advisorOrgId, :principalOrgId)");
 
 		GeneratedKeys<Map<String, Object>> keys = dbHandle.createStatement(sql.toString())
 			.bindFromProperties(r)
@@ -80,6 +81,8 @@ public class ReportDao implements IAnetDao<Report> {
 			.bind("atmosphere", DaoUtils.getEnumId(r.getAtmosphere()))
 			.bind("locationId", DaoUtils.getId(r.getLocation()))
 			.bind("authorId", r.getAuthor().getId())
+			.bind("advisorOrgId", DaoUtils.getId(r.getAdvisorOrgJson()))
+			.bind("principalOrgId", DaoUtils.getId(r.getPrincipalOrgJson()))
 			.executeAndReturnGeneratedKeys();
 		r.setId(DaoUtils.getGeneratedId(keys));
 
@@ -125,24 +128,26 @@ public class ReportDao implements IAnetDao<Report> {
 
 		StringBuilder sql = new StringBuilder("UPDATE reports SET " +
 				"state = :state, updatedAt = :updatedAt, locationId = :locationId, " +
-				"intent = :intent, exsum = :exsum, text = :text, nextSteps = :nextSteps, " +
+				"intent = :intent, exsum = :exsum, text = :reportText, nextSteps = :nextSteps, " +
 				"approvalStepId = :approvalStepId, ");
 		if (DaoUtils.isMsSql(dbHandle)) {
 			sql.append("engagementDate = CAST(:engagementDate AS datetime2), ");
 		} else {
 			sql.append("engagementDate = :engagementDate, ");
 		}
-		sql.append("atmosphere = :atmosphere, atmosphereDetails = :atmosphereDetails WHERE id = :reportId");
+		sql.append("atmosphere = :atmosphere, atmosphereDetails = :atmosphereDetails, "
+				+ "principalOrganizationId = :principalOrgId, advisorOrganizationId = :advisorOrgId "
+				+ "WHERE id = :id");
 
 		return dbHandle.createStatement(sql.toString())
 			.bindFromProperties(r)
-			.bind("state", r.getState().ordinal())
+			.bind("state", DaoUtils.getEnumId(r.getState()))
 			.bind("locationId", DaoUtils.getId(r.getLocation()))
-			.bind("text", r.getReportText())
-			.bind("authorId", r.getAuthor().getId())
+			.bind("authorId", r.getAuthor().getId()) //This can never be null
 			.bind("approvalStepId", DaoUtils.getId(r.getApprovalStepJson()))
 			.bind("atmosphere", DaoUtils.getEnumId(r.getAtmosphere()))
-			.bind("reportId", r.getId())
+			.bind("advisorOrgId", DaoUtils.getId(r.getAdvisorOrgJson()))
+			.bind("principalOrgId", DaoUtils.getId(r.getPrincipalOrgJson()))
 			.execute();
 	}
 

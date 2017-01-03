@@ -57,13 +57,14 @@ export default class ReportShow extends Page {
 					position { id, name }
 				}
 
-				poams { id, shortName, longName }
+				poams { id, shortName, longName, responsibleOrg { id, name} }
 
 				comments {
 					id, text, createdAt, updatedAt
 					author { id, name, rank }
 				}
-
+				advisorOrg { id, name }
+				principalOrg {id, name}
 			}
 		`).then(data => this.setState({report: data.report}))
 	}
@@ -92,6 +93,12 @@ export default class ReportShow extends Page {
 							{report.author &&
 								<Link to={"/people/" + report.author.id}>{report.author.name}</Link>
 							}
+						</Form.Field>
+						<Form.Field id="advisorOrg" label="Advisor Org">
+							{report.advisorOrg && <Link to={"/organizations" + report.advisorOrg.id}>{report.advisorOrg.name}</Link>}
+						</Form.Field>
+						<Form.Field id="principalOrg" label="Principal Org">
+							{report.principalOrg && <Link to={"/organizations" + report.principalOrg.id}>{report.principalOrg.name}</Link>}
 						</Form.Field>
 					</fieldset>
 
@@ -132,7 +139,7 @@ export default class ReportShow extends Page {
 								{report.poams.map(poam =>
 									<tr key={poam.id}>
 										<td><Link to={`/poams/${poam.id}`}>{poam.longName}</Link></td>
-										<td className="todo"><Link to={`/organizations/${poam.shortName}`}>{poam.shortName}</Link> FIXME</td>
+										<td>{ poam.responsibleOrg && <Link to={`/organizations/${poam.responsibleOrg.id}`}>{poam.responsibleOrg.name}</Link>}</td>
 									</tr>
 								)}
 							</tbody>

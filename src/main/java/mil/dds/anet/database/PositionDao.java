@@ -75,7 +75,7 @@ public class PositionDao implements IAnetDao<Position> {
 	
 	
 	public Position getById(int id) { 
-		Query<Position> query = dbHandle.createQuery("SELECT " + POSITIONS_FIELDS + ", people.* "
+		Query<Position> query = dbHandle.createQuery("SELECT " + POSITIONS_FIELDS + ", " + PersonDao.PERSON_FIELDS
 				+ "FROM positions LEFT JOIN people ON positions.currentPersonId = people.id "
 				+ "WHERE positions.id = :id")
 			.bind("id", id)
@@ -104,10 +104,22 @@ public class PositionDao implements IAnetDao<Position> {
 		//TODO: this should be in a transaction. 
 		DateTime now = DateTime.now();
 		//If this person is in a position already, we need to remove them. 
-		dbHandle.createStatement("UPDATE positions set currentPersonId = null WHERE currentPersonId = :personId")
+		Position currPos = dbHandle.createQuery("SELECT " + POSITIONS_FIELDS + " FROM positions WHERE currentPersonId = :personId")
 			.bind("personId", person.getId())
-			.execute();
+			.map(new PositionMapper())
+			.first();
+		if (currPos != null) { 
+			dbHandle.createStatement("UPDATE positions set currentPersonId = null WHERE currentPersonId = :personId")
+				.bind("personId", person.getId())
+				.execute();
 			
+			dbHandle.createStatement("INSERT INTO peoplePositions (positionId, personId, createdAt) "
+					+ "VALUES (:positionId, NULL, :createdAt)")
+				.bind("positionId", currPos.getId())
+				.bind("createdAt", now)
+				.execute();
+		}
+		
 		dbHandle.createStatement("UPDATE positions SET currentPersonId = :personId WHERE id = :positionId")
 			.bind("personId", person.getId())
 			.bind("positionId", position.getId())

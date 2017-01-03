@@ -14,6 +14,7 @@ export default class OrganizationShow extends Page {
 			organization: {
 				id: props.params.id,
 				positions: [],
+				poams: [],
 			},
 		}
 	}
@@ -23,6 +24,7 @@ export default class OrganizationShow extends Page {
 			organization(id:${props.params.id}) {
 				id, name, type
 				parentOrg { id, name }
+				poams { id, longName, shortName }
 				positions {
 					id, name, code
 					person { id, name }
@@ -43,6 +45,14 @@ export default class OrganizationShow extends Page {
 		let positionsNeedingAttention = org.positions.filter(position => !position.person || !position.code || !position.associatedPositions.length)
 		let supportedPositions = org.positions.filter(position => positionsNeedingAttention.indexOf(position) === -1)
 
+		let poamsContent = ''
+		if (org.type === 'ADVISOR_ORG') { 
+			poamsContent = <fieldset>
+				<legend>POAMs / Pillars</legend>
+				{this.renderPoamsTable(org.poams)}
+			</fieldset>
+		}
+
 		return (
 			<div>
 				<Breadcrumbs items={[[breadcrumbName, breadcrumbUrl]]} />
@@ -61,6 +71,8 @@ export default class OrganizationShow extends Page {
 							</Link>
 						</Form.Field>}
 					</fieldset>
+
+					{poamsContent}
 
 					<fieldset>
 						<legend>Positions needing attention</legend>
@@ -126,5 +138,24 @@ export default class OrganizationShow extends Page {
 			{otherCodeCol}
 			{otherNameCol}
 		</tr>
+	}
+
+	renderPoamsTable(poams) { 
+		return <Table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Description</th>
+				</tr>
+			</thead>
+			<tbody>
+				{poams.map(poam =>
+					<tr key={`poam_${poam.id}`} >
+						<td><Link to={`/poams/${poam.id}`}>{poam.shortName}</Link></td>
+						<td>{poam.longName}</td>
+					</tr>
+				)}
+			</tbody>
+		</Table>
 	}
 }
