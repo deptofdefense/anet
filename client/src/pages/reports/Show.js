@@ -57,7 +57,7 @@ export default class ReportShow extends Page {
 					position { id, name }
 				}
 
-				poams { id, shortName, longName }
+				poams { id, shortName, longName, responsibleOrg { id, name} }
 
 				comments {
 					id, text, createdAt, updatedAt
@@ -139,7 +139,7 @@ export default class ReportShow extends Page {
 								{report.poams.map(poam =>
 									<tr key={poam.id}>
 										<td><Link to={`/poams/${poam.id}`}>{poam.longName}</Link></td>
-										<td className="todo"><Link to={`/organizations/${poam.shortName}`}>{poam.shortName}</Link> FIXME</td>
+										<td>{ poam.responsibleOrg && <Link to={`/organizations/${poam.responsibleOrg.id}`}>{poam.responsibleOrg.name}</Link>}</td>
 									</tr>
 								)}
 							</tbody>
