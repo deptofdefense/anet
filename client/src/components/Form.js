@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import ReactDOM from 'react-dom'
-import {Form as BSForm, Button} from 'react-bootstrap'
+import {Form as BSForm, Row, Button} from 'react-bootstrap'
 
 import {ContentForHeader} from 'components/Header'
 import FormField from 'components/FormField'
@@ -10,6 +10,7 @@ export default class Form extends Component {
 		formFor: React.PropTypes.object,
 		actionText: React.PropTypes.string,
 		onSubmit: React.PropTypes.func,
+		static: React.PropTypes.bool,
 	})
 
 	static childContextTypes = {
@@ -32,7 +33,13 @@ export default class Form extends Component {
 
 	render() {
 		let {children, actionText, ...bsProps} = this.props
-		bsProps = Object.without(bsProps, 'formFor')
+		bsProps = Object.without(bsProps, 'formFor', 'static')
+
+		if (this.props.static) {
+			bsProps.componentClass = Row
+			bsProps.style = bsProps.style || {}
+			bsProps.style.margin = 0
+		}
 
 		let showSubmit = bsProps.onSubmit && actionText !== false
 

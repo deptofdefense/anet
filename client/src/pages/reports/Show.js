@@ -74,18 +74,18 @@ export default class ReportShow extends Page {
 			<div>
 				<Breadcrumbs items={[['Reports', '/reports'], [breadcrumbName, breadcrumbUrl]]} />
 
-				<Form formFor={report} horizontal>
+				<Form static formFor={report} horizontal>
 					<fieldset>
 						<legend>Report #{report.id}</legend>
 
-						<Form.Field id="intent" label="Subject" type="static" />
-						<Form.Field id="engagementDate" label="Date 📆" type="static" value={moment(report.engagementDate).format("L")} />
-						<Form.Field id="location" label="Location 📍" type="static" value={report.location && report.location.name} />
-						<Form.Field id="atmosphere" label="Atmospherics" type="static">
+						<Form.Field id="intent" label="Subject" />
+						<Form.Field id="engagementDate" label="Date 📆" value={moment(report.engagementDate).format("L")} />
+						<Form.Field id="location" label="Location 📍" value={report.location && report.location.name} />
+						<Form.Field id="atmosphere" label="Atmospherics">
 							<span style={atmosphereIconStyle}>{atmosphereIcons[report.atmosphere]}</span>
 							{report.atmosphereDetails}
 						</Form.Field>
-						<Form.Field id="author" label="Report author" type="static">
+						<Form.Field id="author" label="Report author">
 							{report.author &&
 								<Link to={"/people/" + report.author.id}>{report.author.name}</Link>
 							}
