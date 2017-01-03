@@ -3,12 +3,13 @@ import API from 'api'
 export default class Model {
 	static schema = {}
 
+	static fromArray(array) {
+		return array.map(object => new this(object))
+	}
+
 	constructor(props) {
 		Object.assign(this, this.constructor.schema, props)
-
-		this._meta = {
-			resourceName: this.constructor.resourceName || (this.constructor.name.toLowerCase() + 's')
-		}
+		this.constructor.resourceName = this.constructor.resourceName || (this.constructor.name.toLowerCase() + 's')
 	}
 
 	setState(props) {
@@ -17,7 +18,7 @@ export default class Model {
 	}
 
 	save(apiOptions) {
-		return API.send(`/api/${this._meta.resourceName}/new`, this, apiOptions)
+		return API.send(`/api/${this.constructor.resourceName}/new`, this, apiOptions)
 				.then(response => {
 					console.log(response);
 
@@ -32,22 +33,17 @@ export default class Model {
 	}
 
 	toPath() {
-		let resourceName = this._meta.resourceName
+		let resourceName = this.constructor.resourceName
 		let id = this.id
 
 		const path = ['']
 		resourceName && path.push(resourceName)
 		id && path.push(id)
 
-		console.log(path.join('/'));
 		return path.join('/')
 	}
 
 	toString() {
 		return this.toPath()
-	}
-
-	toJSON() {
-		return Object.without(this, '_meta')
 	}
 }

@@ -3,11 +3,14 @@ import {Nav, NavItem, NavDropdown, MenuItem} from 'react-bootstrap'
 import {IndexLinkContainer as Link} from 'react-router-bootstrap'
 
 import API from 'api'
+import Organization from 'models/Organization'
 
 export default class extends Component {
 	constructor(props) {
 		super(props)
-		this.state = {organizations: []}
+		this.state = {
+			organizations: [],
+		}
 	}
 
 	componentDidMount() {
@@ -16,7 +19,13 @@ export default class extends Component {
 				id, name
 				parentOrg { id }
 			}
-		`).then(data => this.setState({organizations: data.organizations.filter(org => org.parentOrg === null)}))
+		`).then(data =>
+			this.setState({
+				organizations: Organization.fromArray(
+					data.organizations.filter(org => org.parentOrg === null)
+				)
+			})
+		)
 	}
 
 	render() {
@@ -36,7 +45,7 @@ export default class extends Component {
 
 				<NavDropdown title="Organizations" id="organizations">
 					{this.state.organizations.map(org =>
-						<Link to={"/organizations/" + org.id} key={org.id}>
+						<Link to={org.toPath()} key={org}>
 							<MenuItem>{org.name}</MenuItem>
 						</Link>
 					)}
