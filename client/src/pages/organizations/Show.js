@@ -57,19 +57,19 @@ export default class OrganizationShow extends Page {
 			<div>
 				<Breadcrumbs items={[[breadcrumbName, breadcrumbUrl]]} />
 
-				<Form formFor={org} horizontal>
+				<Form static formFor={org} horizontal>
 					<fieldset>
 						<legend>{org.name}</legend>
 
-						<Form.Field id="type" type="static" label="Org type">
+						<Form.Field id="type">
 							{org.type && org.type.split('_')[0]}
 						</Form.Field>
 
-						<Form.Field id="parentOrg" type="static" label="Parent org">
-							{org.parentOrg && <Link to={`/organizations/${org.parentOrg.id}`}>
+						{org.parentOrg && <Form.Field id="parentOrg" label="Parent">
+							<Link to={`/organizations/${org.parentOrg.id}`}>
 								{org.parentOrg.name}
-							</Link>}
-						</Form.Field>
+							</Link>
+						</Form.Field>}
 					</fieldset>
 
 					{poamsContent}

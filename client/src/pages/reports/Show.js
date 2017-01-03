@@ -22,6 +22,10 @@ const atmosphereIcons = {
 	'NEGATIVE': "👎",
 }
 
+const commentFormStyle = {
+	marginTop: '50px',
+}
+
 export default class ReportShow extends Page {
 	constructor(props) {
 		super(props)
@@ -165,7 +169,7 @@ export default class ReportShow extends Page {
 
 						{!report.comments.length && "There are no comments yet."}
 
-						<Form formFor={this.state.newComment} horizontal style={{marginTop: "52px"}}>
+						<Form formFor={this.state.newComment} horizontal style={commentFormStyle}>
 							<Form.Field id="text" placeholder="Type a comment here" label="">
 								<Form.Field.ExtraCol>
 									<Button bsStyle="primary" type="submit">Save comment</Button>

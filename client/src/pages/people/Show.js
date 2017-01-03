@@ -74,19 +74,19 @@ export default class PersonShow extends Page {
 		return (
 			<div>
 				<Breadcrumbs items={[[person.name, "/people/" + person.id ]]} />
-				<Form formFor={person} horizontal>
+				<Form static formFor={person} horizontal>
 					<fieldset>
 						<legend>{person.rank} {person.name}</legend>
-						<Form.Field type="static" id="rank" />
-						<Form.Field type="static" id="role" />
-						<Form.Field label="Phone" type="static" id="phoneNumber" />
-						<Form.Field label="Email" type="static" id="emailAddress">
+						<Form.Field id="rank" />
+						<Form.Field id="role" />
+						<Form.Field label="Phone" id="phoneNumber" />
+						<Form.Field label="Email" id="emailAddress">
 							<a href={`mailto:${person.emailAddress}`}>{person.emailAddress}</a>
 						</Form.Field>
-						<Form.Field type="static" id="country" />
-						<Form.Field type="static" id="gender" />
-						<Form.Field label="End of Tour Date" type="static" id="endOfTourDate" value={moment(person.endOfTourDate).format("L")} />
-						<Form.Field label="Bio" type="static" id="person.biography" />
+						<Form.Field id="country" />
+						<Form.Field id="gender" />
+						<Form.Field label="End of Tour Date" id="endOfTourDate" value={moment(person.endOfTourDate).format("L")} />
+						<Form.Field label="Bio" id="person.biography" />
 					</fieldset>
 
 					<fieldset>

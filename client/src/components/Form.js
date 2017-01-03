@@ -5,6 +5,11 @@ import {Form as BSForm, Row, Button} from 'react-bootstrap'
 import {ContentForHeader} from 'components/Header'
 import FormField from 'components/FormField'
 
+const staticFormStyle = {
+	margin: 0,
+	marginTop: '-30px',
+}
+
 export default class Form extends Component {
 	static propTypes = Object.assign({}, BSForm.propTypes, {
 		formFor: React.PropTypes.object,
@@ -38,7 +43,7 @@ export default class Form extends Component {
 		if (this.props.static) {
 			bsProps.componentClass = Row
 			bsProps.style = bsProps.style || {}
-			bsProps.style.margin = 0
+			Object.assign(bsProps.style, staticFormStyle)
 		}
 
 		let showSubmit = bsProps.onSubmit && actionText !== false

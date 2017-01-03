@@ -99,6 +99,9 @@ export default class Autcomplete extends Component {
 
 	@autobind
 	onSuggestionSelected(event, {suggestion, suggestionValue}) {
+		event.stopPropagation()
+		event.preventDefault()
+
 		let stringValue = this.props.clearOnSelect ? '' : suggestionValue
 		this.setState({value: suggestion, stringValue})
 
