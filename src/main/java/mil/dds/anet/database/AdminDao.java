@@ -24,7 +24,7 @@ public class AdminDao {
 		this.dbHandle = db;
 		
 		cachedSettings = new HashMap<String,String>();
-		List<AdminSetting> settings = getSettingsFromDb();
+		List<AdminSetting> settings = getAllSettings();
 		for (AdminSetting s : settings){ 
 			cachedSettings.put(s.getKey(), s.getValue());
 		}
@@ -34,10 +34,19 @@ public class AdminDao {
 		return cachedSettings.get(key.toString());
 	}
 	
-	private List<AdminSetting> getSettingsFromDb() { 
+	public List<AdminSetting> getAllSettings() { 
 		return dbHandle.createQuery("SELECT * FROM adminSettings")
-			.map(new AdminSettingMapper())
-			.list();
+				.map(new AdminSettingMapper())
+				.list();
+	}
+	
+
+	public int saveSetting(AdminSetting setting) {
+		cachedSettings.put(setting.getKey(), setting.getValue());
+		return dbHandle.createStatement("UPDATE adminSettings SET value = :value WHERE [key] = :key")
+			.bind("key", setting.getKey())
+			.bind("value", setting.getValue())
+			.execute();
 	}
 	
 }

@@ -63,6 +63,10 @@ public class AnetAuthenticationFilter implements ContainerRequestFilter, Authori
 
 	@Override
 	public boolean authorize(Person principal, String role) {
+		return checkAuthorization(principal, role);
+	}
+	
+	public static boolean checkAuthorization(Person principal, String role) { 
 		Position position = principal.getPosition();
 		if (position == null) {
 			log.debug("Authorizing {} for role {} FAILED due to null position", principal.getDomainUsername(), role);

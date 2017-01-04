@@ -150,7 +150,7 @@ public class AnetApplication extends Application<AnetConfiguration> {
 			ImmutableList.of(reportResource, personResource, 
 				positionResource, locationResource,
 				orgResource, asResource, poamResource, 
-				groupResource)));
+				groupResource, adminResource)));
 
 	}
 
