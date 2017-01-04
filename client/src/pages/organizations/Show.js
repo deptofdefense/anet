@@ -4,6 +4,7 @@ import {Link} from 'react-router'
 import {Table, ListGroup, ListGroupItem} from 'react-bootstrap'
 
 import API from 'api'
+import {Organization, Person, Position, Poam} from 'models'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
 
@@ -40,14 +41,12 @@ export default class OrganizationShow extends Page {
 
 	render() {
 		let org = this.state.organization
-		let breadcrumbName = org.name || 'Organization'
-		let breadcrumbUrl = '/organizations/' + org.id
 
 		let positionsNeedingAttention = org.positions.filter(position => !position.person || !position.code || !position.associatedPositions.length)
 		let supportedPositions = org.positions.filter(position => positionsNeedingAttention.indexOf(position) === -1)
 
 		let poamsContent = ''
-		if (org.type === 'ADVISOR_ORG') { 
+		if (org.type === 'ADVISOR_ORG') {
 			poamsContent = <fieldset>
 				<legend>POAMs / Pillars</legend>
 				{this.renderPoamsTable(org.poams)}
@@ -56,7 +55,7 @@ export default class OrganizationShow extends Page {
 
 		return (
 			<div>
-				<Breadcrumbs items={[[breadcrumbName, breadcrumbUrl]]} />
+				<Breadcrumbs items={[[org.name || 'Organization', Organization.pathFor(org)]]} />
 
 				<Form static formFor={org} horizontal>
 					<fieldset>
@@ -67,7 +66,7 @@ export default class OrganizationShow extends Page {
 						</Form.Field>
 
 						{org.parentOrg && <Form.Field id="parentOrg" label="Parent">
-							<Link to={`/organizations/${org.parentOrg.id}`}>
+							<Link to={Organization.pathFor(org)}>
 								{org.parentOrg.name}
 							</Link>
 						</Form.Field>}
@@ -108,9 +107,9 @@ export default class OrganizationShow extends Page {
 				</tr>
 			</thead>
 			<tbody>
-				{positions.map(position =>
+				{Position.map(positions, position =>
 					position.associatedPositions.length
-					? position.associatedPositions.map(other => this.renderPositionRow(position, other))
+					? Position.map(position.associatedPositions, other => this.renderPositionRow(position, other))
 					: this.renderPositionRow(position)
 				)}
 			</tbody>
@@ -123,11 +122,11 @@ export default class OrganizationShow extends Page {
 		if (other) {
 			key += '.' + other.id
 			otherCodeCol = <td>
-				<Link to={`/positions/${other.id}`}>{other.code || "Uncoded"}</Link>
+				<Link to={Position.pathFor(other)}>{other.code || "Uncoded"}</Link>
 			</td>
 
 			otherNameCol = other.person
-				? <td><Link to={`/people/${other.person.id}`}>{other.person.name}</Link></td>
+				? <td><Link to={Person.pathFor(other.person)}>{other.person.name}</Link></td>
 				: <td className="text-danger">Unfilled</td>
 		}
 
@@ -136,11 +135,11 @@ export default class OrganizationShow extends Page {
 
 		return <tr key={key}>
 			<td>
-				<Link to={`/positions/${position.id}`}>{position.code || "Uncoded"}</Link>
+				<Link to={Position.pathFor(position)}>{position.code || "Uncoded"}</Link>
 			</td>
 
 			{position.person
-				? <td><Link to={`/people/${position.person.id}`}>{position.person.name}</Link></td>
+				? <td><Link to={Person.pathFor(position.person)}>{position.person.name}</Link></td>
 				: <td className="text-danger">Unfilled</td>
 			}
 
@@ -149,7 +148,7 @@ export default class OrganizationShow extends Page {
 		</tr>
 	}
 
-	renderPoamsTable(poams) { 
+	renderPoamsTable(poams) {
 		return <Table>
 			<thead>
 				<tr>
@@ -158,9 +157,9 @@ export default class OrganizationShow extends Page {
 				</tr>
 			</thead>
 			<tbody>
-				{poams.map(poam =>
-					<tr key={`poam_${poam.id}`} >
-						<td><Link to={`/poams/${poam.id}`}>{poam.shortName}</Link></td>
+				{Poam.map(poams, poam =>
+					<tr key={poam} >
+						<td><Link to={Poam.pathFor(poam)}>{poam.shortName}</Link></td>
 						<td>{poam.longName}</td>
 					</tr>
 				)}

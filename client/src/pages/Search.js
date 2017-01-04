@@ -9,6 +9,7 @@ import RadioGroup from 'components/RadioGroup'
 import Breadcrumbs from 'components/Breadcrumbs'
 
 import API from 'api'
+import {Report, Person} from 'models'
 
 const FORMAT_EXSUM = 'exsum'
 const FORMAT_TABLE = 'table'
@@ -21,7 +22,7 @@ export default class Search extends Page {
 			viewFormat: FORMAT_TABLE,
 			results: {
 				reports: [],
-				people: []
+				people: [],
 			}
 		}
 
@@ -96,9 +97,9 @@ export default class Search extends Page {
 				</tr>
 			</thead>
 			<tbody>
-				{this.state.results.reports.map(report =>
-					<tr key={report.id}>
-						<td><Link to={"/reports/" + report.id}>{moment(report.engagementDate).format('L')}</Link></td>
+				{Report.map(this.state.results.reports, report =>
+					<tr key={report}>
+						<td><Link to={Report.pathFor(report)}>{moment(report.engagementDate).format('L')}</Link></td>
 						<td>TODO</td>
 						<td>{report.intent}</td>
 					</tr>
@@ -109,15 +110,17 @@ export default class Search extends Page {
 
 	renderExsums() {
 		return <ul>
-			{this.state.results.reports.map(report => {
+			{Report.map(this.state.results.reports, report => {
 				let author = report.author || {}
 				let attendees = report.attendees || []
-				return <li key={report.id}>
-					<Link to={"/reports/" + report.id}>Report #{report.id}</Link><br />
-					At {moment(report.engagementDate).format('L LT')}, {author.rank} {author.name}
-					 met with {attendees.length} Afghan principals. They discussed {report.intent}.
-					 THIS IS AN IMPROPERLY FORMATTED EXSUM.
-				</li>
+				return (
+					<li key={report}>
+						<Link to={Report.pathFor(report)}>Report #{report.id}</Link><br />
+						At {moment(report.engagementDate).format('L LT')}, {author.rank} {author.name}
+						met with {attendees.length} Afghan principals. They discussed {report.intent}.
+						THIS IS AN IMPROPERLY FORMATTED EXSUM.
+					</li>
+				)
 			})}
 		</ul>
 	}
@@ -133,12 +136,14 @@ export default class Search extends Page {
 				</tr>
 			</thead>
 			<tbody>
-				{this.state.results && this.state.results.people.map(person => <tr key={person.id}>
-					<td><Link to={"/people/" + person.id}>{person.rank} {person.name}</Link></td>
-					<td>{person.role}</td>
-					<td>{person.phoneNumber}</td>
-					<td>{person.emailAddress}</td>
-				</tr>)}
+				{Person.map(this.state.results.people, person =>
+					<tr key={person}>
+						<td><Link to={Person.pathFor(person)}>{person.rank} {person.name}</Link></td>
+						<td>{person.role}</td>
+						<td>{person.phoneNumber}</td>
+						<td>{person.emailAddress}</td>
+					</tr>
+				)}
 			</tbody>
 		</Table>
 	}

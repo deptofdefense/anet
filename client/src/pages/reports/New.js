@@ -1,5 +1,6 @@
 import React from 'react'
 import Page from 'components/Page'
+import History from 'components/History'
 import {InputGroup, Radio, Table, Button} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
@@ -13,12 +14,9 @@ import Autocomplete from 'components/Autocomplete'
 import TextEditor from 'components/TextEditor'
 
 import API from 'api'
+import {Report, Person, Poam} from 'models'
 
 export default class ReportNew extends Page {
-	static contextTypes = {
-		router: React.PropTypes.object.isRequired
-	}
-
 	static pageProps = {
 		useNavigation: false
 	}
@@ -27,16 +25,7 @@ export default class ReportNew extends Page {
 		super(props)
 
 		this.state = {
-			report: {
-				intent: '',
-				engagementDate: null,
-				atmosphere: null,
-				location: {},
-				attendees: [],
-				poams: [],
-				reportText: '',
-				nextSteps: '',
-			},
+			report: new Report(),
 
 			recents: {
 				persons: [],
@@ -70,7 +59,7 @@ export default class ReportNew extends Page {
 					<h2>Create a new Report</h2>
 				</ContentForHeader>
 
-				<Breadcrumbs items={[['EF4', '/organizations/ef4'], ['Submit a report', '/reports/new']]} />
+				<Breadcrumbs items={[['EF4', '/organizations/ef4'], ['Submit a report', Report.pathFor(null)]]} />
 
 				<Form formFor={report} onChange={this.onChange} onSubmit={this.onSubmit} actionText="Create report" horizontal>
 					{this.state.error && <fieldset><p>There was a problem saving this report.</p><p>{this.state.error}</p></fieldset>}
@@ -121,21 +110,23 @@ export default class ReportNew extends Page {
 									</tr>
 								</thead>
 								<tbody>
-									{report.attendees.map(person => <tr key={person.id}>
-										<td onClick={this.removeAttendee.bind(this, person)}>
-											<span style={{cursor: 'pointer'}}>⛔️</span>
-										</td>
-										<td>{person.name} {person.rank && person.rank.toUpperCase()}</td>
-										<td>{person.role}</td>
-									</tr>)}
+									{Person.map(report.attendees, person =>
+										<tr key={person}>
+											<td onClick={this.removeAttendee.bind(this, person)}>
+												<span style={{cursor: 'pointer'}}>⛔️</span>
+											</td>
+											<td>{person.name} {person.rank && person.rank.toUpperCase()}</td>
+											<td>{person.role}</td>
+										</tr>
+									)}
 								</tbody>
 							</Table>
 
 							<Form.Field.ExtraCol className="shortcut-list">
 								<h5>Shortcuts</h5>
 								<Button bsStyle="link">Add myself</Button>
-								{recents.persons.map(person =>
-									<Button key={person.id} bsStyle="link" onClick={this.addAttendee.bind(this, person)}>Add {person.name}</Button>
+								{Person.map(recents.persons, person =>
+									<Button key={person} bsStyle="link" onClick={this.addAttendee.bind(this, person)}>Add {person.name}</Button>
 								)}
 							</Form.Field.ExtraCol>
 						</Form.Field>
@@ -158,20 +149,22 @@ export default class ReportNew extends Page {
 									</tr>
 								</thead>
 								<tbody>
-									{report.poams.map(poam => <tr key={poam.id}>
-										<td onClick={this.removePoam.bind(this, poam)}>
-											<span style={{cursor: 'pointer'}}>⛔️</span>
-										</td>
-										<td>{poam.longName}</td>
-										<td>{poam.shortName}</td>
-									</tr>)}
+									{Poam.map(report.poams, poam =>
+										<tr key={poam}>
+											<td onClick={this.removePoam.bind(this, poam)}>
+												<span style={{cursor: 'pointer'}}>⛔️</span>
+											</td>
+											<td>{poam.longName}</td>
+											<td>{poam.shortName}</td>
+										</tr>
+									)}
 								</tbody>
 							</Table>
 
 							<Form.Field.ExtraCol className="shortcut-list">
 								<h5>Shortcuts</h5>
-								{recents.poams.map(poam =>
-									<Button key={poam.id} bsStyle="link" onClick={this.addPoam.bind(this, poam)}>Add "{poam.longName}"</Button>
+								{Poam.map(recents.poams, poam =>
+									<Button key={poam} bsStyle="link" onClick={this.addPoam.bind(this, poam)}>Add "{poam.longName}"</Button>
 								)}
 							</Form.Field.ExtraCol>
 						</Form.Field>
@@ -204,13 +197,12 @@ export default class ReportNew extends Page {
 		event.stopPropagation()
 		event.preventDefault()
 
-		API.send('/api/reports/new', this.state.report, {disableSubmits: true})
+		this.state.report.save({disableSubmits: true})
 			.then(report => {
-				if (report.code) throw report.code
-				console.log(report);
-				this.context.router.push('/reports/' + report.id)
-			}).catch(error => {
-				this.setState({error: error})
+				History.push(Report.pathFor(report))
+			})
+			.catch(error => {
+				this.setState({errors: error})
 				window.scrollTo(0, 0)
 			})
 	}
@@ -221,7 +213,7 @@ export default class ReportNew extends Page {
 		let attendees = report.attendees
 
 		if (!attendees.find(attendee => attendee.id === newAttendee.id)) {
-			attendees.push(newAttendee)
+			attendees.push(new Person(newAttendee))
 		}
 
 		this.setState({report})
