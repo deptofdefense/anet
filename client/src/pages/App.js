@@ -44,16 +44,21 @@ export default class App extends Page {
 			adminSettings(f:getAll) {
 				key, value
 			}
+			organizations(f:getTopLevelOrgs, type: ADVISOR_ORG) {
+				id, name
+				parentOrg { id }
+			}
 		`).then(data => {
 			let currentUser = this.state.currentUser
 			let settings = this.state.settings
+			let organizations = data.organizations
 
 			Object.assign(currentUser, data.person)
 			if (data.person && data.person.position) currentUser.role = data.person.position.type
 
 			data.adminSettings.forEach(setting => settings[setting.key] = setting.value)
 
-			this.setState({currentUser, settings})
+			this.setState({currentUser, settings, organizations})
 		})
 	}
 

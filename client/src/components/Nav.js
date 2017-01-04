@@ -9,22 +9,10 @@ export default class extends Component {
 		app: React.PropTypes.object.isRequired,
 	}
 
-	constructor(props) {
-		super(props)
-		this.state = {organizations: []}
-	}
-
-	componentDidMount() {
-		API.query(/* GraphQL */`
-			organizations(f:getTopLevelOrgs, type: ADVISOR_ORG) {
-				id, name
-				parentOrg { id }
-			}
-		`).then(data => this.setState({organizations: data.organizations}))
-	}
-
 	render() {
-		let currentUser = this.context.app.state.currentUser
+		let app = this.context.app
+		let currentUser = app.state.currentUser
+		let organizations = app.state.organizations || []
 
 		return (
 			<Nav bsStyle="pills" stacked>
@@ -41,7 +29,7 @@ export default class extends Component {
 				</Link>
 
 				<NavDropdown title="Organizations" id="organizations">
-					{this.state.organizations.map(org =>
+					{organizations.map(org =>
 						<Link to={"/organizations/" + org.id} key={org.id}>
 							<MenuItem>{org.name}</MenuItem>
 						</Link>
