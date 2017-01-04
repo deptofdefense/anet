@@ -2,6 +2,7 @@ package mil.dds.anet.resources;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -10,6 +11,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -18,9 +20,12 @@ import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.geo.Location;
+import mil.dds.anet.beans.search.LocationSearchQuery;
 import mil.dds.anet.database.LocationDao;
 import mil.dds.anet.graphql.GraphQLFetcher;
+import mil.dds.anet.graphql.GraphQLParam;
 import mil.dds.anet.graphql.IGraphQLResource;
+import mil.dds.anet.utils.ResponseUtils;
 
 @Path("/api/locations")
 @Produces(MediaType.APPLICATION_JSON)
@@ -46,11 +51,22 @@ public class LocationResource implements IGraphQLResource {
 		return dao.getById(id);
 	}
 	
-	@GET
+	
+	@POST
 	@GraphQLFetcher
 	@Path("/search")
-	public List<Location> search(@QueryParam("q") String name) {
-		return dao.searchByName(name);
+	public List<Location> search(@GraphQLParam("query") LocationSearchQuery query ) {
+		return dao.search(query);
+	}
+	
+	@GET
+	@Path("/search")
+	public List<Location> search(@Context HttpServletRequest request) {
+		try { 
+			return search(ResponseUtils.convertParamsToBean(request, LocationSearchQuery.class));
+		} catch (IllegalArgumentException e) { 
+			throw new WebApplicationException(e.getMessage(), e.getCause(), Status.BAD_REQUEST);
+		}
 	}
 	
 	@POST

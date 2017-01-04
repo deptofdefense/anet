@@ -12,7 +12,9 @@ import javax.ws.rs.core.MediaType;
 import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.search.LocationSearchQuery;
 import mil.dds.anet.beans.search.PersonSearchQuery;
+import mil.dds.anet.beans.search.PoamSearchQuery;
 import mil.dds.anet.beans.search.PositionSearchQuery;
 import mil.dds.anet.beans.search.ReportSearchQuery;
 import mil.dds.anet.database.AdminDao.AdminSettingKeys;
@@ -57,10 +59,10 @@ public class HomeResource {
 			result.put("positions", AnetObjectEngine.getInstance().getPositionDao().search(PositionSearchQuery.withText(query)));
 		}
 		if (types.contains("poams")) {
-			result.put("poams", AnetObjectEngine.getInstance().getPoamDao().search(query));
+			result.put("poams", AnetObjectEngine.getInstance().getPoamDao().search(PoamSearchQuery.withText(query)));
 		}
 		if (types.contains("locations")) {
-			result.put("locations", AnetObjectEngine.getInstance().getLocationDao().searchByName(query));
+			result.put("locations", AnetObjectEngine.getInstance().getLocationDao().search(LocationSearchQuery.withText(query)));
 		}
 
 		return result;

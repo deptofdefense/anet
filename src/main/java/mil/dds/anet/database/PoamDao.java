@@ -9,8 +9,10 @@ import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.Query;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
+import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
+import mil.dds.anet.beans.search.PoamSearchQuery;
 import mil.dds.anet.database.mappers.PoamMapper;
 import mil.dds.anet.utils.DaoUtils;
 
@@ -115,22 +117,9 @@ public class PoamDao implements IAnetDao<Poam> {
 			.list();
 	}
 
-	public List<Poam> search(String query) {
-		String sql;
-		if (DaoUtils.isMsSql(dbHandle)) { 
-			sql = "SELECT * FROM poams WHERE CONTAINS(longName, :q) OR shortName LIKE :likeQuery";
-			return dbHandle.createQuery(sql)
-					.map(new PoamMapper())
-					.bind("q", "\"" + query + "*\"")
-					.bind("likeQuery", query + "%")
-					.list();
-		} else { 
-			sql = "SELECT * FROM poams WHERE longName LIKE '%' || :q || '%' OR shortName LIKE '%' || :q || '%'";
-			return dbHandle.createQuery(sql)
-				.map(new PoamMapper())
-				.bind("q", query)
-				.list();
-		}
+	public List<Poam> search(PoamSearchQuery query) { 
+		return AnetObjectEngine.getInstance().getSearcher()
+				.getPoamSearcher().runSearch(query, dbHandle);
 	}
 	
 	public List<Poam> getRecentPoams(Person author) {

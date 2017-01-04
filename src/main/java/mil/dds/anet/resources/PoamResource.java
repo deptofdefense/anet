@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -15,6 +16,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -23,9 +25,12 @@ import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
+import mil.dds.anet.beans.search.PoamSearchQuery;
 import mil.dds.anet.database.PoamDao;
 import mil.dds.anet.graphql.GraphQLFetcher;
+import mil.dds.anet.graphql.GraphQLParam;
 import mil.dds.anet.graphql.IGraphQLResource;
+import mil.dds.anet.utils.ResponseUtils;
 
 @Path("/api/poams")
 @Produces(MediaType.APPLICATION_JSON)
@@ -110,11 +115,21 @@ public class PoamResource implements IGraphQLResource {
 		return topPoams;		
 	}
 	
-	@GET
+	@POST
 	@GraphQLFetcher
 	@Path("/search")
-	public List<Poam> search(@QueryParam("q") String query) { 
+	public List<Poam> search(@GraphQLParam("query") PoamSearchQuery query ) {
 		return dao.search(query);
+	}
+	
+	@GET
+	@Path("/search")
+	public List<Poam> search(@Context HttpServletRequest request) {
+		try { 
+			return search(ResponseUtils.convertParamsToBean(request, PoamSearchQuery.class));
+		} catch (IllegalArgumentException e) { 
+			throw new WebApplicationException(e.getMessage(), e.getCause(), Status.BAD_REQUEST);
+		}
 	}
 	
 	@GET
