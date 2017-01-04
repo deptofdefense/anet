@@ -34,7 +34,12 @@ export default class OrganizationShow extends Page {
 						person { id, name }
 					}
 				},
-				childrenOrgs { id, name }
+				childrenOrgs { id, name },
+				approvalSteps {
+					approverGroup { 
+						id, name, members { id, name }
+					}
+				}
 			}
 		`).then(data => this.setState({organization: data.organization}))
 	}
@@ -91,6 +96,23 @@ export default class OrganizationShow extends Page {
 						<legend>Supported laydown</legend>
 						{this.renderPositionTable(supportedPositions)}
 					</fieldset>
+
+					<h2>Approval Process</h2>
+					{org.approvalSteps && org.approvalSteps.map((step, idx) =>
+						<fieldset key={"step_" + idx}>
+							<legend>Step {idx + 1}: {step.approverGroup.name}</legend>
+							<Table>
+								<thead><tr><th>Name</th></tr></thead>
+								<tbody>
+									{step.approverGroup.members.map(person => 
+										<tr key={person.id}>
+											<td><Link to={`/people/${person.id}`}>{person.name}</Link></td>
+										</tr>
+									)}
+								</tbody>
+							</Table>
+						</fieldset>
+					)}
 				</Form>
 			</div>
 		)
