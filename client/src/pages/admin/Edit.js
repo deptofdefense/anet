@@ -1,49 +1,50 @@
 import React from 'react'
 import Page from 'components/Page'
-import {Button} from 'react-bootstrap'
+import autobind from 'autobind-decorator'
 
 import API from 'api'
 import Breadcrumbs from 'components/Breadcrumbs'
+import {ContentForHeader} from 'components/Header'
 import Form from 'components/Form'
-import autobind from 'autobind-decorator'
 
 export default class AdminEdit extends Page {
 	constructor(props) {
 		super(props)
 		this.state = {
-			key: "",
-			value: ""
+			setting: {
+				key: '',
+				value: '',
+			}
 		}
 	}
 
 	fetchData(props) {
 		let key = props.location.query["key"]
 		API.query(/* GraphQL */`
-			adminSettings(f:getAll) { key, value }
+			adminSettings(f:getAll) {
+				key, value
+			}
 		`).then(data => {
-			let setting = data.adminSettings.find(s =>
-				s.key === key
-			);
-			this.setState(setting);
+			let setting = data.adminSettings.find(setting => setting.key === key)
+			this.setState({setting});
 		})
 	}
 
 	render() {
-		let state = this.state
-		let breadcrumbName = 'Edit Admin Settings'
-		let breadcrumbUrl = '/admin/edit'
+		let setting = this.state.setting
+
 		return (
 			<div>
-				<Breadcrumbs items={[[breadcrumbName, breadcrumbUrl]]} />
+				<Breadcrumbs items={[['Admin settings', '/admin/edit']]} />
 
-				<Form onSubmit={this.onSubmit} formFor={state} onChange={this.onChange} >
+				<ContentForHeader>
+					<h1>Edit settings</h1>
+				</ContentForHeader>
+
+				<Form formFor={setting} onChange={this.onChange} onSubmit={this.onSubmit} actionText="Save setting">
 					<fieldset>
-						<legend>{state.key}</legend>
-
-						<Form.Field id="value" value={state.value} />	
-						<Button bsStyle="primary" type="submit" onClick={this.onSubmit} className="pull-right" >
-							Save Setting
-						</Button>
+						<legend>{setting.key}</legend>
+						<Form.Field id="value" />
 					</fieldset>
 				</Form>
 			</div>
@@ -51,25 +52,21 @@ export default class AdminEdit extends Page {
 	}
 
 	@autobind
+	onChange(event) {
+		let setting = this.state.setting
+		this.setState({setting})
+	}
+
+	@autobind
 	onSubmit(event) {
 		event.stopPropagation()
 		event.preventDefault()
 
-        API.send('/api/admin/save', this.state, {disableSubmits: true})
-            .then(response =>  {this.context.router.push('/admin/') }
+        API.send('/api/admin/save', this.state.setting, {disableSubmits: true})
+            .then(() => {this.context.router.push('/admin')}
             ).catch(error => {
                 this.setState({error: error})
                 window.scrollTo(0, 0)
             })
-	
-
 	}
-
-	@autobind
-	onChange(event) {
-		let state = this.state;
-		this.setState(state);
-	}
-		
-
 }
