@@ -10,6 +10,7 @@ import Form from 'components/Form'
 import Breadcrumbs from 'components/Breadcrumbs'
 import TextEditor from 'components/TextEditor'
 import Autocomplete from 'components/Autocomplete'
+import {browserHistory as History} from 'react-router'
 
 import API from 'api'
 
@@ -72,8 +73,9 @@ export default class PositionNew extends Page {
 					{this.state.error && <fieldset><p>There was a problem saving this position</p><p>{this.state.error}</p></fieldset>}
 					<fieldset>
 						<legend>Create a new Position</legend>
-						{ position.type === "PRINCIPAL" && <Form.Field type="static" value="Afghan Principal" label="Type" id="type" /> }
-						{ position.type === "ADVISOR" && 
+						{ position.organization && position.organization.type === "PRINCIPAL_ORG" && 
+							<Form.Field type="static" value="Afghan Principal" label="Type" id="type" /> }
+						{ position.organization && position.organization.type === "ADVISOR_ORG" && 
 							<Form.Field id="type" componentClass="select">
 								<option value="ADVISOR">Advisor</option>
 								<option value="SUPER_USER">Super User</option>
@@ -110,7 +112,10 @@ export default class PositionNew extends Page {
 		event.stopPropagation()
 		event.preventDefault()
 
-		API.send('/api/position/new', this.state.person, {disableSubmits: true})
+		let position = Object.without(this.state.position, "assignedPositions");
+
+
+		API.send('/api/positions/new', position, {disableSubmits: true})
 			.then(position => {
 				History.push("/positions/" + position.id);
 			}).catch(error => {

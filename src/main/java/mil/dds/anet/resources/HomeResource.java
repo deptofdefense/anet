@@ -12,6 +12,7 @@ import javax.ws.rs.core.MediaType;
 import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.search.OrganizationSearchQuery;
 import mil.dds.anet.beans.search.PersonSearchQuery;
 import mil.dds.anet.beans.search.PositionSearchQuery;
 import mil.dds.anet.beans.search.ReportSearchQuery;
@@ -28,7 +29,7 @@ public class HomeResource {
 		return new SimpleView("/views/index.ftl");
 	}
 
-	public static String ALL_TYPES = "people,reports,positions,poams,locations";
+	public static String ALL_TYPES = "people,reports,positions,poams,locations,organizations";
 
 	@GET
 	@Path("/api/search")
@@ -53,6 +54,9 @@ public class HomeResource {
 		}
 		if (types.contains("locations")) {
 			result.put("locations", AnetObjectEngine.getInstance().getLocationDao().searchByName(query));
+		}
+		if (types.contains("organizations")) { 
+			result.put("organizations", AnetObjectEngine.getInstance().getOrganizationDao().search(OrganizationSearchQuery.withText(query)));
 		}
 
 		return result;

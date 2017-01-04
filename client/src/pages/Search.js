@@ -21,7 +21,8 @@ export default class Search extends Page {
 			viewFormat: FORMAT_TABLE,
 			results: {
 				reports: [],
-				people: []
+				people: [],
+				organizations: []
 			}
 		}
 
@@ -38,6 +39,7 @@ export default class Search extends Page {
 				positions: results.positions || [],
 				poams: results.poams || [],
 				locations: results.locations || [],
+				organizations: results.organizations || [],
 			}})
 		})
 	}
@@ -80,6 +82,13 @@ export default class Search extends Page {
 					<fieldset>
 						<legend>People</legend>
 						{this.renderPeople()}
+					</fieldset>
+				}
+
+				{this.state.results.organizations.length > 0 && 
+					<fieldset>
+						<legend>Organizations</legend>
+						{this.renderOrgs()}
 					</fieldset>
 				}
 			</div>
@@ -139,6 +148,25 @@ export default class Search extends Page {
 					<td>{person.phoneNumber}</td>
 					<td>{person.emailAddress}</td>
 				</tr>)}
+			</tbody>
+		</Table>
+	}
+
+	renderOrgs() {
+		return <Table responsive hover striped>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Type</th>
+				</tr>
+			</thead>
+			<tbody>
+				{this.state.results && this.state.results.organizations.map( org =>
+					<tr key={org.id}>
+						<td><Link to={"/organizations/" + org.id}>{org.name}</Link></td>
+						<td>{org.type}</td>
+					</tr>
+				)}
 			</tbody>
 		</Table>
 	}
