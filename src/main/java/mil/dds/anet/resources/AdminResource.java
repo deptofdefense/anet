@@ -27,7 +27,6 @@ public class AdminResource implements IGraphQLResource {
 	@GET
 	@GraphQLFetcher
 	@Path("/")
-	@RolesAllowed("ADMINISTRATOR")
 	public List<AdminSetting> getAll() { 
 		return dao.getAllSettings();
 	}
