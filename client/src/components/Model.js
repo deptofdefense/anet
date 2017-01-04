@@ -12,6 +12,10 @@ export default class Model {
 		)
 	}
 
+	static map(array, func) {
+		return this.fromArray(array).map(func)
+	}
+
 	static pathFor(instance) {
 		let resourceName = this.resourceName || utils.resourceize(this.name)
 		let id = (instance && instance.id) || 'new'
