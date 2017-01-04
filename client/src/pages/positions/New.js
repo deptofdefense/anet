@@ -1,6 +1,6 @@
 import React from 'react'
 import Page from 'components/Page'
-import {InputGroup, Button} from 'react-bootstrap'
+import {InputGroup, Button, Table} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
 import DatePicker from 'react-bootstrap-date-picker'
@@ -88,6 +88,24 @@ export default class PositionNew extends Page {
 						<Form.Field type="static" value={position.organization.name} label="Organization" id="org" />
 					</fieldset>
 
+					<fieldset className="todo">
+						<legend>Assigned Principals</legend>
+				
+						<Form.Field id="assignedPositions">
+							<Autocomplete placeholder="Assign new Position" url="/api/positions/search" valueKey="name" />
+							<Table hover striped>
+								<thead>
+									<tr>
+										<th></th>
+										<th>Name</th>
+										<th>Position</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</Table>
+						</Form.Field>
+					</fieldset>
 
 					<fieldset>
 						<legend>Additional Information</legend>
