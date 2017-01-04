@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {Nav, NavItem, NavDropdown, MenuItem} from 'react-bootstrap'
-import {IndexLinkContainer as Link} from 'react-router-bootstrap'
+import {LinkContainer as NestedLink, IndexLinkContainer as Link} from 'react-router-bootstrap'
 
 import API from 'api'
 
@@ -49,9 +49,9 @@ export default class extends Component {
 					</Link>
 				}
 
-				<Link to="/admin" className="todo">
+				<NestedLink to="/admin">
 					<NavItem>Admin</NavItem>
-				</Link>
+				</NestedLink>
 			</Nav>
 		)
 	}

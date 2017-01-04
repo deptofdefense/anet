@@ -6,27 +6,29 @@ import API from 'api'
 import Breadcrumbs from 'components/Breadcrumbs'
 import {ContentForHeader} from 'components/Header'
 import Form from 'components/Form'
+import {browserHistory as History} from 'react-router'
 
 export default class AdminEdit extends Page {
 	constructor(props) {
 		super(props)
 		this.state = {
 			setting: {
-				key: '',
+				key: props.params.key,
 				value: '',
 			}
 		}
 	}
 
 	fetchData(props) {
-		let key = props.location.query["key"]
+		let key = props.params.key
+
 		API.query(/* GraphQL */`
 			adminSettings(f:getAll) {
 				key, value
 			}
 		`).then(data => {
 			let setting = data.adminSettings.find(setting => setting.key === key)
-			this.setState({setting});
+			this.setState({setting})
 		})
 	}
 
@@ -35,7 +37,7 @@ export default class AdminEdit extends Page {
 
 		return (
 			<div>
-				<Breadcrumbs items={[['Admin settings', '/admin/edit']]} />
+				<Breadcrumbs items={[['Admin settings', '/admin'], [setting.key, `/admin/settings/${setting.key}`]]} />
 
 				<ContentForHeader>
 					<h1>Edit settings</h1>
@@ -63,10 +65,11 @@ export default class AdminEdit extends Page {
 		event.preventDefault()
 
         API.send('/api/admin/save', this.state.setting, {disableSubmits: true})
-            .then(() => {this.context.router.push('/admin')}
-            ).catch(error => {
-                this.setState({error: error})
+            .then(() => History.push('/admin'))
+			.catch(error => {
+                this.setState({error})
                 window.scrollTo(0, 0)
+				console.error(error)
             })
 	}
 }

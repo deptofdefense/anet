@@ -35,18 +35,18 @@ export default class AdminIndex extends Page {
 								<tr>
 									<th>Key</th>
 									<th>Value</th>
-									<th></th>
 								</tr>
 							</thead>
 
 							<tbody>
 								{this.state.settings.map(setting =>
 									<tr key={setting.key} >
-										<td>{setting.key}</td>
-										<td>{setting.value}</td>
 										<td>
-											<Link to={`/admin/settings/${setting.key}`}>Edit</Link>
+											<Link to={`/admin/settings/${setting.key}`}>
+												{setting.key}
+											</Link>
 										</td>
+										<td>{setting.value}</td>
 									</tr>
 								)}
 							</tbody>
