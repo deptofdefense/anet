@@ -17,6 +17,9 @@ export default class Model {
 	}
 
 	static pathFor(instance) {
+		if (!instance && instance !== null)
+			return console.error(`You didn't pass anything to ${this.name}.pathFor. If you want a new route, you can pass null.`)
+
 		let resourceName = this.resourceName || utils.resourceize(this.name)
 		let id = (instance && instance.id) || 'new'
 		return ['', resourceName, id].join('/')
