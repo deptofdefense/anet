@@ -103,5 +103,11 @@ public class ReportSearchQuery implements ISearchQuery {
 	public void setPoamId(Integer poamId) {
 		this.poamId = poamId;
 	}
+
+	public static ReportSearchQuery withText(String text) {
+		ReportSearchQuery query = new ReportSearchQuery();
+		query.setText(text);
+		return query;
+	}
 	
 }

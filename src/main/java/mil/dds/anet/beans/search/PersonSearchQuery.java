@@ -77,5 +77,11 @@ public class PersonSearchQuery implements ISearchQuery {
 	public void setPendingVerification(Boolean pendingVerification) {
 		this.pendingVerification = pendingVerification;
 	}
+
+	public static PersonSearchQuery withText(String text) {
+		PersonSearchQuery query = new PersonSearchQuery();
+		query.setText(text);
+		return query;
+	}
 	
 }

@@ -63,7 +63,7 @@ export default class Search extends Page {
 			<div>
 				<Breadcrumbs items={[['Searching for "' + this.state.query + '"', '/search']]} />
 
-				{this.state.results.reports.length &&
+				{this.state.results.reports.length > 0 &&
 				<fieldset>
 					<legend>
 						Reports
@@ -76,7 +76,7 @@ export default class Search extends Page {
 				</fieldset>
 				}
 
-				{this.state.results.people.length &&
+				{this.state.results.people.length > 0 &&
 					<fieldset>
 						<legend>People</legend>
 						{this.renderPeople()}
@@ -134,7 +134,7 @@ export default class Search extends Page {
 			</thead>
 			<tbody>
 				{this.state.results && this.state.results.people.map(person => <tr key={person.id}>
-					<td>{person.name} {person.rank}</td>
+					<td><Link to={"/people/" + person.id}>{person.rank} {person.name}</Link></td>
 					<td>{person.role}</td>
 					<td>{person.phoneNumber}</td>
 					<td>{person.emailAddress}</td>

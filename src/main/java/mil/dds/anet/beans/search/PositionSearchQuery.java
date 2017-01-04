@@ -47,5 +47,10 @@ public class PositionSearchQuery implements ISearchQuery {
 	public void setLocationId(Integer locationId) {
 		this.locationId = locationId;
 	}
+	public static PositionSearchQuery withText(String text) {
+		PositionSearchQuery query = new PositionSearchQuery();
+		query.setText(text);
+		return query;
+	}
 	
 }
