@@ -8,6 +8,7 @@ export default class Report extends Model {
 		location: {},
 		attendees: [],
 		poams: [],
+		comments: [],
 		reportText: '',
 		nextSteps: '',
 	}

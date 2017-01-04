@@ -3,13 +3,17 @@ import Model from 'components/Model'
 export default class Person extends Model {
 	static schema = {
 		name: '',
+		status: 'ACTIVE',
 		country: '',
 		rank: '',
-		gender: '',
+		gender: 'MALE',
 		phoneNumber: '',
-		endOfTourDate: new Date(),
+		endOfTourDate: '',
 		biography: '',
-		role: '',
+		role: 'PRINCIPAL',
 		position: {},
+
+		authoredReports: [],
+		attendedReports: [],
 	}
 }

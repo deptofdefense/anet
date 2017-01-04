@@ -1,9 +1,11 @@
 import React from 'react'
 import Page from 'components/Page'
 
-import API from 'api'
 import Breadcrumbs from 'components/Breadcrumbs'
 import ReportTable from 'components/ReportTable'
+
+import API from 'api'
+import {Report} from 'models'
 
 export default class ReportsIndex extends Page {
 	constructor(props) {
@@ -20,7 +22,7 @@ export default class ReportsIndex extends Page {
 					name
 				}
 			}
-		`).then(data => this.setState({reports: data.reports}))
+		`).then(data => this.setState({reports: Report.fromArray(data.reports)}))
 	}
 
 	render() {
