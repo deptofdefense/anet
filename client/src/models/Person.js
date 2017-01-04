@@ -12,8 +12,5 @@ export default class Person extends Model {
 		biography: '',
 		role: 'PRINCIPAL',
 		position: {},
-
-		authoredReports: [],
-		attendedReports: [],
 	}
 }

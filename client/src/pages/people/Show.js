@@ -15,7 +15,11 @@ export default class PersonShow extends Page {
 	constructor(props) {
 		super(props)
 		this.state = {
-			person: new Person(props.params.id),
+			person: new Person({
+				id: props.params.id,
+				authoredReports: [],
+				attendedReports: [],
+			}),
 		}
 	}
 

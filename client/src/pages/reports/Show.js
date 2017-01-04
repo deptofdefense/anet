@@ -110,7 +110,7 @@ export default class ReportShow extends Page {
 								{Person.map(report.attendees, person =>
 									<tr key={person}>
 										<td><Link to={Person.pathFor(person)}>{person.name}</Link></td>
-										<td><Link to={Position.pathFor(person.position)}>{person.position.name}</Link></td>
+										<td>{person.position && <Link to={Position.pathFor(person.position)}>{person.position.name}</Link>}</td>
 									</tr>
 								)}
 							</tbody>
