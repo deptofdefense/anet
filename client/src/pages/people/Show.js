@@ -67,7 +67,7 @@ export default class PersonShow extends Page {
 			currentPositionRow = <tr>
 				<td>Now</td>
 				<td>{org && <Link to={`/organizations/${org.id}`}>{org.name}</Link>}</td>
-				<td>{position.name}</td>
+				<td><Link to={`/positions/${position.id}`}>{position.name}</Link></td>
 			</tr>
 		}
 
