@@ -4,7 +4,11 @@ export default class Model {
 	static schema = {}
 
 	static fromArray(array) {
-		return array.map(object => new this(object))
+		return array.map(object =>
+			object instanceof this
+				? object
+				: new this(object)
+		)
 	}
 
 	constructor(props) {

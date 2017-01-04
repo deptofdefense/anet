@@ -2,6 +2,8 @@ import React, {Component} from 'react'
 import {Link} from 'react-router'
 import {Table} from 'react-bootstrap'
 
+import Report from 'models/Report'
+
 import moment from 'moment'
 
 export default class ReportTable extends Component {
@@ -10,16 +12,9 @@ export default class ReportTable extends Component {
 		reports: React.PropTypes.array.isRequired,
 	}
 
-	constructor(props) {
-		super(props)
-
-		this.state = {
-			reports: []
-		}
-	}
-
 	render() {
 		let {showAuthors} = this.props
+		let reports = Report.fromArray(this.props.reports)
 
 		return <Table striped>
 			<thead>
@@ -33,8 +28,8 @@ export default class ReportTable extends Component {
 			</thead>
 
 			<tbody>
-				{this.props.reports.map(report =>
-					<tr key={report.id}>
+				{reports.map(report =>
+					<tr key={report}>
 						{showAuthors && <td><Link to={"/people/" + report.author.id}>{report.author.name}</Link></td>}
 						<td>{report.organization && <Link to={"/organizations/" + report.organization.id}></Link>}</td>
 						<td><Link to={"/reports/" + report.id}>{report.intent}</Link></td>
