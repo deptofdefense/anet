@@ -13,7 +13,11 @@ export default class Model {
 	}
 
 	static map(array, func) {
-		return this.fromArray(array).map(func)
+		return array.map(object =>
+			object instanceof this
+				? func(object)
+				: func(new this(object))
+		)
 	}
 
 	static pathFor(instance) {
@@ -55,5 +59,22 @@ export default class Model {
 
 	toString() {
 		return this.toPath()
+	}
+
+	toJSON() {
+		let json = Object.assign({}, this)
+		Object.keys(json).forEach(key => {
+			let value = json[key]
+			if (value instanceof Model)
+				json[key] = {id: value.id}
+
+			if (Array.isArray(value)) {
+				json[key] = value.map(child =>
+					child instanceof Model ? {id: child.id} : child
+				)
+			}
+		})
+
+		return json
 	}
 }
