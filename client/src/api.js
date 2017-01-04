@@ -19,7 +19,7 @@ const API = {
 
 		return window.fetch(url, params)
 					.then(response =>
-						response.headers.get('content-length')
+						response.headers.get('content-type') === 'application/json'
 							? response.json()
 							: response
 					)
