@@ -48,6 +48,10 @@ export default class extends Component {
 						<NavItem>GraphQL</NavItem>
 					</Link>
 				}
+
+				<Link to="/admin" className="todo">
+					<NavItem>Admin</NavItem>
+				</Link>
 			</Nav>
 		)
 	}

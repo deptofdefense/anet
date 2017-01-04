@@ -34,10 +34,24 @@ public class AdminDao {
 		return cachedSettings.get(key.toString());
 	}
 	
+	public List<AdminSetting> getAllSettings() { 
+		return dbHandle.createQuery("SELECT * FROM adminSettings")
+				.map(new AdminSettingMapper())
+				.list();
+	}
+	
 	private List<AdminSetting> getSettingsFromDb() { 
 		return dbHandle.createQuery("SELECT * FROM adminSettings")
 			.map(new AdminSettingMapper())
 			.list();
+	}
+
+	public int saveSetting(AdminSetting setting) {
+		cachedSettings.put(setting.getKey(), setting.getValue());
+		return dbHandle.createStatement("UPDATE adminSettings SET value = :value WHERE [key] = :key")
+			.bind("key", setting.getKey())
+			.bind("value", setting.getValue())
+			.execute();
 	}
 	
 }

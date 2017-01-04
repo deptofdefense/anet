@@ -23,6 +23,9 @@ import PersonNew from './pages/people/New'
 
 import OrganizationShow from './pages/organizations/Show'
 
+import AdminShow from './pages/admin/Show'
+import AdminEdit from './pages/admin/Edit'
+
 import GraphiQL from './pages/GraphiQL'
 
 function showLoader() {
@@ -56,6 +59,9 @@ ReactDOM.render((
 				</Route>
 
 				<Route path="/graphiql" component={GraphiQL} />
+
+				<Route path="/admin" component={AdminShow} />
+				<Route path="/admin/edit" component={AdminEdit} />
 			</Route>
 		</Router>
 	</InjectablesProvider>
