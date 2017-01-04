@@ -1,3 +1,14 @@
+import * as changeCase from 'change-case'
+import pluralize from 'pluralize'
+
+export default {
+	...changeCase,
+	pluralize,
+	resourceize: function(string) {
+		return pluralize(changeCase.camel(string))
+	}
+}
+
 Object.without = function(source, ...keys) {
 	let copy = Object.assign({}, source)
 	let i = keys.length

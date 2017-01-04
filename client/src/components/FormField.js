@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import _ from 'lodash'
+import utils from 'utils'
 import autobind from 'autobind-decorator'
 import {FormGroup, Col, ControlLabel, FormControl, InputGroup} from 'react-bootstrap'
 
@@ -61,7 +61,7 @@ export default class FormField extends Component {
 		}
 
 		if (typeof label === 'undefined') {
-			label = _.upperFirst(_.startCase(id).toLowerCase())
+			label = utils.sentenceCase(id)
 		}
 
 		// Remove an ExtraCol from children first so we can manually append it
