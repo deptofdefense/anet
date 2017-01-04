@@ -76,8 +76,8 @@ export default class ReportShow extends Page {
 						<legend>Report #{report.id}</legend>
 
 						<Form.Field id="intent" label="Subject" />
-						<Form.Field id="engagementDate" label="Date 📆" value={moment(report.engagementDate).format("L")} />
-						<Form.Field id="location" label="Location 📍" value={report.location && report.location.name} />
+						<Form.Field id="engagementDate" label="Date 📆" getter={date => moment(date).format("L")} />
+						<Form.Field id="location" label="Location 📍" getter={location => location && location.name} />
 						<Form.Field id="atmosphere" label="Atmospherics">
 							<span style={atmosphereIconStyle}>{atmosphereIcons[report.atmosphere]}</span>
 							{report.atmosphereDetails}

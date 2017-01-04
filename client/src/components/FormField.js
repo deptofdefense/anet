@@ -25,6 +25,11 @@ export default class FormField extends Component {
 		id: React.PropTypes.string.isRequired,
 		label: React.PropTypes.string,
 
+		// if you need to do additional formatting on the value returned by
+		// formForObject[idProp], you can specify a getter function which
+		// will be called with the value as its prop
+		getter: React.PropTypes.func,
+
 		// This will cause the FormField to be rendered as an InputGroup,
 		// with the node specified by addon appended on the right of the group.
 		addon: React.PropTypes.node,
@@ -54,6 +59,8 @@ export default class FormField extends Component {
 			children,
 			...childProps
 		} = this.props
+
+		childProps = Object.without(childProps, 'getter')
 
 		let horizontal = this.context.form && this.context.form.props.horizontal
 		if (typeof this.props.horizontal !== 'undefined') {
@@ -123,8 +130,11 @@ export default class FormField extends Component {
 	getValue() {
 		let formContext = this.context.formFor
 		let id = this.props.id
-		if (formContext)
-			return formContext[id]
+		let getter = this.props.getter
+		if (formContext) {
+			let value = formContext[id]
+			return getter ? getter(value) : value
+		}
 	}
 
 	@autobind
