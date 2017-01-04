@@ -1,8 +1,6 @@
 import Model from 'components/Model'
 
 export default class Person extends Model {
-	static resourceName = 'people'
-
 	static schema = {
 		name: '',
 		country: '',

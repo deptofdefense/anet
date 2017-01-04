@@ -1,3 +1,5 @@
-export Report from 'models/Report'
 export Organization from 'models/Organization'
 export Person from 'models/Person'
+export Poam from 'models/Poam'
+export Position from 'models/Position'
+export Report from 'models/Report'
