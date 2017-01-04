@@ -1,15 +1,17 @@
 import React from 'react'
-import {InputGroup, Button} from 'react-bootstrap'
+import {InputGroup} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
 import DatePicker from 'react-bootstrap-date-picker'
 
 import {ContentForHeader} from 'components/Header'
+import History from 'components/History'
 import Form from 'components/Form'
 import Breadcrumbs from 'components/Breadcrumbs'
 import TextEditor from 'components/TextEditor'
 
 import API from 'api'
+import {Person} from 'models'
 
 export default class PersonNew extends React.Component {
 	static contextTypes = {
@@ -24,18 +26,7 @@ export default class PersonNew extends React.Component {
 		super(props)
 
 		this.state = {
-			person: {
-				name: '',
-				status: 'ACTIVE',
-				role: 'PRINCIPAL',
-				emailAddress: '',
-				phoneNumber: '',
-				biography: '',
-				gender: 'MALE',
-				country: 'Afghanistan',
-				rank: 'OF-4',
-				endOfTourDate: ''
-			}
+			person: new Person(),
 		}
 	}
 
@@ -50,7 +41,7 @@ export default class PersonNew extends React.Component {
 
 				<Breadcrumbs items={[['Create new Person', '/people/new']]} />
 
-				<Form formFor={person} onChange={this.onChange} onSubmit={this.onSubmit} horizontal>
+				<Form formFor={person} onChange={this.onChange} onSubmit={this.onSubmit} horizontal actionText="Create person">
 					{this.state.error && <fieldset><p>There was a problem saving this person</p><p>{this.state.error}</p></fieldset>}
 					<fieldset>
 						<legend>Create a new Person</legend>
@@ -99,10 +90,6 @@ export default class PersonNew extends React.Component {
 							<TextEditor label="" />
 						</Form.Field>
 					</fieldset>
-
-					<fieldset>
-						<Button bsSize="large" bsStyle="primary" type="submit" className="pull-right">Create person</Button>
-					</fieldset>
 				</Form>
 			</div>
 		)
@@ -122,7 +109,7 @@ export default class PersonNew extends React.Component {
 		API.send('/api/people/new', this.state.person, {disableSubmits: true})
 			.then(person => {
 				if (person.code) throw person.code
-				this.context.router.push('/people/' + person.id)
+				History.push(Person.pathFor(person))
 			}).catch(error => {
 				this.setState({error: error})
 				window.scrollTo(0, 0)

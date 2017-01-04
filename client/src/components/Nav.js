@@ -3,11 +3,18 @@ import {Nav, NavItem, NavDropdown, MenuItem} from 'react-bootstrap'
 import {LinkContainer as NestedLink, IndexLinkContainer as Link} from 'react-router-bootstrap'
 
 import API from 'api'
+import {Organization} from 'models'
 
 export default class extends Component {
+	static contextTypes = {
+		app: React.PropTypes.object.isRequired,
+	}
+
 	constructor(props) {
 		super(props)
-		this.state = {organizations: []}
+		this.state = {
+			organizations: [],
+		}
 	}
 
 	componentDidMount() {
@@ -16,10 +23,12 @@ export default class extends Component {
 				id, name
 				parentOrg { id }
 			}
-		`).then(data => this.setState({organizations: data.organizations}))
+		`).then(data => this.setState({organizations: Organization.fromArray(data.organizations)}))
 	}
 
 	render() {
+		let currentUser = this.context.app.state.currentUser
+
 		return (
 			<Nav bsStyle="pills" stacked>
 				<Link to="/">
@@ -36,7 +45,7 @@ export default class extends Component {
 
 				<NavDropdown title="Organizations" id="organizations">
 					{this.state.organizations.map(org =>
-						<Link to={"/organizations/" + org.id} key={org.id}>
+						<Link to={Organization.pathFor(org)} key={org}>
 							<MenuItem>{org.name}</MenuItem>
 						</Link>
 					)}
@@ -49,9 +58,9 @@ export default class extends Component {
 					</Link>
 				}
 
-				<NestedLink to="/admin">
+				{currentUser.role === 'ADMINISTRATOR' && <NestedLink to="/admin">
 					<NavItem>Admin</NavItem>
-				</NestedLink>
+				</NestedLink>}
 			</Nav>
 		)
 	}

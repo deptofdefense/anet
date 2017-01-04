@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import _ from 'lodash'
+import utils from 'utils'
 import autobind from 'autobind-decorator'
 import {FormGroup, Col, ControlLabel, FormControl, InputGroup} from 'react-bootstrap'
 
@@ -24,6 +24,11 @@ export default class FormField extends Component {
 		// you to update state or rerender.
 		id: React.PropTypes.string.isRequired,
 		label: React.PropTypes.string,
+
+		// if you need to do additional formatting on the value returned by
+		// formForObject[idProp], you can specify a getter function which
+		// will be called with the value as its prop
+		getter: React.PropTypes.func,
 
 		// This will cause the FormField to be rendered as an InputGroup,
 		// with the node specified by addon appended on the right of the group.
@@ -55,13 +60,15 @@ export default class FormField extends Component {
 			...childProps
 		} = this.props
 
+		childProps = Object.without(childProps, 'getter')
+
 		let horizontal = this.context.form && this.context.form.props.horizontal
 		if (typeof this.props.horizontal !== 'undefined') {
 			horizontal = this.props.horizontal
 		}
 
 		if (typeof label === 'undefined') {
-			label = _.upperFirst(_.startCase(id).toLowerCase())
+			label = utils.sentenceCase(id)
 		}
 
 		// Remove an ExtraCol from children first so we can manually append it
@@ -75,7 +82,7 @@ export default class FormField extends Component {
 
 		// if type is static, render out a static value
 		if (this.props.type === 'static' || (!this.props.type && this.context.form.props.static)) {
-			children = <FormControl.Static>{(children.length && children) || defaultValue}</FormControl.Static>
+			children = <FormControl.Static {...childProps}>{(children.length && children) || defaultValue}</FormControl.Static>
 
 		// if children are provided, render those, but special case them to
 		// automatically set value and children props
@@ -123,8 +130,11 @@ export default class FormField extends Component {
 	getValue() {
 		let formContext = this.context.formFor
 		let id = this.props.id
-		if (formContext)
-			return formContext[id]
+		let getter = this.props.getter
+		if (formContext) {
+			let value = formContext[id]
+			return getter ? getter(value) : value
+		}
 	}
 
 	@autobind

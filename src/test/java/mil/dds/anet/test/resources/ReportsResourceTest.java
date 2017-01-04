@@ -366,12 +366,12 @@ public class ReportsResourceTest extends AbstractResourceTest {
         Person bob = getBobBobtown();
         
         //Fetch some objects from the DB that we'll use later. 
-        List<Location> locSearchResults = httpQuery("/api/locations/search?q=Police", elizabeth)
+        List<Location> locSearchResults = httpQuery("/api/locations/search?text=Police", elizabeth)
                 .get(new GenericType<List<Location>>() {});
         assertThat(locSearchResults.size()).isGreaterThan(0);
         Location loc = locSearchResults.get(0);
         
-        List<Poam> poamSearchResults = httpQuery("/api/poams/search?q=Budgeting", elizabeth)
+        List<Poam> poamSearchResults = httpQuery("/api/poams/search?text=Budgeting", elizabeth)
         		.get(new GenericType<List<Poam>>() {});
         assertThat(poamSearchResults.size()).isGreaterThan(2);    
         
@@ -473,7 +473,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 				(rp.getId().equals(steve.getId()))
 			))).hasSameSizeAs(searchResults);
 		
-		List<Poam> poamResults = httpQuery("/api/poams/search?q=1.1.A", jack).get(new GenericType<List<Poam>>() {});
+		List<Poam> poamResults = httpQuery("/api/poams/search?text=1.1.A", jack).get(new GenericType<List<Poam>>() {});
 		assertThat(poamResults).isNotEmpty();
 		Poam poam = poamResults.get(0);
 		
@@ -516,7 +516,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		//#TODO: figure out how to verify the results? 
 		
 		//Search by location
-		List<Location> locs = httpQuery("/api/locations/search?q=Cabot", jack).get(new GenericType<List<Location>>() {});
+		List<Location> locs = httpQuery("/api/locations/search?text=Cabot", jack).get(new GenericType<List<Location>>() {});
 		assertThat(locs.size() == 0);
 		Location cabot = locs.get(0);
 		

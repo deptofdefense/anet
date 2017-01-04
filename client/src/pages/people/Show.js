@@ -4,19 +4,22 @@ import {Table} from 'react-bootstrap'
 import {Link} from 'react-router'
 import moment from 'moment'
 
-import API from 'api'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
 import ReportTable from 'components/ReportTable'
+
+import API from 'api'
+import {Person, Organization} from 'models'
 
 export default class PersonShow extends Page {
 	constructor(props) {
 		super(props)
 		this.state = {
-			person: {
+			person: new Person({
+				id: props.params.id,
 				authoredReports: [],
-				attendedReports: []
-			},
+				attendedReports: [],
+			}),
 		}
 	}
 
@@ -53,7 +56,7 @@ export default class PersonShow extends Page {
 				}
 
 			}
-		`).then(data => this.setState({person: data.person}))
+		`).then(data => this.setState({person: new Person(data.person)}))
 	}
 
 	render() {
@@ -61,19 +64,19 @@ export default class PersonShow extends Page {
 		let position = person.position
 		let org = position && position.organization
 
-		let currentPositionRow = <tr><td>This person is not assigned to a position</td></tr>;
+		let currentPositionRow = <tr><td>This person is not assigned to a position</td></tr>
 
 		if (position) {
 			currentPositionRow = <tr>
 				<td>Now</td>
-				<td>{org && <Link to={`/organizations/${org.id}`}>{org.name}</Link>}</td>
-				<td><Link to={`/positions/${position.id}`}>{position.name}</Link></td>
+				<td>{org && <Link to={Organization.pathFor(org)}>{org.name}</Link>}</td>
+				<td><Link to={Positions.pathFor(position)}>{position.name}</Link></td>
 			</tr>
 		}
 
 		return (
 			<div>
-				<Breadcrumbs items={[[person.name, "/people/" + person.id ]]} />
+				<Breadcrumbs items={[[person.name, Person.pathFor(person)]]} />
 				<Form static formFor={person} horizontal>
 					<fieldset>
 						<legend>{person.rank} {person.name}</legend>

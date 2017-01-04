@@ -12,11 +12,14 @@ import javax.ws.rs.core.MediaType;
 import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.search.LocationSearchQuery;
 import mil.dds.anet.beans.search.OrganizationSearchQuery;
 import mil.dds.anet.beans.search.PersonSearchQuery;
+import mil.dds.anet.beans.search.PoamSearchQuery;
 import mil.dds.anet.beans.search.PositionSearchQuery;
 import mil.dds.anet.beans.search.ReportSearchQuery;
-import mil.dds.anet.views.SimpleView;
+import mil.dds.anet.database.AdminDao.AdminSettingKeys;
+import mil.dds.anet.views.IndexView;
 
 @Path("")
 @PermitAll
@@ -25,8 +28,15 @@ public class HomeResource {
 	@GET
 	@Path("{path: .*}")
 	@Produces(MediaType.TEXT_HTML)
-	public SimpleView reactIndex(@Auth Person p) {
-		return new SimpleView("/views/index.ftl");
+	public IndexView reactIndex(@Auth Person p) {
+		IndexView view = new IndexView("/views/index.ftl");
+		view.setCurrentUser(p);
+		
+		AnetObjectEngine engine = AnetObjectEngine.getInstance();
+		view.setSecurityBannerText(engine.getAdminSetting(AdminSettingKeys.SECURITY_BANNER_TEXT));
+		view.setSecurityBannerColor(engine.getAdminSetting(AdminSettingKeys.SECURITY_BANNER_COLOR));
+		
+		return view;
 	}
 
 	public static String ALL_TYPES = "people,reports,positions,poams,locations,organizations";
@@ -50,10 +60,10 @@ public class HomeResource {
 			result.put("positions", AnetObjectEngine.getInstance().getPositionDao().search(PositionSearchQuery.withText(query)));
 		}
 		if (types.contains("poams")) {
-			result.put("poams", AnetObjectEngine.getInstance().getPoamDao().search(query));
+			result.put("poams", AnetObjectEngine.getInstance().getPoamDao().search(PoamSearchQuery.withText(query)));
 		}
 		if (types.contains("locations")) {
-			result.put("locations", AnetObjectEngine.getInstance().getLocationDao().searchByName(query));
+			result.put("locations", AnetObjectEngine.getInstance().getLocationDao().search(LocationSearchQuery.withText(query)));
 		}
 		if (types.contains("organizations")) { 
 			result.put("organizations", AnetObjectEngine.getInstance().getOrganizationDao().search(OrganizationSearchQuery.withText(query)));

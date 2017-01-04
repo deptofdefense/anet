@@ -10,6 +10,8 @@ public interface ISearcher {
 	
 	public IPositionSearcher getPositionSearcher();
 	
-//	public IPoamSearcher getPoamSearcher();
+	public IPoamSearcher getPoamSearcher();
+	
+	public ILocationSearcher getLocationSearcher();
 	
 }

@@ -37,7 +37,7 @@ public class LocationResourceTest extends AbstractResourceTest {
 		//You cannot search for the Boat Dock location, because full-text indexing
 		// is done in asynchronously and is not guaranteed to be done
 		// so we search for a record in the base data set. 
-		List<Location> results = httpQuery(String.format("/api/locations/search?q=%s", 
+		List<Location> results = httpQuery(String.format("/api/locations/search?text=%s", 
 				URLEncoder.encode("Police", "UTF-8")))
 				.get(new GenericType<List<Location>>() {});
 		assertThat(results.size()).isGreaterThan(0);
