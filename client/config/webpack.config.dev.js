@@ -107,6 +107,7 @@ module.exports = {
         include: paths.appSrc,
         loader: 'babel',
         query: {
+          presets: ['stage-1'],
           plugins: ['transform-decorators-legacy'],
 
           // This is a feature of `babel-loader` for webpack (not Babel itself).
