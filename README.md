@@ -169,6 +169,17 @@ other components for reusability.
 
 Coming soon.
 
+## How to pull down new changes and update your local server
+1. Close any servers you have running (the `./gradlew` or `npm` commands)
+2. Pull down any updates `git pull`
+3. If you see any changes to `src/main/resources/migrations.xml` this means there are updates to the database schema.  Run `./gradlew dbMigrate` to update your database schema. 
+	- If you are using sqlserver then you need to run `export DB_DRIVER='sqlserver'` to tell gradle to use your sqlserver configuration
+4. If you see any changes to `insertBaseData.sql` then there are updates to the base data set. 
+	- If you are using sqlite, then run `cat insertBaseData.sql | ./mssql2sqlite.sh | sqlite3 development.db`
+	- If you are using sqlserver, then use your favorite SQL connector to run the insertBaseData.sql file. 
+5. Re launch the backend server with `./gradlew run`
+6. Re launch the frontend server with `./npm run start`
+
 ## Random Documentation!! 
 
 ### How to add a new field to an object

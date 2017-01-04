@@ -1,7 +1,7 @@
 import React from 'react'
 import Page from 'components/Page'
 import {Link} from 'react-router'
-import {Table} from 'react-bootstrap'
+import {Table, ListGroup, ListGroupItem} from 'react-bootstrap'
 
 import API from 'api'
 import {Organization, Person, Position, Poam} from 'models'
@@ -33,7 +33,8 @@ export default class OrganizationShow extends Page {
 						id, name, code
 						person { id, name }
 					}
-				}
+				},
+				childrenOrgs { id, name }
 			}
 		`).then(data => this.setState({organization: data.organization}))
 	}
@@ -68,6 +69,14 @@ export default class OrganizationShow extends Page {
 							<Link to={Organization.pathFor(org)}>
 								{org.parentOrg.name}
 							</Link>
+						</Form.Field>}
+
+						{org.childrenOrgs && org.childrenOrgs.length > 0 && <Form.Field id="childrenOrgs" label="Sub-Orgs">
+							<ListGroup>
+							{org.childrenOrgs.map( org =>
+								<ListGroupItem key={org.id} ><Link to={`/organizations/${org.id}`}>{org.name}</Link></ListGroupItem>
+							)}
+							</ListGroup>
 						</Form.Field>}
 					</fieldset>
 

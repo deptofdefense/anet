@@ -18,7 +18,11 @@ const API = {
 		delete params.showLoader
 
 		return window.fetch(url, params)
-					.then(response => response.json())
+					.then(response =>
+						response.headers.get('content-type') === 'application/json'
+							? response.json()
+							: response
+					)
 					.then(response => {
 						API.stopLoading()
 						return response

@@ -62,11 +62,23 @@ public class OrganizationDao implements IAnetDao<Organization> {
 		return (results.size() == 0) ? null : results.get(0);
 	}
 	
+	public List<Organization> getTopLevelOrgs(OrganizationType type) { 
+		return getByParentOrgId(null, type);
+	}
+	
 	public List<Organization> getByParentOrgId(Integer parentId) { 
+		return getByParentOrgId(parentId, null);
+	}
+	
+	public List<Organization> getByParentOrgId(Integer parentId, OrganizationType type) { 
 		String query = (parentId == null) ? "SELECT " + ORGANIZATION_FIELDS + " FROM organizations WHERE parentOrgId IS NULL" : 
 			"SELECT " + ORGANIZATION_FIELDS + " FROM organizations WHERE parentOrgId = :parentId";
+		if (type != null) { 
+			query += " AND type = :type";
+		}
 		return dbHandle.createQuery(query)
 			.bind("parentId",parentId)
+			.bind("type", DaoUtils.getEnumId(type))
 			.map(new OrganizationMapper())
 			.list();
 	}

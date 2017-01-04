@@ -10,8 +10,10 @@ import org.skife.jdbi.v2.Query;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
+import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.geo.Location;
+import mil.dds.anet.beans.search.LocationSearchQuery;
 import mil.dds.anet.database.mappers.LocationMapper;
 import mil.dds.anet.utils.DaoUtils;
 
@@ -69,20 +71,6 @@ public class LocationDao implements IAnetDao<Location> {
 				.bind("updatedAt", DateTime.now()	)
 				.execute();
 	}
-
-	public List<Location> searchByName(String name) {
-		String sql;
-		if (DaoUtils.isMsSql(dbHandle)) { 
-			name = "\"" + name + "*\"";
-			sql = "SELECT * FROM locations WHERE CONTAINS (name, :name)";
-		} else { 
-			sql = "SELECT * FROM locations WHERE name LIKE '%' || :name || '%'";
-		}
-		Query<Location> query = dbHandle.createQuery(sql)
-			.bind("name", name)
-			.map(new LocationMapper());
-		return query.list();
-	}
 	
 	public List<Location> getRecentLocations(Person author) {
 		String sql;
@@ -107,6 +95,11 @@ public class LocationDao implements IAnetDao<Location> {
 				.bind("authorId", author.getId())
 				.map(new LocationMapper())
 				.list();
+	}
+
+	public List<Location> search(LocationSearchQuery query) {
+		return AnetObjectEngine.getInstance().getSearcher()
+				.getLocationSearcher().runSearch(query, dbHandle);
 	}
 	
 	//TODO: Don't delete any location if any references exist. 

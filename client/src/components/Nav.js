@@ -1,11 +1,15 @@
 import React, {Component} from 'react'
 import {Nav, NavItem, NavDropdown, MenuItem} from 'react-bootstrap'
-import {IndexLinkContainer as Link} from 'react-router-bootstrap'
+import {LinkContainer as NestedLink, IndexLinkContainer as Link} from 'react-router-bootstrap'
 
 import API from 'api'
 import {Organization} from 'models'
 
 export default class extends Component {
+	static contextTypes = {
+		app: React.PropTypes.object.isRequired,
+	}
+
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -15,20 +19,16 @@ export default class extends Component {
 
 	componentDidMount() {
 		API.query(/* GraphQL */`
-			organizations(f:getAllOrgs, pageNum:0, pageSize:200) {
+			organizations(f:getTopLevelOrgs, type: ADVISOR_ORG) {
 				id, name
 				parentOrg { id }
 			}
-		`).then(data =>
-			this.setState({
-				organizations: Organization.fromArray(
-					data.organizations.filter(org => org.parentOrg === null)
-				)
-			})
-		)
+		`).then(data => this.setState({organizations: Organization.fromArray(data.organizations)}))
 	}
 
 	render() {
+		let currentUser = this.context.app.state.currentUser
+
 		return (
 			<Nav bsStyle="pills" stacked>
 				<Link to="/">
@@ -57,6 +57,10 @@ export default class extends Component {
 						<NavItem>GraphQL</NavItem>
 					</Link>
 				}
+
+				{currentUser.role === 'ADMINISTRATOR' && <NestedLink to="/admin">
+					<NavItem>Admin</NavItem>
+				</NestedLink>}
 			</Nav>
 		)
 	}

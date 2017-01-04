@@ -22,7 +22,7 @@ export default class Search extends Page {
 			viewFormat: FORMAT_TABLE,
 			results: {
 				reports: [],
-				people: []
+				people: [],
 			}
 		}
 
@@ -64,7 +64,7 @@ export default class Search extends Page {
 			<div>
 				<Breadcrumbs items={[['Searching for "' + this.state.query + '"', '/search']]} />
 
-				{this.state.results.reports.length &&
+				{this.state.results.reports.length > 0 &&
 				<fieldset>
 					<legend>
 						Reports
@@ -77,7 +77,7 @@ export default class Search extends Page {
 				</fieldset>
 				}
 
-				{this.state.results.people.length &&
+				{this.state.results.people.length > 0 &&
 					<fieldset>
 						<legend>People</legend>
 						{this.renderPeople()}
@@ -138,7 +138,7 @@ export default class Search extends Page {
 			<tbody>
 				{Person.map(this.state.results.people, person =>
 					<tr key={person}>
-						<td>{person.name} {person.rank}</td>
+						<td><Link to={Person.pathFor(person)}>{person.rank} {person.name}</Link></td>
 						<td>{person.role}</td>
 						<td>{person.phoneNumber}</td>
 						<td>{person.emailAddress}</td>

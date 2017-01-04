@@ -14,6 +14,7 @@ import io.dropwizard.client.JerseyClientBuilder;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
+import mil.dds.anet.beans.search.PoamSearchQuery;
 
 public class PoamResourceTest extends AbstractResourceTest {
 
@@ -27,9 +28,7 @@ public class PoamResourceTest extends AbstractResourceTest {
 	public void poamTest() { 
 		Person jack = getJackJackson();
 		Person admin = getArthurDmin();
-		
-		
-		
+
 		Poam a = httpQuery("/api/poams/new", admin)
 			.post(Entity.json(Poam.create("TestF1", "Do a thing with a person", "Test-EF" )), Poam.class);
 		assertThat(a.getId()).isNotNull();
@@ -89,5 +88,45 @@ public class PoamResourceTest extends AbstractResourceTest {
 		//Fetch the poams off the organization
 		List<Poam> poams = httpQuery("/api/organizations/" + ef8.getId() + "/poams", jack).get(new GenericType<List<Poam>>() {});
 		assertThat(poams).contains(a);
+		
+		//Search for the poam: 
+		
+		
+	}
+	
+	
+	@Test
+	public void searchTest() { 
+		Person jack = getJackJackson();
+		
+		PoamSearchQuery query = new PoamSearchQuery();
+		query.setText("Budget");
+		List<Poam> searchResults = httpQuery("/api/poams/search", jack).post(Entity.json(query), new GenericType<List<Poam>>() {});
+		assertThat(searchResults).isNotEmpty();
+		assertThat(searchResults.stream()
+				.filter(p -> p.getLongName().toLowerCase().contains("budget"))
+				.count())
+			.isEqualTo(searchResults.size());
+		
+		//Search for a poam by the organization
+		List<Organization> orgs = httpQuery("/api/organizations/search?text=EF2", jack).get(new GenericType<List<Organization>>() {});
+		Organization ef2 = orgs.stream().filter(o -> o.getName().equals("EF2")).findFirst().get();
+		assertThat(ef2).isNotNull();
+		
+		query.setText(null);
+		query.setResponsibleOrgId(ef2.getId());
+		searchResults = httpQuery("/api/poams/search", jack).post(Entity.json(query), new GenericType<List<Poam>>() {});
+		assertThat(searchResults).isNotEmpty();
+		assertThat(searchResults.stream()
+				.filter(p -> p.getResponsibleOrgJson().getId().equals(ef2.getId()))
+				.count())
+			.isEqualTo(searchResults.size());
+		
+		//Search by category
+		query.setResponsibleOrgId(null);
+		query.setText("expenses");
+		query.setCategory("Milestone");
+		searchResults = httpQuery("/api/poams/search", jack).post(Entity.json(query), new GenericType<List<Poam>>() {});
+		assertThat(searchResults).isNotEmpty();
 	}
 }

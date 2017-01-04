@@ -12,10 +12,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response.Status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -25,6 +27,8 @@ import graphql.schema.GraphQLArgument;
 import graphql.schema.GraphQLEnumType;
 import graphql.schema.GraphQLInputType;
 import io.dropwizard.auth.Auth;
+import mil.dds.anet.auth.AnetAuthenticationFilter;
+import mil.dds.anet.beans.Person;
 import mil.dds.anet.utils.GraphQLUtils;
 
 /*
@@ -145,6 +149,13 @@ public class AnetResourceDataFetcher implements DataFetcher {
 			throw new WebApplicationException("No fetcher method exists for the supplied arguments");
 		}
 		
+		if (method.isAnnotationPresent(RolesAllowed.class)) { 
+			Person user = (Person) ((Map<String,Object>)environment.getContext()).get("auth");
+			if (!isAuthorized(method, user)) { 
+				throw new WebApplicationException("Forbidden", Status.FORBIDDEN);
+			}
+		}
+		
 		List<Object> args = new LinkedList<Object>();
 		for (Parameter param : method.getParameters()) {
 			Object arg = null;
@@ -190,6 +201,16 @@ public class AnetResourceDataFetcher implements DataFetcher {
 				throw new WebApplicationException(e.getMessage());
 			}
 		}
+	}
+
+	private boolean isAuthorized(Method method, Person user) {
+		String[] roles = method.getAnnotation(RolesAllowed.class).value();
+		for (String role : roles) { 
+			if (AnetAuthenticationFilter.checkAuthorization(user, role)) { 
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private Method findFetcher(DataFetchingEnvironment environment) {
