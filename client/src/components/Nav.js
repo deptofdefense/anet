@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import {Nav, NavItem, NavDropdown, MenuItem} from 'react-bootstrap'
 import {LinkContainer as NestedLink, IndexLinkContainer as Link} from 'react-router-bootstrap'
 
-import API from 'api'
+import {Organization} from 'models'
 
 export default class extends Component {
 	static contextTypes = {
@@ -10,9 +10,9 @@ export default class extends Component {
 	}
 
 	render() {
-		let app = this.context.app
-		let currentUser = app.state.currentUser
-		let organizations = app.state.organizations || []
+		let appData = this.context.app.state
+		let currentUser = appData.currentUser
+		let organizations = appData.organizations || []
 
 		return (
 			<Nav bsStyle="pills" stacked>
@@ -29,8 +29,8 @@ export default class extends Component {
 				</Link>
 
 				<NavDropdown title="Organizations" id="organizations">
-					{organizations.map(org =>
-						<Link to={"/organizations/" + org.id} key={org.id}>
+					{Organization.map(organizations, org =>
+						<Link to={Organization.pathFor(org)} key={org}>
 							<MenuItem>{org.name}</MenuItem>
 						</Link>
 					)}
@@ -43,9 +43,11 @@ export default class extends Component {
 					</Link>
 				}
 
-				{currentUser.role === 'ADMINISTRATOR' && <NestedLink to="/admin">
-					<NavItem>Admin</NavItem>
-				</NestedLink>}
+				{currentUser.role === 'ADMINISTRATOR' &&
+					<NestedLink to="/admin">
+						<NavItem>Admin</NavItem>
+					</NestedLink>
+				}
 			</Nav>
 		)
 	}

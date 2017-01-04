@@ -40,7 +40,7 @@ INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biograp
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, createdAt, updatedAt) 
 	VALUES ('Elizabeth Elizawell', 0, 0, 'hunter+liz@dds.mil', '+1-777-7777', 'Capt', 'Elizabeth is a test advisor we have in the database who is in EF1.1', 'elizabeth', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, createdAt, updatedAt) 
-	VALUES ('Erin Erinson', 0, 0, 'hunter+erin@dds.mil', '+9-23-2323-2323', 'Civ', 'Erin is an Advisor in EF2.2', 'erin', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	VALUES ('Erin Erinson', 0, 0, 'hunter+erin@dds.mil', '+9-23-2323-2323', 'Civ', 'Erin is an Advisor in EF2.2 who can release her own reports', 'erin', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt) 
 	VALUES ('Reina Reinton', 0, 1, 'hunter+reina@dds.mil', '+23-23-11222', 'CIV', 'Reina is an Advisor in EF2.2', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 -- Principals
@@ -53,6 +53,10 @@ INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biograp
 	VALUES ('Bob Bobtown', 0, 0, 'hunter+bob@dds.mil', '+1-444-7324', 'Civ', 'Bob is a Super User in EF1.1', 'bob', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, createdAt, updatedAt) 
 	VALUES ('Henry Henderson', 0, 0, 'hunter+henry@dds.mil', '+2-456-7324', 'BGen', 'Henry is a Super User in EF2.1', 'henry', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, createdAt, updatedAt) 
+	VALUES ('Jacob Jacobson', 0, 0, 'hunter+jacob@dds.mil', '+2-456-7324', 'Civ', 'Jacob is a Super User in EF2.2', 'jacob', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, createdAt, updatedAt) 
+	VALUES ('Rebecca Beccabon', 0, 0, 'hunter+rebecca@dds.mil', '+2-456-7324', 'CTR', 'Rebecca is a Super User in EF2.2', 'rebecca', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 -- Administrator
 INSERT INTO people (name, status, role, emailAddress, domainUsername, createdAt, updatedAt) 
 	VALUES ('Arthur Dmin', '0', '0', 'hunter+arthur@dds.mil', 'arthur', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
@@ -74,6 +78,8 @@ INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES
 INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF2.1 SuperUser', 2, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF2.2 Advisor C', 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF2.2 Advisor D', 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF2.2 Super User', 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF2.2 Final Reviewer', 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF4.1 Advisor E', 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF9 Advisor <empty>', 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
@@ -111,6 +117,15 @@ INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES
 	((SELECT id from positions where name = 'EF2.2 Advisor D'), (SELECT id from people where emailAddress = 'hunter+erin@dds.mil'), CURRENT_TIMESTAMP);
 UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'hunter+erin@dds.mil') WHERE name = 'EF2.2 Advisor D';
 
+-- Put Jacob in the EF 2.2 Super User Billet
+INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES 
+	((SELECT id from positions where name = 'EF2.2 Super User'), (SELECT id from people where emailAddress = 'hunter+jacob@dds.mil'), CURRENT_TIMESTAMP);
+UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'hunter+jacob@dds.mil') WHERE name = 'EF2.2 Super User';
+
+-- Put Rebecca in the EF 2.2 Final Reviewer Position
+INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES 
+	((SELECT id from positions where name = 'EF2.2 Final Reviewer'), (SELECT id from people where emailAddress = 'hunter+rebecca@dds.mil'), CURRENT_TIMESTAMP);
+UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'hunter+rebecca@dds.mil') WHERE name = 'EF2.2 Final Reviewer';
 
 -- Put Arthur into the Admin Billet
 INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES 
@@ -149,12 +164,27 @@ UPDATE positions SET organizationId = (SELECT id FROM organizations WHERE name =
 UPDATE positions SET organizationId = (SELECT id FROM organizations WHERE name ='EF4') WHERE name LIKE 'EF4%';
 UPDATE positions SET organizationId = (SELECT id FROM organizations WHERE name='ANET Administrators') where name = 'ANET Administrator';
 
+-- Create the EF1.1 approval process
 INSERT INTO groups (name, createdAt) VALUES ('EF1.1 Approvers', CURRENT_TIMESTAMP);
 INSERT INTO approvalSteps (approverGroupId, advisorOrganizationId) VALUES 
 	((SELECT id from groups WHERE name = 'EF1.1 Approvers'), (SELECT id from organizations where name='EF1.1'));
 INSERT INTO groupMemberships (groupId, personId) VALUES 
 	((SELECT id from groups WHERE name='EF1.1 Approvers'), (SELECT id from people where emailAddress = 'hunter+bob@dds.mil'));
 
+-- Create the EF 2.2 approval process
+INSERT INTO groups (name, createdAt) VALUES ('EF2.2 Initial Approvers', CURRENT_TIMESTAMP);
+INSERT INTO groupMemberships (groupId, personId) VALUES 
+	((SELECT id from groups WHERE name='EF2.2 Initial Approvers'), (SELECT id from people where emailAddress = 'hunter+jacob@dds.mil'));
+INSERT INTO groupMemberships (groupId, personId) VALUES 
+	((SELECT id from groups WHERE name='EF2.2 Initial Approvers'), (SELECT id from people where emailAddress = 'hunter+erin@dds.mil'));
+INSERT INTO groups (name, createdAt) VALUES ('EF2.2 Secondary Reviewers', CURRENT_TIMESTAMP);
+INSERT INTO groupMemberships (groupId, personId) VALUES 
+	((SELECT id from groups WHERE name='EF2.2 Secondary Reviewers'), (SELECT id from people where emailAddress = 'hunter+rebecca@dds.mil'));
+
+INSERT INTO approvalSteps (approverGroupId, advisorOrganizationId) VALUES 
+	((SELECT id from groups WHERE name = 'EF2.2 Secondary Reviewers'), (SELECT id from organizations where name='EF2.2'));
+INSERT INTO approvalSteps (approverGroupId, advisorOrganizationId, nextStepId) VALUES 
+	((SELECT id from groups WHERE name = 'EF2.2 Initial Approvers'), (SELECT id from organizations where name='EF2.2'), (SELECT MAX(id) from approvalSteps));
 
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt)	VALUES ('EF1', 'Budget and Planning', 'EF', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId) 

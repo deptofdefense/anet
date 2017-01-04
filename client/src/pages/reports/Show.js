@@ -5,9 +5,9 @@ import {Table, Button} from 'react-bootstrap'
 import moment from 'moment'
 
 import API from 'api'
+import {Report, Person, Poam, Position, Organization} from 'models'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
-
 
 const atmosphereIconStyle = {
 	fontSize: '2rem',
@@ -30,16 +30,11 @@ export default class ReportShow extends Page {
 	constructor(props) {
 		super(props)
 		this.state = {
-			report: {
-				id: props.params.id,
-				attendees: [],
-				poams: [],
-				comments: [],
-			},
+			report: new Report({id: props.params.id}),
 
 			newComment: {
-				text: "",
-			}
+				text: '',
+			},
 		}
 	}
 
@@ -66,39 +61,37 @@ export default class ReportShow extends Page {
 				advisorOrg { id, name }
 				principalOrg {id, name}
 			}
-		`).then(data => this.setState({report: data.report}))
+		`).then(data => this.setState({report: new Report(data.report)}))
 	}
 
 	render() {
 		let report = this.state.report
-		let breadcrumbName = report.intent || 'Report'
-		let breadcrumbUrl = `/reports/${report.id}`
 
 		return (
 			<div>
-				<Breadcrumbs items={[['Reports', '/reports'], [breadcrumbName, breadcrumbUrl]]} />
+				<Breadcrumbs items={[['Reports', '/reports'], [report.intent || 'Report', Report.pathFor(report)]]} />
 
 				<Form static formFor={report} horizontal>
 					<fieldset>
 						<legend>Report #{report.id}</legend>
 
 						<Form.Field id="intent" label="Subject" />
-						<Form.Field id="engagementDate" label="Date 📆" value={moment(report.engagementDate).format("L")} />
-						<Form.Field id="location" label="Location 📍" value={report.location && report.location.name} />
+						<Form.Field id="engagementDate" label="Date 📆" getter={date => moment(date).format("L")} />
+						<Form.Field id="location" label="Location 📍" getter={location => location && location.name} />
 						<Form.Field id="atmosphere" label="Atmospherics">
 							<span style={atmosphereIconStyle}>{atmosphereIcons[report.atmosphere]}</span>
 							{report.atmosphereDetails}
 						</Form.Field>
 						<Form.Field id="author" label="Report author">
 							{report.author &&
-								<Link to={"/people/" + report.author.id}>{report.author.name}</Link>
+								<Link to={Person.pathFor(report.author)}>{report.author.name}</Link>
 							}
 						</Form.Field>
 						<Form.Field id="advisorOrg" label="Advisor Org">
-							{report.advisorOrg && <Link to={"/organizations" + report.advisorOrg.id}>{report.advisorOrg.name}</Link>}
+							{report.advisorOrg && <Link to={Organization.pathFor(report.advisorOrg)}>{report.advisorOrg.name}</Link>}
 						</Form.Field>
 						<Form.Field id="principalOrg" label="Principal Org">
-							{report.principalOrg && <Link to={"/organizations" + report.principalOrg.id}>{report.principalOrg.name}</Link>}
+							{report.principalOrg && <Link to={Organization.pathFor(report.principalOrg)}>{report.principalOrg.name}</Link>}
 						</Form.Field>
 					</fieldset>
 
@@ -114,10 +107,10 @@ export default class ReportShow extends Page {
 							</thead>
 
 							<tbody>
-								{report.attendees.map(person =>
-									<tr key={person.id}>
-										<td><Link to={`/people/${person.id}`}>{person.name}</Link></td>
-										<td><Link to={`/positions/${person.position.id}`}>{person.position.name}</Link></td>
+								{Person.map(report.attendees, person =>
+									<tr key={person}>
+										<td><Link to={Person.pathFor(person)}>{person.name}</Link></td>
+										<td>{person.position && <Link to={Position.pathFor(person.position)}>{person.position.name}</Link>}</td>
 									</tr>
 								)}
 							</tbody>
@@ -136,10 +129,10 @@ export default class ReportShow extends Page {
 							</thead>
 
 							<tbody>
-								{report.poams.map(poam =>
-									<tr key={poam.id}>
-										<td><Link to={`/poams/${poam.id}`}>{poam.longName}</Link></td>
-										<td>{ poam.responsibleOrg && <Link to={`/organizations/${poam.responsibleOrg.id}`}>{poam.responsibleOrg.name}</Link>}</td>
+								{Poam.map(report.poams, poam =>
+									<tr key={poam}>
+										<td><Link to={Poam.pathFor(poam)}>{poam.longName}</Link></td>
+										<td>{poam.responsibleOrg && <Link to={Organization.pathFor(poam.responsibleOrg)}>{poam.responsibleOrg.name}</Link>}</td>
 									</tr>
 								)}
 							</tbody>
@@ -161,7 +154,7 @@ export default class ReportShow extends Page {
 
 						{report.comments.map(comment =>
 							<p key={comment.id}>
-								<Link to={`/people/${comment.author.id}`}>{comment.author.name}</Link>
+								<Link to={Person.pathFor(comment.author)}>{comment.author.name}</Link>
 								<small>said</small>
 								"{comment.text}"
 							</p>
