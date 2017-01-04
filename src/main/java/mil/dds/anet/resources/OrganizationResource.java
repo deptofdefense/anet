@@ -21,6 +21,7 @@ import javax.ws.rs.core.Response.Status;
 import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Organization;
+import mil.dds.anet.beans.Organization.OrganizationType;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.search.OrganizationSearchQuery;
@@ -43,7 +44,7 @@ public class OrganizationResource implements IGraphQLResource {
 	}
 	
 	@Override
-	public Class<Organization> getBeanClass() { return Organization.class; } 
+	public Class<Organization> getBeanClass() { return Organization.class; }
 	
 	@Override
 	public String getDescription() { return "Organizations"; } 
@@ -54,6 +55,13 @@ public class OrganizationResource implements IGraphQLResource {
 	public List<Organization> getAllOrgs(@DefaultValue("0") @QueryParam("pageNum") Integer pageNum, @DefaultValue("100") @QueryParam("pageSize") Integer pageSize) {
 		return dao.getAll(pageNum, pageSize);
 	} 
+
+	@GET
+	@GraphQLFetcher
+	@Path("/topLevel")
+	public List<Organization> getTopLevelOrgs(@QueryParam("type") OrganizationType type) { 
+		return dao.getTopLevelOrgs(type);
+	}
 	
 	@POST
 	@Path("/new")
@@ -101,7 +109,7 @@ public class OrganizationResource implements IGraphQLResource {
 	@GET
 	@Path("/{id}/children")
 	public List<Organization> getChildren(@PathParam("id") Integer id) { 
-		return dao.getByParentOrgId(id);
+		return dao.getByParentOrgId(id, null);
 	}
 	
 	@GET

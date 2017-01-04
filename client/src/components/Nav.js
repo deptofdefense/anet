@@ -12,11 +12,11 @@ export default class extends Component {
 
 	componentDidMount() {
 		API.query(/* GraphQL */`
-			organizations(f:getAllOrgs, pageNum:0, pageSize:200) {
+			organizations(f:getTopLevelOrgs, type: ADVISOR_ORG) {
 				id, name
 				parentOrg { id }
 			}
-		`).then(data => this.setState({organizations: data.organizations.filter(org => org.parentOrg === null)}))
+		`).then(data => this.setState({organizations: data.organizations}))
 	}
 
 	render() {
