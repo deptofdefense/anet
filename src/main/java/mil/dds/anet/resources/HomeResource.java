@@ -25,7 +25,9 @@ public class HomeResource {
 	@Path("{path: .*}")
 	@Produces(MediaType.TEXT_HTML)
 	public SimpleView reactIndex(@Auth Person p) {
-		return new SimpleView("/views/index.ftl");
+		SimpleView view = new SimpleView("/views/index.ftl");
+		view.addToContext("currentUser", p);
+		return view;
 	}
 
 	public static String ALL_TYPES = "people,reports,positions,poams,locations";
