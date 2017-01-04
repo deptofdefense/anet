@@ -7,6 +7,7 @@ import Header from 'components/Header'
 import Nav from 'components/Nav'
 
 import API from 'api'
+import {Person, Organization} from 'models'
 
 export default class App extends Page {
 	static PagePropTypes = {
@@ -49,9 +50,9 @@ export default class App extends Page {
 				parentOrg { id }
 			}
 		`).then(data => {
-			let currentUser = this.state.currentUser
+			let currentUser = new Person(this.state.currentUser)
+			let organizations = Organization.fromArray(data.organizations)
 			let settings = this.state.settings
-			let organizations = data.organizations
 
 			Object.assign(currentUser, data.person)
 			if (data.person && data.person.position) currentUser.role = data.person.position.type
