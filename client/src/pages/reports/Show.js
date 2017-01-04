@@ -9,7 +9,6 @@ import {Report, Person, Poam, Position, Organization} from 'models'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
 
-
 const atmosphereIconStyle = {
 	fontSize: '2rem',
 	display: 'inline-block',
@@ -31,16 +30,11 @@ export default class ReportShow extends Page {
 	constructor(props) {
 		super(props)
 		this.state = {
-			report: {
-				id: props.params.id,
-				attendees: [],
-				poams: [],
-				comments: [],
-			},
+			report: new Report({id: props.params.id}),
 
 			newComment: {
-				text: "",
-			}
+				text: '',
+			},
 		}
 	}
 
