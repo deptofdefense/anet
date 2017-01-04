@@ -1,4 +1,5 @@
 import API from 'api'
+import utils from 'utils'
 
 export default class Model {
 	static schema = {}
@@ -11,9 +12,14 @@ export default class Model {
 		)
 	}
 
+	static pathFor(instance) {
+		let resourceName = this.resourceName || utils.resourceize(this.name)
+		let id = (instance && instance.id) || 'new'
+		return ['', resourceName, id].join('/')
+	}
+
 	constructor(props) {
 		Object.assign(this, this.constructor.schema, props)
-		this.constructor.resourceName = this.constructor.resourceName || (this.constructor.name.toLowerCase() + 's')
 	}
 
 	setState(props) {
@@ -22,7 +28,7 @@ export default class Model {
 	}
 
 	save(apiOptions) {
-		return API.send(`/api/${this.constructor.resourceName}/new`, this, apiOptions)
+		return API.send(`/api/${this.toPath()}`, this, apiOptions)
 				.then(response => {
 					console.log(response);
 
@@ -37,14 +43,7 @@ export default class Model {
 	}
 
 	toPath() {
-		let resourceName = this.constructor.resourceName
-		let id = this.id
-
-		const path = ['']
-		resourceName && path.push(resourceName)
-		id && path.push(id)
-
-		return path.join('/')
+		return this.constructor.pathFor(this)
 	}
 
 	toString() {

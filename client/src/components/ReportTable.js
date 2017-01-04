@@ -30,9 +30,9 @@ export default class ReportTable extends Component {
 			<tbody>
 				{reports.map(report =>
 					<tr key={report}>
-						{showAuthors && <td><Link to={"/people/" + report.author.id}>{report.author.name}</Link></td>}
-						<td>{report.organization && <Link to={"/organizations/" + report.organization.id}></Link>}</td>
-						<td><Link to={"/reports/" + report.id}>{report.intent}</Link></td>
+						{showAuthors && <td><Link to={Person.pathFor(report.author)}>{report.author.name}</Link></td>}
+						<td>{report.organization && <Link to={Organization.pathFor(report.organization)}>{report.organization.name}</Link>}</td>
+						<td><Link to={Report.pathFor(report)}>{report.intent}</Link></td>
 						<td>{report.state}</td>
 						<td>{moment(report.updatedAt).fromNow()}</td>
 					</tr>
