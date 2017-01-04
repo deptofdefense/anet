@@ -5,6 +5,10 @@ import {LinkContainer as NestedLink, IndexLinkContainer as Link} from 'react-rou
 import API from 'api'
 
 export default class extends Component {
+	static contextTypes = {
+		app: React.PropTypes.object.isRequired,
+	}
+
 	constructor(props) {
 		super(props)
 		this.state = {organizations: []}
@@ -20,6 +24,8 @@ export default class extends Component {
 	}
 
 	render() {
+		let currentUser = this.context.app.state.currentUser
+
 		return (
 			<Nav bsStyle="pills" stacked>
 				<Link to="/">
@@ -49,9 +55,9 @@ export default class extends Component {
 					</Link>
 				}
 
-				<NestedLink to="/admin">
+				{currentUser.role === 'ADMINISTRATOR' && <NestedLink to="/admin">
 					<NavItem>Admin</NavItem>
-				</NestedLink>
+				</NestedLink>}
 			</Nav>
 		)
 	}
