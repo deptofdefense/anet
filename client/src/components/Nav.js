@@ -3,7 +3,7 @@ import {Nav, NavItem, NavDropdown, MenuItem} from 'react-bootstrap'
 import {IndexLinkContainer as Link} from 'react-router-bootstrap'
 
 import API from 'api'
-import Organization from 'models'
+import {Organization} from 'models'
 
 export default class extends Component {
 	constructor(props) {
