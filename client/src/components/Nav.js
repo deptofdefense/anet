@@ -3,7 +3,7 @@ import {Nav, NavItem, NavDropdown, MenuItem} from 'react-bootstrap'
 import {IndexLinkContainer as Link} from 'react-router-bootstrap'
 
 import API from 'api'
-import Organization from 'models/Organization'
+import Organization from 'models'
 
 export default class extends Component {
 	constructor(props) {
@@ -45,7 +45,7 @@ export default class extends Component {
 
 				<NavDropdown title="Organizations" id="organizations">
 					{this.state.organizations.map(org =>
-						<Link to={org.toPath()} key={org}>
+						<Link to={Organization.pathFor(org)} key={org}>
 							<MenuItem>{org.name}</MenuItem>
 						</Link>
 					)}

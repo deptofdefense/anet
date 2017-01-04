@@ -14,8 +14,7 @@ import Autocomplete from 'components/Autocomplete'
 import TextEditor from 'components/TextEditor'
 
 import API from 'api'
-import Report from 'models/Report'
-import Person from 'models/Person'
+import {Report, Person} from 'models'
 
 export default class ReportNew extends Page {
 	static pageProps = {
@@ -196,7 +195,7 @@ export default class ReportNew extends Page {
 
 		this.state.report.save({disableSubmits: true})
 			.then(report => {
-				History.push(report.toPath())
+				History.push(Report.pathFor(report))
 			})
 			.catch(error => {
 				this.setState({errors: error})
