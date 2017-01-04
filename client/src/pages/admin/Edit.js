@@ -9,6 +9,10 @@ import Form from 'components/Form'
 import {browserHistory as History} from 'react-router'
 
 export default class AdminEdit extends Page {
+	static contextTypes = {
+		app: React.PropTypes.object.isRequired,
+	}
+
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -65,7 +69,10 @@ export default class AdminEdit extends Page {
 		event.preventDefault()
 
         API.send('/api/admin/save', this.state.setting, {disableSubmits: true})
-            .then(() => History.push('/admin'))
+            .then(() => {
+				History.push('/admin')
+				this.context.app.fetchData()
+			})
 			.catch(error => {
                 this.setState({error})
                 window.scrollTo(0, 0)

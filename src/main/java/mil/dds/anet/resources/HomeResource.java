@@ -15,7 +15,8 @@ import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.search.PersonSearchQuery;
 import mil.dds.anet.beans.search.PositionSearchQuery;
 import mil.dds.anet.beans.search.ReportSearchQuery;
-import mil.dds.anet.views.SimpleView;
+import mil.dds.anet.database.AdminDao.AdminSettingKeys;
+import mil.dds.anet.views.IndexView;
 
 @Path("")
 @PermitAll
@@ -24,8 +25,15 @@ public class HomeResource {
 	@GET
 	@Path("{path: .*}")
 	@Produces(MediaType.TEXT_HTML)
-	public SimpleView reactIndex(@Auth Person p) {
-		return new SimpleView("/views/index.ftl");
+	public IndexView reactIndex(@Auth Person p) {
+		IndexView view = new IndexView("/views/index.ftl");
+		view.setCurrentUser(p);
+		
+		AnetObjectEngine engine = AnetObjectEngine.getInstance();
+		view.setSecurityBannerText(engine.getAdminSetting(AdminSettingKeys.SECURITY_BANNER_TEXT));
+		view.setSecurityBannerColor(engine.getAdminSetting(AdminSettingKeys.SECURITY_BANNER_COLOR));
+		
+		return view;
 	}
 
 	public static String ALL_TYPES = "people,reports,positions,poams,locations";

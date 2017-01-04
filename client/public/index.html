@@ -45,7 +45,15 @@
 
 		<script>
 		window.ANET_DATA = {
-			"currentUser": "${context.currentUser}",
+			currentUser: {
+				id: "${currentUser.id}",
+				name: "${currentUser.name}",
+				role: "${currentUser.position.type}",
+			},
+			settings: {
+				"SECURITY_BANNER_TEXT": "${securityBannerText}",
+				"SECURITY_BANNER_COLOR": "${securityBannerColor}",
+			},
 		}
 		</script>
 
