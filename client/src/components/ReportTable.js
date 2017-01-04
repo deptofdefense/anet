@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import {Link} from 'react-router'
 import {Table} from 'react-bootstrap'
 
-import Report from 'models/Report'
+import {Report, Person, Organization} from 'models'
 
 import moment from 'moment'
 
