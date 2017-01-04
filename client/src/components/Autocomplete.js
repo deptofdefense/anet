@@ -80,7 +80,7 @@ export default class Autcomplete extends Component {
 	@autobind
 	fetchSuggestions(value) {
 		if (this.props.url) {
-			let url = this.props.url + '?q=' + value.value
+			let url = this.props.url + '?text=' + value.value
 			let selectedIds = this.selectedIds
 
 			API.fetch(url, {showLoader: false}).then(data => {
