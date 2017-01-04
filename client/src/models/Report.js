@@ -1,4 +1,4 @@
-import Model from 'models/Model'
+import Model from 'components/Model'
 
 export default class Report extends Model {
 	static schema = {
