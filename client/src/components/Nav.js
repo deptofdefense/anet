@@ -44,7 +44,7 @@ export default class extends Component {
 					</Link>
 				}
 
-				{currentUser.role === 'ADMINISTRATOR' &&
+				{currentUser.isAdmin() &&
 					<Link to="/admin">
 						<NavItem>Admin</NavItem>
 					</Link>
