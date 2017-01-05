@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {DropdownButton, MenuItem} from 'react-bootstrap'
+import {DropdownButton, MenuItem, Button} from 'react-bootstrap'
 import History from 'components/History'
 import * as Models from 'models'
 
@@ -10,25 +10,34 @@ export default class CreateButton extends Component {
 
 	render() {
 		const currentUser = this.context.app.state.currentUser
-		const MODEL_CLASSES = [
+		const modelClasses = [
 			Models.Report,
 		]
 
 		if (currentUser.isSuperUser()) {
-			MODEL_CLASSES.push(Models.Person, Models.Position, Models.Poam)
+			modelClasses.push(Models.Person, Models.Position, Models.Poam)
 		}
 
 		if (currentUser.isAdmin()) {
-			MODEL_CLASSES.push(Models.Organization)
+			modelClasses.push(Models.Organization)
 		}
 
-		return (
-			<DropdownButton title="Create" bsStyle="primary" id="createButton" onSelect={this.onSelect}>
-				{MODEL_CLASSES.map((modelClass, i) =>
-					<MenuItem key={modelClass.name} eventKey={modelClass}>Create {modelClass.name}</MenuItem>
-				)}
-			</DropdownButton>
-		)
+		if (modelClasses.length > 1) {
+			return (
+				<DropdownButton title="Create" bsStyle="primary" id="createButton" onSelect={this.onSelect}>
+					{modelClasses.map((modelClass, i) =>
+						<MenuItem key={modelClass.name} eventKey={modelClass}>Create {modelClass.name}</MenuItem>
+					)}
+				</DropdownButton>
+			)
+		} else if (modelClasses.length) {
+			let modelClass = modelClasses[0]
+			return (
+				<Button bsStyle="primary" onClick={this.onSelect.bind(this, modelClass)}>
+					Create {modelClass.name}
+				</Button>
+			)
+		}
 	}
 
 	onSelect(modelClass) {
