@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {Nav, NavItem, NavDropdown, MenuItem} from 'react-bootstrap'
-import {LinkContainer as NestedLink, IndexLinkContainer as Link} from 'react-router-bootstrap'
+import {IndexLinkContainer as Link} from 'react-router-bootstrap'
 import LinkTo from 'components/LinkTo'
 
 import {Organization} from 'models'
@@ -45,9 +45,9 @@ export default class extends Component {
 				}
 
 				{currentUser.role === 'ADMINISTRATOR' &&
-					<NestedLink to="/admin">
+					<Link to="/admin">
 						<NavItem>Admin</NavItem>
-					</NestedLink>
+					</Link>
 				}
 			</Nav>
 		)
