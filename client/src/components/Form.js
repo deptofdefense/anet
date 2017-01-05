@@ -53,7 +53,7 @@ export default class Form extends Component {
 				{children}
 
 				{showSubmit &&
-					<ContentForHeader>
+					<ContentForHeader right>
 						<Button bsStyle="primary" type="submit" onClick={bsProps.onSubmit}>
 							{actionText || "Save"}
 						</Button>
