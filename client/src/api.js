@@ -37,14 +37,24 @@ const API = {
 		params.headers = params.headers || {}
 		params.headers['Content-Type'] = 'application/json'
 
+		let promise = API.fetch(url, params)
+
 		if (params.disableSubmits) {
-			let buttons = document.querySelectorAll('form [type=submit]')
-			for (var button of buttons) {
+			let buttons = document.querySelectorAll('[type=submit]')
+			for (let button of buttons) {
 				button.disabled = true
 			}
+
+			promise.then(response => {
+				for (let button of buttons) {
+					button.disabled = false
+				}
+
+				return response
+			})
 		}
 
-		return API.fetch(url, params)
+		return promise
 	},
 
 	query(query, variables) {
