@@ -2,7 +2,6 @@ import React, {Component} from 'react'
 import {Nav, NavItem, NavDropdown, MenuItem} from 'react-bootstrap'
 import {LinkContainer as NestedLink, IndexLinkContainer as Link} from 'react-router-bootstrap'
 
-import API from 'api'
 import {Organization} from 'models'
 
 export default class extends Component {
@@ -10,24 +9,10 @@ export default class extends Component {
 		app: React.PropTypes.object.isRequired,
 	}
 
-	constructor(props) {
-		super(props)
-		this.state = {
-			organizations: [],
-		}
-	}
-
-	componentDidMount() {
-		API.query(/* GraphQL */`
-			organizations(f:getTopLevelOrgs, type: ADVISOR_ORG) {
-				id, name
-				parentOrg { id }
-			}
-		`).then(data => this.setState({organizations: Organization.fromArray(data.organizations)}))
-	}
-
 	render() {
-		let currentUser = this.context.app.state.currentUser
+		let appData = this.context.app.state
+		let currentUser = appData.currentUser
+		let organizations = appData.organizations || []
 
 		return (
 			<Nav bsStyle="pills" stacked>
@@ -44,7 +29,7 @@ export default class extends Component {
 				</Link>
 
 				<NavDropdown title="Organizations" id="organizations">
-					{this.state.organizations.map(org =>
+					{Organization.map(organizations, org =>
 						<Link to={Organization.pathFor(org)} key={org}>
 							<MenuItem>{org.name}</MenuItem>
 						</Link>
@@ -58,9 +43,11 @@ export default class extends Component {
 					</Link>
 				}
 
-				{currentUser.role === 'ADMINISTRATOR' && <NestedLink to="/admin">
-					<NavItem>Admin</NavItem>
-				</NestedLink>}
+				{currentUser.role === 'ADMINISTRATOR' &&
+					<NestedLink to="/admin">
+						<NavItem>Admin</NavItem>
+					</NestedLink>
+				}
 			</Nav>
 		)
 	}

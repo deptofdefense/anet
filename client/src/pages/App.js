@@ -7,6 +7,7 @@ import Header from 'components/Header'
 import Nav from 'components/Nav'
 
 import API from 'api'
+import {Person, Organization} from 'models'
 
 export default class App extends Page {
 	static PagePropTypes = {
@@ -44,8 +45,13 @@ export default class App extends Page {
 			adminSettings(f:getAll) {
 				key, value
 			}
+			organizations(f:getTopLevelOrgs, type: ADVISOR_ORG) {
+				id, name
+				parentOrg { id }
+			}
 		`).then(data => {
-			let currentUser = this.state.currentUser
+			let currentUser = new Person(this.state.currentUser)
+			let organizations = Organization.fromArray(data.organizations)
 			let settings = this.state.settings
 
 			Object.assign(currentUser, data.person)
@@ -53,7 +59,7 @@ export default class App extends Page {
 
 			data.adminSettings.forEach(setting => settings[setting.key] = setting.value)
 
-			this.setState({currentUser, settings})
+			this.setState({currentUser, settings, organizations})
 		})
 	}
 
