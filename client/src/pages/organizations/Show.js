@@ -39,7 +39,7 @@ export default class OrganizationShow extends Page {
 				childrenOrgs { id, name },
 				approvalSteps {
 					approverGroup {
-						id, name, members { id, name }
+						id, name, members { id, name , position { id, name} }
 					}
 				}
 			}
@@ -49,7 +49,7 @@ export default class OrganizationShow extends Page {
 	render() {
 		let org = this.state.organization
 
-		let positionsNeedingAttention = org.positions.filter(position => !position.person || !position.code || !position.associatedPositions.length)
+		let positionsNeedingAttention = org.positions.filter(position => !position.person )
 		let supportedPositions = org.positions.filter(position => positionsNeedingAttention.indexOf(position) === -1)
 
 		let poamsContent = ''
@@ -109,11 +109,12 @@ export default class OrganizationShow extends Page {
 						<fieldset key={"step_" + idx}>
 							<legend>Step {idx + 1}: {step.approverGroup.name}</legend>
 							<Table>
-								<thead><tr><th>Name</th></tr></thead>
+								<thead><tr><th>Name</th><th>Position</th></tr></thead>
 								<tbody>
 									{step.approverGroup.members.map(person =>
 										<tr key={person.id}>
 											<td><LinkTo person={person} /></td>
+											<td>{person.position && <LinkTo position={person.position} />}</td>
 										</tr>
 									)}
 								</tbody>
