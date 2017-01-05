@@ -39,6 +39,10 @@ export default class LocationShow extends Page {
 
 						<Form.Field id="latlng" value={latlng} label="Lat/Lon" /> 
 					</fieldset>
+
+					<div className="todo">
+						<p>Map Here</p>
+					</div>
 			</Form>
 			</div>
 		)

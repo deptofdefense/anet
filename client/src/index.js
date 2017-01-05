@@ -24,6 +24,7 @@ import PersonNew from './pages/people/New'
 import OrganizationShow from './pages/organizations/Show'
 
 import LocationShow from './pages/locations/Show'
+import LocationNew from './pages/locations/New'
 
 import AdminIndex from './pages/admin/Index'
 
@@ -60,6 +61,7 @@ ReactDOM.render((
 				</Route>
 
 				<Route path="locations">
+					<Route path="new" component={LocationNew} />
 					<Route path=":id" component={LocationShow} />
 				</Route>
 
