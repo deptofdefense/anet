@@ -23,6 +23,9 @@ import PersonNew from './pages/people/New'
 
 import OrganizationShow from './pages/organizations/Show'
 
+import PositionShow from './pages/positions/Show'
+import PositionNew from './pages/positions/New'
+
 import AdminIndex from './pages/admin/Index'
 
 import GraphiQL from './pages/GraphiQL'
@@ -55,6 +58,11 @@ ReactDOM.render((
 
 				<Route path="organizations">
 					<Route path=":id" component={OrganizationShow} />
+				</Route>
+
+				<Route path="positions">
+					<Route path="new" component={PositionNew} />
+					<Route path=":id" component={PositionShow} />
 				</Route>
 
 				<Route path="graphiql" component={GraphiQL} />

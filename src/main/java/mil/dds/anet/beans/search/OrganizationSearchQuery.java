@@ -20,4 +20,10 @@ public class OrganizationSearchQuery implements ISearchQuery {
 		this.type = type;
 	}
 	
+	public static OrganizationSearchQuery withText(String text) {
+		OrganizationSearchQuery q = new OrganizationSearchQuery();
+		q.setText(text);
+		return q;
+	}
+	
 }

@@ -10,7 +10,7 @@ import Breadcrumbs from 'components/Breadcrumbs'
 import LinkTo from 'components/LinkTo'
 
 import API from 'api'
-import {Report, Person} from 'models'
+import {Report, Person, Organization} from 'models'
 
 const FORMAT_EXSUM = 'exsum'
 const FORMAT_TABLE = 'table'
@@ -24,6 +24,7 @@ export default class Search extends Page {
 			results: {
 				reports: [],
 				people: [],
+				organizations: []
 			}
 		}
 
@@ -40,6 +41,7 @@ export default class Search extends Page {
 				positions: results.positions || [],
 				poams: results.poams || [],
 				locations: results.locations || [],
+				organizations: results.organizations || [],
 			}})
 		})
 	}
@@ -82,6 +84,13 @@ export default class Search extends Page {
 					<fieldset>
 						<legend>People</legend>
 						{this.renderPeople()}
+					</fieldset>
+				}
+
+				{this.state.results.organizations.length > 0 &&
+					<fieldset>
+						<legend>Organizations</legend>
+						{this.renderOrgs()}
 					</fieldset>
 				}
 			</div>
@@ -143,6 +152,25 @@ export default class Search extends Page {
 						<td>{person.role}</td>
 						<td>{person.phoneNumber}</td>
 						<td>{person.emailAddress}</td>
+					</tr>
+				)}
+			</tbody>
+		</Table>
+	}
+
+	renderOrgs() {
+		return <Table responsive hover striped>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Type</th>
+				</tr>
+			</thead>
+			<tbody>
+				{Organization.map(this.state.results.organizations, org =>
+					<tr key={org.id}>
+						<td><LinkTo organization={org} /></td>
+						<td>{org.type}</td>
 					</tr>
 				)}
 			</tbody>

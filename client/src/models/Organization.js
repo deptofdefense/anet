@@ -9,4 +9,8 @@ export default class Organization extends Model {
 		approvalSteps: [],
 		positions: [],
 	}
+
+	static isAdvisorOrg() {
+		return this.type === 'ADVISOR_ORG'
+	}
 }

@@ -7,7 +7,7 @@ import API from 'api'
 
 import './Autocomplete.css'
 
-export default class Autcomplete extends Component {
+export default class Autocomplete extends Component {
 	static propTypes = {
 		value: React.PropTypes.oneOfType([
 			React.PropTypes.object,
@@ -80,7 +80,7 @@ export default class Autcomplete extends Component {
 	@autobind
 	fetchSuggestions(value) {
 		if (this.props.url) {
-			let url = this.props.url + '?q=' + value.value
+			let url = this.props.url + '?text=' + value.value
 			let selectedIds = this.selectedIds
 
 			API.fetch(url, {showLoader: false}).then(data => {
