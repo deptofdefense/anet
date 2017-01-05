@@ -1,12 +1,12 @@
 import React from 'react'
 import Page from 'components/Page'
-import {Link} from 'react-router'
 import {Table, ListGroup, ListGroupItem} from 'react-bootstrap'
 
 import API from 'api'
-import {Organization, Person, Position, Poam} from 'models'
+import {Organization, Position, Poam} from 'models'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
+import LinkTo from 'components/LinkTo'
 
 export default class OrganizationShow extends Page {
 	constructor(props) {
@@ -36,7 +36,7 @@ export default class OrganizationShow extends Page {
 				},
 				childrenOrgs { id, name },
 				approvalSteps {
-					approverGroup { 
+					approverGroup {
 						id, name, members { id, name }
 					}
 				}
@@ -70,17 +70,15 @@ export default class OrganizationShow extends Page {
 							{org.type && org.type.split('_')[0]}
 						</Form.Field>
 
-						{org.parentOrg && <Form.Field id="parentOrg" label="Parent">
-							<Link to={Organization.pathFor(org)}>
-								{org.parentOrg.name}
-							</Link>
-						</Form.Field>}
+						<Form.Field id="parentOrg" label="Parent">
+							<LinkTo organization={org.parentOrg} />
+						</Form.Field>
 
 						{org.childrenOrgs && org.childrenOrgs.length > 0 && <Form.Field id="childrenOrgs" label="Sub-Orgs">
 							<ListGroup>
-							{org.childrenOrgs.map( org =>
-								<ListGroupItem key={org.id} ><Link to={`/organizations/${org.id}`}>{org.name}</Link></ListGroupItem>
-							)}
+								{org.childrenOrgs.map(org =>
+									<ListGroupItem key={org.id} ><LinkTo organization={org} /></ListGroupItem>
+								)}
 							</ListGroup>
 						</Form.Field>}
 					</fieldset>
@@ -104,9 +102,9 @@ export default class OrganizationShow extends Page {
 							<Table>
 								<thead><tr><th>Name</th></tr></thead>
 								<tbody>
-									{step.approverGroup.members.map(person => 
+									{step.approverGroup.members.map(person =>
 										<tr key={person.id}>
-											<td><Link to={`/people/${person.id}`}>{person.name}</Link></td>
+											<td><LinkTo person={person} /></td>
 										</tr>
 									)}
 								</tbody>
@@ -143,12 +141,10 @@ export default class OrganizationShow extends Page {
 		let otherCodeCol, otherNameCol
 		if (other) {
 			key += '.' + other.id
-			otherCodeCol = <td>
-				<Link to={Position.pathFor(other)}>{other.code || "Uncoded"}</Link>
-			</td>
+			otherCodeCol = <td><LinkTo position={other} /></td>
 
 			otherNameCol = other.person
-				? <td><Link to={Person.pathFor(other.person)}>{other.person.name}</Link></td>
+				? <td><LinkTo person={other.person} /></td>
 				: <td className="text-danger">Unfilled</td>
 		}
 
@@ -156,12 +152,10 @@ export default class OrganizationShow extends Page {
 		otherNameCol = otherNameCol || <td></td>
 
 		return <tr key={key}>
-			<td>
-				<Link to={Position.pathFor(position)}>{position.code || "Uncoded"}</Link>
-			</td>
+			<td><LinkTo position={position} /></td>
 
 			{position.person
-				? <td><Link to={Person.pathFor(position.person)}>{position.person.name}</Link></td>
+				? <td><LinkTo person={position.person} /></td>
 				: <td className="text-danger">Unfilled</td>
 			}
 
@@ -180,8 +174,8 @@ export default class OrganizationShow extends Page {
 			</thead>
 			<tbody>
 				{Poam.map(poams, poam =>
-					<tr key={poam} >
-						<td><Link to={Poam.pathFor(poam)}>{poam.shortName}</Link></td>
+					<tr key={poam.id}>
+						<td><LinkTo poam={poam} /></td>
 						<td>{poam.longName}</td>
 					</tr>
 				)}

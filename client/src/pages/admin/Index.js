@@ -1,59 +1,76 @@
 import React from 'react'
 import Page from 'components/Page'
-import {Link} from 'react-router'
-import {Table} from 'react-bootstrap'
+import autobind from 'autobind-decorator'
 
-import API from 'api'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
 
+import API from 'api'
+
 export default class AdminIndex extends Page {
+	static contextTypes = {
+		app: React.PropTypes.object,
+	}
+
 	constructor(props) {
 		super(props)
 		this.state = {
-			settings: [],
+			settings: {},
 		}
 	}
 
 	fetchData(props) {
 		API.query(/* GraphQL */`
 			adminSettings(f:getAll) { key, value }
-		`).then(data => this.setState({settings: data.adminSettings}))
+		`).then(data => {
+			let settings = {}
+			data.adminSettings.forEach(setting => settings[setting.key] = setting.value)
+			this.setState({settings})
+		})
 	}
 
 	render() {
+		let {settings} = this.state
+
 		return (
 			<div>
 				<Breadcrumbs items={[['Admin settings', '/admin']]} />
 
-				<Form static horizontal>
+				<Form formFor={settings} horizontal actionText="Save settings" onChange={this.onChange} onSubmit={this.onSubmit}>
 					<fieldset>
-						<legend>Settings</legend>
+						<legend>Site Settings</legend>
 
-						<Table>
-							<thead>
-								<tr>
-									<th>Key</th>
-									<th>Value</th>
-								</tr>
-							</thead>
-
-							<tbody>
-								{this.state.settings.map(setting =>
-									<tr key={setting.key} >
-										<td>
-											<Link to={`/admin/settings/${setting.key}`}>
-												{setting.key}
-											</Link>
-										</td>
-										<td>{setting.value}</td>
-									</tr>
-								)}
-							</tbody>
-						</Table>
+						{Object.map(settings, (key, value) =>
+							<Form.Field id={key} key={key} />
+						)}
 					</fieldset>
 				</Form>
 			</div>
 		)
 	}
+
+	@autobind
+	onChange(event) {
+		let settings = this.state.settings
+		this.setState({settings})
+	}
+
+	@autobind
+	onSubmit(event) {
+		event.stopPropagation()
+		event.preventDefault()
+
+		let json = Object.map(this.state.settings, (key, value) => ({key, value}))
+
+        API.send('/api/admin/save', json, {disableSubmits: true})
+            .then(() => {
+				this.context.app.fetchData()
+			})
+			.catch(error => {
+                this.setState({error})
+                window.scrollTo(0, 0)
+				console.error(error)
+            })
+	}
+
 }

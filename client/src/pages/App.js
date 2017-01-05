@@ -32,7 +32,14 @@ export default class App extends Page {
 
 	constructor(props) {
 		super(props)
-		this.state = window.ANET_DATA
+
+		this.state = {
+			currentUser: {},
+			settings: {},
+			organizations: [],
+		}
+
+		this.state = this.processData(window.ANET_DATA)
 	}
 
 	fetchData() {
@@ -49,18 +56,17 @@ export default class App extends Page {
 				id, name
 				parentOrg { id }
 			}
-		`).then(data => {
-			let currentUser = new Person(this.state.currentUser)
-			let organizations = Organization.fromArray(data.organizations)
-			let settings = this.state.settings
+		`).then(data => this.setState(this.processData(data)))
+	}
 
-			Object.assign(currentUser, data.person)
-			if (data.person && data.person.position) currentUser.role = data.person.position.type
+	processData(data) {
+		let currentUser = new Person(data.person)
+		let organizations = Organization.fromArray(data.organizations)
 
-			data.adminSettings.forEach(setting => settings[setting.key] = setting.value)
+		let settings = this.state.settings
+		data.adminSettings.forEach(setting => settings[setting.key] = setting.value)
 
-			this.setState({currentUser, settings, organizations})
-		})
+		return {currentUser, settings, organizations}
 	}
 
 	render() {

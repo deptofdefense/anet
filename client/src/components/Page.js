@@ -5,7 +5,8 @@ export default class Page extends Component {
 	}
 
 	componentWillReceiveProps(props) {
-		this.fetchData(props)
+		if (props !== this.props)
+			this.fetchData(props)
 	}
 
 	componentDidMount() {

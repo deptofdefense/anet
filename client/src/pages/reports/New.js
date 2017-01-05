@@ -61,7 +61,7 @@ export default class ReportNew extends Page {
 
 				<Breadcrumbs items={[['EF4', '/organizations/ef4'], ['Submit a report', Report.pathFor(null)]]} />
 
-				<Form formFor={report} onChange={this.onChange} onSubmit={this.onSubmit} actionText="Create report" horizontal>
+				<Form formFor={report} onChange={this.onChange} onSubmit={this.onSubmit} actionText="Save report" horizontal>
 					{this.state.error && <fieldset><p>There was a problem saving this report.</p><p>{this.state.error}</p></fieldset>}
 					<fieldset>
 						<legend>Engagement details <small>Required</small></legend>
@@ -111,7 +111,7 @@ export default class ReportNew extends Page {
 								</thead>
 								<tbody>
 									{Person.map(report.attendees, person =>
-										<tr key={person}>
+										<tr key={person.id}>
 											<td onClick={this.removeAttendee.bind(this, person)}>
 												<span style={{cursor: 'pointer'}}>⛔️</span>
 											</td>
@@ -126,7 +126,7 @@ export default class ReportNew extends Page {
 								<h5>Shortcuts</h5>
 								<Button bsStyle="link">Add myself</Button>
 								{Person.map(recents.persons, person =>
-									<Button key={person} bsStyle="link" onClick={this.addAttendee.bind(this, person)}>Add {person.name}</Button>
+									<Button key={person.id} bsStyle="link" onClick={this.addAttendee.bind(this, person)}>Add {person.name}</Button>
 								)}
 							</Form.Field.ExtraCol>
 						</Form.Field>
@@ -150,7 +150,7 @@ export default class ReportNew extends Page {
 								</thead>
 								<tbody>
 									{Poam.map(report.poams, poam =>
-										<tr key={poam}>
+										<tr key={poam.id}>
 											<td onClick={this.removePoam.bind(this, poam)}>
 												<span style={{cursor: 'pointer'}}>⛔️</span>
 											</td>
@@ -164,7 +164,7 @@ export default class ReportNew extends Page {
 							<Form.Field.ExtraCol className="shortcut-list">
 								<h5>Shortcuts</h5>
 								{Poam.map(recents.poams, poam =>
-									<Button key={poam} bsStyle="link" onClick={this.addPoam.bind(this, poam)}>Add "{poam.longName}"</Button>
+									<Button key={poam.id} bsStyle="link" onClick={this.addPoam.bind(this, poam)}>Add "{poam.longName}"</Button>
 								)}
 							</Form.Field.ExtraCol>
 						</Form.Field>

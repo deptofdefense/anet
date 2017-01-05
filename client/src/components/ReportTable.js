@@ -1,8 +1,8 @@
 import React, {Component} from 'react'
-import {Link} from 'react-router'
 import {Table} from 'react-bootstrap'
 
-import {Report, Person, Organization} from 'models'
+import LinkTo from 'components/LinkTo'
+import {Report} from 'models'
 
 import moment from 'moment'
 
@@ -29,10 +29,10 @@ export default class ReportTable extends Component {
 
 			<tbody>
 				{reports.map(report =>
-					<tr key={report}>
-						{showAuthors && <td><Link to={Person.pathFor(report.author)}>{report.author.name}</Link></td>}
-						<td>{report.organization && <Link to={Organization.pathFor(report.organization)}>{report.organization.name}</Link>}</td>
-						<td><Link to={Report.pathFor(report)}>{report.intent}</Link></td>
+					<tr key={report.id}>
+						{showAuthors && <td><LinkTo person={report.author} /></td>}
+						<td>{<LinkTo organization={report.organization} />}</td>
+						<td>{<LinkTo report={report} />}</td>
 						<td>{report.state}</td>
 						<td>{moment(report.updatedAt).fromNow()}</td>
 					</tr>

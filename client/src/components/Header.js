@@ -3,6 +3,7 @@ import {Link} from 'react-router'
 import {Injectable, Injector} from 'react-injectables'
 
 import SearchBar from 'components/SearchBar.js'
+import CreateButton from 'components/CreateButton.js'
 
 import logo from 'resources/logo.png'
 
@@ -24,19 +25,32 @@ const logoCss = {
 
 class Header extends Component {
 	render() {
+		let leftContent, middleContent, rightContent
+		this.props.injections.forEach(injection => {
+			let content = injection.props.children
+
+			if (content && content.props) {
+				if (content.props.left)
+					return leftContent = injection
+				else if (content.props.right)
+					return rightContent = injection
+			}
+			return middleContent = injection
+		})
+
 		return (
 			<header style={backgroundCss} className="header">
 				<div className="container">
-					<Link to="/" className="pull-left">
+					{leftContent || <Link to="/" className="pull-left">
 						<img src={logo} alt="ANET logo" style={logoCss} />
-					</Link>
+					</Link>}
 
 					<div className="pull-left header-content">
-						{this.props.injections[0] || <SearchBar />}
+						{middleContent || <SearchBar />}
 					</div>
 
 					<div className="pull-right">
-						{this.props.injections[1]}
+						{rightContent || <CreateButton />}
 					</div>
 				</div>
 			</header>

@@ -7,6 +7,7 @@ import {Link} from 'react-router'
 
 import RadioGroup from 'components/RadioGroup'
 import Breadcrumbs from 'components/Breadcrumbs'
+import LinkTo from 'components/LinkTo'
 
 import API from 'api'
 import {Report, Person} from 'models'
@@ -98,8 +99,8 @@ export default class Search extends Page {
 			</thead>
 			<tbody>
 				{Report.map(this.state.results.reports, report =>
-					<tr key={report}>
-						<td><Link to={Report.pathFor(report)}>{moment(report.engagementDate).format('L')}</Link></td>
+					<tr key={report.id}>
+						<td><LinkTo report={report}>{moment(report.engagementDate).format('L')}</LinkTo></td>
 						<td>TODO</td>
 						<td>{report.intent}</td>
 					</tr>
@@ -114,8 +115,8 @@ export default class Search extends Page {
 				let author = report.author || {}
 				let attendees = report.attendees || []
 				return (
-					<li key={report}>
-						<Link to={Report.pathFor(report)}>Report #{report.id}</Link><br />
+					<li key={report.id}>
+						<LinkTo report={report}>Report #{report.id}</LinkTo><br />
 						At {moment(report.engagementDate).format('L LT')}, {author.rank} {author.name}
 						met with {attendees.length} Afghan principals. They discussed {report.intent}.
 						THIS IS AN IMPROPERLY FORMATTED EXSUM.
@@ -137,8 +138,8 @@ export default class Search extends Page {
 			</thead>
 			<tbody>
 				{Person.map(this.state.results.people, person =>
-					<tr key={person}>
-						<td><Link to={Person.pathFor(person)}>{person.rank} {person.name}</Link></td>
+					<tr key={person.id}>
+						<td><LinkTo person={person}>{person.rank} {person.name}</LinkTo></td>
 						<td>{person.role}</td>
 						<td>{person.phoneNumber}</td>
 						<td>{person.emailAddress}</td>
