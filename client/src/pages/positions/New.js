@@ -8,15 +8,11 @@ import Form from 'components/Form'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Autocomplete from 'components/Autocomplete'
 import History from 'components/History'
-import {Position} from 'models'
 
 import API from 'api'
+import {Position, Organization} from 'models'
 
 export default class PositionNew extends Page {
-	static contextTypes = {
-		router: React.PropTypes.object.isRequired
-	}
-
 	static pageProps = {
 		useNavigation: false
 	}
@@ -29,17 +25,19 @@ export default class PositionNew extends Page {
 		}
 	}
 
-	fetchData(props) { 
+	fetchData(props) {
 		API.query( /*GraphQL */`
-			organization(id:${props.location.query["organizationId"]}) { 
+			organization(id:${props.location.query.organizationId}) {
 				id, name, type
 			}
 		`).then(data => {
-			let posType = (data.organization.type === "ADVISOR_ORG") ? "ADVISOR" : "PRINCIPAL";
-			this.setState( {position : new Position({
-				type: posType,
-				organization: data.organization,
-			})});
+			let organization = new Organization(data.organization)
+			this.setState({
+				position : new Position({
+					type: organization.isAdvisorOrg() ? 'ADVISOR' : 'PRINCIPAL',
+					organization: organization,
+				})
+			})
 		})
 	}
 
@@ -52,30 +50,33 @@ export default class PositionNew extends Page {
 					<h2>Create a new Position</h2>
 				</ContentForHeader>
 
-				<Breadcrumbs items={[['Create new Position', '/positions/new']]} />
+				<Breadcrumbs items={[['Create new Position', Position.pathForNew()]]} />
 
 				<Form formFor={position} onChange={this.onChange} onSubmit={this.onSubmit} horizontal>
 					{this.state.error && <fieldset><p>There was a problem saving this position</p><p>{this.state.error}</p></fieldset>}
 					<fieldset>
 						<legend>Create a new Position</legend>
-						{ position.organization && position.organization.type === "PRINCIPAL_ORG" && 
+
+						{position.organization && position.organization.type === "PRINCIPAL_ORG" &&
 							<Form.Field type="static" value="Afghan Principal" label="Type" id="type" /> }
-						{ position.organization && position.organization.type === "ADVISOR_ORG" && 
+
+						{position.organization && position.organization.type === "ADVISOR_ORG" &&
 							<Form.Field id="type" componentClass="select">
 								<option value="ADVISOR">Advisor</option>
 								<option value="SUPER_USER">Super User</option>
 								<option value="ADMINISTRATOR">Administrator</option>
 							</Form.Field>
 						}
+
 						<Form.Field id="code" placeholder="Postion ID or Number" />
 						<Form.Field id="name" placeholder="Name/Description of Position"/>
-						
+
 						<Form.Field type="static" value={position.organization.name} label="Organization" id="org" />
 					</fieldset>
 
 					<fieldset className="todo">
 						<legend>Assigned Principals</legend>
-				
+
 						<Form.Field id="assignedPositions">
 							<Autocomplete placeholder="Assign new Position" url="/api/positions/search" valueKey="name" />
 							<Table hover striped>
@@ -94,9 +95,9 @@ export default class PositionNew extends Page {
 
 					<fieldset>
 						<legend>Additional Information</legend>
-						
+
 						<Form.Field id="location">
-							<Autocomplete valueKey="name" placeholder="Position Location" url="/api/locations/search" /> 
+							<Autocomplete valueKey="name" placeholder="Position Location" url="/api/locations/search" />
 						</Form.Field>
 					</fieldset>
 				</Form>
@@ -118,8 +119,8 @@ export default class PositionNew extends Page {
 		let position = Object.without(this.state.position, "assignedPositions");
 
 		API.send('/api/positions/new', position, {disableSubmits: true})
-			.then(position => {
-				History.push("/positions/" + position.id);
+			.then(response => {
+				History.push(position.toPath());
 			}).catch(error => {
 				this.setState({error: error})
 				window.scrollTo(0, 0)

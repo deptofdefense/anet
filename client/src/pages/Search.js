@@ -87,7 +87,7 @@ export default class Search extends Page {
 					</fieldset>
 				}
 
-				{this.state.results.organizations.length > 0 && 
+				{this.state.results.organizations.length > 0 &&
 					<fieldset>
 						<legend>Organizations</legend>
 						{this.renderOrgs()}
@@ -169,7 +169,7 @@ export default class Search extends Page {
 			<tbody>
 				{Organization.map(this.state.results.organizations, org =>
 					<tr key={org.id}>
-						<td><Link to={Organization.pathFor(org)}>{org.name}</Link></td>
+						<td><LinkTo organization={org} /></td>
 						<td>{org.type}</td>
 					</tr>
 				)}

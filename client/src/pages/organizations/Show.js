@@ -1,6 +1,5 @@
 import React from 'react'
 import Page from 'components/Page'
-import {Link} from 'react-router'
 import {Table, ListGroup, ListGroupItem, DropdownButton, MenuItem} from 'react-bootstrap'
 
 import API from 'api'
@@ -194,10 +193,10 @@ export default class OrganizationShow extends Page {
 	}
 
 	@autobind
-	actionSelect(eventKey, event) { 
-		if (eventKey === "createPos") { 
+	actionSelect(eventKey, event) {
+		if (eventKey === "createPos") {
 			History.push("/positions/new?organizationId=" + this.state.organization.id)
-		} else { 
+		} else {
 			console.log("Unimplemented Action: " + eventKey);
 		}
 	}

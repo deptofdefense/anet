@@ -9,7 +9,7 @@ import ReportTable from 'components/ReportTable'
 import LinkTo from 'components/LinkTo'
 
 import API from 'api'
-import {Person, Organization, Position} from 'models'
+import {Person} from 'models'
 
 export default class PersonShow extends Page {
 	constructor(props) {
@@ -69,8 +69,8 @@ export default class PersonShow extends Page {
 		if (position) {
 			currentPositionRow = <tr>
 				<td>Now</td>
-				<td>{<LinkTo organization={org} />}</td>
-				<td><Link to={Position.pathFor(position)}>{position.name}</Link></td>
+				<td><LinkTo organization={org} /></td>
+				<td><LinkTo position={position}>{position.name}</LinkTo></td>
 			</tr>
 		}
 

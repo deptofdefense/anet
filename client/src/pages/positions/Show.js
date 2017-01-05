@@ -15,7 +15,7 @@ export default class PositionShow extends Page {
 	constructor(props) {
 		super(props)
 		this.state = {
-			position: new Position( { 
+			position: new Position( {
 				id: props.params.id
 			}),
 		}
@@ -110,9 +110,9 @@ export default class PositionShow extends Page {
 		)
 	}
 
-	renderAssociatedPositionRow(pos) { 
+	renderAssociatedPositionRow(pos) {
 		let personName = "Unfilled"
-		if (pos.person) { 
+		if (pos.person) {
 			personName = <Link to={Person.pathFor(pos.person)}>{pos.person.name}</Link>
 		}
 		return <tr key={pos.id}>
@@ -122,12 +122,12 @@ export default class PositionShow extends Page {
 	}
 
 	@autobind
-	actionSelect(eventKey, event) { 
+	actionSelect(eventKey, event) {
 		let position = this.state.position;
-		if (eventKey === "edit") { 
+		if (eventKey === "edit") {
 			History.push("/positions/" + position.id + "/edit")
-		} else { 
-			console.log("Unimplemented Action: " + eventKey);
+		} else {
+			console.error("Unimplemented Action: " + eventKey);
 		}
 	}
 
