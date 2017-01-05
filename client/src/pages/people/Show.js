@@ -89,7 +89,7 @@ export default class PersonShow extends Page {
 						<Form.Field id="country" />
 						<Form.Field id="gender" />
 						<Form.Field label="End of Tour Date" id="endOfTourDate" value={moment(person.endOfTourDate).format("L")} />
-						<Form.Field label="Bio" id="person.biography" />
+						<Form.Field label="Bio" id="biography" />
 					</fieldset>
 
 					<fieldset>
