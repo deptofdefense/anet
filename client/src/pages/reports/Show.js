@@ -1,6 +1,6 @@
 import React from 'react'
 import Page from 'components/Page'
-import {Table, Button} from 'react-bootstrap'
+import {Table, Button, Col} from 'react-bootstrap'
 import moment from 'moment'
 
 import Breadcrumbs from 'components/Breadcrumbs'
@@ -45,8 +45,15 @@ export default class ReportShow extends Page {
 				id, intent, engagementDate, atmosphere, atmosphereDetails
 				reportText, nextSteps
 
+				state
+
 				location { id, name }
-				author { id, name }
+				author {
+					id, name
+					position {
+						organization { name }
+					}
+				}
 
 				attendees {
 					id, name
@@ -70,9 +77,16 @@ export default class ReportShow extends Page {
 
 		return (
 			<div>
-				<Breadcrumbs items={[['Reports', '/reports'], [report.intent || 'Report', Report.pathFor(report)]]} />
+				<Breadcrumbs items={[['Reports', '/reports'], [report.intent || 'Report #' + report.id, Report.pathFor(report)]]} />
 
 				<Form static formFor={report} horizontal>
+					{report.isDraft() &&
+						<fieldset style={{textAlign: 'center'}}>
+							<h4 className="text-danger">This report is in DRAFT state and hasn't been submitted.</h4>
+							<p>You can review the draft below to make sure all the details are correct.</p>
+						</fieldset>
+					}
+
 					<fieldset>
 						<legend>Report #{report.id}</legend>
 
@@ -148,27 +162,45 @@ export default class ReportShow extends Page {
 						<div dangerouslySetInnerHTML={{__html: report.nextSteps}} />
 					</fieldset>
 
-					<fieldset>
-						<legend>Comments</legend>
+					{report.isDraft() ?
+						<fieldset>
+							<Col md={9}>
+								<p>
+									By pressing submit, this report will be sent to
+									<strong> {Object.get(report, 'author.position.organization.name') || 'your organization approver'} </strong>
+									to go through the approval workflow.
+								</p>
+							</Col>
 
-						{report.comments.map(comment =>
-							<p key={comment.id}>
-								<LinkTo person={comment.author} />
-								<small>said</small>
-								"{comment.text}"
-							</p>
-						)}
+							<Col md={3}>
+								<Button type="submit" bsStyle="primary" bsSize="large" onClick={this.submitDraft}>
+									Submit report
+								</Button>
+							</Col>
+						</fieldset>
+						:
+						<fieldset>
+							<legend>Comments</legend>
 
-						{!report.comments.length && "There are no comments yet."}
+							{report.comments.map(comment =>
+								<p key={comment.id}>
+									<LinkTo person={comment.author} />
+									<small>said</small>
+									"{comment.text}"
+								</p>
+							)}
 
-						<Form formFor={this.state.newComment} horizontal style={commentFormStyle}>
-							<Form.Field id="text" placeholder="Type a comment here" label="">
-								<Form.Field.ExtraCol>
-									<Button bsStyle="primary" type="submit">Save comment</Button>
-								</Form.Field.ExtraCol>
-							</Form.Field>
-						</Form>
-					</fieldset>
+							{!report.comments.length && "There are no comments yet."}
+
+							<Form formFor={this.state.newComment} horizontal style={commentFormStyle}>
+								<Form.Field id="text" placeholder="Type a comment here" label="">
+									<Form.Field.ExtraCol>
+										<Button bsStyle="primary" type="submit">Save comment</Button>
+									</Form.Field.ExtraCol>
+								</Form.Field>
+							</Form>
+						</fieldset>
+					}
 				</Form>
 			</div>
 		)
