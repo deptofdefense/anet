@@ -9,7 +9,7 @@ import Form from 'components/Form'
 import ReportTable from 'components/ReportTable'
 
 import API from 'api'
-import {Person, Organization} from 'models'
+import {Person, Organization, Position} from 'models'
 
 export default class PersonShow extends Page {
 	constructor(props) {
@@ -70,7 +70,7 @@ export default class PersonShow extends Page {
 			currentPositionRow = <tr>
 				<td>Now</td>
 				<td>{org && <Link to={Organization.pathFor(org)}>{org.name}</Link>}</td>
-				<td><Link to={Positions.pathFor(position)}>{position.name}</Link></td>
+				<td><Link to={Position.pathFor(position)}>{position.name}</Link></td>
 			</tr>
 		}
 

@@ -27,15 +27,7 @@ export default class PositionNew extends Page {
 		super(props)
 
 		this.state = {
-			position: {
-				name: '',
-				code: '',
-				type: 'PRINCIPAL',
-				organization: {},
-				person: {},
-				assignedPositions: {},
-				location: {}
-			}
+			position:  new Position(),
 		}
 	}
 
@@ -46,14 +38,9 @@ export default class PositionNew extends Page {
 			}
 		`).then(data => {
 			let posType = (data.organization.type === "ADVISOR_ORG") ? "ADVISOR" : "PRINCIPAL";
-			this.setState( {position : {
-				name: '',
-				code: '',
+			this.setState( {position : new Position({
 				type: posType,
 				organization: data.organization,
-				person: {},
-				assignedPositions: {},
-				location: {}
 			}});
 		})
 	}

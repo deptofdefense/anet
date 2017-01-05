@@ -9,17 +9,15 @@ import Form from 'components/Form'
 import autobind from 'autobind-decorator'
 import {browserHistory as History} from 'react-router'
 
+import {Person, Position, Organization} from 'models'
+
 export default class PositionShow extends Page {
 	constructor(props) {
 		super(props)
 		this.state = {
-			position: {
-				id: props.params.id,
-				organization: {},
-				person: {},
-				associatedPositions: [],
-				location: {}
-			},
+			position: new Position( { 
+				id: props.params.id
+			}),
 		}
 	}
 
@@ -35,19 +33,18 @@ export default class PositionShow extends Page {
 				},
 				location { id, name }
 			}
-		`).then(data => this.setState({position: data.position}))
+		`).then(data => this.setState({position: new Position(data.position)}))
 	}
 
 	render() {
 		let position = this.state.position
 		let breadcrumbName = position.name || 'Position'
-		let breadcrumbUrl = '/positions/' + position.id
 
 		let assignedRole = (position.type === "ADVISOR") ? "Afghan Principals" : "Advisors";
 
 		return (
 			<div>
-				<Breadcrumbs items={[[breadcrumbName, breadcrumbUrl]]} />
+				<Breadcrumbs items={[[breadcrumbName, Position.pathFor(position)]]} />
 
 				<Form static formFor={position} horizontal>
 					<fieldset>
@@ -62,13 +59,13 @@ export default class PositionShow extends Page {
 						<Form.Field id="type" />
 
 						{position.organization && <Form.Field id="org" label="Organization" >
-							<Link to={`/organizations/${position.organization.id}`}>
+							<Link to={Organization.pathFor(position.organization)}>
 								{position.organization.name}
 							</Link>
 						</Form.Field>}
 
 						{position.person && <Form.Field id="currentPerson" label="Current Assigned Person" >
-							<Link to={`/people/${position.person.id}`}>
+							<Link to={Person.pathFor(position.person)}>
 								{position.person.rank} {position.person.name}
 							</Link>
 						</Form.Field>}
@@ -118,11 +115,11 @@ export default class PositionShow extends Page {
 	renderAssociatedPositionRow(pos) { 
 		let personName = "Unfilled"
 		if (pos.person) { 
-			personName = <Link to={`/people/${pos.person.id}`}>{pos.person.name}</Link>
+			personName = <Link to={Person.pathFor(pos.person)}>{pos.person.name}</Link>
 		}
 		return <tr key={pos.id}>
 			<td>{personName}</td>
-			<td><Link to={`/positions/${pos.name}`}>{pos.name}</Link></td>
+			<td><Link to={Position.pathFor(pos)}>{pos.name}</Link></td>
 		</tr>
 	}
 
