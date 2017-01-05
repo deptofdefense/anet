@@ -16,6 +16,17 @@ Object.map = function(source, func) {
 	})
 }
 
+Object.get = function(source, keypath) {
+	const keys = keypath.split('.')
+	let key
+	while (key = keys.shift()) {
+		source = source[key]
+		if (typeof source === 'undefined')
+			return source
+	}
+	return source
+}
+
 Object.without = function(source, ...keys) {
 	let copy = Object.assign({}, source)
 	let i = keys.length
