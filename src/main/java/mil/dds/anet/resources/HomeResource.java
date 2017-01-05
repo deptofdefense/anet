@@ -13,6 +13,7 @@ import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.search.LocationSearchQuery;
+import mil.dds.anet.beans.search.OrganizationSearchQuery;
 import mil.dds.anet.beans.search.PersonSearchQuery;
 import mil.dds.anet.beans.search.PoamSearchQuery;
 import mil.dds.anet.beans.search.PositionSearchQuery;
@@ -34,11 +35,12 @@ public class HomeResource {
 		AnetObjectEngine engine = AnetObjectEngine.getInstance();
 		view.setSecurityBannerText(engine.getAdminSetting(AdminSettingKeys.SECURITY_BANNER_TEXT));
 		view.setSecurityBannerColor(engine.getAdminSetting(AdminSettingKeys.SECURITY_BANNER_COLOR));
+		view.setMapLayers(engine.getAdminSetting(AdminSettingKeys.MAP_LAYERS));
 		
 		return view;
 	}
 
-	public static String ALL_TYPES = "people,reports,positions,poams,locations";
+	public static String ALL_TYPES = "people,reports,positions,poams,locations,organizations";
 
 	@GET
 	@Path("/api/search")
@@ -63,6 +65,9 @@ public class HomeResource {
 		}
 		if (types.contains("locations")) {
 			result.put("locations", AnetObjectEngine.getInstance().getLocationDao().search(LocationSearchQuery.withText(query)));
+		}
+		if (types.contains("organizations")) { 
+			result.put("organizations", AnetObjectEngine.getInstance().getOrganizationDao().search(OrganizationSearchQuery.withText(query)));
 		}
 
 		return result;

@@ -192,3 +192,7 @@ Coming soon.
 	b. update any SQL to ensure the value gets INSERTed and UPDATEd correctly. 
 6. update the bean tests to include having this property and update the src/test/resources/testJson to include the property. 
 5. Update the resource unit tests to try setting, fetching, and updating the property. 
+
+##Map Layers
+
+Set the `MAP_LAYERS` admin Setting to a json object that looks like this: `[{"type": "wms", "url" : "http://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r.cgi", "layer": "nexrad-n0r-900913", "name" : "nexrad"}]`

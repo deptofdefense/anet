@@ -4,6 +4,9 @@ import './index.css'
 import 'core-js/shim'
 import './utils'
 
+import 'leaflet/dist/leaflet.css'
+import 'leaflet/dist/leaflet'
+
 import React from 'react'
 import ReactDOM from 'react-dom'
 import {Router, Route, IndexRoute, browserHistory} from 'react-router'
@@ -25,6 +28,9 @@ import OrganizationShow from './pages/organizations/Show'
 
 import LocationShow from './pages/locations/Show'
 import LocationNew from './pages/locations/New'
+
+import PositionShow from './pages/positions/Show'
+import PositionNew from './pages/positions/New'
 
 import AdminIndex from './pages/admin/Index'
 
@@ -63,6 +69,11 @@ ReactDOM.render((
 				<Route path="locations">
 					<Route path="new" component={LocationNew} />
 					<Route path=":id" component={LocationShow} />
+				</Route>
+				
+				<Route path="positions">
+					<Route path="new" component={PositionNew} />
+					<Route path=":id" component={PositionShow} />
 				</Route>
 
 				<Route path="graphiql" component={GraphiQL} />

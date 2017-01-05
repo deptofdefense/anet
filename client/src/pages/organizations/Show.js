@@ -1,11 +1,13 @@
 import React from 'react'
 import Page from 'components/Page'
-import {Table, ListGroup, ListGroupItem} from 'react-bootstrap'
+import {Table, ListGroup, ListGroupItem, DropdownButton, MenuItem} from 'react-bootstrap'
 
 import API from 'api'
 import {Organization, Position, Poam} from 'models'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
+import autobind from 'autobind-decorator'
+import History from 'components/History'
 import LinkTo from 'components/LinkTo'
 
 export default class OrganizationShow extends Page {
@@ -64,7 +66,14 @@ export default class OrganizationShow extends Page {
 
 				<Form static formFor={org} horizontal>
 					<fieldset>
-						<legend>{org.name}</legend>
+						<legend>
+							{org.name}
+							<DropdownButton bsStyle="primary" title="Actions" id="actions" className="pull-right" onSelect={this.actionSelect}>
+								<MenuItem eventKey="edit" className="todo">Edit Organization</MenuItem>
+								<MenuItem eventKey="createSub" className="todo">Create Sub-Organization</MenuItem>
+								<MenuItem eventKey="createPos" className="todo">Create new Position</MenuItem>
+							</DropdownButton>
+						</legend>
 
 						<Form.Field id="type">
 							{org.type && org.type.split('_')[0]}
@@ -181,5 +190,14 @@ export default class OrganizationShow extends Page {
 				)}
 			</tbody>
 		</Table>
+	}
+
+	@autobind
+	actionSelect(eventKey, event) {
+		if (eventKey === "createPos") {
+			History.push("/positions/new?organizationId=" + this.state.organization.id)
+		} else {
+			console.log("Unimplemented Action: " + eventKey);
+		}
 	}
 }

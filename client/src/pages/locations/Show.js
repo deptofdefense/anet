@@ -5,6 +5,8 @@ import API from 'api'
 import {Location} from 'models'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
+import Leaflet from 'components/Leaflet'
+
 
 export default class LocationShow extends Page {
 	constructor(props) {
@@ -40,9 +42,8 @@ export default class LocationShow extends Page {
 						<Form.Field id="latlng" value={latlng} label="Lat/Lon" /> 
 					</fieldset>
 
-					<div className="todo">
-						<p>Map Here</p>
-					</div>
+					<Leaflet />
+
 			</Form>
 			</div>
 		)

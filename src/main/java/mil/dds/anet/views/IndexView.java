@@ -6,6 +6,7 @@ public class IndexView extends SimpleView {
 	private Person currentUser;
 	private String securityBannerText;
 	private String securityBannerColor;
+	private String mapLayers;
 
 	public IndexView(String path) {
 		super(path);
@@ -35,4 +36,13 @@ public class IndexView extends SimpleView {
 		this.securityBannerColor = securityBannerColor;
 	}
 
+	public String getMapLayers() {
+		return mapLayers;
+	}
+
+	public void setMapLayers(String mapLayers) {
+		this.mapLayers = mapLayers;
+	}
+
+	
 }
