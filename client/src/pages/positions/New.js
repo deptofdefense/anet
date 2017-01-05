@@ -11,6 +11,7 @@ import Breadcrumbs from 'components/Breadcrumbs'
 import TextEditor from 'components/TextEditor'
 import Autocomplete from 'components/Autocomplete'
 import {browserHistory as History} from 'react-router'
+import {Position} from 'models'
 
 import API from 'api'
 
@@ -41,7 +42,7 @@ export default class PositionNew extends Page {
 			this.setState( {position : new Position({
 				type: posType,
 				organization: data.organization,
-			}});
+			})});
 		})
 	}
 

@@ -9,7 +9,7 @@ import RadioGroup from 'components/RadioGroup'
 import Breadcrumbs from 'components/Breadcrumbs'
 
 import API from 'api'
-import {Report, Person} from 'models'
+import {Report, Person, Organization} from 'models'
 
 const FORMAT_EXSUM = 'exsum'
 const FORMAT_TABLE = 'table'
@@ -166,9 +166,9 @@ export default class Search extends Page {
 				</tr>
 			</thead>
 			<tbody>
-				{this.state.results && this.state.results.organizations.map( org =>
+				{Organization.map(this.state.results.organizations, org =>
 					<tr key={org.id}>
-						<td><Link to={"/organizations/" + org.id}>{org.name}</Link></td>
+						<td><Link to={Organization.pathFor(org)}>{org.name}</Link></td>
 						<td>{org.type}</td>
 					</tr>
 				)}
