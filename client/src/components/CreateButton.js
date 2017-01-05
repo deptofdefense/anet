@@ -41,6 +41,6 @@ export default class CreateButton extends Component {
 	}
 
 	onSelect(modelClass) {
-		History.push(modelClass.pathFor(null))
+		History.push(modelClass.pathForNew())
 	}
 }
