@@ -78,7 +78,7 @@ export default class FormField extends Component {
 		if (extra)
 			children.splice(children.indexOf(extra), 1)
 
-		let defaultValue = this.props.value || this.getValue()
+		let defaultValue = this.props.value || this.getValue() || ''
 
 		// if type is static, render out a static value
 		if (this.props.type === 'static' || (!this.props.type && this.context.form.props.static)) {
