@@ -9,6 +9,13 @@ export default {
 	}
 }
 
+Object.map = function(source, func) {
+	return Object.keys(source).map(key => {
+		let value = source[key]
+		return func(key, value)
+	})
+}
+
 Object.without = function(source, ...keys) {
 	let copy = Object.assign({}, source)
 	let i = keys.length
