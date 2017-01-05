@@ -18,8 +18,8 @@ Object.map = function(source, func) {
 
 Object.get = function(source, keypath) {
 	const keys = keypath.split('.')
-	let key
-	while (key = keys.shift()) {
+	while (keys[1]) {
+		let key = keys.shift()
 		source = source[key]
 		if (typeof source === 'undefined')
 			return source
