@@ -8,7 +8,7 @@ import {Organization, Position, Poam} from 'models'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
 import autobind from 'autobind-decorator'
-import {browserHistory as History} from 'react-router'
+import History from 'components/History'
 import LinkTo from 'components/LinkTo'
 
 export default class OrganizationShow extends Page {

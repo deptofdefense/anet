@@ -38,13 +38,11 @@ export default class PositionShow extends Page {
 
 	render() {
 		let position = this.state.position
-		let breadcrumbName = position.name || 'Position'
-
 		let assignedRole = (position.type === "ADVISOR") ? "Afghan Principals" : "Advisors";
 
 		return (
 			<div>
-				<Breadcrumbs items={[[breadcrumbName, Position.pathFor(position)]]} />
+				<Breadcrumbs items={[[position.name || 'Position', Position.pathFor(position)]]} />
 
 				<Form static formFor={position} horizontal>
 					<fieldset>
@@ -83,7 +81,7 @@ export default class PositionShow extends Page {
 								</tr>
 							</thead>
 							<tbody>
-							{position.associatedPositions.map(pos =>
+							{Position.map(position.associatedPositions, pos =>
 								this.renderAssociatedPositionRow(pos)
 							)}
 							</tbody>
@@ -125,7 +123,6 @@ export default class PositionShow extends Page {
 
 	@autobind
 	actionSelect(eventKey, event) { 
-		console.log(eventKey);
 		let position = this.state.position;
 		if (eventKey === "edit") { 
 			History.push("/positions/" + position.id + "/edit")

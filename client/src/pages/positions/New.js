@@ -10,7 +10,7 @@ import Form from 'components/Form'
 import Breadcrumbs from 'components/Breadcrumbs'
 import TextEditor from 'components/TextEditor'
 import Autocomplete from 'components/Autocomplete'
-import {browserHistory as History} from 'react-router'
+import History from 'components/History'
 import {Position} from 'models'
 
 import API from 'api'
@@ -120,14 +120,12 @@ export default class PositionNew extends Page {
 
 		let position = Object.without(this.state.position, "assignedPositions");
 
-
-		API.send('/api/positions/new', position, {disableSubmits: true})
-			.then(position => {
+		position.save().then(position => {
 				History.push("/positions/" + position.id);
-			}).catch(error => {
-				this.setState({error: error})
-				window.scrollTo(0, 0)
-			})
+		}).catch(error => {
+			this.setState({error: error})
+			window.scrollTo(0, 0)
+		})
 	}
 
 }
