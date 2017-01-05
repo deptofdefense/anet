@@ -34,8 +34,11 @@ public class AdminResource implements IGraphQLResource {
 	@POST
 	@Path("/save")
 	@RolesAllowed("ADMINISTRATOR")
-	public Response save(AdminSetting setting) { 
-		dao.saveSetting(setting);
+	public Response save(List<AdminSetting> settings) {
+		for (AdminSetting setting : settings) {
+			dao.saveSetting(setting);
+		}
+
 		return Response.ok().build();
 	}
 

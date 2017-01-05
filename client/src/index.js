@@ -27,7 +27,6 @@ import PositionShow from './pages/positions/Show'
 import PositionNew from './pages/positions/New'
 
 import AdminIndex from './pages/admin/Index'
-import AdminEdit from './pages/admin/Edit'
 
 import GraphiQL from './pages/GraphiQL'
 
@@ -68,10 +67,7 @@ ReactDOM.render((
 
 				<Route path="graphiql" component={GraphiQL} />
 
-				<Route path="admin">
-					<IndexRoute component={AdminIndex} />
-					<Route path="settings/:key" component={AdminEdit} />
-				</Route>
+				<Route path="admin" component={AdminIndex} />
 			</Route>
 		</Router>
 	</InjectablesProvider>
