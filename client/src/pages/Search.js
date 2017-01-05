@@ -10,7 +10,7 @@ import Breadcrumbs from 'components/Breadcrumbs'
 import LinkTo from 'components/LinkTo'
 
 import API from 'api'
-import {Report, Person, Organization} from 'models'
+import {Report, Person, Organization, Position, Poam} from 'models'
 
 const FORMAT_EXSUM = 'exsum'
 const FORMAT_TABLE = 'table'
@@ -24,7 +24,10 @@ export default class Search extends Page {
 			results: {
 				reports: [],
 				people: [],
-				organizations: []
+				organizations: [],
+				positions: [],
+				locations: [],
+				poams: []
 			}
 		}
 
@@ -93,6 +96,28 @@ export default class Search extends Page {
 						{this.renderOrgs()}
 					</fieldset>
 				}
+
+				{this.state.results.positions.length > 0 && 
+					<fieldset>
+						<legend>Positions</legend>
+						{this.renderPositions()}
+					</fieldset>
+				}
+				
+				{this.state.results.locations.length > 0 && 
+					<fieldset>
+						<legend>Locations</legend>
+						{this.renderLocations()}
+					</fieldset>
+				}
+
+				{this.state.results.poams.length > 0 && 
+					<fieldset>
+						<legend>Poams</legend>
+						{this.renderPoams()}
+					</fieldset>
+				}
+
 			</div>
 		)
 	}
@@ -175,6 +200,61 @@ export default class Search extends Page {
 				)}
 			</tbody>
 		</Table>
+	}
+
+	renderPositions() { 
+		return <Table responsive hover striped>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Type</th>
+				</tr>
+			</thead>
+			<tbody>
+				{Position.map(this.state.results.positions, pos =>
+					<tr key={pos.id}>
+						<td><LinkTo position={pos} /></td>
+						<td>{pos.type}</td>
+					</tr>
+				)}
+			</tbody>
+		</Table>
+	}
+
+	renderLocations() { 
+		return <Table responsive hover striped>
+			<thead>
+				<tr>
+					<th>Name</th>
+				</tr>
+			</thead>
+			<tbody>
+				{this.state.results.locations.map(loc =>
+					<tr key={loc.id}>
+						<td><Link to={"/locations/" + loc.id}>{loc.name}</Link></td>
+					</tr>
+				)}
+			</tbody>
+		</Table>
+
+	}
+
+	renderPoams() { 
+		return <Table responsive hover striped>
+			<thead>
+				<tr>
+					<th>Name</th>
+				</tr>
+			</thead>
+			<tbody>
+				{Poam.map(this.state.results.poams, poam =>
+					<tr key={poam.id}>
+						<td><LinkTo poam={poam} >{poam.shortName} {poam.longName}</LinkTo></td>
+					</tr>
+				)}
+			</tbody>
+		</Table>
+
 	}
 
 	changeViewFormat(newFormat) {
