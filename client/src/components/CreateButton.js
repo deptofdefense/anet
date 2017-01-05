@@ -1,28 +1,28 @@
 import React, {Component} from 'react'
 import {DropdownButton, MenuItem} from 'react-bootstrap'
 import History from 'components/History'
-import {Report, Person, Position, Organization, Poam} from 'models'
+import * as Models from 'models'
 
-const RESOURCES = {
-	"Report": Report.pathFor(null),
-	"Person": Person.pathFor(null),
-	"Position": Position.pathFor(null),
-	"Organization": Organization.pathFor(null),
-	"Poam": Poam.pathFor(null),
-}
+const RESOURCES = [
+	Models.Report,
+	Models.Person,
+	Models.Position,
+	Models.Organization,
+	Models.Poam,
+]
 
 export default class CreateButton extends Component {
 	render() {
 		return (
 			<DropdownButton title="Create" bsStyle="primary" id="createButton" onSelect={this.onSelect}>
-				{Object.keys(RESOURCES).map(resource =>
-					<MenuItem key={resource} eventKey={resource}>{resource}</MenuItem>
+				{RESOURCES.map((resource, i) =>
+					<MenuItem key={resource.name} eventKey={i}>Create {resource.name}</MenuItem>
 				)}
 			</DropdownButton>
 		)
 	}
 
-	onSelect(resource) {
-		History.push(RESOURCES[resource])
+	onSelect(index) {
+		History.push(RESOURCES[index].pathFor(null))
 	}
 }
