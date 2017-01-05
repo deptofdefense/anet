@@ -24,7 +24,7 @@ export default class LocationShow extends Page {
 
 	render() {
 		let loc = this.state.location
-		let latlng = ""
+		let latlng = "None"
 		if (loc.lat && loc.lng) { 
 			latlng = loc.lat + ", " + loc.lng
 		}
