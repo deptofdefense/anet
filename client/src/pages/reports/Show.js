@@ -119,7 +119,7 @@ export default class ReportShow extends Page {
 					</fieldset>
 
 					<fieldset>
-						<legend>Milestones</legend>
+						<legend>Plan of Action and Milestones / Pillars</legend>
 
 						<Table>
 							<thead>

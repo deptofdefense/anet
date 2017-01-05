@@ -133,7 +133,7 @@ export default class ReportNew extends Page {
 					</fieldset>
 
 					<fieldset>
-						<legend>Milestones</legend>
+						<legend>Plan of Action and Milestones / Pillars</legend>
 
 						<Form.Field id="poams">
 							<Autocomplete url="/api/poams/search" template={poam =>
