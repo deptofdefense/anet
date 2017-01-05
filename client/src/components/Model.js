@@ -1,4 +1,3 @@
-import API from 'api'
 import utils from 'utils'
 
 export default class Model {
@@ -47,20 +46,6 @@ export default class Model {
 	setState(props) {
 		Object.assign(this, props)
 		return this
-	}
-
-	save(apiOptions) {
-		return API.send(`/api/${this.toPath()}`, this, apiOptions)
-				.then(response => {
-					console.log(response);
-
-					if (response.code) {
-						this.errors = response.code
-						throw response.code
-					}
-
-					return response
-				})
 	}
 
 	toPath() {

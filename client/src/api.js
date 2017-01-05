@@ -27,6 +27,12 @@ const API = {
 						API.stopLoading()
 						return response
 					})
+					.then(response => {
+						if (response.code)
+							throw response.code
+
+						return response
+					})
 	},
 
 	send(url, data, params) {
