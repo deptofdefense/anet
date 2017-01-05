@@ -120,7 +120,7 @@ export default class PositionNew extends Page {
 
 		API.send('/api/positions/new', position, {disableSubmits: true})
 			.then(response => {
-				History.push(position.toPath());
+				History.push("/positions/" + response.id);
 			}).catch(error => {
 				this.setState({error: error})
 				window.scrollTo(0, 0)

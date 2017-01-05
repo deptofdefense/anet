@@ -8,6 +8,7 @@ import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
 import autobind from 'autobind-decorator'
 import {browserHistory as History} from 'react-router'
+import LinkTo from 'components/LinkTo'
 
 import {Person, Position, Organization} from 'models'
 
@@ -61,6 +62,10 @@ export default class PositionShow extends Page {
 								{position.organization.name}
 							</Link>
 						</Form.Field>}
+
+						<Form.Field id="location" label="Location">
+							{position.location && <Link to={"/locations/" + position.location.id}>{position.location.name}</Link>}
+						</Form.Field>
 
 						{position.person && <Form.Field id="currentPerson" label="Current Assigned Person" >
 							<Link to={Person.pathFor(position.person)}>
