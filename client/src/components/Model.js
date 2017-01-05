@@ -54,8 +54,7 @@ export default class Model {
 						throw response.code
 					}
 
-					this.setState(response)
-					return this
+					return response
 				})
 	}
 
