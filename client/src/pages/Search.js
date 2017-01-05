@@ -7,6 +7,7 @@ import {Link} from 'react-router'
 
 import RadioGroup from 'components/RadioGroup'
 import Breadcrumbs from 'components/Breadcrumbs'
+import LinkTo from 'components/LinkTo'
 
 import API from 'api'
 import {Report, Person} from 'models'
