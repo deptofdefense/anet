@@ -5,7 +5,7 @@ import {Table, Button} from 'react-bootstrap'
 import moment from 'moment'
 
 import API from 'api'
-import {Report, Person, Poam, Position, Organization} from 'models'
+import {Report, Person, Poam, Position, Organization, Location} from 'models'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
 
@@ -77,7 +77,9 @@ export default class ReportShow extends Page {
 
 						<Form.Field id="intent" label="Subject" />
 						<Form.Field id="engagementDate" label="Date 📆" getter={date => moment(date).format("L")} />
-						<Form.Field id="location" label="Location 📍" getter={location => location && location.name} />
+						<Form.Field id="location" label="Location 📍">
+							{report.location && <Link to={Location.pathFor(report.location)}>{report.location.name}</Link>}
+						</Form.Field>
 						<Form.Field id="atmosphere" label="Atmospherics">
 							<span style={atmosphereIconStyle}>{atmosphereIcons[report.atmosphere]}</span>
 							{report.atmosphereDetails}

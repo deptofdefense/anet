@@ -23,6 +23,8 @@ import PersonNew from './pages/people/New'
 
 import OrganizationShow from './pages/organizations/Show'
 
+import LocationShow from './pages/locations/Show'
+
 import AdminIndex from './pages/admin/Index'
 import AdminEdit from './pages/admin/Edit'
 
@@ -56,6 +58,10 @@ ReactDOM.render((
 
 				<Route path="organizations">
 					<Route path=":id" component={OrganizationShow} />
+				</Route>
+
+				<Route path="locations">
+					<Route path=":id" component={LocationShow} />
 				</Route>
 
 				<Route path="graphiql" component={GraphiQL} />
