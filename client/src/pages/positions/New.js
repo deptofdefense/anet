@@ -1,14 +1,11 @@
 import React from 'react'
 import Page from 'components/Page'
-import {InputGroup, Button, Table} from 'react-bootstrap'
+import {Table} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
-
-import DatePicker from 'react-bootstrap-date-picker'
 
 import {ContentForHeader} from 'components/Header'
 import Form from 'components/Form'
 import Breadcrumbs from 'components/Breadcrumbs'
-import TextEditor from 'components/TextEditor'
 import Autocomplete from 'components/Autocomplete'
 import History from 'components/History'
 import {Position} from 'models'
@@ -70,8 +67,8 @@ export default class PositionNew extends Page {
 								<option value="ADMINISTRATOR">Administrator</option>
 							</Form.Field>
 						}
-						<Form.Field id="code" />
-						<Form.Field id="name" />
+						<Form.Field id="code" placeholder="Postion ID or Number" />
+						<Form.Field id="name" placeholder="Name/Description of Position"/>
 						
 						<Form.Field type="static" value={position.organization.name} label="Organization" id="org" />
 					</fieldset>
@@ -120,12 +117,13 @@ export default class PositionNew extends Page {
 
 		let position = Object.without(this.state.position, "assignedPositions");
 
-		position.save().then(position => {
+		API.send('/api/positions/new', position, {disableSubmits: true})
+			.then(position => {
 				History.push("/positions/" + position.id);
-		}).catch(error => {
-			this.setState({error: error})
-			window.scrollTo(0, 0)
-		})
+			}).catch(error => {
+				this.setState({error: error})
+				window.scrollTo(0, 0)
+			})
 	}
 
 }
