@@ -3,6 +3,7 @@ import {Link} from 'react-router'
 import {Injectable, Injector} from 'react-injectables'
 
 import SearchBar from 'components/SearchBar.js'
+import CreateButton from 'components/CreateButton.js'
 
 import logo from 'resources/logo.png'
 
@@ -36,7 +37,7 @@ class Header extends Component {
 					</div>
 
 					<div className="pull-right">
-						{this.props.injections[1]}
+						{this.props.injections[1] || <CreateButton />}
 					</div>
 				</div>
 			</header>
