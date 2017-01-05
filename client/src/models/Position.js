@@ -10,4 +10,8 @@ export default class Position extends Model {
 		person: {},
 		location: {},
 	}
+
+	toString() {
+		return this.code || this.name || "Uncoded"
+	}
 }

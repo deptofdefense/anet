@@ -1,15 +1,15 @@
 import React from 'react'
 import Page from 'components/Page'
 import {Table} from 'react-bootstrap'
-import {Link} from 'react-router'
 import moment from 'moment'
 
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
 import ReportTable from 'components/ReportTable'
+import LinkTo from 'components/LinkTo'
 
 import API from 'api'
-import {Person, Organization} from 'models'
+import {Person} from 'models'
 
 export default class PersonShow extends Page {
 	constructor(props) {
@@ -69,7 +69,7 @@ export default class PersonShow extends Page {
 		if (position) {
 			currentPositionRow = <tr>
 				<td>Now</td>
-				<td>{org && <Link to={Organization.pathFor(org)}>{org.name}</Link>}</td>
+				<td>{<LinkTo organization={org} />}</td>
 				<td>{position.name}</td>
 			</tr>
 		}

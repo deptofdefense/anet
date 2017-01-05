@@ -9,4 +9,8 @@ export default class Poam extends Model {
 		parentPoam: {},
 		childrenPoams: [],
 	}
+
+	toString() {
+		return this.longName || this.shortName || "Unnamed"
+	}
 }

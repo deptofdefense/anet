@@ -12,4 +12,8 @@ export default class Report extends Model {
 		reportText: '',
 		nextSteps: '',
 	}
+
+	toString() {
+		return this.intent || "None"
+	}
 }

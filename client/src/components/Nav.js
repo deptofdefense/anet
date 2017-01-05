@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {Nav, NavItem, NavDropdown, MenuItem} from 'react-bootstrap'
 import {LinkContainer as NestedLink, IndexLinkContainer as Link} from 'react-router-bootstrap'
+import LinkTo from 'components/LinkTo'
 
 import {Organization} from 'models'
 
@@ -30,9 +31,9 @@ export default class extends Component {
 
 				<NavDropdown title="Organizations" id="organizations">
 					{Organization.map(organizations, org =>
-						<Link to={Organization.pathFor(org)} key={org}>
+						<LinkTo organization={org} componentClass={Link} key={org.id}>
 							<MenuItem>{org.name}</MenuItem>
-						</Link>
+						</LinkTo>
 					)}
 				</NavDropdown>
 
