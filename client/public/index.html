@@ -50,10 +50,10 @@
 				name: "${currentUser.name}",
 				role: "${currentUser.position.type}",
 			},
-			settings: {
-				"SECURITY_BANNER_TEXT": "${securityBannerText}",
-				"SECURITY_BANNER_COLOR": "${securityBannerColor}",
-			},
+			adminSettings: [
+				{key: "SECURITY_BANNER_TEXT", value: "${securityBannerText}"},
+				{key: "SECURITY_BANNER_COLOR", value: "${securityBannerColor}"},
+			],
 		}
 		</script>
 

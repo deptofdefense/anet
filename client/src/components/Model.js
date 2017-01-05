@@ -5,6 +5,9 @@ export default class Model {
 	static schema = {}
 
 	static fromArray(array) {
+		if (!array)
+			return []
+
 		return array.map(object =>
 			object instanceof this
 				? object
@@ -13,6 +16,9 @@ export default class Model {
 	}
 
 	static map(array, func) {
+		if (!array)
+			return []
+
 		return array.map(object =>
 			object instanceof this
 				? func(object)
