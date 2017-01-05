@@ -58,7 +58,7 @@ export default class Model {
 	}
 
 	toString() {
-		return this.toPath()
+		return this.name || this.id
 	}
 
 	toJSON() {
