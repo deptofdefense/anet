@@ -18,12 +18,8 @@ export default class LinkTo extends Component {
 		]),
 	}
 
-	static defaultProps = {
-		componentClass: Link
-	}
-
 	render() {
-		let {componentClass: Component, children, ...componentProps} = this.props
+		let {componentClass, children, ...componentProps} = this.props
 
 		let modelName = Object.keys(componentProps).find(key => MODEL_NAMES.indexOf(key) !== -1)
 		if (!modelName) {
@@ -39,6 +35,7 @@ export default class LinkTo extends Component {
 		let to = modelClass.pathFor(modelInstance)
 		componentProps = Object.without(componentProps, modelName)
 
+		let Component = componentClass || Link
 		return <Component to={to} {...componentProps}>
 			{children || modelClass.prototype.toString.call(modelInstance)}
 		</Component>
