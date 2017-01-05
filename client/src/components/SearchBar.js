@@ -1,14 +1,11 @@
 import React, {Component} from 'react'
 import {Form, Button, InputGroup, FormControl} from 'react-bootstrap'
+import History from 'components/History'
 
 export default class SearchBar extends Component {
-	static contextTypes = {
-		router: React.PropTypes.object.isRequired
-	}
-
-	constructor(props, context) {
-		super(props, context)
-		this.state = {query: context.router.location.query.q || ""}
+	constructor(props) {
+		super(props)
+		this.state = {query: History.getCurrentLocation().query.q || ""}
 
 		this.onChange = this.onChange.bind(this)
 		this.onSubmit = this.onSubmit.bind(this)
@@ -32,7 +29,7 @@ export default class SearchBar extends Component {
 	}
 
 	onSubmit(event) {
-		this.context.router.push('/search?q=' + this.state.query)
+		History.push('/search?q=' + this.state.query)
 		event.preventDefault()
 		event.stopPropagation()
 	}
