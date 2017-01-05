@@ -49,7 +49,7 @@ export default class OrganizationNew extends React.Component {
 							<option value="PRINCIPAL_ORG">Afghan Govt Organization</option>
 						</Form.Field>
 						<Form.Field id="parentOrg" label="Parent Org" >
-							<Autocomplete valueKey="name" placeholder="Choose the parent organization" url="/api/organizations/search" />
+							<Autocomplete valueKey="name" placeholder="Choose the parent organization" url="/api/organizations/search" urlParams={"&type=" + org.type} />
 						</Form.Field>
 
 						<Form.Field id="name" />

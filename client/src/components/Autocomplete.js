@@ -18,6 +18,7 @@ export default class Autocomplete extends Component {
 		url: React.PropTypes.string.isRequired,
 		template: React.PropTypes.func,
 		onChange: React.PropTypes.func,
+		urlParams: React.PropTypes.string
 	}
 
 	constructor(props) {
@@ -44,7 +45,7 @@ export default class Autocomplete extends Component {
 	}
 
 	render() {
-		let inputProps = Object.without(this.props, 'url', 'clearOnSelect', 'valueKey', 'template')
+		let inputProps = Object.without(this.props, 'url', 'clearOnSelect', 'valueKey', 'template', 'urlParams')
 		inputProps.value = this.state.stringValue
 		inputProps.onChange = this.onInputChange
 
@@ -81,6 +82,13 @@ export default class Autocomplete extends Component {
 	fetchSuggestions(value) {
 		if (this.props.url) {
 			let url = this.props.url + '?text=' + value.value
+			if (this.props.urlParams) { 
+				if (this.props.urlParams[0] !== '&') { 
+					url += "&"
+				}
+				url += this.props.urlParams
+			}
+
 			let selectedIds = this.selectedIds
 
 			API.fetch(url, {showLoader: false}).then(data => {
