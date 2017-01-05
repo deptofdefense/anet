@@ -61,7 +61,7 @@ export default class ReportNew extends Page {
 
 				<Breadcrumbs items={[['EF4', '/organizations/ef4'], ['Submit a report', Report.pathFor(null)]]} />
 
-				<Form formFor={report} onChange={this.onChange} onSubmit={this.onSubmit} actionText="Create report" horizontal>
+				<Form formFor={report} onChange={this.onChange} onSubmit={this.onSubmit} actionText="Save report" horizontal>
 					{this.state.error && <fieldset><p>There was a problem saving this report.</p><p>{this.state.error}</p></fieldset>}
 					<fieldset>
 						<legend>Engagement details <small>Required</small></legend>
