@@ -51,7 +51,7 @@ export default class AdminIndex extends Page {
 	@autobind
 	onChange(event) {
 		let settings = this.state.settings
-		this.setState({settings})
+		this.context.app.setState({settings})
 	}
 
 	@autobind
