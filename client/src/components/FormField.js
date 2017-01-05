@@ -82,7 +82,7 @@ export default class FormField extends Component {
 
 		// if type is static, render out a static value
 		if (this.props.type === 'static' || (!this.props.type && this.context.form.props.static)) {
-			children = <FormControl.Static {...childProps}>{(children.length && children) || defaultValue}</FormControl.Static>
+			children = <FormControl.Static componentClass={'div'} {...childProps}>{(children.length && children) || defaultValue}</FormControl.Static>
 
 		// if children are provided, render those, but special case them to
 		// automatically set value and children props
