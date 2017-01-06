@@ -108,6 +108,12 @@ public class PersonResource implements IGraphQLResource {
 			throw new WebApplicationException("You are not permitted to do this", Status.UNAUTHORIZED);
 		}
 		int numRows = dao.update(p);
+		
+		if (p.getPositionJson() != null) { 
+			//TODO: Maybe update position? 
+		}
+		
+		
 		return (numRows == 1) ? Response.ok().build() : Response.status(Status.NOT_FOUND).build();
 	}
 	
