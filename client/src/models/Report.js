@@ -12,8 +12,6 @@ export default class Report extends Model {
 		comments: [],
 		reportText: '',
 		nextSteps: '',
-
-		state: '',
 	}
 
 	isDraft() {
