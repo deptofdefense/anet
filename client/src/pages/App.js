@@ -42,6 +42,12 @@ export default class App extends Page {
 		this.state = this.processData(window.ANET_DATA)
 	}
 
+	componentWillReceiveProps() {
+		// this is just to prevent App from refetching app settings on every
+		// single page load. in the future we may wish to do something more
+		// intelligent to refetch page settings
+	}
+
 	fetchData() {
 		API.query(/* GraphQL */`
 			person(f:me) {
