@@ -60,7 +60,16 @@ export default class ReportShow extends Page {
 				author {
 					id, name
 					position {
-						organization { name }
+						organization {
+							name
+							approvalSteps {
+								id
+								approverGroup {
+									id, name
+									members { id, name, rank }
+								}
+							}
+						}
 					}
 				}
 
@@ -79,24 +88,16 @@ export default class ReportShow extends Page {
 				}
 
 				principalOrg { id, name }
-				advisorOrg {
-					id, name
-					approvalSteps {
-						id
-						approverGroup {
-							id, name
-							members { id, name, rank }
-						}
-					}
-				}
+				advisorOrg { id, name }
 
 				approvalStatus {
 					type, createdAt
-					step {
-						id
-						approverGroup {
-							id, members { id }
-						}
+					step { id }
+				}
+
+				approvalStep {
+					approverGroup {
+						members { id }
 					}
 				}
 			}
@@ -221,7 +222,7 @@ export default class ReportShow extends Page {
 							<a name="approvals" />
 							<legend>Approvals</legend>
 
-							{report.advisorOrg.approvalSteps.map(step =>
+							{report.author.position.organization.approvalSteps.map(step =>
 								<div key={step.id}>
 									{<LinkTo person={step.approverGroup.members[0]} /> || step.approverGroup.name}
 									{report.approvalStatus.find(thisStep => step.id === thisStep.id) ?
@@ -232,7 +233,7 @@ export default class ReportShow extends Page {
 								</div>
 							)}
 
-							{currentUser.isSuperUserForOrg(report.advisorOrg) &&
+							{report.approvalStep.approverGroup.members.find(member => member.id === currentUser.id) &&
 								<div className="pull-right">
 									<Button bsStyle="danger" style={approvalButtonCss} onClick={this.rejectReport}>Reject</Button>
 									<Button bsStyle="warning" style={approvalButtonCss}>Edit report</Button>
@@ -303,9 +304,8 @@ export default class ReportShow extends Page {
 
 	@autobind
 	updateReport(json) {
-		let {report} = this.state
-		report.setState(json)
-		this.setState({report})
+		this.fetchData(this.props)
+		window.scrollTo(0, 0)
 	}
 
 	@autobind
