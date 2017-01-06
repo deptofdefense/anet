@@ -18,6 +18,10 @@ export default class Report extends Model {
 		return this.state === 'DRAFT'
 	}
 
+	isPending() {
+		return this.state === 'PENDING_APPROVAL'
+	}
+
 	toString() {
 		return this.intent || "None"
 	}

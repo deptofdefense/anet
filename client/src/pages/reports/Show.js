@@ -69,8 +69,23 @@ export default class ReportShow extends Page {
 					id, text, createdAt, updatedAt
 					author { id, name, rank }
 				}
-				advisorOrg { id, name }
-				principalOrg {id, name}
+
+				principalOrg { id, name }
+				advisorOrg {
+					id, name
+					approvalSteps {
+						id
+						approverGroup {
+							id, name
+							members { id, name, rank }
+						}
+					}
+				}
+
+				approvalStatus {
+					type, createdAt
+					step { id, approverGroup {id}}
+				}
 			}
 		`).then(data => this.setState({report: new Report(data.report)}))
 	}
@@ -94,6 +109,13 @@ export default class ReportShow extends Page {
 						<fieldset style={{textAlign: 'center'}}>
 							<h4 className="text-danger">This report is in DRAFT state and hasn't been submitted.</h4>
 							<p>You can review the draft below to make sure all the details are correct.</p>
+						</fieldset>
+					}
+
+					{report.isPending() &&
+						<fieldset style={{textAlign: 'center'}}>
+							<h4 className="text-danger">This report is PENDING approvals.</h4>
+							<p>It won't be available in the ANET database until your approval organization marks it as approved.</p>
 						</fieldset>
 					}
 
@@ -179,6 +201,23 @@ export default class ReportShow extends Page {
 						<h5>Next steps</h5>
 						<div dangerouslySetInnerHTML={{__html: report.nextSteps}} />
 					</fieldset>
+
+					{report.isPending() &&
+						<fieldset>
+							<legend>Approvals</legend>
+
+							{report.advisorOrg.approvalSteps.map(step =>
+								<div key={step.id}>
+									{<LinkTo person={step.approverGroup.members[0]} /> || step.approverGroup.name}
+									{report.approvalStatus.find(thisStep => step.id === thisStep.id) ?
+										<span> approved <small>{step.createdAt}</small></span>
+										:
+										<span className="text-danger"> Pending</span>
+									}
+								</div>
+							)}
+						</fieldset>
+					}
 
 					{report.isDraft() ?
 						<fieldset>
