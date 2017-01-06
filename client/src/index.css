@@ -15,20 +15,24 @@ fieldset {
 	background: #fff;
 	border: 1px solid #e0e0e0;
 	padding: 1.7rem 3rem 1.9rem 3rem;
-	margin: 3rem 0;
+	margin: 7rem 0;
+	position: relative;
 }
 
 fieldset legend {
-	margin-bottom: 0;
+	position: absolute;
+	top: -35px;
+	left: 3px;
+	font-size: 2.5rem;
+	color: #363636;
 	border: none;
 }
 
 fieldset legend small {
-	float: right;
-	font-size: 1.4rem;
-	font-weight: bold;
-	color: #333;
-	margin: 0.5rem;
+	position: absolute;
+	top: 16px;
+	right: 4px;
+	font-size: 1.2rem;
 }
 
 .shortcut-list {

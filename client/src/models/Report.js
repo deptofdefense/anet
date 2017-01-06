@@ -12,12 +12,14 @@ export default class Report extends Model {
 		comments: [],
 		reportText: '',
 		nextSteps: '',
-
-		state: '',
 	}
 
 	isDraft() {
 		return this.state === 'DRAFT'
+	}
+
+	isPending() {
+		return this.state === 'PENDING_APPROVAL'
 	}
 
 	toString() {

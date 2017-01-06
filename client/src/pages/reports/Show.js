@@ -11,7 +11,7 @@ import LinkTo from 'components/LinkTo'
 import API from 'api'
 import {Report, Person, Poam} from 'models'
 
-const atmosphereIconStyle = {
+const atmosphereIconCss = {
 	fontSize: '2rem',
 	display: 'inline-block',
 	marginTop: '-4px',
@@ -24,11 +24,19 @@ const atmosphereIcons = {
 	'NEGATIVE': "👎",
 }
 
-const commentFormStyle = {
+const commentFormCss = {
 	marginTop: '50px',
 }
 
+const approvalButtonCss = {
+	marginLeft: '15px',
+}
+
 export default class ReportShow extends Page {
+	static contextTypes = {
+		app: React.PropTypes.object,
+	}
+
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -52,14 +60,25 @@ export default class ReportShow extends Page {
 				author {
 					id, name
 					position {
-						organization { name }
+						organization {
+							name
+							approvalSteps {
+								id
+								approverGroup {
+									id, name
+									members { id, name, rank }
+								}
+							}
+						}
 					}
 				}
 
 				attendees {
-					id, name
+					id, name, role
 					position { id, name }
 				}
+				primaryAdvisor { id }
+				primaryPrincipal { id }
 
 				poams { id, shortName, longName, responsibleOrg { id, name} }
 
@@ -67,24 +86,51 @@ export default class ReportShow extends Page {
 					id, text, createdAt, updatedAt
 					author { id, name, rank }
 				}
+
+				principalOrg { id, name }
 				advisorOrg { id, name }
-				principalOrg {id, name}
+
+				approvalStatus {
+					type, createdAt
+					step { id }
+				}
+
+				approvalStep {
+					approverGroup {
+						members { id }
+					}
+				}
 			}
 		`).then(data => this.setState({report: new Report(data.report)}))
 	}
 
 	render() {
-		let report = this.state.report
+		let {report} = this.state
+		let {currentUser} = this.context.app.state
 
 		return (
 			<div>
 				<Breadcrumbs items={[['Reports', '/reports'], [report.intent || 'Report #' + report.id, Report.pathFor(report)]]} />
 
 				<Form static formFor={report} horizontal>
+					{this.state.error &&
+						<fieldset className="text-danger">
+							<p>There was a problem saving this report.</p>
+							<p>{this.state.error}</p>
+						</fieldset>
+					}
+
 					{report.isDraft() &&
 						<fieldset style={{textAlign: 'center'}}>
 							<h4 className="text-danger">This report is in DRAFT state and hasn't been submitted.</h4>
 							<p>You can review the draft below to make sure all the details are correct.</p>
+						</fieldset>
+					}
+
+					{report.isPending() &&
+						<fieldset style={{textAlign: 'center'}}>
+							<h4 className="text-danger">This report is PENDING approvals.</h4>
+							<p>It won't be available in the ANET database until your <a href="#approvals">approval organization</a> marks it as approved.</p>
 						</fieldset>
 					}
 
@@ -95,7 +141,7 @@ export default class ReportShow extends Page {
 						<Form.Field id="engagementDate" label="Date 📆" getter={date => moment(date).format("L")} />
 						<Form.Field id="location" label="Location 📍" getter={location => location && location.name} />
 						<Form.Field id="atmosphere" label="Atmospherics">
-							<span style={atmosphereIconStyle}>{atmosphereIcons[report.atmosphere]}</span>
+							<span style={atmosphereIconCss}>{atmosphereIcons[report.atmosphere]}</span>
 							{report.atmosphereDetails}
 						</Form.Field>
 						<Form.Field id="author" label="Report author">
@@ -115,7 +161,9 @@ export default class ReportShow extends Page {
 						<Table>
 							<thead>
 								<tr>
+									<th>Primary</th>
 									<th>Name</th>
+									<th>Type</th>
 									<th>Position</th>
 								</tr>
 							</thead>
@@ -123,7 +171,13 @@ export default class ReportShow extends Page {
 							<tbody>
 								{Person.map(report.attendees, person =>
 									<tr key={person.id}>
+										<td>
+											{(Person.isEqual(report.primaryAdvisor, person) || Person.isEqual(report.primaryPrincipal, person)) &&
+												"⭐️"
+											}
+										</td>
 										<td><LinkTo person={person} /></td>
+										<td>{person.role}</td>
 										<td><LinkTo position={person.position} /></td>
 									</tr>
 								)}
@@ -163,7 +217,33 @@ export default class ReportShow extends Page {
 						<div dangerouslySetInnerHTML={{__html: report.nextSteps}} />
 					</fieldset>
 
-					{report.isDraft() ?
+					{report.isPending() &&
+						<fieldset>
+							<a name="approvals" />
+							<legend>Approvals</legend>
+
+							{report.author.position.organization.approvalSteps.map(step =>
+								<div key={step.id}>
+									{<LinkTo person={step.approverGroup.members[0]} /> || step.approverGroup.name}
+									{report.approvalStatus.find(thisStep => step.id === thisStep.id) ?
+										<span> approved <small>{step.createdAt}</small></span>
+										:
+										<span className="text-danger"> Pending</span>
+									}
+								</div>
+							)}
+
+							{report.approvalStep.approverGroup.members.find(member => member.id === currentUser.id) &&
+								<div className="pull-right">
+									<Button bsStyle="danger" style={approvalButtonCss} onClick={this.rejectReport}>Reject</Button>
+									<Button bsStyle="warning" style={approvalButtonCss}>Edit report</Button>
+									<Button bsStyle="primary" style={approvalButtonCss} onClick={this.approveReport}>Approve</Button>
+								</div>
+							}
+						</fieldset>
+					}
+
+					{report.isDraft() &&
 						<fieldset>
 							<Col md={9}>
 								<p>
@@ -179,29 +259,32 @@ export default class ReportShow extends Page {
 								</Button>
 							</Col>
 						</fieldset>
-						:
-						<fieldset>
-							<legend>Comments</legend>
+					}
 
-							{report.comments.map(comment =>
+					<fieldset>
+						<legend>Comments</legend>
+
+						{report.comments.map(comment => {
+							let createdAt = moment(comment.createAt)
+							return (
 								<p key={comment.id}>
 									<LinkTo person={comment.author} />
-									<small>said</small>
+									<span title={createdAt.format('L LT')}> {createdAt.fromNow()}: </span>
 									"{comment.text}"
 								</p>
-							)}
+							)
+						})}
 
-							{!report.comments.length && "There are no comments yet."}
+						{!report.comments.length && "There are no comments yet."}
 
-							<Form formFor={this.state.newComment} horizontal style={commentFormStyle}>
-								<Form.Field id="text" placeholder="Type a comment here" label="">
-									<Form.Field.ExtraCol>
-										<Button bsStyle="primary" type="submit">Save comment</Button>
-									</Form.Field.ExtraCol>
-								</Form.Field>
-							</Form>
-						</fieldset>
-					}
+						<Form formFor={this.state.newComment} horizontal style={commentFormCss}>
+							<Form.Field id="text" placeholder="Type a comment here" label="">
+								<Form.Field.ExtraCol>
+									<Button bsStyle="primary" type="submit">Save comment</Button>
+								</Form.Field.ExtraCol>
+							</Form.Field>
+						</Form>
+					</fieldset>
 				</Form>
 			</div>
 		)
@@ -209,8 +292,32 @@ export default class ReportShow extends Page {
 
 	@autobind
 	submitDraft() {
-		API.send(`/api/reports/${this.state.report.id}/submit`).then(response => {
-			console.log(response);
-		})
+		API.send(`/api/reports/${this.state.report.id}/submit`).then(this.updateReport, this.handleError)
+	}
+
+	@autobind
+	rejectReport() {
+		let comment = {
+			text: "TODO"
+		}
+
+		API.send(`/api/reports/${this.state.report.id}/reject`, comment).then(this.updateReport, this.handleError)
+	}
+
+	@autobind
+	approveReport() {
+		API.send(`/api/reports/${this.state.report.id}/approve`).then(this.updateReport, this.handleError)
+	}
+
+	@autobind
+	updateReport(json) {
+		this.fetchData(this.props)
+		window.scrollTo(0, 0)
+	}
+
+	@autobind
+	handleError(response) {
+		this.setState({error: response.error})
+		window.scrollTo(0, 0)
 	}
 }

@@ -9,6 +9,12 @@ export default {
 	}
 }
 
+Object.forEach = function(source, func) {
+	return Object.keys(source).forEach(key => {
+		func(key, source[key])
+	})
+}
+
 Object.map = function(source, func) {
 	return Object.keys(source).map(key => {
 		let value = source[key]
@@ -18,7 +24,7 @@ Object.map = function(source, func) {
 
 Object.get = function(source, keypath) {
 	const keys = keypath.split('.')
-	while (keys[1]) {
+	while (keys[0]) {
 		let key = keys.shift()
 		source = source[key]
 		if (typeof source === 'undefined')

@@ -64,13 +64,13 @@ public class ReportResource implements IGraphQLResource {
 		this.dao = engine.getReportDao();
 		this.mapper = new ObjectMapper();
 	}
-	
+
 	@Override
-	public String getDescription() { return "Reports"; } 
-	
+	public String getDescription() { return "Reports"; }
+
 	@Override
-	public Class<Report> getBeanClass() { return Report.class; } 
-	
+	public Class<Report> getBeanClass() { return Report.class; }
+
 	@GET
 	@GraphQLFetcher
 	@Path("/")
@@ -157,29 +157,29 @@ public class ReportResource implements IGraphQLResource {
 	 */
 	@POST
 	@Path("/{id}/submit")
-	public Response submitReport(@PathParam("id") int id) {
+	public Report submitReport(@PathParam("id") int id) {
 		Report r = dao.getById(id);
 		//TODO: this needs to be done by either the Author, a Superuser for the AO, or an Administrator
 
-		if (r.getAdvisorOrgJson() == null) { 
+		if (r.getAdvisorOrgJson() == null) {
 			ReportPerson advisor = r.getPrimaryAdvisor();
-			if (advisor == null) { 
+			if (advisor == null) {
 				throw new WebApplicationException("Report missing primary advisor", Status.BAD_REQUEST);
 			}
 			r.setAdvisorOrg(engine.getOrganizationForPerson(advisor));
 		}
-		if (r.getPrincipalOrgJson() == null) { 
+		if (r.getPrincipalOrgJson() == null) {
 			ReportPerson principal = r.getPrimaryPrincipal();
 			if (principal == null) {
 				throw new WebApplicationException("Report missing primary principal", Status.BAD_REQUEST);
 			}
 			r.setPrincipalOrg(engine.getOrganizationForPerson(principal));
 		}
-		
-		if (r.getEngagementDate() == null) { 
+
+		if (r.getEngagementDate() == null) {
 			throw new WebApplicationException("Missing engagement date", Status.BAD_REQUEST);
 		}
-		
+
 		Organization org = engine.getOrganizationForPerson(r.getAuthor());
 		if (org == null ) {
 			// Author missing Org, use the Default Approval Workflow
@@ -199,11 +199,15 @@ public class ReportResource implements IGraphQLResource {
 		sendApprovalNeededEmail(r);
 		log.info("Putting report {} into step {} because of org {} on author {}",
 				r.getId(), steps.get(0).getId(), org.getId(), r.getAuthor().getId());
-		
-		return (numRows == 1) ? Response.ok().build() : ResponseUtils.withMsg("No records updated", Status.BAD_REQUEST);
+
+		if (numRows != 1) {
+			throw new WebApplicationException("No records updated", Status.BAD_REQUEST);
+		}
+
+		return r;
 	}
 
-	private void sendApprovalNeededEmail(Report r) { 
+	private void sendApprovalNeededEmail(Report r) {
 		ApprovalStep step = r.getApprovalStep();
 		Group approvalGroup = step.getApproverGroup();
 		List<Person> approvers = approvalGroup.getMembers();
@@ -214,21 +218,21 @@ public class ReportResource implements IGraphQLResource {
 		approverEmail.setContext(ImmutableMap.of("report", r, "approvalGroup", approvalGroup));
 		AnetEmailWorker.sendEmailAsync(approverEmail);
 	}
-	
+
 	/*
 	 * Approve this report for the current step.
 	 * TODO: this should run common approval code that checks if any previous approving users can approve the future steps
 	 */
-	@GET
+	@POST
 	@Path("/{id}/approve")
-	public Response approveReport(@Auth Person approver, @PathParam("id") int id) {
+	public Report approveReport(@Auth Person approver, @PathParam("id") int id) {
 		Report r = dao.getById(id);
 		if (r == null) {
-			return Response.status(Status.NOT_FOUND).build();
+			throw new WebApplicationException("Report not found", Status.NOT_FOUND);
 		}
 		if (r.getApprovalStep() == null) {
 			log.info("Report ID {} does not currently need an approval", r.getId());
-			return ResponseUtils.withMsg("No Approval Step Found", Status.BAD_REQUEST);
+			throw new WebApplicationException("No approval step found", Status.NOT_FOUND);
 		}
 		ApprovalStep step = engine.getApprovalStepDao().getById(r.getApprovalStep().getId());
 
@@ -237,7 +241,7 @@ public class ReportResource implements IGraphQLResource {
 		boolean canApprove = engine.canUserApproveStep(approver.getId(), step.getId());
 		if (canApprove == false) {
 			log.info("User ID {} cannot approve report ID {} for step ID {}",approver.getId(), r.getId(), step.getId());
-			return Response.status(Status.FORBIDDEN).build();
+			throw new WebApplicationException("User cannot approve report", Status.FORBIDDEN);
 		}
 
 		//Write the approval
@@ -253,13 +257,13 @@ public class ReportResource implements IGraphQLResource {
 		r.setApprovalStep(ApprovalStep.createWithId(step.getNextStepId()));
 		if (step.getNextStepId() == null) {
 			r.setState(ReportState.RELEASED);
-		} else { 
+		} else {
 			sendApprovalNeededEmail(r);
 		}
 		dao.update(r);
 		//TODO: close the transaction.
 
-		return Response.ok().build();
+		return r;
 	}
 
 	/**
@@ -270,7 +274,7 @@ public class ReportResource implements IGraphQLResource {
 	 */
 	@POST
 	@Path("/{id}/reject")
-	public Response rejectReport(@Auth Person approver, @PathParam("id") int id, Comment reason) {
+	public Report rejectReport(@Auth Person approver, @PathParam("id") int id, Comment reason) {
 		Report r = dao.getById(id);
 		ApprovalStep step = engine.getApprovalStepDao().getById(r.getApprovalStep().getId());
 
@@ -278,7 +282,7 @@ public class ReportResource implements IGraphQLResource {
 		boolean canApprove = engine.canUserApproveStep(approver.getId(), step.getId());
 		if (canApprove == false) {
 			log.info("User ID {} cannot reject report ID {} for step ID {}",approver.getId(), r.getId(), step.getId());
-			return Response.status(Status.FORBIDDEN).build();
+			throw new WebApplicationException("User cannot approve report", Status.FORBIDDEN);
 		}
 
 		//Write the rejection
@@ -308,7 +312,7 @@ public class ReportResource implements IGraphQLResource {
 
 		//TODO: close the transaction.
 
-		return Response.ok().build();
+		return r;
 	}
 
 	@POST
@@ -343,13 +347,13 @@ public class ReportResource implements IGraphQLResource {
 	@GET
 	@Path("/search")
 	public List<Report> search(@Context HttpServletRequest request) {
-		try { 
+		try {
 			return search(ResponseUtils.convertParamsToBean(request, ReportSearchQuery.class));
-		} catch (IllegalArgumentException e) { 
+		} catch (IllegalArgumentException e) {
 			throw new WebApplicationException(e.getMessage(), e.getCause(), Status.BAD_REQUEST);
 		}
 	}
-	
+
 	@POST
 	@GraphQLFetcher
 	@Path("/search")
