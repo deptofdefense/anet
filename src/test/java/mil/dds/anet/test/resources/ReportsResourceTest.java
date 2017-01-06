@@ -157,7 +157,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		assertThat(created.getState()).isEqualTo(ReportState.DRAFT);
 		
 		//Have the author submit the report
-		resp = httpQuery(String.format("/api/reports/%d/submit", created.getId()), author).get();
+		resp = httpQuery(String.format("/api/reports/%d/submit", created.getId()), author).post(null);
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
 		Report returned = httpQuery(String.format("/api/reports/%d", created.getId()), author).get(Report.class);

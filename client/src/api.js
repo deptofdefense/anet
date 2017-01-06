@@ -18,19 +18,27 @@ const API = {
 		delete params.showLoader
 
 		return window.fetch(url, params)
-					.then(response =>
-						response.headers.get('content-type') === 'application/json'
-							? response.json()
-							: response
-					)
 					.then(response => {
 						API.stopLoading()
+
+						let isOk = response.ok
+
+						if (response.headers.get('content-type') === 'application/json') {
+							response = response.json()
+							if (!isOk)
+								return response.then(response => Promise.reject(response))
+						}
+
+						if (!isOk)
+							response = Promise.reject(response)
+
 						return response
 					})
 	},
 
 	send(url, data, params) {
 		params = params || {}
+		params.disableSubmits = typeof params.disableSubmits === 'undefined' ? true : params.disableSubmits
 		params.method = params.method || 'POST'
 		params.body = JSON.stringify(data)
 
@@ -38,18 +46,21 @@ const API = {
 		params.headers['Content-Type'] = 'application/json'
 
 		let promise = API.fetch(url, params)
+		let buttons = document.querySelectorAll('[type=submit]')
+		let toggleButtons =  function(onOff) {
+			for (let button of buttons) {
+				button.disabled = !onOff
+			}
+		}
 
 		if (params.disableSubmits) {
-			let buttons = document.querySelectorAll('[type=submit]')
-			for (let button of buttons) {
-				button.disabled = true
-			}
+			toggleButtons(false)
 
 			promise.then(response => {
-				for (let button of buttons) {
-					button.disabled = false
-				}
-
+				toggleButtons(true)
+				return response
+			}, response => {
+				toggleButtons(true)
 				return response
 			})
 		}

@@ -12,6 +12,12 @@ export default class Report extends Model {
 		comments: [],
 		reportText: '',
 		nextSteps: '',
+
+		state: '',
+	}
+
+	isDraft() {
+		return this.state === 'DRAFT'
 	}
 
 	toString() {
