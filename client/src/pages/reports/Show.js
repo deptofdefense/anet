@@ -264,13 +264,16 @@ export default class ReportShow extends Page {
 					<fieldset>
 						<legend>Comments</legend>
 
-						{report.comments.map(comment =>
-							<p key={comment.id}>
-								<LinkTo person={comment.author} />
-								<small>said</small>
-								"{comment.text}"
-							</p>
-						)}
+						{report.comments.map(comment => {
+							let createdAt = moment(comment.createAt)
+							return (
+								<p key={comment.id}>
+									<LinkTo person={comment.author} />
+									<span title={createdAt.format('L LT')}> {createdAt.fromNow()}: </span>
+									"{comment.text}"
+								</p>
+							)
+						})}
 
 						{!report.comments.length && "There are no comments yet."}
 
@@ -294,7 +297,11 @@ export default class ReportShow extends Page {
 
 	@autobind
 	rejectReport() {
-		API.send(`/api/reports/${this.state.report.id}/reject`, {text: "TODO"}).then(this.updateReport, this.handleError)
+		let comment = {
+			text: "TODO"
+		}
+
+		API.send(`/api/reports/${this.state.report.id}/reject`, comment).then(this.updateReport, this.handleError)
 	}
 
 	@autobind
