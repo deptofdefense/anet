@@ -81,6 +81,13 @@ export default class ReportShow extends Page {
 				<Breadcrumbs items={[['Reports', '/reports'], [report.intent || 'Report #' + report.id, Report.pathFor(report)]]} />
 
 				<Form static formFor={report} horizontal>
+					{this.state.error &&
+						<fieldset className="text-danger">
+							<p>There was a problem saving this report.</p>
+							<p>{this.state.error}</p>
+						</fieldset>
+					}
+
 					{report.isDraft() &&
 						<fieldset style={{textAlign: 'center'}}>
 							<h4 className="text-danger">This report is in DRAFT state and hasn't been submitted.</h4>
@@ -211,6 +218,9 @@ export default class ReportShow extends Page {
 	submitDraft() {
 		API.send(`/api/reports/${this.state.report.id}/submit`).then(response => {
 			console.log(response);
+		}).catch(response => {
+			this.setState({error: response.error})
+			window.scrollTo(0, 0)
 		})
 	}
 }
