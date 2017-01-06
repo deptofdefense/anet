@@ -223,16 +223,16 @@ public class ReportResource implements IGraphQLResource {
 	 * Approve this report for the current step.
 	 * TODO: this should run common approval code that checks if any previous approving users can approve the future steps
 	 */
-	@GET
+	@POST
 	@Path("/{id}/approve")
-	public Response approveReport(@Auth Person approver, @PathParam("id") int id) {
+	public Report approveReport(@Auth Person approver, @PathParam("id") int id) {
 		Report r = dao.getById(id);
 		if (r == null) {
-			return Response.status(Status.NOT_FOUND).build();
+			throw new WebApplicationException("Report not found", Status.NOT_FOUND);
 		}
 		if (r.getApprovalStep() == null) {
 			log.info("Report ID {} does not currently need an approval", r.getId());
-			return ResponseUtils.withMsg("No Approval Step Found", Status.BAD_REQUEST);
+			throw new WebApplicationException("No approval step found", Status.NOT_FOUND);
 		}
 		ApprovalStep step = engine.getApprovalStepDao().getById(r.getApprovalStep().getId());
 
@@ -241,7 +241,7 @@ public class ReportResource implements IGraphQLResource {
 		boolean canApprove = engine.canUserApproveStep(approver.getId(), step.getId());
 		if (canApprove == false) {
 			log.info("User ID {} cannot approve report ID {} for step ID {}",approver.getId(), r.getId(), step.getId());
-			return Response.status(Status.FORBIDDEN).build();
+			throw new WebApplicationException("User cannot approve report", Status.FORBIDDEN);
 		}
 
 		//Write the approval
@@ -263,7 +263,7 @@ public class ReportResource implements IGraphQLResource {
 		dao.update(r);
 		//TODO: close the transaction.
 
-		return Response.ok().build();
+		return r;
 	}
 
 	/**
@@ -274,7 +274,7 @@ public class ReportResource implements IGraphQLResource {
 	 */
 	@POST
 	@Path("/{id}/reject")
-	public Response rejectReport(@Auth Person approver, @PathParam("id") int id, Comment reason) {
+	public Report rejectReport(@Auth Person approver, @PathParam("id") int id, Comment reason) {
 		Report r = dao.getById(id);
 		ApprovalStep step = engine.getApprovalStepDao().getById(r.getApprovalStep().getId());
 
@@ -282,7 +282,7 @@ public class ReportResource implements IGraphQLResource {
 		boolean canApprove = engine.canUserApproveStep(approver.getId(), step.getId());
 		if (canApprove == false) {
 			log.info("User ID {} cannot reject report ID {} for step ID {}",approver.getId(), r.getId(), step.getId());
-			return Response.status(Status.FORBIDDEN).build();
+			throw new WebApplicationException("User cannot approve report", Status.FORBIDDEN);
 		}
 
 		//Write the rejection
@@ -312,7 +312,7 @@ public class ReportResource implements IGraphQLResource {
 
 		//TODO: close the transaction.
 
-		return Response.ok().build();
+		return r;
 	}
 
 	@POST
