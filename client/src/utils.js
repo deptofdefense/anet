@@ -9,6 +9,12 @@ export default {
 	}
 }
 
+Object.forEach = function(source, func) {
+	return Object.keys(source).forEach(key => {
+		func(key, source[key])
+	})
+}
+
 Object.map = function(source, func) {
 	return Object.keys(source).map(key => {
 		let value = source[key]

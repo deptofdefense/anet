@@ -44,11 +44,17 @@ export default class Model {
 	}
 
 	constructor(props) {
-		Object.assign(this, this.constructor.schema, props)
+		Object.assign(this, this.constructor.schema)
+		if (props)
+			this.setState(props)
 	}
 
 	setState(props) {
-		Object.assign(this, props)
+		Object.forEach(props, (key, value) => {
+			if (value !== null)
+				this[key] = value
+		})
+
 		return this
 	}
 
