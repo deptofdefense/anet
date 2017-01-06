@@ -22,6 +22,10 @@ export default class ReportNew extends Page {
 		useNavigation: false
 	}
 
+	static contextTypes = {
+		app: React.PropTypes.object,
+	}
+
 	constructor(props) {
 		super(props)
 
@@ -143,7 +147,7 @@ export default class ReportNew extends Page {
 
 							<Form.Field.ExtraCol className="shortcut-list">
 								<h5>Shortcuts</h5>
-								<Button bsStyle="link">Add myself</Button>
+								<Button bsStyle="link" onClick={this.addMyself}>Add myself</Button>
 								{Person.map(recents.persons, person =>
 									<Button key={person.id} bsStyle="link" onClick={this.addAttendee.bind(this, person)}>Add {person.name}</Button>
 								)}
@@ -265,6 +269,7 @@ export default class ReportNew extends Page {
 		}
 	}
 
+	@autobind
 	setPrimaryAttendee(person) {
 		let report = this.state.report
 
@@ -272,6 +277,13 @@ export default class ReportNew extends Page {
 		report[primaryKey] = person
 
 		this.setState({report})
+	}
+
+	@autobind
+	addMyself() {
+		let currentUser = this.context.app.state.currentUser
+		this.addAttendee(currentUser)
+		this.setPrimaryAttendee(currentUser)
 	}
 
 	@autobind
