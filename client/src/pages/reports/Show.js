@@ -243,7 +243,7 @@ export default class ReportShow extends Page {
 						</fieldset>
 					}
 
-					{report.isDraft() ?
+					{report.isDraft() &&
 						<fieldset>
 							<Col md={9}>
 								<p>
@@ -259,29 +259,29 @@ export default class ReportShow extends Page {
 								</Button>
 							</Col>
 						</fieldset>
-						:
-						<fieldset>
-							<legend>Comments</legend>
-
-							{report.comments.map(comment =>
-								<p key={comment.id}>
-									<LinkTo person={comment.author} />
-									<small>said</small>
-									"{comment.text}"
-								</p>
-							)}
-
-							{!report.comments.length && "There are no comments yet."}
-
-							<Form formFor={this.state.newComment} horizontal style={commentFormCss}>
-								<Form.Field id="text" placeholder="Type a comment here" label="">
-									<Form.Field.ExtraCol>
-										<Button bsStyle="primary" type="submit">Save comment</Button>
-									</Form.Field.ExtraCol>
-								</Form.Field>
-							</Form>
-						</fieldset>
 					}
+
+					<fieldset>
+						<legend>Comments</legend>
+
+						{report.comments.map(comment =>
+							<p key={comment.id}>
+								<LinkTo person={comment.author} />
+								<small>said</small>
+								"{comment.text}"
+							</p>
+						)}
+
+						{!report.comments.length && "There are no comments yet."}
+
+						<Form formFor={this.state.newComment} horizontal style={commentFormCss}>
+							<Form.Field id="text" placeholder="Type a comment here" label="">
+								<Form.Field.ExtraCol>
+									<Button bsStyle="primary" type="submit">Save comment</Button>
+								</Form.Field.ExtraCol>
+							</Form.Field>
+						</Form>
+					</fieldset>
 				</Form>
 			</div>
 		)
