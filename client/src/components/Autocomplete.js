@@ -116,6 +116,8 @@ export default class Autocomplete extends Component {
 		event.stopPropagation()
 		event.preventDefault()
 
+		console.log("oss", suggestion)
+
 		let stringValue = this.props.clearOnSelect ? '' : suggestionValue
 		this.setState({value: suggestion, stringValue})
 
@@ -125,7 +127,12 @@ export default class Autocomplete extends Component {
 
 	@autobind
 	onInputChange(event) {
-		this.setState({stringValue: event.target.value})
+		console.log("oic", event);
+		if (event.target.value.length === 0) { //Clear the suggestion
+			this.onSuggestionSelected(event, {suggestion: {}, suggestionValue: ''})
+		} else { 
+			this.setState({stringValue: event.target.value})
+		}
 		event.stopPropagation()
 	}
 }
