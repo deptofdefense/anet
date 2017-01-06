@@ -21,10 +21,6 @@ export default class extends Component {
 					<NavItem>Home</NavItem>
 				</Link>
 
-				<Link to="/reports/new">
-					<NavItem>Submit a report</NavItem>
-				</Link>
-
 				<Link to="/reports">
 					<NavItem>My Reports</NavItem>
 				</Link>
