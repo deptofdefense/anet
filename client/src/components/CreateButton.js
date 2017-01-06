@@ -24,9 +24,9 @@ export default class CreateButton extends Component {
 
 		if (modelClasses.length > 1) {
 			return (
-				<DropdownButton title="Create" bsStyle="primary" id="createButton" onSelect={this.onSelect}>
+				<DropdownButton title="Create new" bsStyle="primary" id="createButton" onSelect={this.onSelect}>
 					{modelClasses.map((modelClass, i) =>
-						<MenuItem key={modelClass.name} eventKey={modelClass}>Create {modelClass.name}</MenuItem>
+						<MenuItem key={modelClass.name} eventKey={modelClass}>New {modelClass.name}</MenuItem>
 					)}
 				</DropdownButton>
 			)
@@ -34,7 +34,7 @@ export default class CreateButton extends Component {
 			let modelClass = modelClasses[0]
 			return (
 				<Button bsStyle="primary" onClick={this.onSelect.bind(this, modelClass)}>
-					Create {modelClass.name}
+					New {modelClass.name}
 				</Button>
 			)
 		}
