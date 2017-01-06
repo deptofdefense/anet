@@ -57,9 +57,11 @@ export default class ReportShow extends Page {
 				}
 
 				attendees {
-					id, name
+					id, name, role
 					position { id, name }
 				}
+				primaryAdvisor { id }
+				primaryPrincipal { id }
 
 				poams { id, shortName, longName, responsibleOrg { id, name} }
 
@@ -122,6 +124,7 @@ export default class ReportShow extends Page {
 						<Table>
 							<thead>
 								<tr>
+									<th>Primary</th>
 									<th>Name</th>
 									<th>Type</th>
 									<th>Position</th>
@@ -131,6 +134,11 @@ export default class ReportShow extends Page {
 							<tbody>
 								{Person.map(report.attendees, person =>
 									<tr key={person.id}>
+										<td>
+											{(Person.isEqual(report.primaryAdvisor, person) || Person.isEqual(report.primaryPrincipal, person)) &&
+												"⭐️"
+											}
+										</td>
 										<td><LinkTo person={person} /></td>
 										<td>{person.role}</td>
 										<td><LinkTo position={person.position} /></td>
