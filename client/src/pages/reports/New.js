@@ -233,7 +233,13 @@ export default class ReportNew extends Page {
 		let attendees = report.attendees
 
 		if (!attendees.find(attendee => attendee.id === newAttendee.id)) {
-			attendees.push(new Person(newAttendee))
+			let person = new Person(newAttendee)
+			attendees.push(person)
+
+			let primaryKey = person.isAdvisor() ? 'primaryAdvisor' : 'primaryPrincipal'
+			if (!report[primaryKey]) {
+				report[primaryKey] = person
+			}
 		}
 
 		this.setState({report})
@@ -246,7 +252,15 @@ export default class ReportNew extends Page {
 		let index = attendees.findIndex(attendee => attendee.id === oldAttendee.id)
 
 		if (index !== -1) {
+			let person = attendees[index]
 			attendees.splice(index, 1)
+
+			let primaryKey = person.isAdvisor() ? 'primaryAdvisor' : 'primaryPrincipal'
+			if (report[primaryKey] === person) {
+				let nextPerson = attendees.find(nextPerson => nextPerson.role === person.role)
+				report[primaryKey] = nextPerson
+			}
+
 			this.setState({report})
 		}
 	}
