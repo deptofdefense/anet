@@ -227,7 +227,9 @@ export default class ReportShow extends Page {
 	@autobind
 	submitDraft() {
 		API.send(`/api/reports/${this.state.report.id}/submit`).then(response => {
-			console.log(response);
+			let report = this.state.report
+			report.setState(response)
+			this.setState({report})
 		}).catch(response => {
 			this.setState({error: response.error})
 			window.scrollTo(0, 0)
