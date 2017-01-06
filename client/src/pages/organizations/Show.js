@@ -11,6 +11,10 @@ import History from 'components/History'
 import LinkTo from 'components/LinkTo'
 
 export default class OrganizationShow extends Page {
+	static contextTypes = { 
+		app: React.PropTypes.object.isRequired,
+	}
+
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -60,19 +64,26 @@ export default class OrganizationShow extends Page {
 			</fieldset>
 		}
 
+		let currentUser = this.context.app.state.currentUser;
+		let isSuperUser = (currentUser) ? currentUser.isSuperUser(org) : false
+		let isAdmin = (currentUser) ? currentUser.isAdmin() : false
+
 		return (
 			<div>
 				<Breadcrumbs items={[[org.name || 'Organization', Organization.pathFor(org)]]} />
+
+				<div className="pull-right">
+					<DropdownButton bsStyle="primary" title="Actions" id="actions" className="pull-right" onSelect={this.actionSelect}>
+						{isSuperUser && <MenuItem eventKey="edit" className="todo">Edit Organization</MenuItem>}
+						{isAdmin && <MenuItem eventKey="createSub">Create Sub-Organization</MenuItem> }
+						{isSuperUser && <MenuItem eventKey="createPos">Create new Position</MenuItem> }
+					</DropdownButton>
+				</div>
 
 				<Form static formFor={org} horizontal>
 					<fieldset>
 						<legend>
 							{org.name}
-							<DropdownButton bsStyle="primary" title="Actions" id="actions" className="pull-right" onSelect={this.actionSelect}>
-								<MenuItem eventKey="edit" className="todo">Edit Organization</MenuItem>
-								<MenuItem eventKey="createSub" className="todo">Create Sub-Organization</MenuItem>
-								<MenuItem eventKey="createPos" className="todo">Create new Position</MenuItem>
-							</DropdownButton>
 						</legend>
 
 						<Form.Field id="type">
@@ -197,6 +208,8 @@ export default class OrganizationShow extends Page {
 	actionSelect(eventKey, event) {
 		if (eventKey === "createPos") {
 			History.push("/positions/new?organizationId=" + this.state.organization.id)
+		} else if (eventKey === "createSub") { 
+			History.push("/organizations/new?parentOrgId=" + this.state.organization.id)
 		} else {
 			console.log("Unimplemented Action: " + eventKey);
 		}

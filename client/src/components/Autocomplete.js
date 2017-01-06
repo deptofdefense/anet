@@ -35,10 +35,16 @@ export default class Autocomplete extends Component {
 
 	componentWillReceiveProps(props) {
 		let value = props.value
-
 		if (Array.isArray(value)) {
 			this.selectedIds = value.map(object => object.id)
 			value = {}
+		}
+
+		//Ensure that we update the stringValue if we get an updated value
+		let state = this.state
+		if (state) { 
+			state.stringValue = this.getStringValue(value)
+			this.setState(state)
 		}
 
 		return value

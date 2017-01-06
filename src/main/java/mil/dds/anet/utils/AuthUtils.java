@@ -33,5 +33,15 @@ public class AuthUtils {
 		}
 		throw new WebApplicationException(UNAUTH_MESSAGE, Status.UNAUTHORIZED);
 	}
+
+	public static void assertSuperUser(Person user) {
+		Position position = user.getPositionJson();
+		if (position != null && 
+			(position.getType() == PositionType.SUPER_USER ||
+			position.getType() == PositionType.ADMINISTRATOR)) { 
+			return;
+		}
+		throw new WebApplicationException(UNAUTH_MESSAGE, Status.UNAUTHORIZED);
+	}
 	
 }

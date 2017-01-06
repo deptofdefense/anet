@@ -46,7 +46,10 @@ export default class App extends Page {
 		API.query(/* GraphQL */`
 			person(f:me) {
 				id, name
-				position { type }
+				position { 
+					id, name, type, 
+					organization { id, name } 
+				}
 			}
 
 			adminSettings(f:getAll) {

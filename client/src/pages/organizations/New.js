@@ -1,7 +1,7 @@
 import React from 'react'
 import autobind from 'autobind-decorator'
 
-
+import Page from 'components/Page'
 import {ContentForHeader} from 'components/Header'
 import History from 'components/History'
 import Form from 'components/Form'
@@ -11,7 +11,7 @@ import Autocomplete from 'components/Autocomplete'
 import API from 'api'
 import {Organization} from 'models'
 
-export default class OrganizationNew extends React.Component {
+export default class OrganizationNew extends Page {
 	static contextTypes = {
 		router: React.PropTypes.object.isRequired
 	}
@@ -28,9 +28,25 @@ export default class OrganizationNew extends React.Component {
 		}
 	}
 
+	fetchData(props) {
+		if (props.location.query.parentOrgId) { 
+			API.query(/*GraphQL */ `
+				organization(id: ${props.location.query.parentOrgId}) { 
+					id, name, type
+				}
+			`).then(data => { 
+				let org = this.state.org;
+				org.parentOrg = new Organization(data.organization)
+				org.type = org.parentOrg.type
+				this.setState({org})
+			})
+		}
+	}
+
+
 	render() {
 		let org = this.state.org
-
+		
 		return (
 			<div>
 				<ContentForHeader>
