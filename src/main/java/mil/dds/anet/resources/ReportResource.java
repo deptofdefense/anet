@@ -155,7 +155,7 @@ public class ReportResource implements IGraphQLResource {
 	/* Submit a report for approval
 	 * Kicks a report from DRAFT to PENDING_APPROVAL and sets the approval step Id
 	 */
-	@GET
+	@POST
 	@Path("/{id}/submit")
 	public Response submitReport(@PathParam("id") int id) {
 		Report r = dao.getById(id);
