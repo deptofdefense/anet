@@ -1,6 +1,7 @@
 import React from 'react'
 import Page from 'components/Page'
 import {Table, Button, Col} from 'react-bootstrap'
+import autobind from 'autobind-decorator'
 import moment from 'moment'
 
 import Breadcrumbs from 'components/Breadcrumbs'
@@ -204,5 +205,12 @@ export default class ReportShow extends Page {
 				</Form>
 			</div>
 		)
+	}
+
+	@autobind
+	submitDraft() {
+		API.send(`/api/reports/${this.state.report.id}/submit`).then(response => {
+			console.log(response);
+		})
 	}
 }
