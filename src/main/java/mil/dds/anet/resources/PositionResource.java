@@ -69,6 +69,14 @@ public class PositionResource implements IGraphQLResource {
 		return p;
 	}
 	
+	/**
+	 * Creates a new position in the database. Must have Type and Organization with ID specified. 
+	 * Optionally can provide: 
+	 * - position.associatedPositions:  a list of Associated Positions and those relationships will be created at this point. 
+	 * - position.person : If a person ID is provided in the Person object, that person will be put in this position. 
+	 * @param position
+	 * @return the same Position object with the ID field filled in. 
+	 */
 	@POST
 	@Path("/new")
 	@RolesAllowed("SUPER_USER")
@@ -81,7 +89,16 @@ public class PositionResource implements IGraphQLResource {
 		
 		AuthUtils.assertSuperUserForOrg(user, p.getOrganizationJson());
 		
-		return dao.insert(p);
+		Position created = dao.insert(p);
+		
+		if (p.getAssociatedPositions() != null && p.getAssociatedPositions().size() > 0) { 
+			//Create the associations now
+			for (Position associated : p.getAssociatedPositions()) { 
+				dao.associatePosition(created, associated);
+			}
+		}
+		
+		return created;
 	}
 	
 	@POST

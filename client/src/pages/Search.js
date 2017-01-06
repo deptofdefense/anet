@@ -213,7 +213,7 @@ export default class Search extends Page {
 			<tbody>
 				{Position.map(this.state.results.positions, pos =>
 					<tr key={pos.id}>
-						<td><LinkTo position={pos} /></td>
+						<td><LinkTo position={pos} >{pos.code} {pos.name}</LinkTo></td>
 						<td>{pos.type}</td>
 					</tr>
 				)}

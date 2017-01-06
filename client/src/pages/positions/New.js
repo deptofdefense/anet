@@ -43,6 +43,7 @@ export default class PositionNew extends Page {
 
 	render() {
 		let position = this.state.position
+		let relationshipPositionType = (position.type === "ADVISOR") ? "PRINCIPAL" : "ADVISOR";
 
 		return (
 			<div>
@@ -74,11 +75,18 @@ export default class PositionNew extends Page {
 						<Form.Field type="static" value={position.organization.name} label="Organization" id="org" />
 					</fieldset>
 
-					<fieldset className="todo">
-						<legend>Assigned Principals</legend>
+					<fieldset>
+						<legend>Assigned Position Relationships</legend>
 
-						<Form.Field id="assignedPositions">
-							<Autocomplete placeholder="Assign new Position" url="/api/positions/search" valueKey="name" />
+						<Form.Field id="associatedPositions">
+							<Autocomplete 
+								placeholder="Assign new Position Relationship" 
+								url="/api/positions/search" 
+								valueKey="name" 
+								onChange={this.addPositionRelationship} 
+								clearOnSelect={true} 
+								urlParams={"&type=" + relationshipPositionType} />
+
 							<Table hover striped>
 								<thead>
 									<tr>
@@ -88,14 +96,23 @@ export default class PositionNew extends Page {
 									</tr>
 								</thead>
 								<tbody>
+								{Position.map(position.associatedPositions, relPos =>
+									<tr key={relPos.id}>
+										<td onClick={this.removePositionRelationship.bind(this, relPos)}>
+											<span style={{cursor:'pointer'}}>Del</span>
+										</td>
+										<td className="todo"></td>
+										<td>{relPos.name}</td>
+									</tr>
+								)}
 								</tbody>
 							</Table>
 						</Form.Field>
+						<div className="todo">Should be able to search by person name too, but only people in positions.... and then pull up their position... </div>
 					</fieldset>
 
 					<fieldset>
 						<legend>Additional Information</legend>
-
 						<Form.Field id="location">
 							<Autocomplete valueKey="name" placeholder="Position Location" url="/api/locations/search" />
 						</Form.Field>
@@ -103,6 +120,29 @@ export default class PositionNew extends Page {
 				</Form>
 			</div>
 		)
+	}
+
+	@autobind
+	addPositionRelationship(newRelatedPos)  { 
+		let position = this.state.position
+		let rels = position.associatedPositions;
+
+		if (!rels.find(relPos => relPos.id === newRelatedPos.id)) { 
+			rels.push(new Position(newRelatedPos))
+		}
+		this.setState({position})
+	}
+
+	@autobind
+	removePositionRelationship(relToDelete) { 
+		let position = this.state.position;
+		let rels = position.associatedPositions;
+		let index = rels.findIndex(rel => rel.id === relToDelete.id)
+
+		if (index !== -1) { 
+			rels.splice(index, 1)
+			this.setState({position})
+		}
 	}
 
 	@autobind
@@ -116,8 +156,8 @@ export default class PositionNew extends Page {
 		event.stopPropagation()
 		event.preventDefault()
 
-		let position = Object.without(this.state.position, "assignedPositions");
-
+		let position = this.state.position 
+		console.log(position)
 		API.send('/api/positions/new', position, {disableSubmits: true})
 			.then(response => {
 				History.push("/positions/" + response.id);
