@@ -70,6 +70,7 @@ export default class PersonEdit extends Page {
 	@autobind
 	onChange() {
 		let person = this.state.person
+		console.log(person);
 		this.setState({person})
 	}
 

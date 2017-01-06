@@ -95,6 +95,8 @@ public class PersonResource implements IGraphQLResource {
 	
 	/**
 	 * Will update a person record with the {@link Person} entity provided in the http entity. All fields will be updated, so you must pass the complete Person object.
+	 * Optional:
+	 *  - position: If you provide a position on the Person, then this person will be updated to be in that position (unless they already are in that position).  If position is an empty object, the person will be REMOVED from their position.  
 	 * Must be 
 	 *   1) The person editing yourself
 	 *   2) A super user for the person's organization
@@ -109,8 +111,17 @@ public class PersonResource implements IGraphQLResource {
 		}
 		int numRows = dao.update(p);
 		
-		if (p.getPositionJson() != null) { 
-			//TODO: Maybe update position? 
+		if (p.getPositionJson() != null) {
+			//Maybe update position? 
+			Position existing = AnetObjectEngine.getInstance()
+					.getPositionDao().getCurrentPositionForPerson(Person.createWithId(p.getId()));
+			if (existing == null || existing.getId() != p.getPositionJson().getId()) { 
+				//Update the position for this person. 
+				AnetObjectEngine.getInstance().getPositionDao().setPersonInPosition(p, p.getPositionJson());
+			} else if (existing != null && p.getPositionJson().getId() == null) {
+				//Remove this person from their position.
+				AnetObjectEngine.getInstance().getPositionDao().removePersonFromPosition(existing);
+			}
 		}
 		
 		
