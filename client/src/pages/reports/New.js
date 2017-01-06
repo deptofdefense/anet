@@ -56,7 +56,7 @@ export default class ReportNew extends Page {
 
 	render() {
 		let {report, recents} = this.state
-
+		console.log("render", report)
 		return (
 			<div>
 				<ContentForHeader>
@@ -220,6 +220,10 @@ export default class ReportNew extends Page {
 		event.preventDefault()
 
 		let report = this.state.report
+		if(report.primaryAdvisor) { report.attendees.find(a => a.id === report.primaryAdvisor.id).isPrimary = true; }
+		if(report.primaryPrincipal) { report.attendees.find(a => a.id === report.primaryPrincipal.id).isPrimary = true; }
+		console.log(report)
+
 		API.send('/api/reports/new', report)
 			.then(response => {
 				History.push(Report.pathFor(report))

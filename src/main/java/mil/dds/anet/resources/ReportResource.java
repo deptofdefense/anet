@@ -47,6 +47,7 @@ import mil.dds.anet.graphql.GraphQLFetcher;
 import mil.dds.anet.graphql.GraphQLParam;
 import mil.dds.anet.graphql.IGraphQLResource;
 import mil.dds.anet.utils.ResponseUtils;
+import mil.dds.anet.utils.Utils;
 
 @Path("/api/reports")
 @Produces(MediaType.APPLICATION_JSON)
@@ -90,6 +91,14 @@ public class ReportResource implements IGraphQLResource {
 	public Report createNewReport(@Auth Person author, Report r) {
 		if (r.getState() == null) { r.setState(ReportState.DRAFT); }
 		if (r.getAuthor() == null) { r.setAuthor(author); }
+		
+		if (r.getAdvisorOrgJson() == null && r.getPrimaryAdvisor() != null) {
+			r.setAdvisorOrg(engine.getOrganizationForPerson(r.getPrimaryAdvisor()));
+		}
+		if (r.getPrincipalOrgJson() == null && r.getPrimaryPrincipal() != null) {
+			r.setPrincipalOrg(engine.getOrganizationForPerson(r.getPrimaryPrincipal()));
+		}
+		
 		return dao.insert(r);
 	}
 
@@ -124,7 +133,18 @@ public class ReportResource implements IGraphQLResource {
 		case RELEASED:
 			throw new WebApplicationException("Cannot edit a released report", Status.FORBIDDEN);
 		}
+		
 		r.setAuthor(existing.getAuthorJson());
+		
+		//If there is a change to the primary advisor, change the advisor Org. 
+		if (Utils.idEqual(r.getPrimaryAdvisor(), existing.getPrimaryAdvisor()) == false) { 
+			r.setAdvisorOrg(engine.getOrganizationForPerson(r.getPrimaryAdvisor()));
+		}
+		if (Utils.idEqual(r.getPrimaryPrincipal(), existing.getPrimaryPrincipal()) ==  false) { 
+			r.setPrincipalOrg(engine.getOrganizationForPerson(r.getPrimaryPrincipal()));
+		}
+		
+		
 		dao.update(r);
 		//Update Attendees: Fetch the people associated with this report
 		List<ReportPerson> existingPeople = dao.getAttendeesForReport(r.getId());
