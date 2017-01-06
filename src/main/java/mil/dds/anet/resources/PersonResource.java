@@ -22,10 +22,8 @@ import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Position;
-import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Position.PositionType;
 import mil.dds.anet.beans.search.PersonSearchQuery;
-import mil.dds.anet.beans.search.ReportSearchQuery;
 import mil.dds.anet.database.PersonDao;
 import mil.dds.anet.graphql.GraphQLFetcher;
 import mil.dds.anet.graphql.GraphQLParam;
@@ -78,13 +76,21 @@ public class PersonResource implements IGraphQLResource {
 	
 	/**
 	 * Creates a new {@link Person} object as supplied in http entity. 
+	 * Optional: 
+	 * - position: If you provide a Position ID number in the Position object, this person will be associated with that position (Potentially removing anybody currently in the position)
 	 * @return the same Person object with the ID field filled in. 
 	 */
 	@POST
 	@Path("/new")
 	@RolesAllowed("SUPER_USER")
-	public Person createNewPerson(Person p) { 
-		return dao.insert(p);
+	public Person createNewPerson(Person p) {
+		Person created = dao.insert(p);
+		
+		if (created.getPositionJson() != null) { 
+			AnetObjectEngine.getInstance().getPositionDao().setPersonInPosition(created, created.getPositionJson());
+		}
+		
+		return created;
 	}
 	
 	/**

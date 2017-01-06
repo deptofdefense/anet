@@ -31,7 +31,7 @@ export default class ReportTable extends Component {
 				{reports.map(report =>
 					<tr key={report.id}>
 						{showAuthors && <td><LinkTo person={report.author} /></td>}
-						<td>{<LinkTo organization={report.organization} />}</td>
+						<td>{<LinkTo organization={report.advisorOrg} />}</td>
 						<td>{<LinkTo report={report} />}</td>
 						<td>{report.state}</td>
 						<td>{moment(report.updatedAt).fromNow()}</td>

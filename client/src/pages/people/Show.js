@@ -39,6 +39,7 @@ export default class PersonShow extends Page {
 				authoredReports(pageNum:0,pageSize:10) {
 					id,
 					engagementDate,
+					advisorOrg { id, name }
 					intent,
 					author {
 						id,
@@ -48,6 +49,7 @@ export default class PersonShow extends Page {
 				attendedReports(pageNum:0, pageSize:10) {
 					id,
 					engagementDate,
+					advisorOrg { id, name}
 					intent,
 					author {
 						id,

@@ -9,6 +9,7 @@ import History from 'components/History'
 import Form from 'components/Form'
 import Breadcrumbs from 'components/Breadcrumbs'
 import TextEditor from 'components/TextEditor'
+import Autocomplete from 'components/Autocomplete'
 
 import API from 'api'
 import {Person} from 'models'
@@ -90,6 +91,18 @@ export default class PersonNew extends React.Component {
 							<TextEditor label="" />
 						</Form.Field>
 					</fieldset>
+
+					<fieldset>
+						<legend>Position</legend>
+						<Form.Field id="position" >
+							<Autocomplete valueKey="name"  
+								placeholder="Select a position for this person"
+								url="/api/positions/search"
+								urlParams={"&type=" + person.role} />
+						</Form.Field>
+						<span>You can optionally assign this person to a position now</span>
+					</fieldset>
+
 				</Form>
 			</div>
 		)
