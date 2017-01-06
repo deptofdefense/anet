@@ -12,6 +12,7 @@ import RadioGroup from 'components/RadioGroup'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Autocomplete from 'components/Autocomplete'
 import TextEditor from 'components/TextEditor'
+import LinkTo from 'components/LinkTo'
 
 import API from 'api'
 import {Report, Person, Poam} from 'models'
@@ -112,6 +113,7 @@ export default class ReportNew extends Page {
 									<tr>
 										<th></th>
 										<th>Name</th>
+										<th>Type</th>
 										<th>Position</th>
 									</tr>
 								</thead>
@@ -123,6 +125,7 @@ export default class ReportNew extends Page {
 											</td>
 											<td>{person.name} {person.rank && person.rank.toUpperCase()}</td>
 											<td>{person.role}</td>
+											<td><LinkTo position={person.position} /></td>
 										</tr>
 									)}
 								</tbody>

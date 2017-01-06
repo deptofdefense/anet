@@ -123,6 +123,7 @@ export default class ReportShow extends Page {
 							<thead>
 								<tr>
 									<th>Name</th>
+									<th>Type</th>
 									<th>Position</th>
 								</tr>
 							</thead>
@@ -131,6 +132,7 @@ export default class ReportShow extends Page {
 								{Person.map(report.attendees, person =>
 									<tr key={person.id}>
 										<td><LinkTo person={person} /></td>
+										<td>{person.role}</td>
 										<td><LinkTo position={person.position} /></td>
 									</tr>
 								)}
