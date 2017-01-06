@@ -115,7 +115,7 @@ export default class ReportShow extends Page {
 					{report.isPending() &&
 						<fieldset style={{textAlign: 'center'}}>
 							<h4 className="text-danger">This report is PENDING approvals.</h4>
-							<p>It won't be available in the ANET database until your approval organization marks it as approved.</p>
+							<p>It won't be available in the ANET database until your <a href="#approvals">approval organization</a> marks it as approved.</p>
 						</fieldset>
 					}
 
@@ -204,6 +204,7 @@ export default class ReportShow extends Page {
 
 					{report.isPending() &&
 						<fieldset>
+							<a name="approvals" />
 							<legend>Approvals</legend>
 
 							{report.advisorOrg.approvalSteps.map(step =>
