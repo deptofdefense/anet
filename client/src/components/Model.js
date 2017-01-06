@@ -39,6 +39,10 @@ export default class Model {
 		return ['', resourceName, 'new'].join('/')
 	}
 
+	static isEqual(a, b) {
+		return a && b && a.id === b.id
+	}
+
 	constructor(props) {
 		Object.assign(this, this.constructor.schema, props)
 	}

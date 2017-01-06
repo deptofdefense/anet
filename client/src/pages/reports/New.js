@@ -127,7 +127,7 @@ export default class ReportNew extends Page {
 
 											<td onClick={this.setPrimaryAttendee.bind(this, person)}>
 												<span style={{cursor: 'pointer'}}>
-													{report.primaryAdvisor === person || report.primaryPrincipal === person ?
+													{Person.isEqual(report.primaryAdvisor, person) || Person.isEqual(report.primaryPrincipal, person) ?
 														"⭐️" : "☆"
 													}
 												</span>
@@ -232,7 +232,7 @@ export default class ReportNew extends Page {
 		let report = this.state.report
 		let attendees = report.attendees
 
-		if (!attendees.find(attendee => attendee.id === newAttendee.id)) {
+		if (!attendees.find(attendee => Person.isEqual(attendee, newAttendee))) {
 			let person = new Person(newAttendee)
 			attendees.push(person)
 
@@ -249,14 +249,14 @@ export default class ReportNew extends Page {
 	removeAttendee(oldAttendee) {
 		let report = this.state.report
 		let attendees = report.attendees
-		let index = attendees.findIndex(attendee => attendee.id === oldAttendee.id)
+		let index = attendees.findIndex(attendee => Person.isEqual(attendee, oldAttendee))
 
 		if (index !== -1) {
 			let person = attendees[index]
 			attendees.splice(index, 1)
 
 			let primaryKey = person.isAdvisor() ? 'primaryAdvisor' : 'primaryPrincipal'
-			if (report[primaryKey] === person) {
+			if (Person.isEqual(report[primaryKey], person)) {
 				let nextPerson = attendees.find(nextPerson => nextPerson.role === person.role)
 				report[primaryKey] = nextPerson
 			}
