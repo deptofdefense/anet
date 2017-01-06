@@ -62,7 +62,13 @@ export default class ReportNew extends Page {
 				<Breadcrumbs items={[['EF4', '/organizations/ef4'], ['Submit a report', Report.pathForNew()]]} />
 
 				<Form formFor={report} onChange={this.onChange} onSubmit={this.onSubmit} actionText="Save report" horizontal>
-					{this.state.error && <fieldset><p>There was a problem saving this report.</p><p>{this.state.error}</p></fieldset>}
+					{this.state.error &&
+						<fieldset className="text-danger">
+							<p>There was a problem saving this report.</p>
+							<p>{this.state.error}</p>
+						</fieldset>
+					}
+
 					<fieldset>
 						<legend>Engagement details <small>Required</small></legend>
 
@@ -197,12 +203,13 @@ export default class ReportNew extends Page {
 		event.stopPropagation()
 		event.preventDefault()
 
-		this.state.report.save({disableSubmits: true})
-			.then(report => {
+		let report = this.state.report
+		API.send('/api/reports/new', report)
+			.then(response => {
 				History.push(Report.pathFor(report))
 			})
-			.catch(error => {
-				this.setState({errors: error})
+			.catch(response => {
+				this.setState({error: response.message})
 				window.scrollTo(0, 0)
 			})
 	}
