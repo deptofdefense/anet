@@ -11,7 +11,7 @@ import LinkTo from 'components/LinkTo'
 import API from 'api'
 import {Report, Person, Poam} from 'models'
 
-const atmosphereIconStyle = {
+const atmosphereIconCss = {
 	fontSize: '2rem',
 	display: 'inline-block',
 	marginTop: '-4px',
@@ -24,11 +24,19 @@ const atmosphereIcons = {
 	'NEGATIVE': "👎",
 }
 
-const commentFormStyle = {
+const commentFormCss = {
 	marginTop: '50px',
 }
 
+const approvalButtonCss = {
+	marginLeft: '15px',
+}
+
 export default class ReportShow extends Page {
+	static contextTypes = {
+		app: React.PropTypes.object,
+	}
+
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -84,14 +92,20 @@ export default class ReportShow extends Page {
 
 				approvalStatus {
 					type, createdAt
-					step { id, approverGroup {id}}
+					step {
+						id
+						approverGroup {
+							id, members { id }
+						}
+					}
 				}
 			}
 		`).then(data => this.setState({report: new Report(data.report)}))
 	}
 
 	render() {
-		let report = this.state.report
+		let {report} = this.state
+		let {currentUser} = this.context.app.state
 
 		return (
 			<div>
@@ -126,7 +140,7 @@ export default class ReportShow extends Page {
 						<Form.Field id="engagementDate" label="Date 📆" getter={date => moment(date).format("L")} />
 						<Form.Field id="location" label="Location 📍" getter={location => location && location.name} />
 						<Form.Field id="atmosphere" label="Atmospherics">
-							<span style={atmosphereIconStyle}>{atmosphereIcons[report.atmosphere]}</span>
+							<span style={atmosphereIconCss}>{atmosphereIcons[report.atmosphere]}</span>
 							{report.atmosphereDetails}
 						</Form.Field>
 						<Form.Field id="author" label="Report author">
@@ -217,6 +231,14 @@ export default class ReportShow extends Page {
 									}
 								</div>
 							)}
+
+							{currentUser.isSuperUserForOrg(report.advisorOrg) &&
+								<div className="pull-right">
+									<Button bsStyle="danger" style={approvalButtonCss} onClick={this.rejectReport}>Reject</Button>
+									<Button bsStyle="warning" style={approvalButtonCss}>Edit report</Button>
+									<Button bsStyle="primary" style={approvalButtonCss} onClick={this.approveReport}>Approve</Button>
+								</div>
+							}
 						</fieldset>
 					}
 
@@ -250,7 +272,7 @@ export default class ReportShow extends Page {
 
 							{!report.comments.length && "There are no comments yet."}
 
-							<Form formFor={this.state.newComment} horizontal style={commentFormStyle}>
+							<Form formFor={this.state.newComment} horizontal style={commentFormCss}>
 								<Form.Field id="text" placeholder="Type a comment here" label="">
 									<Form.Field.ExtraCol>
 										<Button bsStyle="primary" type="submit">Save comment</Button>
@@ -266,13 +288,29 @@ export default class ReportShow extends Page {
 
 	@autobind
 	submitDraft() {
-		API.send(`/api/reports/${this.state.report.id}/submit`).then(response => {
-			let report = this.state.report
-			report.setState(response)
-			this.setState({report})
-		}).catch(response => {
-			this.setState({error: response.error})
-			window.scrollTo(0, 0)
-		})
+		API.send(`/api/reports/${this.state.report.id}/submit`).then(this.updateReport, this.handleError)
+	}
+
+	@autobind
+	rejectReport() {
+		API.send(`/api/reports/${this.state.report.id}/reject`, {text: "TODO"}).then(this.updateReport, this.handleError)
+	}
+
+	@autobind
+	approveReport() {
+		API.send(`/api/reports/${this.state.report.id}/approve`).then(this.updateReport, this.handleError)
+	}
+
+	@autobind
+	updateReport(json) {
+		let {report} = this.state
+		report.setState(json)
+		this.setState({report})
+	}
+
+	@autobind
+	handleError(response) {
+		this.setState({error: response.error})
+		window.scrollTo(0, 0)
 	}
 }

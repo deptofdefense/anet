@@ -55,8 +55,7 @@ export default class ReportNew extends Page {
 	}
 
 	render() {
-		let report = this.state.report
-		let recents = this.state.recents
+		let {report, recents} = this.state
 
 		return (
 			<div>
@@ -281,7 +280,7 @@ export default class ReportNew extends Page {
 
 	@autobind
 	addMyself() {
-		let currentUser = this.context.app.state.currentUser
+		let {currentUser} = this.context.app.state
 		this.addAttendee(currentUser)
 		this.setPrimaryAttendee(currentUser)
 	}
