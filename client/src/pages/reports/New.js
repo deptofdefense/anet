@@ -112,6 +112,7 @@ export default class ReportNew extends Page {
 								<thead>
 									<tr>
 										<th></th>
+										<th>Primary</th>
 										<th>Name</th>
 										<th>Type</th>
 										<th>Position</th>
@@ -123,6 +124,15 @@ export default class ReportNew extends Page {
 											<td onClick={this.removeAttendee.bind(this, person)}>
 												<span style={{cursor: 'pointer'}}>⛔️</span>
 											</td>
+
+											<td onClick={this.setPrimaryAttendee.bind(this, person)}>
+												<span style={{cursor: 'pointer'}}>
+													{report.primaryAdvisor === person || report.primaryPrincipal === person ?
+														"⭐️" : "☆"
+													}
+												</span>
+											</td>
+
 											<td>{person.name} {person.rank && person.rank.toUpperCase()}</td>
 											<td>{person.role}</td>
 											<td><LinkTo position={person.position} /></td>
@@ -239,6 +249,15 @@ export default class ReportNew extends Page {
 			attendees.splice(index, 1)
 			this.setState({report})
 		}
+	}
+
+	setPrimaryAttendee(person) {
+		let report = this.state.report
+
+		let primaryKey = person.isAdvisor() ? 'primaryAdvisor' : 'primaryPrincipal'
+		report[primaryKey] = person
+
+		this.setState({report})
 	}
 
 	@autobind
