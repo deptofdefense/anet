@@ -225,7 +225,7 @@ export default class ReportNew extends Page {
 		console.log(report)
 
 		API.send('/api/reports/new', report)
-			.then(response => {
+			.then(report => {
 				History.push(Report.pathFor(report))
 			})
 			.catch(response => {
