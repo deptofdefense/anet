@@ -91,7 +91,6 @@ public class ReportResource implements IGraphQLResource {
 	public Report createNewReport(@Auth Person author, Report r) {
 		if (r.getState() == null) { r.setState(ReportState.DRAFT); }
 		if (r.getAuthor() == null) { r.setAuthor(author); }
-		
 		if (r.getAdvisorOrgJson() == null && r.getPrimaryAdvisor() != null) {
 			r.setAdvisorOrg(engine.getOrganizationForPerson(r.getPrimaryAdvisor()));
 		}

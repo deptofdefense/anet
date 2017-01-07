@@ -71,11 +71,13 @@ export default class Model {
 		Object.keys(json).forEach(key => {
 			let value = json[key]
 			if (value instanceof Model)
-				json[key] = {id: value.id}
+				value
+//				json[key] = {id: value.id}
 
 			if (Array.isArray(value)) {
 				json[key] = value.map(child =>
-					child instanceof Model ? {id: child.id} : child
+//					child instanceof Model ? {id: child.id} : child
+					child
 				)
 			}
 		})
