@@ -1,11 +1,8 @@
 import React from 'react'
 import Page from 'components/Page'
-import {Table} from 'react-bootstrap'
-import moment from 'moment'
 
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
-import ReportTable from 'components/ReportTable'
 import LinkTo from 'components/LinkTo'
 import autobind from 'autobind-decorator'
 
@@ -48,10 +45,10 @@ export default class PoamShow extends Page {
 				<Breadcrumbs items={[[poam.shortName, Poam.pathFor(poam)]]} />
 				<Form static formFor={poam} horizontal>
 					<fieldset>
-						<legend>{poam.rank} {poam.longName}</legend>
+						<legend>{poam.longName}</legend>
 						<Form.Field id="shortName" />
 						<Form.Field id="longName" />
-						{ poam.responsibleOrg && poam.responsibleOrg !={} && this.renderOrg()}
+						{ poam.responsibleOrg && poam.responsibleOrg !=={} && this.renderOrg()}
 					</fieldset>
 				</Form>
 			</div>
@@ -67,7 +64,7 @@ export default class PoamShow extends Page {
 				<legend>
 					Responsible Organization
 				</legend>
-				<Form.Field id="name"><LinkTo organization={responsibleOrg}/></Form.Field>
+				<Form.Field id="name"><LinkTo organization={responsibleOrg} /></Form.Field>
 			</fieldset>
 			</Form>
 		)

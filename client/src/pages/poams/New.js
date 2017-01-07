@@ -1,14 +1,10 @@
 import React from 'react'
-import {InputGroup} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
-
-import DatePicker from 'react-bootstrap-date-picker'
 
 import {ContentForHeader} from 'components/Header'
 import History from 'components/History'
 import Form from 'components/Form'
 import Breadcrumbs from 'components/Breadcrumbs'
-import TextEditor from 'components/TextEditor'
 import Autocomplete from 'components/Autocomplete'
 
 import API from 'api'
@@ -51,8 +47,7 @@ export default class PoamNew extends React.Component {
 						<Form.Field id="responsibleOrg">
 							<Autocomplete valueKey="name"  
 								placeholder="Select a responsible organization for this poam"
-								url="/api/organizations/search"
-                                valueKey="name" />
+								url="/api/organizations/search" />
 						</Form.Field>
 					</fieldset>
 				</Form>
