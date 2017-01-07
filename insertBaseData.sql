@@ -100,7 +100,7 @@ INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES
 UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'hunter+erin@dds.mil') WHERE name = 'EF2.1 Advisor B';
 INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES
 	((SELECT id from positions where name = 'EF2.1 Advisor B'), (SELECT id from people where emailAddress = 'hunter+jack@dds.mil'), CURRENT_TIMESTAMP);
-UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'hunter+jack@dds.mil') WHERE name = 'EF2.1 Advisor 4987';
+UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'hunter+jack@dds.mil') WHERE name = 'EF2.1 Advisor B';
 
 -- Put Elizabeth into the EF1 Advisor Billet
 INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES 
