@@ -11,7 +11,10 @@ export default class Report extends Model {
 		poams: [],
 		comments: [],
 		reportText: '',
+		nextStepsSummary: '',
 		nextSteps: '',
+		keyOutcomesSummary: '',
+		keyOutcomes: ''
 	}
 
 	isDraft() {

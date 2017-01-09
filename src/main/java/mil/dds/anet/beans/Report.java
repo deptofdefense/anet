@@ -37,8 +37,11 @@ public class Report extends AbstractAnetBean {
 	List<ReportPerson> attendees;
 	List<Poam> poams;
 	
-	String reportText;
+	String keyOutcomesSummary;
+	String keyOutcomes;
+	String nextStepsSummary;
 	String nextSteps;
+	String reportText;
 	
 	Person author;	
 	
@@ -189,6 +192,30 @@ public class Report extends AbstractAnetBean {
 	@JsonGetter("poams")
 	public List<Poam> getPoamsJson() { 
 		return poams;
+	}
+
+	public String getKeyOutcomesSummary() {
+		return keyOutcomesSummary;
+	}
+
+	public void setKeyOutcomesSummary(String keyOutcomesSummary) {
+		this.keyOutcomesSummary = keyOutcomesSummary;
+	}
+
+	public String getKeyOutcomes() {
+		return keyOutcomes;
+	}
+
+	public void setKeyOutcomes(String keyOutcomes) {
+		this.keyOutcomes = keyOutcomes;
+	}
+
+	public String getNextStepsSummary() {
+		return nextStepsSummary;
+	}
+
+	public void setNextStepsSummary(String nextStepsSummary) {
+		this.nextStepsSummary = nextStepsSummary;
 	}
 
 	public String getReportText() {

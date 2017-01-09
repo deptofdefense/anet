@@ -437,4 +437,21 @@
 			constraintName="fk_reports_principalOrg" onDelete="NO ACTION" onUpdate="NO ACTION"
 			referencedColumnNames="id" referencedTableName="organizations" />
 	</changeSet>
+
+	<changeSet id="15" author="hpitelka" >
+		<addColumn tableName="reports">
+			<column name="keyOutcomesSummary" type="text" />
+		</addColumn>
+		<addColumn tableName="reports">
+			<column name="keyOutcomes" type="text" />
+		</addColumn>
+		<addColumn tableName="reports">
+			<column name="nextStepsSummary" type="text" />
+		</addColumn>
+
+		<sql dbms="mssql">
+			ALTER FULLTEXT INDEX 
+			CREATE FULLTEXT INDEX ON reports(text, nextSteps, intent, atmosphereDetails) KEY INDEX PK_REPORTS;
+		</sql>
+	</changeSet>
 </databaseChangeLog>
