@@ -14,7 +14,7 @@ import API from 'api'
 import {Person} from 'models'
 
 export default class PersonShow extends Page {
-	static contextTypes = { 
+	static contextTypes = {
 		app: React.PropTypes.object.isRequired,
 	}
 
@@ -82,10 +82,10 @@ export default class PersonShow extends Page {
 			</tr>
 		}
 
-		//User can always edit themselves, or Super Users/Admins. 
+		//User can always edit themselves, or Super Users/Admins.
 		let currentUser = this.context.app.state.currentUser;
-		let canEdit = (currentUser) ? ((currentUser.id === person.id) || 
-			currentUser.isSuperUser() || currentUser.isAdmin()) : false
+		let canEdit = currentUser && (currentUser.id === person.id ||
+			currentUser.isSuperUser())
 
 		return (
 			<div>
@@ -142,7 +142,7 @@ export default class PersonShow extends Page {
 	@autobind
 	actionSelect(eventKey, event) {
 		if (eventKey === "edit") {
-			History.push("/people/" + this.state.person.id + "/edit");
+			History.push(`/people/${this.state.person.id}/edit`);
 		} else {
 			console.log("Unimplemented Action: " + eventKey);
 		}

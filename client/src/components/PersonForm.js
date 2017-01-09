@@ -6,28 +6,24 @@ import Form from 'components/Form'
 import DatePicker from 'react-bootstrap-date-picker'
 import {InputGroup} from 'react-bootstrap'
 
-export default class PersonForm extends Component { 
+export default class PersonForm extends Component {
 	static propTypes = {
 		person: React.PropTypes.object,
 		onChange: React.PropTypes.func,
-		onSubmit: React.PropTypes.func, 
+		onSubmit: React.PropTypes.func,
 		edit: React.PropTypes.bool,
 		actionText: React.PropTypes.string,
 		error: React.PropTypes.object,
 	}
 
 	render() {
-		let person = this.props.person
-		let onChange = this.props.onChange
-		let onSubmit = this.props.onSubmit
-		let actionText = this.props.actionText
-		let error = this.props.error
+		let {person, onChange, onSubmit, actionText, error} = this.props
 
-		return <Form formFor={person} onChange={onChange} 
-				onSubmit={onSubmit} horizontal 
-				actionText={actionText} >
-			
-			{error && 
+		return <Form formFor={person} onChange={onChange}
+			onSubmit={onSubmit} horizontal
+			actionText={actionText}>
+
+			{error &&
 				<fieldset>
 					<p>There was a problem saving this person</p>
 					<p>{error}</p>
@@ -86,7 +82,7 @@ export default class PersonForm extends Component {
 			<fieldset>
 				<legend>Position</legend>
 				<Form.Field id="position" >
-					<Autocomplete valueKey="name"  
+					<Autocomplete valueKey="name"
 						placeholder="Select a position for this person"
 						url="/api/positions/search"
 						urlParams={"&type=" + person.role} />

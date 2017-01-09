@@ -12,10 +12,6 @@ import API from 'api'
 import {Person} from 'models'
 
 export default class PersonEdit extends Page {
-	static contextTypes = {
-		router: React.PropTypes.object.isRequired
-	}
-
 	static pageProps = {
 		useNavigation: false
 	}
@@ -28,18 +24,18 @@ export default class PersonEdit extends Page {
 		}
 	}
 
-	fetchData(props) { 
+	fetchData(props) {
 		API.query(/*GraphQL*/ `
-			person(id:${props.params.id}) { 
-				id, 
-				name, rank, role, emailAddress, phoneNumber, 
+			person(id:${props.params.id}) {
+				id,
+				name, rank, role, emailAddress, phoneNumber,
 				biography, country, gender, endOfTourDate,
-				position { 
+				position {
 					id, name
 				}
 			}
 		`).then(data => {
-			if (data.person.endOfTourDate) { 
+			if (data.person.endOfTourDate) {
 				data.person.endOfTourDate = moment(data.person.endOfTourDate).format()
 			}
 			this.setState({person: new Person(data.person)})
@@ -55,14 +51,14 @@ export default class PersonEdit extends Page {
 					<h2>Create a new Person</h2>
 				</ContentForHeader>
 
-				<Breadcrumbs items={[['Edit ' + person.name, '/people/' + person.id + '/edit']]} />
-				<PersonForm 
-					person={person} 
-					onChange={this.onChange} 
-					onSubmit={this.onSubmit} 
+				<Breadcrumbs items={[[`Edit ${person.name}`, `/people/${person.id}/edit`]]} />
+				<PersonForm
+					person={person}
+					onChange={this.onChange}
+					onSubmit={this.onSubmit}
 					actionText="Save Person"
 					edit
-					error={this.state.error}/> 
+					error={this.state.error}/>
 			</div>
 		)
 	}
@@ -70,7 +66,6 @@ export default class PersonEdit extends Page {
 	@autobind
 	onChange() {
 		let person = this.state.person
-		console.log(person);
 		this.setState({person})
 	}
 

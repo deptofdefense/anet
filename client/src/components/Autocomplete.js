@@ -42,7 +42,7 @@ export default class Autocomplete extends Component {
 
 		//Ensure that we update the stringValue if we get an updated value
 		let state = this.state
-		if (state) { 
+		if (state) {
 			state.stringValue = this.getStringValue(value)
 			this.setState(state)
 		}
@@ -88,8 +88,8 @@ export default class Autocomplete extends Component {
 	fetchSuggestions(value) {
 		if (this.props.url) {
 			let url = this.props.url + '?text=' + value.value
-			if (this.props.urlParams) { 
-				if (this.props.urlParams[0] !== '&') { 
+			if (this.props.urlParams) {
+				if (this.props.urlParams[0] !== '&') {
 					url += "&"
 				}
 				url += this.props.urlParams
@@ -116,8 +116,6 @@ export default class Autocomplete extends Component {
 		event.stopPropagation()
 		event.preventDefault()
 
-		console.log("oss", suggestion)
-
 		let stringValue = this.props.clearOnSelect ? '' : suggestionValue
 		this.setState({value: suggestion, stringValue})
 
@@ -127,10 +125,9 @@ export default class Autocomplete extends Component {
 
 	@autobind
 	onInputChange(event) {
-		console.log("oic", event);
-		if (event.target.value.length === 0) { //Clear the suggestion
+		if (!event.target.value) { //Clear the suggestion
 			this.onSuggestionSelected(event, {suggestion: {}, suggestionValue: ''})
-		} else { 
+		} else {
 			this.setState({stringValue: event.target.value})
 		}
 		event.stopPropagation()
