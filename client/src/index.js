@@ -25,6 +25,7 @@ import OrganizationShow from './pages/organizations/Show'
 import OrganizationNew from './pages/organizations/New'
 
 import PositionShow from './pages/positions/Show'
+import PositionEdit from './pages/positions/Edit'
 import PositionNew from './pages/positions/New'
 
 import AdminIndex from './pages/admin/Index'
@@ -64,6 +65,7 @@ ReactDOM.render((
 
 				<Route path="positions">
 					<Route path="new" component={PositionNew} />
+					<Route path=":id/edit" component={PositionEdit} />
 					<Route path=":id" component={PositionShow} />
 				</Route>
 

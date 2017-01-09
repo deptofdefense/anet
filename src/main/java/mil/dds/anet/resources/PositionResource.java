@@ -1,6 +1,7 @@
 package mil.dds.anet.resources;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -33,6 +34,7 @@ import mil.dds.anet.graphql.GraphQLParam;
 import mil.dds.anet.graphql.IGraphQLResource;
 import mil.dds.anet.utils.AuthUtils;
 import mil.dds.anet.utils.ResponseUtils;
+import mil.dds.anet.utils.Utils;
 
 @Path("/api/positions")
 @Produces(MediaType.APPLICATION_JSON)
@@ -91,6 +93,11 @@ public class PositionResource implements IGraphQLResource {
 		
 		Position created = dao.insert(p);
 		
+		if (p.getPersonJson() != null) { 
+			//Put the person in the position now. 
+			dao.setPersonInPosition(p.getPersonJson(), p);
+		}
+		
 		if (p.getAssociatedPositions() != null && p.getAssociatedPositions().size() > 0) { 
 			//Create the associations now
 			for (Position associated : p.getAssociatedPositions()) { 
@@ -107,6 +114,31 @@ public class PositionResource implements IGraphQLResource {
 	public Response updatePosition(@Auth Person user, Position pos) {
 		AuthUtils.assertSuperUserForOrg(user, pos.getOrganizationJson());
 		int numRows = dao.update(pos);
+		
+		if (pos.getPersonJson() != null || pos.getAssociatedPositionsJson() != null) { 
+			//Run the diff and see if anything changed and update. 
+			
+			Position current = dao.getById(pos.getId());
+			if (pos.getPersonJson() != null && Utils.idEqual(pos.getPersonJson(), current.getPersonJson()) == false) { 
+				dao.setPersonInPosition(pos.getPersonJson(), pos);
+			}
+
+			if (pos.getAssociatedPositionsJson() != null) { 
+				List<Integer> existingIds = current.getAssociatedPositions().stream().map(p -> p.getId()).collect(Collectors.toList());			
+				for (Position newPos : pos.getAssociatedPositionsJson()) { 
+					if (existingIds.remove(newPos.getId()) == false) { 
+						//Add this relationship
+						dao.associatePosition(newPos, pos);
+					}
+				}
+				
+				//Now remove all items in existingIds. 
+				for (Integer id : existingIds) { 
+					dao.deletePositionAssociation(pos, Position.createWithId(id));
+				}
+			}	
+		}
+		
 		return (numRows == 1) ? Response.ok().build() : Response.status(Status.NOT_FOUND).build();
 	}
 	

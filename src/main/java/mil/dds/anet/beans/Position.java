@@ -109,6 +109,11 @@ public class Position extends AbstractAnetBean {
 		return associatedPositions;
 	}
 	
+	@JsonIgnore
+	public List<Position> getAssociatedPositionsJson() { 
+		return associatedPositions;
+	}
+	
 	@JsonSetter("associatedPositions")
 	public void setAssociatedPositions(List<Position> associatedPositions) { 
 		this.associatedPositions = associatedPositions;
