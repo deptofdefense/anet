@@ -30,6 +30,7 @@ import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.ReportPerson;
 import mil.dds.anet.graphql.AnetResourceDataFetcher;
 import mil.dds.anet.graphql.GraphQLIgnore;
+import mil.dds.anet.graphql.IGraphQLBean;
 import mil.dds.anet.graphql.IGraphQLResource;
 import mil.dds.anet.utils.GraphQLUtils;
 import mil.dds.anet.views.AbstractAnetBean;
@@ -54,7 +55,7 @@ public class GraphQLResource {
 		
 		//Go through all of the resources to build object types for each. 
 		for (IGraphQLResource resource : resources) {
-			Class<? extends AbstractAnetBean> beanClazz = resource.getBeanClass();
+			Class<? extends IGraphQLBean> beanClazz = resource.getBeanClass();
 			String name = GraphQLUtils.lowerCaseFirstLetter(beanClazz.getSimpleName());
 			GraphQLObjectType objectType = buildTypeFromBean(name, beanClazz);
 			
@@ -80,8 +81,6 @@ public class GraphQLResource {
 					.build();
 				queryTypeBuilder.field(listField);
 			}
-			
-				
 		}
 		
 		//TODO: find a way to not have to do this. 
@@ -106,7 +105,7 @@ public class GraphQLResource {
 		graphql = new GraphQL(schmea);
 	}
 	
-	private GraphQLObjectType buildTypeFromBean(String name, Class<? extends AbstractAnetBean> beanClazz) { 
+	private GraphQLObjectType buildTypeFromBean(String name, Class<? extends IGraphQLBean> beanClazz) { 
 		GraphQLObjectType.Builder builder = GraphQLObjectType.newObject()
 			.name(name);
 

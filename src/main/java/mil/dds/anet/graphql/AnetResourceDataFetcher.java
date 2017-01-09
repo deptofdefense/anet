@@ -232,7 +232,9 @@ public class AnetResourceDataFetcher implements DataFetcher {
 				} else {  
 					continue;
 				}
-				if (environment.getArgument(argName) == null) { 
+				
+				//Fail if we're missing an arugment, unless it has a @DefaultValue
+				if (environment.getArgument(argName) == null && (!param.isAnnotationPresent(DefaultValue.class))) { 
 					throw new WebApplicationException("Missing argument for function " + functionName + ", arg: " + argName);
 				}
 			}
