@@ -62,13 +62,14 @@ export default class LocationNew extends React.Component {
 	onSubmit(event) {
 		event.stopPropagation()
 		event.preventDefault()
-
-		this.state.location.save().then(location => {
-			History.push(Location.pathFor(location))
-		}).catch(error => {
-			this.setState({error: error})
-			window.scrollTo(0, 0)
-		})
+		
+		API.send("/api/locations/new", this.state.location, {disableSubmits: true})
+			.then(location => {
+				History.push(Location.pathFor(location))
+			}).catch(error => {
+				this.setState({error: error})
+				window.scrollTo(0, 0)
+			})
 	}
 
 }
