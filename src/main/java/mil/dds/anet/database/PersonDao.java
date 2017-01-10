@@ -88,12 +88,19 @@ public class PersonDao implements IAnetDao<Person> {
 	
 	public int update(Person p){
 		p.setUpdatedAt(DateTime.now());
-		return dbHandle.createStatement("UPDATE people " + 
+		StringBuilder sql = new StringBuilder("UPDATE people " + 
 				"SET name = :name, status = :status, role = :role, " + 
-				"gender = :gender, country = :country, endOfTourDate = :endOfTourDate, " + 
+				"gender = :gender, country = :country,  " + 
 				"phoneNumber = :phoneNumber, rank = :rank, biography = :biography, " +
-				"pendingVerification = :pendingVerification, updatedAt = :updatedAt "
-				+ "WHERE id = :id")
+				"pendingVerification = :pendingVerification, updatedAt = :updatedAt, ");
+		if (DaoUtils.isMsSql(dbHandle)) {
+			//MsSql requires an explicit CAST when datetime2 might be NULL. 
+			sql.append("endOfTourDate = CAST(:endOfTourDate AS datetime2) ");
+		} else {
+			sql.append("endOfTourDate = :endOfTourDate ");
+		}
+		sql.append("WHERE id = :id");
+		return dbHandle.createStatement(sql.toString())
 			.bindFromProperties(p)
 			.bind("status", DaoUtils.getEnumId(p.getStatus()))
 			.bind("role", DaoUtils.getEnumId(p.getRole()))
