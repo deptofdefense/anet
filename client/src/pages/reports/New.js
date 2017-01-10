@@ -132,9 +132,7 @@ export default class ReportNew extends Page {
 
 											<td onClick={this.setPrimaryAttendee.bind(this, person)}>
 												<span style={{cursor: 'pointer'}}>
-													{Person.isEqual(report.primaryAdvisor, person) || Person.isEqual(report.primaryPrincipal, person) ?
-														"⭐️" : "☆"
-													}
+													{person.primary ? "⭐️" : "☆"}
 												</span>
 											</td>
 
@@ -259,8 +257,6 @@ export default class ReportNew extends Page {
 		event.preventDefault()
 
 		let report = this.state.report
-		if(report.primaryAdvisor) { report.attendees.find(a => a.id === report.primaryAdvisor.id).primary = true; }
-		if(report.primaryPrincipal) { report.attendees.find(a => a.id === report.primaryPrincipal.id).primary = true; }
 
 		API.send('/api/reports/new', report)
 			.then(report => {
@@ -274,19 +270,21 @@ export default class ReportNew extends Page {
 
 	@autobind
 	addAttendee(newAttendee) {
+		if (!newAttendee || !newAttendee.id)
+			return
+
 		let report = this.state.report
 		let attendees = report.attendees
 
-		if (!attendees.find(attendee => Person.isEqual(attendee, newAttendee))) {
-			let person = new Person(newAttendee)
-			attendees.push(person)
+		if (attendees.find(attendee => Person.isEqual(attendee, newAttendee)))
+			return
 
-			let primaryKey = person.isAdvisor() ? 'primaryAdvisor' : 'primaryPrincipal'
-			if (!report[primaryKey]) {
-				report[primaryKey] = person
-			}
-		}
+		let person = new Person(newAttendee)
 
+		if (!attendees.find(attendee => attendee.role === person.role && attendee.primary))
+			person.primary = true
+
+		attendees.push(person)
 		this.setState({report})
 	}
 
@@ -300,10 +298,10 @@ export default class ReportNew extends Page {
 			let person = attendees[index]
 			attendees.splice(index, 1)
 
-			let primaryKey = person.isAdvisor() ? 'primaryAdvisor' : 'primaryPrincipal'
-			if (Person.isEqual(report[primaryKey], person)) {
+			if (person.primary) {
 				let nextPerson = attendees.find(nextPerson => nextPerson.role === person.role)
-				report[primaryKey] = nextPerson
+				if (nextPerson)
+					nextPerson.primary = true
 			}
 
 			this.setState({report})
@@ -313,9 +311,14 @@ export default class ReportNew extends Page {
 	@autobind
 	setPrimaryAttendee(person) {
 		let report = this.state.report
+		let attendees = report.attendees
 
-		let primaryKey = person.isAdvisor() ? 'primaryAdvisor' : 'primaryPrincipal'
-		report[primaryKey] = person
+		attendees.forEach(nextPerson => {
+			if (nextPerson.role === person.role)
+				nextPerson.primary = false
+			if (Person.isEqual(nextPerson, person))
+				nextPerson.primary = true
+		})
 
 		this.setState({report})
 	}
