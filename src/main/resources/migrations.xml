@@ -450,8 +450,7 @@
 		</addColumn>
 
 		<sql dbms="mssql">
-			ALTER FULLTEXT INDEX 
-			CREATE FULLTEXT INDEX ON reports(text, nextSteps, intent, atmosphereDetails) KEY INDEX PK_REPORTS;
+			ALTER FULLTEXT INDEX ON reports ADD (keyOutcomesSummary, keyOutcomes, nextStepsSummary)
 		</sql>
 	</changeSet>
 </databaseChangeLog>
