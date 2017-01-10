@@ -87,15 +87,15 @@ public class PositionResource implements IGraphQLResource {
 			throw new WebApplicationException("Position Name must not be null", Status.BAD_REQUEST);
 		}
 		if (p.getType() == null) { throw new WebApplicationException("Position type must be defined", Status.BAD_REQUEST); }
-		if (p.getOrganizationJson() == null) { throw new WebApplicationException("A Position must belong to an organization", Status.BAD_REQUEST); } 
+		if (p.getOrganization() == null) { throw new WebApplicationException("A Position must belong to an organization", Status.BAD_REQUEST); } 
 		
-		AuthUtils.assertSuperUserForOrg(user, p.getOrganizationJson());
+		AuthUtils.assertSuperUserForOrg(user, p.getOrganization());
 		
 		Position created = dao.insert(p);
 		
-		if (p.getPersonJson() != null) { 
+		if (p.getPerson() != null) { 
 			//Put the person in the position now. 
-			dao.setPersonInPosition(p.getPersonJson(), p);
+			dao.setPersonInPosition(p.getPerson(), p);
 		}
 		
 		if (p.getAssociatedPositions() != null && p.getAssociatedPositions().size() > 0) { 
@@ -112,20 +112,20 @@ public class PositionResource implements IGraphQLResource {
 	@Path("/update")
 	@RolesAllowed("SUPER_USER")
 	public Response updatePosition(@Auth Person user, Position pos) {
-		AuthUtils.assertSuperUserForOrg(user, pos.getOrganizationJson());
+		AuthUtils.assertSuperUserForOrg(user, pos.getOrganization());
 		int numRows = dao.update(pos);
 		
-		if (pos.getPersonJson() != null || pos.getAssociatedPositionsJson() != null) { 
+		if (pos.getPerson() != null || pos.getAssociatedPositions() != null) { 
 			//Run the diff and see if anything changed and update. 
 			
 			Position current = dao.getById(pos.getId());
-			if (pos.getPersonJson() != null && Utils.idEqual(pos.getPersonJson(), current.getPersonJson()) == false) { 
-				dao.setPersonInPosition(pos.getPersonJson(), pos);
+			if (pos.getPerson() != null && Utils.idEqual(pos.getPerson(), current.getPerson()) == false) { 
+				dao.setPersonInPosition(pos.getPerson(), pos);
 			}
 
-			if (pos.getAssociatedPositionsJson() != null) { 
-				List<Integer> existingIds = current.getAssociatedPositions().stream().map(p -> p.getId()).collect(Collectors.toList());			
-				for (Position newPos : pos.getAssociatedPositionsJson()) { 
+			if (pos.getAssociatedPositions() != null) { 
+				List<Integer> existingIds = current.loadAssociatedPositions().stream().map(p -> p.getId()).collect(Collectors.toList());			
+				for (Position newPos : pos.getAssociatedPositions()) { 
 					if (existingIds.remove(newPos.getId()) == false) { 
 						//Add this relationship
 						dao.associatePosition(newPos, pos);
@@ -156,7 +156,7 @@ public class PositionResource implements IGraphQLResource {
 	@RolesAllowed("SUPER_USER")
 	public Response putPersonInPosition(@Auth Person user, @PathParam("id") int positionId, Person p) {
 		Position pos = engine.getPositionDao().getById(positionId);
-		AuthUtils.assertSuperUserForOrg(user, pos.getOrganizationJson());
+		AuthUtils.assertSuperUserForOrg(user, pos.getOrganization());
 		
 		dao.setPersonInPosition(p, pos);
 		return Response.ok().build();

@@ -1,0 +1,51 @@
+report(id:${reportId}) {
+    id, intent, engagementDate, atmosphere, atmosphereDetails
+    keyOutcomesSummary, keyOutcomes, nextStepsSummary, reportText, nextSteps
+
+    state
+
+    location { id, name }
+    author {
+        id, name
+        position {
+            organization {
+                name
+                approvalSteps {
+                    id
+                    approverGroup {
+                        id, name
+                        members { id, name, rank }
+                    }
+                }
+            }
+        }
+    }
+
+    attendees {
+        id, name, role
+        position { id, name }
+    }
+    primaryAdvisor { id }
+    primaryPrincipal { id }
+
+    poams { id, shortName, longName, responsibleOrg { id, name} }
+
+    comments {
+        id, text, createdAt, updatedAt
+        author { id, name, rank }
+    }
+
+    principalOrg { id, name }
+    advisorOrg { id, name }
+
+    approvalStatus {
+        type, createdAt
+        step { id }
+    }
+
+    approvalStep {
+        approverGroup {
+            members { id }
+        }
+    }
+}

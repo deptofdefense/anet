@@ -24,7 +24,7 @@ public class PositionMapper implements ResultSetMapper<Position> {
 		Position p = fillInFields(new Position(), r);
 		
 		if (MapperUtils.containsColumnNamed(r, "people_id")) { 
-			PersonMapper.fillInFields(p.getPersonJson(), r);
+			PersonMapper.fillInFields(p.getPerson(), r);
 		}
 		return p;
 	}

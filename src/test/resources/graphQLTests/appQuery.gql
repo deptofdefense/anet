@@ -1,0 +1,15 @@
+person(f:me) {
+    id, name, role
+    position {
+        id, name, type,
+        organization { id, name }
+    }
+}
+
+adminSettings(f:getAll) {
+    key, value
+}
+organizations(f:getTopLevelOrgs, type: ADVISOR_ORG) {
+    id, name
+    parentOrg { id }
+}

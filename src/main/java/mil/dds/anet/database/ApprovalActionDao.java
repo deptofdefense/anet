@@ -24,7 +24,7 @@ public class ApprovalActionDao implements IAnetDao<ApprovalAction> {
 				"(approvalStepId, personId, reportId, createdAt, type) " + 
 				"VALUES (:approvalStepId, :personId, :reportId, :createdAt, :type)")
 			.bind("approvalStepId", action.getStep().getId())
-			.bind("personId", action.getPersonJson().getId())
+			.bind("personId", action.getPerson().getId())
 			.bind("reportId", action.getReport().getId())
 			.bind("createdAt", action.getCreatedAt())
 			.bind("type", action.getType().ordinal())

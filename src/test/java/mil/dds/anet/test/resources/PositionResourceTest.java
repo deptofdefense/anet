@@ -65,7 +65,7 @@ public class PositionResourceTest extends AbstractResourceTest {
 		
 		//change the person in this position
 		Person steve = getSteveSteveson();
-		Position stevesCurrentPosition = steve.getPosition();
+		Position stevesCurrentPosition = steve.loadPosition();
 		resp = httpQuery(String.format("/api/positions/%d/person", returned.getId()), admin).post(Entity.json(steve));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
@@ -163,7 +163,7 @@ public class PositionResourceTest extends AbstractResourceTest {
 		
 		//Assign Principal
 		Person steve = getSteveSteveson();
-		Position stevesCurrPos = steve.getPosition();
+		Position stevesCurrPos = steve.loadPosition();
 		assertThat(stevesCurrPos).isNotNull();
 		
 		resp = httpQuery(String.format("/api/positions/%d/person",created.getId()), admin).post(Entity.json(steve));
@@ -198,7 +198,7 @@ public class PositionResourceTest extends AbstractResourceTest {
 		query.setIsFilled(false);
 		searchResults = httpQuery("/api/positions/search", jack).post(Entity.json(query), new GenericType<List<Position>>() {});
 		assertThat(searchResults).isNotEmpty();
-		assertThat(searchResults.stream().filter(p -> (p.getPersonJson() == null)).collect(Collectors.toList()))
+		assertThat(searchResults.stream().filter(p -> (p.getPerson() == null)).collect(Collectors.toList()))
 			.hasSameElementsAs(searchResults);
 		
 		//Search by name and is filled and type
@@ -207,7 +207,7 @@ public class PositionResourceTest extends AbstractResourceTest {
 		searchResults = httpQuery("/api/positions/search", jack).post(Entity.json(query), new GenericType<List<Position>>() {});
 		assertThat(searchResults).isNotEmpty();
 		assertThat(searchResults.stream()
-				.filter(p -> (p.getPersonJson() != null))
+				.filter(p -> (p.getPerson() != null))
 				.filter(p -> p.getType().equals(PositionType.ADVISOR))
 				.collect(Collectors.toList()))
 			.hasSameElementsAs(searchResults);

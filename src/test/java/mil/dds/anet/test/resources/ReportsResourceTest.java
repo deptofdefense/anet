@@ -59,9 +59,9 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		//Create a principal for the report
 		ReportPerson principal = PersonTest.personToReportPerson(getSteveSteveson());
 		principal.setPrimary(true);
-		Position principalPosition = principal.getPosition();
+		Position principalPosition = principal.loadPosition();
 		assertThat(principalPosition).isNotNull();
-		Organization principalOrg = principalPosition.getOrganization();
+		Organization principalOrg = principalPosition.loadOrganization();
 		assertThat(principalOrg).isNotNull();
 
 		//Create an Advising Organization for the report writer
@@ -171,11 +171,11 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		assertThat(returned.getLocation().getId()).isEqualTo(loc.getId());
 
 		//verify the principals on this report
-		assertThat(returned.getAttendees()).contains(principal);
+		assertThat(returned.loadAttendees()).contains(principal);
 		returned.setAttendees(null); //Annoyning, but required to make future .equals checks pass, because we just caused a lazy load.
 
 		//verify the poams on this report
-		assertThat(returned.getPoams()).contains(action);
+		assertThat(returned.loadPoams()).contains(action);
 		returned.setPoams(null);
 
 		//Verify this shows up on the approvers list of pending documents
@@ -186,14 +186,14 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		assertThat(pending).contains(returned);
 
 		//Check on Report status for who needs to approve
-		List<ApprovalAction> approvalStatus = returned.getApprovalStatus();
+		List<ApprovalAction> approvalStatus = returned.loadApprovalStatus();
 		assertThat(approvalStatus.size()).isEqualTo(2);
 		ApprovalAction approvalAction = approvalStatus.get(0);
-		assertThat(approvalAction.getPersonJson()).isNull(); //Because this hasn't been approved yet.
+		assertThat(approvalAction.getPerson()).isNull(); //Because this hasn't been approved yet.
 		assertThat(approvalAction.getCreatedAt()).isNull();
-		assertThat(approvalAction.getStep()).isEqualTo(steps.get(0));
+		assertThat(approvalAction.loadStep()).isEqualTo(steps.get(0));
 		approvalAction = approvalStatus.get(1);
-		assertThat(approvalAction.getStep()).isEqualTo(steps.get(1));
+		assertThat(approvalAction.loadStep()).isEqualTo(steps.get(1));
 
 		//Reject the report
 		resp = httpQuery(String.format("/api/reports/%d/reject", created.getId()), approver1)
@@ -234,14 +234,14 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		assertThat(returned.getApprovalStep()).isNull();
 
 		//check on report status to see that it got approved.
-		approvalStatus = returned.getApprovalStatus();
+		approvalStatus = returned.loadApprovalStatus();
 		assertThat(approvalStatus.size()).isEqualTo(2);
 		approvalAction = approvalStatus.get(0);
-		assertThat(approvalAction.getPersonJson().getId()).isEqualTo(approver1.getId());
+		assertThat(approvalAction.getPerson().getId()).isEqualTo(approver1.getId());
 		assertThat(approvalAction.getCreatedAt()).isNotNull();
-		assertThat(approvalAction.getStep()).isEqualTo(steps.get(0));
+		assertThat(approvalAction.loadStep()).isEqualTo(steps.get(0));
 		approvalAction = approvalStatus.get(1);
-		assertThat(approvalAction.getStep()).isEqualTo(steps.get(1));
+		assertThat(approvalAction.loadStep()).isEqualTo(steps.get(1));
 
 		//Post a comment on the report because it's awesome
 		Comment cOne = httpQuery(String.format("/api/reports/%d/comments", created.getId()), author)
@@ -315,7 +315,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 				.get(new GenericType<List<ApprovalStep>>() {});
 		assertThat(steps).isNotNull();
 		assertThat(steps).hasSize(1);
-		assertThat(returned.getApprovalStepJson().getId()).isEqualTo(steps.get(0).getId());
+		assertThat(returned.getApprovalStep().getId()).isEqualTo(steps.get(0).getId());
 
 		//Get the Person who is able to approve that report (nick@example.com)
 		Person nick = new Person();
@@ -357,7 +357,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		Report returned2 = httpQuery("/api/reports/" + r.getId(), jack).get(Report.class);
 		assertThat(returned2.getId()).isEqualTo(r.getId());
 		assertThat(returned2.getState()).isEqualTo(Report.ReportState.PENDING_APPROVAL);
-		assertThat(returned2.getApprovalStepJson().getId()).isNotEqualTo(returned.getApprovalStepJson().getId());
+		assertThat(returned2.getApprovalStep().getId()).isNotEqualTo(returned.getApprovalStep().getId());
 	}
 
 	@Test
@@ -402,10 +402,10 @@ public class ReportsResourceTest extends AbstractResourceTest {
         //Verify the report changed
         Report returned2 = httpQuery("/api/reports/" + returned.getId(), elizabeth).get(Report.class);
         assertThat(returned2.getIntent()).isEqualTo(r.getIntent());
-        assertThat(returned2.getLocationJson().getId()).isEqualTo(loc.getId());
-        assertThat(returned2.getPoams()).isEmpty(); //yes this does a DB load :(
-        assertThat(returned2.getAttendees()).hasSize(3);
-        assertThat(returned2.getAttendees().contains(roger));
+        assertThat(returned2.getLocation().getId()).isEqualTo(loc.getId());
+        assertThat(returned2.loadPoams()).isEmpty(); //yes this does a DB load :(
+        assertThat(returned2.loadAttendees()).hasSize(3);
+        assertThat(returned2.loadAttendees().contains(roger));
 
         //Elizabeth submits the report
         resp = httpQuery("/api/reports/" + returned.getId() + "/submit", elizabeth).post(Entity.json(null));
@@ -426,9 +426,9 @@ public class ReportsResourceTest extends AbstractResourceTest {
         
         Report returned4 = httpQuery("/api/reports/" + returned.getId(), elizabeth).get(Report.class);
         assertThat(returned4.getReportText()).endsWith("Bob!!");
-        assertThat(returned4.getAttendees()).hasSize(2);
-        assertThat(returned4.getAttendees()).contains(PersonTest.personToReportPerson(nick));
-        assertThat(returned4.getPoams()).hasSize(2);
+        assertThat(returned4.loadAttendees()).hasSize(2);
+        assertThat(returned4.loadAttendees()).contains(PersonTest.personToReportPerson(nick));
+        assertThat(returned4.loadPoams()).hasSize(2);
 
         resp = httpQuery("/api/reports/" + returned.getId() + "/approve", bob).post(null);
         assertThat(resp.getStatus()).isEqualTo(200);
@@ -456,7 +456,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		searchResults = httpQuery("/api/reports/search", jack).post(Entity.json(query), new GenericType<List<Report>>() {});
 		assertThat(searchResults).isNotEmpty();
 		assertThat(searchResults.stream()
-				.filter(r -> (r.getAuthorJson().getId().equals(jack.getId()))).count())
+				.filter(r -> (r.getAuthor().getId().equals(jack.getId()))).count())
 			.isEqualTo(searchResults.size());
 		int numResults = searchResults.size();
 
@@ -475,7 +475,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		searchResults = httpQuery("/api/reports/search", jack).post(Entity.json(query), new GenericType<List<Report>>() {});
 		assertThat(searchResults).isNotEmpty();
 		assertThat(searchResults.stream().filter(r ->
-			r.getAttendees().stream().anyMatch(rp ->
+			r.loadAttendees().stream().anyMatch(rp ->
 				(rp.getId().equals(steve.getId()))
 			))).hasSameSizeAs(searchResults);
 
@@ -489,7 +489,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		searchResults = httpQuery("/api/reports/search", jack).post(Entity.json(query), new GenericType<List<Report>>() {});
 		assertThat(searchResults).isNotEmpty();
 		assertThat(searchResults.stream().filter(r ->
-				r.getPoams().stream().anyMatch(p ->
+				r.loadPoams().stream().anyMatch(p ->
 					p.getId().equals(poam.getId()))
 			)).hasSameSizeAs(searchResults);
 
@@ -505,7 +505,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		searchResults = httpQuery("/api/reports/search", jack).post(Entity.json(query), new GenericType<List<Report>>() {});
 		assertThat(searchResults).isNotEmpty();
 		assertThat(searchResults.stream().filter(r ->
-				r.getAuthor().getPosition().getOrganization().getId().equals(ef11.getId())
+				r.loadAuthor().loadPosition().loadOrganization().getId().equals(ef11.getId())
 			)).hasSameSizeAs(searchResults);
 
 		//Search by parent organization

@@ -78,7 +78,7 @@ public class ReportTest extends BeanTester<Report> {
 		assertThat(r.getId()).isEqualTo(4);
 		assertThat(r.getLoadLevel()).isEqualTo(LoadLevel.ID_ONLY);
 		assertThat(r.getReportText()).isNull();
-		assertThat(r.getApprovalStepJson()).isNull();
+		assertThat(r.getApprovalStep()).isNull();
 		assertThat(r.getNextSteps()).isNull();
 		assertThat(r.getCreatedAt()).isNull();
 	}

@@ -1,0 +1,10 @@
+position(id:${positionId}) {
+    id, name, type, code,
+    organization { id, name },
+    person { id, name, rank },
+    associatedPositions {
+        id, name,
+        person { id, name }
+    },
+    location { id, name }
+}

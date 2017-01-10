@@ -12,6 +12,7 @@ import mil.dds.anet.test.beans.PoamTest;
 import mil.dds.anet.test.beans.PositionTest;
 import mil.dds.anet.test.beans.ReportTest;
 import mil.dds.anet.test.resources.ApprovalStepResourceTest;
+import mil.dds.anet.test.resources.GraphQLResourceTest;
 import mil.dds.anet.test.resources.GroupsResourceTest;
 import mil.dds.anet.test.resources.LocationResourceTest;
 import mil.dds.anet.test.resources.OrganizationResourceTest;
@@ -38,7 +39,8 @@ import mil.dds.anet.test.resources.ReportsResourceTest;
   PositionResourceTest.class,
   ApprovalStepResourceTest.class,
   ReportsResourceTest.class,
-  RandomTests.class
+  RandomTests.class,
+  GraphQLResourceTest.class
 })
 
 public class AnetTestSuite {

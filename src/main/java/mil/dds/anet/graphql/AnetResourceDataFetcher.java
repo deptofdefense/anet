@@ -39,8 +39,8 @@ public class AnetResourceDataFetcher implements DataFetcher {
 
 	//given a set of arguments which method to call. 
 	Map<String,Method> fetchers;
-	Map<Set<String>,String> fetchersByArguments;
 	Map<String, GraphQLArgument> arguments;
+	List<Method> validMethods;
 	IGraphQLResource resource;
 	List<GraphQLArgument> validArgs;
 	
@@ -52,8 +52,8 @@ public class AnetResourceDataFetcher implements DataFetcher {
 	
 	public AnetResourceDataFetcher(IGraphQLResource resource, boolean isListFetcher) {
 		this.resource = resource;
-		fetchersByArguments = new HashMap<Set<String>, String>();
 		fetchers = new HashMap<String,Method>();
+		validMethods = new LinkedList<Method>();
 		arguments = new HashMap<String,GraphQLArgument>();
 		
 		//Find all methods that are annotated as Fetchers
@@ -71,14 +71,8 @@ public class AnetResourceDataFetcher implements DataFetcher {
 				Set<String> argNames =  new HashSet<String>();
 				//Get all of their annotated arguments and record them as potential GraphQLArguments
 				for (Parameter param : m.getParameters()) {
-					String argName = null;
-					if (param.isAnnotationPresent(PathParam.class)) { 
-						argName = param.getAnnotation(PathParam.class).value();
-					} else if (param.isAnnotationPresent(QueryParam.class)) { 
-						argName = param.getAnnotation(QueryParam.class).value();
-					} else if (param.isAnnotationPresent(GraphQLParam.class)) { 
-						argName = param.getAnnotation(GraphQLParam.class).value();
-					} else if (param.isAnnotationPresent(Auth.class)) { 
+					String argName = GraphQLUtils.getParamName(param);
+					if (param.isAnnotationPresent(Auth.class)) { 
 						continue;
 					}
 					
@@ -95,13 +89,18 @@ public class AnetResourceDataFetcher implements DataFetcher {
 						System.err.println("Unbound arg " + param.toString() + " on method" + m.getName());
 					}
 				}
-				fetchersByArguments.put(argNames,  functionName);
+				validMethods.add(m);
 			}
 		}
 		
 		buildValidArgs(isListFetcher);
 	}
 	
+	/* 
+	 * Determines if this method returns the right type for this Resource Fetcher
+	 * must return either the right Bean (based on Resource.getBeanClass()
+	 * or a list of that bean. 
+	 */
 	private boolean shouldUseMethod(Method m, boolean isListFetcher) { 
 		if (m.getReturnType().equals(resource.getBeanClass())) { 
 			return !isListFetcher; //Only use this if this is NOT a list fetcher 
@@ -149,6 +148,7 @@ public class AnetResourceDataFetcher implements DataFetcher {
 			throw new WebApplicationException("No fetcher method exists for the supplied arguments");
 		}
 		
+		//Check authorization
 		if (method.isAnnotationPresent(RolesAllowed.class)) { 
 			Person user = (Person) ((Map<String,Object>)environment.getContext()).get("auth");
 			if (!isAuthorized(method, user)) { 
@@ -156,42 +156,7 @@ public class AnetResourceDataFetcher implements DataFetcher {
 			}
 		}
 		
-		List<Object> args = new LinkedList<Object>();
-		for (Parameter param : method.getParameters()) {
-			Object arg = null;
-			if (param.isAnnotationPresent(PathParam.class)) {
-				arg = environment.getArgument(param.getAnnotation(PathParam.class).value());
-			} else if (param.isAnnotationPresent(QueryParam.class)) { 
-				arg = environment.getArgument(param.getAnnotation(QueryParam.class).value());
-			} else if (param.isAnnotationPresent(GraphQLParam.class)) { 
-				arg = environment.getArgument(param.getAnnotation(GraphQLParam.class).value());
-			} else if (param.isAnnotationPresent(Auth.class)) { 
-				arg = ((Map<String,Object>)environment.getContext()).get("auth");
-			}
-		
-			//Handle missing arguments but @DefaultValue annotations.
-			if (arg == null && param.isAnnotationPresent(DefaultValue.class)) { 
-				arg = param.getAnnotation(DefaultValue.class).value();
-			}
-
-			//Verify the types are correct. (ignore primitives) 
-			if ((!param.getType().isPrimitive()) && param.getType().isAssignableFrom(arg.getClass()) == false) {
-				//If the argument passed was a Map, but we need a bean, try to convert it? 
-				if (Map.class.isAssignableFrom(arg.getClass())) { 
-					try { 
-						arg = mapper.convertValue(arg, param.getType());
-					} catch (IllegalArgumentException e) { 
-						throw new WebApplicationException("Unable to convert Map into " + param.getType() + ": " + e.getMessage(), e);
-					}
-				} else {
-					System.out.println("c: Arg is " + arg.getClass() + " and param is " + param.getType());
-					throw new WebApplicationException("Type mismatch on arg, wanted " + param.getType() + " got " + arg.getClass());
-				}
-			}
-			args.add(arg);
-			
-		}
-		
+		List<Object> args = fetchParameters(method, environment);
 		try { 
 			return method.invoke(resource, args.toArray());
 		} catch (Exception e) { 
@@ -213,6 +178,45 @@ public class AnetResourceDataFetcher implements DataFetcher {
 		return false;
 	}
 
+	private List<Object> fetchParameters(Method method, DataFetchingEnvironment environment) { 
+		List<Object> args = new LinkedList<Object>();
+		for (Parameter param : method.getParameters()) {
+			String argName = GraphQLUtils.getParamName(param);
+			
+			Object arg = environment.getArgument(argName);
+			
+			//Handle missing arguments but @DefaultValue annotations.
+			if (arg == null) { 
+				if (param.isAnnotationPresent(DefaultValue.class)) { 
+					arg = param.getAnnotation(DefaultValue.class).value();
+				} else if (param.isAnnotationPresent(Auth.class)) { 
+					arg = ((Map<String,Object>)environment.getContext()).get("auth");
+				} else { 
+					throw new WebApplicationException("Missing argument for function " + method.getName() + ", arg: " + argName);
+				}
+			}
+			
+			//Verify the types are correct. (ignore primitives) 
+			if ((!param.getType().isPrimitive()) && param.getType().isAssignableFrom(arg.getClass()) == false) {
+				//If the argument passed was a Map, but we need a bean, try to convert it? 
+				if (Map.class.isAssignableFrom(arg.getClass())) { 
+					try { 
+						arg = mapper.convertValue(arg, param.getType());
+					} catch (IllegalArgumentException e) { 
+						throw new WebApplicationException("Unable to convert Map into " + param.getType() + ": " + e.getMessage(), e);
+					}
+				} else {
+					System.out.println("c: Arg is " + arg.getClass() + " and param is " + param.getType());
+					throw new WebApplicationException("Type mismatch on arg, wanted " + param.getType() + " got " + arg.getClass());
+				}
+			}
+			args.add(arg);
+		}
+		return args;
+	}
+	
+	
+
 	private Method findFetcher(DataFetchingEnvironment environment) {
 		if (environment.getArgument("f") != null) {
 			String functionName = environment.getArgument("f");
@@ -220,53 +224,10 @@ public class AnetResourceDataFetcher implements DataFetcher {
 			if (fetcher == null) { 
 				throw new WebApplicationException("No such fetcher for name " + functionName);
 			}
-
-			for (Parameter param : fetcher.getParameters()) { 
-				String argName = null;
-				if (param.isAnnotationPresent(PathParam.class)) { 
-					argName = param.getAnnotation(PathParam.class).value();
-				} else if (param.isAnnotationPresent(QueryParam.class)) { 
-					argName = param.getAnnotation(QueryParam.class).value();
-				} else if (param.isAnnotationPresent(GraphQLParam.class)) { 
-					argName = param.getAnnotation(GraphQLParam.class).value();
-				} else {  
-					continue;
-				}
-				
-				//Fail if we're missing an arugment, unless it has a @DefaultValue
-				if (environment.getArgument(argName) == null && (!param.isAnnotationPresent(DefaultValue.class))) { 
-					throw new WebApplicationException("Missing argument for function " + functionName + ", arg: " + argName);
-				}
-			}
 			return fetcher;
-		}
-		
-		//Try to find the function that exactly matches the arguments the client provided
-		Set<String> args = environment.getArguments().entrySet().stream()
-			.filter(e -> (e.getValue() != null))
-			.map(e -> e.getKey())
-			.collect(Collectors.toSet());
-		args.remove("f");
-		
-		if (args.size() == 0) { 
-			throw new WebApplicationException("You must use the 'f' argument to specify a function name");
-		}
-		
-		//Track which functions match the arguments we have. 
-		List<String> matches = new LinkedList<String>();
-		
-		for (Map.Entry<Set<String>, String> entry : fetchersByArguments.entrySet()) {
-			if (args.equals(entry.getKey())) { 
-				matches.add(entry.getValue());
-			}
-		}
-		if (matches.size() == 0) { 
-			return null;
-		} else if (matches.size() > 1) { 
-			throw new WebApplicationException(
-				String.format("Ambigous fetcher called for arguments %s.  Matches are %s.  Use the 'f' argument to specify a function name", args, matches));
 		} else { 
-			return fetchers.get(matches.get(0));
+			Method m = GraphQLUtils.findMethod(environment, validMethods);
+			return m;
 		}
 	}
 	

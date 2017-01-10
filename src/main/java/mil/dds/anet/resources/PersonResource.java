@@ -86,8 +86,8 @@ public class PersonResource implements IGraphQLResource {
 	public Person createNewPerson(Person p) {
 		Person created = dao.insert(p);
 		
-		if (created.getPositionJson() != null) { 
-			AnetObjectEngine.getInstance().getPositionDao().setPersonInPosition(created, created.getPositionJson());
+		if (created.getPosition() != null) { 
+			AnetObjectEngine.getInstance().getPositionDao().setPersonInPosition(created, created.getPosition());
 		}
 		
 		return created;
@@ -115,15 +115,15 @@ public class PersonResource implements IGraphQLResource {
 		if (editor.getId().equals(subject.getId())) { 
 			return true;
 		}
-		Position editorPos = editor.getPositionJson();
+		Position editorPos = editor.getPosition();
 		if (editorPos == null) { return false; } 
 		if (editorPos.getType() == PositionType.ADMINISTRATOR) { return true; } 
 		if (editorPos.getType() == PositionType.SUPER_USER) { 
 			//Ensure that the editor is the Super User for the subject's organization.
-			Position subjectPos = subject.getPosition();
-			if (subjectPos != null && subjectPos.getOrganizationJson() != null &&
-					editorPos.getOrganizationJson() != null && 
-					subjectPos.getOrganizationJson().getId().equals(editorPos.getOrganizationJson().getId())) { 
+			Position subjectPos = subject.loadPosition();
+			if (subjectPos != null && subjectPos.getOrganization() != null &&
+					editorPos.getOrganization() != null && 
+					subjectPos.getOrganization().getId().equals(editorPos.getOrganization().getId())) { 
 				return true;
 			}
 		}

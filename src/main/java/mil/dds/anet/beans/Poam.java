@@ -3,11 +3,9 @@ package mil.dds.anet.beans;
 import java.util.List;
 import java.util.Objects;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonSetter;
-
 import mil.dds.anet.AnetObjectEngine;
+import mil.dds.anet.graphql.GraphQLFetcher;
+import mil.dds.anet.graphql.GraphQLIgnore;
 import mil.dds.anet.utils.DaoUtils;
 import mil.dds.anet.views.AbstractAnetBean;
 
@@ -40,10 +38,9 @@ public class Poam extends AbstractAnetBean {
 		this.category = category;
 	}
 	
-	@JsonIgnore
-	public Poam getParentPoam() {
-		if (parentPoam == null) { return null; }
-		if (parentPoam.getLoadLevel() == null) { return parentPoam; } 
+	@GraphQLFetcher("parentPoam")
+	public Poam loadParentPoam() {
+		if (parentPoam == null || parentPoam.getLoadLevel() == null) { return parentPoam; }
 		if (parentPoam.getLoadLevel().contains(LoadLevel.PROPERTIES) == false) { 
 			this.parentPoam = AnetObjectEngine.getInstance()
 					.getPoamDao().getById(parentPoam.getId());
@@ -51,18 +48,17 @@ public class Poam extends AbstractAnetBean {
 		return parentPoam;
 	}
 	
-	@JsonSetter("parentPoam")
 	public void setParentPoam(Poam parent) {
 		this.parentPoam = parent;
 	}
 	
-	@JsonGetter("parentPoam")
-	public Poam getParentPoamJson() { 
+	@GraphQLIgnore
+	public Poam getParentPoam() { 
 		return this.parentPoam;
 	}
 	
-	@JsonIgnore
-	public List<Poam> getChildrenPoams(){ 
+	@GraphQLFetcher("childrenPoams")
+	public List<Poam> loadChildrenPoams(){ 
 		if (childrenPoams == null) { 
 			childrenPoams = AnetObjectEngine.getInstance()
 					.getPoamDao().getPoamsByParentId(this.getId());
@@ -70,23 +66,21 @@ public class Poam extends AbstractAnetBean {
 		return childrenPoams;
 	}
 	
-	@JsonGetter("childrenPoams")
-	public List<Poam> getChildrenPoamsJson() { 
+	@GraphQLIgnore
+	public List<Poam> getChildrenPoams() { 
 		return childrenPoams;
 	}
 	
-	@JsonSetter("childrenPoams")
 	public void setChildrenPoams(List<Poam> childrenPoams) { 
 		this.childrenPoams = childrenPoams;
 	}
 	
-	@JsonSetter("responsibleOrg")
 	public void setResponsibleOrg(Organization org) { 
 		this.responsibleOrg = org;
 	}
 	
-	@JsonIgnore
-	public Organization getResponsibleOrg() {
+	@GraphQLFetcher("responsibleOrg")
+	public Organization loadResponsibleOrg() {
 		if (responsibleOrg == null || responsibleOrg.getLoadLevel() == null) { return responsibleOrg; } 
 		if (responsibleOrg.getLoadLevel().contains(LoadLevel.PROPERTIES) == false) { 
 			this.responsibleOrg = AnetObjectEngine.getInstance()
@@ -95,8 +89,8 @@ public class Poam extends AbstractAnetBean {
 		return responsibleOrg;
 	}
 	
-	@JsonGetter("responsibleOrg")
-	public Organization getResponsibleOrgJson() { 
+	@GraphQLIgnore
+	public Organization getResponsibleOrg() { 
 		return responsibleOrg;
 	}
 	
@@ -131,7 +125,7 @@ public class Poam extends AbstractAnetBean {
 				Objects.equals(other.getShortName(), shortName) &&
 				Objects.equals(other.getLongName(), longName) &&
 				Objects.equals(other.getCategory(), category) &&
-				idEqual(other.getParentPoamJson(), parentPoam);
+				idEqual(other.getParentPoam(), parentPoam);
 	}
 	
 	@Override

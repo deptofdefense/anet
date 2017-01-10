@@ -13,7 +13,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.lang3.mutable.MutableInt;
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;
 
@@ -29,11 +28,11 @@ import mil.dds.anet.beans.Comment;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.ReportPerson;
 import mil.dds.anet.graphql.AnetResourceDataFetcher;
+import mil.dds.anet.graphql.GraphQLFetcher;
 import mil.dds.anet.graphql.GraphQLIgnore;
 import mil.dds.anet.graphql.IGraphQLBean;
 import mil.dds.anet.graphql.IGraphQLResource;
 import mil.dds.anet.utils.GraphQLUtils;
-import mil.dds.anet.views.AbstractAnetBean;
 
 @Path("/graphql")
 @Produces(MediaType.APPLICATION_JSON)
@@ -109,35 +108,30 @@ public class GraphQLResource {
 		GraphQLObjectType.Builder builder = GraphQLObjectType.newObject()
 			.name(name);
 
-		//Find all of the 'getter' methods to use as Fields.
-		//Need to find all unique method names, and figure out which ones require arguments
-		//If there are multiple methods named getXYZ, only want to register a single Field. 
-		Map<String,MutableInt> getMethods = new HashMap<String,MutableInt>();
+		//Find all of the methods to use as Fields. Either getters, or @GraphQLFetcher annotated
+		//Get a set of all unique names. 
 		Map<String,Type> methodReturnTypes = new HashMap<String,Type>();
 		for (Method m : beanClazz.getMethods()) {
+			String methodName = null;
 			if (m.getName().startsWith("get")) {
 				if (m.getName().equalsIgnoreCase("getClass")) { continue; } 
 				if (m.isAnnotationPresent(GraphQLIgnore.class)) { continue; }
-				MutableInt ct = getMethods.get(m.getName());
-				if (ct == null) { 
-					ct = new MutableInt(0);
-					getMethods.put(m.getName(), ct);
-				}
-				ct.add(1 + m.getParameterCount());
-				methodReturnTypes.put(m.getName(), m.getGenericReturnType());
+				methodName = GraphQLUtils.lowerCaseFirstLetter(m.getName().substring(3));
+				
+			} else if(m.isAnnotationPresent(GraphQLFetcher.class)) { 
+				methodName = m.getAnnotation(GraphQLFetcher.class).value();
+			}
+			
+			if (methodName != null) { 
+				methodReturnTypes.put(methodName, m.getGenericReturnType());
 			}
 		}
 		
 		//For any method with a count over 1, we need to support arguments
-		for (Map.Entry<String, MutableInt> entry : getMethods.entrySet()) { 
-			String fieldName = GraphQLUtils.lowerCaseFirstLetter(entry.getKey().substring(3));
-			Type retType = methodReturnTypes.get(entry.getKey());
-			if (entry.getValue().intValue() > 1) { 
-				builder.field(GraphQLUtils.buildFieldWithArgs(fieldName, retType, beanClazz));
-			} else { 
-				//If count == 1 then this should be a no arguent method with a unique name.
-				builder.field(GraphQLUtils.buildField(fieldName, retType));
-			}
+		for (Map.Entry<String, Type> entry : methodReturnTypes.entrySet()) { 
+			String fieldName = entry.getKey();
+			Type retType = entry.getValue();
+			builder.field(GraphQLUtils.buildFieldWithArgs(fieldName, retType, beanClazz));
 		}
 		
 		return builder.build();
@@ -145,7 +139,7 @@ public class GraphQLResource {
 	
 	@POST
 	public Map<String,Object> graphql(@Auth Person user, Map<String,Object> body) {
-		buildGraph();
+		buildGraph(); // TODO: remove outside of dev. 
 		String query = (String) body.get("query");
 	    Map<String, Object> variables = (Map<String, Object>) body.get("variables");
 	    if (variables == null) { variables = new HashMap<String,Object>(); }

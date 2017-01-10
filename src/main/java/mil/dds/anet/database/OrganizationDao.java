@@ -92,7 +92,7 @@ public class OrganizationDao implements IAnetDao<Organization> {
 				"VALUES (:name, :type, :createdAt, :updatedAt, :parentOrgId)")
 			.bindFromProperties(org)
 			.bind("type", DaoUtils.getEnumId(org.getType()))
-			.bind("parentOrgId", DaoUtils.getId(org.getParentOrgJson()))
+			.bind("parentOrgId", DaoUtils.getId(org.getParentOrg()))
 			.executeAndReturnGeneratedKeys();
 		
 		org.setId(DaoUtils.getGeneratedId(keys));
@@ -105,7 +105,7 @@ public class OrganizationDao implements IAnetDao<Organization> {
 				+ "SET name = :name, type = :type, updatedAt = :updatedAt, parentOrgid = :parentOrgId where id = :id")
 				.bindFromProperties(org)
 				.bind("type", DaoUtils.getEnumId(org.getType()))
-				.bind("parentOrgId", DaoUtils.getId(org.getParentOrgJson()))
+				.bind("parentOrgId", DaoUtils.getId(org.getParentOrg()))
 				.execute();
 			
 		return numRows;

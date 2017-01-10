@@ -1,9 +1,5 @@
 package mil.dds.anet.graphql;
 
-import static graphql.Scalars.GraphQLBoolean;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Arrays;
@@ -13,12 +9,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.WebApplicationException;
+
 import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
 import graphql.schema.GraphQLArgument;
 import graphql.schema.GraphQLInputType;
-import graphql.schema.GraphQLNonNull;
-import graphql.schema.GraphQLOutputType;
 import jersey.repackaged.com.google.common.base.Joiner;
 import mil.dds.anet.utils.GraphQLUtils;
 
@@ -31,6 +28,7 @@ public class PropertyDataFetcherWithArgs implements DataFetcher {
 
     private final String propertyName;
     private List<GraphQLArgument> validArgs;
+    private List<Method> matchingMethods;
 
     public PropertyDataFetcherWithArgs(String propertyName, Class<?> beanClazz) {
         this.propertyName = propertyName;
@@ -39,19 +37,29 @@ public class PropertyDataFetcherWithArgs implements DataFetcher {
     
     private void findMatchingMethods(Class<?> beanClazz) { 
     	Map<String,GraphQLArgument> args = new HashMap<String,GraphQLArgument>();
+    	matchingMethods = new LinkedList<Method>();
     	for (Method m : beanClazz.getMethods()) { 
+    		if (m.isAnnotationPresent(GraphQLIgnore.class)) { continue; }
     		if (m.getName().equalsIgnoreCase("get" + propertyName)) { 
-    			if (m.isAnnotationPresent(GraphQLIgnore.class)) { continue; }
-    			for (Parameter param : m.getParameters()) {
-    				if (param.isAnnotationPresent(GraphQLParam.class) == false) { 
-    					throw new RuntimeException(String.format("Method %s on class %s is missing GraphQLParam annotation", m.getName(), beanClazz.getSimpleName()));
-    				}
-    				String argName = param.getAnnotation(GraphQLParam.class).value();
-    				args.put(argName, GraphQLArgument.newArgument()
-    					.name(argName)
-    					.type((GraphQLInputType) GraphQLUtils.getGraphQLTypeForJavaType(param.getParameterizedType()))
-    					.build());
+    			matchingMethods.add(m);
+    		} else if (m.getName().equalsIgnoreCase("is" + propertyName)) {
+    			matchingMethods.add(m);
+    		} else if (m.isAnnotationPresent(GraphQLFetcher.class) && m.getAnnotation(GraphQLFetcher.class).value().equals(propertyName)) { 
+    			matchingMethods.add(m);
+    		}
+
+    	}
+    	
+    	for (Method m : matchingMethods) { 
+    		for (Parameter param : m.getParameters()) {
+    			if (param.isAnnotationPresent(GraphQLParam.class) == false) { 
+    				throw new RuntimeException(String.format("Method %s on class %s is missing GraphQLParam annotation", m.getName(), beanClazz.getSimpleName()));
     			}
+    			String argName = param.getAnnotation(GraphQLParam.class).value();
+    			args.put(argName, GraphQLArgument.newArgument()
+    				.name(argName)
+    				.type((GraphQLInputType) GraphQLUtils.getGraphQLTypeForJavaType(param.getParameterizedType()))
+    				.build());
     		}
     	}
     	validArgs = new LinkedList<GraphQLArgument>(args.values());
@@ -68,49 +76,17 @@ public class PropertyDataFetcherWithArgs implements DataFetcher {
         if (source instanceof Map) {
             return ((Map<?, ?>) source).get(propertyName);
         }
-        return getPropertyViaGetter(source, environment.getFieldType(), environment);
-    }
-
-    private Object getPropertyViaGetter(Object object, GraphQLOutputType outputType, DataFetchingEnvironment environment) {
-        try {
-            if (isBooleanProperty(outputType)) {
-                try {
-                    return getPropertyViaGetterUsingPrefix(object, "is", environment);
-                } catch (NoSuchMethodException e) {
-                    return getPropertyViaGetterUsingPrefix(object, "get", environment);
-                }
-            } else {
-                return getPropertyViaGetterUsingPrefix(object, "get", environment);
-            }
-        } catch (NoSuchMethodException e1) {
-            return getPropertyViaFieldAccess(object);
+        
+        Method method = GraphQLUtils.findMethod(environment,matchingMethods);
+        if (method == null) { 
+        	throw new WebApplicationException("No method found for args. Possible Methods are: " + paramsToString(matchingMethods));
         }
-    }
-
-    private Object getPropertyViaGetterUsingPrefix(Object object, String prefix, DataFetchingEnvironment environment) throws NoSuchMethodException {
-        String getterName = prefix + propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
-        try {
-        	List<Method> methodMatches = new LinkedList<Method>();
-        	for (Method m : object.getClass().getMethods()) { 
-        		if (m.getName().equals(getterName)) { 
-        			Object[] args = fetchParameters(m, environment);
-        			if (args != null) { 
-        				return m.invoke(object, args);
-        			}
-        			methodMatches.add(m);
-        		}
-        	}
-        	if (methodMatches.size() > 0) { 
-        		String methodMatchArgString = paramsToString(methodMatches);
-        		throw new RuntimeException("Missing arguments for " + getterName + ", matches: " + methodMatchArgString);
-        	} else { 
-        		throw new NoSuchMethodException();
-        	}
-
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
+        
+        Object[] args = fetchParameters(method, environment);
+        try { 
+        	return method.invoke(source, args);
+        } catch (Exception e) { 
+        	throw new WebApplicationException(e.getMessage(),e);
         }
     }
     
@@ -119,10 +95,13 @@ public class PropertyDataFetcherWithArgs implements DataFetcher {
     	Object[] args = new Object[params.length];
     	for (int i=0;i<args.length;i++) {
     		String argName = params[i].getName();
+    		Object arg = null;
     		if (params[i].isAnnotationPresent(GraphQLParam.class)) { 
     			argName = params[i].getAnnotation(GraphQLParam.class).value();
+    			arg = env.getArgument(argName);
+    		} else if (params[i].isAnnotationPresent(DefaultValue.class)) { 
+    			arg = params[i].getAnnotation(DefaultValue.class).value();
     		}
-    		Object arg =env.getArgument(argName);
     		if (arg == null) { return null; } 
     		args[i] = arg;
     	}
@@ -141,24 +120,5 @@ public class PropertyDataFetcherWithArgs implements DataFetcher {
     		paramStrings.add(sb.toString());
     	}
     	return Joiner.on(", ").join(paramStrings);
-    }
-    
-    private boolean isBooleanProperty(GraphQLOutputType outputType) {
-        if (outputType == GraphQLBoolean) return true;
-        if (outputType instanceof GraphQLNonNull) {
-            return ((GraphQLNonNull) outputType).getWrappedType() == GraphQLBoolean;
-        }
-        return false;
-    }
-
-    private Object getPropertyViaFieldAccess(Object object) {
-        try {
-            Field field = object.getClass().getField(propertyName);
-            return field.get(object);
-        } catch (NoSuchFieldException e) {
-            return null;
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

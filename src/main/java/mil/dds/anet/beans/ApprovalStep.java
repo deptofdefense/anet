@@ -2,11 +2,9 @@ package mil.dds.anet.beans;
 
 import java.util.Objects;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonSetter;
-
 import mil.dds.anet.AnetObjectEngine;
+import mil.dds.anet.graphql.GraphQLFetcher;
+import mil.dds.anet.graphql.GraphQLIgnore;
 import mil.dds.anet.utils.DaoUtils;
 import mil.dds.anet.views.AbstractAnetBean;
 
@@ -25,8 +23,8 @@ public class ApprovalStep extends AbstractAnetBean {
 		return as;
 	}
 	
-	@JsonIgnore
-	public Group getApproverGroup() {
+	@GraphQLFetcher("approverGroup")
+	public Group loadApproverGroup() {
 		if (approverGroup == null || approverGroup.getLoadLevel() == null) { return approverGroup; }
 		if (approverGroup.getLoadLevel().contains(LoadLevel.PROPERTIES) == false) { 
 			this.approverGroup = AnetObjectEngine.getInstance()
@@ -35,12 +33,11 @@ public class ApprovalStep extends AbstractAnetBean {
 		return approverGroup;
 	}
 	
-	@JsonGetter("approverGroup")
-	public Group getApproverGroupJson() { 
+	@GraphQLIgnore
+	public Group getApproverGroup() { 
 		return approverGroup;
 	}
 	
-	@JsonSetter
 	public void setApproverGroup(Group approverGroup) {
 		this.approverGroup = approverGroup;
 	}
@@ -64,7 +61,7 @@ public class ApprovalStep extends AbstractAnetBean {
 		}
 		ApprovalStep as = (ApprovalStep) o;
 		return Objects.equals(id, as.getId()) &&
-			idEqual(approverGroup, as.getApproverGroupJson()) &&
+			idEqual(approverGroup, as.getApproverGroup()) &&
 			Objects.equals(nextStepId, as.getNextStepId()) &&
 			Objects.equals(advisorOrganizationId, as.getAdvisorOrganizationId());
 	}
