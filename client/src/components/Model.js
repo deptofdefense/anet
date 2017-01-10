@@ -44,7 +44,13 @@ export default class Model {
 	}
 
 	constructor(props) {
-		Object.assign(this, this.constructor.schema)
+		const {__meta, ...schema} = this.constructor.schema
+		if (__meta) {
+			this.constructor.__meta = __meta
+			this.constructor.schema.__meta = undefined
+		}
+
+		Object.assign(this, schema)
 		if (props)
 			this.setState(props)
 	}
@@ -70,17 +76,35 @@ export default class Model {
 		let json = Object.assign({}, this)
 		Object.keys(json).forEach(key => {
 			let value = json[key]
-			// if (value instanceof Model)
-//				json[key] = {id: value.id}
+			if (value instanceof Model)
+				json[key] = value.toChildJSON()
 
 			if (Array.isArray(value)) {
 				json[key] = value.map(child =>
-//					child instanceof Model ? {id: child.id} : child
-					child
+					child instanceof Model ? child.toChildJSON() : child
 				)
 			}
 		})
 
 		return json
 	}
+
+	toChildJSON() {
+		let json = {id: this.id}
+
+		if (this.constructor.__meta) {
+			const childKeys = this.constructor.__meta.childJSONKeys
+			childKeys && childKeys.forEach(key => {
+				json[key] = this[key]
+			})
+		}
+
+		return json
+	}
+}
+
+export function includeAsChild(schema, key) {
+	schema.__meta = schema.__meta || {}
+	schema.__meta.childJSONKeys = schema.__meta.childJSONKeys || []
+	schema.__meta.childJSONKeys.push(key)
 }
