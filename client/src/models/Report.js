@@ -11,7 +11,18 @@ export default class Report extends Model {
 		poams: [],
 		comments: [],
 		reportText: '',
+		nextStepsSummary: '',
 		nextSteps: '',
+		keyOutcomesSummary: '',
+		keyOutcomes: ''
+	}
+
+	isDraft() {
+		return this.state === 'DRAFT'
+	}
+
+	isPending() {
+		return this.state === 'PENDING_APPROVAL'
 	}
 
 	toString() {

@@ -1,6 +1,7 @@
 package mil.dds.anet.resources;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -33,6 +34,7 @@ import mil.dds.anet.graphql.GraphQLParam;
 import mil.dds.anet.graphql.IGraphQLResource;
 import mil.dds.anet.utils.AuthUtils;
 import mil.dds.anet.utils.ResponseUtils;
+import mil.dds.anet.utils.Utils;
 
 @Path("/api/positions")
 @Produces(MediaType.APPLICATION_JSON)
@@ -69,6 +71,14 @@ public class PositionResource implements IGraphQLResource {
 		return p;
 	}
 	
+	/**
+	 * Creates a new position in the database. Must have Type and Organization with ID specified. 
+	 * Optionally can provide: 
+	 * - position.associatedPositions:  a list of Associated Positions and those relationships will be created at this point. 
+	 * - position.person : If a person ID is provided in the Person object, that person will be put in this position. 
+	 * @param position
+	 * @return the same Position object with the ID field filled in. 
+	 */
 	@POST
 	@Path("/new")
 	@RolesAllowed("SUPER_USER")
@@ -77,19 +87,58 @@ public class PositionResource implements IGraphQLResource {
 			throw new WebApplicationException("Position Name must not be null", Status.BAD_REQUEST);
 		}
 		if (p.getType() == null) { throw new WebApplicationException("Position type must be defined", Status.BAD_REQUEST); }
-		if (p.getOrganizationJson() == null) { throw new WebApplicationException("A Position must belong to an organization", Status.BAD_REQUEST); } 
+		if (p.getOrganization() == null) { throw new WebApplicationException("A Position must belong to an organization", Status.BAD_REQUEST); } 
 		
-		AuthUtils.assertSuperUserForOrg(user, p.getOrganizationJson());
+		AuthUtils.assertSuperUserForOrg(user, p.getOrganization());
 		
-		return dao.insert(p);
+		Position created = dao.insert(p);
+		
+		if (p.getPerson() != null) { 
+			//Put the person in the position now. 
+			dao.setPersonInPosition(p.getPerson(), p);
+		}
+		
+		if (p.getAssociatedPositions() != null && p.getAssociatedPositions().size() > 0) { 
+			//Create the associations now
+			for (Position associated : p.getAssociatedPositions()) { 
+				dao.associatePosition(created, associated);
+			}
+		}
+		
+		return created;
 	}
 	
 	@POST
 	@Path("/update")
 	@RolesAllowed("SUPER_USER")
 	public Response updatePosition(@Auth Person user, Position pos) {
-		AuthUtils.assertSuperUserForOrg(user, pos.getOrganizationJson());
+		AuthUtils.assertSuperUserForOrg(user, pos.getOrganization());
 		int numRows = dao.update(pos);
+		
+		if (pos.getPerson() != null || pos.getAssociatedPositions() != null) { 
+			//Run the diff and see if anything changed and update. 
+			
+			Position current = dao.getById(pos.getId());
+			if (pos.getPerson() != null && Utils.idEqual(pos.getPerson(), current.getPerson()) == false) { 
+				dao.setPersonInPosition(pos.getPerson(), pos);
+			}
+
+			if (pos.getAssociatedPositions() != null) { 
+				List<Integer> existingIds = current.loadAssociatedPositions().stream().map(p -> p.getId()).collect(Collectors.toList());			
+				for (Position newPos : pos.getAssociatedPositions()) { 
+					if (existingIds.remove(newPos.getId()) == false) { 
+						//Add this relationship
+						dao.associatePosition(newPos, pos);
+					}
+				}
+				
+				//Now remove all items in existingIds. 
+				for (Integer id : existingIds) { 
+					dao.deletePositionAssociation(pos, Position.createWithId(id));
+				}
+			}	
+		}
+		
 		return (numRows == 1) ? Response.ok().build() : Response.status(Status.NOT_FOUND).build();
 	}
 	
@@ -107,7 +156,7 @@ public class PositionResource implements IGraphQLResource {
 	@RolesAllowed("SUPER_USER")
 	public Response putPersonInPosition(@Auth Person user, @PathParam("id") int positionId, Person p) {
 		Position pos = engine.getPositionDao().getById(positionId);
-		AuthUtils.assertSuperUserForOrg(user, pos.getOrganizationJson());
+		AuthUtils.assertSuperUserForOrg(user, pos.getOrganization());
 		
 		dao.setPersonInPosition(p, pos);
 		return Response.ok().build();

@@ -66,8 +66,8 @@ public class OrganizationResource implements IGraphQLResource {
 	@POST
 	@Path("/new")
 	@RolesAllowed("ADMINISTRATOR")
-	public Organization createNewAdvisorOrganization(Organization ao, @Auth Person user) {
-		AuthUtils.assertAdministrator(user);
+	public Organization createNewOrganization(Organization ao, @Auth Person user) {
+		AuthUtils.assertAdministrator(user); 
 		return dao.insert(ao);
 	}
 	

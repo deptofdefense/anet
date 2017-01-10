@@ -11,6 +11,10 @@ import History from 'components/History'
 import LinkTo from 'components/LinkTo'
 
 export default class OrganizationShow extends Page {
+	static contextTypes = { 
+		app: React.PropTypes.object.isRequired,
+	}
+
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -39,7 +43,7 @@ export default class OrganizationShow extends Page {
 				childrenOrgs { id, name },
 				approvalSteps {
 					approverGroup {
-						id, name, members { id, name }
+						id, name, members { id, name , position { id, name} }
 					}
 				}
 			}
@@ -49,7 +53,7 @@ export default class OrganizationShow extends Page {
 	render() {
 		let org = this.state.organization
 
-		let positionsNeedingAttention = org.positions.filter(position => !position.person || !position.code || !position.associatedPositions.length)
+		let positionsNeedingAttention = org.positions.filter(position => !position.person )
 		let supportedPositions = org.positions.filter(position => positionsNeedingAttention.indexOf(position) === -1)
 
 		let poamsContent = ''
@@ -60,19 +64,26 @@ export default class OrganizationShow extends Page {
 			</fieldset>
 		}
 
+		let currentUser = this.context.app.state.currentUser;
+		let isSuperUser = (currentUser) ? currentUser.isSuperUser(org) : false
+		let isAdmin = (currentUser) ? currentUser.isAdmin() : false
+
 		return (
 			<div>
 				<Breadcrumbs items={[[org.name || 'Organization', Organization.pathFor(org)]]} />
+
+				<div className="pull-right">
+					<DropdownButton bsStyle="primary" title="Actions" id="actions" className="pull-right" onSelect={this.actionSelect}>
+						{isSuperUser && <MenuItem eventKey="edit" className="todo">Edit Organization</MenuItem>}
+						{isAdmin && <MenuItem eventKey="createSub">Create Sub-Organization</MenuItem> }
+						{isSuperUser && <MenuItem eventKey="createPos">Create new Position</MenuItem> }
+					</DropdownButton>
+				</div>
 
 				<Form static formFor={org} horizontal>
 					<fieldset>
 						<legend>
 							{org.name}
-							<DropdownButton bsStyle="primary" title="Actions" id="actions" className="pull-right" onSelect={this.actionSelect}>
-								<MenuItem eventKey="edit" className="todo">Edit Organization</MenuItem>
-								<MenuItem eventKey="createSub" className="todo">Create Sub-Organization</MenuItem>
-								<MenuItem eventKey="createPos" className="todo">Create new Position</MenuItem>
-							</DropdownButton>
 						</legend>
 
 						<Form.Field id="type">
@@ -109,11 +120,12 @@ export default class OrganizationShow extends Page {
 						<fieldset key={"step_" + idx}>
 							<legend>Step {idx + 1}: {step.approverGroup.name}</legend>
 							<Table>
-								<thead><tr><th>Name</th></tr></thead>
+								<thead><tr><th>Name</th><th>Position</th></tr></thead>
 								<tbody>
 									{step.approverGroup.members.map(person =>
 										<tr key={person.id}>
 											<td><LinkTo person={person} /></td>
+											<td>{person.position && <LinkTo position={person.position} />}</td>
 										</tr>
 									)}
 								</tbody>
@@ -196,6 +208,8 @@ export default class OrganizationShow extends Page {
 	actionSelect(eventKey, event) {
 		if (eventKey === "createPos") {
 			History.push("/positions/new?organizationId=" + this.state.organization.id)
+		} else if (eventKey === "createSub") { 
+			History.push("/organizations/new?parentOrgId=" + this.state.organization.id)
 		} else {
 			console.log("Unimplemented Action: " + eventKey);
 		}

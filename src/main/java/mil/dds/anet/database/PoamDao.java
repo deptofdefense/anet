@@ -57,8 +57,8 @@ public class PoamDao implements IAnetDao<Poam> {
 				+ "(longName, shortName, category, parentPoamId, organizationId, createdAt, updatedAt) " 
 				+ "VALUES (:longName, :shortName, :category, :parentPoamId, :organizationId, :createdAt, :updatedAt)")
 			.bindFromProperties(p)
-			.bind("parentPoamId", DaoUtils.getId(p.getParentPoamJson()))
-			.bind("organizationId", DaoUtils.getId(p.getResponsibleOrgJson()))
+			.bind("parentPoamId", DaoUtils.getId(p.getParentPoam()))
+			.bind("organizationId", DaoUtils.getId(p.getResponsibleOrg()))
 			.executeAndReturnGeneratedKeys();
 		p.setId(DaoUtils.getGeneratedId(keys));
 		return p;
@@ -72,8 +72,8 @@ public class PoamDao implements IAnetDao<Poam> {
 				"organizationId = :organizationId " + 
 				"WHERE id = :id")
 			.bindFromProperties(p)
-			.bind("parentPoamId", DaoUtils.getId(p.getParentPoamJson()))
-			.bind("organizationId", DaoUtils.getId(p.getResponsibleOrgJson()))
+			.bind("parentPoamId", DaoUtils.getId(p.getParentPoam()))
+			.bind("organizationId", DaoUtils.getId(p.getResponsibleOrg()))
 			.execute();
 	}
 	

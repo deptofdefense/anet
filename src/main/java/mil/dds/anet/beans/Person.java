@@ -7,11 +7,8 @@ import java.util.Optional;
 
 import org.joda.time.DateTime;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonSetter;
-
 import mil.dds.anet.AnetObjectEngine;
+import mil.dds.anet.graphql.GraphQLFetcher;
 import mil.dds.anet.graphql.GraphQLIgnore;
 import mil.dds.anet.graphql.GraphQLParam;
 import mil.dds.anet.views.AbstractAnetBean;
@@ -127,8 +124,8 @@ public class Person extends AbstractAnetBean implements Principal{
 		this.domainUsername = domainUsername;
 	}
 
-	@JsonIgnore
-	public Position getPosition() { 
+	@GraphQLFetcher("position")
+	public Position loadPosition() { 
 		if (position == null) {
 			position = Optional.ofNullable(AnetObjectEngine.getInstance()
 					.getPositionDao().getCurrentPositionForPerson(this));
@@ -137,25 +134,23 @@ public class Person extends AbstractAnetBean implements Principal{
 	}
 	
 	@GraphQLIgnore
-	@JsonGetter("position")
-	public Position getPositionJson() {
+	public Position getPosition() {
 		return (position == null) ? null : position.orElse(null);
 	}
 	
-	@JsonSetter("position")
 	public void setPosition(Position p) { 
 		if (p != null) { 
 			this.position = Optional.of(p);
 		}
 	}
 	
-	@JsonIgnore
-	public List<Report> getAuthoredReports(@GraphQLParam("pageNum") Integer pageNum, @GraphQLParam("pageSize") Integer pageSize) { 
+	@GraphQLFetcher("authoredReports")
+	public List<Report> loadAuthoredReports(@GraphQLParam("pageNum") Integer pageNum, @GraphQLParam("pageSize") Integer pageSize) { 
 		return AnetObjectEngine.getInstance().getReportDao().getReportsByAuthor(this, pageNum, pageSize);
 	}
 	
-	@JsonIgnore
-	public List<Report> getAttendedReports(@GraphQLParam("pageNum") Integer pageNum, @GraphQLParam("pageSize") Integer pageSize) { 
+	@GraphQLFetcher("attendedReports")
+	public List<Report> loadAttendedReports(@GraphQLParam("pageNum") Integer pageNum, @GraphQLParam("pageSize") Integer pageSize) { 
 		return AnetObjectEngine.getInstance().getReportDao().getReportsByAttendee(this, pageNum, pageSize);
 	}
 	

@@ -1,0 +1,33 @@
+person(id:${personId}) {
+    id,
+    name, rank, role, emailAddress, phoneNumber, biography, country, gender, endOfTourDate
+    position {
+        id,
+        name,
+        organization {
+            id,
+            name
+        }
+    },
+    authoredReports(pageNum:0,pageSize:10) {
+        id,
+        engagementDate,
+        advisorOrg { id, name }
+        intent,
+        author {
+            id,
+            name
+        }
+    },
+    attendedReports(pageNum:0, pageSize:10) {
+        id,
+        engagementDate,
+        advisorOrg { id, name}
+        intent,
+        author {
+            id,
+            name
+        }
+    }
+
+}

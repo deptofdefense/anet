@@ -1,7 +1,7 @@
 import React from 'react'
 import Page from 'components/Page'
 import History from 'components/History'
-import {InputGroup, Radio, Table, Button} from 'react-bootstrap'
+import {InputGroup, Radio, Table, Button, Collapse, Link} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
 import DatePicker from 'react-bootstrap-date-picker'
@@ -12,6 +12,7 @@ import RadioGroup from 'components/RadioGroup'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Autocomplete from 'components/Autocomplete'
 import TextEditor from 'components/TextEditor'
+import LinkTo from 'components/LinkTo'
 
 import API from 'api'
 import {Report, Person, Poam} from 'models'
@@ -19,6 +20,10 @@ import {Report, Person, Poam} from 'models'
 export default class ReportNew extends Page {
 	static pageProps = {
 		useNavigation: false
+	}
+
+	static contextTypes = {
+		app: React.PropTypes.object,
 	}
 
 	constructor(props) {
@@ -31,7 +36,10 @@ export default class ReportNew extends Page {
 				persons: [],
 				locations: [],
 				poams: [],
-			}
+			},
+			showKeyOutcomesText: false,
+			showNextStepsText: false,
+			showReportText: false
 		}
 	}
 
@@ -50,9 +58,7 @@ export default class ReportNew extends Page {
 	}
 
 	render() {
-		let report = this.state.report
-		let recents = this.state.recents
-
+		let {report, recents} = this.state
 		return (
 			<div>
 				<ContentForHeader>
@@ -62,7 +68,13 @@ export default class ReportNew extends Page {
 				<Breadcrumbs items={[['EF4', '/organizations/ef4'], ['Submit a report', Report.pathForNew()]]} />
 
 				<Form formFor={report} onChange={this.onChange} onSubmit={this.onSubmit} actionText="Save report" horizontal>
-					{this.state.error && <fieldset><p>There was a problem saving this report.</p><p>{this.state.error}</p></fieldset>}
+					{this.state.error &&
+						<fieldset className="text-danger">
+							<p>There was a problem saving this report.</p>
+							<p>{this.state.error}</p>
+						</fieldset>
+					}
+
 					<fieldset>
 						<legend>Engagement details <small>Required</small></legend>
 
@@ -105,7 +117,9 @@ export default class ReportNew extends Page {
 								<thead>
 									<tr>
 										<th></th>
+										<th>Primary</th>
 										<th>Name</th>
+										<th>Type</th>
 										<th>Position</th>
 									</tr>
 								</thead>
@@ -115,8 +129,18 @@ export default class ReportNew extends Page {
 											<td onClick={this.removeAttendee.bind(this, person)}>
 												<span style={{cursor: 'pointer'}}>⛔️</span>
 											</td>
+
+											<td onClick={this.setPrimaryAttendee.bind(this, person)}>
+												<span style={{cursor: 'pointer'}}>
+													{Person.isEqual(report.primaryAdvisor, person) || Person.isEqual(report.primaryPrincipal, person) ?
+														"⭐️" : "☆"
+													}
+												</span>
+											</td>
+
 											<td>{person.name} {person.rank && person.rank.toUpperCase()}</td>
 											<td>{person.role}</td>
+											<td><LinkTo position={person.position} /></td>
 										</tr>
 									)}
 								</tbody>
@@ -124,7 +148,7 @@ export default class ReportNew extends Page {
 
 							<Form.Field.ExtraCol className="shortcut-list">
 								<h5>Shortcuts</h5>
-								<Button bsStyle="link">Add myself</Button>
+								<Button bsStyle="link" onClick={this.addMyself}>Add myself</Button>
 								{Person.map(recents.persons, person =>
 									<Button key={person.id} bsStyle="link" onClick={this.addAttendee.bind(this, person)}>Add {person.name}</Button>
 								)}
@@ -172,18 +196,55 @@ export default class ReportNew extends Page {
 
 					<fieldset>
 						<legend>Meeting discussion</legend>
-
-						<Form.Field id="reportText" label="" horizontal={false}>
-							<TextEditor label="Key outcomes" />
+						<Form.Field id="keyOutcomesSummary" >
+							<Form.Field.ExtraCol>{250 - report.keyOutcomesSummary.length} characters remaining</Form.Field.ExtraCol>
 						</Form.Field>
 
-						<Form.Field id="nextSteps" label="" horizontal={false} style={{marginTop: '5rem'}}>
-							<TextEditor label="Next steps" />
+						<Button bsStyle="link" onClick={this.toggleKeyOutcomesText} >
+							{this.state.showKeyOutcomesText ? "Hide" : "Add" } details to Key Outcomes
+						</Button>
+						<Collapse in={this.state.showKeyOutcomesText} >
+							<Form.Field id="keyOutcomes" label="" horizontal={false}>
+								<TextEditor label="Key outcomes" />
+							</Form.Field>
+						</Collapse>
+
+						<Form.Field id="nextStepsSummary" >
+							<Form.Field.ExtraCol>{250 - report.nextStepsSummary.length} characters remaining</Form.Field.ExtraCol>
 						</Form.Field>
+						<Button bsStyle="link" onClick={this.toggleNextStepsText} >Add details to Next Steps</Button>
+						<Collapse in={this.state.showNextStepsText} >
+							<Form.Field id="nextSteps" label="" horizontal={false} style={{marginTop: '5rem'}}>
+								<TextEditor label="Next steps" />
+							</Form.Field>
+						</Collapse>
+
+						<Button bsStyle="link" onClick={this.toggleReportText} >Add additional report details</Button>
+						<Collapse in={this.state.showReportText} >
+							<Form.Field id="reportText" label="" horizontal={false} >
+								<TextEditor label="Report Details" />
+							</Form.Field>
+						</Collapse>
+
 					</fieldset>
 				</Form>
 			</div>
 		)
+	}
+
+	@autobind
+	toggleKeyOutcomesText() { 
+		this.setState({showKeyOutcomesText: !this.state.showKeyOutcomesText});
+	}
+
+	@autobind
+	toggleNextStepsText() { 
+		this.setState({showNextStepsText: !this.state.showNextStepsText});
+	}
+
+	@autobind
+	toggleReportText() { 
+		this.setState({showReportText: !this.state.showReportText});
 	}
 
 	@autobind
@@ -197,12 +258,17 @@ export default class ReportNew extends Page {
 		event.stopPropagation()
 		event.preventDefault()
 
-		this.state.report.save({disableSubmits: true})
+		let report = this.state.report
+		if(report.primaryAdvisor) { report.attendees.find(a => a.id === report.primaryAdvisor.id).isPrimary = true; }
+		if(report.primaryPrincipal) { report.attendees.find(a => a.id === report.primaryPrincipal.id).isPrimary = true; }
+		console.log(report)
+
+		API.send('/api/reports/new', report)
 			.then(report => {
 				History.push(Report.pathFor(report))
 			})
-			.catch(error => {
-				this.setState({errors: error})
+			.catch(response => {
+				this.setState({error: response.message})
 				window.scrollTo(0, 0)
 			})
 	}
@@ -212,8 +278,14 @@ export default class ReportNew extends Page {
 		let report = this.state.report
 		let attendees = report.attendees
 
-		if (!attendees.find(attendee => attendee.id === newAttendee.id)) {
-			attendees.push(new Person(newAttendee))
+		if (!attendees.find(attendee => Person.isEqual(attendee, newAttendee))) {
+			let person = new Person(newAttendee)
+			attendees.push(person)
+
+			let primaryKey = person.isAdvisor() ? 'primaryAdvisor' : 'primaryPrincipal'
+			if (!report[primaryKey]) {
+				report[primaryKey] = person
+			}
 		}
 
 		this.setState({report})
@@ -223,12 +295,37 @@ export default class ReportNew extends Page {
 	removeAttendee(oldAttendee) {
 		let report = this.state.report
 		let attendees = report.attendees
-		let index = attendees.findIndex(attendee => attendee.id === oldAttendee.id)
+		let index = attendees.findIndex(attendee => Person.isEqual(attendee, oldAttendee))
 
 		if (index !== -1) {
+			let person = attendees[index]
 			attendees.splice(index, 1)
+
+			let primaryKey = person.isAdvisor() ? 'primaryAdvisor' : 'primaryPrincipal'
+			if (Person.isEqual(report[primaryKey], person)) {
+				let nextPerson = attendees.find(nextPerson => nextPerson.role === person.role)
+				report[primaryKey] = nextPerson
+			}
+
 			this.setState({report})
 		}
+	}
+
+	@autobind
+	setPrimaryAttendee(person) {
+		let report = this.state.report
+
+		let primaryKey = person.isAdvisor() ? 'primaryAdvisor' : 'primaryPrincipal'
+		report[primaryKey] = person
+
+		this.setState({report})
+	}
+
+	@autobind
+	addMyself() {
+		let {currentUser} = this.context.app.state
+		this.addAttendee(currentUser)
+		this.setPrimaryAttendee(currentUser)
 	}
 
 	@autobind

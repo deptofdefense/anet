@@ -1,19 +1,17 @@
 import React from 'react'
-import {InputGroup} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
-import DatePicker from 'react-bootstrap-date-picker'
 
 import {ContentForHeader} from 'components/Header'
 import History from 'components/History'
-import Form from 'components/Form'
 import Breadcrumbs from 'components/Breadcrumbs'
-import TextEditor from 'components/TextEditor'
+import Page from 'components/Page'
+import PersonForm from 'components/PersonForm'
 
 import API from 'api'
 import {Person} from 'models'
 
-export default class PersonNew extends React.Component {
+export default class PersonNew extends Page {
 	static contextTypes = {
 		router: React.PropTypes.object.isRequired
 	}
@@ -40,57 +38,12 @@ export default class PersonNew extends React.Component {
 				</ContentForHeader>
 
 				<Breadcrumbs items={[['Create new Person', '/people/new']]} />
-
-				<Form formFor={person} onChange={this.onChange} onSubmit={this.onSubmit} horizontal actionText="Create person">
-					{this.state.error && <fieldset><p>There was a problem saving this person</p><p>{this.state.error}</p></fieldset>}
-					<fieldset>
-						<legend>Create a new Person</legend>
-						<Form.Field id="name" />
-						<Form.Field id="role" componentClass="select">
-							<option value="ADVISOR">Advisor</option>
-							<option value="PRINCIPAL">Principal</option>
-						</Form.Field>
-					</fieldset>
-
-					<fieldset>
-						<legend>Additional Information</legend>
-						<Form.Field id="emailAddress" label="Email" />
-						<Form.Field id="phoneNumber" label="Phone Number" />
-						<Form.Field id="rank"  componentClass="select">
-							<option value="OF-1" >OF-1</option>
-							<option value="OF-2" >OF-2</option>
-							<option value="OF-3" >OF-3</option>
-							<option value="OF-4" >OF-4</option>
-							<option value="OF-5" >OF-5</option>
-							<option value="OF-6" >OF-6</option>
-						</Form.Field>
-
-						<Form.Field id="gender" componentClass="select">
-							<option>Male</option>
-							<option>Female</option>
-						</Form.Field>
-
-						<Form.Field id="country" componentClass="select">
-							<option>Afghanistan</option>
-							<option>Australia</option>
-							<option>Romania</option>
-							<option>Turkey</option>
-							<option>United States of America</option>
-							<option>United Kingdom</option>
-							<option>Germany</option>
-						</Form.Field>
-
-						<Form.Field id="endOfTourDate">
-							<DatePicker placeholder="End of Tour Date">
-								<InputGroup.Addon>📆</InputGroup.Addon>
-							</DatePicker>
-						</Form.Field>
-
-						<Form.Field id="biography" >
-							<TextEditor label="" />
-						</Form.Field>
-					</fieldset>
-				</Form>
+				<PersonForm 
+					person={person} 
+					onChange={this.onChange} 
+					onSubmit={this.onSubmit} 
+					actionText="Create Person"
+					error={this.state.error}/> 
 			</div>
 		)
 	}

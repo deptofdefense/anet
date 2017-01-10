@@ -1,0 +1,15 @@
+searchResults(f:search, q:"${searchQuery}") {
+	reports { id, intent, engagementDate, keyOutcomesSummary, nextStepsSummary
+        primaryAdvisor { id, name, position { organization { id, name}}},
+        primaryPrincipal { id, name, position { organization { id, name}}},
+        advisorOrg { id, name},
+        principalOrg { id, name},
+        location { id, name},
+        poams {id, shortName, longName}
+	},
+    people { id, name, rank, emailAddress }
+    positions { id }
+    poams { id, shortName, longName}
+    locations { id, name, lat, lng}
+    organizations { id, name }
+}

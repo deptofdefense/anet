@@ -105,9 +105,9 @@ public class PoamResource implements IGraphQLResource {
 			poamById.put(p.getId(), p);
 		}
 		for (Poam p : poams) { 
-			if (p.getParentPoamJson() != null) { 
-				Poam parent = poamById.get(p.getParentPoamJson().getId());
-				parent.getChildrenPoamsJson().add(p);
+			if (p.getParentPoam() != null) { 
+				Poam parent = poamById.get(p.getParentPoam().getId());
+				parent.getChildrenPoams().add(p);
 			} else { 
 				topPoams.add(p);
 			}

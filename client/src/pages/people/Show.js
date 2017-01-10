@@ -1,17 +1,23 @@
 import React from 'react'
 import Page from 'components/Page'
-import {Table} from 'react-bootstrap'
+import {Table, DropdownButton, MenuItem} from 'react-bootstrap'
 import moment from 'moment'
+import autobind from 'autobind-decorator'
 
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
 import ReportTable from 'components/ReportTable'
 import LinkTo from 'components/LinkTo'
+import History from 'components/History'
 
 import API from 'api'
 import {Person} from 'models'
 
 export default class PersonShow extends Page {
+	static contextTypes = {
+		app: React.PropTypes.object.isRequired,
+	}
+
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -39,6 +45,7 @@ export default class PersonShow extends Page {
 				authoredReports(pageNum:0,pageSize:10) {
 					id,
 					engagementDate,
+					advisorOrg { id, name }
 					intent,
 					updatedAt,
 					author {
@@ -49,6 +56,7 @@ export default class PersonShow extends Page {
 				attendedReports(pageNum:0, pageSize:10) {
 					id,
 					engagementDate,
+					advisorOrg { id, name}
 					intent,
 					updatedAt,
 					author {
@@ -76,9 +84,21 @@ export default class PersonShow extends Page {
 			</tr>
 		}
 
+		//User can always edit themselves, or Super Users/Admins.
+		let currentUser = this.context.app.state.currentUser;
+		let canEdit = currentUser && (currentUser.id === person.id ||
+			currentUser.isSuperUser())
+
 		return (
 			<div>
 				<Breadcrumbs items={[[person.name, Person.pathFor(person)]]} />
+
+				<div className="pull-right">
+					<DropdownButton bsStyle="primary" title="Actions" id="actions" className="pull-right" onSelect={this.actionSelect}>
+						{canEdit && <MenuItem eventKey="edit" className="todo">Edit {person.name}</MenuItem>}
+					</DropdownButton>
+				</div>
+
 				<Form static formFor={person} horizontal>
 					<fieldset>
 						<legend>{person.rank} {person.name}</legend>
@@ -91,7 +111,7 @@ export default class PersonShow extends Page {
 						<Form.Field id="country" />
 						<Form.Field id="gender" />
 						<Form.Field label="End of Tour Date" id="endOfTourDate" value={moment(person.endOfTourDate).format("L")} />
-						<Form.Field label="Bio" id="person.biography" />
+						<Form.Field label="Bio" id="biography" />
 					</fieldset>
 
 					<fieldset>
@@ -120,4 +140,14 @@ export default class PersonShow extends Page {
 			</div>
 		)
 	}
+
+	@autobind
+	actionSelect(eventKey, event) {
+		if (eventKey === "edit") {
+			History.push(`/people/${this.state.person.id}/edit`);
+		} else {
+			console.log("Unimplemented Action: " + eventKey);
+		}
+	}
+
 }

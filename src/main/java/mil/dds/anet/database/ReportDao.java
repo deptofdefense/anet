@@ -26,7 +26,8 @@ public class ReportDao implements IAnetDao<Report> {
 	private static String[] fields = { "id", "state", "createdAt", "updatedAt", "engagementDate",
 			"locationId", "approvalStepId", "intent", "exsum", "atmosphere",
 			"advisorOrganizationId", "principalOrganizationId",
-			"atmosphereDetails", "text", "nextSteps", "authorId"};
+			"atmosphereDetails", "text", "keyOutcomesSummary", "keyOutcomes",
+			"nextStepsSummary", "nextSteps", "authorId"};
 	private static String tableName = "reports";
 	public static String REPORT_FIELDS = DaoUtils.buildFieldAliases(tableName, fields);
 
@@ -63,11 +64,13 @@ public class ReportDao implements IAnetDao<Report> {
 		//MSSQL requires explicit CAST when a datetime2 might be NULL.
 		StringBuilder sql = new StringBuilder("INSERT INTO reports " 
 				+ "(state, createdAt, updatedAt, locationId, intent, exsum, " 
-				+ "text, nextSteps, authorId, engagementDate, atmosphere, " 
+				+ "text, keyOutcomesSummary, keyOutcomes, nextStepsSummary, "
+				+ "nextSteps, authorId, engagementDate, atmosphere, " 
 				+ "atmosphereDetails, advisorOrganizationId, "
 				+ "principalOrganizationId) VALUES " 
 				+ "(:state, :createdAt, :updatedAt, :locationId, :intent, " 
-				+ ":exsum, :reportText, :nextSteps, :authorId, ");
+				+ ":exsum, :reportText, :keyOutcomesSummary, :keyOutcomes, "
+				+ ":nextStepsSummary, :nextSteps, :authorId, ");
 		if (DaoUtils.isMsSql(dbHandle)) {
 			sql.append("CAST(:engagementDate AS datetime2), ");
 		} else {
@@ -80,14 +83,14 @@ public class ReportDao implements IAnetDao<Report> {
 			.bind("state", DaoUtils.getEnumId(r.getState()))
 			.bind("atmosphere", DaoUtils.getEnumId(r.getAtmosphere()))
 			.bind("locationId", DaoUtils.getId(r.getLocation()))
-			.bind("authorId", r.getAuthor().getId())
-			.bind("advisorOrgId", DaoUtils.getId(r.getAdvisorOrgJson()))
-			.bind("principalOrgId", DaoUtils.getId(r.getPrincipalOrgJson()))
+			.bind("authorId", DaoUtils.getId(r.getAuthor()))
+			.bind("advisorOrgId", DaoUtils.getId(r.getAdvisorOrg()))
+			.bind("principalOrgId", DaoUtils.getId(r.getPrincipalOrg()))
 			.executeAndReturnGeneratedKeys();
 		r.setId(DaoUtils.getGeneratedId(keys));
 
-		if (r.getAttendeesJson() != null) {
-			for (ReportPerson p : r.getAttendeesJson()) {
+		if (r.getAttendees() != null) {
+			for (ReportPerson p : r.getAttendees()) {
 				//TODO: batch this
 				dbHandle.createStatement("INSERT INTO reportPeople " +
 						"(personId, reportId, isPrimary) VALUES (:personId, :reportId, :isPrimary)")
@@ -97,7 +100,7 @@ public class ReportDao implements IAnetDao<Report> {
 					.execute();
 			}
 		}
-		if (r.getPoamsJson() != null) {
+		if (r.getPoams() != null) {
 			for (Poam p : r.getPoams()) {
 				//TODO: batch this.
 				dbHandle.createStatement("INSERT INTO reportPoams " +
@@ -128,7 +131,9 @@ public class ReportDao implements IAnetDao<Report> {
 
 		StringBuilder sql = new StringBuilder("UPDATE reports SET " +
 				"state = :state, updatedAt = :updatedAt, locationId = :locationId, " +
-				"intent = :intent, exsum = :exsum, text = :reportText, nextSteps = :nextSteps, " +
+				"intent = :intent, exsum = :exsum, text = :reportText, "
+				+ "keyOutcomesSummary = :keyOutcomesSummary, keyOutcomes = :keyOutcomes, "
+				+ "nextStepsSummary = :nextStepsSummary, nextSteps = :nextSteps, " +
 				"approvalStepId = :approvalStepId, ");
 		if (DaoUtils.isMsSql(dbHandle)) {
 			sql.append("engagementDate = CAST(:engagementDate AS datetime2), ");
@@ -143,11 +148,11 @@ public class ReportDao implements IAnetDao<Report> {
 			.bindFromProperties(r)
 			.bind("state", DaoUtils.getEnumId(r.getState()))
 			.bind("locationId", DaoUtils.getId(r.getLocation()))
-			.bind("authorId", r.getAuthor().getId()) //This can never be null
-			.bind("approvalStepId", DaoUtils.getId(r.getApprovalStepJson()))
+			.bind("authorId", DaoUtils.getId(r.getAuthor())) 
+			.bind("approvalStepId", DaoUtils.getId(r.getApprovalStep()))
 			.bind("atmosphere", DaoUtils.getEnumId(r.getAtmosphere()))
-			.bind("advisorOrgId", DaoUtils.getId(r.getAdvisorOrgJson()))
-			.bind("principalOrgId", DaoUtils.getId(r.getPrincipalOrgJson()))
+			.bind("advisorOrgId", DaoUtils.getId(r.getAdvisorOrg()))
+			.bind("principalOrgId", DaoUtils.getId(r.getPrincipalOrg()))
 			.execute();
 	}
 

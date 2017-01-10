@@ -6,11 +6,10 @@ import javax.ws.rs.WebApplicationException;
 
 import org.joda.time.DateTime;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonSetter;
 
 import mil.dds.anet.AnetObjectEngine;
+import mil.dds.anet.graphql.GraphQLFetcher;
 import mil.dds.anet.graphql.GraphQLIgnore;
 import mil.dds.anet.views.AbstractAnetBean;
 
@@ -30,9 +29,9 @@ public class ApprovalAction extends AbstractAnetBean {
 	public Integer getId() { 
 		throw new WebApplicationException("no ID field on Approval Action");
 	}
-	
-	@JsonIgnore
-	public ApprovalStep getStep() {
+
+	@GraphQLFetcher("step")
+	public ApprovalStep loadStep() {
 		if (step == null || step.getLoadLevel() == null) { return step; }
 		if (step.getLoadLevel().contains(LoadLevel.PROPERTIES) == false) { 
 			this.step = AnetObjectEngine.getInstance()
@@ -41,28 +40,26 @@ public class ApprovalAction extends AbstractAnetBean {
 		return step;
 	}
 	
-	@JsonSetter("step")
 	public void setStep(ApprovalStep step) {
 		this.step = step;
 	}
 	
 	@GraphQLIgnore
-	@JsonGetter("step")
-	public ApprovalStep getStepJson() { 
+	public ApprovalStep getStep() { 
 		return step;
 	}
 	
 	@GraphQLIgnore
-	@JsonGetter("person")
-	public Person getPersonJson() {
+	public Person getPerson() {
 		return person;
 	}
-	@JsonSetter("person")
+	
 	public void setPerson(Person person) {
 		this.person = person;
 	}
-	@JsonIgnore
-	public Person getPerson() { 
+	
+	@GraphQLFetcher("person")
+	public Person loadPerson() { 
 		if (person == null || person.getLoadLevel() == null) { return person; } 
 		if (person.getLoadLevel().contains(LoadLevel.PROPERTIES) == false) { 
 			this.person = AnetObjectEngine.getInstance()
@@ -95,8 +92,8 @@ public class ApprovalAction extends AbstractAnetBean {
 			return false;
 		}
 		ApprovalAction other = (ApprovalAction) o;
-		return Objects.equals(step, other.getStepJson()) &&
-				AbstractAnetBean.idEqual(person, other.getPersonJson()) &&
+		return Objects.equals(step, other.getStep()) &&
+				AbstractAnetBean.idEqual(person, other.getPerson()) &&
 				Objects.equals(report, other.getReport()) &&
 				Objects.equals(createdAt, other.getCreatedAt()) &&
 				Objects.equals(type, other.getType());

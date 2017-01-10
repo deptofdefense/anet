@@ -23,13 +23,16 @@ import ReportShow from './pages/reports/Show'
 
 import PersonShow from './pages/people/Show'
 import PersonNew from './pages/people/New'
+import PersonEdit from './pages/people/Edit'
 
 import OrganizationShow from './pages/organizations/Show'
+import OrganizationNew from './pages/organizations/New'
 
 import LocationShow from './pages/locations/Show'
 import LocationNew from './pages/locations/New'
 
 import PositionShow from './pages/positions/Show'
+import PositionEdit from './pages/positions/Edit'
 import PositionNew from './pages/positions/New'
 
 import AdminIndex from './pages/admin/Index'
@@ -59,10 +62,12 @@ ReactDOM.render((
 
 				<Route path="people">
 					<Route path="new" component={PersonNew} />
+					<Route path=":id/edit" component={PersonEdit} />
 					<Route path=":id" component={PersonShow} />
 				</Route>
 
 				<Route path="organizations">
+					<Route path="new" component={OrganizationNew} />
 					<Route path=":id" component={OrganizationShow} />
 				</Route>
 
@@ -73,6 +78,7 @@ ReactDOM.render((
 				
 				<Route path="positions">
 					<Route path="new" component={PositionNew} />
+					<Route path=":id/edit" component={PositionEdit} />
 					<Route path=":id" component={PositionShow} />
 				</Route>
 

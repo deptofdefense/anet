@@ -10,7 +10,7 @@ export default class Organization extends Model {
 		positions: [],
 	}
 
-	static isAdvisorOrg() {
+	isAdvisorOrg() {
 		return this.type === 'ADVISOR_ORG'
 	}
 }

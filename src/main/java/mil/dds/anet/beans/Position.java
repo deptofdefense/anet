@@ -3,12 +3,9 @@ package mil.dds.anet.beans;
 import java.util.List;
 import java.util.Objects;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonSetter;
-
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.geo.Location;
+import mil.dds.anet.graphql.GraphQLFetcher;
 import mil.dds.anet.graphql.GraphQLIgnore;
 import mil.dds.anet.views.AbstractAnetBean;
 
@@ -55,10 +52,9 @@ public class Position extends AbstractAnetBean {
 		this.type = type;
 	}
 
-	@JsonIgnore
-	public Organization getOrganization() {
-		if (organization == null) { return null; } 
-		if (organization.getLoadLevel() == null ) { 
+	@GraphQLFetcher("organization")
+	public Organization loadOrganization() {
+		if (organization == null || organization.getLoadLevel() == null ) { 
 			return organization; // just a bean, not a db object! 
 		}
 		if (organization.getLoadLevel().contains(LoadLevel.PROPERTIES) == false) {
@@ -68,19 +64,17 @@ public class Position extends AbstractAnetBean {
 		return organization;
 	}
 	
-	@JsonSetter("organization")
 	public void setOrganization(Organization ao) {
 		this.organization = ao;
 	}
 	
 	@GraphQLIgnore
-	@JsonGetter("organization")
-	public Organization getOrganizationJson() { 
+	public Organization getOrganization() { 
 		return organization;
 	}
 	
-	@JsonIgnore
-	public Person getPerson() { 
+	@GraphQLFetcher("person")
+	public Person loadPerson() { 
 		if (person == null || person.getLoadLevel() == null) { return person; } 
 		if (person.getLoadLevel().contains(LoadLevel.PROPERTIES) == false) { 
 			this.person = AnetObjectEngine.getInstance()
@@ -90,18 +84,16 @@ public class Position extends AbstractAnetBean {
 	}
 	
 	@GraphQLIgnore
-	@JsonGetter("person")
-	public Person getPersonJson() { 
+	public Person getPerson() { 
 		return person;
 	}
 	
-	@JsonSetter("person")
 	public void setPerson(Person p) {
 		this.person = p;
 	}
 	
-	@JsonIgnore
-	public List<Position> getAssociatedPositions() { 
+	@GraphQLFetcher("associatedPositions")
+	public List<Position> loadAssociatedPositions() { 
 		if (associatedPositions == null) { 
 			associatedPositions = AnetObjectEngine.getInstance()
 				.getPositionDao().getAssociatedPositions(this);
@@ -109,8 +101,17 @@ public class Position extends AbstractAnetBean {
 		return associatedPositions;
 	}
 	
-	@JsonIgnore
-	public Location getLocation() { 
+	@GraphQLIgnore
+	public List<Position> getAssociatedPositions() { 
+		return associatedPositions;
+	}
+	
+	public void setAssociatedPositions(List<Position> associatedPositions) { 
+		this.associatedPositions = associatedPositions;
+	}
+	
+	@GraphQLFetcher("location")
+	public Location loadLocation() { 
 		if (location == null || location.getLoadLevel() == null) { return location; } 
 		if (location.getLoadLevel().contains(LoadLevel.PROPERTIES) == false) { 
 			this.location = AnetObjectEngine.getInstance()
@@ -120,12 +121,10 @@ public class Position extends AbstractAnetBean {
 	}
 	
 	@GraphQLIgnore
-	@JsonGetter("location")
-	public Location getLocationJson() { 
+	public Location getLocation() { 
 		return location;
 	}
 	
-	@JsonSetter("location")
 	public void setLocation(Location location) { 
 		this.location = location;
 	}
@@ -140,7 +139,7 @@ public class Position extends AbstractAnetBean {
 			Objects.equals(name, other.getName()) &&
 			Objects.equals(code,  other.getCode()) && 
 			Objects.equals(type, other.getType()) && 
-			idEqual(organization, other.getOrganizationJson());
+			idEqual(organization, other.getOrganization());
 	}
 	
 	@Override

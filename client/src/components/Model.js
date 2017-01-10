@@ -1,4 +1,3 @@
-import API from 'api'
 import utils from 'utils'
 
 export default class Model {
@@ -40,27 +39,23 @@ export default class Model {
 		return ['', resourceName, 'new'].join('/')
 	}
 
+	static isEqual(a, b) {
+		return a && b && a.id === b.id
+	}
+
 	constructor(props) {
-		Object.assign(this, this.constructor.schema, props)
+		Object.assign(this, this.constructor.schema)
+		if (props)
+			this.setState(props)
 	}
 
 	setState(props) {
-		Object.assign(this, props)
+		Object.forEach(props, (key, value) => {
+			if (value !== null)
+				this[key] = value
+		})
+
 		return this
-	}
-
-	save(apiOptions) {
-		return API.send(`/api/${this.toPath()}`, this, apiOptions)
-				.then(response => {
-					console.log(response);
-
-					if (response.code) {
-						this.errors = response.code
-						throw response.code
-					}
-
-					return response
-				})
 	}
 
 	toPath() {
