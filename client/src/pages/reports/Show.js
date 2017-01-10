@@ -108,6 +108,9 @@ export default class ReportShow extends Page {
 		let {report} = this.state
 		let {currentUser} = this.context.app.state
 
+		let canApprove = currentUser.isAdmin() ||
+			report.approvalStep.approverGroup.members.find(member => member.id === currentUser.id)
+
 		return (
 			<div>
 				<Breadcrumbs items={[['Reports', '/reports'], [report.intent || 'Report #' + report.id, Report.pathFor(report)]]} />
@@ -241,7 +244,7 @@ export default class ReportShow extends Page {
 								</div>
 							)}
 
-							{report.approvalStep.approverGroup.members.find(member => member.id === currentUser.id) &&
+							{canApprove &&
 								<div className="pull-right">
 									<Button bsStyle="danger" style={approvalButtonCss} onClick={this.rejectReport}>Reject</Button>
 									<Button bsStyle="warning" style={approvalButtonCss}>Edit report</Button>
