@@ -54,18 +54,18 @@ public class PositionDao implements IAnetDao<Position> {
 				"VALUES (:name, :code, :type, :organizationId, :currentPersonId, :locationId, :createdAt, :updatedAt)")
 			.bindFromProperties(p)
 			.bind("type", DaoUtils.getEnumId(p.getType()))
-			.bind("organizationId", DaoUtils.getId(p.getOrganizationJson()))
-			.bind("currentPersonId", DaoUtils.getId(p.getPersonJson()))
+			.bind("organizationId", DaoUtils.getId(p.getOrganization()))
+			.bind("currentPersonId", DaoUtils.getId(p.getPerson()))
 
 			.bind("locationId", DaoUtils.getId(p.getLocation()))
 			.executeAndReturnGeneratedKeys();
 		p.setId(DaoUtils.getGeneratedId(keys));
 		
 		//TODO: this should be in a transaction.
-		if (p.getPersonJson() != null) { 
+		if (p.getPerson() != null) { 
 			dbHandle.createStatement("INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES (:positionId, :personId, :createdAt)")
 				.bind("positionId", p.getId())
-				.bind("personId", DaoUtils.getId(p.getPersonJson()))
+				.bind("personId", DaoUtils.getId(p.getPerson()))
 				.bind("createdAt", p.getCreatedAt())
 				.execute();
 		}
@@ -165,9 +165,9 @@ public class PositionDao implements IAnetDao<Position> {
 	}
 	
 	public Person getPersonInPositionNow(Position p) { 
-		if (p.getPersonJson() == null) { return null; } //No person currently in position.
+		if (p.getPerson() == null) { return null; } //No person currently in position.
 		List<Person> people = dbHandle.createQuery("SELECT " + PersonDao.PERSON_FIELDS + " FROM people WHERE id = :personId")
-			.bind("personId", p.getPersonJson().getId())
+			.bind("personId", p.getPerson().getId())
 			.map(new PersonMapper())
 			.list();
 		if (people.size() == 0) { return null; }

@@ -8,6 +8,7 @@ import {Link} from 'react-router'
 import RadioGroup from 'components/RadioGroup'
 import Breadcrumbs from 'components/Breadcrumbs'
 import LinkTo from 'components/LinkTo'
+import ReportSummary from 'components/ReportSummary'
 
 import API from 'api'
 import {Report, Person, Organization, Position, Poam} from 'models'
@@ -20,13 +21,13 @@ export default class Search extends Page {
 		super(props)
 		this.state = {
 			query: props.location.query.q,
-			viewFormat: FORMAT_TABLE,
+			viewFormat: FORMAT_EXSUM,
 			results: {
 				reports: [],
 				people: [],
 				organizations: [],
 				positions: [],
-				locations: [],
+				location: [],
 				poams: []
 			}
 		}
@@ -37,16 +38,24 @@ export default class Search extends Page {
 	fetchData(props) {
 		let query = props.location.query.q
 		this.setState({query})
-		API.fetch(`/api/search/?q=${query}`).then(results => {
-			this.setState({results: {
-				reports: results.reports || [],
-				people: results.people || [],
-				positions: results.positions || [],
-				poams: results.poams || [],
-				locations: results.locations || [],
-				organizations: results.organizations || [],
-			}})
-		})
+		//TODO: escape query in the graphQL query
+		API.query(/*GraphQL */ `
+			searchResults(f:search, q:"${query}") {
+				reports { id, intent, engagementDate, keyOutcomesSummary, nextStepsSummary 
+					primaryAdvisor { id, name, position { organization { id, name}}}, 
+					primaryPrincipal { id, name, position { organization { id, name}}},
+					advisorOrg { id, name},
+					principalOrg { id, name},
+					location { id, name},
+					poams {id, shortName, longName}
+				},
+				people { id, name, rank, emailAddress } 
+				positions { id }
+				poams { id, shortName, longName}
+				locations { id, name, lat, lng}
+				organizations { id, name }
+			}
+		`).then(data => this.setState({results: data.searchResults}))
 	}
 
 	static pageProps = {
@@ -66,11 +75,12 @@ export default class Search extends Page {
 	}
 
 	render() {
+		let results = this.state.results;
 		return (
 			<div>
 				<Breadcrumbs items={[['Searching for "' + this.state.query + '"', '/search']]} />
 
-				{this.state.results.reports.length > 0 &&
+				{results.reports && results.reports.length > 0 &&
 				<fieldset>
 					<legend>
 						Reports
@@ -83,35 +93,35 @@ export default class Search extends Page {
 				</fieldset>
 				}
 
-				{this.state.results.people.length > 0 &&
+				{results.people && results.people.length > 0 &&
 					<fieldset>
 						<legend>People</legend>
 						{this.renderPeople()}
 					</fieldset>
 				}
 
-				{this.state.results.organizations.length > 0 &&
+				{results.organizations && results.organizations.length > 0 &&
 					<fieldset>
 						<legend>Organizations</legend>
 						{this.renderOrgs()}
 					</fieldset>
 				}
 
-				{this.state.results.positions.length > 0 && 
+				{results.positions && results.positions.length > 0 && 
 					<fieldset>
 						<legend>Positions</legend>
 						{this.renderPositions()}
 					</fieldset>
 				}
 				
-				{this.state.results.locations.length > 0 && 
+				{results.locations && results.locations.length > 0 && 
 					<fieldset>
 						<legend>Locations</legend>
 						{this.renderLocations()}
 					</fieldset>
 				}
 
-				{this.state.results.poams.length > 0 && 
+				{results.poams && results.poams.length > 0 && 
 					<fieldset>
 						<legend>Poams</legend>
 						{this.renderPoams()}
@@ -144,20 +154,16 @@ export default class Search extends Page {
 	}
 
 	renderExsums() {
-		return <ul>
-			{Report.map(this.state.results.reports, report => {
-				let author = report.author || {}
-				let attendees = report.attendees || []
-				return (
-					<li key={report.id}>
-						<LinkTo report={report}>Report #{report.id}</LinkTo><br />
-						At {moment(report.engagementDate).format('L LT')}, {author.rank} {author.name}
-						met with {attendees.length} Afghan principals. They discussed {report.intent}.
-						THIS IS AN IMPROPERLY FORMATTED EXSUM.
-					</li>
-				)
-			})}
-		</ul>
+		console.log(this.state.results.reports)
+		return <Table responsive>
+			<tbody>
+				{this.state.results.reports.map(report => 
+					<tr key={report.id}>
+						<td><ReportSummary report={report} /></td>
+					</tr>
+				)}
+			</tbody>
+		</Table>
 	}
 
 	renderPeople() {

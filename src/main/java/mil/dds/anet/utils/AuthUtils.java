@@ -13,19 +13,19 @@ public class AuthUtils {
 	public static String UNAUTH_MESSAGE = "You do not have permissions to do this";
 	
 	public static void assertAdministrator(Person user) { 
-		if (user.getPositionJson() != null &&
-				user.getPositionJson().getType() == PositionType.ADMINISTRATOR) { 
+		if (user.loadPosition() != null &&
+				user.getPosition().getType() == PositionType.ADMINISTRATOR) { 
 			return;
 		}
 		throw new WebApplicationException(UNAUTH_MESSAGE, Status.UNAUTHORIZED);
 	}
 	
 	public static void assertSuperUserForOrg(Person user, Organization org) {
-		Position position = user.getPositionJson();
+		Position position = user.loadPosition();
 		if (position != null && 
 				position.getType() == PositionType.SUPER_USER &&
-				position.getOrganizationJson() != null && 
-				position.getOrganizationJson().getId().equals(org.getId())) { 
+				position.getOrganization() != null && 
+				position.getOrganization().getId().equals(org.getId())) { 
 			return;
 		} else if (position != null && 
 				position.getType() == PositionType.ADMINISTRATOR) { 
@@ -35,7 +35,7 @@ public class AuthUtils {
 	}
 
 	public static void assertSuperUser(Person user) {
-		Position position = user.getPositionJson();
+		Position position = user.loadPosition();
 		if (position != null && 
 			(position.getType() == PositionType.SUPER_USER ||
 			position.getType() == PositionType.ADMINISTRATOR)) { 

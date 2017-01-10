@@ -4,6 +4,9 @@ import './index.css'
 import 'core-js/shim'
 import './utils'
 
+import 'leaflet/dist/leaflet.css'
+import 'leaflet/dist/leaflet'
+
 import React from 'react'
 import ReactDOM from 'react-dom'
 import {Router, Route, IndexRoute, browserHistory} from 'react-router'
@@ -20,11 +23,19 @@ import ReportShow from './pages/reports/Show'
 
 import PersonShow from './pages/people/Show'
 import PersonNew from './pages/people/New'
+import PersonEdit from './pages/people/Edit'
+
+import PoamShow from './pages/poams/Show'
+import PoamNew from './pages/poams/New'
 
 import OrganizationShow from './pages/organizations/Show'
 import OrganizationNew from './pages/organizations/New'
 
+import LocationShow from './pages/locations/Show'
+import LocationNew from './pages/locations/New'
+
 import PositionShow from './pages/positions/Show'
+import PositionEdit from './pages/positions/Edit'
 import PositionNew from './pages/positions/New'
 
 import AdminIndex from './pages/admin/Index'
@@ -54,6 +65,7 @@ ReactDOM.render((
 
 				<Route path="people">
 					<Route path="new" component={PersonNew} />
+					<Route path=":id/edit" component={PersonEdit} />
 					<Route path=":id" component={PersonShow} />
 				</Route>
 
@@ -62,9 +74,20 @@ ReactDOM.render((
 					<Route path=":id" component={OrganizationShow} />
 				</Route>
 
+				<Route path="locations">
+					<Route path="new" component={LocationNew} />
+					<Route path=":id" component={LocationShow} />
+				</Route>
+				
 				<Route path="positions">
 					<Route path="new" component={PositionNew} />
+					<Route path=":id/edit" component={PositionEdit} />
 					<Route path=":id" component={PositionShow} />
+				</Route>
+
+				<Route path="poams">
+					<Route path="new" component={PoamNew} />
+					<Route path=":id" component={PoamShow} />
 				</Route>
 
 				<Route path="graphiql" component={GraphiQL} />

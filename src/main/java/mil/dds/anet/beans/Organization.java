@@ -5,11 +5,8 @@ import java.util.Objects;
 
 import org.joda.time.DateTime;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonSetter;
-
 import mil.dds.anet.AnetObjectEngine;
+import mil.dds.anet.graphql.GraphQLFetcher;
 import mil.dds.anet.graphql.GraphQLIgnore;
 import mil.dds.anet.views.AbstractAnetBean;
 
@@ -33,8 +30,8 @@ public class Organization extends AbstractAnetBean {
 		this.name = name;
 	}
 
-	@JsonIgnore
-	public Organization getParentOrg() { 
+	@GraphQLFetcher("parentOrg")
+	public Organization loadParentOrg() { 
 		if (parentOrg == null || parentOrg.getLoadLevel() == null) { return parentOrg; }
 		if (parentOrg.getLoadLevel().contains(LoadLevel.PROPERTIES) == false) { 
 			this.parentOrg = AnetObjectEngine.getInstance()
@@ -44,12 +41,10 @@ public class Organization extends AbstractAnetBean {
 	}
 	
 	@GraphQLIgnore
-	@JsonGetter("parentOrg")
-	public Organization getParentOrgJson() {
+	public Organization getParentOrg() {
 		return parentOrg;
 	}
 	
-	@JsonSetter("parentOrg")
 	public void setParentOrg(Organization parentOrg) {
 		this.parentOrg = parentOrg;
 	}
@@ -73,8 +68,8 @@ public class Organization extends AbstractAnetBean {
 		this.updatedAt = updatedAt;
 	}
 	
-	@JsonIgnore
-	public List<Position> getPositions() {
+	@GraphQLFetcher("positions")
+	public List<Position> loadPositions() {
 		if (positions == null) {
 			positions = AnetObjectEngine.getInstance()
 					.getPositionDao().getByOrganization(this);
@@ -82,8 +77,8 @@ public class Organization extends AbstractAnetBean {
 		return positions;
 	}
 	
-	@JsonIgnore
-	public List<ApprovalStep> getApprovalSteps() { 
+	@GraphQLFetcher("approvalSteps")
+	public List<ApprovalStep> loadApprovalSteps() { 
 		if (approvalSteps == null) { 
 			approvalSteps = AnetObjectEngine.getInstance()
 					.getApprovalStepsForOrg(this);
@@ -91,27 +86,25 @@ public class Organization extends AbstractAnetBean {
 		return approvalSteps;
 	}
 	
-	@JsonIgnore
-	public List<Organization> getChildrenOrgs() { 
+	@GraphQLFetcher("childrenOrgs")
+	public List<Organization> loadChildrenOrgs() { 
 		if (childrenOrgs == null) { 
 			childrenOrgs = AnetObjectEngine.getInstance().getOrganizationDao().getByParentOrgId(id);
 		}
 		return childrenOrgs;
 	}
 	
-	@GraphQLIgnore
-	@JsonGetter("childrenOrgss")
-	public List<Organization> getChildrenOrgsJson() { 
-		return childrenOrgs;
-	}
+//	@GraphQLIgnore
+//	public List<Organization> getChildrenOrgs() { 
+//		return childrenOrgs;
+//	}
+//	
+//	public void setChildrenOrgs(List<Organization> childrenOrgs) { 
+//		this.childrenOrgs = childrenOrgs;
+//	}
 	
-	@JsonSetter("childrenOrgs")
-	public void setChildrenOrgss(List<Organization> childrenOrgs) { 
-		this.childrenOrgs = childrenOrgs;
-	}
-	
-	@JsonIgnore
-	public List<Poam> getPoams() { 
+	@GraphQLFetcher("poams")
+	public List<Poam> loadPoams() { 
 		if (poams == null) { 
 			poams = AnetObjectEngine.getInstance().getPoamDao().getPoamsByOrganizationId(this.getId());
 		}

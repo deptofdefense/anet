@@ -63,7 +63,7 @@ public class PoamResourceTest extends AbstractResourceTest {
 		assertThat(tree).doesNotContain(b);
 		for (Poam p : tree) { 
 			if (p.getId() == a.getId()) { 
-				assertThat(p.getChildrenPoamsJson()).contains(b, c, d);
+				assertThat(p.getChildrenPoams()).contains(b, c, d);
 			}
 		}
 		
@@ -83,7 +83,7 @@ public class PoamResourceTest extends AbstractResourceTest {
 		resp = httpQuery("/api/poams/update", admin).post(Entity.json(a));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		returned = httpQuery("/api/poams/" + a.getId(), jack).get(Poam.class);
-		assertThat(returned.getResponsibleOrgJson().getId()).isEqualTo(ef8.getId());
+		assertThat(returned.getResponsibleOrg().getId()).isEqualTo(ef8.getId());
 		
 		//Fetch the poams off the organization
 		List<Poam> poams = httpQuery("/api/organizations/" + ef8.getId() + "/poams", jack).get(new GenericType<List<Poam>>() {});
@@ -118,7 +118,7 @@ public class PoamResourceTest extends AbstractResourceTest {
 		searchResults = httpQuery("/api/poams/search", jack).post(Entity.json(query), new GenericType<List<Poam>>() {});
 		assertThat(searchResults).isNotEmpty();
 		assertThat(searchResults.stream()
-				.filter(p -> p.getResponsibleOrgJson().getId().equals(ef2.getId()))
+				.filter(p -> p.getResponsibleOrg().getId().equals(ef2.getId()))
 				.count())
 			.isEqualTo(searchResults.size());
 		

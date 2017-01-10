@@ -8,14 +8,13 @@ import java.util.Optional;
 
 import org.joda.time.DateTime;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.database.AdminDao.AdminSettingKeys;
+import mil.dds.anet.graphql.GraphQLFetcher;
 import mil.dds.anet.graphql.GraphQLIgnore;
 import mil.dds.anet.views.AbstractAnetBean;
 
@@ -37,8 +36,11 @@ public class Report extends AbstractAnetBean {
 	List<ReportPerson> attendees;
 	List<Poam> poams;
 	
-	String reportText;
+	String keyOutcomesSummary;
+	String keyOutcomes;
+	String nextStepsSummary;
 	String nextSteps;
+	String reportText;
 	
 	Person author;	
 	
@@ -48,18 +50,16 @@ public class Report extends AbstractAnetBean {
 	List<Comment> comments;
 
 	@GraphQLIgnore
-	@JsonGetter("approvalStep")
-	public ApprovalStep getApprovalStepJson() {
+	public ApprovalStep getApprovalStep() {
 		return approvalStep;
 	}
 
-	@JsonSetter("approvalStep")
 	public void setApprovalStep(ApprovalStep approvalStep) {
 		this.approvalStep = approvalStep;
 	}
 
-	@JsonIgnore
-	public ApprovalStep getApprovalStep() { 
+	@GraphQLFetcher("approvalStep")
+	public ApprovalStep loadApprovalStep() { 
 		if (approvalStep == null || approvalStep.getLoadLevel() == null) { return approvalStep; } 
 		if (approvalStep.getLoadLevel().contains(LoadLevel.PROPERTIES) == false) { 
 			this.approvalStep = AnetObjectEngine.getInstance()
@@ -84,8 +84,8 @@ public class Report extends AbstractAnetBean {
 		this.engagementDate = engagementDate;
 	}
 
-	@JsonIgnore
-	public Location getLocation() {
+	@GraphQLFetcher("location")
+	public Location loadLocation() {
 		if (location == null || location.getLoadLevel() == null) { return location; } 
 		if (location.getLoadLevel().contains(LoadLevel.PROPERTIES) == false) { 
 			this.location = AnetObjectEngine.getInstance()
@@ -94,14 +94,12 @@ public class Report extends AbstractAnetBean {
 		return location;
 	}
 
-	@JsonSetter("location")
 	public void setLocation(Location location) {
 		this.location = location;
 	}
 	
-	@JsonGetter("location")
 	@GraphQLIgnore
-	public Location getLocationJson() { 
+	public Location getLocation() { 
 		return location;
 	}
 
@@ -137,8 +135,8 @@ public class Report extends AbstractAnetBean {
 		this.intent = intent;
 	}
 
-	@JsonIgnore
-	public List<ReportPerson> getAttendees() { 
+	@GraphQLFetcher("attendees")
+	public List<ReportPerson> loadAttendees() { 
 		if (attendees == null && id != null) {
 			attendees = AnetObjectEngine.getInstance().getReportDao().getAttendeesForReport(id);
 		}
@@ -146,49 +144,69 @@ public class Report extends AbstractAnetBean {
 	}
 	
 	@GraphQLIgnore
-	@JsonGetter("attendees")
-	public List<ReportPerson> getAttendeesJson() {
+	public List<ReportPerson> getAttendees() {
 		return attendees;
 	}
 
-	@JsonSetter("attendees")
 	public void setAttendees(List<ReportPerson> attendees) {
 		this.attendees = attendees;
 	}
 
-	@JsonIgnore
-	public ReportPerson getPrimaryAdvisor() { 
-		getAttendees(); //Force the load of attendees
+	@GraphQLFetcher("primaryAdvisor")
+	public ReportPerson loadPrimaryAdvisor() { 
+		loadAttendees(); //Force the load of attendees
 		return attendees.stream().filter(p ->
 				p.isPrimary() && p.getRole().equals(Role.ADVISOR)
 			).findFirst().orElse(null);
 	}
 	
-	@JsonIgnore
-	public ReportPerson getPrimaryPrincipal() { 
-		getAttendees(); //Force the load of attendees
+	@GraphQLFetcher("primaryPrincipal")
+	public ReportPerson loadPrimaryPrincipal() { 
+		loadAttendees(); //Force the load of attendees
 		return attendees.stream().filter(p ->
 				p.isPrimary() && p.getRole().equals(Role.PRINCIPAL)
 			).findFirst().orElse(null);
 	}
 	
-	@JsonIgnore
-	public List<Poam> getPoams() {
+	@GraphQLFetcher("poams")
+	public List<Poam> loadPoams() {
 		if (poams == null) { 
 			poams = AnetObjectEngine.getInstance().getReportDao().getPoamsForReport(this);
 		}
 		return poams;
 	}
 
-	@JsonSetter("poams")
 	public void setPoams(List<Poam> poams) {
 		this.poams = poams;
 	}
 	
 	@GraphQLIgnore
-	@JsonGetter("poams")
-	public List<Poam> getPoamsJson() { 
+	public List<Poam> getPoams() { 
 		return poams;
+	}
+
+	public String getKeyOutcomesSummary() {
+		return keyOutcomesSummary;
+	}
+
+	public void setKeyOutcomesSummary(String keyOutcomesSummary) {
+		this.keyOutcomesSummary = keyOutcomesSummary;
+	}
+
+	public String getKeyOutcomes() {
+		return keyOutcomes;
+	}
+
+	public void setKeyOutcomes(String keyOutcomes) {
+		this.keyOutcomes = keyOutcomes;
+	}
+
+	public String getNextStepsSummary() {
+		return nextStepsSummary;
+	}
+
+	public void setNextStepsSummary(String nextStepsSummary) {
+		this.nextStepsSummary = nextStepsSummary;
 	}
 
 	public String getReportText() {
@@ -207,8 +225,8 @@ public class Report extends AbstractAnetBean {
 		this.nextSteps = nextSteps;
 	}
 
-	@JsonIgnore
-	public Person getAuthor() {
+	@GraphQLFetcher("author")
+	public Person loadAuthor() {
 		if (author == null || author.getLoadLevel() == null) { return author; } 
 		if (author.getLoadLevel().contains(LoadLevel.PROPERTIES) == false) { 
 			this.author = getBeanAtLoadLevel(author, LoadLevel.PROPERTIES);
@@ -222,24 +240,21 @@ public class Report extends AbstractAnetBean {
 	}
 	
 	@GraphQLIgnore
-	@JsonGetter("author")
-	public Person getAuthorJson() { 
+	public Person getAuthor() { 
 		return author;
 	}
-
 	
-	@JsonGetter("advisorOrg")
-	public Organization getAdvisorOrgJson() {
+	@GraphQLIgnore
+	public Organization getAdvisorOrg() {
 		return advisorOrg;
 	}
 
-	@JsonSetter("advisorOrg")
 	public void setAdvisorOrg(Organization advisorOrg) {
 		this.advisorOrg = advisorOrg;
 	}
 
-	@JsonIgnore
-	public Organization getAdvisorOrg() { 
+	@GraphQLFetcher("advisorOrg")
+	public Organization loadAdvisorOrg() { 
 		if (advisorOrg == null || advisorOrg.getLoadLevel() == null) { return advisorOrg; } 
 		if (advisorOrg.getLoadLevel().contains(LoadLevel.PROPERTIES) == false) { 
 			this.advisorOrg = getBeanAtLoadLevel(advisorOrg, LoadLevel.PROPERTIES);
@@ -247,18 +262,17 @@ public class Report extends AbstractAnetBean {
 		return advisorOrg;
 	}
 	
-	@JsonGetter("principalOrg")
-	public Organization getPrincipalOrgJson() {
+	@GraphQLIgnore
+	public Organization getPrincipalOrg() {
 		return principalOrg;
 	}
 
-	@JsonSetter("principalOrg")
 	public void setPrincipalOrg(Organization principalOrg) {
 		this.principalOrg = principalOrg;
 	}
 
-	@JsonIgnore
-	public Organization getPrincipalOrg() { 
+	@GraphQLFetcher("principalOrg")
+	public Organization loadPrincipalOrg() { 
 		if (principalOrg == null || principalOrg.getLoadLevel() == null) { return principalOrg; } 
 		if (principalOrg.getLoadLevel().contains(LoadLevel.PROPERTIES) == false) { 
 			this.principalOrg = getBeanAtLoadLevel(principalOrg, LoadLevel.PROPERTIES);
@@ -266,8 +280,8 @@ public class Report extends AbstractAnetBean {
 		return principalOrg;
 	}
 	
-	@JsonIgnore
-	public List<Comment> getComments() {
+	@GraphQLFetcher("comments")
+	public List<Comment> loadComments() {
 		if (comments == null) {
 			comments = AnetObjectEngine.getInstance().getCommentDao().getCommentsForReport(this);
 		}
@@ -280,8 +294,7 @@ public class Report extends AbstractAnetBean {
 	}
 	
 	@GraphQLIgnore
-	@JsonGetter("comments")
-	public List<Comment> getCommentsJson() { 
+	public List<Comment> getComments() { 
 		return comments;
 	}
 	
@@ -289,8 +302,8 @@ public class Report extends AbstractAnetBean {
 	 * There will be an approval action for each approval step for this report
 	 * With information about the 
 	 */
-	@JsonIgnore
-	public List<ApprovalAction> getApprovalStatus() { 
+	@GraphQLFetcher("approvalStatus")
+	public List<ApprovalAction> loadApprovalStatus() { 
 		AnetObjectEngine engine = AnetObjectEngine.getInstance();
 		List<ApprovalAction> actions = engine.getApprovalActionDao().getActionsForReport(this.getId());
 		
@@ -299,7 +312,7 @@ public class Report extends AbstractAnetBean {
 			ApprovalAction last = actions.get(0);
 			List<ApprovalAction> compacted = new LinkedList<ApprovalAction>();
 			for (ApprovalAction action : actions) { 
-				if (action.getStepJson().getId().equals(last.getStepJson().getId()) == false) { 
+				if (action.getStep().getId().equals(last.getStep().getId()) == false) { 
 					compacted.add(last);
 				}
 				last = action;
@@ -352,21 +365,21 @@ public class Report extends AbstractAnetBean {
 		Report r = (Report) other;
 		return Objects.equals(r.getId(), id) &&
 				Objects.equals(r.getState(), state) &&
-				idEqual(r.getApprovalStepJson(), approvalStep) &&
+				idEqual(r.getApprovalStep(), approvalStep) &&
 				Objects.equals(r.getCreatedAt(), createdAt) &&
 				Objects.equals(r.getUpdatedAt(), updatedAt) &&
 				Objects.equals(r.getEngagementDate(), engagementDate) &&
-				idEqual(r.getLocationJson(), location) &&
+				idEqual(r.getLocation(), location) &&
 				Objects.equals(r.getIntent(), intent) &&
 				Objects.equals(r.getExsum(), exsum) &&
 				Objects.equals(r.getAtmosphere(), atmosphere) &&
 				Objects.equals(r.getAtmosphereDetails(), atmosphereDetails) &&
-				Objects.equals(r.getAttendeesJson(), attendees) &&
-				Objects.equals(r.getPoamsJson(), poams) &&
+				Objects.equals(r.getAttendees(), attendees) &&
+				Objects.equals(r.getPoams(), poams) &&
 				Objects.equals(r.getReportText(), reportText) &&
 				Objects.equals(r.getNextSteps(), nextSteps) &&
-				idEqual(r.getAuthorJson(), author) &&
-				Objects.equals(r.getCommentsJson(), comments);
+				idEqual(r.getAuthor(), author) &&
+				Objects.equals(r.getComments(), comments);
 	}
 	
 	@Override

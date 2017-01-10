@@ -1,7 +1,7 @@
 import React from 'react'
 import Page from 'components/Page'
 import History from 'components/History'
-import {InputGroup, Radio, Table, Button} from 'react-bootstrap'
+import {InputGroup, Radio, Table, Button, Collapse, Link} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
 import DatePicker from 'react-bootstrap-date-picker'
@@ -36,7 +36,10 @@ export default class ReportNew extends Page {
 				persons: [],
 				locations: [],
 				poams: [],
-			}
+			},
+			showKeyOutcomesText: false,
+			showNextStepsText: false,
+			showReportText: false
 		}
 	}
 
@@ -154,7 +157,7 @@ export default class ReportNew extends Page {
 					</fieldset>
 
 					<fieldset>
-						<legend>Milestones</legend>
+						<legend>Plan of Action and Milestones / Pillars</legend>
 
 						<Form.Field id="poams">
 							<Autocomplete url="/api/poams/search" template={poam =>
@@ -193,18 +196,55 @@ export default class ReportNew extends Page {
 
 					<fieldset>
 						<legend>Meeting discussion</legend>
-
-						<Form.Field id="reportText" label="" horizontal={false}>
-							<TextEditor label="Key outcomes" />
+						<Form.Field id="keyOutcomesSummary" >
+							<Form.Field.ExtraCol>{250 - report.keyOutcomesSummary.length} characters remaining</Form.Field.ExtraCol>
 						</Form.Field>
 
-						<Form.Field id="nextSteps" label="" horizontal={false} style={{marginTop: '5rem'}}>
-							<TextEditor label="Next steps" />
+						<Button bsStyle="link" onClick={this.toggleKeyOutcomesText} >
+							{this.state.showKeyOutcomesText ? "Hide" : "Add" } details to Key Outcomes
+						</Button>
+						<Collapse in={this.state.showKeyOutcomesText} >
+							<Form.Field id="keyOutcomes" label="" horizontal={false}>
+								<TextEditor label="Key outcomes" />
+							</Form.Field>
+						</Collapse>
+
+						<Form.Field id="nextStepsSummary" >
+							<Form.Field.ExtraCol>{250 - report.nextStepsSummary.length} characters remaining</Form.Field.ExtraCol>
 						</Form.Field>
+						<Button bsStyle="link" onClick={this.toggleNextStepsText} >Add details to Next Steps</Button>
+						<Collapse in={this.state.showNextStepsText} >
+							<Form.Field id="nextSteps" label="" horizontal={false} style={{marginTop: '5rem'}}>
+								<TextEditor label="Next steps" />
+							</Form.Field>
+						</Collapse>
+
+						<Button bsStyle="link" onClick={this.toggleReportText} >Add additional report details</Button>
+						<Collapse in={this.state.showReportText} >
+							<Form.Field id="reportText" label="" horizontal={false} >
+								<TextEditor label="Report Details" />
+							</Form.Field>
+						</Collapse>
+
 					</fieldset>
 				</Form>
 			</div>
 		)
+	}
+
+	@autobind
+	toggleKeyOutcomesText() { 
+		this.setState({showKeyOutcomesText: !this.state.showKeyOutcomesText});
+	}
+
+	@autobind
+	toggleNextStepsText() { 
+		this.setState({showNextStepsText: !this.state.showNextStepsText});
+	}
+
+	@autobind
+	toggleReportText() { 
+		this.setState({showReportText: !this.state.showReportText});
 	}
 
 	@autobind
@@ -223,7 +263,7 @@ export default class ReportNew extends Page {
 		if(report.primaryPrincipal) { report.attendees.find(a => a.id === report.primaryPrincipal.id).primary = true; }
 
 		API.send('/api/reports/new', report)
-			.then(response => {
+			.then(report => {
 				History.push(Report.pathFor(report))
 			})
 			.catch(response => {

@@ -1,17 +1,20 @@
 package mil.dds.anet.utils;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
+
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 
 import org.joda.time.DateTime;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import graphql.Scalars;
+import graphql.schema.DataFetchingEnvironment;
 import graphql.schema.GraphQLEnumType;
 import graphql.schema.GraphQLFieldDefinition;
 import graphql.schema.GraphQLInputObjectField;
@@ -21,9 +24,11 @@ import graphql.schema.GraphQLList;
 import graphql.schema.GraphQLOutputType;
 import graphql.schema.GraphQLType;
 import graphql.schema.GraphQLTypeReference;
+import io.dropwizard.auth.Auth;
 import mil.dds.anet.beans.search.ISearchQuery;
 import mil.dds.anet.graphql.GraphQLDateTimeType;
 import mil.dds.anet.graphql.GraphQLIgnore;
+import mil.dds.anet.graphql.GraphQLParam;
 import mil.dds.anet.graphql.PropertyDataFetcherWithArgs;
 import mil.dds.anet.views.AbstractAnetBean;
 
@@ -119,4 +124,51 @@ public class GraphQLUtils {
 		return new GraphQLInputObjectType(clazz.getSimpleName(), "", fields);
 	}
 
+	/*
+	 * Used to pick the best method out of a list given the arguments we were passed via GraphQL
+	 */
+	public static Method findMethod(DataFetchingEnvironment environment, List<Method> methods) { 
+    	Method bestMethod = null;
+    	int maxScore = -1;
+    	for (Method m : methods) {
+    		int score = getMethodScore(m, environment);
+    		if (score > maxScore) { 
+    			maxScore = score;
+    			bestMethod = m;
+    		}
+    	}
+    	return bestMethod;
+    }
+    
+    /* Returns a 'score' for the method that is either
+     * - -1 if this method cannot be used because we are missing required arguments
+     * - the number of arguments if we have all of the required args. 
+     */
+    private static int getMethodScore(Method m, DataFetchingEnvironment environment) { 
+    	int score = 0;
+    	for (Parameter p : m.getParameters()) { 
+    		String paramName = getParamName(p);
+    		if (paramName != null && environment.getArgument(paramName) != null) { 
+				score++;
+    		} else if (p.isAnnotationPresent(Auth.class)) { 
+    			//no biggie. 
+			} else if (!p.isAnnotationPresent(DefaultValue.class)) { 
+				//We're missing args, 
+				return -1;
+			}
+    	}
+    	return score;
+    }
+    
+    public static String getParamName(Parameter param) {
+		if (param.isAnnotationPresent(PathParam.class)) {
+			return param.getAnnotation(PathParam.class).value();
+		} else if (param.isAnnotationPresent(QueryParam.class)) { 
+			return param.getAnnotation(QueryParam.class).value();
+		} else if (param.isAnnotationPresent(GraphQLParam.class)) { 
+			return param.getAnnotation(GraphQLParam.class).value();
+		}
+		return null;
+	}
+	
 }

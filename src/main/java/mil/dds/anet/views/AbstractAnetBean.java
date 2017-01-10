@@ -8,8 +8,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.graphql.GraphQLIgnore;
+import mil.dds.anet.graphql.IGraphQLBean;
 
-public abstract class AbstractAnetBean {
+public abstract class AbstractAnetBean implements IGraphQLBean {
 
 	protected LoadLevel loadLevel;
 	protected Integer id;

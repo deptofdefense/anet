@@ -20,7 +20,7 @@ public class MssqlLocationSearcher implements ILocationSearcher {
 		}
 		
 		return dbHandle.createQuery("SELECT * FROM locations WHERE CONTAINS (name, :name)")
-			.bind("name", query.getText())
+			.bind("name", "\"" + query.getText() + "*\"")
 			.map(new LocationMapper())
 			.list();
 	}

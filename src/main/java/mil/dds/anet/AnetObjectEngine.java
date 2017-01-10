@@ -153,6 +153,7 @@ public class AnetObjectEngine {
 	}
 
 	public Organization getOrganizationForPerson(Person p) { 
+		if (p == null) { return null; } 
 		return personDao.getOrganizationForPerson(p.getId());
 	}
 	

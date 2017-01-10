@@ -8,7 +8,6 @@ import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
 import autobind from 'autobind-decorator'
 import {browserHistory as History} from 'react-router'
-import LinkTo from 'components/LinkTo'
 
 import {Person, Position, Organization} from 'models'
 

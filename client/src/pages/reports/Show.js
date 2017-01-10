@@ -4,12 +4,12 @@ import {Table, Button, Col} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 import moment from 'moment'
 
+import {Report, Person, Poam, Position, Organization, Location} from 'models'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
 import LinkTo from 'components/LinkTo'
 
 import API from 'api'
-import {Report, Person, Poam} from 'models'
 
 const atmosphereIconCss = {
 	fontSize: '2rem',
@@ -52,7 +52,7 @@ export default class ReportShow extends Page {
 		API.query(/* GraphQL */`
 			report(id:${props.params.id}) {
 				id, intent, engagementDate, atmosphere, atmosphereDetails
-				reportText, nextSteps
+				keyOutcomesSummary, keyOutcomes, nextStepsSummary, reportText, nextSteps
 
 				state
 
@@ -139,7 +139,9 @@ export default class ReportShow extends Page {
 
 						<Form.Field id="intent" label="Subject" />
 						<Form.Field id="engagementDate" label="Date 📆" getter={date => moment(date).format("L")} />
-						<Form.Field id="location" label="Location 📍" getter={location => location && location.name} />
+						<Form.Field id="location" label="Location 📍">
+							{report.location && <LinkTo location={report.location} />}
+						</Form.Field>
 						<Form.Field id="atmosphere" label="Atmospherics">
 							<span style={atmosphereIconCss}>{atmosphereIcons[report.atmosphere]}</span>
 							{report.atmosphereDetails}
@@ -186,7 +188,7 @@ export default class ReportShow extends Page {
 					</fieldset>
 
 					<fieldset>
-						<legend>Milestones</legend>
+						<legend>Plan of Action and Milestones / Pillars</legend>
 
 						<Table>
 							<thead>
@@ -211,10 +213,16 @@ export default class ReportShow extends Page {
 						<legend>Meeting discussion</legend>
 
 						<h5>Key outcomes</h5>
-						<div dangerouslySetInnerHTML={{__html: report.reportText}} />
+						<span>{report.keyOutcomesSummary}</span>
+						<div dangerouslySetInnerHTML={{__html: report.keyOutcomes}} />
 
 						<h5>Next steps</h5>
+						<span>{report.nextStepsSummary}</span>
 						<div dangerouslySetInnerHTML={{__html: report.nextSteps}} />
+
+						<h5>Report Details</h5>
+						<div dangerouslySetInnerHTML={{__html: report.reportText}} />
+
 					</fieldset>
 
 					{report.isPending() &&

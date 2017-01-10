@@ -1,0 +1,7 @@
+reports(f:getAll, pageSize:100, pageNum:0) {
+    id, intent, state
+    author {
+        id
+        name
+    }
+}

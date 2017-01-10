@@ -73,7 +73,7 @@ public class ApprovalStepDao implements IAnetDao<ApprovalStep> {
 				"WHERE id = :id")
 			.bind("nextStepId", as.getNextStepId())
 			.bind("advisorOrganizationId", as.getAdvisorOrganizationId())
-			.bind("approverGroupId", (as.getApproverGroup() == null) ? null : as.getApproverGroup().getId())
+			.bind("approverGroupId", DaoUtils.getId(as.getApproverGroup()))
 			.bind("id", as.getId())
 			.execute();
 				

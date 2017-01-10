@@ -14,7 +14,8 @@ public class AdminDao {
 	public static enum AdminSettingKeys { 
 		SECURITY_BANNER_TEXT,
 		SECURITY_BANNER_COLOR, 
-		DEFAULT_APPROVAL_ORGANIZATION
+		DEFAULT_APPROVAL_ORGANIZATION,
+		MAP_LAYERS
 	}
 	
 	private Handle dbHandle;
