@@ -22,6 +22,9 @@ import PersonShow from './pages/people/Show'
 import PersonNew from './pages/people/New'
 import PersonEdit from './pages/people/Edit'
 
+import PoamShow from './pages/poams/Show'
+import PoamNew from './pages/poams/New'
+
 import OrganizationShow from './pages/organizations/Show'
 import OrganizationNew from './pages/organizations/New'
 
@@ -69,6 +72,11 @@ ReactDOM.render((
 					<Route path="new" component={PositionNew} />
 					<Route path=":id/edit" component={PositionEdit} />
 					<Route path=":id" component={PositionShow} />
+				</Route>
+
+				<Route path="poams">
+					<Route path="new" component={PoamNew} />
+					<Route path=":id" component={PoamShow} />
 				</Route>
 
 				<Route path="graphiql" component={GraphiQL} />
