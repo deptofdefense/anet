@@ -10,6 +10,7 @@ import org.skife.jdbi.v2.Query;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
 import mil.dds.anet.AnetObjectEngine;
+import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.search.PoamSearchQuery;
@@ -74,6 +75,15 @@ public class PoamDao implements IAnetDao<Poam> {
 			.bindFromProperties(p)
 			.bind("parentPoamId", DaoUtils.getId(p.getParentPoam()))
 			.bind("organizationId", DaoUtils.getId(p.getResponsibleOrg()))
+			.execute();
+	}
+	
+	public int setResponsibleOrgForPoam(Poam p, Organization org) { 
+		p.setUpdatedAt(DateTime.now());
+		return dbHandle.createStatement("UPDATE poams SET organizationId = :orgId, updatedAt = :updatedAt WHERE id = :id")
+			.bind("orgId", DaoUtils.getId(org))
+			.bind("id", p.getId())
+			.bind("updatedAt", p.getUpdatedAt())
 			.execute();
 	}
 	

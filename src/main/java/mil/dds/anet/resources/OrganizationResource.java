@@ -1,6 +1,7 @@
 package mil.dds.anet.resources;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -38,9 +39,11 @@ import mil.dds.anet.utils.ResponseUtils;
 public class OrganizationResource implements IGraphQLResource {
 
 	private OrganizationDao dao;
+	private AnetObjectEngine engine;
 	
 	public OrganizationResource(AnetObjectEngine engine) {
 		this.dao = engine.getOrganizationDao(); 
+		this.engine = engine;
 	}
 	
 	@Override
@@ -66,9 +69,19 @@ public class OrganizationResource implements IGraphQLResource {
 	@POST
 	@Path("/new")
 	@RolesAllowed("ADMINISTRATOR")
-	public Organization createNewOrganization(Organization ao, @Auth Person user) {
+	public Organization createNewOrganization(Organization org, @Auth Person user) {
 		AuthUtils.assertAdministrator(user); 
-		return dao.insert(ao);
+		Organization created = dao.insert(org);
+		
+		if (org.getPoams() != null) { 
+			//Assign all of these poams to this organization. 
+			for (Poam p : org.getPoams()) { 
+				engine.getPoamDao().setResponsibleOrgForPoam(p, created);
+			}
+		}
+		//TODO: Check for approval Steps and create them now. 
+		
+		return created; 
 	}
 	
 	@GET
@@ -81,11 +94,30 @@ public class OrganizationResource implements IGraphQLResource {
 	@POST
 	@Path("/update")
 	@RolesAllowed("SUPER_USER")
-	public Response updateAdvisorOrganizationName(Organization ao, @Auth Person user) { 
+	public Response updateAdvisorOrganizationName(Organization org, @Auth Person user) { 
 		//Verify correct Organization 
-		AuthUtils.assertSuperUserForOrg(user, ao);
+		AuthUtils.assertSuperUserForOrg(user, org);
 		
-		int numRows = dao.update(ao);
+		int numRows = dao.update(org);
+		
+		if (org.getPoams() != null) {
+			Organization existing = dao.getById(org.getId());
+			
+			List<Integer> existingIds = existing.loadPoams().stream().map(p -> p.getId()).collect(Collectors.toList());			
+			for (Poam newPoam : org.getPoams()) { 
+				if (existingIds.remove(newPoam.getId()) == false) { 
+					//Add this poam
+					engine.getPoamDao().setResponsibleOrgForPoam(newPoam, existing);
+				}
+			}
+			
+			//Now remove all items in existingIds. 
+			for (Integer id : existingIds) {
+				engine.getPoamDao().setResponsibleOrgForPoam(Poam.createWithId(id), null);
+			}
+		}
+		//TODO: check for update to poams and approval steps
+		
 		return (numRows == 1) ? Response.ok().build() : Response.status(Status.NOT_FOUND).build();
 	}
 	

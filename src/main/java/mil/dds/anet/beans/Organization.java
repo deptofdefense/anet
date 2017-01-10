@@ -111,6 +111,15 @@ public class Organization extends AbstractAnetBean {
 		return poams;
 	}
 	
+	@GraphQLIgnore
+	public List<Poam> getPoams() { 
+		return poams;
+	}
+	
+	public void setPoams(List<Poam> poams) { 
+		this.poams = poams;
+	}
+	
 	public static Organization create(String name, OrganizationType type) { 
 		Organization org = new Organization();
 		org.setName(name);

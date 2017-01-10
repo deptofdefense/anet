@@ -32,7 +32,8 @@ export default class OrganizationEdit extends Page {
 					approverGroup { id, name,
 						members { id, name}
 					}
-				}
+				},
+				poams { id, shortName, longName}
 			}
 		`).then(data => {
 			this.setState({organization: new Organization(data.organization)})

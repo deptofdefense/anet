@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 
 import Autocomplete from 'components/Autocomplete'
 import Form from 'components/Form'
+import PoamsSelector from 'components/PoamsSelector'
 
 export default class OrganizationForm extends Component {
 	static propTypes = {
@@ -44,19 +45,13 @@ export default class OrganizationForm extends Component {
 			</fieldset>
 
 			{ organization.type === "ADVISOR_ORG" &&
-				this.renderPoams()
+				<PoamsSelector poams={organization.poams} onChange={onChange}/>
 			}
 
 			{ organization.type === "ADVISOR_ORG" &&
 				this.renderApprovalSteps()
 			}
 		</Form>
-	}
-
-	renderPoams() {
-		return <fieldset className="todo">
-			<legend>Plan of Action and Milestones / Pillars</legend>
-		</fieldset>
 	}
 
 	renderApprovalSteps() {

@@ -30,12 +30,12 @@ export default class OrganizationNew extends Page {
 	}
 
 	fetchData(props) {
-		if (props.location.query.parentOrgId) { 
+		if (props.location.query.parentOrgId) {
 			API.query(/*GraphQL */ `
-				organization(id: ${props.location.query.parentOrgId}) { 
+				organization(id: ${props.location.query.parentOrgId}) {
 					id, name, type
 				}
-			`).then(data => { 
+			`).then(data => {
 				let org = this.state.org;
 				org.parentOrg = new Organization(data.organization)
 				org.type = org.parentOrg.type
@@ -47,7 +47,7 @@ export default class OrganizationNew extends Page {
 
 	render() {
 		let org = this.state.org
-		
+
 		return (
 			<div>
 				<ContentForHeader>
@@ -75,7 +75,12 @@ export default class OrganizationNew extends Page {
 		event.stopPropagation()
 		event.preventDefault()
 
-		API.send('/api/organizations/new', this.state.org, {disableSubmits: true})
+		let organization = Object.without(this.state.org, 'childrenOrgs', 'positions')
+		if (organization.parentOrg) {
+			organization.parentOrg = {id: organization.parentOrg.id}
+		}
+
+		API.send('/api/organizations/new', organization, {disableSubmits: true})
 			.then(org => {
 				if (org.code) throw org.code
 				History.push(Organization.pathFor(org))
