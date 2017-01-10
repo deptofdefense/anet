@@ -3,6 +3,21 @@ import {DropdownButton, MenuItem, Button} from 'react-bootstrap'
 import History from 'components/History'
 import * as Models from 'models'
 
+const DEFAULT_ACTIONS = [
+	Models.Report,
+]
+
+const SUPER_USER_ACTIONS = [
+	Models.Person,
+	Models.Position,
+	Models.Poam,
+	Models.Location,
+]
+
+const ADMIN_ACTIONS = [
+	Models.Organization,
+]
+
 export default class CreateButton extends Component {
 	static contextTypes = {
 		app: React.PropTypes.object,
@@ -10,17 +25,11 @@ export default class CreateButton extends Component {
 
 	render() {
 		const currentUser = this.context.app.state.currentUser
-		const modelClasses = [
-			Models.Report,
-		]
 
-		if (currentUser.isSuperUser()) {
-			modelClasses.push(Models.Person, Models.Position, Models.Poam, Models.Location)
-		}
-
-		if (currentUser.isAdmin()) {
-			modelClasses.push(Models.Organization)
-		}
+		const modelClasses = DEFAULT_ACTIONS.concat(
+			currentUser.isSuperUser() && SUPER_USER_ACTIONS,
+			currentUser.isAdmin() && ADMIN_ACTIONS,
+		).filter(value => !!value)
 
 		if (modelClasses.length > 1) {
 			return (
