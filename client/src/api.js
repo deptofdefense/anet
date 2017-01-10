@@ -41,7 +41,7 @@ const API = {
 		params.disableSubmits = typeof params.disableSubmits === 'undefined' ? true : params.disableSubmits
 		params.method = params.method || 'POST'
 		params.body = JSON.stringify(data)
-		
+
 		params.headers = params.headers || {}
 		params.headers['Content-Type'] = 'application/json'
 

@@ -4,7 +4,7 @@ import {Table, Button, Col} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 import moment from 'moment'
 
-import {Report, Person, Poam, Position, Organization, Location} from 'models'
+import {Report, Person, Poam} from 'models'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
 import LinkTo from 'components/LinkTo'

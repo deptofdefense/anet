@@ -1,7 +1,7 @@
 import React from 'react'
 import Page from 'components/Page'
 import History from 'components/History'
-import {InputGroup, Radio, Table, Button, Collapse, Link} from 'react-bootstrap'
+import {InputGroup, Radio, Table, Button, Collapse} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
 import DatePicker from 'react-bootstrap-date-picker'
@@ -233,17 +233,17 @@ export default class ReportNew extends Page {
 	}
 
 	@autobind
-	toggleKeyOutcomesText() { 
+	toggleKeyOutcomesText() {
 		this.setState({showKeyOutcomesText: !this.state.showKeyOutcomesText});
 	}
 
 	@autobind
-	toggleNextStepsText() { 
+	toggleNextStepsText() {
 		this.setState({showNextStepsText: !this.state.showNextStepsText});
 	}
 
 	@autobind
-	toggleReportText() { 
+	toggleReportText() {
 		this.setState({showReportText: !this.state.showReportText});
 	}
 

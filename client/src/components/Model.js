@@ -70,8 +70,7 @@ export default class Model {
 		let json = Object.assign({}, this)
 		Object.keys(json).forEach(key => {
 			let value = json[key]
-			if (value instanceof Model)
-				value
+			// if (value instanceof Model)
 //				json[key] = {id: value.id}
 
 			if (Array.isArray(value)) {
