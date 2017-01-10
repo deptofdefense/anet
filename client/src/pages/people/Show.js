@@ -95,7 +95,7 @@ export default class PersonShow extends Page {
 
 				<div className="pull-right">
 					<DropdownButton bsStyle="primary" title="Actions" id="actions" className="pull-right" onSelect={this.actionSelect}>
-						{canEdit && <MenuItem eventKey="edit" className="todo">Edit {person.name}</MenuItem>}
+						{canEdit && <MenuItem eventKey="edit" >Edit {person.name}</MenuItem>}
 					</DropdownButton>
 				</div>
 

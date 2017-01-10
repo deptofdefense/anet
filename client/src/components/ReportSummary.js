@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {Grid, Row, Col, Button} from 'react-bootstrap'
+import {Grid, Row, Col} from 'react-bootstrap'
 import {Link} from 'react-router'
 
 import LinkTo from 'components/LinkTo'
