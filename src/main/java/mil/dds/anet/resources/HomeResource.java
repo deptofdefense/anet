@@ -43,6 +43,7 @@ public class HomeResource implements IGraphQLResource {
 		
 		view.setSecurityBannerText(engine.getAdminSetting(AdminSettingKeys.SECURITY_BANNER_TEXT));
 		view.setSecurityBannerColor(engine.getAdminSetting(AdminSettingKeys.SECURITY_BANNER_COLOR));
+		view.setMapLayers(engine.getAdminSetting(AdminSettingKeys.MAP_LAYERS));
 		
 		return view;
 	}

@@ -33,7 +33,7 @@ export default class PersonShow extends Page {
 		API.query(/* GraphQL */`
 			person(id:${props.params.id}) {
 				id,
-				name, rank, role, emailAddress, phoneNumber, biography, country, gender, endOfTourDate
+				name, rank, role, emailAddress, phoneNumber, biography, country, gender, endOfTourDate,
 				position {
 					id,
 					name,
@@ -47,6 +47,7 @@ export default class PersonShow extends Page {
 					engagementDate,
 					advisorOrg { id, name }
 					intent,
+					updatedAt,
 					author {
 						id,
 						name
@@ -57,6 +58,7 @@ export default class PersonShow extends Page {
 					engagementDate,
 					advisorOrg { id, name}
 					intent,
+					updatedAt,
 					author {
 						id,
 						name
@@ -131,7 +133,7 @@ export default class PersonShow extends Page {
 					</fieldset>
 
 					<fieldset>
-						<legend>Reports involving this person</legend>
+						<legend>Reports this person is listed as an attendee of</legend>
 						<ReportTable reports={person.attendedReports} showAuthors={true} />
 					</fieldset>
 				</Form>

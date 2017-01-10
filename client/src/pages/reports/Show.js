@@ -4,12 +4,12 @@ import {Table, Button, Col} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 import moment from 'moment'
 
+import {Report, Person, Poam, Position, Organization, Location} from 'models'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
 import LinkTo from 'components/LinkTo'
 
 import API from 'api'
-import {Report, Person, Poam} from 'models'
 
 const atmosphereIconCss = {
 	fontSize: '2rem',
@@ -139,7 +139,9 @@ export default class ReportShow extends Page {
 
 						<Form.Field id="intent" label="Subject" />
 						<Form.Field id="engagementDate" label="Date 📆" getter={date => moment(date).format("L")} />
-						<Form.Field id="location" label="Location 📍" getter={location => location && location.name} />
+						<Form.Field id="location" label="Location 📍">
+							{report.location && <LinkTo location={report.location} />}
+						</Form.Field>
 						<Form.Field id="atmosphere" label="Atmospherics">
 							<span style={atmosphereIconCss}>{atmosphereIcons[report.atmosphere]}</span>
 							{report.atmosphereDetails}
@@ -186,7 +188,7 @@ export default class ReportShow extends Page {
 					</fieldset>
 
 					<fieldset>
-						<legend>Milestones</legend>
+						<legend>Plan of Action and Milestones / Pillars</legend>
 
 						<Table>
 							<thead>

@@ -426,3 +426,4 @@ INSERT INTO approvalSteps (approverGroupId, advisorOrganizationId) VALUES ((SELE
 INSERT INTO adminSettings ([key], value) VALUES ('SECURITY_BANNER_TEXT', 'DEMO USE ONLY');
 INSERT INTO adminSettings ([key], value) VALUES ('SECURITY_BANNER_COLOR', 'green');
 INSERT INTO adminSettings ([key], value) VALUES ('DEFAULT_APPROVAL_ORGANIZATION', (select CAST(id AS varchar) from organizations where name='ANET Administrators'));
+INSERT INTO adminSettings ([key], value) VALUES ('MAP_LAYERS', '[]')

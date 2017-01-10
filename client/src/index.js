@@ -4,6 +4,9 @@ import './index.css'
 import 'core-js/shim'
 import './utils'
 
+import 'leaflet/dist/leaflet.css'
+import 'leaflet/dist/leaflet'
+
 import React from 'react'
 import ReactDOM from 'react-dom'
 import {Router, Route, IndexRoute, browserHistory} from 'react-router'
@@ -27,6 +30,9 @@ import PoamNew from './pages/poams/New'
 
 import OrganizationShow from './pages/organizations/Show'
 import OrganizationNew from './pages/organizations/New'
+
+import LocationShow from './pages/locations/Show'
+import LocationNew from './pages/locations/New'
 
 import PositionShow from './pages/positions/Show'
 import PositionEdit from './pages/positions/Edit'
@@ -68,6 +74,11 @@ ReactDOM.render((
 					<Route path=":id" component={OrganizationShow} />
 				</Route>
 
+				<Route path="locations">
+					<Route path="new" component={LocationNew} />
+					<Route path=":id" component={LocationShow} />
+				</Route>
+				
 				<Route path="positions">
 					<Route path="new" component={PositionNew} />
 					<Route path=":id/edit" component={PositionEdit} />
