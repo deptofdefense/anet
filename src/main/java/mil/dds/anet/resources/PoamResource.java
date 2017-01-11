@@ -30,6 +30,7 @@ import mil.dds.anet.database.PoamDao;
 import mil.dds.anet.graphql.GraphQLFetcher;
 import mil.dds.anet.graphql.GraphQLParam;
 import mil.dds.anet.graphql.IGraphQLResource;
+import mil.dds.anet.utils.AuthUtils;
 import mil.dds.anet.utils.ResponseUtils;
 
 @Path("/api/poams")
@@ -77,8 +78,14 @@ public class PoamResource implements IGraphQLResource {
 	/* Updates shortName, longName, category, and parentPoamId */
 	@POST
 	@Path("/update")
-	@RolesAllowed("ADMINISTRATOR")
-	public Response updatePoam(Poam p) { 
+	@RolesAllowed("SUPER_USER")
+	public Response updatePoam(@Auth Person user, Poam p) { 
+		//Admins can edit all Poams, SuperUsers can edit poams within their EF. 
+		if (AuthUtils.isAdmin(user) == false) { 
+			Poam existing = dao.getById(p.getId());
+			AuthUtils.assertSuperUserForOrg(user, existing.getResponsibleOrg());
+		}
+		
 		int numRows = dao.update(p);
 		if (numRows == 0) { 
 			throw new WebApplicationException("Couldn't process update", Status.NOT_FOUND);

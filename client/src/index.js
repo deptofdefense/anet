@@ -27,6 +27,7 @@ import PersonEdit from './pages/people/Edit'
 
 import PoamShow from './pages/poams/Show'
 import PoamNew from './pages/poams/New'
+import PoamEdit from './pages/poams/Edit'
 
 import OrganizationShow from './pages/organizations/Show'
 import OrganizationNew from './pages/organizations/New'
@@ -89,6 +90,7 @@ ReactDOM.render((
 
 				<Route path="poams">
 					<Route path="new" component={PoamNew} />
+					<Route path=":id/edit" component={PoamEdit} />
 					<Route path=":id" component={PoamShow} />
 				</Route>
 
