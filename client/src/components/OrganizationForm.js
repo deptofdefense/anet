@@ -119,8 +119,14 @@ export default class OrganizationForm extends Component {
 
 	@autobind
 	removeApprover(approver, index) {
+		let step = this.props.organization.approvalSteps[index];
+		let approvers = step.approverGroup.members;
+		let approverIdx = approvers.findIndex(m => m.id === approver.id );
 
-
+		if (index !== -1) {
+			approvers.splice(approverIdx, 1);
+			this.props.onChange();
+		}
 	}
 
 	@autobind
@@ -129,7 +135,6 @@ export default class OrganizationForm extends Component {
 		let step = this.props.organization.approvalSteps[index];
 		step.approverGroup.name = name;
 
-		console.log(this.props.organization);
 		this.props.onChange();
 	}
 
