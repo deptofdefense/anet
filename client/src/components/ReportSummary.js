@@ -19,16 +19,16 @@ export default class ReportSummary extends Component {
 		return <Grid fluid>
 			<Row>
 				<Col md={6}>
-					{report.advisorOrg && 
+					{report.advisorOrg &&
 						<LinkTo organization={new Organization(report.advisorOrg)} />
 					} ->&nbsp;
-					{report.principalOrg && 
+					{report.principalOrg &&
 						<LinkTo organization={new Organization(report.principalOrg)} />
 					}
 				</Col>
 				<Col md={6}>
-					{moment(report.engagementDate).format("L")} 
-					{report.location && 
+					{moment(report.engagementDate).format("L")}
+					{report.location &&
 						<span> @&nbsp;
 						<Link to={"/locations/" + report.location.id}>{report.location.name}</Link>
 						</span>
@@ -41,7 +41,7 @@ export default class ReportSummary extends Component {
 			</Row>
 			<Row>
 				<Col md={12}>
-					<ul>{report.poams && Poam.map(report.poams, poam => 
+					<ul>{report.poams && Poam.map(report.poams, poam =>
 						<li key={poam.id}>{poam.shortName} - {poam.longName}</li>
 					)}
 					</ul>
@@ -56,12 +56,12 @@ export default class ReportSummary extends Component {
 		</Grid>
 	}
 
-	renderPerson(person) { 
+	renderPerson(person) {
 		person = new Person(person);
 		return <div>
 			<LinkTo person={person} />
 			{person.position && person.position.organization &&
-				<span> -&nbsp; 
+				<span> -&nbsp;
 				<LinkTo organization={new Organization(person.position.organization)} />
 				</span>
 			}

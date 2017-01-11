@@ -1,4 +1,4 @@
-import Model from 'components/Model'
+import Model, {includeAsChild} from 'components/Model'
 
 export default class Person extends Model {
 	static schema = {

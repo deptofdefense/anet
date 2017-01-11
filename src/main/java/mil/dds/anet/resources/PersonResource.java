@@ -21,6 +21,7 @@ import javax.ws.rs.core.Response.Status;
 import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Position.PositionType;
 import mil.dds.anet.beans.search.PersonSearchQuery;
@@ -105,6 +106,7 @@ public class PersonResource implements IGraphQLResource {
 	 */
 	@POST
 	@Path("/update")
+	@RolesAllowed("SUPER_USER")
 	public Response updatePerson(@Auth Person user, Person p) {
 		if (canEditPerson(user, p) == false) { 
 			throw new WebApplicationException("You are not permitted to do this", Status.UNAUTHORIZED);
@@ -136,6 +138,8 @@ public class PersonResource implements IGraphQLResource {
 		if (editorPos == null) { return false; } 
 		if (editorPos.getType() == PositionType.ADMINISTRATOR) { return true; } 
 		if (editorPos.getType() == PositionType.SUPER_USER) { 
+			//Super Users can edit any principal
+			if (subject.getRole().equals(Role.PRINCIPAL)) { return true; }
 			//Ensure that the editor is the Super User for the subject's organization.
 			Position subjectPos = subject.loadPosition();
 			if (subjectPos != null && subjectPos.getOrganization() != null &&
