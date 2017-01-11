@@ -13,6 +13,7 @@ import Breadcrumbs from 'components/Breadcrumbs'
 import Autocomplete from 'components/Autocomplete'
 import TextEditor from 'components/TextEditor'
 import LinkTo from 'components/LinkTo'
+import PoamsSelector from 'components/PoamsSelector'
 
 import API from 'api'
 import {Report, Person, Poam} from 'models'
@@ -156,43 +157,7 @@ export default class ReportNew extends Page {
 						</Form.Field>
 					</fieldset>
 
-					<fieldset>
-						<legend>Plan of Action and Milestones / Pillars</legend>
-
-						<Form.Field id="poams">
-							<Autocomplete url="/api/poams/search" template={poam =>
-								<span>{[poam.shortName, poam.longName].join(' - ')}</span>
-							} onChange={this.addPoam} clearOnSelect={true} />
-
-							<Table hover striped>
-								<thead>
-									<tr>
-										<th></th>
-										<th>Name</th>
-										<th>AO</th>
-									</tr>
-								</thead>
-								<tbody>
-									{Poam.map(report.poams, poam =>
-										<tr key={poam.id}>
-											<td onClick={this.removePoam.bind(this, poam)}>
-												<span style={{cursor: 'pointer'}}>⛔️</span>
-											</td>
-											<td>{poam.longName}</td>
-											<td>{poam.shortName}</td>
-										</tr>
-									)}
-								</tbody>
-							</Table>
-
-							<Form.Field.ExtraCol className="shortcut-list">
-								<h5>Shortcuts</h5>
-								{Poam.map(recents.poams, poam =>
-									<Button key={poam.id} bsStyle="link" onClick={this.addPoam.bind(this, poam)}>Add "{poam.longName}"</Button>
-								)}
-							</Form.Field.ExtraCol>
-						</Form.Field>
-					</fieldset>
+					<PoamsSelector poams={report.poams} shortcuts={recents.poams} onChange={this.onChange}/>
 
 					<fieldset>
 						<legend>Meeting discussion</legend>
@@ -233,17 +198,17 @@ export default class ReportNew extends Page {
 	}
 
 	@autobind
-	toggleKeyOutcomesText() { 
+	toggleKeyOutcomesText() {
 		this.setState({showKeyOutcomesText: !this.state.showKeyOutcomesText});
 	}
 
 	@autobind
-	toggleNextStepsText() { 
+	toggleNextStepsText() {
 		this.setState({showNextStepsText: !this.state.showNextStepsText});
 	}
 
 	@autobind
-	toggleReportText() { 
+	toggleReportText() {
 		this.setState({showReportText: !this.state.showReportText});
 	}
 
@@ -261,7 +226,9 @@ export default class ReportNew extends Page {
 		let report = this.state.report
 		if(report.primaryAdvisor) { report.attendees.find(a => a.id === report.primaryAdvisor.id).isPrimary = true; }
 		if(report.primaryPrincipal) { report.attendees.find(a => a.id === report.primaryPrincipal.id).isPrimary = true; }
-		console.log(report)
+
+		delete report.primaryPrincipal
+		delete report.primaryAdvisor
 
 		API.send('/api/reports/new', report)
 			.then(report => {
