@@ -55,9 +55,52 @@ export default class OrganizationForm extends Component {
 	}
 
 	renderApprovalSteps() {
-		return <fieldset className="todo">
-			<legend>Approval Process</legend>
+		let approvalSteps = this.props.organization.approvalSteps
+		return <fieldset>
+			<legend>Approval Process
+				<Button className="pull-right" onClick="addApprovalStep">Add an Approval Step</Button>
+			</legend>
+
+			{approvalSteps && approvalSteps.map((step, idx) =>
+				this.renderApprovalStep(step, idx)
+			)}
 		</fieldset>
+	}
+
+	renderApprovalStep(step, idx) {
+		let members = (step.approverGroup && step.approverGroups.members) || []
+		return <fieldset key={"step_" + idx}>
+			<legend>Step {idx + 1}</legend>
+			<Form.field id="approverGroupName" value={step.approverGroup && step.approverGroup.name} />
+			<Form.Field id="addApprover" label="Add an Approver">
+				<Autocomplete valueKey="name"
+					placeholder="Choose a person"
+					url="/api/people/search"
+					urlParams="&type=ADVISOR"
+					onChange={this.addApprover(idx)} />
+				<Table striped>
+					<thead>
+						<tr>
+							<th></th>
+							<th>Name</th>
+							<th>Position</th>
+						</tr>
+					</thead>
+					<tbody>
+						{members.map(member =>
+							<tr key={member.id}>
+								<td onClick={this.removeApprover.bind(this, member, idx)}>
+									<span style={{cursor: 'pointer'}}>⛔️</span>
+								</td>
+								<td>{member.name}</td>
+								<td className="todo"></td>
+							</tr>
+						)}
+					</tbody>
+				</Table>
+			</Form.Field>
+		</fieldset>
+
 	}
 
 }
