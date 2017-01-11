@@ -222,7 +222,8 @@ public class ReportResource implements IGraphQLResource {
 		List<ApprovalStep> steps = engine.getApprovalStepsForOrg(org);
 		if (steps == null || steps.size() == 0) {
 			//Missing approval steps for this organization
-			steps = engine.getApprovalStepsForOrg(Organization.createWithId(-1));
+			steps = engine.getApprovalStepsForOrg(
+					Organization.createWithId(Integer.parseInt(engine.getAdminSetting(AdminSettingKeys.DEFAULT_APPROVAL_ORGANIZATION))));
 		}
 
 		//Push the report into the first step of this workflow
