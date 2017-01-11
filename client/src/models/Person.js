@@ -12,9 +12,6 @@ export default class Person extends Model {
 		biography: '',
 		role: 'PRINCIPAL',
 		position: {},
-
-		@includeAsChild
-		primary: false,
 	}
 
 	isAdvisor() {

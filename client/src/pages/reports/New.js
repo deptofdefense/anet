@@ -280,6 +280,7 @@ export default class ReportNew extends Page {
 			return
 
 		let person = new Person(newAttendee)
+		person.primary = false
 
 		if (!attendees.find(attendee => attendee.role === person.role && attendee.primary))
 			person.primary = true
