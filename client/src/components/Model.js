@@ -44,7 +44,7 @@ export default class Model {
 	}
 
 	constructor(props) {
-		Object.assign(this, schema)
+		Object.assign(this, this.constructor.schema)
 		if (props)
 			this.setState(props)
 	}

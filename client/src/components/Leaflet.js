@@ -60,7 +60,6 @@ export default class Leaflet extends Component {
 	}
 
 	componentWillUpdate() {
-		console.log("cwu", this.state.hasLayers);
 		if (this.state.hasLayers === false) {
 			this.addLayers();
 		}
@@ -70,8 +69,10 @@ export default class Leaflet extends Component {
 	addLayers() {
 		let app = this.context.app
 		let rawLayers = app.state.settings["MAP_LAYERS"]
-		if (!rawLayers)
+		if (!rawLayers || rawLayers.length == 0) {
+			this.setState({hasLayers:true});
 			return
+		}
 
 		let mapLayers = JSON.parse(rawLayers)
 		console.log("adding layers")

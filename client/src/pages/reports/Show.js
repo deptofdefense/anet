@@ -108,8 +108,8 @@ export default class ReportShow extends Page {
 		let {report} = this.state
 		let {currentUser} = this.context.app.state
 
-		let canApprove = currentUser.isAdmin() ||
-			report.approvalStep.approverGroup.members.find(member => member.id === currentUser.id)
+		let canApprove = report.isPending() && (currentUser.isAdmin() ||
+			report.approvalStep.approverGroup.members.find(member => member.id === currentUser.id))
 
 		return (
 			<div>
