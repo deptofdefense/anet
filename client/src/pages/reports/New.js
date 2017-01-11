@@ -83,7 +83,7 @@ export default class ReportNew extends Page {
 						</Form.Field>
 
 						<Form.Field id="engagementDate">
-							<DatePicker placeholder="When did it happen?">
+							<DatePicker showTodayButton placeholder="When did it happen?">
 								<InputGroup.Addon>📆</InputGroup.Addon>
 							</DatePicker>
 						</Form.Field>
