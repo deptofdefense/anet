@@ -15,11 +15,11 @@ export default class CreateButton extends Component {
 		]
 
 		if (currentUser.isSuperUser()) {
-			modelClasses.push(Models.Person, Models.Position, Models.Poam, Models.Location)
+			modelClasses.push(Models.Person, Models.Position, Models.Location)
 		}
 
 		if (currentUser.isAdmin()) {
-			modelClasses.push(Models.Organization)
+			modelClasses.push(Models.Organization, Models.Poam)
 		}
 
 		if (modelClasses.length > 1) {
