@@ -57,6 +57,11 @@ public class ApprovalStepDao implements IAnetDao<ApprovalStep> {
 			.executeAndReturnGeneratedKeys();
 		
 		as.setId(DaoUtils.getGeneratedId(keys));
+		return as;
+	}
+	
+	public ApprovalStep insertAtEnd(ApprovalStep as) { 
+		as = insert(as);
 		
 		//Add this Step to the current org list. 
 		dbHandle.createStatement("UPDATE approvalSteps SET nextStepId = :id " + 

@@ -103,7 +103,7 @@ export default class FormField extends Component {
 			if (children.length)
 				childProps.children = children
 
-			children = <FormControl {...childProps} value={defaultValue} onChange={this.onChange} />
+			children = <FormControl {...childProps} value={defaultValue} onChange={this.props.onChange || this.onChange} />
 		}
 
 		// if there's an addon we need to use an InputGroup
