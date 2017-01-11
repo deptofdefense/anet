@@ -43,5 +43,10 @@ public class AuthUtils {
 		}
 		throw new WebApplicationException(UNAUTH_MESSAGE, Status.UNAUTHORIZED);
 	}
+
+	public static boolean isAdmin(Person user) {
+		Position position = user.loadPosition();
+		return position.getType() == PositionType.ADMINISTRATOR;
+	}
 	
 }

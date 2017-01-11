@@ -6,16 +6,11 @@ import History from 'components/History'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Page from 'components/Page'
 import PoamForm from 'components/PoamForm'
-import Autocomplete from 'components/Autocomplete'
 
 import API from 'api'
-import {Poam,Organization} from 'models'
+import {Poam} from 'models'
 
-export default class PoamNew extends Page {
-	static contextTypes = {
-		router: React.PropTypes.object.isRequired
-	}
-
+export default class PoamEdit extends Page {
 	static pageProps = {
 		useNavigation: false
 	}
@@ -29,18 +24,18 @@ export default class PoamNew extends Page {
 	}
 
 	fetchData(props) {
-		if (props.location.query.responsibleOrg) {
-			API.query(/*GraphQL */ `
-				organization(id: ${props.location.query.responsibleOrg}) {
-					id,name,type
-				}
-			`).then(data => {
-				let poam = this.state.poam;
-				poam.responsibleOrg = new Organization(data.organization)
-				this.setState({poam})
-			})
-		}
+		API.query(/*GraphQL*/ `
+			poam(id:${props.params.id}) {
+				id,
+				shortName,
+				longName,
+				responsibleOrg {id,name}
+			}
+		`).then(data => {
+			this.setState({poam: new Poam(data.poam)})
+		})
 	}
+
 	render() {
 		let poam = this.state.poam
 
@@ -50,12 +45,13 @@ export default class PoamNew extends Page {
 					<h2>Create a new Poam</h2>
 				</ContentForHeader>
 
-				<Breadcrumbs items={[['Create new Poam', '/poams/new']]} />
+				<Breadcrumbs items={[[`Edit ${poam.shortName}`, `/poams/${poam.id}/edit`]]} />
 				<PoamForm
 					poam={poam}
 					onChange={this.onChange}
 					onSubmit={this.onSubmit}
-					actionText="Create Poam"
+					actionText="Save Poam"
+					edit
 					error={this.state.error}/>
 			</div>
 		)
@@ -72,10 +68,10 @@ export default class PoamNew extends Page {
 		event.stopPropagation()
 		event.preventDefault()
 
-		API.send('/api/poams/new', this.state.poam, {disableSubmits: true})
-			.then(poam => {
-				if (poam.code) throw poam.code
-				History.push(Poam.pathFor(poam))
+		API.send('/api/poams/update', this.state.poam, {disableSubmits: true})
+			.then(response => {
+				if (response.code) throw response.code
+				History.push(Poam.pathFor(this.state.poam))
 			}).catch(error => {
 				this.setState({error: error})
 				window.scrollTo(0, 0)
