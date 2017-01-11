@@ -76,6 +76,7 @@ export default class OrganizationShow extends Page {
 					<DropdownButton bsStyle="primary" title="Actions" id="actions" className="pull-right" onSelect={this.actionSelect}>
 						{isSuperUser && <MenuItem eventKey="edit" className="todo">Edit Organization</MenuItem>}
 						{isAdmin && <MenuItem eventKey="createSub">Create Sub-Organization</MenuItem> }
+						{isAdmin && <MenuItem eventKey="createPoam">Create Poam</MenuItem> }
 						{isSuperUser && <MenuItem eventKey="createPos">Create new Position</MenuItem> }
 					</DropdownButton>
 				</div>
@@ -210,6 +211,8 @@ export default class OrganizationShow extends Page {
 			History.push("/positions/new?organizationId=" + this.state.organization.id)
 		} else if (eventKey === "createSub") { 
 			History.push("/organizations/new?parentOrgId=" + this.state.organization.id)
+		} else if (eventKey === "createPoam") {
+			History.push("/poams/new?responsibleOrg=" + this.state.organization.id)
 		} else {
 			console.log("Unimplemented Action: " + eventKey);
 		}

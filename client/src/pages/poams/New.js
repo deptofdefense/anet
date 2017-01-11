@@ -6,11 +6,12 @@ import History from 'components/History'
 import Form from 'components/Form'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Autocomplete from 'components/Autocomplete'
+import Page from 'components/Page'
 
 import API from 'api'
-import {Poam} from 'models'
+import {Poam,Organization} from 'models'
 
-export default class PoamNew extends React.Component {
+export default class PoamNew extends Page {
 	static contextTypes = {
 		router: React.PropTypes.object.isRequired
 	}
@@ -27,6 +28,19 @@ export default class PoamNew extends React.Component {
 		}
 	}
 
+	fetchData(props) {
+		if (props.location.query.responsibleOrg) {
+			API.query(/*GraphQL */ `
+				organization(id: ${props.location.query.responsibleOrg}) {
+					id,name,type
+				}
+			`).then(data => {
+				let poam = this.state.poam;
+				poam.responsibleOrg = new Organization(data.organization)
+				this.setState({poam})
+			})
+		}
+	}
 	render() {
 		let poam = this.state.poam
 
