@@ -21,6 +21,8 @@ import javax.ws.rs.core.Response.Status;
 
 import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
+import mil.dds.anet.beans.ApprovalStep;
+import mil.dds.anet.beans.Group;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Organization.OrganizationType;
 import mil.dds.anet.beans.Person;
@@ -79,7 +81,15 @@ public class OrganizationResource implements IGraphQLResource {
 				engine.getPoamDao().setResponsibleOrgForPoam(p, created);
 			}
 		}
-		//TODO: Check for approval Steps and create them now. 
+		if (org.getApprovalSteps() != null) { 
+			//Create the approval steps 
+			for (ApprovalStep step : org.getApprovalSteps()) { 
+				step.setAdvisorOrganizationId(created.getId());
+				Group createdGroup = engine.getGroupDao().insert(step.getApproverGroup());
+				step.setApproverGroup(createdGroup);
+				engine.getApprovalStepDao().insert(step);
+			}
+		}
 		
 		return created; 
 	}
@@ -94,26 +104,31 @@ public class OrganizationResource implements IGraphQLResource {
 	@POST
 	@Path("/update")
 	@RolesAllowed("SUPER_USER")
-	public Response updateAdvisorOrganizationName(Organization org, @Auth Person user) { 
+	public Response updateOrganization(Organization org, @Auth Person user) { 
 		//Verify correct Organization 
 		AuthUtils.assertSuperUserForOrg(user, org);
 		
 		int numRows = dao.update(org);
 		
-		if (org.getPoams() != null) {
+		if (org.getPoams() != null || org.getApprovalSteps() != null) {
 			Organization existing = dao.getById(org.getId());
 			
-			List<Integer> existingIds = existing.loadPoams().stream().map(p -> p.getId()).collect(Collectors.toList());			
-			for (Poam newPoam : org.getPoams()) { 
-				if (existingIds.remove(newPoam.getId()) == false) { 
-					//Add this poam
-					engine.getPoamDao().setResponsibleOrgForPoam(newPoam, existing);
+			if (org.getPoams() != null) { 
+				List<Integer> existingIds = existing.loadPoams().stream().map(p -> p.getId()).collect(Collectors.toList());			
+				for (Poam newPoam : org.getPoams()) { 
+					if (existingIds.remove(newPoam.getId()) == false) { 
+						//Add this poam
+						engine.getPoamDao().setResponsibleOrgForPoam(newPoam, existing);
+					}
+				}
+				
+				//Now remove all items in existingIds. 
+				for (Integer id : existingIds) {
+					engine.getPoamDao().setResponsibleOrgForPoam(Poam.createWithId(id), null);
 				}
 			}
-			
-			//Now remove all items in existingIds. 
-			for (Integer id : existingIds) {
-				engine.getPoamDao().setResponsibleOrgForPoam(Poam.createWithId(id), null);
+			if (org.getApprovalSteps() != null) { 
+				
 			}
 		}
 		//TODO: check for update to poams and approval steps
