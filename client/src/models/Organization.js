@@ -8,6 +8,7 @@ export default class Organization extends Model {
 		childrenOrgs: [],
 		approvalSteps: [],
 		positions: [],
+		poams: []
 	}
 
 	isAdvisorOrg() {

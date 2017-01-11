@@ -41,15 +41,15 @@ export default class Search extends Page {
 		//TODO: escape query in the graphQL query
 		API.query(/*GraphQL */ `
 			searchResults(f:search, q:"${query}") {
-				reports { id, intent, engagementDate, keyOutcomesSummary, nextStepsSummary 
-					primaryAdvisor { id, name, position { organization { id, name}}}, 
+				reports { id, intent, engagementDate, keyOutcomesSummary, nextStepsSummary
+					primaryAdvisor { id, name, position { organization { id, name}}},
 					primaryPrincipal { id, name, position { organization { id, name}}},
 					advisorOrg { id, name},
 					principalOrg { id, name},
 					location { id, name},
 					poams {id, shortName, longName}
 				},
-				people { id, name, rank, emailAddress } 
+				people { id, name, rank, emailAddress, role }
 				positions { id }
 				poams { id, shortName, longName}
 				locations { id, name, lat, lng}
@@ -107,21 +107,21 @@ export default class Search extends Page {
 					</fieldset>
 				}
 
-				{results.positions && results.positions.length > 0 && 
+				{results.positions && results.positions.length > 0 &&
 					<fieldset>
 						<legend>Positions</legend>
 						{this.renderPositions()}
 					</fieldset>
 				}
-				
-				{results.locations && results.locations.length > 0 && 
+
+				{results.locations && results.locations.length > 0 &&
 					<fieldset>
 						<legend>Locations</legend>
 						{this.renderLocations()}
 					</fieldset>
 				}
 
-				{results.poams && results.poams.length > 0 && 
+				{results.poams && results.poams.length > 0 &&
 					<fieldset>
 						<legend>Poams</legend>
 						{this.renderPoams()}
@@ -157,7 +157,7 @@ export default class Search extends Page {
 		console.log(this.state.results.reports)
 		return <Table responsive>
 			<tbody>
-				{this.state.results.reports.map(report => 
+				{this.state.results.reports.map(report =>
 					<tr key={report.id}>
 						<td><ReportSummary report={report} /></td>
 					</tr>
@@ -208,7 +208,7 @@ export default class Search extends Page {
 		</Table>
 	}
 
-	renderPositions() { 
+	renderPositions() {
 		return <Table responsive hover striped>
 			<thead>
 				<tr>
@@ -227,7 +227,7 @@ export default class Search extends Page {
 		</Table>
 	}
 
-	renderLocations() { 
+	renderLocations() {
 		return <Table responsive hover striped>
 			<thead>
 				<tr>
@@ -245,7 +245,7 @@ export default class Search extends Page {
 
 	}
 
-	renderPoams() { 
+	renderPoams() {
 		return <Table responsive hover striped>
 			<thead>
 				<tr>

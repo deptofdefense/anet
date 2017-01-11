@@ -10,12 +10,12 @@ const DEFAULT_ACTIONS = [
 const SUPER_USER_ACTIONS = [
 	Models.Person,
 	Models.Position,
-	Models.Poam,
 	Models.Location,
 ]
 
 const ADMIN_ACTIONS = [
 	Models.Organization,
+	Models.Poam,
 ]
 
 export default class CreateButton extends Component {
