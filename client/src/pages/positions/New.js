@@ -23,8 +23,8 @@ export default class PositionNew extends Page {
 		}
 	}
 
-	fetchData(props) { 
-		if (props.location.query.organizationId) { 
+	fetchData(props) {
+		if (props.location.query.organizationId) {
 			API.query( /*GraphQL */`
 				organization(id:${props.location.query.organizationId}) {
 					id, name, type
@@ -66,10 +66,10 @@ export default class PositionNew extends Page {
 	@autobind
 	onChange() {
 		let position = this.state.position
-		if ((!position.type) && position.organization) { 
-			if (position.organization.type === "ADVISOR_ORG") { 
+		if ((!position.type) && position.organization) {
+			if (position.organization.type === "ADVISOR_ORG") {
 				position.type = "ADVISOR"
-			} else { 
+			} else {
 				position.type = "PRINCIPAL"
 			}
 		}
@@ -81,8 +81,10 @@ export default class PositionNew extends Page {
 		event.stopPropagation()
 		event.preventDefault()
 
-		let position = this.state.position 
+		let position = this.state.position
+		position.organization = {id: position.organization.id}
 		console.log(position)
+
 		API.send('/api/positions/new', position, {disableSubmits: true})
 			.then(response => {
 				History.push("/positions/" + response.id);
