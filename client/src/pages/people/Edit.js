@@ -48,7 +48,7 @@ export default class PersonEdit extends Page {
 		return (
 			<div>
 				<ContentForHeader>
-					<h2>Create a new Person</h2>
+					<h2>Edit {person.name}</h2>
 				</ContentForHeader>
 
 				<Breadcrumbs items={[[`Edit ${person.name}`, `/people/${person.id}/edit`]]} />

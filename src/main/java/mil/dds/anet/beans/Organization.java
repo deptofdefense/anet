@@ -86,6 +86,15 @@ public class Organization extends AbstractAnetBean {
 		return approvalSteps;
 	}
 	
+	@GraphQLIgnore
+	public List<ApprovalStep> getApprovalSteps() { 
+		return approvalSteps;
+	}
+	
+	public void setApprovalSteps(List<ApprovalStep> steps) { 
+		this.approvalSteps = steps;
+	}
+	
 	@GraphQLFetcher("childrenOrgs")
 	public List<Organization> loadChildrenOrgs() { 
 		if (childrenOrgs == null) { 
@@ -94,21 +103,21 @@ public class Organization extends AbstractAnetBean {
 		return childrenOrgs;
 	}
 	
-//	@GraphQLIgnore
-//	public List<Organization> getChildrenOrgs() { 
-//		return childrenOrgs;
-//	}
-//	
-//	public void setChildrenOrgs(List<Organization> childrenOrgs) { 
-//		this.childrenOrgs = childrenOrgs;
-//	}
-	
 	@GraphQLFetcher("poams")
 	public List<Poam> loadPoams() { 
 		if (poams == null) { 
 			poams = AnetObjectEngine.getInstance().getPoamDao().getPoamsByOrganizationId(this.getId());
 		}
 		return poams;
+	}
+	
+	@GraphQLIgnore
+	public List<Poam> getPoams() { 
+		return poams;
+	}
+	
+	public void setPoams(List<Poam> poams) { 
+		this.poams = poams;
 	}
 	
 	public static Organization create(String name, OrganizationType type) { 

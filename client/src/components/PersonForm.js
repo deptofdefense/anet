@@ -17,7 +17,7 @@ export default class PersonForm extends Component {
 	}
 
 	render() {
-		let {person, onChange, onSubmit, actionText, error} = this.props
+		let {person, onChange, onSubmit, actionText, error, edit} = this.props
 
 		return <Form formFor={person} onChange={onChange}
 			onSubmit={onSubmit} horizontal
@@ -30,7 +30,7 @@ export default class PersonForm extends Component {
 				</fieldset>}
 
 			<fieldset>
-				<legend>Create a new Person</legend>
+				<legend>{edit ? "Edit " + person.name : "Create a new Person"}</legend>
 				<Form.Field id="name" />
 				<Form.Field id="role" componentClass="select">
 					<option value="ADVISOR">Advisor</option>

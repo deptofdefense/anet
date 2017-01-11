@@ -31,6 +31,7 @@ import PoamEdit from './pages/poams/Edit'
 
 import OrganizationShow from './pages/organizations/Show'
 import OrganizationNew from './pages/organizations/New'
+import OrganizationEdit from './pages/organizations/Edit'
 
 import LocationShow from './pages/locations/Show'
 import LocationNew from './pages/locations/New'
@@ -72,6 +73,7 @@ ReactDOM.render((
 
 				<Route path="organizations">
 					<Route path="new" component={OrganizationNew} />
+					<Route path=":id/edit" component={OrganizationEdit} />
 					<Route path=":id" component={OrganizationShow} />
 				</Route>
 

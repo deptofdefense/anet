@@ -6,9 +6,10 @@ import History from 'components/History'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Page from 'components/Page'
 import PoamForm from 'components/PoamForm'
+import Autocomplete from 'components/Autocomplete'
 
 import API from 'api'
-import {Poam} from 'models'
+import {Poam,Organization} from 'models'
 
 export default class PoamNew extends Page {
 	static contextTypes = {
@@ -27,6 +28,19 @@ export default class PoamNew extends Page {
 		}
 	}
 
+	fetchData(props) {
+		if (props.location.query.responsibleOrg) {
+			API.query(/*GraphQL */ `
+				organization(id: ${props.location.query.responsibleOrg}) {
+					id,name,type
+				}
+			`).then(data => {
+				let poam = this.state.poam;
+				poam.responsibleOrg = new Organization(data.organization)
+				this.setState({poam})
+			})
+		}
+	}
 	render() {
 		let poam = this.state.poam
 
@@ -38,11 +52,11 @@ export default class PoamNew extends Page {
 
 				<Breadcrumbs items={[['Create new Poam', '/poams/new']]} />
 				<PoamForm
-					poam={poam} 
-					onChange={this.onChange} 
-					onSubmit={this.onSubmit} 
+					poam={poam}
+					onChange={this.onChange}
+					onSubmit={this.onSubmit}
 					actionText="Create Poam"
-					error={this.state.error}/> 
+					error={this.state.error}/>
 			</div>
 		)
 	}
