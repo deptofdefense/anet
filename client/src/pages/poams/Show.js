@@ -1,5 +1,6 @@
 import React from 'react'
 import Page from 'components/Page'
+import {DropdownButton, MenuItem} from 'react-bootstrap'
 
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
@@ -10,6 +11,9 @@ import API from 'api'
 import {Poam} from 'models'
 
 export default class PoamShow extends Page {
+	static contextTypes = {
+		app: React.PropTypes.object.isRequired,
+	}
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -40,9 +44,17 @@ export default class PoamShow extends Page {
 
 	render() {
 		let {poam} = this.state
+		// Super Users/Admins can edit Poams. Perhaps users of the responsible org can edit? TODO
+		let currentUser = this.context.app.state.currentUser
+		let canEdit = currentUser && currentUser.isSuperUser()
 		return (
 			<div>
 				<Breadcrumbs items={[[poam.shortName, Poam.pathFor(poam)]]} />
+				<div className="pull-right">
+					<DropdownButton bsStyle="primary" title="Actions" id="actions" className="pull-right" onSelect={this.actionSelect}>
+						{canEdit && <MenuItem eventKey="edit" className="todo">Edit {poam.shortName}</MenuItem>}
+					</DropdownButton>
+				</div>
 				<Form static formFor={poam} horizontal>
 					<fieldset>
 						<legend>{poam.longName}</legend>
@@ -68,5 +80,14 @@ export default class PoamShow extends Page {
 			</fieldset>
 			</Form>
 		)
+	}
+
+	@autobind
+	actionSelect(eventKey, event) {
+		if (eventKey === "edit") {
+			History.push(`/poams/${this.state.poam.id}/edit`);
+		} else {
+			console.log("Unimplemented Action: " + eventKey);
+		}
 	}
 }
