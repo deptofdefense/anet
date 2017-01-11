@@ -6,6 +6,7 @@ import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
 import LinkTo from 'components/LinkTo'
 import autobind from 'autobind-decorator'
+import History from 'components/History'
 
 import API from 'api'
 import {Poam} from 'models'
@@ -44,15 +45,17 @@ export default class PoamShow extends Page {
 
 	render() {
 		let {poam} = this.state
-		// Super Users/Admins can edit Poams. Perhaps users of the responsible org can edit? TODO
+		// Admins can edit poams, or super users if this poam is assigned to their org.
 		let currentUser = this.context.app.state.currentUser
-		let canEdit = currentUser && currentUser.isSuperUser()
+		let canEdit = (currentUser && currentUser.isAdmin()) ||
+			(currentUser && poam.responsibleOrg && currentUser.isSuperUserForOrg(poam.responsibleOrg));
+
 		return (
 			<div>
 				<Breadcrumbs items={[[poam.shortName, Poam.pathFor(poam)]]} />
 				<div className="pull-right">
 					<DropdownButton bsStyle="primary" title="Actions" id="actions" className="pull-right" onSelect={this.actionSelect}>
-						{canEdit && <MenuItem eventKey="edit" className="todo">Edit {poam.shortName}</MenuItem>}
+						{canEdit && <MenuItem eventKey="edit" >Edit {poam.shortName}</MenuItem>}
 					</DropdownButton>
 				</div>
 				<Form static formFor={poam} horizontal>

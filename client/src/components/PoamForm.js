@@ -24,12 +24,13 @@ export default class PoamForm extends Component {
 				<p>There was a problem saving this poam</p>
 				<p>{error}</p>
 				</fieldset>}
-				<fieldset>
+
+			<fieldset>
 					<legend>Create a new Poam</legend>
 					<Form.Field id="shortName" />
 					<Form.Field id="longName" />
 					<Form.Field id="responsibleOrg">
-						<Autocomplete valueKey="name"  
+						<Autocomplete valueKey="name"
 							placeholder="Select a responsible organization for this poam"
 							url="/api/organizations/search" />
 					</Form.Field>
