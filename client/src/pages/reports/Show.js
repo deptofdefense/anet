@@ -98,7 +98,8 @@ export default class ReportShow extends Page {
 							id, name,
 							members { id, name }
 						}
-					}
+					},
+					person { id, name, rank}
 				}
 
 				approvalStep {
@@ -382,8 +383,8 @@ export default class ReportShow extends Page {
 					</ul>
 				</Modal.Body>
 			</Modal>
-			{action.type ?
-				<span> {action.type} <small>{action.createdAt}</small></span>
+	 	{action.type ?
+				<span> {action.type} by {action.person.name} <small>{moment(action.createdAt).format("L")}</small></span>
 				:
 				<span className="text-danger"> Pending</span>
 			}
