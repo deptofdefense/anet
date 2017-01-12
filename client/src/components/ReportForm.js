@@ -51,7 +51,7 @@ export default class ReportForm extends Component {
 
 
 			<fieldset>
-				<legend>Engagement details <small>Required</small></legend>
+				<legend>Engagement Details<small>Required</small></legend>
 
 				<Form.Field id="intent" label="Meeting subject" placeholder="What happened?" data-focus>
 					<Form.Field.ExtraCol>{250 - report.intent.length} characters remaining</Form.Field.ExtraCol>
@@ -81,7 +81,7 @@ export default class ReportForm extends Component {
 			</fieldset>
 
 			<fieldset>
-				<legend>Meeting attendance <small>Required</small></legend>
+				<legend>Meeting Attendance<small>Required</small></legend>
 
 				<Form.Field id="attendees">
 					<Autocomplete placeholder="Who was there?" url="/api/people/search" template={person =>
@@ -132,7 +132,7 @@ export default class ReportForm extends Component {
 			<PoamsSelector poams={report.poams} shortcuts={recents.poams} onChange={onChange}/>
 
 			<fieldset>
-				<legend>Meeting discussion</legend>
+				<legend>Meeting Discussion<small>Required</small></legend>
 				<Form.Field id="keyOutcomesSummary" >
 					<Form.Field.ExtraCol>{250 - report.keyOutcomesSummary.length} characters remaining</Form.Field.ExtraCol>
 				</Form.Field>
