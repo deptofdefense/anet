@@ -223,8 +223,7 @@ module.exports = {
         warnings: false
       },
       mangle: {
-        screw_ie8: true,
-        keep_fnames: true,
+        screw_ie8: true
       },
       output: {
         comments: false,
