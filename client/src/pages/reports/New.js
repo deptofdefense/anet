@@ -158,7 +158,7 @@ export default class ReportNew extends Page {
 					<PoamsSelector poams={report.poams} shortcuts={recents.poams} onChange={this.onChange}/>
 
 					<fieldset>
-						<legend>Meeting discussion</legend>
+						<legend>Meeting discussion<small>Required</small></legend>
 						<Form.Field id="keyOutcomesSummary" >
 							<Form.Field.ExtraCol>{250 - report.keyOutcomesSummary.length} characters remaining</Form.Field.ExtraCol>
 						</Form.Field>
