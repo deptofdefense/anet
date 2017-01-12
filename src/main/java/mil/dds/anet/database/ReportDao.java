@@ -172,6 +172,14 @@ public class ReportDao implements IAnetDao<Report> {
 			.execute();
 	}
 
+	public int updateAttendeeOnReport(ReportPerson rp, Report r) { 
+		return dbHandle.createStatement("UPDATE reportPeople SET isPrimary = :isPrimary WHERE reportId = :reportId AND personId = :personId")
+			.bind("reportId", r.getId())
+			.bind("personId", rp.getId())
+			.bind("isPrimary", rp.isPrimary())
+			.execute();
+	}
+	
 	public int addPoamToReport(Poam p, Report r) {
 		return dbHandle.createStatement("INSERT INTO reportPoams (poamId, reportId) VALUES (:poamId, :reportId)")
 			.bind("reportId", r.getId())

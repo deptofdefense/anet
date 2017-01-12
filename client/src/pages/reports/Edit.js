@@ -108,8 +108,8 @@ export default class ReportEdit extends Page {
 		delete report.primaryPrincipal
 		delete report.primaryAdvisor
 
-		API.send('/api/reports/new', report)
-			.then(report => {
+		API.send('/api/reports/update', report)
+			.then(response => {
 				History.push(Report.pathFor(report))
 			})
 			.catch(response => {
