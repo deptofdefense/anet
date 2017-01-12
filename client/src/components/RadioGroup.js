@@ -20,6 +20,10 @@ export default class RadioGroup extends Component {
 		this.id = props.id || (formGroup && formGroup.controlId)
 	}
 
+	componentWillReceiveProps(props) {
+		this.setState({value: props.value})
+	}
+
 	render() {
 		let {children, ...props} = this.props
 

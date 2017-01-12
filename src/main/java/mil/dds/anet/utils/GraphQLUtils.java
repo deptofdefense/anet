@@ -71,7 +71,7 @@ public class GraphQLUtils {
 			gType = Scalars.GraphQLString;
 		}else if (Integer.class.equals(clazz) || "int".equals(type.getTypeName())) { 
 			gType = Scalars.GraphQLInt;
-		} else if (Boolean.class.equals(clazz)) { 
+		} else if (Boolean.class.equals(clazz) || "boolean".equals(type.getTypeName())) { 
 			gType = Scalars.GraphQLBoolean;
 		} else if (Double.class.equals(clazz)) { 
 			gType = Scalars.GraphQLFloat;

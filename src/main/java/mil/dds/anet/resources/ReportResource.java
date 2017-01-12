@@ -1,6 +1,7 @@
 package mil.dds.anet.resources;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.PermitAll;
@@ -31,12 +32,12 @@ import mil.dds.anet.AnetEmailWorker.AnetEmail;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.ApprovalAction;
 import mil.dds.anet.beans.ApprovalAction.ApprovalType;
-import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.beans.ApprovalStep;
 import mil.dds.anet.beans.Comment;
 import mil.dds.anet.beans.Group;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
@@ -113,63 +114,49 @@ public class ReportResource implements IGraphQLResource {
 	}
 	
 	@POST
-	@Path("/{id}/edit")
+	@Path("/update")
 	public Response editReport(@Auth Person editor, Report r) {
 		//Verify this person has access to edit this report
 		//Either they are the author, or an approver for the current step.
 		Report existing = dao.getById(r.getId());
 		r.setState(existing.getState());
 		r.setApprovalStep(existing.getApprovalStep());
-		switch (existing.getState()) {
-		case DRAFT:
-			//Must be the author
-			if (!existing.getAuthor().getId().equals(editor.getId())) {
-				throw new WebApplicationException("Not the Author", Status.FORBIDDEN);
-			}
-			break;
-		case PENDING_APPROVAL:
-			//Either the author, or the approver
-			if (existing.getAuthor().getId().equals(editor.getId())) {
-				//This is okay, but move it back to draft
-				r.setState(ReportState.DRAFT);
-				r.setApprovalStep(null);
-			} else {
-				boolean canApprove = engine.canUserApproveStep(editor.getId(), existing.getApprovalStep().getId());
-				if (!canApprove) {
-					throw new WebApplicationException("Not the Approver", Status.FORBIDDEN);
-				}
-			}
-			break;
-		case RELEASED:
-			throw new WebApplicationException("Cannot edit a released report", Status.FORBIDDEN);
-		}
-		
 		r.setAuthor(existing.getAuthor());
+		assertCanEditReport(r, editor);
 		
 		//If there is a change to the primary advisor, change the advisor Org. 
 		Person primaryAdvisor = findPrimaryAttendee(r, Role.ADVISOR);
-		if (Utils.idEqual(primaryAdvisor, existing.loadPrimaryAdvisor()) == false) { 
+		if (Utils.idEqual(primaryAdvisor, existing.loadPrimaryAdvisor()) == false || existing.getAdvisorOrg() == null) { 
 			r.setAdvisorOrg(engine.getOrganizationForPerson(primaryAdvisor));
+		} else { 
+			r.setAdvisorOrg(existing.getAdvisorOrg());
 		}
 
 		Person primaryPrincipal = findPrimaryAttendee(r, Role.PRINCIPAL);
-		if (Utils.idEqual(primaryPrincipal, existing.loadPrimaryPrincipal()) ==  false) { 
+		if (Utils.idEqual(primaryPrincipal, existing.loadPrimaryPrincipal()) ==  false || existing.getPrincipalOrg() == null) { 
 			r.setPrincipalOrg(engine.getOrganizationForPerson(primaryPrincipal));
+		} else { 
+			r.setPrincipalOrg(existing.getPrincipalOrg());
 		}
-		
 		
 		dao.update(r);
 		//Update Attendees: Fetch the people associated with this report
 		List<ReportPerson> existingPeople = dao.getAttendeesForReport(r.getId());
-		List<Integer> existingPplIds = existingPeople.stream().map( rp -> rp.getId()).collect(Collectors.toList());
 		//Find any differences and fix them.
 		for (ReportPerson rp : r.getAttendees()) {
-			int idx = existingPplIds.indexOf(rp.getId());
-			if (idx == -1) { dao.addAttendeeToReport(rp, r); } else { existingPplIds.remove(idx);}
+			Optional<ReportPerson> existingPerson = existingPeople.stream().filter(el -> el.getId().equals(rp.getId())).findFirst();
+			if (existingPerson.isPresent()) { 
+				if (existingPerson.get().isPrimary() != rp.isPrimary()) { 
+					dao.updateAttendeeOnReport(rp, r);
+				}
+				existingPeople.remove(existingPerson.get());
+			} else { 
+				dao.addAttendeeToReport(rp, r);
+			}
 		}
-		//Any ids left in existingPplIds needs to be removed.
-		for (Integer id : existingPplIds) {
-			dao.removeAttendeeFromReport(Person.createWithId(id), r);
+		//Any attendees left in existingPeople needs to be removed.
+		for (ReportPerson rp : existingPeople) {
+			dao.removeAttendeeFromReport(rp, r);
 		}
 
 		//Update Poams:
@@ -185,6 +172,32 @@ public class ReportResource implements IGraphQLResource {
 		return Response.ok().build();
 	}
 
+	private void assertCanEditReport(Report report, Person editor) { 
+		switch (report.getState()) {
+		case DRAFT:
+			//Must be the author
+			if (!report.getAuthor().getId().equals(editor.getId())) {
+				throw new WebApplicationException("Not the Author", Status.FORBIDDEN);
+			}
+			break;
+		case PENDING_APPROVAL:
+			//Either the author, or the approver
+			if (report.getAuthor().getId().equals(editor.getId())) {
+				//This is okay, but move it back to draft
+				report.setState(ReportState.DRAFT);
+				report.setApprovalStep(null);
+			} else {
+				boolean canApprove = engine.canUserApproveStep(editor.getId(), report.getApprovalStep().getId());
+				if (!canApprove) {
+					throw new WebApplicationException("Not the Approver", Status.FORBIDDEN);
+				}
+			}
+			break;
+		case RELEASED:
+			throw new WebApplicationException("Cannot edit a released report", Status.FORBIDDEN);
+		}
+	}
+	
 	/* Submit a report for approval
 	 * Kicks a report from DRAFT to PENDING_APPROVAL and sets the approval step Id
 	 */
