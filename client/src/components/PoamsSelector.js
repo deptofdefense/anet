@@ -1,10 +1,9 @@
 import React, {Component} from 'react'
+import autobind from 'autobind-decorator'
 
 import Autocomplete from 'components/Autocomplete'
 import Form from 'components/Form'
-import Poam from 'models'
 import {Table, Button} from 'react-bootstrap'
-import autobind from 'autobind-decorator'
 
 export default class PoamsSelector extends Component {
 	static propTypes = {
@@ -51,10 +50,10 @@ export default class PoamsSelector extends Component {
 	}
 
 	renderShortcuts() {
-		let shortcuts = this.props.shortcuts;
+		let shortcuts = this.props.shortcuts || [];
 		return <Form.Field.ExtraCol className="shortcut-list">
 			<h5>Shortcuts</h5>
-				{Poam.map(shortcuts, poam =>
+				{shortcuts.map(poam =>
 					<Button key={poam.id} bsStyle="link" onClick={this.addPoam.bind(this, poam)}>Add "{poam.longName}"</Button>
 				)}
 			</Form.Field.ExtraCol>

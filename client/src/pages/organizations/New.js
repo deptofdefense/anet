@@ -1,13 +1,11 @@
 import React from 'react'
+import Page from 'components/Page'
 import autobind from 'autobind-decorator'
 
-import Page from 'components/Page'
 import {ContentForHeader} from 'components/Header'
-import History from 'components/History'
-import Form from 'components/Form'
-import Breadcrumbs from 'components/Breadcrumbs'
-import Autocomplete from 'components/Autocomplete'
 import OrganizationForm from 'components/OrganizationForm'
+import History from 'components/History'
+import Breadcrumbs from 'components/Breadcrumbs'
 
 import API from 'api'
 import {Organization} from 'models'
@@ -79,6 +77,8 @@ export default class OrganizationNew extends Page {
 		if (organization.parentOrg) {
 			organization.parentOrg = {id: organization.parentOrg.id}
 		}
+
+		console.log(organization);
 
 		API.send('/api/organizations/new', organization, {disableSubmits: true})
 			.then(org => {

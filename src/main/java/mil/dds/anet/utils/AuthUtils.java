@@ -20,17 +20,22 @@ public class AuthUtils {
 		throw new WebApplicationException(UNAUTH_MESSAGE, Status.UNAUTHORIZED);
 	}
 	
-	public static void assertSuperUserForOrg(Person user, Organization org) {
+	public static boolean isSuperUserForOrg(Person user, Organization org) { 
 		Position position = user.loadPosition();
 		if (position != null && 
 				position.getType() == PositionType.SUPER_USER &&
 				position.getOrganization() != null && 
 				position.getOrganization().getId().equals(org.getId())) { 
-			return;
+			return true;
 		} else if (position != null && 
 				position.getType() == PositionType.ADMINISTRATOR) { 
-			return;
+			return true;
 		}
+		return false;
+	}
+	
+	public static void assertSuperUserForOrg(Person user, Organization org) {
+		if (isSuperUserForOrg(user, org)) { return; } 
 		throw new WebApplicationException(UNAUTH_MESSAGE, Status.UNAUTHORIZED);
 	}
 

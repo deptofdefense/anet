@@ -2,6 +2,8 @@ package mil.dds.anet.utils;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import mil.dds.anet.views.AbstractAnetBean;
 
@@ -20,4 +22,27 @@ public class Utils {
 		return false; 
 	}
 	
+	public static <T extends AbstractAnetBean> T getById(List<T> list, Integer id) { 
+		return list.stream().filter(el -> Objects.equals(id, el.getId())).findFirst().orElse(null);
+	}
+	
+	/*
+	 * Performs a diff of the two lists of elements
+	 * For each element that is in newElements but is not in oldElements it will call addFunc
+	 * For each element that is in oldElements but is not in newElements, it will call removeFunc
+	 */
+	public static <T extends AbstractAnetBean> void addRemoveElementsById(List<T> oldElements, List<T> newElements, Consumer<T> addFunc, Consumer<Integer> removeFunc ) { 
+		List<Integer> existingIds = oldElements.stream().map(p -> p.getId()).collect(Collectors.toList());			
+		for (T newEl : newElements) { 
+			if (existingIds.remove(newEl.getId()) == false) { 
+				//Add this element
+				addFunc.accept(newEl);
+			}
+		}
+		
+		//Now remove all items in existingIds. 
+		for (Integer id : existingIds) {
+			removeFunc.accept(id);
+		}
+	}
 }

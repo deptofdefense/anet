@@ -59,7 +59,7 @@ public class ApprovalStepResource implements IGraphQLResource{
 	@RolesAllowed("SUPER_USER")
 	public ApprovalStep createNewStep(@Auth Person user, ApprovalStep as) {
 		AuthUtils.assertSuperUserForOrg(user, Organization.createWithId(as.getAdvisorOrganizationId()));
-		return dao.insert(as);
+		return dao.insertAtEnd(as);
 	}
 	
 	@POST

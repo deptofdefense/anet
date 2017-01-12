@@ -331,7 +331,8 @@ public class Report extends AbstractAnetBean {
 		List<ApprovalStep> steps = engine.getApprovalStepsForOrg(ao);
 		if (steps == null || steps.size() == 0) {
 			//No approval steps for this organization
-			steps = engine.getApprovalStepsForOrg(Organization.createWithId(-1));
+			steps = engine.getApprovalStepsForOrg(Organization.createWithId(
+					Integer.parseInt(engine.getAdminSetting(AdminSettingKeys.DEFAULT_APPROVAL_ORGANIZATION))));
 		}
 				
 		List<ApprovalAction> workflow = new LinkedList<ApprovalAction>();

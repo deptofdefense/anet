@@ -1,6 +1,8 @@
 import Model from 'components/Model'
 
 export default class Position extends Model {
+	static resourceName = "Position"
+
 	static schema = {
 		name: '',
 		type: '',

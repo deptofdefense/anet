@@ -3,19 +3,19 @@ import React, {Component} from 'react'
 import L from 'leaflet'
 import autobind from 'autobind-decorator'
 
-const css = { 
+const css = {
 	height: "500px"
 }
 
-export default class Leaflet extends Component { 
+export default class Leaflet extends Component {
 	static propTypes = {
-	
+
 	}
-	static contextTypes = { 
+	static contextTypes = {
 		app: React.PropTypes.object.isRequired
 	}
 
-	constructor(props) { 
+	constructor(props) {
 		super(props)
 
 		this.state = {
@@ -26,7 +26,7 @@ export default class Leaflet extends Component {
 		}
 	}
 
-	componentDidMount() { 
+	componentDidMount() {
 		let app = this.context.app;
 		let mapLayers = app.state.settings["MAP_LAYERS"];
 		console.log(mapLayers);
@@ -43,14 +43,14 @@ export default class Leaflet extends Component {
 			format: 'image/png',
 			transparent: true
 		})
-		
+
 		let osm = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
 
 		let baseLayers = { "Nexrad" : nexrad, "NMRA" : nmra, "OSM" : osm}
 */
 		let layerControl = L.control.layers({}, {});
 		layerControl.addTo(map);
-	
+
 		map.on('moveend', this.moveEnd);
 
 		let state = this.state;
@@ -60,40 +60,41 @@ export default class Leaflet extends Component {
 	}
 
 	componentWillUpdate() {
-		console.log("cwu", this.state.hasLayers);
-		if (this.state.hasLayers === false) { 
+		if (this.state.hasLayers === false) {
 			this.addLayers();
 		}
 	}
 
 	@autobind
 	addLayers() {
-		let map = this.state.map;
-		let app = this.context.app;
-		let rawLayers = app.state.settings["MAP_LAYERS"];
-		if (!rawLayers) { return; } 
-		let mapLayers = JSON.parse(rawLayers);
-		console.log("adding layers")
-		console.log(mapLayers);
+		let app = this.context.app
+		let rawLayers = app.state.settings["MAP_LAYERS"]
+		if (!rawLayers || rawLayers.length === 0) {
+			this.setState({hasLayers:true});
+			return
+		}
 
-		let baseLayers = {}
-		mapLayers.map( l => {
-			if (l.type === "wms") { 
+		let mapLayers = JSON.parse(rawLayers)
+		console.log("adding layers")
+		console.log(mapLayers)
+
+		mapLayers.forEach(l => {
+			if (l.type === "wms") {
 				let layer = L.tileLayer.wms(l.url, {
 					layers: l.layer,
 					format: l.format || 'image/png'
-				});
-				this.state.layerControl.addBaseLayer(layer, l.name);
-			} else if (l.type === "osm") { 
+				})
+				this.state.layerControl.addBaseLayer(layer, l.name)
+			} else if (l.type === "osm") {
 				let layer = L.tileLayer(l.url)
-				this.state.layerControl.addBaseLayer(layer, l.name);
+				this.state.layerControl.addBaseLayer(layer, l.name)
 			}
-		});
+		})
 
 
-		let state = this.state;
-		state.hasLayers = (mapLayers.length > 0);
-		this.setState(state);
+		let state = this.state
+		state.hasLayers = (mapLayers.length > 0)
+		this.setState(state)
 	}
 
 	render() {
@@ -104,9 +105,9 @@ export default class Leaflet extends Component {
 			</div>
 		)
 	}
-	
+
 	@autobind
-	moveEnd(event) { 
+	moveEnd(event) {
 		let map = this.state.map;
 		let center = map.getCenter()
 		console.log(map.getCenter())

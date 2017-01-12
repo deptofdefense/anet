@@ -1,7 +1,6 @@
 package mil.dds.anet.resources;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -124,18 +123,9 @@ public class PositionResource implements IGraphQLResource {
 			}
 
 			if (pos.getAssociatedPositions() != null) { 
-				List<Integer> existingIds = current.loadAssociatedPositions().stream().map(p -> p.getId()).collect(Collectors.toList());			
-				for (Position newPos : pos.getAssociatedPositions()) { 
-					if (existingIds.remove(newPos.getId()) == false) { 
-						//Add this relationship
-						dao.associatePosition(newPos, pos);
-					}
-				}
-				
-				//Now remove all items in existingIds. 
-				for (Integer id : existingIds) { 
-					dao.deletePositionAssociation(pos, Position.createWithId(id));
-				}
+				Utils.addRemoveElementsById(current.loadAssociatedPositions(), pos.getAssociatedPositions(), 
+						newPosition -> dao.associatePosition(newPosition, pos), 
+						oldPositionId -> dao.deletePositionAssociation(pos, Position.createWithId(oldPositionId)));
 			}	
 		}
 		

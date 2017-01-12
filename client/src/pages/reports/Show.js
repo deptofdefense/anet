@@ -92,7 +92,12 @@ export default class ReportShow extends Page {
 
 				approvalStatus {
 					type, createdAt
-					step { id }
+					step { id ,
+						approverGroup {
+							id, name,
+							members { id, name }
+						}
+					}
 				}
 
 				approvalStep {
@@ -108,8 +113,8 @@ export default class ReportShow extends Page {
 		let {report} = this.state
 		let {currentUser} = this.context.app.state
 
-		let canApprove = currentUser.isAdmin() ||
-			report.approvalStep.approverGroup.members.find(member => member.id === currentUser.id)
+		let canApprove = report.isPending() && (currentUser.isAdmin() ||
+			report.approvalStep.approverGroup.members.find(member => member.id === currentUser.id))
 
 		return (
 			<div>
@@ -233,11 +238,11 @@ export default class ReportShow extends Page {
 							<a name="approvals" />
 							<legend>Approvals</legend>
 
-							{report.author.position.organization.approvalSteps.map(step =>
-								<div key={step.id}>
-									{<LinkTo person={step.approverGroup.members[0]} /> || step.approverGroup.name}
-									{report.approvalStatus.find(thisStep => step.id === thisStep.id) ?
-										<span> approved <small>{step.createdAt}</small></span>
+							{report.approvalStatus.map(action =>
+								<div key={action.step.id}>
+									{action.step.approverGroup.name}
+									{action.type ?
+										<span> {action.type} <small>{action.createdAt}</small></span>
 										:
 										<span className="text-danger"> Pending</span>
 									}
