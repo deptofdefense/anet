@@ -2,7 +2,6 @@ import React, {Component} from 'react'
 
 import Autocomplete from 'components/Autocomplete'
 import Form from 'components/Form'
-import Poam from 'models'
 import {Table, Button} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 

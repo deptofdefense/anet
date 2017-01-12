@@ -17,9 +17,11 @@ import NProgress from 'nprogress'
 import App from './pages/App'
 import Home from './pages/Home'
 import Search from './pages/Search'
+
 import ReportsIndex from './pages/reports/Index'
 import ReportNew from './pages/reports/New'
 import ReportShow from './pages/reports/Show'
+import ReportEdit from './pages/reports/Edit'
 
 import PersonShow from './pages/people/Show'
 import PersonNew from './pages/people/New'
@@ -62,6 +64,7 @@ ReactDOM.render((
 				<Route path="reports">
 					<IndexRoute component={ReportsIndex} />
 					<Route path="new" component={ReportNew} />
+					<Route path=":id/edit" component={ReportEdit} />
 					<Route path=":id" component={ReportShow} />
 				</Route>
 
@@ -81,7 +84,7 @@ ReactDOM.render((
 					<Route path="new" component={LocationNew} />
 					<Route path=":id" component={LocationShow} />
 				</Route>
-				
+
 				<Route path="positions">
 					<Route path="new" component={PositionNew} />
 					<Route path=":id/edit" component={PositionEdit} />

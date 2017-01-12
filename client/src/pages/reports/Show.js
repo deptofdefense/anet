@@ -1,6 +1,6 @@
 import React from 'react'
 import Page from 'components/Page'
-import {Table, Button, Col} from 'react-bootstrap'
+import {Table, Button, Col, DropdownButton, MenuItem} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 import moment from 'moment'
 
@@ -8,6 +8,7 @@ import {Report, Person, Poam} from 'models'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
 import LinkTo from 'components/LinkTo'
+import History from 'components/History'
 
 import API from 'api'
 
@@ -116,29 +117,50 @@ export default class ReportShow extends Page {
 		let canApprove = report.isPending() && (currentUser.isAdmin() ||
 			report.approvalStep.approverGroup.members.find(member => member.id === currentUser.id))
 
+		//Authors can approve in draft mode or Pending Mode
+		let canEdit = (report.isDraft() || report.isPending()) && (currentUser.id === report.author.id)
+		//Approvers can edit.
+		canEdit = canEdit || canApprove
+
+		//Only the author can submit when report is in Draft.
+		let canSubmit = report.isDraft() && (currentUser.id === report.author.id)
+
+		//Anbody can email a report as long as it's not in draft.
+		let canEmail = !report.isDraft();
+
 		return (
 			<div>
 				<Breadcrumbs items={[['Reports', '/reports'], [report.intent || 'Report #' + report.id, Report.pathFor(report)]]} />
+
+
+				{report.isDraft() &&
+					<fieldset style={{textAlign: 'center'}}>
+						<h4 className="text-danger">This report is in DRAFT state and hasn't been submitted.</h4>
+						<p>You can review the draft below to make sure all the details are correct.</p>
+					</fieldset>
+				}
+
+				{report.isPending() &&
+					<fieldset style={{textAlign: 'center'}}>
+						<h4 className="text-danger">This report is PENDING approvals.</h4>
+						<p>It won't be available in the ANET database until your <a href="#approvals">approval organization</a> marks it as approved.</p>
+					</fieldset>
+				}
+
+				<div className="pull-right">
+					<DropdownButton bsStyle="primary" title="Actions" id="actions"
+							className="pull-right" onSelect={this.actionSelect}>
+						{canEdit && <MenuItem eventKey="edit" >Edit Report</MenuItem>}
+						{canSubmit && <MenuItem eventKey="submit">Submit</MenuItem>}
+						{canEmail && <MenuItem eventKey="email" className="todo" >Email Report</MenuItem>}
+					</DropdownButton>
+				</div>
 
 				<Form static formFor={report} horizontal>
 					{this.state.error &&
 						<fieldset className="text-danger">
 							<p>There was a problem saving this report.</p>
 							<p>{this.state.error}</p>
-						</fieldset>
-					}
-
-					{report.isDraft() &&
-						<fieldset style={{textAlign: 'center'}}>
-							<h4 className="text-danger">This report is in DRAFT state and hasn't been submitted.</h4>
-							<p>You can review the draft below to make sure all the details are correct.</p>
-						</fieldset>
-					}
-
-					{report.isPending() &&
-						<fieldset style={{textAlign: 'center'}}>
-							<h4 className="text-danger">This report is PENDING approvals.</h4>
-							<p>It won't be available in the ANET database until your <a href="#approvals">approval organization</a> marks it as approved.</p>
 						</fieldset>
 					}
 
@@ -259,7 +281,7 @@ export default class ReportShow extends Page {
 						</fieldset>
 					}
 
-					{report.isDraft() &&
+					{canSubmit &&
 						<fieldset>
 							<Col md={9}>
 								<p>
@@ -335,5 +357,16 @@ export default class ReportShow extends Page {
 	handleError(response) {
 		this.setState({error: response.error})
 		window.scrollTo(0, 0)
+	}
+
+	@autobind
+	actionSelect(eventKey, event) {
+		if (eventKey === "edit") {
+			History.push(`/reports/${this.state.report.id}/edit`);
+		} else if (eventKey === "submit" ) {
+			this.submitDraft()
+		} else {
+			console.log("Unimplemented Action: " + eventKey);
+		}
 	}
 }

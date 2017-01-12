@@ -6,11 +6,12 @@ import autobind from 'autobind-decorator'
 import {ContentForHeader} from 'components/Header'
 import Breadcrumbs from 'components/Breadcrumbs'
 import ReportForm from 'components/ReportForm'
+import moment from 'moment'
 
 import API from 'api'
 import {Report} from 'models'
 
-export default class ReportNew extends Page {
+export default class ReportEdit extends Page {
 	static pageProps = {
 		useNavigation: false
 	}
@@ -33,8 +34,18 @@ export default class ReportNew extends Page {
 		}
 	}
 
-	fetchData() {
+	fetchData(props) {
 		API.query(/* GraphQL */`
+			report(id:${props.params.id}) {
+				id, intent, engagementDate, atmosphere, atmosphereDetails
+				keyOutcomesSummary, keyOutcomes, nextStepsSummary, reportText, nextSteps
+				location { id, name},
+				attendees {
+					id, name, role, primary
+					position { id, name }
+				}
+				poams { id, shortName, longName, responsibleOrg { id, name} }
+			}
 			locations(f:recents) {
 				id, name
 			}
@@ -44,18 +55,30 @@ export default class ReportNew extends Page {
 			poams(f:recents) {
 				id, shortName, longName
 			}
-		`).then(data => this.setState({recents: data}))
+		`).then(data => {
+			let newState = {
+				recents: {
+					locations: data.locations,
+					persons: data.persons,
+					poams: data.poams
+				},
+				report: new Report(data.report)
+			}
+			newState.report.engagementDate = moment(newState.report.engagementDate).format()
+			this.setState(newState)
+		})
 	}
 
 	render() {
 		let {report, recents} = this.state
+
 		return (
 			<div>
 				<ContentForHeader>
-					<h2>Create a new Report</h2>
+					<h2>Edit Report #{report.id}</h2>
 				</ContentForHeader>
 
-				<Breadcrumbs items={[['EF4', '/organizations/ef4'], ['Submit a report', Report.pathForNew()]]} />
+				<Breadcrumbs items={[['Report #' + report.id, '/reports/' + report.id], ['Edit', "/reports/" + report.id + "/edit"]]} />
 
 				<ReportForm report={report}
 					recents={recents}

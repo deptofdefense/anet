@@ -113,11 +113,12 @@ public class GraphQLResource {
 		Map<String,Type> methodReturnTypes = new HashMap<String,Type>();
 		for (Method m : beanClazz.getMethods()) {
 			String methodName = null;
-			if (m.getName().startsWith("get")) {
+			if (m.isAnnotationPresent(GraphQLIgnore.class)) { continue; }
+			if (m.getName().startsWith("get")) { 
 				if (m.getName().equalsIgnoreCase("getClass")) { continue; } 
-				if (m.isAnnotationPresent(GraphQLIgnore.class)) { continue; }
 				methodName = GraphQLUtils.lowerCaseFirstLetter(m.getName().substring(3));
-				
+			} else if (m.getName().startsWith("is")) { 
+				methodName = GraphQLUtils.lowerCaseFirstLetter(m.getName().substring(2));
 			} else if(m.isAnnotationPresent(GraphQLFetcher.class)) { 
 				methodName = m.getAnnotation(GraphQLFetcher.class).value();
 			}
@@ -127,11 +128,14 @@ public class GraphQLResource {
 			}
 		}
 		
-		//For any method with a count over 1, we need to support arguments
 		for (Map.Entry<String, Type> entry : methodReturnTypes.entrySet()) { 
 			String fieldName = entry.getKey();
 			Type retType = entry.getValue();
-			builder.field(GraphQLUtils.buildFieldWithArgs(fieldName, retType, beanClazz));
+			try { 
+				builder.field(GraphQLUtils.buildFieldWithArgs(fieldName, retType, beanClazz));
+			} catch (Exception e) { 
+				throw new RuntimeException("Unable to build GraphQL field " + fieldName + " on bean " + beanClazz.getName() + ", error was: " + e.getMessage(), e);
+			}
 		}
 		
 		return builder.build();
