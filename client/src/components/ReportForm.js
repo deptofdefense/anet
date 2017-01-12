@@ -22,6 +22,10 @@ export default class ReportForm extends Component {
 		error: React.PropTypes.object,
 	}
 
+	static contextTypes = {
+		app: React.PropTypes.object,
+	}
+
 	constructor(props) {
 		super(props)
 

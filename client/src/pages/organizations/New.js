@@ -6,7 +6,6 @@ import {ContentForHeader} from 'components/Header'
 import OrganizationForm from 'components/OrganizationForm'
 import History from 'components/History'
 import Breadcrumbs from 'components/Breadcrumbs'
-import OrganizationForm from 'components/OrganizationForm'
 
 import API from 'api'
 import {Organization} from 'models'
