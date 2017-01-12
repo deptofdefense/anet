@@ -1,6 +1,8 @@
 import Model from 'components/Model'
 
 export default class Report extends Model {
+	static resourceName = "Report"
+
 	static schema = {
 		intent: '',
 		engagementDate: null,

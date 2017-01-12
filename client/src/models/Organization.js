@@ -1,6 +1,8 @@
 import Model from 'components/Model'
 
 export default class Organization extends Model {
+	static resourceName = "Organization"
+
 	static schema = {
 		name: '',
 		type: '',
