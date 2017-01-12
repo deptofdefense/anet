@@ -16,7 +16,7 @@ import LinkTo from 'components/LinkTo'
 import PoamsSelector from 'components/PoamsSelector'
 
 import API from 'api'
-import {Report, Person, Poam} from 'models'
+import {Report, Person} from 'models'
 
 export default class ReportNew extends Page {
 	static pageProps = {

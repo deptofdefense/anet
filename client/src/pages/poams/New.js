@@ -6,7 +6,6 @@ import History from 'components/History'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Page from 'components/Page'
 import PoamForm from 'components/PoamForm'
-import Autocomplete from 'components/Autocomplete'
 
 import API from 'api'
 import {Poam,Organization} from 'models'

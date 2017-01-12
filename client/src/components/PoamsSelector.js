@@ -1,10 +1,9 @@
 import React, {Component} from 'react'
+import autobind from 'autobind-decorator'
 
 import Autocomplete from 'components/Autocomplete'
 import Form from 'components/Form'
-import Poam from 'models'
 import {Table, Button} from 'react-bootstrap'
-import autobind from 'autobind-decorator'
 
 export default class PoamsSelector extends Component {
 	static propTypes = {
