@@ -8,7 +8,11 @@ import Breadcrumbs from 'components/Breadcrumbs'
 import ReportForm from 'components/ReportForm'
 
 import API from 'api'
+<<<<<<< HEAD
 import {Report} from 'models'
+=======
+import {Report, Person} from 'models'
+>>>>>>> master
 
 export default class ReportNew extends Page {
 	static pageProps = {

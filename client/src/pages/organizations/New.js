@@ -1,8 +1,9 @@
 import React from 'react'
+import Page from 'components/Page'
 import autobind from 'autobind-decorator'
 
-import Page from 'components/Page'
 import {ContentForHeader} from 'components/Header'
+import OrganizationForm from 'components/OrganizationForm'
 import History from 'components/History'
 import Breadcrumbs from 'components/Breadcrumbs'
 import OrganizationForm from 'components/OrganizationForm'
