@@ -1,6 +1,6 @@
 import React from 'react'
 import Page from 'components/Page'
-import {Table, Button, Col, DropdownButton, MenuItem} from 'react-bootstrap'
+import {Table, Button, Col, DropdownButton, MenuItem, Modal} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 import moment from 'moment'
 
@@ -261,14 +261,7 @@ export default class ReportShow extends Page {
 							<legend>Approvals</legend>
 
 							{report.approvalStatus.map(action =>
-								<div key={action.step.id}>
-									{action.step.approverGroup.name}
-									{action.type ?
-										<span> {action.type} <small>{action.createdAt}</small></span>
-										:
-										<span className="text-danger"> Pending</span>
-									}
-								</div>
+								this.renderApprovalAction(action)
 							)}
 
 							{canApprove &&
@@ -368,5 +361,44 @@ export default class ReportShow extends Page {
 		} else {
 			console.log("Unimplemented Action: " + eventKey);
 		}
+	}
+
+	@autobind
+	renderApprovalAction(action) {
+		let group = action.step.approverGroup
+		return <div key={action.step.id}>
+			<Button onClick={this.showApproversModal.bind(this, group)}>
+				{group.name}
+			</Button>
+			<Modal show={group.showModal} onHide={this.closeApproversModal.bind(this, group)}>
+				<Modal.Header closeButton>
+					<Modal.Title>Approvers for {group.name}</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+					<ul>
+					{group.members.map(p =>
+						<li key={p.id}>{p.name} - {p.emailAddress}</li>
+					)}
+					</ul>
+				</Modal.Body>
+			</Modal>
+			{action.type ?
+				<span> {action.type} <small>{action.createdAt}</small></span>
+				:
+				<span className="text-danger"> Pending</span>
+			}
+		</div>
+	}
+
+	@autobind
+	showApproversModal(approverGroup) {
+		approverGroup.showModal = true
+		this.setState(this.state)
+	}
+
+	@autobind
+	closeApproversModal(approverGroup) {
+		approverGroup.showModal = false
+		this.setState(this.state)
 	}
 }
