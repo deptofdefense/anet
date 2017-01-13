@@ -438,7 +438,7 @@
 			referencedColumnNames="id" referencedTableName="organizations" />
 	</changeSet>
 
-	<changeSet id="15" author="hpitelka" >
+	<changeSet id="15" author="hpitelka" runInTransaction="false" >
 		<addColumn tableName="reports">
 			<column name="keyOutcomesSummary" type="text" />
 		</addColumn>
