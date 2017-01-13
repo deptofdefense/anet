@@ -4,7 +4,7 @@ import {Table, Button, Col, DropdownButton, MenuItem, Modal} from 'react-bootstr
 import autobind from 'autobind-decorator'
 import moment from 'moment'
 
-import {Report, Person, Poam} from 'models'
+import {Report, Person, Poam, Comment} from 'models'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
 import LinkTo from 'components/LinkTo'
@@ -43,9 +43,7 @@ export default class ReportShow extends Page {
 		this.state = {
 			report: new Report({id: props.params.id}),
 
-			newComment: {
-				text: '',
-			},
+			newComment: new Comment(),
 		}
 	}
 
@@ -309,7 +307,7 @@ export default class ReportShow extends Page {
 
 						{!report.comments.length && "There are no comments yet."}
 
-						<Form formFor={this.state.newComment} horizontal style={commentFormCss}>
+						<Form formFor={this.state.newComment} horizontal style={commentFormCss} onSubmit={this.submitComment} onChange={this.onChange}>
 							<Form.Field id="text" placeholder="Type a comment here" label="">
 								<Form.Field.ExtraCol>
 									<Button bsStyle="primary" type="submit">Save comment</Button>
@@ -328,17 +326,30 @@ export default class ReportShow extends Page {
 	}
 
 	@autobind
+	submitComment(){
+			API.send(`/api/reports/${this.state.report.id}/comments`,this.state.newComment).then(this.updateReport, this.handleError)
+	}
+
+	@autobind
 	rejectReport() {
+        /* must refactor comments/approvals TODO
 		let comment = {
 			text: "TODO"
 		}
+        */
 
-		API.send(`/api/reports/${this.state.report.id}/reject`, comment).then(this.updateReport, this.handleError)
+		API.send(`/api/reports/${this.state.report.id}/reject`, this.state.newComment).then(this.updateReport, this.handleError)
 	}
 
 	@autobind
 	approveReport() {
 		API.send(`/api/reports/${this.state.report.id}/approve`).then(this.updateReport, this.handleError)
+	}
+
+	@autobind
+	onChange() {
+		let report = this.state.report
+		this.setState({report})
 	}
 
 	@autobind
