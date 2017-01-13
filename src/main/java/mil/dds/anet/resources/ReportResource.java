@@ -104,7 +104,7 @@ public class ReportResource implements IGraphQLResource {
 			r.setPrincipalOrg(engine.getOrganizationForPerson(primaryPrincipal));
 		}
 		
-		AnetAuditLogger.log("report {} created by author {} (id: {})", r.getId(), r.getAuthor().getName(), r.getAuthor().getId());
+		AnetAuditLogger.log("new report created by author {} (id: {})", r.getAuthor().getName(), r.getAuthor().getId());
 		return dao.insert(r);
 	}
 
@@ -128,8 +128,11 @@ public class ReportResource implements IGraphQLResource {
 		
 		//If there is a change to the primary advisor, change the advisor Org. 
 		Person primaryAdvisor = findPrimaryAttendee(r, Role.ADVISOR);
+		Organization org = existing.loadPrimaryAdvisor().getPosition().getOrganization();
 		if (Utils.idEqual(primaryAdvisor, existing.loadPrimaryAdvisor()) == false || existing.getAdvisorOrg() == null) { 
 			r.setAdvisorOrg(engine.getOrganizationForPerson(primaryAdvisor));
+			AnetAuditLogger.log("advisor org changed from {} to {} due to edit by editor {} (id: {})",
+					org.getName(), r.getAdvisorOrg().getName(), editor.getName(), editor.getId());
 		} else { 
 			r.setAdvisorOrg(existing.getAdvisorOrg());
 		}
@@ -316,6 +319,7 @@ public class ReportResource implements IGraphQLResource {
 		dao.update(r);
 		//TODO: close the transaction.
 
+		AnetAuditLogger.log("report {} approved by {} (id: {})", r.getId(), approver.getName(), approver.getId());
 		return r;
 	}
 
