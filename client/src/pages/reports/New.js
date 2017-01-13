@@ -50,18 +50,32 @@ export default class ReportNew extends Page {
 
 	//use this to auto add the author to the report attendees
 	componentWillReceiveProps(nextProps, nextContext) {
+		this.tryToAddAuthor()
+	}
+
+	componentDidMount() {
+		this.fetchData(this.props)
+		this.tryToAddAuthor()
+	}
+
+	@autobind
+	tryToAddAuthor() {
 		let currUser = this.state.currentUser
-		let newUser = nextContext.app.state && nextContext.app.state.currentUser
+		let newUser = this.context.app.state && this.context.app.state.currentUser
 
 		let currUserId = currUser && currUser.id
 		let newUserId = newUser && newUser.id
 
-		if (newUserId !== currUserId) {
+		if (newUserId && newUserId !== currUserId) {
+			console.log('updating', currUser, newUser);
 			let report = this.state.report
 			newUser.primary = true
 			report.attendees.push(newUser)
 			this.setState({report: report})
+		} else {
+			console.log('notUpdating', currUser, newUser);
 		}
+
 	}
 
 	render() {
@@ -106,6 +120,7 @@ export default class ReportNew extends Page {
 		API.send('/api/reports/new', report)
 			.then(report => {
 				History.push(Report.pathFor(report))
+				window.scrollTo(0, 0)
 			})
 			.catch(response => {
 				this.setState({error: response.message})
