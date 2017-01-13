@@ -43,7 +43,7 @@ export default class ReportShow extends Page {
 		this.state = {
 			report: new Report({id: props.params.id}),
 			newComment: new Comment(),
-            approvalComment: new Comment(),
+			approvalComment: new Comment(),
 		}
 	}
 
