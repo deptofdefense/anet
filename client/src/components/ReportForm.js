@@ -19,7 +19,7 @@ export default class ReportForm extends Component {
 		onSubmit: React.PropTypes.func,
 		edit: React.PropTypes.bool,
 		actionText: React.PropTypes.string,
-		error: React.PropTypes.object,
+		error: React.PropTypes.string,
 	}
 
 	static contextTypes = {
@@ -44,7 +44,7 @@ export default class ReportForm extends Component {
 			actionText={actionText}>
 
 			{error &&
-				<fieldset>
+				<fieldset className="text-danger" >
 					<p>There was a problem saving this report</p>
 					<p>{error}</p>
 				</fieldset>}

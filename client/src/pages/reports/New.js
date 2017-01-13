@@ -61,6 +61,7 @@ export default class ReportNew extends Page {
 					recents={recents}
 					onChange={this.onChange}
 					onSubmit={this.onSubmit}
+					error={this.state.error}
 					actionText="Save report" />
 			</div>
 		)
