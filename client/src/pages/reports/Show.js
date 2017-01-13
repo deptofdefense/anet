@@ -42,8 +42,8 @@ export default class ReportShow extends Page {
 		super(props)
 		this.state = {
 			report: new Report({id: props.params.id}),
-
 			newComment: new Comment(),
+            approvalComment: new Comment(),
 		}
 	}
 
@@ -264,8 +264,12 @@ export default class ReportShow extends Page {
 							)}
 
 							{canApprove &&
-								<div className="pull-right">
-									<Button bsStyle="danger" style={approvalButtonCss} onClick={this.rejectReport}>Reject</Button>
+								<Form.Field id="author" style={Object.assign({width:"200%"},commentFormCss)} type="text" className="pull-left" placeholder="Type a comment here" getter={this.getApprovalComment} onChange={this.onChangeComment}>
+								</Form.Field>
+							}
+							{canApprove &&
+								<div className="pull-right" style={commentFormCss}>
+									<Button bsStyle="danger" style={approvalButtonCss} onClick={this.rejectReport}>Reject with comment</Button>
 									<Button bsStyle="warning" style={approvalButtonCss} onClick={this.actionSelect.bind(this, "edit")} >Edit report</Button>
 									<Button bsStyle="primary" style={approvalButtonCss} onClick={this.approveReport}>Approve</Button>
 								</div>
@@ -332,13 +336,12 @@ export default class ReportShow extends Page {
 
 	@autobind
 	rejectReport() {
-        /* must refactor comments/approvals TODO
-		let comment = {
-			text: "TODO"
+		if (this.state.approvalComment.text.length === 0){
+			this.handleError({error:"Please include a comment when rejecting a report."})
+			return
 		}
-        */
 
-		API.send(`/api/reports/${this.state.report.id}/reject`, this.state.newComment).then(this.updateReport, this.handleError)
+		API.send(`/api/reports/${this.state.report.id}/reject`, this.state.approvalComment).then(this.updateReport, this.handleError)
 	}
 
 	@autobind
@@ -350,6 +353,18 @@ export default class ReportShow extends Page {
 	onChange() {
 		let report = this.state.report
 		this.setState({report})
+	}
+
+	@autobind
+	getApprovalComment(){
+		return this.state.approvalComment.text
+	}
+
+	@autobind
+	onChangeComment(value) {
+		let approvalComment = this.state.approvalComment
+		approvalComment.text=value.target.value
+		this.setState({approvalComment})
 	}
 
 	@autobind
