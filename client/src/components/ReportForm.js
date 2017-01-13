@@ -121,7 +121,6 @@ export default class ReportForm extends Component {
 
 					<Form.Field.ExtraCol className="shortcut-list">
 						<h5>Shortcuts</h5>
-						<Button bsStyle="link" onClick={this.addMyself}>Add myself</Button>
 						{Person.map(recents.persons, person =>
 							<Button key={person.id} bsStyle="link" onClick={this.addAttendee.bind(this, person)}>Add {person.name}</Button>
 						)}
