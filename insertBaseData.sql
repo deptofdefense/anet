@@ -436,8 +436,15 @@ INSERT INTO groups (name, createdAt) VALUES ('Default Approvers', CURRENT_TIMEST
 INSERT INTO groupMemberships (groupId, personId) VALUES ((SELECT id from groups where name = 'Default Approvers'), (SELECT id from people where emailAddress='hunter+nick@dds.mil'));
 INSERT INTO approvalSteps (approverGroupId, advisorOrganizationId) VALUES ((SELECT id from groups where name = 'Default Approvers'), (select id from organizations where name='ANET Administrators'));
 
+-- Set approvalStepId's from organizations with default
+UPDATE reports SET
+approvalStepId = (SELECT MAX(approvalSteps.id) FROM approvalSteps INNER JOIN groups ON approvalSteps.approverGroupId = groups.id WHERE groups.name = 'Default Approvers')
+WHERE reports.id IN
+(SELECT reports.id FROM reports INNER JOIN (people INNER JOIN (organizations INNER JOIN positions ON positions.organizationId = organizations.id) ON people.id = positions.currentPersonId) ON reports.authorId = people.id WHERE approvalStepId IS NULL AND reports.state = 1);
+
 --Set the Admin Settings
 INSERT INTO adminSettings ([key], value) VALUES ('SECURITY_BANNER_TEXT', 'DEMO USE ONLY');
 INSERT INTO adminSettings ([key], value) VALUES ('SECURITY_BANNER_COLOR', 'green');
 INSERT INTO adminSettings ([key], value) VALUES ('DEFAULT_APPROVAL_ORGANIZATION', (select CAST(id AS varchar) from organizations where name='ANET Administrators'));
 INSERT INTO adminSettings ([key], value) VALUES ('MAP_LAYERS', '[]');
+
