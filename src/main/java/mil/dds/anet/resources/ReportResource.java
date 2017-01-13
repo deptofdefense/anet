@@ -48,6 +48,7 @@ import mil.dds.anet.database.ReportDao;
 import mil.dds.anet.graphql.GraphQLFetcher;
 import mil.dds.anet.graphql.GraphQLParam;
 import mil.dds.anet.graphql.IGraphQLResource;
+import mil.dds.anet.utils.AnetAuditLogger;
 import mil.dds.anet.utils.ResponseUtils;
 import mil.dds.anet.utils.Utils;
 
@@ -103,6 +104,7 @@ public class ReportResource implements IGraphQLResource {
 			r.setPrincipalOrg(engine.getOrganizationForPerson(primaryPrincipal));
 		}
 		
+		AnetAuditLogger.log("report {} created by author {} (id: {})", r.getId(), r.getAuthor().getName(), r.getAuthor().getId());
 		return dao.insert(r);
 	}
 
@@ -193,8 +195,11 @@ public class ReportResource implements IGraphQLResource {
 				}
 			}
 			break;
-		case RELEASED:
+		case RELEASED: {
+			AnetAuditLogger.log("attempt to edit released report {} by editor {} (id: {}) was forbidden",
+					report.getId(), editor.getName(), editor.getId());
 			throw new WebApplicationException("Cannot edit a released report", Status.FORBIDDEN);
+			}
 		}
 	}
 	
@@ -251,6 +256,7 @@ public class ReportResource implements IGraphQLResource {
 			throw new WebApplicationException("No records updated", Status.BAD_REQUEST);
 		}
 
+		AnetAuditLogger.log("report {} submitted by author {} (id: {})", r.getId(), r.getAuthor().getName(), r.getAuthor().getId());
 		return r;
 	}
 

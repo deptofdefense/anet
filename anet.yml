@@ -57,6 +57,13 @@ logging:
           currentLogFilename: ./logs/testingLogger.log
           archivedLogFilenamePattern: ./logs/testingLogger-%d.log.gz
           archivedFileCount: 2
+    "mil.dds.anet.utils.AnetAuditLogger" :
+      level: INFO
+      appenders:
+        - type: file
+          currentLogFilename: ./logs/auditLogger.log
+          archivedLogFilenamePattern: ./logs/auditLogger-%d.log.gz
+          archivedFileCount: 2
   appenders:
     - type: console
       threshold: TRACE
