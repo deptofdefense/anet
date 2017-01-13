@@ -19,7 +19,7 @@ export default class ReportNew extends Page {
 		app: React.PropTypes.object,
 	}
 
-	constructor(props) {
+	constructor(props, context) {
 		super(props)
 
 		this.state = {
@@ -30,6 +30,7 @@ export default class ReportNew extends Page {
 				locations: [],
 				poams: [],
 			},
+			currentUser: null
 		}
 	}
 
@@ -47,6 +48,22 @@ export default class ReportNew extends Page {
 		`).then(data => this.setState({recents: data}))
 	}
 
+	//use this to auto add the author to the report attendees
+	componentWillReceiveProps(nextProps, nextContext) {
+		let currUser = this.state.currentUser
+		let newUser = nextContext.app.state && nextContext.app.state.currentUser
+
+		let currUserId = currUser && currUser.id
+		let newUserId = newUser && newUser.id
+
+		if (newUserId !== currUserId) {
+			let report = this.state.report
+			newUser.primary = true
+			report.attendees.push(newUser)
+			this.setState({report: report})
+		}
+	}
+
 	render() {
 		let {report, recents} = this.state
 		return (
@@ -55,12 +72,13 @@ export default class ReportNew extends Page {
 					<h2>Create a new Report</h2>
 				</ContentForHeader>
 
-				<Breadcrumbs items={[['EF4', '/organizations/ef4'], ['Submit a report', Report.pathForNew()]]} />
+				<Breadcrumbs items={[['Submit a report', Report.pathForNew()]]} />
 
 				<ReportForm report={report}
 					recents={recents}
 					onChange={this.onChange}
 					onSubmit={this.onSubmit}
+					error={this.state.error}
 					actionText="Save report" />
 			</div>
 		)

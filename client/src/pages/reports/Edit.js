@@ -64,7 +64,7 @@ export default class ReportEdit extends Page {
 				},
 				report: new Report(data.report)
 			}
-			newState.report.engagementDate = moment(newState.report.engagementDate).format()
+			newState.report.engagementDate = newState.report.engagementDate && moment(newState.report.engagementDate).format()
 			this.setState(newState)
 		})
 	}

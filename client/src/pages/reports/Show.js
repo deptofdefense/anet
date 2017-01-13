@@ -1,6 +1,6 @@
 import React from 'react'
 import Page from 'components/Page'
-import {Table, Button, Col, DropdownButton, MenuItem, Modal} from 'react-bootstrap'
+import {Alert, Table, Button, Col, DropdownButton, MenuItem, Modal} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 import moment from 'moment'
 
@@ -75,7 +75,7 @@ export default class ReportShow extends Page {
 				}
 
 				attendees {
-					id, name, role
+					id, name, role, primary
 					position { id, name }
 				}
 				primaryAdvisor { id }
@@ -129,6 +129,8 @@ export default class ReportShow extends Page {
 		//Anbody can email a report as long as it's not in draft.
 		let canEmail = !report.isDraft();
 
+		let errors = report.isDraft() && report.validateForSubmit();
+
 		return (
 			<div>
 				<Breadcrumbs items={[['Reports', '/reports'], [report.intent || 'Report #' + report.id, Report.pathFor(report)]]} />
@@ -138,6 +140,11 @@ export default class ReportShow extends Page {
 					<fieldset style={{textAlign: 'center'}}>
 						<h4 className="text-danger">This report is in DRAFT state and hasn't been submitted.</h4>
 						<p>You can review the draft below to make sure all the details are correct.</p>
+						<div style={{textAlign: 'left'}}>
+							{errors && errors.length > 0 &&
+								this.renderValidationErrors(errors)
+							}
+						</div>
 					</fieldset>
 				}
 
@@ -152,7 +159,7 @@ export default class ReportShow extends Page {
 					<DropdownButton bsStyle="primary" title="Actions" id="actions"
 							className="pull-right" onSelect={this.actionSelect}>
 						{canEdit && <MenuItem eventKey="edit" >Edit Report</MenuItem>}
-						{canSubmit && <MenuItem eventKey="submit">Submit</MenuItem>}
+						{canSubmit && errors.length == 0 && <MenuItem eventKey="submit">Submit</MenuItem>}
 						{canEmail && <MenuItem eventKey="email" className="todo" >Email Report</MenuItem>}
 					</DropdownButton>
 				</div>
@@ -205,7 +212,7 @@ export default class ReportShow extends Page {
 								{Person.map(report.attendees, person =>
 									<tr key={person.id}>
 										<td>
-											{(Person.isEqual(report.primaryAdvisor, person) || Person.isEqual(report.primaryPrincipal, person)) &&
+											{person.primary &&
 												"⭐️"
 											}
 										</td>
@@ -278,15 +285,21 @@ export default class ReportShow extends Page {
 					{canSubmit &&
 						<fieldset>
 							<Col md={9}>
-								<p>
-									By pressing submit, this report will be sent to
-									<strong> {Object.get(report, 'author.position.organization.name') || 'your organization approver'} </strong>
-									to go through the approval workflow.
-								</p>
+								{(errors && errors.length > 0) ?
+									this.renderValidationErrors(errors)
+									:
+									<p>
+										By pressing submit, this report will be sent to
+										<strong> {Object.get(report, 'author.position.organization.name') || 'your organization approver'} </strong>
+										to go through the approval workflow.
+									</p>
+								}
 							</Col>
 
 							<Col md={3}>
-								<Button type="submit" bsStyle="primary" bsSize="large" onClick={this.submitDraft}>
+								<Button type="submit" bsStyle="primary" bsSize="large"
+										onClick={this.submitDraft}
+										disabled={errors && errors.length > 0} >
 									Submit report
 								</Button>
 							</Col>
@@ -389,6 +402,17 @@ export default class ReportShow extends Page {
 				<span className="text-danger"> Pending</span>
 			}
 		</div>
+	}
+
+	renderValidationErrors(errors) {
+		return <Alert bsStyle="danger">
+			The following errors must be fixed before submitting this report
+			<ul>
+			{ errors.map((error,idx) =>
+				<li key={idx}>{error}</li>
+			)}
+			</ul>
+		</Alert>
 	}
 
 	@autobind

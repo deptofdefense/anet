@@ -19,7 +19,7 @@ export default class ReportForm extends Component {
 		onSubmit: React.PropTypes.func,
 		edit: React.PropTypes.bool,
 		actionText: React.PropTypes.string,
-		error: React.PropTypes.object,
+		error: React.PropTypes.string,
 	}
 
 	static contextTypes = {
@@ -44,7 +44,7 @@ export default class ReportForm extends Component {
 			actionText={actionText}>
 
 			{error &&
-				<fieldset>
+				<fieldset className="text-danger" >
 					<p>There was a problem saving this report</p>
 					<p>{error}</p>
 				</fieldset>}
@@ -121,7 +121,6 @@ export default class ReportForm extends Component {
 
 					<Form.Field.ExtraCol className="shortcut-list">
 						<h5>Shortcuts</h5>
-						<Button bsStyle="link" onClick={this.addMyself}>Add myself</Button>
 						{Person.map(recents.persons, person =>
 							<Button key={person.id} bsStyle="link" onClick={this.addAttendee.bind(this, person)}>Add {person.name}</Button>
 						)}
