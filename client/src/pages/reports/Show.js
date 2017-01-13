@@ -268,7 +268,7 @@ export default class ReportShow extends Page {
 							{canApprove &&
 								<div className="pull-right">
 									<Button bsStyle="danger" style={approvalButtonCss} onClick={this.rejectReport}>Reject</Button>
-									<Button bsStyle="warning" style={approvalButtonCss}>Edit report</Button>
+									<Button bsStyle="warning" style={approvalButtonCss} onClick={this.actionSelect.bind(this, "edit")} >Edit report</Button>
 									<Button bsStyle="primary" style={approvalButtonCss} onClick={this.approveReport}>Approve</Button>
 								</div>
 							}
