@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 
 import javax.mail.Authenticator;
@@ -20,12 +21,12 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.ws.rs.WebApplicationException;
 
-import org.eclipse.jetty.util.log.Log;
-import org.eclipse.jetty.util.log.Logger;
 import org.joda.time.DateTime;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -50,7 +51,7 @@ public class AnetEmailWorker implements Runnable {
 	private Configuration freemarkerConfig;
 	
 	private static AnetEmailWorker instance;
-	private static Logger log = Log.getLogger(AnetEmailWorker.class);
+	private Logger logger = LoggerFactory.getLogger(AnetEmailWorker.class);
 	
 	public AnetEmailWorker(Handle dbHandle, AnetConfiguration config) { 
 		this.handle = dbHandle;
@@ -89,7 +90,7 @@ public class AnetEmailWorker implements Runnable {
 	@Override
 	public void run() {
 		while (true) { 
-			log.debug("AnetEmailWorker waking up to send emails!");
+			logger.debug("AnetEmailWorker waking up to send emails!");
 			
 			//check the database for any emails we need to send. 
 			List<AnetEmail> emails = handle.createQuery("SELECT * FROM pendingEmails ORDER BY createdAt ASC")
@@ -99,8 +100,8 @@ public class AnetEmailWorker implements Runnable {
 			//Send the emails!
 			List<Integer> sentEmails = new LinkedList<Integer>();
 			for (AnetEmail email : emails) { 
-				try { 
-					log.debug("Sending email to {} re: {}",email.getToAddresses(), email.getSubject());
+				try {
+					logger.error("Sending email to {} re: {}",email.getToAddresses(), email.getSubject());
 					sendEmail(email);
 					sentEmails.add(email.getId());
 				} catch (Exception e) { 
@@ -128,6 +129,13 @@ public class AnetEmailWorker implements Runnable {
 	}
 	
 	private void sendEmail(AnetEmail email) throws MessagingException, IOException, TemplateException {
+		//Remove any null email addresses
+		email.getToAddresses().removeIf(s -> Objects.equals(s, null));
+		if (email.getToAddresses().size() == 0) { 
+			//This email will never get sent... just kill it off
+//			log.error("Unable to send email of subject {}, because there are no valid to email addresses");
+			return;
+		}
 		Template temp = freemarkerConfig.getTemplate(email.getTemplateName());
 		StringWriter writer = new StringWriter();
 		temp.process(email.getContext(), writer);

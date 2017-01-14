@@ -14,6 +14,6 @@ export default class Position extends Model {
 	}
 
 	toString() {
-		return this.code || this.name || "Uncoded"
+		return this.code || this.name
 	}
 }

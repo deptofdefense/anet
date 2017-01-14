@@ -90,7 +90,7 @@ public class PersonDao implements IAnetDao<Person> {
 		p.setUpdatedAt(DateTime.now());
 		StringBuilder sql = new StringBuilder("UPDATE people " + 
 				"SET name = :name, status = :status, role = :role, " + 
-				"gender = :gender, country = :country,  " + 
+				"gender = :gender, country = :country,  emailAddress = :emailAddress, " + 
 				"phoneNumber = :phoneNumber, rank = :rank, biography = :biography, " +
 				"pendingVerification = :pendingVerification, updatedAt = :updatedAt, ");
 		if (DaoUtils.isMsSql(dbHandle)) {

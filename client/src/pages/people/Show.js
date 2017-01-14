@@ -76,7 +76,7 @@ export default class PersonShow extends Page {
 
 		let currentPositionRow = <tr><td>This person is not assigned to a position</td></tr>
 
-		if (position) {
+		if (position && position.id) {
 			currentPositionRow = <tr>
 				<td>Now</td>
 				<td><LinkTo organization={org} /></td>

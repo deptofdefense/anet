@@ -23,6 +23,7 @@ import javax.ws.rs.core.Response.Status;
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;
 
+import com.codahale.metrics.annotation.Timed;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 
@@ -75,6 +76,7 @@ public class ReportResource implements IGraphQLResource {
 	public Class<Report> getBeanClass() { return Report.class; }
 
 	@GET
+	@Timed
 	@GraphQLFetcher
 	@Path("/")
 	public List<Report> getAll(@Auth Person p, @DefaultValue("0") @QueryParam("pageNum") Integer pageNum, @DefaultValue("100") @QueryParam("pageSize") Integer pageSize) {
@@ -82,6 +84,7 @@ public class ReportResource implements IGraphQLResource {
 	}
 
 	@GET
+	@Timed
 	@Path("/{id}")
 	@GraphQLFetcher
 	public Report getById(@PathParam("id") Integer id) {
@@ -89,6 +92,7 @@ public class ReportResource implements IGraphQLResource {
 	}
 
 	@POST
+	@Timed
 	@Path("/new")
 	public Report createNewReport(@Auth Person author, Report r) {
 		if (r.getState() == null) { r.setState(ReportState.DRAFT); }
@@ -114,6 +118,7 @@ public class ReportResource implements IGraphQLResource {
 	}
 	
 	@POST
+	@Timed
 	@Path("/update")
 	public Response editReport(@Auth Person editor, Report r) {
 		//Verify this person has access to edit this report
@@ -202,6 +207,7 @@ public class ReportResource implements IGraphQLResource {
 	 * Kicks a report from DRAFT to PENDING_APPROVAL and sets the approval step Id
 	 */
 	@POST
+	@Timed
 	@Path("/{id}/submit")
 	public Report submitReport(@PathParam("id") int id) {
 		Report r = dao.getById(id);
@@ -271,6 +277,7 @@ public class ReportResource implements IGraphQLResource {
 	 * TODO: this should run common approval code that checks if any previous approving users can approve the future steps
 	 */
 	@POST
+	@Timed
 	@Path("/{id}/approve")
 	public Report approveReport(@Auth Person approver, @PathParam("id") int id) {
 		Report r = dao.getById(id);
@@ -320,6 +327,7 @@ public class ReportResource implements IGraphQLResource {
 	 * @return 200 on a successful reject, 401 if you don't have privelages to reject this report.
 	 */
 	@POST
+	@Timed
 	@Path("/{id}/reject")
 	public Report rejectReport(@Auth Person approver, @PathParam("id") int id, Comment reason) {
 		Report r = dao.getById(id);
@@ -363,6 +371,7 @@ public class ReportResource implements IGraphQLResource {
 	}
 
 	@POST
+	@Timed
 	@Path("/{id}/comments")
 	public Comment postNewComment(@Auth Person author, @PathParam("id") int reportId, Comment comment) {
 		comment.setReportId(reportId);
@@ -371,12 +380,14 @@ public class ReportResource implements IGraphQLResource {
 	}
 
 	@GET
+	@Timed
 	@Path("/{id}/comments")
 	public List<Comment> getCommentsForReport(@PathParam("id") int reportId) {
 		return engine.getCommentDao().getCommentsForReport(Report.createWithId(reportId));
 	}
 
 	@DELETE
+	@Timed
 	@Path("/{id}/comments/{commentId}")
 	public Response deleteComment(@PathParam("commentId") int commentId) {
 		//TODO: user validation on /who/ is allowed to delete a comment.
@@ -385,6 +396,7 @@ public class ReportResource implements IGraphQLResource {
 	}
 
 	@GET
+	@Timed
 	@GraphQLFetcher("pendingMyApproval")
 	@Path("/pendingMyApproval")
 	public List<Report> getReportsPendingMyApproval(@Auth Person approver) {
@@ -392,6 +404,7 @@ public class ReportResource implements IGraphQLResource {
 	}
 
 	@GET
+	@Timed
 	@Path("/search")
 	public List<Report> search(@Context HttpServletRequest request) {
 		try {
@@ -402,6 +415,7 @@ public class ReportResource implements IGraphQLResource {
 	}
 
 	@POST
+	@Timed
 	@GraphQLFetcher
 	@Path("/search")
 	public List<Report> search(@GraphQLParam("query") ReportSearchQuery query) {

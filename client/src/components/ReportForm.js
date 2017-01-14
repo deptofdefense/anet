@@ -189,7 +189,7 @@ export default class ReportForm extends Component {
 		let report = this.props.report
 		let attendees = report.attendees
 
-		if (attendees.find(attendee => Person.isEqual(attendee, newAttendee)))
+		if (attendees.find(attendee => attendee.id === newAttendee.id))
 			return
 
 		let person = new Person(newAttendee)

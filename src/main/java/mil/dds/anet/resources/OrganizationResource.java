@@ -18,6 +18,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.codahale.metrics.annotation.Timed;
+
 import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.ApprovalStep;
@@ -56,6 +58,7 @@ public class OrganizationResource implements IGraphQLResource {
 	public String getDescription() { return "Organizations"; } 
 	
 	@GET
+	@Timed
 	@GraphQLFetcher
 	@Path("/")
 	public List<Organization> getAllOrgs(@DefaultValue("0") @QueryParam("pageNum") Integer pageNum, @DefaultValue("100") @QueryParam("pageSize") Integer pageSize) {
@@ -63,6 +66,7 @@ public class OrganizationResource implements IGraphQLResource {
 	} 
 
 	@GET
+	@Timed
 	@GraphQLFetcher
 	@Path("/topLevel")
 	public List<Organization> getTopLevelOrgs(@QueryParam("type") OrganizationType type) { 
@@ -70,6 +74,7 @@ public class OrganizationResource implements IGraphQLResource {
 	}
 	
 	@POST
+	@Timed
 	@Path("/new")
 	@RolesAllowed("ADMINISTRATOR")
 	public Organization createNewOrganization(Organization org, @Auth Person user) {
@@ -96,6 +101,7 @@ public class OrganizationResource implements IGraphQLResource {
 	}
 	
 	@GET
+	@Timed
 	@GraphQLFetcher
 	@Path("/{id}")
 	public Organization getById(@PathParam("id") int id) {
@@ -103,6 +109,7 @@ public class OrganizationResource implements IGraphQLResource {
 	}
 	
 	@POST
+	@Timed
 	@Path("/update")
 	@RolesAllowed("SUPER_USER")
 	public Response updateOrganization(Organization org, @Auth Person user) { 
@@ -162,6 +169,7 @@ public class OrganizationResource implements IGraphQLResource {
 	}
 	
 	@POST
+	@Timed
 	@GraphQLFetcher
 	@Path("/search")
 	public List<Organization> search(@GraphQLParam("query") OrganizationSearchQuery query ) {
@@ -169,6 +177,7 @@ public class OrganizationResource implements IGraphQLResource {
 	}
 	
 	@GET
+	@Timed
 	@Path("/search")
 	public List<Organization> search(@Context HttpServletRequest request) {
 		try { 
@@ -179,12 +188,14 @@ public class OrganizationResource implements IGraphQLResource {
 	}
 	
 	@GET
+	@Timed
 	@Path("/{id}/children")
 	public List<Organization> getChildren(@PathParam("id") Integer id) { 
 		return dao.getByParentOrgId(id, null);
 	}
 	
 	@GET
+	@Timed
 	@Path("/{id}/poams")
 	public List<Poam> getPoams(@PathParam("id") Integer orgId) { 
 		return AnetObjectEngine.getInstance().getPoamDao().getPoamsByOrganizationId(orgId);

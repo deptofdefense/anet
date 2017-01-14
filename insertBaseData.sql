@@ -66,8 +66,8 @@ INSERT INTO people (name, status, role, emailAddress, domainUsername, createdAt,
 --People
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt)
 	VALUES ('Hunter Huntman', 0, 1, 'hunter+hunter@dds.mil', '+1-412-9314', 'CIV', '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt)
-	VALUES ('Andrew Anderson', 0, 1, 'hunter+andrew@dds.mil', '+1-412-7324', 'CIV', '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, createdAt, updatedAt)
+	VALUES ('Andrew Anderson', 0, 1, 'hunter+andrew@dds.mil', '+1-412-7324', 'CIV', '', 'andrew', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, createdAt, updatedAt)
 	VALUES ('Nick Nicholson', 0, 0, 'hunter+nick@dds.mil', '+1-202-7324', 'CIV', '', 'nick', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt)
