@@ -160,7 +160,7 @@ export default class ReportShow extends Page {
 							className="pull-right" onSelect={this.actionSelect}>
 						{canEdit && <MenuItem eventKey="edit" >Edit Report</MenuItem>}
 						{canSubmit && errors.length === 0 && <MenuItem eventKey="submit">Submit</MenuItem>}
-						{canEmail && <MenuItem eventKey="email" className="todo" >Email Report</MenuItem>}
+						{canEmail && <MenuItem eventKey="email" className="todo" href={"mailto:?subject="+encodeURIComponent(this.state.report.intent)+"&body="+encodeURIComponent(this.state.report.reportText)}>Email Report</MenuItem>}
 					</DropdownButton>
 				</div>
 
@@ -372,6 +372,7 @@ export default class ReportShow extends Page {
 			History.push(`/reports/${this.state.report.id}/edit`);
 		} else if (eventKey === "submit" ) {
 			this.submitDraft()
+		} else if (eventKey === "email" ) {
 		} else {
 			console.log("Unimplemented Action: " + eventKey);
 		}
