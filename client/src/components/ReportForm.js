@@ -37,7 +37,7 @@ export default class ReportForm extends Component {
 	}
 
 	render() {
-		let {report, recents, onChange, onSubmit, actionText, error, edit} = this.props
+		let {report, recents, onChange, onSubmit, actionText, error} = this.props
 
 		return <Form formFor={report} onChange={onChange}
 			onSubmit={onSubmit} horizontal
