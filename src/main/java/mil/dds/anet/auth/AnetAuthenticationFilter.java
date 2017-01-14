@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 
+import javax.annotation.Priority;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
@@ -17,9 +18,10 @@ import io.dropwizard.auth.Authorizer;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Person.Role;
-import mil.dds.anet.beans.Position.PositionType;
 import mil.dds.anet.beans.Position;
+import mil.dds.anet.beans.Position.PositionType;
 
+@Priority(1500) //Run After Authentication, but before Authorization
 public class AnetAuthenticationFilter implements ContainerRequestFilter, Authorizer<Person> {
 
 	AnetObjectEngine engine;

@@ -106,7 +106,6 @@ public class PersonResource implements IGraphQLResource {
 	 */
 	@POST
 	@Path("/update")
-	@RolesAllowed("SUPER_USER")
 	public Response updatePerson(@Auth Person user, Person p) {
 		if (canEditPerson(user, p) == false) { 
 			throw new WebApplicationException("You are not permitted to do this", Status.UNAUTHORIZED);
