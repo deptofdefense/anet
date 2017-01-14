@@ -12,4 +12,8 @@ export default class Page extends Component {
 	componentDidMount() {
 		this.fetchData(this.props)
 	}
+
+	componentWillMount() {
+		window.scrollTo(0,0)
+	}
 }
