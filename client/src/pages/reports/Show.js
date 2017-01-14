@@ -159,7 +159,7 @@ export default class ReportShow extends Page {
 					<DropdownButton bsStyle="primary" title="Actions" id="actions"
 							className="pull-right" onSelect={this.actionSelect}>
 						{canEdit && <MenuItem eventKey="edit" >Edit Report</MenuItem>}
-						{canSubmit && errors.length == 0 && <MenuItem eventKey="submit">Submit</MenuItem>}
+						{canSubmit && errors.length === 0 && <MenuItem eventKey="submit">Submit</MenuItem>}
 						{canEmail && <MenuItem eventKey="email" className="todo" >Email Report</MenuItem>}
 					</DropdownButton>
 				</div>
