@@ -15,6 +15,13 @@ public class ReportSearchQuery implements ISearchQuery {
 	boolean includePrincipalOrgChildren;
 	Integer locationId;
 	Integer poamId;
+	int pageNum;
+	int pageSize;
+	
+	public ReportSearchQuery() { 
+		this.pageNum = 0;
+		this.pageSize = 10;
+	}
 
 	public Integer getAuthorId() {
 		return authorId;
@@ -104,6 +111,23 @@ public class ReportSearchQuery implements ISearchQuery {
 		this.poamId = poamId;
 	}
 
+	@Override
+	public int getPageNum() {
+		return pageNum;
+	}
+	@Override
+	public void setPageNum(int pageNum) {
+		this.pageNum = pageNum;
+	}
+	@Override
+	public int getPageSize() {
+		return pageSize;
+	}
+	@Override
+	public void setPageSize(int pageSize) {
+		this.pageSize = pageSize;
+	}
+	
 	public static ReportSearchQuery withText(String text) {
 		ReportSearchQuery query = new ReportSearchQuery();
 		query.setText(text);

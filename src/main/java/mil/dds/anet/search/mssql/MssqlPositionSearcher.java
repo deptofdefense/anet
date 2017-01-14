@@ -68,7 +68,7 @@ public class MssqlPositionSearcher implements IPositionSearcher {
 		
 		sql.append(Joiner.on(" AND ").join(whereClauses));
 		
-		sql.append(")");
+		sql.append("OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY )");
 		
 		if (commonTableExpression != null) { 
 			sql.insert(0, commonTableExpression);
@@ -76,6 +76,8 @@ public class MssqlPositionSearcher implements IPositionSearcher {
 		
 		return dbHandle.createQuery(sql.toString())
 			.bindFromMap(sqlArgs)
+			.bind("offset", query.getPageSize() * query.getPageNum())
+			.bind("limit", query.getPageSize())
 			.map(new PositionMapper())
 			.list();
 	}

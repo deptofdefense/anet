@@ -40,10 +40,12 @@ public class SqlitePoamSearcher implements IPoamSearcher {
 		}
 		
 		sql.append(Joiner.on(" AND ").join(whereClauses));
-		
+		sql.append(" LIMIT :limit OFFSET :offset");
 		
 		return dbHandle.createQuery(sql.toString())
 			.bindFromMap(args)
+			.bind("offset", query.getPageSize() * query.getPageNum())
+			.bind("limit", query.getPageSize())
 			.map(new PoamMapper())
 			.list();
 	}

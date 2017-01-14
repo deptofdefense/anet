@@ -67,7 +67,7 @@ public class SqlitePositionSearcher implements IPositionSearcher {
 		
 		sql.append(Joiner.on(" AND ").join(whereClauses));
 		
-		sql.append(")");
+		sql.append(" LIMIT :limit OFFSET :offset)");
 		
 		if (commonTableExpression != null) { 
 			sql.insert(0, commonTableExpression);
@@ -75,6 +75,8 @@ public class SqlitePositionSearcher implements IPositionSearcher {
 		
 		return dbHandle.createQuery(sql.toString())
 			.bindFromMap(sqlArgs)
+			.bind("offset", query.getPageSize() * query.getPageNum())
+			.bind("limit", query.getPageSize())
 			.map(new PositionMapper())
 			.list();
 	}

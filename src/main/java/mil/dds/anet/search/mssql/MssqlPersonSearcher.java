@@ -79,7 +79,7 @@ public class MssqlPersonSearcher implements IPersonSearcher {
 		
 		sql.append(Joiner.on(" AND ").join(whereClauses));
 		
-		sql.append(")");
+		sql.append(" OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY)");
 		
 		if (commonTableExpression != null) { 
 			sql.insert(0, commonTableExpression);
@@ -87,6 +87,8 @@ public class MssqlPersonSearcher implements IPersonSearcher {
 		
 		return dbHandle.createQuery(sql.toString())
 			.bindFromMap(sqlArgs)
+			.bind("offset", query.getPageSize() * query.getPageNum())
+			.bind("limit", query.getPageSize())
 			.map(new PersonMapper())
 			.list();
 	}

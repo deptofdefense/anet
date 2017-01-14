@@ -19,8 +19,10 @@ public class MssqlLocationSearcher implements ILocationSearcher {
 			return ImmutableList.of();
 		}
 		
-		return dbHandle.createQuery("SELECT * FROM locations WHERE CONTAINS (name, :name)")
+		return dbHandle.createQuery("SELECT * FROM locations WHERE CONTAINS (name, :name) OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY")
 			.bind("name", "\"" + query.getText() + "*\"")
+			.bind("offset", query.getPageSize() * query.getPageNum())
+			.bind("limit", query.getPageSize())
 			.map(new LocationMapper())
 			.list();
 	}

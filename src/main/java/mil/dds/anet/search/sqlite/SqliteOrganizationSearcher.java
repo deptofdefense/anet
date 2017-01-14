@@ -39,10 +39,12 @@ public class SqliteOrganizationSearcher implements IOrganizationSearcher {
 		
 		sql.append(Joiner.on(" AND ").join(whereClauses));
 		
-		sql.append(")");
+		sql.append(" LIMIT :limit OFFSET :offset)");
 		
 		return dbHandle.createQuery(sql.toString())
 			.bindFromMap(sqlArgs)
+			.bind("offset", query.getPageSize() * query.getPageNum())
+			.bind("limit", query.getPageSize())
 			.map(new OrganizationMapper())
 			.list();
 	}

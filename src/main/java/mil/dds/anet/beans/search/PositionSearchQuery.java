@@ -10,6 +10,13 @@ public class PositionSearchQuery implements ISearchQuery {
 	PositionType type;
 	Boolean isFilled;
 	Integer locationId;
+	int pageNum;
+	int pageSize;
+	
+	public PositionSearchQuery() { 
+		this.pageNum = 0;
+		this.pageSize = 10;
+	}
 	
 	public String getText() {
 		return text;
@@ -47,6 +54,24 @@ public class PositionSearchQuery implements ISearchQuery {
 	public void setLocationId(Integer locationId) {
 		this.locationId = locationId;
 	}
+	
+	@Override
+	public int getPageNum() {
+		return pageNum;
+	}
+	@Override
+	public void setPageNum(int pageNum) {
+		this.pageNum = pageNum;
+	}
+	@Override
+	public int getPageSize() {
+		return pageSize;
+	}
+	@Override
+	public void setPageSize(int pageSize) {
+		this.pageSize = pageSize;
+	}
+	
 	public static PositionSearchQuery withText(String text) {
 		PositionSearchQuery query = new PositionSearchQuery();
 		query.setText(text);
