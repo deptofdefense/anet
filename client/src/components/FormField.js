@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import React, {PureComponent} from 'react'
+=======
+import React, {Component} from 'react'
+>>>>>>> 2c44c815f097b0716923f1468887b2285d747cb9
 import update from 'immutability-helper'
 import utils from 'utils'
 import autobind from 'autobind-decorator'
