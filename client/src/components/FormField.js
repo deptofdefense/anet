@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 import React, {PureComponent} from 'react'
-=======
-import React, {Component} from 'react'
->>>>>>> 2c44c81... Initial state fixes
 import update from 'immutability-helper'
 import utils from 'utils'
 import autobind from 'autobind-decorator'
