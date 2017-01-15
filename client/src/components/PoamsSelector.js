@@ -1,11 +1,11 @@
-import React, {Component} from 'react'
+import React, {PureComponent} from 'react'
 import autobind from 'autobind-decorator'
 
 import Autocomplete from 'components/Autocomplete'
 import Form from 'components/Form'
 import {Table, Button} from 'react-bootstrap'
 
-export default class PoamsSelector extends Component {
+export default class PoamsSelector extends PureComponent {
 	static propTypes = {
 		poams: React.PropTypes.array.isRequired,
 		onChange: React.PropTypes.func.isRequired,
