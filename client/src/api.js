@@ -1,9 +1,11 @@
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 
-NProgress.configure({
-	parent: '.header'
-})
+if (process.env.NODE_ENV !== 'test') {
+	NProgress.configure({
+		parent: '.header'
+	})
+}
 
 const API = {
 	fetch(url, params) {
