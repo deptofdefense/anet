@@ -100,7 +100,11 @@
   },
   "babel": {
     "presets": [
-      "react-app"
+      "react-app",
+      "stage-1"
+    ],
+    "plugins": [
+      "transform-decorators-legacy"
     ]
   },
   "eslintConfig": {
