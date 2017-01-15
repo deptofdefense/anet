@@ -1,4 +1,5 @@
 import React, {Component} from 'react'
+import update from 'immutability-helper'
 
 import TextEditor from 'components/TextEditor'
 import Autocomplete from 'components/Autocomplete'
@@ -53,21 +54,21 @@ export default class ReportForm extends Component {
 			<fieldset>
 				<legend>Engagement Details<small>Required</small></legend>
 
-				<Form.Field id="intent" label="Meeting subject" placeholder="What happened?" data-focus>
-					<Form.Field.ExtraCol>{250 - report.intent.length} characters remaining</Form.Field.ExtraCol>
+				<Form.Field id="intent" label="Meeting subject" placeholder="What happened?" data-focus value={report.intent}>
+					<Form.Field.ExtraCol>{250 - (report.intent && report.intent.length)} characters remaining</Form.Field.ExtraCol>
 				</Form.Field>
 
-				<Form.Field id="engagementDate">
+				<Form.Field id="engagementDate" value={report.engagementDate}>
 					<DatePicker showTodayButton placeholder="When did it happen?">
 						<InputGroup.Addon>📆</InputGroup.Addon>
 					</DatePicker>
 				</Form.Field>
 
-				<Form.Field id="location" addon="📍">
+				<Form.Field id="location" addon="📍" value={report.location}>
 					<Autocomplete valueKey="name" placeholder="Where did it happen?" url="/api/locations/search" />
 				</Form.Field>
 
-				<Form.Field id="atmosphere">
+				<Form.Field id="atmosphere" value={report.atmosphere}>
 					<RadioGroup bsSize="large">
 						<Radio value="POSITIVE">👍</Radio>
 						<Radio value="NEUTRAL">😐</Radio>
@@ -83,7 +84,7 @@ export default class ReportForm extends Component {
 			<fieldset>
 				<legend>Meeting Attendance<small>Required</small></legend>
 
-				<Form.Field id="attendees">
+				<Form.Field id="attendees" value={report.attendees}>
 					<Autocomplete placeholder="Who was there?" url="/api/people/search" template={person =>
 						<span>{person.name} {person.rank && person.rank.toUpperCase()}</span>
 					} onChange={this.addAttendee} clearOnSelect={true} />
@@ -132,7 +133,7 @@ export default class ReportForm extends Component {
 
 			<fieldset>
 				<legend>Meeting Discussion<small>Required</small></legend>
-				<Form.Field id="keyOutcomesSummary" >
+				<Form.Field id="keyOutcomesSummary" value={report.keyOutcomesSummary}>
 					<Form.Field.ExtraCol>{250 - report.keyOutcomesSummary.length} characters remaining</Form.Field.ExtraCol>
 				</Form.Field>
 
@@ -140,12 +141,12 @@ export default class ReportForm extends Component {
 					{this.state.showKeyOutcomesText ? "Hide" : "Add" } details to Key Outcomes
 				</Button>
 				<Collapse in={this.state.showKeyOutcomesText} >
-					<Form.Field id="keyOutcomes" label="" horizontal={false}>
+					<Form.Field id="keyOutcomes" label="" horizontal={false} value={report.keyOutcomes}>
 						<TextEditor label="Key outcomes" />
 					</Form.Field>
 				</Collapse>
 
-				<Form.Field id="nextStepsSummary" >
+				<Form.Field id="nextStepsSummary"  value={report.nextStepsSummary}>
 					<Form.Field.ExtraCol>{250 - report.nextStepsSummary.length} characters remaining</Form.Field.ExtraCol>
 				</Form.Field>
 				<Button bsStyle="link" onClick={this.toggleNextStepsText} >Add details to Next Steps</Button>
@@ -157,7 +158,7 @@ export default class ReportForm extends Component {
 
 				<Button bsStyle="link" onClick={this.toggleReportText} >Add additional report details</Button>
 				<Collapse in={this.state.showReportText} >
-					<Form.Field id="reportText" label="" horizontal={false} >
+					<Form.Field id="reportText" label="" horizontal={false} value={report.reportText}>
 						<TextEditor label="Report Details" />
 					</Form.Field>
 				</Collapse>
@@ -198,7 +199,8 @@ export default class ReportForm extends Component {
 		if (!attendees.find(attendee => attendee.role === person.role && attendee.primary))
 			person.primary = true
 
-		attendees.push(person)
+		const newReportState = update(this.props.report,{attendees:{$push:[person]}})
+        this.props.report.setState(newReportState)
 		this.props.onChange()
 	}
 

@@ -1,4 +1,5 @@
 import React, {Component} from 'react'
+import update from 'immutability-helper'
 import utils from 'utils'
 import autobind from 'autobind-decorator'
 import {FormGroup, Col, ControlLabel, FormControl, InputGroup} from 'react-bootstrap'
@@ -46,9 +47,20 @@ export default class FormField extends Component {
 		]),
 
 		// If you don't want autobinding behavior, you can override them here
-		value: React.PropTypes.string,
+		value: React.PropTypes.oneOfType([
+			React.PropTypes.string,
+			React.PropTypes.array,
+			React.PropTypes.object
+		]),
+
 		onChange: React.PropTypes.func,
 	}
+    @autobind
+    shouldComponentUpdate(nextProp,nextState){
+        if (this.props.value)
+            return (this.props.value !== nextProp.value)
+        return true
+    }
 
 	render() {
 		let {
@@ -142,8 +154,12 @@ export default class FormField extends Component {
 		let id = this.props.id
 		let value = event && event.target ? event.target.value : event
 		let formContext = this.context.formFor
-		if (formContext)
-			formContext[id] = value
+		if (formContext){
+			let newStateComp = {};
+			newStateComp[id]=value;
+			const newState = update(formContext,{$merge:newStateComp})
+			formContext.setState(newState)
+        }
 
 		let form = this.context.form
 		if (form && form.props.onChange) {
