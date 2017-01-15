@@ -35,7 +35,7 @@ export default class CreateButton extends Component {
 			return (
 				<DropdownButton title="Create new" bsStyle="primary" id="createButton" onSelect={this.onSelect}>
 					{modelClasses.map((modelClass, i) =>
-						<MenuItem key={modelClass.name} eventKey={modelClass}>New {modelClass.name}</MenuItem>
+						<MenuItem key={modelClass.resourceName} eventKey={modelClass}>New {modelClass.resourceName}</MenuItem>
 					)}
 				</DropdownButton>
 			)
@@ -43,7 +43,7 @@ export default class CreateButton extends Component {
 			let modelClass = modelClasses[0]
 			return (
 				<Button bsStyle="primary" onClick={this.onSelect.bind(this, modelClass)}>
-					New {modelClass.name}
+					New {modelClass.resourceName}
 				</Button>
 			)
 		}
