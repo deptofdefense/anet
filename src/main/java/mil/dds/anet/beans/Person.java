@@ -15,7 +15,7 @@ import mil.dds.anet.views.AbstractAnetBean;
 
 public class Person extends AbstractAnetBean implements Principal{
 
-	public static enum Status { ACTIVE, INACTIVE }
+	public static enum Status { ACTIVE, INACTIVE, NEW_USER }
 	public static enum Role { ADVISOR, PRINCIPAL }
 	
 	private String name;

@@ -50,8 +50,6 @@ export default class PositionShow extends Page {
 			(currentUser.isSuperUser() && position.type === "PRINCIPAL") ||
 			//Admins can edit anybody
 			(currentUser.isAdmin()) ||
-			//Users can edit their own position
-			(position.person && position.person.id === currentUser.id) ||
 			//Super users can edit positions within their own organization
 			(position.organization && position.organization.id && currentUser.isSuperUserForOrg(position.organization)))
 

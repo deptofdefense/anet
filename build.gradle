@@ -35,6 +35,10 @@ dependencies {
 	compile 'com.github.dblock.waffle:waffle-distro:1.8.1'
 	compile 'com.graphql-java:graphql-java:2.2.0'
 
+	compile group: 'org.jvnet.com4j', name: 'com4j', version: '20110320'
+	compile 'org.jvnet.com4j.typelibs:active-directory:1.0'
+	compile 'org.jvnet.com4j.typelibs:ado20:1.0'
+
 	compile files('lib/sqljdbc42.jar')
 	
 	testCompile group: 'io.dropwizard', name: 'dropwizard-testing', version: '1.0.2'

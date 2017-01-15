@@ -5,6 +5,7 @@ import {Grid, Row, Col} from 'react-bootstrap'
 import SecurityBanner from 'components/SecurityBanner'
 import Header from 'components/Header'
 import Nav from 'components/Nav'
+import History from 'components/History'
 
 import API from 'api'
 import {Person, Organization} from 'models'
@@ -51,7 +52,7 @@ export default class App extends Page {
 	fetchData() {
 		API.query(/* GraphQL */`
 			person(f:me) {
-				id, name, role
+				id, name, role, emailAddress, rank, status
 				position {
 					id, name, type,
 					organization { id, name }
@@ -66,6 +67,7 @@ export default class App extends Page {
 				parentOrg { id }
 			}
 		`).then(data => this.setState(this.processData(data)))
+
 	}
 
 	processData(data) {
@@ -75,6 +77,10 @@ export default class App extends Page {
 
 		let settings = this.state.settings
 		data.adminSettings.forEach(setting => settings[setting.key] = setting.value)
+
+		if (currentUser.id && currentUser.status === "NEW_USER") {
+			History.push("/people/" + currentUser.id + "/edit");
+		}
 
 		return {currentUser, settings, organizations}
 	}

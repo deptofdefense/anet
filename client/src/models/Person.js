@@ -40,4 +40,5 @@ export default class Person extends Model {
 			this.position.organization.id === org.id
 		)
 	}
+
 }

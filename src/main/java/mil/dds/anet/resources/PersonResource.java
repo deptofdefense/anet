@@ -115,6 +115,7 @@ public class PersonResource implements IGraphQLResource {
 		if (canEditPerson(user, p) == false) { 
 			throw new WebApplicationException("You are not permitted to do this", Status.UNAUTHORIZED);
 		}
+		
 		int numRows = dao.update(p);
 		
 		if (p.getPosition() != null) {

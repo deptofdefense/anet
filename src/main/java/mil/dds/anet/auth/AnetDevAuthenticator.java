@@ -8,6 +8,8 @@ import io.dropwizard.auth.Authenticator;
 import io.dropwizard.auth.basic.BasicCredentials;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.Person.Role;
+import mil.dds.anet.beans.Person.Status;
 import mil.dds.anet.database.PersonDao;
 
 public class AnetDevAuthenticator implements Authenticator<BasicCredentials, Person> {
@@ -23,6 +25,18 @@ public class AnetDevAuthenticator implements Authenticator<BasicCredentials, Per
 		List<Person> p = dao.findByProperty("domainUsername", credentials.getUsername());
         if (p.size() > 0) { 
             return Optional.of(p.get(0));
+        }
+        
+        if (credentials.getUsername().equals(credentials.getPassword())) {
+        	//Special development mechanism to perform a 'first login'. 
+        	Person newUser = new Person();
+        	newUser.setName(credentials.getUsername());
+        	newUser.setRole(Role.ADVISOR);
+        	newUser.setDomainUsername(credentials.getUsername());
+        	newUser.setStatus(Status.NEW_USER);
+        	newUser = dao.insert(newUser);
+        	
+        	return Optional.of(newUser);
         }
         return Optional.empty();
 	}

@@ -28,7 +28,7 @@ export default class PersonEdit extends Page {
 		API.query(/*GraphQL*/ `
 			person(id:${props.params.id}) {
 				id,
-				name, rank, role, emailAddress, phoneNumber,
+				name, rank, role, emailAddress, phoneNumber, status
 				biography, country, gender, endOfTourDate,
 				position {
 					id, name
@@ -37,6 +37,10 @@ export default class PersonEdit extends Page {
 		`).then(data => {
 			if (data.person.endOfTourDate) {
 				data.person.endOfTourDate = moment(data.person.endOfTourDate).format()
+			}
+			if (data.person.status === "NEW_USER") {
+				//this is the inital setup of this user
+				data.person.status = "ACTIVE"
 			}
 			this.setState({person: new Person(data.person)})
 		})
