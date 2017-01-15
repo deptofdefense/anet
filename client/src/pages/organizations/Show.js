@@ -91,9 +91,11 @@ export default class OrganizationShow extends Page {
 							{org.type && org.type.split('_')[0]}
 						</Form.Field>
 
-						<Form.Field id="parentOrg" label="Parent">
-							<LinkTo organization={org.parentOrg} />
-						</Form.Field>
+						{org.parentOrg && org.parentOrg.id &&
+							<Form.Field id="parentOrg" label="Parent">
+								<LinkTo organization={org.parentOrg} />
+							</Form.Field>
+						}
 
 						{org.childrenOrgs && org.childrenOrgs.length > 0 && <Form.Field id="childrenOrgs" label="Sub-Orgs">
 							<ListGroup>
