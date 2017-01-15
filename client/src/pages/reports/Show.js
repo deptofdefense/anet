@@ -4,7 +4,7 @@ import {Alert, Table, Button, Col, DropdownButton, MenuItem, Modal} from 'react-
 import autobind from 'autobind-decorator'
 import moment from 'moment'
 
-import {Report, Person, Poam} from 'models'
+import {Report, Person, Poam, Comment} from 'models'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
 import LinkTo from 'components/LinkTo'
@@ -42,10 +42,8 @@ export default class ReportShow extends Page {
 		super(props)
 		this.state = {
 			report: new Report({id: props.params.id}),
-
-			newComment: {
-				text: '',
-			},
+			newComment: new Comment(),
+			approvalComment: new Comment(),
 		}
 	}
 
@@ -273,8 +271,12 @@ export default class ReportShow extends Page {
 							)}
 
 							{canApprove &&
-								<div className="pull-right">
-									<Button bsStyle="danger" style={approvalButtonCss} onClick={this.rejectReport}>Reject</Button>
+								<Form.Field id="author" style={Object.assign({width:"200%"},commentFormCss)} type="text" className="pull-left" placeholder="Type a comment here" getter={this.getApprovalComment} onChange={this.onChangeComment}>
+								</Form.Field>
+							}
+							{canApprove &&
+								<div className="pull-right" style={commentFormCss}>
+									<Button bsStyle="danger" style={approvalButtonCss} onClick={this.rejectReport}>Reject with comment</Button>
 									<Button bsStyle="warning" style={approvalButtonCss} onClick={this.actionSelect.bind(this, "edit")} >Edit report</Button>
 									<Button bsStyle="primary" style={approvalButtonCss} onClick={this.approveReport}>Approve</Button>
 								</div>
@@ -322,7 +324,7 @@ export default class ReportShow extends Page {
 
 						{!report.comments.length && "There are no comments yet."}
 
-						<Form formFor={this.state.newComment} horizontal style={commentFormCss}>
+						<Form formFor={this.state.newComment} horizontal style={commentFormCss} onSubmit={this.submitComment} onChange={this.onChange}>
 							<Form.Field id="text" placeholder="Type a comment here" label="">
 								<Form.Field.ExtraCol>
 									<Button bsStyle="primary" type="submit">Save comment</Button>
@@ -341,17 +343,41 @@ export default class ReportShow extends Page {
 	}
 
 	@autobind
+	submitComment(){
+			API.send(`/api/reports/${this.state.report.id}/comments`,this.state.newComment).then(this.updateReport, this.handleError)
+	}
+
+	@autobind
 	rejectReport() {
-		let comment = {
-			text: "TODO"
+		if (this.state.approvalComment.text.length === 0){
+			this.handleError({error:"Please include a comment when rejecting a report."})
+			return
 		}
 
-		API.send(`/api/reports/${this.state.report.id}/reject`, comment).then(this.updateReport, this.handleError)
+		API.send(`/api/reports/${this.state.report.id}/reject`, this.state.approvalComment).then(this.updateReport, this.handleError)
 	}
 
 	@autobind
 	approveReport() {
 		API.send(`/api/reports/${this.state.report.id}/approve`).then(this.updateReport, this.handleError)
+	}
+
+	@autobind
+	onChange() {
+		let report = this.state.report
+		this.setState({report})
+	}
+
+	@autobind
+	getApprovalComment(){
+		return this.state.approvalComment.text
+	}
+
+	@autobind
+	onChangeComment(value) {
+		let approvalComment = this.state.approvalComment
+		approvalComment.text=value.target.value
+		this.setState({approvalComment})
 	}
 
 	@autobind
