@@ -1,5 +1,6 @@
-import React, {Component} from 'react'
-import {Editor, EditorState, RichUtils, ContentState} from 'draft-js'
+import React, {Component,PureComponent} from 'react'
+import {Editor, EditorState, RichUtils, ContentState, convertFromHTML} from 'draft-js'
+import {stateToHTML} from 'draft-js-export-html'
 
 import './TextEditor.css'
 
@@ -13,7 +14,7 @@ CODE: {
 },
 };
 
-export default class TextEditor extends Component {
+export default class TextEditor extends PureComponent {
 	constructor(props) {
 		super(props);
 

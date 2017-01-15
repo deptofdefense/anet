@@ -1,16 +1,16 @@
-import React, {Component} from 'react'
+import React, {PureComponent} from 'react'
 import update from 'immutability-helper'
 import utils from 'utils'
 import autobind from 'autobind-decorator'
 import {FormGroup, Col, ControlLabel, FormControl, InputGroup} from 'react-bootstrap'
 
-class FormFieldExtraCol extends Component {
+class FormFieldExtraCol extends PureComponent {
 	render() {
 		return <Col sm={3} {...this.props} />
 	}
 }
 
-export default class FormField extends Component {
+export default class FormField extends PureComponent {
 	static contextTypes = {
 		formFor: React.PropTypes.object,
 		form: React.PropTypes.object,
@@ -57,9 +57,7 @@ export default class FormField extends Component {
 	}
     @autobind
     shouldComponentUpdate(nextProp,nextState){
-        if (this.props.value)
-            return (this.props.value !== nextProp.value)
-        return true
+        return !(this.props.value === nextProp.value)
     }
 
 	render() {
