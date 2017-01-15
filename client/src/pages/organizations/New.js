@@ -78,8 +78,6 @@ export default class OrganizationNew extends Page {
 			organization.parentOrg = {id: organization.parentOrg.id}
 		}
 
-		console.log(organization);
-
 		API.send('/api/organizations/new', organization, {disableSubmits: true})
 			.then(org => {
 				if (org.code) throw org.code

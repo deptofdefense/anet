@@ -71,6 +71,7 @@ export default class App extends Page {
 	processData(data) {
 		let currentUser = new Person(data.person)
 		let organizations = Organization.fromArray(data.organizations)
+		organizations.sort((a, b) => a.name.localeCompare(b.name));
 
 		let settings = this.state.settings
 		data.adminSettings.forEach(setting => settings[setting.key] = setting.value)
