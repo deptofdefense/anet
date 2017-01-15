@@ -45,7 +45,7 @@ export default class ReportNew extends Page {
 			poams(f:recents) {
 				id, shortName, longName
 			}
-		`).then(data => this.setState({recents: data}))
+		`).then(data => this.setState({recents: data, report: new Report()}))
 	}
 
 	//use this to auto add the author to the report attendees
