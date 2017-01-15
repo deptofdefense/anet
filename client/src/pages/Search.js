@@ -50,7 +50,7 @@ export default class Search extends Page {
 					poams {id, shortName, longName}
 				},
 				people { id, name, rank, emailAddress, role }
-				positions { id }
+				positions { id , name, type}
 				poams { id, shortName, longName}
 				locations { id, name, lat, lng}
 				organizations { id, name }

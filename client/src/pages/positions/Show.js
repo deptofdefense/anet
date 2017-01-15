@@ -12,6 +12,10 @@ import {browserHistory as History} from 'react-router'
 import {Person, Position, Organization} from 'models'
 
 export default class PositionShow extends Page {
+	static contextTypes = {
+		app: React.PropTypes.object.isRequired,
+	}
+
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -40,17 +44,34 @@ export default class PositionShow extends Page {
 		let position = this.state.position
 		let assignedRole = (position.type === "ADVISOR") ? "Afghan Principals" : "Advisors";
 
+		let currentUser = this.context.app.state.currentUser
+		let canEdit = currentUser && (
+			//Super Users can edit any Principal
+			(currentUser.isSuperUser() && position.type === "PRINCIPAL") ||
+			//Admins can edit anybody
+			(currentUser.isAdmin()) ||
+			//Users can edit their own position
+			(position.person && position.person.id === currentUser.id) ||
+			//Super users can edit positions within their own organization
+			(position.organization && position.organization.id && currentUser.isSuperUserForOrg(position.organization)))
+
 		return (
 			<div>
 				<Breadcrumbs items={[[position.name || 'Position', Position.pathFor(position)]]} />
+
+				{canEdit &&
+					<div className="pull-right">
+						<DropdownButton bsStyle="primary" title="Actions" id="actions" onSelect={this.actionSelect}>
+							<MenuItem eventKey="edit" >Edit Position</MenuItem>
+						</DropdownButton>
+					</div>
+				}
+
 
 				<Form static formFor={position} horizontal>
 					<fieldset>
 						<legend>
 							{position.name}
-							<DropdownButton bsStyle="primary" title="Actions" id="actions" className="pull-right" onSelect={this.actionSelect}>
-								<MenuItem eventKey="edit" >Edit Position</MenuItem>
-							</DropdownButton>
 						</legend>
 
 						<Form.Field id="code" />

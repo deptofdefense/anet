@@ -62,6 +62,7 @@ export default class Leaflet extends Component {
 	componentWillUpdate() {
 		if (this.state.hasLayers === false) {
 			this.addLayers();
+			this.setState({hasLayers:true});
 		}
 	}
 
@@ -70,7 +71,6 @@ export default class Leaflet extends Component {
 		let app = this.context.app
 		let rawLayers = app.state.settings["MAP_LAYERS"]
 		if (!rawLayers || rawLayers.length === 0) {
-			this.setState({hasLayers:true});
 			return
 		}
 
@@ -90,11 +90,6 @@ export default class Leaflet extends Component {
 				this.state.layerControl.addBaseLayer(layer, l.name)
 			}
 		})
-
-
-		let state = this.state
-		state.hasLayers = (mapLayers.length > 0)
-		this.setState(state)
 	}
 
 	render() {

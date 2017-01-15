@@ -53,11 +53,15 @@ export default class PoamShow extends Page {
 		return (
 			<div>
 				<Breadcrumbs items={[[poam.shortName, Poam.pathFor(poam)]]} />
-				<div className="pull-right">
-					<DropdownButton bsStyle="primary" title="Actions" id="actions" className="pull-right" onSelect={this.actionSelect}>
-						{canEdit && <MenuItem eventKey="edit" >Edit {poam.shortName}</MenuItem>}
-					</DropdownButton>
-				</div>
+
+				{canEdit &&
+					<div className="pull-right">
+						<DropdownButton bsStyle="primary" title="Actions" id="actions" className="pull-right" onSelect={this.actionSelect}>
+							{canEdit && <MenuItem eventKey="edit" >Edit {poam.shortName}</MenuItem>}
+						</DropdownButton>
+					</div>
+				}
+
 				<Form static formFor={poam} horizontal>
 					<fieldset>
 						<legend>{poam.longName}</legend>

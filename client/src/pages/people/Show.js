@@ -93,11 +93,13 @@ export default class PersonShow extends Page {
 			<div>
 				<Breadcrumbs items={[[person.name, Person.pathFor(person)]]} />
 
-				<div className="pull-right">
-					<DropdownButton bsStyle="primary" title="Actions" id="actions" className="pull-right" onSelect={this.actionSelect}>
-						{canEdit && <MenuItem eventKey="edit" >Edit {person.name}</MenuItem>}
-					</DropdownButton>
-				</div>
+				{canEdit &&
+					<div className="pull-right">
+						<DropdownButton bsStyle="primary" title="Actions" id="actions" className="pull-right" onSelect={this.actionSelect}>
+							{canEdit && <MenuItem eventKey="edit" >Edit {person.name}</MenuItem>}
+						</DropdownButton>
+					</div>
+				}
 
 				<Form static formFor={person} horizontal>
 					<fieldset>

@@ -65,21 +65,24 @@ export default class OrganizationShow extends Page {
 		}
 
 		let currentUser = this.context.app.state.currentUser;
-		let isSuperUser = (currentUser) ? currentUser.isSuperUser(org) : false
+		let isSuperUser = (currentUser) ? currentUser.isSuperUserForOrg(org) : false
 		let isAdmin = (currentUser) ? currentUser.isAdmin() : false
+		let showActions = isAdmin || isSuperUser;
 
 		return (
 			<div>
 				<Breadcrumbs items={[[org.name || 'Organization', Organization.pathFor(org)]]} />
 
-				<div className="pull-right">
-					<DropdownButton bsStyle="primary" title="Actions" id="actions" className="pull-right" onSelect={this.actionSelect}>
-						{isSuperUser && <MenuItem eventKey="edit" >Edit Organization</MenuItem>}
-						{isAdmin && <MenuItem eventKey="createSub">Create Sub-Organization</MenuItem> }
-						{isAdmin && <MenuItem eventKey="createPoam">Create Poam</MenuItem> }
-						{isSuperUser && <MenuItem eventKey="createPos">Create new Position</MenuItem> }
-					</DropdownButton>
-				</div>
+				{ showActions &&
+					<div className="pull-right">
+						<DropdownButton bsStyle="primary" title="Actions" id="actions" className="pull-right" onSelect={this.actionSelect}>
+							{isSuperUser && <MenuItem eventKey="edit" >Edit Organization</MenuItem>}
+							{isAdmin && <MenuItem eventKey="createSub">Create Sub-Organization</MenuItem> }
+							{isAdmin && <MenuItem eventKey="createPoam">Create Poam</MenuItem> }
+							{isSuperUser && <MenuItem eventKey="createPos">Create new Position</MenuItem> }
+						</DropdownButton>
+					</div>
+				}
 
 				<Form static formFor={org} horizontal>
 					<fieldset>
