@@ -76,7 +76,7 @@ public class PoamResourceTest extends AbstractResourceTest {
 
 		//Assign the POAMs to the AO
 		List<Organization> orgs = httpQuery("/api/organizations/search?text=EF8", jack).get(new GenericType<List<Organization>>() {});
-		Organization ef8 = orgs.stream().filter(o -> o.getName().equals("EF8")).findFirst().get();
+		Organization ef8 = orgs.stream().filter(o -> o.getShortName().equals("EF8")).findFirst().get();
 		assertThat(ef8).isNotNull();
 		
 		a.setResponsibleOrg(ef8);
@@ -110,7 +110,7 @@ public class PoamResourceTest extends AbstractResourceTest {
 		
 		//Search for a poam by the organization
 		List<Organization> orgs = httpQuery("/api/organizations/search?text=EF2", jack).get(new GenericType<List<Organization>>() {});
-		Organization ef2 = orgs.stream().filter(o -> o.getName().equals("EF2")).findFirst().get();
+		Organization ef2 = orgs.stream().filter(o -> o.getShortName().equals("EF2")).findFirst().get();
 		assertThat(ef2).isNotNull();
 		
 		query.setText(null);

@@ -41,8 +41,9 @@ export default class OrganizationForm extends Component {
 				</fieldset>}
 
 			<fieldset>
-				<legend>{edit ? "Editing " + organization.name : "Create a new Organization"}</legend>
+				<legend>{edit ? "Editing " + organization.shortName : "Create a new Organization"}</legend>
 				<Form.Field id="type" componentClass="select" value={organization.type} scu={this.shouldUpdate}>
+
 					<option value="ADVISOR_ORG">Advisor Organization</option>
 					<option value="PRINCIPAL_ORG">Afghan Govt Organization</option>
 				</Form.Field>
@@ -54,7 +55,8 @@ export default class OrganizationForm extends Component {
 							urlParams={"&type=" + organization.type} />
 				</Form.Field>
 
-				<Form.Field id="name" />
+				<Form.Field id="shortName" />
+				<Form.Field id="longName" />
 			</fieldset>
 
 			{ organization.type === "ADVISOR_ORG" &&

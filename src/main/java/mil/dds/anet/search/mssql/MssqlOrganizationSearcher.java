@@ -28,9 +28,9 @@ public class MssqlOrganizationSearcher implements IOrganizationSearcher {
 		
 		String text = query.getText();
 		if (text != null && text.trim().length() > 0) {
-			text = "\"" + text + "*\"";
-			whereClauses.add("CONTAINS(name, :text)");
-			sqlArgs.put("text", text);
+			whereClauses.add("(CONTAINS((shortName, name), :text) OR  shortName LIKE :likeQuery)");
+			sqlArgs.put("text", "\"" + text + "*\"");
+			sqlArgs.put("likeQuery", text + "%");
 		}
 		
 		if (query.getType() != null) { 
@@ -40,7 +40,7 @@ public class MssqlOrganizationSearcher implements IOrganizationSearcher {
 		
 		sql.append(Joiner.on(" AND ").join(whereClauses));
 		
-		sql.append(" OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY)");
+		sql.append(" ORDER BY createdAt DESC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY)");
 		
 		return dbHandle.createQuery(sql.toString())
 			.bindFromMap(sqlArgs)

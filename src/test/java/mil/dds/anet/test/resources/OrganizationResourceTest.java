@@ -38,10 +38,11 @@ public class OrganizationResourceTest extends AbstractResourceTest {
 		//Create a new AO
 		Organization created = httpQuery("/api/organizations/new", admin)
 			.post(Entity.json(ao), Organization.class);
-		assertThat(ao.getName()).isEqualTo(created.getName());
+		assertThat(ao.getShortName()).isEqualTo(created.getShortName());
+		assertThat(ao.getLongName()).isEqualTo(created.getLongName());
 
 		//update name of the AO
-		created.setName("Ao McAoFace");
+		created.setLongName("Ao McAoFace");
 		Response resp = httpQuery("/api/organizations/update", admin)
 				.post(Entity.json(created));
 		assertThat(resp.getStatus()).isEqualTo(200);
@@ -49,7 +50,7 @@ public class OrganizationResourceTest extends AbstractResourceTest {
 		//Verify the AO name is updated.
 		Organization updated = httpQuery(String.format("/api/organizations/%d",created.getId()), jack)
 				.get(Organization.class);
-		assertThat(updated.getName()).isEqualTo(created.getName());
+		assertThat(updated.getLongName()).isEqualTo(created.getLongName());
 
 		//Create a position and put then in this AO
 		Position b1 = PositionTest.getTestPosition();
@@ -69,7 +70,8 @@ public class OrganizationResourceTest extends AbstractResourceTest {
 		//Create a child organizations
 		Organization child = new Organization();
 		child.setParentOrg(Organization.createWithId(created.getId()));
-		child.setName("Child McAo");
+		child.setShortName("AO McChild");
+		child.setLongName("Child McAo");
 		child.setType(OrganizationType.ADVISOR_ORG);
 		child = httpQuery("/api/organizations/new", admin)
 				.post(Entity.json(child), Organization.class);

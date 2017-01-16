@@ -29,7 +29,7 @@ export default class PoamEdit extends Page {
 				id,
 				shortName,
 				longName,
-				responsibleOrg {id,name}
+				responsibleOrg {id,shortName, longName}
 			}
 		`).then(data => {
 			this.setState({poam: new Poam(data.poam)})

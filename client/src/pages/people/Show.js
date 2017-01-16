@@ -38,14 +38,13 @@ export default class PersonShow extends Page {
 					id,
 					name,
 					organization {
-						id,
-						name
+						id, shortName, longName
 					}
 				},
 				authoredReports(pageNum:0,pageSize:10) {
 					id,
 					engagementDate,
-					advisorOrg { id, name }
+					advisorOrg { id, shortName }
 					intent,
 					updatedAt,
 					author {
@@ -56,7 +55,7 @@ export default class PersonShow extends Page {
 				attendedReports(pageNum:0, pageSize:10) {
 					id,
 					engagementDate,
-					advisorOrg { id, name}
+					advisorOrg { id, shortName}
 					intent,
 					updatedAt,
 					author {

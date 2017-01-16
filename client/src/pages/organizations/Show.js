@@ -29,8 +29,8 @@ export default class OrganizationShow extends Page {
 	fetchData(props) {
 		API.query(/* GraphQL */`
 			organization(id:${props.params.id}) {
-				id, name, type
-				parentOrg { id, name }
+				id, shortName, longName, type
+				parentOrg { id, shortName, longName }
 				poams { id, longName, shortName }
 				positions {
 					id, name, code
@@ -40,7 +40,7 @@ export default class OrganizationShow extends Page {
 						person { id, name }
 					}
 				},
-				childrenOrgs { id, name },
+				childrenOrgs { id, shortName, longName },
 				approvalSteps {
 					approverGroup {
 						id, name, members { id, name , position { id, name} }
@@ -71,7 +71,7 @@ export default class OrganizationShow extends Page {
 
 		return (
 			<div>
-				<Breadcrumbs items={[[org.name || 'Organization', Organization.pathFor(org)]]} />
+				<Breadcrumbs items={[[org.shortName || 'Organization', Organization.pathFor(org)]]} />
 
 				{ showActions &&
 					<div className="pull-right">
@@ -87,8 +87,10 @@ export default class OrganizationShow extends Page {
 				<Form static formFor={org} horizontal>
 					<fieldset>
 						<legend>
-							{org.name}
+							{org.shortName}
 						</legend>
+
+						<Form.Field id="longName" label="Description"/>
 
 						<Form.Field id="type">
 							{org.type && org.type.split('_')[0]}

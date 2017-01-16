@@ -55,7 +55,7 @@ export default class App extends Page {
 				id, name, role, emailAddress, rank, status
 				position {
 					id, name, type,
-					organization { id, name }
+					organization { id, shortName }
 				}
 			}
 
@@ -63,8 +63,7 @@ export default class App extends Page {
 				key, value
 			}
 			organizations(f:getTopLevelOrgs, type: ADVISOR_ORG) {
-				id, name
-				parentOrg { id }
+				id, shortName
 			}
 		`).then(data => this.setState(this.processData(data)))
 
@@ -73,7 +72,7 @@ export default class App extends Page {
 	processData(data) {
 		let currentUser = new Person(data.person)
 		let organizations = Organization.fromArray(data.organizations)
-		organizations.sort((a, b) => a.name.localeCompare(b.name));
+		organizations.sort((a, b) => a.shortName.localeCompare(b.shortName));
 
 		let settings = this.state.settings
 		data.adminSettings.forEach(setting => settings[setting.key] = setting.value)

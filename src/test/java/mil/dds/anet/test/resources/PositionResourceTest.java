@@ -223,10 +223,10 @@ public class PositionResourceTest extends AbstractResourceTest {
 		//Search by organization
 		List<Organization> orgs = httpQuery("/api/organizations/search?type=ADVISOR_ORG&text=ef1", jack).get(new GenericType<List<Organization>>() {});
 		assertThat(orgs.size()).isGreaterThan(0);
-		Organization ef11 = orgs.stream().filter(o -> o.getName().equalsIgnoreCase("ef1.1")).findFirst().get();
-		Organization ef1 = orgs.stream().filter(o -> o.getName().equalsIgnoreCase("ef1")).findFirst().get();
-		assertThat(ef11.getName()).isEqualToIgnoringCase("EF1.1");
-		assertThat(ef1.getName()).isEqualTo("EF1");
+		Organization ef11 = orgs.stream().filter(o -> o.getShortName().equalsIgnoreCase("ef1.1")).findFirst().get();
+		Organization ef1 = orgs.stream().filter(o -> o.getShortName().equalsIgnoreCase("ef1")).findFirst().get();
+		assertThat(ef11.getShortName()).isEqualToIgnoringCase("EF1.1");
+		assertThat(ef1.getShortName()).isEqualTo("EF1");
 		
 		query.setText("Advisor");
 		query.setType(null);

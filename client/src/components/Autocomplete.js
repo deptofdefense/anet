@@ -1,4 +1,5 @@
 import React, {Component} from 'react'
+import debounce from 'debounce'
 import Autosuggest from 'react-autosuggest'
 import {FormControl} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
@@ -32,6 +33,7 @@ export default class Autocomplete extends Component {
 			value: value,
 			stringValue: this.getStringValue(value),
 		}
+        this.fetchSuggestionsDebounced = debounce(this.fetchSuggestions,200)
 	}
 
 	componentWillReceiveProps(props) {
@@ -59,7 +61,7 @@ export default class Autocomplete extends Component {
 		return (
 			<Autosuggest
 				suggestions={this.state.suggestions}
-				onSuggestionsFetchRequested={this.fetchSuggestions}
+				onSuggestionsFetchRequested={this.fetchSuggestionsDebounced}
 				onSuggestionsClearRequested={this.clearSuggestions}
 				onSuggestionSelected={this.onSuggestionSelected}
 				getSuggestionValue={this.getStringValue}
@@ -88,7 +90,7 @@ export default class Autocomplete extends Component {
 	@autobind
 	fetchSuggestions(value) {
 		if (this.props.url) {
-            if(value.value.length < 3) {
+            if(value.value.length < 2) {
 				this.setState({suggestions: []})
 				return;
             }
@@ -132,7 +134,7 @@ export default class Autocomplete extends Component {
 	onInputChange(event) {
 		if (!event.target.value && !this.props.clearOnSelect) {
 			//If the selection lives in this component, and the user just cleared the input
-			// Then set the selection to empty. 
+			// Then set the selection to empty.
 			this.onSuggestionSelected(event, {suggestion: {}, suggestionValue: ''})
 		} else {
 			this.setState({stringValue: event.target.value})

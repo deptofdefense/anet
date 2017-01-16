@@ -61,7 +61,7 @@ export default class ReportShow extends Page {
 					id, name
 					position {
 						organization {
-							name
+							shortName, longName
 							approvalSteps {
 								id
 								approverGroup {
@@ -80,15 +80,15 @@ export default class ReportShow extends Page {
 				primaryAdvisor { id }
 				primaryPrincipal { id }
 
-				poams { id, shortName, longName, responsibleOrg { id, name} }
+				poams { id, shortName, longName, responsibleOrg { id, shortName} }
 
 				comments {
 					id, text, createdAt, updatedAt
 					author { id, name, rank }
 				}
 
-				principalOrg { id, name }
-				advisorOrg { id, name }
+				principalOrg { id, shortName, longName }
+				advisorOrg { id, shortName, longName }
 
 				approvalStatus {
 					type, createdAt
@@ -325,7 +325,7 @@ export default class ReportShow extends Page {
 
 						{!report.comments.length && "There are no comments yet."}
 
-						<Form formFor={this.state.newComment} horizontal style={commentFormCss} onSubmit={this.submitComment} onChange={this.onChange}>
+						<Form formFor={this.state.newComment} horizontal style={commentFormCss} onSubmit={this.submitComment} onChange={this.onChange} actionText={false}>
 							<Form.Field id="text" placeholder="Type a comment here" label="" value={this.state.newComment.text} onChange={this.changeComment}>
 								<Form.Field.ExtraCol>
 									<Button bsStyle="primary" type="submit">Save comment</Button>
@@ -352,8 +352,13 @@ export default class ReportShow extends Page {
 	}
 
 	@autobind
-	submitComment(){
-			API.send(`/api/reports/${this.state.report.id}/comments`,this.state.newComment).then(this.updateReport, this.handleError)
+	submitComment(event){
+		API.send(`/api/reports/${this.state.report.id}/comments`,
+			this.state.newComment)
+		.then(this.updateReport, this.handleError)
+
+		event.stopPropagation()
+		event.preventDefault()
 	}
 
 	@autobind

@@ -28,7 +28,7 @@ public class SqliteOrganizationSearcher implements IOrganizationSearcher {
 		
 		String text = query.getText();
 		if (text != null && text.trim().length() > 0) { 
-			whereClauses.add("(name LIKE '%' || :text || '%' )");
+			whereClauses.add("(shortName LIKE '%' || :text || '%' OR longName LIKE '%' || :text || '%' )");
 			sqlArgs.put("text", text);
 		}
 		

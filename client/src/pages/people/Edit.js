@@ -12,6 +12,10 @@ import API from 'api'
 import {Person} from 'models'
 
 export default class PersonEdit extends Page {
+	static contextTypes = {
+		app: React.PropTypes.object.isRequired,
+	}
+
 	static pageProps = {
 		useNavigation: false
 	}
@@ -49,6 +53,9 @@ export default class PersonEdit extends Page {
 	render() {
 		let person = this.state.person
 
+		let currentUser = this.context.app.state.currentUser
+		let canEditPosition = currentUser && currentUser.isSuperUser()
+
 		return (
 			<div>
 				<ContentForHeader>
@@ -62,6 +69,7 @@ export default class PersonEdit extends Page {
 					onSubmit={this.onSubmit}
 					actionText="Save Person"
 					edit
+					showPositionAssignment={canEditPosition}
 					error={this.state.error}/>
 			</div>
 		)
