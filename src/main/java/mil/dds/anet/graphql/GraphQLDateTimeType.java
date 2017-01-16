@@ -1,7 +1,11 @@
 package mil.dds.anet.graphql;
 
+import java.math.BigInteger;
+
 import org.joda.time.DateTime;
 
+import graphql.language.IntValue;
+import graphql.language.StringValue;
 import graphql.schema.Coercing;
 import graphql.schema.GraphQLScalarType;
 
@@ -20,8 +24,11 @@ public class GraphQLDateTimeType extends GraphQLScalarType {
 
         @Override
         public Object parseLiteral(Object input) {
-        	throw new RuntimeException("wtf is this!");
-//        	return input;
+        	if (input.getClass().equals(IntValue.class)) { 
+        		BigInteger value = ((IntValue) input).getValue();
+        		return new DateTime(value.longValue());
+        	}
+        	throw new RuntimeException("Unexpected input, expected Unix Millis as long");
         }
     };
 	
