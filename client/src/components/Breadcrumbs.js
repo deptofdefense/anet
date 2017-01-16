@@ -21,6 +21,9 @@ export default class Breadcrumbs extends PureComponent {
 			</Breadcrumb>
 		)
 	}
+	shouldComponentUpdate(nextProps){
+		return !(JSON.stringify(this.props) == JSON.stringify(nextProps))
+	}
 }
 
 Breadcrumbs.defaultProps = {items: []}
