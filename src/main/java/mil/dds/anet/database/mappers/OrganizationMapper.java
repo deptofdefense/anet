@@ -17,7 +17,8 @@ public class OrganizationMapper implements ResultSetMapper<Organization> {
 	public Organization map(int index, ResultSet r, StatementContext ctx) throws SQLException {
 		Organization org = new Organization();
 		org.setId(r.getInt("organizations_id"));
-		org.setName(r.getString("organizations_name"));
+		org.setShortName(r.getString("organizations_shortName"));
+		org.setLongName(r.getString("organizations_longName"));
 		org.setType(MapperUtils.getEnumIdx(r, "organizations_type", OrganizationType.class));
 		
 		Integer parentOrgId = MapperUtils.getInteger(r, "organizations_parentOrgId");

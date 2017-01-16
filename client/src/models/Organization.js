@@ -4,7 +4,8 @@ export default class Organization extends Model {
 	static resourceName = "Organization"
 
 	static schema = {
-		name: '',
+		shortName: '',
+		longName: '',
 		type: '',
 		parentOrg: null,
 		childrenOrgs: [],
@@ -16,4 +17,9 @@ export default class Organization extends Model {
 	isAdvisorOrg() {
 		return this.type === 'ADVISOR_ORG'
 	}
+
+	toString() {
+		return this.shortName || this.longName
+	}
+
 }

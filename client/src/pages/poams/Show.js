@@ -33,7 +33,7 @@ export default class PoamShow extends Page {
 				id,
 				shortName,
 				longName,
-				responsibleOrg {id,name}
+				responsibleOrg {id, shortName, longName}
 			}
 		`).then(data => {
             this.setState({
@@ -67,7 +67,7 @@ export default class PoamShow extends Page {
 						<legend>{poam.shortName}</legend>
 						<Form.Field id="shortName" />
 						<Form.Field id="longName" />
-						{ poam.responsibleOrg && poam.responsibleOrg !=={} && this.renderOrg()}
+						{ poam.responsibleOrg && poam.responsibleOrg.id && this.renderOrg()}
 					</fieldset>
 				</Form>
 			</div>
@@ -78,14 +78,11 @@ export default class PoamShow extends Page {
     renderOrg() {
 		let responsibleOrg = this.state.poam.responsibleOrg
 		return (
-			<Form static formFor={responsibleOrg} horizontal>
-			<fieldset>
-				<legend>
-					Responsible Organization
-				</legend>
-				<Form.Field id="name"><LinkTo organization={responsibleOrg} /></Form.Field>
-			</fieldset>
-			</Form>
+			<Form.Field id="responsibleOrg" label="Responsible Organization" >
+				<LinkTo organization={responsibleOrg}>
+					{responsibleOrg.shortName} {responsibleOrg.longName}
+				</LinkTo>
+			</Form.Field>
 		)
 	}
 

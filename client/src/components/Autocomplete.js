@@ -133,7 +133,7 @@ export default class Autocomplete extends Component {
 	onInputChange(event) {
 		if (!event.target.value && !this.props.clearOnSelect) {
 			//If the selection lives in this component, and the user just cleared the input
-			// Then set the selection to empty. 
+			// Then set the selection to empty.
 			this.onSuggestionSelected(event, {suggestion: {}, suggestionValue: ''})
 		} else {
 			this.setState({stringValue: event.target.value})

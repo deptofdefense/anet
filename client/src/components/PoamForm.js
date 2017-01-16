@@ -30,7 +30,7 @@ export default class PoamForm extends Component {
 					<Form.Field id="shortName" />
 					<Form.Field id="longName" />
 					<Form.Field id="responsibleOrg">
-						<Autocomplete valueKey="name"
+						<Autocomplete valueKey="shortName"
 							placeholder="Select a responsible organization for this poam"
 							url="/api/organizations/search" />
 					</Form.Field>
