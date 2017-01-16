@@ -14,10 +14,11 @@ export default class PersonForm extends Component {
 		edit: React.PropTypes.bool,
 		actionText: React.PropTypes.string,
 		error: React.PropTypes.object,
+		showPositionAssignment: React.PropTypes.bool
 	}
 
 	render() {
-		let {person, onChange, onSubmit, actionText, error, edit} = this.props
+		let {person, onChange, onSubmit, actionText, error, edit, showPositionAssignment} = this.props
 
 		return <Form formFor={person} onChange={onChange}
 			onSubmit={onSubmit} horizontal
@@ -32,10 +33,14 @@ export default class PersonForm extends Component {
 			<fieldset>
 				<legend>{edit ? "Edit " + person.name : "Create a new Person"}</legend>
 				<Form.Field id="name" />
-				<Form.Field id="role" componentClass="select">
-					<option value="ADVISOR">Advisor</option>
-					<option value="PRINCIPAL">Principal</option>
-				</Form.Field>
+				{edit ?
+					<Form.Field type="static" id="role" />
+					:
+					<Form.Field id="role" componentClass="select">
+						<option value="ADVISOR">Advisor</option>
+						<option value="PRINCIPAL">Principal</option>
+					</Form.Field>
+				}
 			</fieldset>
 
 			<fieldset>
@@ -114,16 +119,18 @@ export default class PersonForm extends Component {
 				</Form.Field>
 			</fieldset>
 
-			<fieldset>
-				<legend>Position</legend>
-				<Form.Field id="position" >
-					<Autocomplete valueKey="name"
-						placeholder="Select a position for this person"
-						url="/api/positions/search"
-						urlParams={"&type=" + person.role} />
-				</Form.Field>
-				<span>You can optionally assign this person to a position now</span>
-			</fieldset>
+			{showPositionAssignment &&
+				<fieldset>
+					<legend>Position</legend>
+					<Form.Field id="position" >
+						<Autocomplete valueKey="name"
+							placeholder="Select a position for this person"
+							url="/api/positions/search"
+							urlParams={"&type=" + person.role} />
+					</Form.Field>
+					<span>You can optionally assign this person to a position now</span>
+				</fieldset>
+			}
 
 		</Form>
 	}
