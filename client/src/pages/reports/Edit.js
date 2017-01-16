@@ -70,7 +70,7 @@ export default class ReportEdit extends Page {
 	}
 
 	render() {
-		let {report, recents} = this.state
+		let {report, recents, error} = this.state
 
 		return (
 			<div>
@@ -81,6 +81,7 @@ export default class ReportEdit extends Page {
 				<Breadcrumbs items={[['Report #' + report.id, '/reports/' + report.id], ['Edit', "/reports/" + report.id + "/edit"]]} />
 
 				<ReportForm report={report}
+					error={error}
 					recents={recents}
 					onChange={this.onChange}
 					onSubmit={this.onSubmit}
@@ -113,7 +114,7 @@ export default class ReportEdit extends Page {
 				History.push(Report.pathFor(report))
 			})
 			.catch(response => {
-				this.setState({error: response.message})
+				this.setState({error: response.message || response.error})
 				window.scrollTo(0, 0)
 			})
 	}

@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 
 import Autocomplete from 'components/Autocomplete'
 import Form from 'components/Form'
+import {Alert} from 'react-bootstrap'
 
 export default class PoamForm extends Component {
 	static propTypes = {
@@ -20,10 +21,10 @@ export default class PoamForm extends Component {
 			onSubmit={onSubmit} horizontal
 			actionText={actionText}>
 
-			{error && <fieldset>
+			{error && <Alert bsStyle="danger">
 				<p>There was a problem saving this poam</p>
-				<p>{error}</p>
-				</fieldset>}
+				<p>{error.statusText}: {error.message}</p>
+			</Alert>}
 
 			<fieldset>
 					<legend>Create a new Poam</legend>

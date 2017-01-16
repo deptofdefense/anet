@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 
-import {Table} from 'react-bootstrap'
+import {Table, Alert} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
 import Form from 'components/Form'
@@ -39,7 +39,13 @@ export default class PositionForm extends Component {
 		return <Form formFor={position} onChange={onChange}
 				onSubmit={onSubmit} horizontal
 				actionText={actionText} >
-			{error && <fieldset><p>There was a problem saving this position</p><p>{error}</p></fieldset>}
+
+			{error &&
+				<Alert bsStyle="danger">
+					<p>There was a problem saving this organization</p>
+					<p>{error.statusText}: {error.message}</p>
+				</Alert>}
+
 			<fieldset>
 				<legend>Create a new Position</legend>
 

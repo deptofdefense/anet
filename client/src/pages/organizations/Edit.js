@@ -78,8 +78,8 @@ export default class OrganizationEdit extends Page {
 			.then(response => {
 				if (response.code) throw response.code
 				History.push(Organization.pathFor(this.state.organization))
-			}).catch(error => {
-				this.setState({error: error})
+			}).catch(response => {
+				this.setState({error: response})
 				window.scrollTo(0, 0)
 			})
 	}

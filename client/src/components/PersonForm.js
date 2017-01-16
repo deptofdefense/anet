@@ -4,7 +4,7 @@ import TextEditor from 'components/TextEditor'
 import Autocomplete from 'components/Autocomplete'
 import Form from 'components/Form'
 import DatePicker from 'react-bootstrap-date-picker'
-import {InputGroup} from 'react-bootstrap'
+import {InputGroup, Alert} from 'react-bootstrap'
 
 export default class PersonForm extends Component {
 	static propTypes = {
@@ -25,10 +25,10 @@ export default class PersonForm extends Component {
 			actionText={actionText}>
 
 			{error &&
-				<fieldset>
+				<Alert bsStyle="danger">
 					<p>There was a problem saving this person</p>
-					<p>{error}</p>
-				</fieldset>}
+					<p>{error.statusText}: {error.message}</p>
+				</Alert>}
 
 			<fieldset>
 				<legend>{edit ? "Edit " + person.name : "Create a new Person"}</legend>

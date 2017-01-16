@@ -90,8 +90,8 @@ export default class PersonEdit extends Page {
 			.then(response => {
 				if (response.code) throw response.code
 				History.push(Person.pathFor(this.state.person))
-			}).catch(error => {
-				this.setState({error: error})
+			}).catch(response => {
+				this.setState({error: response})
 				window.scrollTo(0, 0)
 			})
 	}

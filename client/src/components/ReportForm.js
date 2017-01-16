@@ -4,7 +4,7 @@ import TextEditor from 'components/TextEditor'
 import Autocomplete from 'components/Autocomplete'
 import Form from 'components/Form'
 import DatePicker from 'react-bootstrap-date-picker'
-import {InputGroup, Radio, Table, Button, Collapse} from 'react-bootstrap'
+import {InputGroup, Radio, Table, Button, Collapse, Alert} from 'react-bootstrap'
 import RadioGroup from 'components/RadioGroup'
 import LinkTo from 'components/LinkTo'
 import PoamsSelector from 'components/PoamsSelector'
@@ -44,10 +44,11 @@ export default class ReportForm extends Component {
 			actionText={actionText}>
 
 			{error &&
-				<fieldset className="text-danger" >
+				<Alert bsStyle="danger">
 					<p>There was a problem saving this report</p>
 					<p>{error}</p>
-				</fieldset>}
+				</Alert>
+			}
 
 
 			<fieldset>

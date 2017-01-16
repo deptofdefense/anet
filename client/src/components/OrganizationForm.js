@@ -3,7 +3,7 @@ import React, {Component} from 'react'
 import Autocomplete from 'components/Autocomplete'
 import Form from 'components/Form'
 import PoamsSelector from 'components/PoamsSelector'
-import {Button, Table} from 'react-bootstrap'
+import {Button, Table, Alert} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
 export default class OrganizationForm extends Component {
@@ -24,10 +24,10 @@ export default class OrganizationForm extends Component {
 			actionText={actionText}>
 
 			{error &&
-				<fieldset>
-					<p>There was a problem saving this person</p>
-					<p>{error}</p>
-				</fieldset>}
+				<Alert bsStyle="danger">
+					<p>There was a problem saving this organization</p>
+					<p>{error.statusText}: {error.message}</p>
+				</Alert>}
 
 			<fieldset>
 				<legend>{edit ? "Editing " + organization.shortName : "Create a new Organization"}</legend>
