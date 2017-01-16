@@ -446,5 +446,5 @@ WHERE reports.id IN
 INSERT INTO adminSettings ([key], value) VALUES ('SECURITY_BANNER_TEXT', 'DEMO USE ONLY');
 INSERT INTO adminSettings ([key], value) VALUES ('SECURITY_BANNER_COLOR', 'green');
 INSERT INTO adminSettings ([key], value) VALUES ('DEFAULT_APPROVAL_ORGANIZATION', (select CAST(id AS varchar) from organizations where shortName='ANET Administrators'));
-INSERT INTO adminSettings ([key], value) VALUES ('MAP_LAYERS', '[]');
+INSERT INTO adminSettings ([key], value) VALUES ('MAP_LAYERS', '[{"name":"OSM","url":"http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", "type":"osm"]');
 

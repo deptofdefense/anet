@@ -19,17 +19,21 @@ export default class LocationShow extends Page {
 	fetchData(props) {
 		API.query(/* GraphQL */`
 			location(id:${props.params.id}) {
-				id, name, lat, lng 
+				id, name, lat, lng
 			}
 		`).then(data => this.setState({location: new Location(data.location)}))
 	}
 
 	render() {
 		let loc = this.state.location
+		let markers=[]
 		let latlng = "None"
-		if (loc.lat && loc.lng) { 
+		if (loc.lat && loc.lng) {
 			latlng = loc.lat + ", " + loc.lng
+			markers.push({name: loc.name, lat: loc.lat, lng: loc.lng})
 		}
+
+
 
 		return (
 			<div>
@@ -39,10 +43,10 @@ export default class LocationShow extends Page {
 					<fieldset>
 						<legend>{loc.name}</legend>
 
-						<Form.Field id="latlng" value={latlng} label="Lat/Lon" /> 
+						<Form.Field id="latlng" value={latlng} label="Lat/Lon" />
 					</fieldset>
 
-					<Leaflet />
+					<Leaflet markers={markers}/>
 
 			</Form>
 			</div>

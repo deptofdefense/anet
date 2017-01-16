@@ -9,7 +9,7 @@ const css = {
 
 export default class Leaflet extends Component {
 	static propTypes = {
-
+		markers: React.PropTypes.array,
 	}
 	static contextTypes = {
 		app: React.PropTypes.object.isRequired
@@ -22,8 +22,20 @@ export default class Leaflet extends Component {
 			map: null,
 			center: null,
 			layerControl: null,
+			markerLayer: null,
 			hasLayers: false
 		}
+
+		this.icon = L.icon({
+			iconUrl:       '/assets/img/leaflet/marker-icon.png',
+			iconRetinaUrl: '/assets/img/leaflet/marker-icon-2x.png',
+			shadowUrl:     '/assets/img/leaflet/marker-shadow.png',
+			iconSize:    [25, 41],
+			iconAnchor:  [12, 41],
+			popupAnchor: [1, -34],
+			tooltipAnchor: [16, -28],
+			shadowSize: [41, 41]
+		});
 	}
 
 	componentDidMount() {
@@ -31,7 +43,7 @@ export default class Leaflet extends Component {
 		let mapLayers = app.state.settings["MAP_LAYERS"];
 		console.log(mapLayers);
 
-		let map = L.map('map', {zoomControl:true}).setView([35, -75], 10);
+		let map = L.map('map', {zoomControl:true}).setView([34.52, 69.16], 10);
 /*		let nexrad = L.tileLayer.wms("http://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r.cgi", {
 		    layers: 'nexrad-n0r-900913',
 		    format: 'image/png',
@@ -57,13 +69,51 @@ export default class Leaflet extends Component {
 		state.map = map;
 		state.layerControl = layerControl;
 		this.setState(state);
+
+		this.tryAddLayers()
+		this.updateMarkerLayer(this.props.markers)
 	}
 
-	componentWillUpdate() {
+	@autobind
+	tryAddLayers() {
 		if (this.state.hasLayers === false) {
 			this.addLayers();
-			this.setState({hasLayers:true});
 		}
+	}
+
+	componentWillUnmount() {
+		this.setState({hasLayers:false})
+	}
+
+	componentWillReceiveProps(nextProps) {
+		this.tryAddLayers()
+		this.updateMarkerLayer(nextProps.markers)
+	}
+
+	@autobind
+	updateMarkerLayer(markers) {
+		markers = markers || [];
+
+		let newMarkers = []
+		this.props.markers.forEach(m => {
+			console.log("adding", m)
+			let latLng = [m.lat, m.lng]
+			let marker = L.marker(latLng, {icon: this.icon})
+				.bindPopup(m.name)
+			newMarkers.push(marker);
+		})
+
+		let newMarkerLayer = L.featureGroup(newMarkers)
+
+		if (this.state.markerLayer) {
+			this.state.map.removeLayer(this.state.markerLayer)
+		}
+		if (newMarkers.length > 0) {
+			newMarkerLayer.addTo(this.state.map)
+			this.state.map.fitBounds(newMarkerLayer.getBounds(), {maxZoom: 15});
+		}
+
+		this.setState({markerLayer: newMarkerLayer})
 	}
 
 	@autobind
@@ -75,21 +125,26 @@ export default class Leaflet extends Component {
 		}
 
 		let mapLayers = JSON.parse(rawLayers)
-		console.log("adding layers")
-		console.log(mapLayers)
 
+		let defaultLayer = null
 		mapLayers.forEach(l => {
+			let layer = null;
 			if (l.type === "wms") {
-				let layer = L.tileLayer.wms(l.url, {
+				layer = L.tileLayer.wms(l.url, {
 					layers: l.layer,
 					format: l.format || 'image/png'
 				})
-				this.state.layerControl.addBaseLayer(layer, l.name)
 			} else if (l.type === "osm") {
-				let layer = L.tileLayer(l.url)
+				layer = L.tileLayer(l.url)
+			}
+
+			if (layer) {
 				this.state.layerControl.addBaseLayer(layer, l.name)
 			}
+			if (l.default) { defaultLayer = layer;  }
 		})
+		if (defaultLayer) { this.state.map.addLayer(defaultLayer); }
+		this.setState({hasLayers:true});
 	}
 
 	render() {
