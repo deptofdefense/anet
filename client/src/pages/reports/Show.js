@@ -1,4 +1,5 @@
 import React from 'react'
+import update from 'immutability-helper'
 import Page from 'components/Page'
 import {Alert, Table, Button, Col, DropdownButton, MenuItem, Modal} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
@@ -325,7 +326,7 @@ export default class ReportShow extends Page {
 						{!report.comments.length && "There are no comments yet."}
 
 						<Form formFor={this.state.newComment} horizontal style={commentFormCss} onSubmit={this.submitComment} onChange={this.onChange} actionText={false}>
-							<Form.Field id="text" placeholder="Type a comment here" label="">
+							<Form.Field id="text" placeholder="Type a comment here" label="" value={this.state.newComment.text} onChange={this.changeComment}>
 								<Form.Field.ExtraCol>
 									<Button bsStyle="primary" type="submit">Save comment</Button>
 								</Form.Field.ExtraCol>
@@ -335,6 +336,14 @@ export default class ReportShow extends Page {
 				</Form>
 			</div>
 		)
+	}
+
+	@autobind
+	changeComment(event){
+		const value = event && event.target ? event.target.value : event
+		const newState = update(this.state,{newComment:{text:{$set:value}}})
+		this.setState(newState)
+        event && event.stopPropagation && event.stopPropagation()
 	}
 
 	@autobind

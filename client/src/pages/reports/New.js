@@ -1,4 +1,5 @@
 import React from 'react'
+import update from 'immutability-helper'
 import Page from 'components/Page'
 import History from 'components/History'
 import autobind from 'autobind-decorator'
@@ -29,7 +30,7 @@ export default class ReportNew extends Page {
 				persons: [],
 				locations: [],
 				poams: [],
-			},
+		},
 			currentUser: null
 		}
 	}
@@ -68,10 +69,9 @@ export default class ReportNew extends Page {
 
 		if (newUserId && newUserId !== currUserId) {
 			console.log('updating', currUser, newUser);
-			let report = this.state.report
 			newUser.primary = true
-			report.attendees.push(newUser)
-			this.setState({report: report})
+			const newState = update(this.state,{report:{attendees:{$push:[newUser]}}})
+			this.setState(newState)
 		} else {
 			console.log('notUpdating', currUser, newUser);
 		}
@@ -101,7 +101,7 @@ export default class ReportNew extends Page {
 	@autobind
 	onChange() {
 		let report = this.state.report
-		this.setState({report})
+		this.setState(report)
 	}
 
 	@autobind

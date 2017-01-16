@@ -13,6 +13,7 @@ export default class Autocomplete extends Component {
 		value: React.PropTypes.oneOfType([
 			React.PropTypes.object,
 			React.PropTypes.array,
+            React.PropTypes.string
 		]),
 		valueKey: React.PropTypes.string,
 		clearOnSelect: React.PropTypes.bool,

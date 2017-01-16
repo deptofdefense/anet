@@ -1,8 +1,8 @@
-import React, {Component} from 'react'
+import React, {PureComponent} from 'react'
 import {Breadcrumb} from 'react-bootstrap'
 import {IndexLinkContainer as Link} from 'react-router-bootstrap'
 
-export default class Breadcrumbs extends Component {
+export default class Breadcrumbs extends PureComponent {
 	makeItem(item) {
 		return (
 			<Link key={item[1]} to={item[1]}>
@@ -20,6 +20,9 @@ export default class Breadcrumbs extends Component {
 				{items.map(this.makeItem)}
 			</Breadcrumb>
 		)
+	}
+	shouldComponentUpdate(nextProps){
+		return !(JSON.stringify(this.props) === JSON.stringify(nextProps))
 	}
 }
 

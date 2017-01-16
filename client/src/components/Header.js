@@ -6,6 +6,7 @@ import SearchBar from 'components/SearchBar.js'
 import CreateButton from 'components/CreateButton.js'
 
 import logo from 'resources/logo.png'
+import stringify from 'json-stringify-safe'
 
 const backgroundCss = {
 	position: 'fixed',
@@ -24,6 +25,18 @@ const logoCss = {
 }
 
 class Header extends Component {
+	shouldComponentUpdate(nextProps){
+		let len = nextProps.injections && nextProps.injections.length
+		let len2 = this.props.injections && this.props.injections.length
+		if (len !== len2) return true
+		nextProps.injections && nextProps.injections.forEach( (inj,ind) => {
+			let a = this.props && this.props.injections[ind]
+			let b = a && a.props
+			if (b !== inj.props) return true
+			if (stringify(b) !== stringify(inj.props)) return true
+		})
+		return false
+	}
 	render() {
 		let leftContent, middleContent, rightContent
 		this.props.injections.forEach(injection => {

@@ -1,15 +1,16 @@
-import React, {Component} from 'react'
+import React, {PureComponent} from 'react'
+import update from 'immutability-helper'
 import utils from 'utils'
 import autobind from 'autobind-decorator'
 import {FormGroup, Col, ControlLabel, FormControl, InputGroup} from 'react-bootstrap'
 
-class FormFieldExtraCol extends Component {
+class FormFieldExtraCol extends PureComponent {
 	render() {
 		return <Col sm={3} {...this.props} />
 	}
 }
 
-export default class FormField extends Component {
+export default class FormField extends PureComponent {
 	static contextTypes = {
 		formFor: React.PropTypes.object,
 		form: React.PropTypes.object,
@@ -46,8 +47,21 @@ export default class FormField extends Component {
 		]),
 
 		// If you don't want autobinding behavior, you can override them here
-		value: React.PropTypes.string,
+		value: React.PropTypes.oneOfType([
+			React.PropTypes.string,
+			React.PropTypes.array,
+			React.PropTypes.object
+		]),
 		onChange: React.PropTypes.func,
+        scu: React.PropTypes.func
+	}
+	static defaultProps = {
+		scu: function(){return true}
+	}
+
+	@autobind
+	shouldComponentUpdate(nextProps,nextState,nextContext){
+		return this.props.scu(nextProps,nextState,nextContext)
 	}
 
 	render() {
@@ -61,6 +75,7 @@ export default class FormField extends Component {
 		} = this.props
 
 		childProps = Object.without(childProps, 'getter')
+		childProps = Object.without(childProps, 'scu')
 
 		let horizontal = this.context.form && this.context.form.props.horizontal
 		if (typeof this.props.horizontal !== 'undefined') {
@@ -73,21 +88,21 @@ export default class FormField extends Component {
 
 		// Remove an ExtraCol from children first so we can manually append it
 		// as a column
-		children = React.Children.toArray(children)
-		let extra = children.find(child => child.type === FormFieldExtraCol)
+		let children2 = React.Children.toArray(children)
+		let extra = children2.find(child => child.type === FormFieldExtraCol)
 		if (extra)
-			children.splice(children.indexOf(extra), 1)
+			children2.splice(children2.indexOf(extra), 1)
 
 		let defaultValue = this.props.value || this.getValue() || ''
 
 		// if type is static, render out a static value
 		if (this.props.type === 'static' || (!this.props.type && this.context.form.props.static)) {
-			children = <FormControl.Static componentClass={'div'} {...childProps}>{(children.length && children) || defaultValue}</FormControl.Static>
+			children2 = <FormControl.Static componentClass={'div'} {...childProps}>{(children2.length && children2) || defaultValue}</FormControl.Static>
 
 		// if children are provided, render those, but special case them to
 		// automatically set value and children props
-		} else if (!this.props.componentClass && children.length) {
-			children = children.map(child => {
+		} else if (!this.props.componentClass && children2.length) {
+			children2 = children2.map(child => {
 				let propTypes = child.type.propTypes
 
 				// check to see if this is some kind of element where we
@@ -100,16 +115,16 @@ export default class FormField extends Component {
 
 		// otherwise render out a default FormControl input element
 		} else {
-			if (children.length)
-				childProps.children = children
+			if (children2.length)
+				childProps.children = children2
 
-			children = <FormControl {...childProps} value={defaultValue} onChange={this.props.onChange || this.onChange} />
+			children2 = <FormControl {...childProps} value={defaultValue} onChange={this.props.onChange || this.onChange} />
 		}
 
 		// if there's an addon we need to use an InputGroup
 		if (addon) {
 			children = <InputGroup>
-				{children}
+				{children2}
 				<InputGroup.Addon>{addon}</InputGroup.Addon>
 			</InputGroup>
 		}
@@ -120,8 +135,8 @@ export default class FormField extends Component {
 					? <Col sm={2} componentClass={ControlLabel}>{label}</Col>
 					: <ControlLabel>{label}</ControlLabel> }
 				{horizontal
-					? <Col sm={7}>{children}</Col>
-					: children }
+					? <Col sm={7}>{children2}</Col>
+					: children2 }
 				{extra}
 			</FormGroup>
 		)
@@ -142,8 +157,12 @@ export default class FormField extends Component {
 		let id = this.props.id
 		let value = event && event.target ? event.target.value : event
 		let formContext = this.context.formFor
-		if (formContext)
-			formContext[id] = value
+		if (formContext){
+			let newStateComp = {};
+			newStateComp[id]=value;
+			const newState = update(formContext,{$merge:newStateComp})
+			formContext.setState(newState)
+        }
 
 		let form = this.context.form
 		if (form && form.props.onChange) {
