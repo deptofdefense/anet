@@ -53,8 +53,8 @@ export default class OrganizationShow extends Page {
 	render() {
 		let org = this.state.organization
 
-		let positionsNeedingAttention = org.positions.filter(position => !position.person )
-		let supportedPositions = org.positions.filter(position => positionsNeedingAttention.indexOf(position) === -1)
+		let positionsNeedingAttention = org && org.positions.filter(position => !position.person )
+		let supportedPositions = org && org.positions.filter(position => positionsNeedingAttention.indexOf(position) === -1)
 
 		let poamsContent = ''
 		if (org.type === 'ADVISOR_ORG') {

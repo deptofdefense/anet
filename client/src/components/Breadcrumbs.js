@@ -22,7 +22,7 @@ export default class Breadcrumbs extends PureComponent {
 		)
 	}
 	shouldComponentUpdate(nextProps){
-		return !(JSON.stringify(this.props) == JSON.stringify(nextProps))
+		return !(JSON.stringify(this.props) === JSON.stringify(nextProps))
 	}
 }
 
