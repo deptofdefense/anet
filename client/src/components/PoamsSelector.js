@@ -1,4 +1,5 @@
 import React, {PureComponent} from 'react'
+import update from 'immutability-helper'
 import autobind from 'autobind-decorator'
 
 import Autocomplete from 'components/Autocomplete'
@@ -9,7 +10,8 @@ export default class PoamsSelector extends PureComponent {
 	static propTypes = {
 		poams: React.PropTypes.array.isRequired,
 		onChange: React.PropTypes.func.isRequired,
-		shortcuts: React.PropTypes.array
+		shortcuts: React.PropTypes.array,
+		setPoams: React.PropTypes.func.isRequired
 	}
 
 	render() {
@@ -64,7 +66,8 @@ export default class PoamsSelector extends PureComponent {
 		let poams = this.props.poams
 
 		if (!poams.find(poam => poam.id === newPoam.id)) {
-			poams.push(newPoam)
+			const newPoams = update(this.props.poams,{$push:[newPoam]})
+			this.props.setPoams(newPoams)
 		}
 
 		this.props.onChange()
@@ -76,7 +79,8 @@ export default class PoamsSelector extends PureComponent {
 		let index = poams.findIndex(poam => poam.id === oldPoam.id)
 
 		if (index !== -1) {
-			poams.splice(index, 1)
+			const newPoams = update(this.props.poams,{$splice:[[index,1]]})
+			this.props.setPoams(newPoams)
 			this.props.onChange()
 		}
 	}
