@@ -1,4 +1,5 @@
 import React, {Component} from 'react'
+import update from 'immutability-helper'
 
 import Autocomplete from 'components/Autocomplete'
 import Form from 'components/Form'
@@ -16,6 +17,16 @@ export default class OrganizationForm extends Component {
 		error: React.PropTypes.object,
 	}
 
+    @autobind
+    setPoams(newPoams){
+        const newOrganization = update(this.props.organization,{poams:{$set:newPoams}})
+        this.props.organization.setState(newOrganization)
+        this.props.onChange()
+    }
+
+    shouldUpdate(nextProps,nextState){
+        return !(this.value === nextProps.value)
+    }
 	render() {
 		let {organization, onChange, onSubmit, actionText, error, edit} = this.props
 
@@ -31,12 +42,12 @@ export default class OrganizationForm extends Component {
 
 			<fieldset>
 				<legend>{edit ? "Editing " + organization.name : "Create a new Organization"}</legend>
-				<Form.Field id="type" componentClass="select">
+				<Form.Field id="type" componentClass="select" value={organization.type} scu={this.shouldUpdate}>
 					<option value="ADVISOR_ORG">Advisor Organization</option>
 					<option value="PRINCIPAL_ORG">Afghan Govt Organization</option>
 				</Form.Field>
 
-				<Form.Field id="parentOrg" label="Parent Org" >
+				<Form.Field id="parentOrg" label="Parent Org" value={organization.parentOrg}>
 					<Autocomplete valueKey="name"
 							placeholder="Choose the parent organization"
 							url="/api/organizations/search"
@@ -47,7 +58,7 @@ export default class OrganizationForm extends Component {
 			</fieldset>
 
 			{ organization.type === "ADVISOR_ORG" &&
-				<PoamsSelector poams={organization.poams} onChange={onChange}/>
+				<PoamsSelector poams={organization.poams} onChange={onChange} setPoams={this.setPoams}/>
 			}
 
 			{ organization.type === "ADVISOR_ORG" &&

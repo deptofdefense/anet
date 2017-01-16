@@ -52,13 +52,17 @@ export default class FormField extends PureComponent {
 			React.PropTypes.array,
 			React.PropTypes.object
 		]),
-
 		onChange: React.PropTypes.func,
+        scu: React.PropTypes.func
 	}
-    @autobind
-    shouldComponentUpdate(nextProp,nextState){
-        return !(this.props.value === nextProp.value)
-    }
+	static defaultProps = {
+		scu: function(){return true}
+	}
+
+	@autobind
+	shouldComponentUpdate(nextProps,nextState,nextContext){
+		return this.props.scu(nextProps,nextState,nextContext)
+	}
 
 	render() {
 		let {
@@ -71,6 +75,7 @@ export default class FormField extends PureComponent {
 		} = this.props
 
 		childProps = Object.without(childProps, 'getter')
+		childProps = Object.without(childProps, 'scu')
 
 		let horizontal = this.context.form && this.context.form.props.horizontal
 		if (typeof this.props.horizontal !== 'undefined') {
@@ -83,21 +88,21 @@ export default class FormField extends PureComponent {
 
 		// Remove an ExtraCol from children first so we can manually append it
 		// as a column
-		children = React.Children.toArray(children)
-		let extra = children.find(child => child.type === FormFieldExtraCol)
+		let children2 = React.Children.toArray(children)
+		let extra = children2.find(child => child.type === FormFieldExtraCol)
 		if (extra)
-			children.splice(children.indexOf(extra), 1)
+			children2.splice(children2.indexOf(extra), 1)
 
 		let defaultValue = this.props.value || this.getValue() || ''
 
 		// if type is static, render out a static value
 		if (this.props.type === 'static' || (!this.props.type && this.context.form.props.static)) {
-			children = <FormControl.Static componentClass={'div'} {...childProps}>{(children.length && children) || defaultValue}</FormControl.Static>
+			children2 = <FormControl.Static componentClass={'div'} {...childProps}>{(children2.length && children2) || defaultValue}</FormControl.Static>
 
 		// if children are provided, render those, but special case them to
 		// automatically set value and children props
-		} else if (!this.props.componentClass && children.length) {
-			children = children.map(child => {
+		} else if (!this.props.componentClass && children2.length) {
+			children2 = children2.map(child => {
 				let propTypes = child.type.propTypes
 
 				// check to see if this is some kind of element where we
@@ -110,16 +115,16 @@ export default class FormField extends PureComponent {
 
 		// otherwise render out a default FormControl input element
 		} else {
-			if (children.length)
-				childProps.children = children
+			if (children2.length)
+				childProps.children = children2
 
-			children = <FormControl {...childProps} value={defaultValue} onChange={this.props.onChange || this.onChange} />
+			children2 = <FormControl {...childProps} value={defaultValue} onChange={this.props.onChange || this.onChange} />
 		}
 
 		// if there's an addon we need to use an InputGroup
 		if (addon) {
 			children = <InputGroup>
-				{children}
+				{children2}
 				<InputGroup.Addon>{addon}</InputGroup.Addon>
 			</InputGroup>
 		}
@@ -130,8 +135,8 @@ export default class FormField extends PureComponent {
 					? <Col sm={2} componentClass={ControlLabel}>{label}</Col>
 					: <ControlLabel>{label}</ControlLabel> }
 				{horizontal
-					? <Col sm={7}>{children}</Col>
-					: children }
+					? <Col sm={7}>{children2}</Col>
+					: children2 }
 				{extra}
 			</FormGroup>
 		)

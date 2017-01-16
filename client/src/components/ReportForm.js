@@ -20,7 +20,7 @@ export default class ReportForm extends Component {
 		onSubmit: React.PropTypes.func,
 		edit: React.PropTypes.bool,
 		actionText: React.PropTypes.string,
-		error: React.PropTypes.string,
+		error: React.PropTypes.string
 	}
 
 	static contextTypes = {
@@ -35,6 +35,22 @@ export default class ReportForm extends Component {
 			showNextStepsText: false,
 			showReportText: false
 		}
+	}
+
+	@autobind
+	setPoams(newPoams){
+		const newReport = update(this.props.report,{poams:{$set:newPoams}})
+		this.props.report.setState(newReport)
+		this.props.onChange()
+		let _this = this
+	}
+
+	scu(nextProps,nextState) {
+		let a = !(this.value === nextProps.value &&
+				 this.label === nextProps.label &&
+				 this.className === nextProps.className
+				 )
+		return a
 	}
 
 	render() {
@@ -54,21 +70,21 @@ export default class ReportForm extends Component {
 			<fieldset>
 				<legend>Engagement Details<small>Required</small></legend>
 
-				<Form.Field id="intent" label="Meeting subject" placeholder="What happened?" data-focus value={report.intent}>
+				<Form.Field id="intent" label="Meeting subject" placeholder="What happened?" data-focus value={report.intent} scu={this.scu}>
 					<Form.Field.ExtraCol>{250 - (report.intent && report.intent.length)} characters remaining</Form.Field.ExtraCol>
 				</Form.Field>
 
-				<Form.Field id="engagementDate" value={report.engagementDate}>
+				<Form.Field id="engagementDate" value={report.engagementDate} scu={this.scu}>
 					<DatePicker showTodayButton placeholder="When did it happen?">
 						<InputGroup.Addon>📆</InputGroup.Addon>
 					</DatePicker>
 				</Form.Field>
 
-				<Form.Field id="location" addon="📍" value={report.location}>
+				<Form.Field id="location" addon="📍" value={report.location} scu={this.scu}>
 					<Autocomplete valueKey="name" placeholder="Where did it happen?" url="/api/locations/search" />
 				</Form.Field>
 
-				<Form.Field id="atmosphere" value={report.atmosphere}>
+				<Form.Field id="atmosphere" value={report.atmosphere} scu={this.scu}>
 					<RadioGroup bsSize="large">
 						<Radio value="POSITIVE">👍</Radio>
 						<Radio value="NEUTRAL">😐</Radio>
@@ -77,14 +93,14 @@ export default class ReportForm extends Component {
 				</Form.Field>
 
 				{report.atmosphere && report.atmosphere !== 'POSITIVE' &&
-					<Form.Field id="atmosphereDetails" />
+					<Form.Field id="atmosphereDetails" value={report.atmosphereDetails} scu={this.scu}/>
 				}
 			</fieldset>
 
 			<fieldset>
 				<legend>Meeting Attendance<small>Required</small></legend>
 
-				<Form.Field id="attendees" value={report.attendees}>
+				<Form.Field id="attendees" value={report.attendees} scu={this.scu}>
 					<Autocomplete placeholder="Who was there?" url="/api/people/search" template={person =>
 						<span>{person.name} {person.rank && person.rank.toUpperCase()}</span>
 					} onChange={this.addAttendee} clearOnSelect={true} />
@@ -129,11 +145,11 @@ export default class ReportForm extends Component {
 				</Form.Field>
 			</fieldset>
 
-			<PoamsSelector poams={report.poams} shortcuts={recents.poams} onChange={onChange}/>
+			<PoamsSelector poams={report.poams} shortcuts={recents.poams} setPoams={this.setPoams} onChange={onChange} />
 
 			<fieldset>
 				<legend>Meeting Discussion<small>Required</small></legend>
-				<Form.Field id="keyOutcomesSummary" value={report.keyOutcomesSummary}>
+				<Form.Field id="keyOutcomesSummary" value={report.keyOutcomesSummary} scu={this.scu}>
 					<Form.Field.ExtraCol>{250 - report.keyOutcomesSummary.length} characters remaining</Form.Field.ExtraCol>
 				</Form.Field>
 
@@ -141,24 +157,24 @@ export default class ReportForm extends Component {
 					{this.state.showKeyOutcomesText ? "Hide" : "Add" } details to Key Outcomes
 				</Button>
 				<Collapse in={this.state.showKeyOutcomesText} >
-					<Form.Field id="keyOutcomes" label="" horizontal={false} value={report.keyOutcomes}>
+					<Form.Field id="keyOutcomes" label="" horizontal={false} value={report.keyOutcomes} scu={this.scu}>
 						<TextEditor label="Key outcomes" />
 					</Form.Field>
 				</Collapse>
 
-				<Form.Field id="nextStepsSummary"  value={report.nextStepsSummary}>
+				<Form.Field id="nextStepsSummary"  value={report.nextStepsSummary} scu={this.scu}>
 					<Form.Field.ExtraCol>{250 - report.nextStepsSummary.length} characters remaining</Form.Field.ExtraCol>
 				</Form.Field>
 				<Button bsStyle="link" onClick={this.toggleNextStepsText} >Add details to Next Steps</Button>
 				<Collapse in={this.state.showNextStepsText} >
-					<Form.Field id="nextSteps" label="" horizontal={false} style={{marginTop: '5rem'}}>
+					<Form.Field id="nextSteps" label="" horizontal={false} style={{marginTop: '5rem'}} scu={this.scu}>
 						<TextEditor label="Next steps" />
 					</Form.Field>
 				</Collapse>
 
 				<Button bsStyle="link" onClick={this.toggleReportText} >Add additional report details</Button>
 				<Collapse in={this.state.showReportText} >
-					<Form.Field id="reportText" label="" horizontal={false} value={report.reportText}>
+					<Form.Field id="reportText" label="" horizontal={false} scu={this.scu}>
 						<TextEditor label="Report Details" />
 					</Form.Field>
 				</Collapse>
@@ -166,6 +182,10 @@ export default class ReportForm extends Component {
 			</fieldset>
 		</Form>
 	}
+    @autobind
+    debugger(ev,ad){
+        debugger
+    }
 
 	@autobind
 	toggleKeyOutcomesText() {
@@ -212,12 +232,16 @@ export default class ReportForm extends Component {
 
 		if (index !== -1) {
 			let person = attendees[index]
-			attendees.splice(index, 1)
+			let newReportState = update(this.props.report,{attendees:{$splice:[[index,1]]}})
+			this.props.report.setState(newReportState)
+			// attendees.splice(index, 1)
 
 			if (person.primary) {
-				let nextPerson = attendees.find(nextPerson => nextPerson.role === person.role)
-				if (nextPerson)
-					nextPerson.primary = true
+				let nextPerson = attendees.findIndex(nextPerson => nextPerson.role === person.role)
+				if (nextPerson > -1){
+					let newReportState = update(this.props.report,{attendees:{$apply:function(people){people[nextPerson].primary=true;return people;}}})
+					this.props.report.setState(newReportState)
+				}
 			}
 
 			this.props.onChange()
@@ -228,13 +252,23 @@ export default class ReportForm extends Component {
 	setPrimaryAttendee(person) {
 		let report = this.props.report
 		let attendees = report.attendees
+		let newReportState = this.props.report
 
-		attendees.forEach(nextPerson => {
+		attendees.forEach((nextPerson,index) => {
 			if (nextPerson.role === person.role)
-				nextPerson.primary = false
+				newReportState = update(newReportState,{attendees:{$apply:function(people){
+					let p=people.slice()
+					p[index].primary=false
+					return p
+				}}})
 			if (Person.isEqual(nextPerson, person))
-				nextPerson.primary = true
+				newReportState = update(newReportState,{attendees:{$apply:function(people){
+					let p=people.slice()
+					p[index].primary=true
+					return p
+				}}})
 		})
+		this.props.report.setState(newReportState)
 
 		this.props.onChange()
 	}
