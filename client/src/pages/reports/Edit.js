@@ -44,7 +44,7 @@ export default class ReportEdit extends Page {
 					id, name, role, primary
 					position { id, name }
 				}
-				poams { id, shortName, longName, responsibleOrg { id, name} }
+				poams { id, shortName, longName, responsibleOrg { id, shortName} }
 			}
 			locations(f:recents) {
 				id, name

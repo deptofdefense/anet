@@ -113,8 +113,8 @@ export default class ReportShow extends Page {
 		let {report} = this.state
 		let {currentUser} = this.context.app.state
 
-		let canApprove = report.isPending() && (currentUser.isAdmin() ||
-			report.approvalStep.approverGroup.members.find(member => member.id === currentUser.id))
+		let canApprove = report.isPending() &&
+			report.approvalStep.approverGroup.members.find(member => member.id === currentUser.id)
 
 		//Authors can approve in draft mode or Pending Mode
 		let canEdit = (report.isDraft() || report.isPending()) && (currentUser.id === report.author.id)
@@ -324,7 +324,7 @@ export default class ReportShow extends Page {
 
 						{!report.comments.length && "There are no comments yet."}
 
-						<Form formFor={this.state.newComment} horizontal style={commentFormCss} onSubmit={this.submitComment} onChange={this.onChange} actionText={false}>
+						<Form formFor={this.state.newComment} horizontal style={commentFormCss} onSubmit={this.submitComment} onChange={this.onChange} >
 							<Form.Field id="text" placeholder="Type a comment here" label="">
 								<Form.Field.ExtraCol>
 									<Button bsStyle="primary" type="submit">Save comment</Button>
