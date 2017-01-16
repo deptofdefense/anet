@@ -64,7 +64,7 @@ export default class PoamShow extends Page {
 
 				<Form static formFor={poam} horizontal>
 					<fieldset>
-						<legend>{poam.longName}</legend>
+						<legend>{poam.shortName}</legend>
 						<Form.Field id="shortName" />
 						<Form.Field id="longName" />
 						{ poam.responsibleOrg && poam.responsibleOrg !=={} && this.renderOrg()}

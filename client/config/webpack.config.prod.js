@@ -112,8 +112,6 @@ module.exports = {
         include: paths.appSrc,
         loader: 'babel',
         query: {
-          presets: ['stage-1'],
-          plugins: ['transform-decorators-legacy']
         }
       },
       // The notation here is somewhat confusing.

@@ -58,14 +58,24 @@ class Header extends Component {
 	}
 }
 
-// this is some magic around the Injectable library to allow
-// components further down the tree to inject children into the header
-const InjectableHeader = Injectable(Header)
-export default InjectableHeader
+let InjectableHeader = null
+let ContentForHeader = null
+if (process.env.NODE_ENV === 'test') {
+	ContentForHeader = function(props) {
+		return <div />
+	}
+} else {
+	// this is some magic around the Injectable library to allow
+	// components further down the tree to inject children into the header
+	InjectableHeader = Injectable(Header)
 
-const HeaderInjector = Injector({into: InjectableHeader})
-export function ContentForHeader(props) {
-	let {children, ...childProps} = props
-	let Component = HeaderInjector(function() { return children })
-	return <Component {...childProps} />
+	const HeaderInjector = Injector({into: InjectableHeader})
+	ContentForHeader = function(props) {
+		let {children, ...childProps} = props
+		let Component = HeaderInjector(function() { return children })
+		return <Component {...childProps} />
+	}
 }
+
+export default InjectableHeader
+export {ContentForHeader}
