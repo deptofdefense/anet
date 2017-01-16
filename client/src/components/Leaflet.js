@@ -68,6 +68,7 @@ export default class Leaflet extends Component {
 		let state = this.state;
 		state.map = map;
 		state.layerControl = layerControl;
+		state.markerLayer = L.featureGroup([]).addTo(map)
 		this.setState(state);
 
 		this.tryAddLayers()
@@ -87,7 +88,12 @@ export default class Leaflet extends Component {
 
 	componentWillReceiveProps(nextProps) {
 		this.tryAddLayers()
-		this.updateMarkerLayer(nextProps.markers)
+
+		let existingMarkers = this.state.markerLayer.getLayers();
+		let markersToAdd = nextProps.markers.filter(m =>
+			existingMarkers.findIndex(el => el.options.id === m.id) === -1
+		)
+		this.updateMarkerLayer(markersToAdd)
 	}
 
 	@autobind
@@ -95,25 +101,23 @@ export default class Leaflet extends Component {
 		markers = markers || [];
 
 		let newMarkers = []
-		this.props.markers.forEach(m => {
-			console.log("adding", m)
-			let latLng = [m.lat, m.lng]
-			let marker = L.marker(latLng, {icon: this.icon})
+		let markerLayer = this.state.markerLayer;
+		markers.forEach(m => {
+			let latLng = (m.lat && m.lng) ? [m.lat, m.lng] : this.state.map.getCenter()
+			let marker = L.marker(latLng, {icon: this.icon, draggable: (m.draggable || false), id: m.id})
 				.bindPopup(m.name)
+			if (m.onMove) {
+				marker.on("move", m.onMove);
+			}
 			newMarkers.push(marker);
+			markerLayer.addLayer(marker);
 		})
 
-		let newMarkerLayer = L.featureGroup(newMarkers)
-
-		if (this.state.markerLayer) {
-			this.state.map.removeLayer(this.state.markerLayer)
-		}
 		if (newMarkers.length > 0) {
-			newMarkerLayer.addTo(this.state.map)
-			this.state.map.fitBounds(newMarkerLayer.getBounds(), {maxZoom: 15});
+			if (markerLayer.getBounds() && markerLayer.getBounds().isValid()) {
+				this.state.map.fitBounds(markerLayer.getBounds(), {maxZoom: 15});
+			}
 		}
-
-		this.setState({markerLayer: newMarkerLayer})
 	}
 
 	@autobind
@@ -160,8 +164,6 @@ export default class Leaflet extends Component {
 	moveEnd(event) {
 		let map = this.state.map;
 		let center = map.getCenter()
-		console.log(map.getCenter())
-
 		this.setState({map, center: [center.lat, center.lng].join(',')})
 	}
 
