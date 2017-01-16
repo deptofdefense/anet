@@ -173,7 +173,7 @@ export default class ReportShow extends Page {
 					<fieldset>
 						<legend>Report #{report.id}</legend>
 
-						<Form.Field id="intent" label="Subject" />
+						<Form.Field id="intent" label="Purpose" />
 						<Form.Field id="engagementDate" label="Date 📆" getter={date => moment(date).format("L")} />
 						<Form.Field id="location" label="Location 📍">
 							{report.location && <LinkTo location={report.location} />}

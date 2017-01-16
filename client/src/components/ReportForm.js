@@ -53,7 +53,7 @@ export default class ReportForm extends Component {
 			<fieldset>
 				<legend>Engagement Details<small>Required</small></legend>
 
-				<Form.Field id="intent" label="Meeting subject" placeholder="What happened?" data-focus>
+				<Form.Field id="intent" label="Meeting purpose" placeholder="What happened?" data-focus>
 					<Form.Field.ExtraCol>{250 - report.intent.length} characters remaining</Form.Field.ExtraCol>
 				</Form.Field>
 
