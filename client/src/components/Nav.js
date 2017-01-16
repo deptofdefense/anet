@@ -28,7 +28,7 @@ export default class extends Component {
 				<NavDropdown title="Organizations" id="organizations">
 					{Organization.map(organizations, org =>
 						<LinkTo organization={org} componentClass={Link} key={org.id}>
-							<MenuItem>{org.name}</MenuItem>
+							<MenuItem>{org.shortName}</MenuItem>
 						</LinkTo>
 					)}
 				</NavDropdown>

@@ -17,7 +17,7 @@ import mil.dds.anet.utils.DaoUtils;
 
 public class OrganizationDao implements IAnetDao<Organization> {
 
-	private static String[] fields = {"id", "name", "type", "createdAt", "updatedAt", "parentOrgId"};
+	private static String[] fields = {"id", "shortName", "longName", "type", "createdAt", "updatedAt", "parentOrgId"};
 	private static String tableName = "organizations";
 	public static String ORGANIZATION_FIELDS = DaoUtils.buildFieldAliases(tableName, fields);
 	
@@ -88,8 +88,8 @@ public class OrganizationDao implements IAnetDao<Organization> {
 		org.setUpdatedAt(org.getCreatedAt());
 		
 		GeneratedKeys<Map<String,Object>> keys = dbHandle.createStatement(
-				"INSERT INTO organizations (name, type, createdAt, updatedAt, parentOrgId) " + 
-				"VALUES (:name, :type, :createdAt, :updatedAt, :parentOrgId)")
+				"INSERT INTO organizations (shortName, longName, type, createdAt, updatedAt, parentOrgId) " + 
+				"VALUES (:shortName, :longName, :type, :createdAt, :updatedAt, :parentOrgId)")
 			.bindFromProperties(org)
 			.bind("type", DaoUtils.getEnumId(org.getType()))
 			.bind("parentOrgId", DaoUtils.getId(org.getParentOrg()))
@@ -102,7 +102,8 @@ public class OrganizationDao implements IAnetDao<Organization> {
 	public int update(Organization org) {
 		org.setUpdatedAt(DateTime.now());
 		int numRows = dbHandle.createStatement("UPDATE organizations "
-				+ "SET name = :name, type = :type, updatedAt = :updatedAt, parentOrgid = :parentOrgId where id = :id")
+				+ "SET shortName = :shortName, longName = :longName, type = :type, "
+				+ "updatedAt = :updatedAt, parentOrgid = :parentOrgId where id = :id")
 				.bindFromProperties(org)
 				.bind("type", DaoUtils.getEnumId(org.getType()))
 				.bind("parentOrgId", DaoUtils.getId(org.getParentOrg()))

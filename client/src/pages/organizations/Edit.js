@@ -26,8 +26,8 @@ export default class OrganizationEdit extends Page {
 	fetchData(props) {
 		API.query(/*GraphQL*/ `
 			organization(id:${props.params.id}) {
-				id, name, type,
-				parentOrg { id, name }
+				id, shortName, longName, type,
+				parentOrg { id, shortName, longName }
 				approvalSteps { id,
 					approverGroup { id, name,
 						members { id, name}
@@ -46,10 +46,10 @@ export default class OrganizationEdit extends Page {
 		return (
 			<div>
 				<ContentForHeader>
-					<h2>Edit {organization.name}</h2>
+					<h2>Edit {organization.shortName}</h2>
 				</ContentForHeader>
 
-				<Breadcrumbs items={[[`Edit ${organization.name}`, `/organizations/${organization.id}/edit`]]} />
+				<Breadcrumbs items={[[`Edit ${organization.shortName}`, `/organizations/${organization.id}/edit`]]} />
 				<OrganizationForm
 					organization={organization}
 					onChange={this.onChange}

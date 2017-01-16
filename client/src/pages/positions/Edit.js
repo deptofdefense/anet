@@ -29,7 +29,7 @@ export default class PositionEdit extends Page {
 				id, name, code, type
 				location { id, name },
 				associatedPositions { id, name  },
-				organization {id, name, type},
+				organization {id, shortName, longName, type},
 				person { id, name}
 			}
 		`).then(data => {

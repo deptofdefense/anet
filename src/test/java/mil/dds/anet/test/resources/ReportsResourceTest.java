@@ -331,7 +331,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		assertThat(results.size()).isGreaterThan(0);
 		Organization ef1 = null;
 		for (Organization org : results) {
-			if (org.getName().trim().equalsIgnoreCase("ef1.1")) {
+			if (org.getShortName().trim().equalsIgnoreCase("ef1.1")) {
 				billet.setOrganization(Organization.createWithId(org.getId()));
 				ef1 = org;
 				break;
@@ -396,7 +396,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
         returned.setLocation(loc);
         returned.setAttendees(ImmutableList.of(PersonTest.personToPrimaryReportPerson(roger), PersonTest.personToReportPerson(nick), PersonTest.personToPrimaryReportPerson(elizabeth)));
         returned.setPoams(ImmutableList.of());
-        Response resp = httpQuery("/api/reports/" + returned.getId() + "/edit", elizabeth).post(Entity.json(returned));
+        Response resp = httpQuery("/api/reports/update", elizabeth).post(Entity.json(returned));
         assertThat(resp.getStatus()).isEqualTo(200);
 
         //Verify the report changed
@@ -421,7 +421,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
         returned3.setReportText(r.getReportText() + ", edited by Bob!!");
         returned3.setAttendees(ImmutableList.of(PersonTest.personToPrimaryReportPerson(nick), PersonTest.personToPrimaryReportPerson(elizabeth)));
         returned3.setPoams(ImmutableList.of(poamSearchResults.get(1), poamSearchResults.get(2)));
-        resp = httpQuery("/api/reports/" + returned.getId() + "/edit", bob).post(Entity.json(returned3));
+        resp = httpQuery("/api/reports/update", bob).post(Entity.json(returned3));
         assertThat(resp.getStatus()).isEqualTo(200);
         
         Report returned4 = httpQuery("/api/reports/" + returned.getId(), elizabeth).get(Report.class);
@@ -496,8 +496,8 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		//Search by direct organization
 		List<Organization> orgs = httpQuery("/api/organizations/search?type=ADVISOR_ORG&text=EF1", jack).get(new GenericType<List<Organization>>() {});
 		assertThat(orgs.size()).isGreaterThan(0);
-		Organization ef11 = orgs.stream().filter(o -> o.getName().equals("EF1.1")).findFirst().get();
-		assertThat(ef11.getName()).isEqualToIgnoringCase("EF1.1");
+		Organization ef11 = orgs.stream().filter(o -> o.getShortName().equals("EF1.1")).findFirst().get();
+		assertThat(ef11.getShortName()).isEqualToIgnoringCase("EF1.1");
 
 		query.setPoamId(null);
 		query.setAuthorOrgId(ef11.getId());
@@ -511,8 +511,8 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		//Search by parent organization
 		orgs = httpQuery("/api/organizations/search?type=ADVISOR_ORG&text=ef1", jack).get(new GenericType<List<Organization>>() {});
 		assertThat(orgs.size()).isGreaterThan(0);
-		Organization ef1 = orgs.stream().filter(o -> o.getName().equalsIgnoreCase("ef1")).findFirst().get();
-		assertThat(ef1.getName()).isEqualToIgnoringCase("EF1");
+		Organization ef1 = orgs.stream().filter(o -> o.getShortName().equalsIgnoreCase("ef1")).findFirst().get();
+		assertThat(ef1.getShortName()).isEqualToIgnoringCase("EF1");
 
 		query.setPoamId(null);
 		query.setAuthorOrgId(ef1.getId());

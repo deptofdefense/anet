@@ -42,10 +42,10 @@ export default class Search extends Page {
 		API.query(/*GraphQL */ `
 			searchResults(f:search, q:"${query}") {
 				reports { id, intent, engagementDate, keyOutcomesSummary, nextStepsSummary
-					primaryAdvisor { id, name, position { organization { id, name}}},
-					primaryPrincipal { id, name, position { organization { id, name}}},
-					advisorOrg { id, name},
-					principalOrg { id, name},
+					primaryAdvisor { id, name, position { organization { id, shortName}}},
+					primaryPrincipal { id, name, position { organization { id, shortName}}},
+					advisorOrg { id, shortName},
+					principalOrg { id, shortName},
 					location { id, name},
 					poams {id, shortName, longName}
 				},
@@ -53,7 +53,7 @@ export default class Search extends Page {
 				positions { id , name, type}
 				poams { id, shortName, longName}
 				locations { id, name, lat, lng}
-				organizations { id, name }
+				organizations { id, shortName, longName }
 			}
 		`).then(data => this.setState({results: data.searchResults}))
 	}
@@ -194,6 +194,7 @@ export default class Search extends Page {
 			<thead>
 				<tr>
 					<th>Name</th>
+					<th>Description</th>
 					<th>Type</th>
 				</tr>
 			</thead>
@@ -201,6 +202,7 @@ export default class Search extends Page {
 				{Organization.map(this.state.results.organizations, org =>
 					<tr key={org.id}>
 						<td><LinkTo organization={org} /></td>
+						<td>{org.longName}</td>
 						<td>{org.type}</td>
 					</tr>
 				)}

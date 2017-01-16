@@ -29,7 +29,7 @@ export default class PositionShow extends Page {
 		API.query(/* GraphQL */`
 			position(id:${props.params.id}) {
 				id, name, type, code,
-				organization { id, name },
+				organization { id, shortName, longName },
 				person { id, name, rank },
 				associatedPositions {
 					id, name,
@@ -77,7 +77,7 @@ export default class PositionShow extends Page {
 
 						{position.organization && <Form.Field id="org" label="Organization" >
 							<Link to={Organization.pathFor(position.organization)}>
-								{position.organization.name}
+								{position.organization.shortName} {position.organization.longName}
 							</Link>
 						</Form.Field>}
 

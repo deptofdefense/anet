@@ -7,9 +7,9 @@ import Form from 'components/Form'
 import Autocomplete from 'components/Autocomplete'
 import {Position} from 'models'
 
-export default class PositionForm extends Component { 
+export default class PositionForm extends Component {
 	static propTypes = {
-		position: React.PropTypes.object, 
+		position: React.PropTypes.object,
 		onChange: React.PropTypes.func,
 		onSubmit: React.PropTypes.func,
 		edit: React.PropTypes.bool,
@@ -17,7 +17,7 @@ export default class PositionForm extends Component {
 		error: React.PropTypes.object,
 	}
 
-	constructor(props) { 
+	constructor(props) {
 		super(props);
 
 		this.state = {
@@ -25,26 +25,26 @@ export default class PositionForm extends Component {
 		}
 	}
 
-	componentWillReceiveProps(props) { 
+	componentWillReceiveProps(props) {
 		this.setState({position: props.position})
 	}
 
-	render() { 
+	render() {
 		let {onChange, onSubmit, actionText, error} = this.props
 		let position = this.state.position;
 		let relationshipPositionType = (position.type === "ADVISOR") ? "PRINCIPAL" : "ADVISOR";
 
-		//TODO: only allow you to set positon to admin if you are an admin. 
+		//TODO: only allow you to set positon to admin if you are an admin.
 
-		return <Form formFor={position} onChange={onChange} 
-				onSubmit={onSubmit} horizontal 
+		return <Form formFor={position} onChange={onChange}
+				onSubmit={onSubmit} horizontal
 				actionText={actionText} >
 			{error && <fieldset><p>There was a problem saving this position</p><p>{error}</p></fieldset>}
 			<fieldset>
 				<legend>Create a new Position</legend>
 
 				<Form.Field id="organization" >
-					<Autocomplete valueKey="name"
+					<Autocomplete valueKey="shortName"
 						placeholder="Select the organization for this position"
 						url="/api/organizations/search"
 					/>
@@ -76,12 +76,12 @@ export default class PositionForm extends Component {
 				<legend>Assigned Position Relationships</legend>
 
 				<Form.Field id="associatedPositions">
-					<Autocomplete 
-						placeholder="Assign new Position Relationship" 
-						url="/api/positions/search" 
-						valueKey="name" 
-						onChange={this.addPositionRelationship} 
-						clearOnSelect={true} 
+					<Autocomplete
+						placeholder="Assign new Position Relationship"
+						url="/api/positions/search"
+						valueKey="name"
+						onChange={this.addPositionRelationship}
+						clearOnSelect={true}
 						urlParams={"&type=" + relationshipPositionType} />
 
 					<Table hover striped>
@@ -118,23 +118,23 @@ export default class PositionForm extends Component {
 	}
 
 	@autobind
-	addPositionRelationship(newRelatedPos)  { 
+	addPositionRelationship(newRelatedPos)  {
 		let position = this.state.position
 		let rels = position.associatedPositions;
 
-		if (!rels.find(relPos => relPos.id === newRelatedPos.id)) { 
+		if (!rels.find(relPos => relPos.id === newRelatedPos.id)) {
 			rels.push(new Position(newRelatedPos))
 		}
 		this.setState({position})
 	}
 
 	@autobind
-	removePositionRelationship(relToDelete) { 
+	removePositionRelationship(relToDelete) {
 		let position = this.state.position;
 		let rels = position.associatedPositions;
 		let index = rels.findIndex(rel => rel.id === relToDelete.id)
 
-		if (index !== -1) { 
+		if (index !== -1) {
 			rels.splice(index, 1)
 			this.setState({position})
 		}

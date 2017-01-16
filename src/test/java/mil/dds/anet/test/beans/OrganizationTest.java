@@ -9,7 +9,8 @@ public class OrganizationTest extends BeanTester<Organization> {
 
 	public static Organization getTestAO() { 
 		Organization ao = new Organization();
-		ao.setName("The Best Advisors Ever");
+		ao.setShortName("TBAE");
+		ao.setLongName("The Best Advisors Ever");
 		ao.setType(OrganizationType.ADVISOR_ORG);
 		return ao;
 	}

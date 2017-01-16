@@ -453,4 +453,26 @@
 			ALTER FULLTEXT INDEX ON reports ADD (keyOutcomesSummary, keyOutcomes, nextStepsSummary)
 		</sql>
 	</changeSet>
+
+	<changeSet id="16" author="hpitelka" >
+		<addColumn tableName="organizations">
+			<column name="longName" type="text" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="17" author="hpitelka" dbms="mssql" >
+		<renameColumn 
+			columnDataType="varchar(255)" 
+			oldColumnName="name" 
+			newColumnName="shortName" 
+			tableName="organizations" />
+	</changeSet>
+
+	<changeSet id="18" author="hpitelka" dbms="sqlite" >
+		<!-- sqlite doesn't support rename column, so drop and add a new column -->
+		<addColumn tableName="organizations">
+			<column name="shortName" type="varchar(255)" />
+		</addColumn>
+		<dropColumn tableName="organizations" columnName="name" />
+	</changeSet>
 </databaseChangeLog>

@@ -92,7 +92,7 @@ public class PersonResourceTest extends AbstractResourceTest {
 		
 		List<Organization> orgs = httpQuery("/api/organizations/search?text=EF1&type=ADVISOR_ORG", jack).get(new GenericType<List<Organization>>() {});
 		assertThat(orgs.size()).isGreaterThan(0);
-		Organization org = orgs.stream().filter(o -> o.getName().equalsIgnoreCase("EF1.1")).findFirst().get();
+		Organization org = orgs.stream().filter(o -> o.getShortName().equalsIgnoreCase("EF1.1")).findFirst().get();
 		
 		query.setText(null);
 		query.setOrgId(org.getId());
@@ -100,7 +100,7 @@ public class PersonResourceTest extends AbstractResourceTest {
 		assertThat(searchResults).isNotEmpty();
 		
 		//Search with children orgs
-		org = orgs.stream().filter(o -> o.getName().equalsIgnoreCase("EF1")).findFirst().get();
+		org = orgs.stream().filter(o -> o.getShortName().equalsIgnoreCase("EF1")).findFirst().get();
 		query.setOrgId(org.getId());
 		//First don't include child orgs and then increase the scope and verify results increase.
 		List<Person> parentOnlyResults = httpQuery("/api/people/search", jack).post(Entity.json(query), new GenericType<List<Person>>() {});
