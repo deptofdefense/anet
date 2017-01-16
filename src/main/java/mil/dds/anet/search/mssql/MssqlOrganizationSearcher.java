@@ -40,7 +40,7 @@ public class MssqlOrganizationSearcher implements IOrganizationSearcher {
 		
 		sql.append(Joiner.on(" AND ").join(whereClauses));
 		
-		sql.append(" OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY)");
+		sql.append(" ORDER BY createdAt DESC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY)");
 		
 		return dbHandle.createQuery(sql.toString())
 			.bindFromMap(sqlArgs)

@@ -42,7 +42,6 @@ public class AnetAuthenticationFilter implements ContainerRequestFilter, Authori
 			if (matches.size() == 0) { 
 				//First time this user has ever logged in. 
 				person = new Person();
-				person.setName(domainUsername);
 				person.setDomainUsername(domainUsername);
 				person.setRole(Role.ADVISOR);
 				person.setStatus(Person.Status.NEW_USER);
