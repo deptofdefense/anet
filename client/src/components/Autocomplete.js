@@ -29,6 +29,7 @@ export default class Autocomplete extends Component {
 
 		this.state = {
 			suggestions: [],
+			noSuggestions: false,
 			value: value,
 			stringValue: this.getStringValue(value),
 		}
@@ -56,8 +57,8 @@ export default class Autocomplete extends Component {
 		let inputProps = Object.without(this.props, 'url', 'clearOnSelect', 'valueKey', 'template', 'urlParams')
 		inputProps.value = this.state.stringValue
 		inputProps.onChange = this.onInputChange
-
-		return (
+		console.log(this.state.noSuggestions);
+		return <div>
 			<Autosuggest
 				suggestions={this.state.suggestions}
 				onSuggestionsFetchRequested={this.fetchSuggestionsDebounced}
@@ -69,7 +70,8 @@ export default class Autocomplete extends Component {
 				renderSuggestion={this.renderSuggestion}
 				focusInputOnSuggestionClick={false}
 			/>
-		)
+			{this.state.noSuggestions && <div>No suggestions found</div>}
+		</div>
 	}
 
 	@autobind
@@ -89,9 +91,9 @@ export default class Autocomplete extends Component {
 	@autobind
 	fetchSuggestions(value) {
 		if (this.props.url) {
-            if(value.value.length < 2) {
-				this.setState({suggestions: []})
-				return;
+            if(value.value.trim().length < 2) {
+				this.setState({suggestions: [], noSuggestions: false})
+				return
             }
 			let url = this.props.url + '?text=' + value.value
 			if (this.props.urlParams) {
@@ -107,7 +109,8 @@ export default class Autocomplete extends Component {
 				if (selectedIds)
 					data = data.filter(suggestion => suggestion && suggestion.id && selectedIds.indexOf(suggestion.id) === -1)
 
-				this.setState({suggestions: data})
+				let noSuggstions = data.length === 0
+				this.setState({suggestions: data, noSuggstions})
 			})
 		}
 	}
