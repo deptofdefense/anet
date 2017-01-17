@@ -19,8 +19,11 @@ const FORMAT_EXSUM = 'exsum'
 const FORMAT_TABLE = 'table'
 
 export default class Search extends Page {
+
 	constructor(props) {
 		super(props)
+
+
 		this.state = {
 			query: props.location.query.q,
 			viewFormat: FORMAT_EXSUM,
@@ -41,30 +44,78 @@ export default class Search extends Page {
 	}
 
 	fetchData(props) {
+		let reportFields = `id, intent, engagementDate, keyOutcomesSummary, nextStepsSummary
+			primaryAdvisor { id, name, role, position { organization { id, shortName}}},
+			primaryPrincipal { id, name, role, position { organization { id, shortName}}},
+			advisorOrg { id, shortName},
+			principalOrg { id, shortName},
+			location { id, name},
+			poams {id, shortName, longName}`
+
+		let peopleFields = "id, name, rank, emailAddress, role , position { id, name, organization { id, shortName} }";
+
+		let positionFields = "id , name, type, organization { id, shortName}, person { id, name }"
+		let poamFields = "id, shortName, longName"
+		let locationFields = "id, name, lat, lng"
+		let organizationFields = "id, shortName, longName"
+
 		let query = props.location.query.q
-		this.setState({query})
-		//TODO: escape query in the graphQL query
-		API.query(/*GraphQL */ `
-			searchResults(f:search, q:"${query}") {
-				reports { id, intent, engagementDate, keyOutcomesSummary, nextStepsSummary
-					primaryAdvisor { id, name, role, position { organization { id, shortName}}},
-					primaryPrincipal { id, name, role, position { organization { id, shortName}}},
-					advisorOrg { id, shortName},
-					principalOrg { id, shortName},
-					location { id, name},
-					poams {id, shortName, longName}
-				},
-				people { id, name, rank, emailAddress, role , position { id, name, organization { id, shortName} }}
-				positions { id , name, type, organization { id, shortName}, person { id, name } }
-				poams { id, shortName, longName}
-				locations { id, name, lat, lng}
-				organizations { id, shortName, longName }
+		let type = props.location.query.type
+		let advQuery = null
+		if (!query && type) {
+			advQuery = Object.without(props.location.query, "type")
+			type = (type === "people") ? "persons" : type;
+
+			let graphQl = type + '(f:search, query: $query) {'
+			let variableDef = "($query: ";
+			if (type === "reports" ) {
+				graphQl += reportFields
+				variableDef += "ReportSearchQuery)";
+			} else if (type === "persons") {
+				graphQl += peopleFields
+				variableDef += "PersonSearchQuery)";
+			} else if (type === "positions" ) {
+				graphQl += positionFields
+				variableDef += "PositionSearchQuery)";
+			} else if (type === "poams") {
+				graphQl += poamFields
+				variableDef += "PoamSearchQuery)";
+			} else if (type === "locations") {
+				graphQl += locationFields
+				variableDef += "LocationSearchQuery)";
+			} else if (type === "organizations") {
+				graphQl += organizationFields
+				variableDef += "OrganizationSearchQuery)";
 			}
-		`).then(data =>
-			this.setState({results: data.searchResults})
-		).catch(response => {
-			this.setState({error: response})
-		})
+			graphQl += "}"
+
+			API.query(graphQl, { query: advQuery}, variableDef ).then( data => {
+				if (type === "persons") {
+					data.people = data.persons
+					delete data.persons
+				}
+				this.setState({results: data})
+			}).catch(response =>
+				this.setState({error: response})
+			)
+		} else {
+			this.setState({query})
+			//TODO: escape query in the graphQL query
+			API.query(/*GraphQL */ `
+				searchResults(f:search, q:"${query}") {
+					reports { ` + reportFields +  `},
+					people { ` + peopleFields + `}
+					positions { ` + positionFields + `}
+					poams { ` + poamFields + `}
+					locations { id, name, lat, lng}
+					organizations { id, shortName, longName }
+				}
+			`).then(data =>
+				this.setState({results: data.searchResults})
+			).catch(response => {
+				this.setState({error: response})
+			})
+		}
 	}
 
 	static pageProps = {

@@ -81,9 +81,10 @@ const API = {
 		return promise
 	},
 
-	query(query, variables) {
-		query = 'query { ' + query + ' }'
+	query(query, variables, variableDef ) {
 		variables = variables || {}
+		variableDef = variableDef || ""
+		query = 'query ' + variableDef + ' { ' + query + ' }'
 		return API.send('/graphql', {query, variables}).then(json => json.data)
 	},
 
