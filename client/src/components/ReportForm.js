@@ -9,6 +9,7 @@ import DatePicker from 'react-bootstrap-date-picker'
 import RadioGroup from 'components/RadioGroup'
 import PoamsSelector from 'components/PoamsSelector'
 import LinkTo from 'components/LinkTo'
+import History from 'components/History'
 
 import API from 'api'
 import {Report, Person} from 'models'
@@ -286,18 +287,19 @@ export default class ReportForm extends Component {
 		event.stopPropagation()
 		event.preventDefault()
 
-		let report = this.state.report
+		let report = this.props.report
 
 		if(report.primaryAdvisor) { report.attendees.find(a => a.id === report.primaryAdvisor.id).isPrimary = true }
 		if(report.primaryPrincipal) { report.attendees.find(a => a.id === report.primaryPrincipal.id).isPrimary = true }
 
 		delete report.primaryPrincipal
 		delete report.primaryAdvisor
+		delete report.cancelled
 
 		let url = `/api/reports/${this.props.edit ? 'update' : 'new'}`
 		API.send(url, report)
 			.then(response => {
-				History.push(Report.pathFor(report))
+				History.push(Report.pathFor(response))
 				window.scrollTo(0, 0)
 			})
 			.catch(response => {
