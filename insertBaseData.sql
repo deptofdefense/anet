@@ -24,6 +24,7 @@ TRUNCATE TABLE positionRelationships;
 TRUNCATE TABLE reportPoams;
 TRUNCATE TABLE reportPeople;
 TRUNCATE TABLE comments;
+TRUNCATE TABLE savedSearches;
 DELETE FROM positions;
 DELETE FROM poams;
 DELETE FROM reports;

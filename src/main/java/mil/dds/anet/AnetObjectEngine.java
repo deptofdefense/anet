@@ -18,6 +18,7 @@ import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.geo.Location;
+import mil.dds.anet.beans.search.SavedSearch;
 import mil.dds.anet.database.AdminDao;
 import mil.dds.anet.database.AdminDao.AdminSettingKeys;
 import mil.dds.anet.database.ApprovalActionDao;
@@ -31,6 +32,7 @@ import mil.dds.anet.database.PersonDao;
 import mil.dds.anet.database.PoamDao;
 import mil.dds.anet.database.PositionDao;
 import mil.dds.anet.database.ReportDao;
+import mil.dds.anet.database.SavedSearchDao;
 import mil.dds.anet.database.TestingDao;
 import mil.dds.anet.search.ISearcher;
 import mil.dds.anet.search.mssql.MssqlSearcher;
@@ -54,6 +56,7 @@ public class AnetObjectEngine {
 	ReportDao reportDao;
 	CommentDao commentDao;
 	AdminDao adminDao;
+	SavedSearchDao savedSearchDao;
 
 	ISearcher searcher;
 	
@@ -76,6 +79,7 @@ public class AnetObjectEngine {
 		reportDao = new ReportDao(dbHandle);
 		commentDao = new CommentDao(dbHandle);
 		adminDao = new AdminDao(dbHandle);
+		savedSearchDao = new SavedSearchDao(dbHandle);
 		
 		daoMap = new HashMap<Class<? extends AbstractAnetBean>, IAnetDao<?>>();
 		daoMap.put(Person.class, personDao);
@@ -89,6 +93,7 @@ public class AnetObjectEngine {
 //		daoMap.put(ApprovalAction.class, approvalActionDao);
 		daoMap.put(Report.class, reportDao);
 		daoMap.put(Comment.class, commentDao);
+		daoMap.put(SavedSearch.class, savedSearchDao);
 		
 		instance = this;
 		
@@ -146,6 +151,10 @@ public class AnetObjectEngine {
 	
 	public AdminDao getAdminDao() { 
 		return adminDao;
+	}
+	
+	public SavedSearchDao getSavedSearchDao() { 
+		return savedSearchDao;
 	}
 	
 	public ISearcher getSearcher() {

@@ -20,6 +20,7 @@ import mil.dds.anet.test.resources.PersonResourceTest;
 import mil.dds.anet.test.resources.PoamResourceTest;
 import mil.dds.anet.test.resources.PositionResourceTest;
 import mil.dds.anet.test.resources.ReportsResourceTest;
+import mil.dds.anet.test.resources.SavedSearchResourceTest;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
@@ -40,7 +41,8 @@ import mil.dds.anet.test.resources.ReportsResourceTest;
   ApprovalStepResourceTest.class,
   ReportsResourceTest.class,
   RandomTests.class,
-  GraphQLResourceTest.class
+  GraphQLResourceTest.class,
+  SavedSearchResourceTest.class
 })
 
 public class AnetTestSuite {

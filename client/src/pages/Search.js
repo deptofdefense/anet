@@ -2,16 +2,18 @@ import React from 'react'
 import Page from 'components/Page'
 import moment from 'moment'
 
-import {Radio, Table} from 'react-bootstrap'
+import {Alert, Radio, Table, DropdownButton, MenuItem, Modal, Button} from 'react-bootstrap'
 import {Link} from 'react-router'
 
 import RadioGroup from 'components/RadioGroup'
 import Breadcrumbs from 'components/Breadcrumbs'
 import LinkTo from 'components/LinkTo'
 import ReportSummary from 'components/ReportSummary'
+import Form from 'components/Form'
 
 import API from 'api'
 import {Report, Person, Organization, Position, Poam} from 'models'
+import autobind from 'autobind-decorator'
 
 const FORMAT_EXSUM = 'exsum'
 const FORMAT_TABLE = 'table'
@@ -22,6 +24,7 @@ export default class Search extends Page {
 		this.state = {
 			query: props.location.query.q,
 			viewFormat: FORMAT_EXSUM,
+			saveSearch: {show: false},
 			results: {
 				reports: [],
 				people: [],
@@ -29,7 +32,8 @@ export default class Search extends Page {
 				positions: [],
 				location: [],
 				poams: []
-			}
+			},
+			error: null
 		}
 
 		this.changeViewFormat = this.changeViewFormat.bind(this)
@@ -80,15 +84,24 @@ export default class Search extends Page {
 			<div>
 				<Breadcrumbs items={[['Searching for "' + this.state.query + '"', '/search']]} />
 
+				{this.state.error && <Alert bsStyle="danger">
+					{this.state.error.message}
+				</Alert>}
+
 				{results.reports && results.reports.length > 0 &&
 				<fieldset>
-					<legend>
+						<legend>
 						Reports
 						<RadioGroup value={this.state.viewFormat} onChange={this.changeViewFormat} className="pull-right">
 							<Radio value={FORMAT_EXSUM}>EXSUM</Radio>
 							<Radio value={FORMAT_TABLE}>Table</Radio>
 						</RadioGroup>
 					</legend>
+					<div className="pull-right">
+						<DropdownButton bsStyle="primary" title="Actions" id="actions" onSelect={this.actionSelect}>
+							<MenuItem eventKey="saveReportSearch">Save Search</MenuItem>
+						</DropdownButton>
+					</div><br /><br/>
 					{this.state.viewFormat === FORMAT_TABLE ? this.renderTable() : this.renderExsums()}
 				</fieldset>
 				}
@@ -128,6 +141,7 @@ export default class Search extends Page {
 					</fieldset>
 				}
 
+			{this.state.saveSearch.show && this.renderSaveModal() }
 			</div>
 		)
 	}
@@ -154,7 +168,6 @@ export default class Search extends Page {
 	}
 
 	renderExsums() {
-		console.log(this.state.results.reports)
 		return <Table responsive>
 			<tbody>
 				{this.state.results.reports.map(report =>
@@ -272,7 +285,60 @@ export default class Search extends Page {
 
 	}
 
+	renderSaveModal() {
+		return <Modal show={this.state.saveSearch.show} onHide={this.closeSaveModal}>
+			<Modal.Header closeButton>
+				<Modal.Title>Save Search</Modal.Title>
+			</Modal.Header>
+
+			<Modal.Body>
+				<Form formFor={this.state.saveSearch} onChange={this.onChangeSaveSearch}
+						onSubmit={this.onSubmitSaveSearch} submitText={false}>
+					<Form.Field id="name" placeholder="Give this saved search a name" />
+					<Button type="submit" bsStyle="primary">Save</Button>
+				</Form>
+			</Modal.Body>
+		</Modal>
+	}
+
 	changeViewFormat(newFormat) {
 		this.setState({viewFormat: newFormat})
+	}
+
+	@autobind
+	onChangeSaveSearch() {
+		let search = this.state.saveSearch;
+		this.setState({saveSearch: search})
+	}
+
+	@autobind
+	onSubmitSaveSearch(event) {
+		console.log("save!")
+		event.stopPropagation()
+		event.preventDefault()
+
+		let search = Object.without(this.state.saveSearch, "show")
+
+		API.send('/api/search/save', search, {disableSubmits: true})
+			.then(response => {
+				if (response.code) throw response.code
+				console.log('save successful')
+			}).catch(response => {
+				this.setState({error: response})
+				window.scrollTo(0, 0)
+			})
+	}
+
+	@autobind
+	actionSelect(eventKey) {
+		if (eventKey === "saveReportSearch") {
+			//show modal
+			this.setState({saveSearch: {show: true, name: '', type: "reports"}});
+		}
+	}
+
+	@autobind
+	closeSaveModal() {
+		this.setState({saveSearch: {show: false}});
 	}
 }
