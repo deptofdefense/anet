@@ -38,8 +38,12 @@ const API = {
 							return respBody
 						}
 
-						if (!isOk)
+						if (!isOk) {
+							if (response.status === 500) {
+								response.message = "An Error occured! Please contact the administrator and let them know what you were doing to get this error"
+							}
 							response = Promise.reject(response)
+						}
 
 						return response
 					})

@@ -3,7 +3,7 @@ import {Grid, Row, Col} from 'react-bootstrap'
 import {Link} from 'react-router'
 
 import LinkTo from 'components/LinkTo'
-import {Report, Poam, Person, Organization} from 'models'
+import {Report, Person, Organization} from 'models'
 
 import moment from 'moment'
 

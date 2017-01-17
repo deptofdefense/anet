@@ -33,7 +33,8 @@ export default class Search extends Page {
 				location: [],
 				poams: []
 			},
-			error: null
+			error: null,
+			success: null
 		}
 
 		this.changeViewFormat = this.changeViewFormat.bind(this)
@@ -59,7 +60,11 @@ export default class Search extends Page {
 				locations { id, name, lat, lng}
 				organizations { id, shortName, longName }
 			}
-		`).then(data => this.setState({results: data.searchResults}))
+		`).then(data =>
+			this.setState({results: data.searchResults})
+		).catch(response => {
+			this.setState({error: response})
+		})
 	}
 
 	static pageProps = {
@@ -86,6 +91,10 @@ export default class Search extends Page {
 
 				{this.state.error && <Alert bsStyle="danger">
 					{this.state.error.message}
+				</Alert>}
+
+				{this.state.success && <Alert bsStyle="success">
+					{this.state.success}
 				</Alert>}
 
 				{results.reports && results.reports.length > 0 &&
@@ -313,18 +322,25 @@ export default class Search extends Page {
 
 	@autobind
 	onSubmitSaveSearch(event) {
-		console.log("save!")
 		event.stopPropagation()
 		event.preventDefault()
 
 		let search = Object.without(this.state.saveSearch, "show")
+		search.query = "q=" + this.props.location.query.q
 
-		API.send('/api/search/save', search, {disableSubmits: true})
+		API.send('/api/savedSearches/new', search, {disableSubmits: true})
 			.then(response => {
 				if (response.code) throw response.code
-				console.log('save successful')
+				this.setState({
+					success: "Search successfully saved!",
+					saveSearch: {show: false}
+				})
+				window.scrollTo(0, 0)
 			}).catch(response => {
-				this.setState({error: response})
+				this.setState({
+					error: response,
+					saveSearch: { show: false}
+				})
 				window.scrollTo(0, 0)
 			})
 	}
@@ -333,7 +349,7 @@ export default class Search extends Page {
 	actionSelect(eventKey) {
 		if (eventKey === "saveReportSearch") {
 			//show modal
-			this.setState({saveSearch: {show: true, name: '', type: "reports"}});
+			this.setState({saveSearch: {show: true, name: '', objectType: "reports"}});
 		}
 	}
 
