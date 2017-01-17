@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {Component, PropTypes} from 'react'
 import {DropdownButton, MenuItem, Button} from 'react-bootstrap'
 import History from 'components/History'
 import * as Models from 'models'
@@ -20,7 +20,7 @@ const ADMIN_ACTIONS = [
 
 export default class CreateButton extends Component {
 	static contextTypes = {
-		app: React.PropTypes.object,
+		app: PropTypes.object,
 	}
 
 	render() {

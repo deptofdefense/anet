@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 import {Grid, Row, Col} from 'react-bootstrap'
 
@@ -12,17 +12,17 @@ import {Person, Organization} from 'models'
 
 export default class App extends Page {
 	static PagePropTypes = {
-		useNavigation: React.PropTypes.bool,
-		navElement: React.PropTypes.element,
-		fluidContainer: React.PropTypes.bool,
+		useNavigation: PropTypes.bool,
+		navElement: PropTypes.element,
+		fluidContainer: PropTypes.bool,
 	}
 
 	static propTypes = {
-		children: React.PropTypes.element.isRequired,
+		children: PropTypes.element.isRequired,
 	}
 
 	static childContextTypes = {
-		app: React.PropTypes.object,
+		app: PropTypes.object,
 	}
 
 	getChildContext() {

@@ -1,33 +1,33 @@
-import React, {Component} from 'react'
+import React, {Component, PropTypes} from 'react'
 
 import Autocomplete from 'components/Autocomplete'
 import Form from 'components/Form'
 import PoamsSelector from 'components/PoamsSelector'
-import {Button, Table} from 'react-bootstrap'
+import {Button, Table, Alert} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
 export default class OrganizationForm extends Component {
 	static propTypes = {
-		organization: React.PropTypes.object,
-		onChange: React.PropTypes.func,
-		onSubmit: React.PropTypes.func,
-		edit: React.PropTypes.bool,
-		actionText: React.PropTypes.string,
-		error: React.PropTypes.object,
+		organization: PropTypes.object,
+		onChange: PropTypes.func,
+		onSubmit: PropTypes.func,
+		edit: PropTypes.bool,
+		submitText: PropTypes.string,
+		error: PropTypes.object,
 	}
 
 	render() {
-		let {organization, onChange, onSubmit, actionText, error, edit} = this.props
+		let {organization, onChange, onSubmit, submitText, error, edit} = this.props
 
 		return <Form formFor={organization} onChange={onChange}
 			onSubmit={onSubmit} horizontal
-			actionText={actionText}>
+			submitText={submitText}>
 
 			{error &&
-				<fieldset>
-					<p>There was a problem saving this person</p>
-					<p>{error}</p>
-				</fieldset>}
+				<Alert bsStyle="danger">
+					<p>There was a problem saving this organization</p>
+					<p>{error.statusText}: {error.message}</p>
+				</Alert>}
 
 			<fieldset>
 				<legend>{edit ? "Editing " + organization.shortName : "Create a new Organization"}</legend>

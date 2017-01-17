@@ -177,12 +177,13 @@ public class ReportResource implements IGraphQLResource {
 		return Response.ok().build();
 	}
 
-	private void assertCanEditReport(Report report, Person editor) { 
+	private void assertCanEditReport(Report report, Person editor) {
+		String permError = "You do not have permission to edit this report. ";
 		switch (report.getState()) {
 		case DRAFT:
 			//Must be the author
 			if (!report.getAuthor().getId().equals(editor.getId())) {
-				throw new WebApplicationException("Not the Author", Status.FORBIDDEN);
+				throw new WebApplicationException(permError + "Must be the author of this report.", Status.FORBIDDEN);
 			}
 			break;
 		case PENDING_APPROVAL:
@@ -194,12 +195,12 @@ public class ReportResource implements IGraphQLResource {
 			} else {
 				boolean canApprove = engine.canUserApproveStep(editor.getId(), report.getApprovalStep().getId());
 				if (!canApprove) {
-					throw new WebApplicationException("Not the Approver", Status.FORBIDDEN);
+					throw new WebApplicationException(permError + "Must be the author or the current approver", Status.FORBIDDEN);
 				}
 			}
 			break;
 		case RELEASED:
-			throw new WebApplicationException("Cannot edit a released report", Status.FORBIDDEN);
+			throw new WebApplicationException(permError + "Cannot edit a released report", Status.FORBIDDEN);
 		}
 	}
 	

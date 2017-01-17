@@ -1,34 +1,34 @@
-import React, {Component} from 'react'
+import React, {Component, PropTypes} from 'react'
 
 import TextEditor from 'components/TextEditor'
 import Autocomplete from 'components/Autocomplete'
 import Form from 'components/Form'
 import DatePicker from 'react-bootstrap-date-picker'
-import {InputGroup} from 'react-bootstrap'
+import {InputGroup, Alert} from 'react-bootstrap'
 
 export default class PersonForm extends Component {
 	static propTypes = {
-		person: React.PropTypes.object,
-		onChange: React.PropTypes.func,
-		onSubmit: React.PropTypes.func,
-		edit: React.PropTypes.bool,
-		actionText: React.PropTypes.string,
-		error: React.PropTypes.object,
-		showPositionAssignment: React.PropTypes.bool
+		person: PropTypes.object,
+		onChange: PropTypes.func,
+		onSubmit: PropTypes.func,
+		edit: PropTypes.bool,
+		submitText: PropTypes.string,
+		error: PropTypes.object,
+		showPositionAssignment: PropTypes.bool
 	}
 
 	render() {
-		let {person, onChange, onSubmit, actionText, error, edit, showPositionAssignment} = this.props
+		let {person, onChange, onSubmit, submitText, error, edit, showPositionAssignment} = this.props
 
 		return <Form formFor={person} onChange={onChange}
 			onSubmit={onSubmit} horizontal
-			actionText={actionText}>
+			submitText={submitText}>
 
 			{error &&
-				<fieldset>
+				<Alert bsStyle="danger">
 					<p>There was a problem saving this person</p>
-					<p>{error}</p>
-				</fieldset>}
+					<p>{error.statusText}: {error.message}</p>
+				</Alert>}
 
 			<fieldset>
 				<legend>{edit ? "Edit " + person.name : "Create a new Person"}</legend>
@@ -109,7 +109,7 @@ export default class PersonForm extends Component {
 				</Form.Field>
 
 				<Form.Field id="endOfTourDate">
-					<DatePicker placeholder="End of Tour Date">
+					<DatePicker placeholder="End of Tour Date" dateFormat="DD/MM/YYYY">
 						<InputGroup.Addon>📆</InputGroup.Addon>
 					</DatePicker>
 				</Form.Field>

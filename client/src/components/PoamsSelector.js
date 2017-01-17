@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {Component, PropTypes} from 'react'
 import autobind from 'autobind-decorator'
 
 import Autocomplete from 'components/Autocomplete'
@@ -7,9 +7,9 @@ import {Table, Button} from 'react-bootstrap'
 
 export default class PoamsSelector extends Component {
 	static propTypes = {
-		poams: React.PropTypes.array.isRequired,
-		onChange: React.PropTypes.func.isRequired,
-		shortcuts: React.PropTypes.array
+		poams: PropTypes.array.isRequired,
+		onChange: PropTypes.func.isRequired,
+		shortcuts: PropTypes.array
 	}
 
 	render() {

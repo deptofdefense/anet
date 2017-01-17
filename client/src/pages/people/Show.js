@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 import {Table, DropdownButton, MenuItem} from 'react-bootstrap'
 import moment from 'moment'
@@ -15,7 +15,7 @@ import {Person} from 'models'
 
 export default class PersonShow extends Page {
 	static contextTypes = {
-		app: React.PropTypes.object.isRequired,
+		app: PropTypes.object.isRequired,
 	}
 
 	constructor(props) {
@@ -111,7 +111,7 @@ export default class PersonShow extends Page {
 						</Form.Field>
 						<Form.Field id="country" />
 						<Form.Field id="gender" />
-						<Form.Field label="End of Tour Date" id="endOfTourDate" value={moment(person.endOfTourDate).format("L")} />
+						<Form.Field label="End of Tour Date" id="endOfTourDate" value={moment(person.endOfTourDate).format("D MMM YYYY")} />
 						<Form.Field label="Bio" id="biography" />
 					</fieldset>
 

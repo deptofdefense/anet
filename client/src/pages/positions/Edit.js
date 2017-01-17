@@ -51,7 +51,7 @@ export default class PositionEdit extends Page {
 					position={position}
 					onChange={this.onChange}
 					onSubmit={this.onSubmit}
-					actionText="Save Position"
+					submitText="Save Position"
 					edit
 					error={this.state.error}/>
 			</div>

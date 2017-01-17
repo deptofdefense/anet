@@ -1,7 +1,5 @@
-import React from 'react'
+import React, {PropTypes} from 'react'
 import Page from 'components/Page'
-import History from 'components/History'
-import autobind from 'autobind-decorator'
 
 import {ContentForHeader} from 'components/Header'
 import Breadcrumbs from 'components/Breadcrumbs'
@@ -17,7 +15,7 @@ export default class ReportEdit extends Page {
 	}
 
 	static contextTypes = {
-		app: React.PropTypes.object,
+		app: PropTypes.object,
 	}
 
 	constructor(props) {
@@ -25,12 +23,6 @@ export default class ReportEdit extends Page {
 
 		this.state = {
 			report: new Report(),
-
-			recents: {
-				persons: [],
-				locations: [],
-				poams: [],
-			},
 		}
 	}
 
@@ -44,25 +36,11 @@ export default class ReportEdit extends Page {
 					id, name, role, primary
 					position { id, name }
 				}
-				poams { id, shortName, longName, responsibleOrg { id, name} }
-			}
-			locations(f:recents) {
-				id, name
-			}
-			persons(f:recents) {
-				id, name, rank, role
-			}
-			poams(f:recents) {
-				id, shortName, longName
+				poams { id, shortName, longName, responsibleOrg { id, shortName} }
 			}
 		`).then(data => {
 			let newState = {
-				recents: {
-					locations: data.locations,
-					persons: data.persons,
-					poams: data.poams
-				},
-				report: new Report(data.report)
+				report: new Report(data.report),
 			}
 			newState.report.engagementDate = newState.report.engagementDate && moment(newState.report.engagementDate).format()
 			this.setState(newState)
@@ -70,7 +48,7 @@ export default class ReportEdit extends Page {
 	}
 
 	render() {
-		let {report, recents} = this.state
+		let report = this.state.report
 
 		return (
 			<div>
@@ -80,42 +58,8 @@ export default class ReportEdit extends Page {
 
 				<Breadcrumbs items={[['Report #' + report.id, '/reports/' + report.id], ['Edit', "/reports/" + report.id + "/edit"]]} />
 
-				<ReportForm report={report}
-					recents={recents}
-					onChange={this.onChange}
-					onSubmit={this.onSubmit}
-					actionText="Save report" />
+				<ReportForm report={report} />
 			</div>
 		)
 	}
-
-	@autobind
-	onChange() {
-		let report = this.state.report
-		this.setState({report})
-	}
-
-	@autobind
-	onSubmit(event) {
-		event.stopPropagation()
-		event.preventDefault()
-
-		let report = this.state.report
-
-		if(report.primaryAdvisor) { report.attendees.find(a => a.id === report.primaryAdvisor.id).isPrimary = true; }
-		if(report.primaryPrincipal) { report.attendees.find(a => a.id === report.primaryPrincipal.id).isPrimary = true; }
-
-		delete report.primaryPrincipal
-		delete report.primaryAdvisor
-
-		API.send('/api/reports/update', report)
-			.then(response => {
-				History.push(Report.pathFor(report))
-			})
-			.catch(response => {
-				this.setState({error: response.message})
-				window.scrollTo(0, 0)
-			})
-	}
-
 }

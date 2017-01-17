@@ -17,7 +17,7 @@ while read input
 do
 	if [[ "$OSTYPE" == "darwin"* ]]; then
 		time=`dtg_mac`;
-		echo ${input} | sed "s/CURRENT_TIMESTAMP/'${time}'/g" | sed -E "s/'([0-9]{4}-[0-9]{2}-[0-9]{2})'/'\1 00:00:00.000 -0000'/g" | sed "s/TRUNCATE TABLE/DELETE FROM/"
+		echo ${input} | sed "s/CURRENT_TIMESTAMP/'${time}'/g" | sed -E "s/'([0-9]{4}-[0-9]{2}-[0-9]{2})'/date('\1 00:00:00.000 -0000')/g" | sed "s/TRUNCATE TABLE/DELETE FROM/"
 	else
 		time=`dtg_linux`;
 		echo ${input} | sed "s/CURRENT_TIMESTAMP/'${time}'/g" | sed -r "s/'([0-9]{4}-[0-9]{2}-[0-9]{2})'/'\1 00:00:00.000 -0000'/g" | sed "s/TRUNCATE TABLE/DELETE FROM/"

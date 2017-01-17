@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {PropTypes} from 'react'
 import autobind from 'autobind-decorator'
 
 import {ContentForHeader} from 'components/Header'
@@ -13,7 +13,7 @@ import {Person} from 'models'
 
 export default class PersonEdit extends Page {
 	static contextTypes = {
-		app: React.PropTypes.object.isRequired,
+		app: PropTypes.object.isRequired,
 	}
 
 	static pageProps = {
@@ -67,7 +67,7 @@ export default class PersonEdit extends Page {
 					person={person}
 					onChange={this.onChange}
 					onSubmit={this.onSubmit}
-					actionText="Save Person"
+					submitText="Save Person"
 					edit
 					showPositionAssignment={canEditPosition}
 					error={this.state.error}/>
@@ -90,8 +90,8 @@ export default class PersonEdit extends Page {
 			.then(response => {
 				if (response.code) throw response.code
 				History.push(Person.pathFor(this.state.person))
-			}).catch(error => {
-				this.setState({error: error})
+			}).catch(response => {
+				this.setState({error: response})
 				window.scrollTo(0, 0)
 			})
 	}

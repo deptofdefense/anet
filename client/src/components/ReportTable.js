@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {Component, PropTypes} from 'react'
 import {Table} from 'react-bootstrap'
 
 import LinkTo from 'components/LinkTo'
@@ -8,8 +8,8 @@ import moment from 'moment'
 
 export default class ReportTable extends Component {
 	static propTypes = {
-		showAuthors: React.PropTypes.bool,
-		reports: React.PropTypes.array.isRequired,
+		showAuthors: PropTypes.bool,
+		reports: PropTypes.array.isRequired,
 	}
 
 	render() {

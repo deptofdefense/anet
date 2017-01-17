@@ -50,7 +50,7 @@ export default class PoamEdit extends Page {
 					poam={poam}
 					onChange={this.onChange}
 					onSubmit={this.onSubmit}
-					actionText="Save Poam"
+					submitText="Save Poam"
 					edit
 					error={this.state.error}/>
 			</div>

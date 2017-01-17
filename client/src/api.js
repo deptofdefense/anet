@@ -26,9 +26,16 @@ const API = {
 						let isOk = response.ok
 
 						if (response.headers.get('content-type') === 'application/json') {
-							response = response.json()
-							if (!isOk)
-								return response.then(response => Promise.reject(response))
+							let respBody = response.json()
+							if (!isOk) {
+								return respBody.then(r => {
+									r.status = response.status
+									r.statusText = response.statusText
+									if (!r.message) { r.message = r.error || "You do not have permissions to perform this action"; }
+									return Promise.reject(r)
+								})
+							}
+							return respBody
 						}
 
 						if (!isOk)

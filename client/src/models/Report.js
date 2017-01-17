@@ -6,6 +6,7 @@ export default class Report extends Model {
 	static schema = {
 		intent: '',
 		engagementDate: null,
+		cancelled: false,
 		atmosphere: null,
 		atmosphereDetails: '',
 		location: {},

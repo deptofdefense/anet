@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 import {Link} from 'react-router'
 import {Table, DropdownButton, MenuItem} from 'react-bootstrap'
@@ -13,7 +13,7 @@ import {Person, Position, Organization} from 'models'
 
 export default class PositionShow extends Page {
 	static contextTypes = {
-		app: React.PropTypes.object.isRequired,
+		app: PropTypes.object.isRequired,
 	}
 
 	constructor(props) {
