@@ -12,6 +12,7 @@ import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.Position;
+import mil.dds.anet.beans.ApprovalAction.ApprovalType;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
@@ -309,6 +310,23 @@ public class ReportDao implements IAnetDao<Report> {
 			.map(new ReportMapper())
 			.list();
 	} 
+
+	public List<Report> getRecentReleased() {
+		String sql = "SELECT " + REPORT_FIELDS
+			+ "FROM reports "
+			+ "JOIN approvalActions ON approvalActions.reportId = reports.id "
+			+ "WHERE approvalActions.type = :approvalType "
+			+ "AND reports.state = :reportState "
+			+ "AND approvalActions.createdAt > :startTime "
+			+ "AND reports.engagementDate > :twoWeeksAgo ";
+		return dbHandle.createQuery(sql)
+			.bind("approvalType", ApprovalType.APPROVE)
+			.bind("reportState", ReportState.RELEASED)
+			.bind("startTime", DateTime.now().minusDays(1))
+			.bind("twoWeeksAgo", DateTime.now().minusDays(14))
+			.map(new ReportMapper())
+			.list();
+}
 
 
 }
