@@ -17,7 +17,7 @@ export default class Position extends Model {
 		return this.code || this.name
 	}
 
-	getIcon() {
+	iconUrl() {
 		if (this.type === "ADVISOR") {
 			return "/assets/img/rs_small.png"
 		} else if (this.type === "PRINCIPAL") {
