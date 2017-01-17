@@ -18,6 +18,7 @@ export default class ReportForm extends Component {
 	static propTypes = {
 		report: PropTypes.instanceOf(Report).isRequired,
 		edit: PropTypes.bool,
+		addMyself: PropTypes.bool,
 	}
 
 	static contextTypes = {
@@ -63,6 +64,11 @@ export default class ReportForm extends Component {
 		})
 	}
 
+	componentWillReceiveProps() {
+		if (this.props.addMyself)
+			this.addMyself()
+	}
+
 	render() {
 		let {report} = this.props
 		let {recents, error} = this.state
@@ -93,9 +99,9 @@ export default class ReportForm extends Component {
 					<Autocomplete valueKey="name" placeholder="Where did it happen?" url="/api/locations/search" />
 				</Form.Field>
 
-				<Form.Field id="cancelled" label="">
+				{false && <Form.Field id="cancelled" label="">
 					<Checkbox>Engagement was cancelled?</Checkbox>
-				</Form.Field>
+				</Form.Field>}
 
 				{!report.cancelled &&
 					<Form.Field id="atmosphere">
