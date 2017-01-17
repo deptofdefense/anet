@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {Component, PropTypes} from 'react'
 
 import TextEditor from 'components/TextEditor'
 import Autocomplete from 'components/Autocomplete'
@@ -8,21 +8,21 @@ import {InputGroup, Alert} from 'react-bootstrap'
 
 export default class PersonForm extends Component {
 	static propTypes = {
-		person: React.PropTypes.object,
-		onChange: React.PropTypes.func,
-		onSubmit: React.PropTypes.func,
-		edit: React.PropTypes.bool,
-		actionText: React.PropTypes.string,
-		error: React.PropTypes.object,
-		showPositionAssignment: React.PropTypes.bool
+		person: PropTypes.object,
+		onChange: PropTypes.func,
+		onSubmit: PropTypes.func,
+		edit: PropTypes.bool,
+		submitText: PropTypes.string,
+		error: PropTypes.object,
+		showPositionAssignment: PropTypes.bool
 	}
 
 	render() {
-		let {person, onChange, onSubmit, actionText, error, edit, showPositionAssignment} = this.props
+		let {person, onChange, onSubmit, submitText, error, edit, showPositionAssignment} = this.props
 
 		return <Form formFor={person} onChange={onChange}
 			onSubmit={onSubmit} horizontal
-			actionText={actionText}>
+			submitText={submitText}>
 
 			{error &&
 				<Alert bsStyle="danger">

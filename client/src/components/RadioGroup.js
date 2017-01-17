@@ -1,15 +1,15 @@
-import React, {Component} from 'react'
+import React, {Component, PropTypes} from 'react'
 import autobind from 'autobind-decorator'
 import {ButtonGroup, Button, Radio} from 'react-bootstrap'
 
 export default class RadioGroup extends Component {
 	static contextTypes = {
-		$bs_formGroup: React.PropTypes.object,
+		$bs_formGroup: PropTypes.object,
 	}
 
 	static propTypes = Object.assign({
-		value: React.PropTypes.string,
-		onChange: React.PropTypes.func,
+		value: PropTypes.string,
+		onChange: PropTypes.func,
 	}, ButtonGroup.propTypes)
 
 	constructor(props, context) {

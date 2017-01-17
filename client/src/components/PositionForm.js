@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {Component, PropTypes} from 'react'
 
 import {Table, Alert} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
@@ -9,12 +9,12 @@ import {Position} from 'models'
 
 export default class PositionForm extends Component {
 	static propTypes = {
-		position: React.PropTypes.object,
-		onChange: React.PropTypes.func,
-		onSubmit: React.PropTypes.func,
-		edit: React.PropTypes.bool,
-		actionText: React.PropTypes.string,
-		error: React.PropTypes.object,
+		position: PropTypes.object,
+		onChange: PropTypes.func,
+		onSubmit: PropTypes.func,
+		edit: PropTypes.bool,
+		submitText: PropTypes.string,
+		error: PropTypes.object,
 	}
 
 	constructor(props) {
@@ -30,7 +30,7 @@ export default class PositionForm extends Component {
 	}
 
 	render() {
-		let {onChange, onSubmit, actionText, error} = this.props
+		let {onChange, onSubmit, submitText, error} = this.props
 		let position = this.state.position;
 		let relationshipPositionType = (position.type === "ADVISOR") ? "PRINCIPAL" : "ADVISOR";
 
@@ -38,7 +38,7 @@ export default class PositionForm extends Component {
 
 		return <Form formFor={position} onChange={onChange}
 				onSubmit={onSubmit} horizontal
-				actionText={actionText} >
+				submitText={submitText} >
 
 			{error &&
 				<Alert bsStyle="danger">

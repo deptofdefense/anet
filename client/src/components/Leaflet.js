@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {Component, PropTypes} from 'react'
 
 import L from 'leaflet'
 import autobind from 'autobind-decorator'
@@ -9,10 +9,10 @@ const css = {
 
 export default class Leaflet extends Component {
 	static propTypes = {
-		markers: React.PropTypes.array,
+		markers: PropTypes.array,
 	}
 	static contextTypes = {
-		app: React.PropTypes.object.isRequired
+		app: PropTypes.object.isRequired
 	}
 
 	constructor(props) {

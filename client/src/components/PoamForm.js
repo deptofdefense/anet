@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {Component, PropTypes} from 'react'
 
 import Autocomplete from 'components/Autocomplete'
 import Form from 'components/Form'
@@ -6,20 +6,20 @@ import {Alert} from 'react-bootstrap'
 
 export default class PoamForm extends Component {
 	static propTypes = {
-		poam: React.PropTypes.object,
-		onChange: React.PropTypes.func,
-		onSubmit: React.PropTypes.func,
-		edit: React.PropTypes.bool,
-		actionText: React.PropTypes.string,
-		error: React.PropTypes.object,
+		poam: PropTypes.object,
+		onChange: PropTypes.func,
+		onSubmit: PropTypes.func,
+		edit: PropTypes.bool,
+		submitText: PropTypes.string,
+		error: PropTypes.object,
 	}
 
 	render() {
-		let {poam, onChange, onSubmit, actionText, error} = this.props
+		let {poam, onChange, onSubmit, submitText, error} = this.props
 
 		return <Form formFor={poam} onChange={onChange}
 			onSubmit={onSubmit} horizontal
-			actionText={actionText}>
+			submitText={submitText}>
 
 			{error && <Alert bsStyle="danger">
 				<p>There was a problem saving this poam</p>

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 import autobind from 'autobind-decorator'
 
@@ -12,7 +12,7 @@ import {Organization} from 'models'
 
 export default class OrganizationNew extends Page {
 	static contextTypes = {
-		router: React.PropTypes.object.isRequired
+		router: PropTypes.object.isRequired
 	}
 
 	static pageProps = {
@@ -55,7 +55,7 @@ export default class OrganizationNew extends Page {
 				<Breadcrumbs items={[['Create new Organization', '/organizations/new']]} />
 
 				<OrganizationForm organization={org} onChange={this.onChange}
-						onSubmit={this.onSubmit} actionText="Create Organization" />
+						onSubmit={this.onSubmit} submitText="Create Organization" />
 			</div>
 		)
 	}

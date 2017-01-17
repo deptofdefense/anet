@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {PropTypes} from 'react'
 import autobind from 'autobind-decorator'
 
 
@@ -13,7 +13,7 @@ import {Person} from 'models'
 
 export default class PersonNew extends Page {
 	static contextTypes = {
-		router: React.PropTypes.object.isRequired
+		router: PropTypes.object.isRequired
 	}
 
 	static pageProps = {
@@ -38,12 +38,12 @@ export default class PersonNew extends Page {
 				</ContentForHeader>
 
 				<Breadcrumbs items={[['Create new Person', '/people/new']]} />
-				<PersonForm 
-					person={person} 
-					onChange={this.onChange} 
-					onSubmit={this.onSubmit} 
-					actionText="Create Person"
-					error={this.state.error}/> 
+				<PersonForm
+					person={person}
+					onChange={this.onChange}
+					onSubmit={this.onSubmit}
+					submitText="Create Person"
+					error={this.state.error}/>
 			</div>
 		)
 	}

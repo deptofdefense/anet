@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 import autobind from 'autobind-decorator'
 
@@ -9,7 +9,7 @@ import API from 'api'
 
 export default class AdminIndex extends Page {
 	static contextTypes = {
-		app: React.PropTypes.object,
+		app: PropTypes.object,
 	}
 
 	constructor(props) {
@@ -36,7 +36,7 @@ export default class AdminIndex extends Page {
 			<div>
 				<Breadcrumbs items={[['Admin settings', '/admin']]} />
 
-				<Form formFor={settings} horizontal actionText="Save settings" onChange={this.onChange} onSubmit={this.onSubmit}>
+				<Form formFor={settings} horizontal submitText="Save settings" onChange={this.onChange} onSubmit={this.onSubmit}>
 					<fieldset>
 						<legend>Site Settings</legend>
 

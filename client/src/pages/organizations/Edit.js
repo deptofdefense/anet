@@ -54,7 +54,7 @@ export default class OrganizationEdit extends Page {
 					organization={organization}
 					onChange={this.onChange}
 					onSubmit={this.onSubmit}
-					actionText="Save Organization"
+					submitText="Save Organization"
 					edit
 					error={this.state.error}/>
 			</div>

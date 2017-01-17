@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {Component, PropTypes} from 'react'
 import {Grid, Row, Col} from 'react-bootstrap'
 import {Link} from 'react-router'
 
@@ -9,7 +9,7 @@ import moment from 'moment'
 
 export default class ReportSummary extends Component {
 	static propTypes = {
-		report: React.PropTypes.object.isRequired,
+		report: PropTypes.object.isRequired,
 	}
 
 	render() {

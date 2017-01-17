@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {Component, PropTypes} from 'react'
 import debounce from 'debounce'
 import Autosuggest from 'react-autosuggest'
 import {FormControl} from 'react-bootstrap'
@@ -10,16 +10,16 @@ import './Autocomplete.css'
 
 export default class Autocomplete extends Component {
 	static propTypes = {
-		value: React.PropTypes.oneOfType([
-			React.PropTypes.object,
-			React.PropTypes.array,
+		value: PropTypes.oneOfType([
+			PropTypes.object,
+			PropTypes.array,
 		]),
-		valueKey: React.PropTypes.string,
-		clearOnSelect: React.PropTypes.bool,
-		url: React.PropTypes.string.isRequired,
-		template: React.PropTypes.func,
-		onChange: React.PropTypes.func,
-		urlParams: React.PropTypes.string
+		valueKey: PropTypes.string,
+		clearOnSelect: PropTypes.bool,
+		url: PropTypes.string.isRequired,
+		template: PropTypes.func,
+		onChange: PropTypes.func,
+		urlParams: PropTypes.string
 	}
 
 	constructor(props) {

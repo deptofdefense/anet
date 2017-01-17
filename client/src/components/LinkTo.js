@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {Component, PropTypes} from 'react'
 import {Link} from 'react-router'
 import utils from 'utils'
 
@@ -12,9 +12,9 @@ const MODEL_NAMES = Object.keys(Models).map(key => {
 
 export default class LinkTo extends Component {
 	static propTypes = {
-		componentClass: React.PropTypes.oneOfType([
-			React.PropTypes.string,
-			React.PropTypes.func,
+		componentClass: PropTypes.oneOfType([
+			PropTypes.string,
+			PropTypes.func,
 		]),
 	}
 
@@ -42,7 +42,7 @@ export default class LinkTo extends Component {
 	}
 }
 
-MODEL_NAMES.forEach(key => LinkTo.propTypes[key] = React.PropTypes.oneOfType([
-	React.PropTypes.instanceOf(Models[key]),
-	React.PropTypes.object,
+MODEL_NAMES.forEach(key => LinkTo.propTypes[key] = PropTypes.oneOfType([
+	PropTypes.instanceOf(Models[key]),
+	PropTypes.object,
 ]))
