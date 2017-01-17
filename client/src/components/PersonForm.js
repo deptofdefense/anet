@@ -109,7 +109,7 @@ export default class PersonForm extends Component {
 				</Form.Field>
 
 				<Form.Field id="endOfTourDate">
-					<DatePicker placeholder="End of Tour Date">
+					<DatePicker placeholder="End of Tour Date" dateFormat="DD/MM/YYYY">
 						<InputGroup.Addon>📆</InputGroup.Addon>
 					</DatePicker>
 				</Form.Field>

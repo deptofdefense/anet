@@ -144,7 +144,7 @@ export default class Search extends Page {
 			<tbody>
 				{Report.map(this.state.results.reports, report =>
 					<tr key={report.id}>
-						<td><LinkTo report={report}>{moment(report.engagementDate).format('L')}</LinkTo></td>
+						<td><LinkTo report={report}>{moment(report.engagementDate).format('D MMM YYYY')}</LinkTo></td>
 						<td>TODO</td>
 						<td>{report.intent}</td>
 					</tr>

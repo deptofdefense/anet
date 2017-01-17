@@ -59,7 +59,7 @@ export default class ReportForm extends Component {
 				</Form.Field>
 
 				<Form.Field id="engagementDate">
-					<DatePicker showTodayButton placeholder="When did it happen?">
+					<DatePicker showTodayButton placeholder="When did it happen?" dateFormat="DD/MM/YYYY">
 						<InputGroup.Addon>📆</InputGroup.Addon>
 					</DatePicker>
 				</Form.Field>

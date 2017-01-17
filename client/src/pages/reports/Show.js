@@ -174,7 +174,7 @@ export default class ReportShow extends Page {
 						<legend>Report #{report.id}</legend>
 
 						<Form.Field id="intent" label="Purpose" />
-						<Form.Field id="engagementDate" label="Date 📆" getter={date => moment(date).format("L")} />
+						<Form.Field id="engagementDate" label="Date 📆" getter={date => moment(date).format("D MMM YYYY")} />
 						<Form.Field id="location" label="Location 📍">
 							{report.location && <LinkTo location={report.location} />}
 						</Form.Field>
@@ -429,7 +429,7 @@ export default class ReportShow extends Page {
 				</Modal.Body>
 			</Modal>
 	 	{action.type ?
-				<span> {action.type} by {action.person.name} <small>{moment(action.createdAt).format("L")}</small></span>
+				<span> {action.type} by {action.person.name} <small>{moment(action.createdAt).format("D MMM YYYY")}</small></span>
 				:
 				<span className="text-danger"> Pending</span>
 			}

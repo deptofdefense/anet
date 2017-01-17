@@ -27,7 +27,7 @@ export default class ReportSummary extends Component {
 					}
 				</Col>
 				<Col md={6}>
-					{moment(report.engagementDate).format("L")}
+					{moment(report.engagementDate).format("D MMM YYYY")}
 					{report.location &&
 						<span> @&nbsp;
 						<Link to={"/locations/" + report.location.id}>{report.location.name}</Link>
