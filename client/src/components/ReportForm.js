@@ -1,25 +1,22 @@
 import React, {Component, PropTypes} from 'react'
+import {InputGroup, Radio, Checkbox, Table, Button, Collapse, Alert} from 'react-bootstrap'
+import autobind from 'autobind-decorator'
 
+import Form from 'components/Form'
 import TextEditor from 'components/TextEditor'
 import Autocomplete from 'components/Autocomplete'
-import Form from 'components/Form'
 import DatePicker from 'react-bootstrap-date-picker'
-import {InputGroup, Radio, Table, Button, Collapse, Alert} from 'react-bootstrap'
 import RadioGroup from 'components/RadioGroup'
-import LinkTo from 'components/LinkTo'
 import PoamsSelector from 'components/PoamsSelector'
-import autobind from 'autobind-decorator'
-import {Person} from 'models'
+import LinkTo from 'components/LinkTo'
+
+import API from 'api'
+import {Report, Person} from 'models'
 
 export default class ReportForm extends Component {
 	static propTypes = {
-		report: PropTypes.object.isRequired,
-		recents: PropTypes.object.isRequired,
-		onChange: PropTypes.func.isRequired,
-		onSubmit: PropTypes.func,
+		report: PropTypes.instanceOf(Report).isRequired,
 		edit: PropTypes.bool,
-		submitText: PropTypes.string,
-		error: PropTypes.string,
 	}
 
 	static contextTypes = {
@@ -30,18 +27,46 @@ export default class ReportForm extends Component {
 		super(props)
 
 		this.state = {
+			recents: {
+				persons: [],
+				locations: [],
+				poams: [],
+			},
+
 			showKeyOutcomesText: false,
 			showNextStepsText: false,
 			showReportText: false
 		}
 	}
 
-	render() {
-		let {report, recents, onChange, onSubmit, submitText, error} = this.props
+	componentDidMount() {
+		API.query(/* GraphQL */`
+			locations(f:recents) {
+				id, name
+			}
+			persons(f:recents) {
+				id, name, rank, role
+			}
+			poams(f:recents) {
+				id, shortName, longName
+			}
+		`).then(data => {
+			let newState = {
+				recents: {
+					locations: data.locations,
+					persons: data.persons,
+					poams: data.poams,
+				},
+			}
+			this.setState(newState)
+		})
+	}
 
-		return <Form formFor={report} onChange={onChange}
-			onSubmit={onSubmit} horizontal
-			submitText={submitText}>
+	render() {
+		let {report} = this.props
+		let {recents, error} = this.state
+
+		return <Form formFor={report} horizontal onChange={this.onChange} onSubmit={this.onSubmit} submitText="Save report">
 
 			{error &&
 				<Alert bsStyle="danger">
@@ -49,7 +74,6 @@ export default class ReportForm extends Component {
 					<p>{error}</p>
 				</Alert>
 			}
-
 
 			<fieldset>
 				<legend>Engagement Details<small>Required</small></legend>
@@ -68,15 +92,21 @@ export default class ReportForm extends Component {
 					<Autocomplete valueKey="name" placeholder="Where did it happen?" url="/api/locations/search" />
 				</Form.Field>
 
-				<Form.Field id="atmosphere">
-					<RadioGroup bsSize="large">
-						<Radio value="POSITIVE">👍</Radio>
-						<Radio value="NEUTRAL">😐</Radio>
-						<Radio value="NEGATIVE">👎</Radio>
-					</RadioGroup>
+				<Form.Field id="cancelled" label="">
+					<Checkbox>Engagement was cancelled?</Checkbox>
 				</Form.Field>
 
-				{report.atmosphere && report.atmosphere !== 'POSITIVE' &&
+				{!report.cancelled &&
+					<Form.Field id="atmosphere">
+						<RadioGroup bsSize="large">
+							<Radio value="POSITIVE">👍</Radio>
+							<Radio value="NEUTRAL">😐</Radio>
+							<Radio value="NEGATIVE">👎</Radio>
+						</RadioGroup>
+					</Form.Field>
+				}
+
+				{!report.cancelled && report.atmosphere && report.atmosphere !== 'POSITIVE' &&
 					<Form.Field id="atmosphereDetails" />
 				}
 			</fieldset>
@@ -129,18 +159,18 @@ export default class ReportForm extends Component {
 				</Form.Field>
 			</fieldset>
 
-			<PoamsSelector poams={report.poams} shortcuts={recents.poams} onChange={onChange}/>
+			<PoamsSelector poams={report.poams} shortcuts={recents.poams} onChange={this.onChange} />
 
 			<fieldset>
 				<legend>Meeting Discussion<small>Required</small></legend>
-				<Form.Field id="keyOutcomesSummary" >
+				<Form.Field id="keyOutcomesSummary">
 					<Form.Field.ExtraCol>{250 - report.keyOutcomesSummary.length} characters remaining</Form.Field.ExtraCol>
 				</Form.Field>
 
-				<Button bsStyle="link" onClick={this.toggleKeyOutcomesText} >
+				<Button bsStyle="link" onClick={this.toggleKeyOutcomesText}>
 					{this.state.showKeyOutcomesText ? "Hide" : "Add" } details to Key Outcomes
 				</Button>
-				<Collapse in={this.state.showKeyOutcomesText} >
+				<Collapse in={this.state.showKeyOutcomesText}>
 					<Form.Field id="keyOutcomes" label="" horizontal={false}>
 						<TextEditor label="Key outcomes" />
 					</Form.Field>
@@ -149,16 +179,16 @@ export default class ReportForm extends Component {
 				<Form.Field id="nextStepsSummary" >
 					<Form.Field.ExtraCol>{250 - report.nextStepsSummary.length} characters remaining</Form.Field.ExtraCol>
 				</Form.Field>
-				<Button bsStyle="link" onClick={this.toggleNextStepsText} >Add details to Next Steps</Button>
-				<Collapse in={this.state.showNextStepsText} >
+				<Button bsStyle="link" onClick={this.toggleNextStepsText}>Add details to Next Steps</Button>
+				<Collapse in={this.state.showNextStepsText}>
 					<Form.Field id="nextSteps" label="" horizontal={false} style={{marginTop: '5rem'}}>
 						<TextEditor label="Next steps" />
 					</Form.Field>
 				</Collapse>
 
 				<Button bsStyle="link" onClick={this.toggleReportText} >Add additional report details</Button>
-				<Collapse in={this.state.showReportText} >
-					<Form.Field id="reportText" label="" horizontal={false} >
+				<Collapse in={this.state.showReportText}>
+					<Form.Field id="reportText" label="" horizontal={false}>
 						<TextEditor label="Report Details" />
 					</Form.Field>
 				</Collapse>
@@ -169,17 +199,17 @@ export default class ReportForm extends Component {
 
 	@autobind
 	toggleKeyOutcomesText() {
-		this.setState({showKeyOutcomesText: !this.state.showKeyOutcomesText});
+		this.setState({showKeyOutcomesText: !this.state.showKeyOutcomesText})
 	}
 
 	@autobind
 	toggleNextStepsText() {
-		this.setState({showNextStepsText: !this.state.showNextStepsText});
+		this.setState({showNextStepsText: !this.state.showNextStepsText})
 	}
 
 	@autobind
 	toggleReportText() {
-		this.setState({showReportText: !this.state.showReportText});
+		this.setState({showReportText: !this.state.showReportText})
 	}
 
 	@autobind
@@ -200,7 +230,7 @@ export default class ReportForm extends Component {
 			person.primary = true
 
 		attendees.push(person)
-		this.props.onChange()
+		this.onChange()
 	}
 
 	@autobind
@@ -219,7 +249,7 @@ export default class ReportForm extends Component {
 					nextPerson.primary = true
 			}
 
-			this.props.onChange()
+			this.onChange()
 		}
 	}
 
@@ -235,7 +265,7 @@ export default class ReportForm extends Component {
 				nextPerson.primary = true
 		})
 
-		this.props.onChange()
+		this.onChange()
 	}
 
 	@autobind
@@ -243,5 +273,36 @@ export default class ReportForm extends Component {
 		let {currentUser} = this.context.app.state
 		this.addAttendee(currentUser)
 		this.setPrimaryAttendee(currentUser)
+	}
+
+	@autobind
+	onChange() {
+		let report = this.state.report
+		this.setState({report})
+	}
+
+	@autobind
+	onSubmit(event) {
+		event.stopPropagation()
+		event.preventDefault()
+
+		let report = this.state.report
+
+		if(report.primaryAdvisor) { report.attendees.find(a => a.id === report.primaryAdvisor.id).isPrimary = true }
+		if(report.primaryPrincipal) { report.attendees.find(a => a.id === report.primaryPrincipal.id).isPrimary = true }
+
+		delete report.primaryPrincipal
+		delete report.primaryAdvisor
+
+		let url = `/api/reports/${this.props.edit ? 'update' : 'new'}`
+		API.send(url, report)
+			.then(response => {
+				History.push(Report.pathFor(report))
+				window.scrollTo(0, 0)
+			})
+			.catch(response => {
+				this.setState({error: response.message || response.error})
+				window.scrollTo(0, 0)
+			})
 	}
 }

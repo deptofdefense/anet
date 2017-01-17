@@ -48,6 +48,7 @@ export default class Form extends Component {
 		bsProps = Object.without(bsProps, 'formFor', 'static')
 
 		if (this.props.static) {
+			submitText = false
 			bsProps.componentClass = Row
 			bsProps.style = bsProps.style || {}
 			Object.assign(bsProps.style, staticFormStyle)
