@@ -92,15 +92,21 @@ export default class ReportForm extends Component {
 					<Autocomplete valueKey="name" placeholder="Where did it happen?" url="/api/locations/search" />
 				</Form.Field>
 
-				<Form.Field id="atmosphere">
-					<RadioGroup bsSize="large">
-						<Radio value="POSITIVE">👍</Radio>
-						<Radio value="NEUTRAL">😐</Radio>
-						<Radio value="NEGATIVE">👎</Radio>
-					</RadioGroup>
+				<Form.Field id="cancelled" label="">
+					<Checkbox>Engagement was cancelled?</Checkbox>
 				</Form.Field>
 
-				{report.atmosphere && report.atmosphere !== 'POSITIVE' &&
+				{!report.cancelled &&
+					<Form.Field id="atmosphere">
+						<RadioGroup bsSize="large">
+							<Radio value="POSITIVE">👍</Radio>
+							<Radio value="NEUTRAL">😐</Radio>
+							<Radio value="NEGATIVE">👎</Radio>
+						</RadioGroup>
+					</Form.Field>
+				}
+
+				{!report.cancelled && report.atmosphere && report.atmosphere !== 'POSITIVE' &&
 					<Form.Field id="atmosphereDetails" />
 				}
 			</fieldset>
