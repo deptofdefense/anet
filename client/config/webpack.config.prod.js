@@ -241,7 +241,10 @@ module.exports = {
 	new StatsWriterPlugin({
 	  fields: null,
 	  stats: {chunkModules: true}
-	})
+	}),
+
+	new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en|uk/)
+	// new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
 
   ],
   // Some libraries import Node modules but don't use them in the browser.
