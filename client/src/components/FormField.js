@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import utils from 'utils'
+import deepEqual from 'deep-equal'
 import autobind from 'autobind-decorator'
 import {FormGroup, Col, ControlLabel, FormControl, InputGroup} from 'react-bootstrap'
 
@@ -82,8 +83,13 @@ export default class FormField extends Component {
 		if (extra)
 			children.splice(children.indexOf(extra), 1)
 
+		let defaultValue = this.getDefaultValue(this.props)
+
 		let state = this.state
-		let defaultValue = state.value = this.getDefaultValue(this.props)
+		if (Array.isArray(defaultValue))
+			state.value = Array.from(defaultValue)
+		else
+			state.value = defaultValue
 
 		// if type is static, render out a static value
 		if (this.props.type === 'static' || (!this.props.type && this.context.form.props.static)) {
@@ -133,7 +139,16 @@ export default class FormField extends Component {
 	}
 
 	shouldComponentUpdate(newProps, newState) {
-		return this.getDefaultValue(newProps) !== this.state.value
+		let newValue = this.getDefaultValue(newProps)
+		let oldValue = this.state.value
+
+		if (newValue !== oldValue)
+			return true
+
+		if (Array.isArray(newValue))
+			return !deepEqual(newValue, oldValue)
+
+		return false
 	}
 
 	getValue() {
