@@ -3,6 +3,7 @@ package mil.dds.anet.resources;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -15,6 +16,7 @@ import mil.dds.anet.beans.search.PersonSearchQuery;
 import mil.dds.anet.beans.search.PoamSearchQuery;
 import mil.dds.anet.beans.search.PositionSearchQuery;
 import mil.dds.anet.beans.search.ReportSearchQuery;
+import mil.dds.anet.beans.search.SavedSearch;
 import mil.dds.anet.graphql.GraphQLFetcher;
 import mil.dds.anet.graphql.IGraphQLBean;
 import mil.dds.anet.graphql.IGraphQLResource;
@@ -57,6 +59,29 @@ public class SearchResource implements IGraphQLResource  {
 			results.setOrganizations(engine.getOrganizationDao().search(OrganizationSearchQuery.withText(query)));
 		}
 
+		return results;
+	}
+	
+	@GET
+	@Path("saved/{searchId}")
+	@GraphQLFetcher
+	public SearchResults runSavedSearch(@PathParam("searchId") int searchId) { 
+		SavedSearch search = engine.getSavedSearchDao().getById(searchId);
+		SearchResults results = new SearchResults();
+		switch (search.getObjectType()) {
+		case ORGANIZATIONS:
+			break;
+		case PEOPLE:
+			break;
+		case POAMS:
+			break;
+		case POSITIONS:
+			break;
+		case REPORTS:
+			results.setReports(engine.getReportDao().search(ReportSearchQuery.withText(search.getQuery())));
+			break;
+		}
+		
 		return results;
 	}
 	

@@ -326,7 +326,7 @@ export default class Search extends Page {
 		event.preventDefault()
 
 		let search = Object.without(this.state.saveSearch, "show")
-		search.query = "q=" + this.props.location.query.q
+		search.query = this.props.location.query.q
 
 		API.send('/api/savedSearches/new', search, {disableSubmits: true})
 			.then(response => {

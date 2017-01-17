@@ -31,7 +31,7 @@ public class SavedSearchResourceTest extends AbstractResourceTest {
 		SavedSearch ss = new SavedSearch();
 		ss.setName("Test Saved Search created by SavedSearchResourceTest");
 		ss.setObjectType(SearchObjectType.REPORTS);
-		ss.setQuery("q=spreadsheets");
+		ss.setQuery("spreadsheets");
 		
 		SavedSearch created = httpQuery("/api/savedSearches/new", jack).post(Entity.json(ss), SavedSearch.class);
 		assertThat(created.getId()).isNotNull();

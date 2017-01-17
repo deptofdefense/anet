@@ -13,6 +13,7 @@ import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.search.SavedSearch;
 import mil.dds.anet.database.SavedSearchDao;
+import mil.dds.anet.graphql.GraphQLFetcher;
 import mil.dds.anet.graphql.IGraphQLBean;
 import mil.dds.anet.graphql.IGraphQLResource;
 
@@ -34,6 +35,7 @@ public class SavedSearchResource implements IGraphQLResource  {
 	}
 	
 	@GET
+	@GraphQLFetcher("mine")
 	@Path("/mine")
 	public List<SavedSearch> getMySearches(@Auth Person user) { 
 		return dao.getSearchesByOwner(user);
