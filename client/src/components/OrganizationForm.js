@@ -12,16 +12,16 @@ export default class OrganizationForm extends Component {
 		onChange: React.PropTypes.func,
 		onSubmit: React.PropTypes.func,
 		edit: React.PropTypes.bool,
-		actionText: React.PropTypes.string,
+		submitText: React.PropTypes.string,
 		error: React.PropTypes.object,
 	}
 
 	render() {
-		let {organization, onChange, onSubmit, actionText, error, edit} = this.props
+		let {organization, onChange, onSubmit, submitText, error, edit} = this.props
 
 		return <Form formFor={organization} onChange={onChange}
 			onSubmit={onSubmit} horizontal
-			actionText={actionText}>
+			submitText={submitText}>
 
 			{error &&
 				<Alert bsStyle="danger">

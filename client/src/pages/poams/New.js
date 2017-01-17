@@ -54,7 +54,7 @@ export default class PoamNew extends Page {
 					poam={poam}
 					onChange={this.onChange}
 					onSubmit={this.onSubmit}
-					actionText="Create Poam"
+					submitText="Create Poam"
 					error={this.state.error}/>
 			</div>
 		)

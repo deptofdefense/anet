@@ -42,7 +42,7 @@ export default class PersonNew extends Page {
 					person={person} 
 					onChange={this.onChange} 
 					onSubmit={this.onSubmit} 
-					actionText="Create Person"
+					submitText="Create Person"
 					error={this.state.error}/> 
 			</div>
 		)

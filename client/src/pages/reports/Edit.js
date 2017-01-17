@@ -85,7 +85,7 @@ export default class ReportEdit extends Page {
 					recents={recents}
 					onChange={this.onChange}
 					onSubmit={this.onSubmit}
-					actionText="Save report" />
+					submitText="Save report" />
 			</div>
 		)
 	}

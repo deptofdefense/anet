@@ -40,7 +40,7 @@ export default class LocationNew extends React.Component {
 
 				<Breadcrumbs items={[['Create new Location', Location.pathForNew()]]} />
 
-				<Form formFor={location} onChange={this.onChange} onSubmit={this.onSubmit} horizontal actionText="Create location">
+				<Form formFor={location} onChange={this.onChange} onSubmit={this.onSubmit} horizontal submitText="Create location">
 					{this.state.error && <fieldset><p>There was a problem saving this location</p><p>{this.state.error}</p></fieldset>}
 					<fieldset>
 						<legend>Create a new Location</legend>

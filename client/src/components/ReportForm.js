@@ -18,7 +18,7 @@ export default class ReportForm extends Component {
 		onChange: React.PropTypes.func.isRequired,
 		onSubmit: React.PropTypes.func,
 		edit: React.PropTypes.bool,
-		actionText: React.PropTypes.string,
+		submitText: React.PropTypes.string,
 		error: React.PropTypes.string,
 	}
 
@@ -37,11 +37,11 @@ export default class ReportForm extends Component {
 	}
 
 	render() {
-		let {report, recents, onChange, onSubmit, actionText, error} = this.props
+		let {report, recents, onChange, onSubmit, submitText, error} = this.props
 
 		return <Form formFor={report} onChange={onChange}
 			onSubmit={onSubmit} horizontal
-			actionText={actionText}>
+			submitText={submitText}>
 
 			{error &&
 				<Alert bsStyle="danger">

@@ -10,16 +10,16 @@ export default class PoamForm extends Component {
 		onChange: React.PropTypes.func,
 		onSubmit: React.PropTypes.func,
 		edit: React.PropTypes.bool,
-		actionText: React.PropTypes.string,
+		submitText: React.PropTypes.string,
 		error: React.PropTypes.object,
 	}
 
 	render() {
-		let {poam, onChange, onSubmit, actionText, error} = this.props
+		let {poam, onChange, onSubmit, submitText, error} = this.props
 
 		return <Form formFor={poam} onChange={onChange}
 			onSubmit={onSubmit} horizontal
-			actionText={actionText}>
+			submitText={submitText}>
 
 			{error && <Alert bsStyle="danger">
 				<p>There was a problem saving this poam</p>

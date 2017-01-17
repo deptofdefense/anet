@@ -14,14 +14,14 @@ export default class Form extends Component {
 	static propTypes = Object.assign({}, BSForm.propTypes, {
 		formFor: React.PropTypes.object,
 		static: React.PropTypes.bool,
-		actionText: React.PropTypes.string,
+		submitText: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.bool]),
 		submitOnEnter: React.PropTypes.bool,
 		onSubmit: React.PropTypes.func,
 	})
 
 	static defaultProps = {
 		static: false,
-		actionText: 'Save',
+		submitText: 'Save',
 		submitOnEnter: false,
 	}
 
@@ -44,7 +44,7 @@ export default class Form extends Component {
 	}
 
 	render() {
-		let {children, actionText, submitOnEnter, ...bsProps} = this.props
+		let {children, submitText, submitOnEnter, ...bsProps} = this.props
 		bsProps = Object.without(bsProps, 'formFor', 'static')
 
 		if (this.props.static) {
@@ -57,7 +57,7 @@ export default class Form extends Component {
 			bsProps.onKeyDown = this.preventEnterKey
 		}
 
-		let showSubmit = bsProps.onSubmit && actionText !== false
+		let showSubmit = bsProps.onSubmit && submitText !== false
 
 		return (
 			<BSForm {...bsProps} ref="container">
@@ -66,7 +66,7 @@ export default class Form extends Component {
 				{showSubmit &&
 					<ContentForHeader right>
 						<Button bsStyle="primary" type="submit" onClick={bsProps.onSubmit}>
-							{actionText}
+							{submitText}
 						</Button>
 					</ContentForHeader>
 				}
@@ -74,7 +74,7 @@ export default class Form extends Component {
 				{showSubmit &&
 					<fieldset>
 						<Button bsStyle="primary" bsSize="large" type="submit" className="pull-right">
-							{actionText}
+							{submitText}
 						</Button>
 					</fieldset>
 				}

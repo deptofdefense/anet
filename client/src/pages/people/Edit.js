@@ -67,7 +67,7 @@ export default class PersonEdit extends Page {
 					person={person}
 					onChange={this.onChange}
 					onSubmit={this.onSubmit}
-					actionText="Save Person"
+					submitText="Save Person"
 					edit
 					showPositionAssignment={canEditPosition}
 					error={this.state.error}/>

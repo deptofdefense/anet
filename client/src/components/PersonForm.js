@@ -12,17 +12,17 @@ export default class PersonForm extends Component {
 		onChange: React.PropTypes.func,
 		onSubmit: React.PropTypes.func,
 		edit: React.PropTypes.bool,
-		actionText: React.PropTypes.string,
+		submitText: React.PropTypes.string,
 		error: React.PropTypes.object,
 		showPositionAssignment: React.PropTypes.bool
 	}
 
 	render() {
-		let {person, onChange, onSubmit, actionText, error, edit, showPositionAssignment} = this.props
+		let {person, onChange, onSubmit, submitText, error, edit, showPositionAssignment} = this.props
 
 		return <Form formFor={person} onChange={onChange}
 			onSubmit={onSubmit} horizontal
-			actionText={actionText}>
+			submitText={submitText}>
 
 			{error &&
 				<Alert bsStyle="danger">

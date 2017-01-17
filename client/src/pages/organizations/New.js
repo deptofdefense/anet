@@ -55,7 +55,7 @@ export default class OrganizationNew extends Page {
 				<Breadcrumbs items={[['Create new Organization', '/organizations/new']]} />
 
 				<OrganizationForm organization={org} onChange={this.onChange}
-						onSubmit={this.onSubmit} actionText="Create Organization" />
+						onSubmit={this.onSubmit} submitText="Create Organization" />
 			</div>
 		)
 	}
