@@ -1,13 +1,11 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
-import History from 'components/History'
 import autobind from 'autobind-decorator'
 
 import {ContentForHeader} from 'components/Header'
 import Breadcrumbs from 'components/Breadcrumbs'
 import ReportForm from 'components/ReportForm'
 
-import API from 'api'
 import {Report} from 'models'
 
 export default class ReportNew extends Page {
@@ -24,28 +22,8 @@ export default class ReportNew extends Page {
 
 		this.state = {
 			report: new Report(),
-
-			recents: {
-				persons: [],
-				locations: [],
-				poams: [],
-			},
 			currentUser: null
 		}
-	}
-
-	fetchData() {
-		API.query(/* GraphQL */`
-			locations(f:recents) {
-				id, name
-			}
-			persons(f:recents) {
-				id, name, rank, role
-			}
-			poams(f:recents) {
-				id, shortName, longName
-			}
-		`).then(data => this.setState({recents: data, report: new Report()}))
 	}
 
 	//use this to auto add the author to the report attendees
@@ -54,7 +32,7 @@ export default class ReportNew extends Page {
 	}
 
 	componentDidMount() {
-		this.fetchData(this.props)
+		super.componentDidMount()
 		this.tryToAddAuthor()
 	}
 
@@ -79,7 +57,6 @@ export default class ReportNew extends Page {
 	}
 
 	render() {
-		let {report, recents} = this.state
 		return (
 			<div>
 				<ContentForHeader>
@@ -88,44 +65,8 @@ export default class ReportNew extends Page {
 
 				<Breadcrumbs items={[['Submit a report', Report.pathForNew()]]} />
 
-				<ReportForm report={report}
-					recents={recents}
-					onChange={this.onChange}
-					onSubmit={this.onSubmit}
-					error={this.state.error}
-					submitText="Save report" />
+				<ReportForm report={this.state.report} />
 			</div>
 		)
 	}
-
-	@autobind
-	onChange() {
-		let report = this.state.report
-		this.setState({report})
-	}
-
-	@autobind
-	onSubmit(event) {
-		event.stopPropagation()
-		event.preventDefault()
-
-		let report = this.state.report
-
-		if(report.primaryAdvisor) { report.attendees.find(a => a.id === report.primaryAdvisor.id).isPrimary = true; }
-		if(report.primaryPrincipal) { report.attendees.find(a => a.id === report.primaryPrincipal.id).isPrimary = true; }
-
-		delete report.primaryPrincipal
-		delete report.primaryAdvisor
-
-		API.send('/api/reports/new', report)
-			.then(report => {
-				History.push(Report.pathFor(report))
-				window.scrollTo(0, 0)
-			})
-			.catch(response => {
-				this.setState({error: response.message})
-				window.scrollTo(0, 0)
-			})
-	}
-
 }
