@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.skife.jdbi.v2.GeneratedKeys;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.Query;
@@ -311,19 +313,30 @@ public class ReportDao implements IAnetDao<Report> {
 			.list();
 	} 
 
+	DateTimeFormatter sqlitePattern = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+
+	
 	public List<Report> getRecentReleased() {
-		String sql = "SELECT " + REPORT_FIELDS
+		String sql = "SELECT " + REPORT_FIELDS + ", " + PersonDao.PERSON_FIELDS
 			+ "FROM reports "
 			+ "JOIN approvalActions ON approvalActions.reportId = reports.id "
+			+ "JOIN people ON reports.authorId = people.id "
 			+ "WHERE approvalActions.type = :approvalType "
-			+ "AND reports.state = :reportState "
-			+ "AND approvalActions.createdAt > :startTime "
-			+ "AND reports.engagementDate > :twoWeeksAgo ";
+			+ "AND reports.state = :reportState ";
+		if (DaoUtils.isMsSql(dbHandle)) { 
+			sql +=  "AND approvalActions.createdAt > :startTime "
+					+ "AND reports.engagementDate > :twoWeeksAgo ";
+		} else { 
+			sql +=  "AND approvalActions.createdAt > DateTime(:startTimeSqlite) "
+					+ "AND reports.engagementDate > DateTime(:twoWeeksAgoSqlite) ";
+		}
 		return dbHandle.createQuery(sql)
-			.bind("approvalType", ApprovalType.APPROVE)
-			.bind("reportState", ReportState.RELEASED)
+			.bind("approvalType", DaoUtils.getEnumId(ApprovalType.APPROVE))
+			.bind("reportState", DaoUtils.getEnumId(ReportState.RELEASED))
 			.bind("startTime", DateTime.now().minusDays(1))
 			.bind("twoWeeksAgo", DateTime.now().minusDays(14))
+			.bind("startTimeSqlite", sqlitePattern.print(DateTime.now().minusDays(1)))
+			.bind("twoWeeksAgoSqlite", sqlitePattern.print(DateTime.now().minusDays(14)))
 			.map(new ReportMapper())
 			.list();
 }
