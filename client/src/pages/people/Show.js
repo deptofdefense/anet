@@ -37,6 +37,7 @@ export default class PersonShow extends Page {
 				position {
 					id,
 					name,
+					type,
 					organization {
 						id, shortName
 					},
@@ -113,32 +114,9 @@ export default class PersonShow extends Page {
 					<fieldset>
 						<legend>Position</legend>
 						{position && position.id &&
-							<div>
-							<Form.Field id="position" label="Current Position">
-								<LinkTo position={position} /> (<LinkTo organization={position.organization} />)
-							</Form.Field>
-
-							<FormGroup controlId="counterparts" >
-								<Col sm={2} componentClass={ControlLabel}>Assigned Counterparts</Col>
-								<Col sm={7} >
-									<Table striped>
-										<thead>
-											<tr><th>Name</th><th>Position</th><th>Organization</th></tr>
-										</thead>
-										<tbody>
-											{position.associatedPositions.map( assocPos =>
-												<tr key={assocPos.id}>
-													<td>{assocPos.person && <LinkTo person={assocPos.person} /> }</td>
-													<td><LinkTo position={assocPos} /></td>
-													<td><LinkTo organization={assocPos.organization} /></td>
-												</tr>
-											)}
-										</tbody>
-									</Table>
-								</Col>
-							</FormGroup>
-							</div>
+							this.renderPosition(position)
 						}
+
 					</fieldset>
 
 					<fieldset>
@@ -164,4 +142,33 @@ export default class PersonShow extends Page {
 		}
 	}
 
+	@autobind
+	renderPosition(position) {
+		let assocTitle = position.type === "ADVISOR" ? "Advises" : "Is advised by"
+		return <div>
+			<Form.Field id="position" label="Current Position">
+				<LinkTo position={position} /> (<LinkTo organization={position.organization} />)
+			</Form.Field>
+
+			<FormGroup controlId="counterparts" >
+				<Col sm={2} componentClass={ControlLabel}>{assocTitle}</Col>
+				<Col sm={7} >
+					<Table striped>
+						<thead>
+							<tr><th>Name</th><th>Position</th><th>Organization</th></tr>
+						</thead>
+						<tbody>
+							{position.associatedPositions.map( assocPos =>
+								<tr key={assocPos.id}>
+									<td>{assocPos.person && <LinkTo person={assocPos.person} /> }</td>
+									<td><LinkTo position={assocPos} /></td>
+										<td><LinkTo organization={assocPos.organization} /></td>
+								</tr>
+							)}
+						</tbody>
+					</Table>
+				</Col>
+			</FormGroup>
+		</div>
+	}
 }
