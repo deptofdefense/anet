@@ -15,7 +15,7 @@ import {Person} from 'models'
 
 export default class PersonShow extends Page {
 	static contextTypes = {
-		app: React.PropTypes.object.isRequired,
+		app: PropTypes.object.isRequired,
 	}
 
 	constructor(props) {
