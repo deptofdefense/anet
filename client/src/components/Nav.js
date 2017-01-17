@@ -33,6 +33,9 @@ export default class extends Component {
 					)}
 				</NavDropdown>
 
+				<Link to="/rollup">
+					<NavItem>Daily Rollup</NavItem>
+				</Link>
 
 				{process.env.NODE_ENV === 'development' &&
 					<Link to="/graphiql">
