@@ -174,7 +174,7 @@ export default class ReportShow extends Page {
 						<legend>Report #{report.id}</legend>
 
 						<Form.Field id="intent" label="Purpose" />
-						<Form.Field id="engagementDate" label="Date 📆" getter={date => moment(date).format("D MMM YYYY")} />
+						<Form.Field id="engagementDate" label="Date 📆" getter={date => date && moment(date).format("D MMM YYYY")} />
 						<Form.Field id="location" label="Location 📍">
 							{report.location && <LinkTo location={report.location} />}
 						</Form.Field>
@@ -199,9 +199,7 @@ export default class ReportShow extends Page {
 						<Table>
 							<thead>
 								<tr>
-									<th>Primary</th>
 									<th>Name</th>
-									<th>Type</th>
 									<th>Position</th>
 								</tr>
 							</thead>
@@ -210,12 +208,12 @@ export default class ReportShow extends Page {
 								{Person.map(report.attendees, person =>
 									<tr key={person.id}>
 										<td>
+											<img src={person.iconUrl()} alt={person.role}/>
+											<LinkTo person={person} />
 											{person.primary &&
-												"⭐️"
+												<img src="/assets/img/star.png" alt="primary" />
 											}
 										</td>
-										<td><LinkTo person={person} /></td>
-										<td>{person.role}</td>
 										<td><LinkTo position={person.position} /></td>
 									</tr>
 								)}

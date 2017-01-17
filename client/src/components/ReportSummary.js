@@ -27,7 +27,7 @@ export default class ReportSummary extends Component {
 					}
 				</Col>
 				<Col md={6}>
-					{moment(report.engagementDate).format("D MMM YYYY")}
+					{report.engagementDate && moment(report.engagementDate).format("D MMM YYYY")}
 					{report.location &&
 						<span> @&nbsp;
 						<Link to={"/locations/" + report.location.id}>{report.location.name}</Link>
@@ -59,6 +59,7 @@ export default class ReportSummary extends Component {
 	renderPerson(person) {
 		person = new Person(person);
 		return <div>
+			<img src={person.iconUrl()} alt={person.role} />
 			<LinkTo person={person} />
 			{person.position && person.position.organization &&
 				<span> -&nbsp;

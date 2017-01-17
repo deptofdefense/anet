@@ -42,15 +42,15 @@ export default class Search extends Page {
 		API.query(/*GraphQL */ `
 			searchResults(f:search, q:"${query}") {
 				reports { id, intent, engagementDate, keyOutcomesSummary, nextStepsSummary
-					primaryAdvisor { id, name, position { organization { id, shortName}}},
-					primaryPrincipal { id, name, position { organization { id, shortName}}},
+					primaryAdvisor { id, name, role, position { organization { id, shortName}}},
+					primaryPrincipal { id, name, role, position { organization { id, shortName}}},
 					advisorOrg { id, shortName},
 					principalOrg { id, shortName},
 					location { id, name},
 					poams {id, shortName, longName}
 				},
-				people { id, name, rank, emailAddress, role }
-				positions { id , name, type}
+				people { id, name, rank, emailAddress, role , position { id, name, organization { id, shortName} }}
+				positions { id , name, type, organization { id, shortName}, person { id, name } }
 				poams { id, shortName, longName}
 				locations { id, name, lat, lng}
 				organizations { id, shortName, longName }
@@ -171,18 +171,20 @@ export default class Search extends Page {
 			<thead>
 				<tr>
 					<th>Name</th>
-					<th>Role</th>
-					<th>Phone</th>
-					<th>Email</th>
+					<th>Position</th>
+					<th>Org</th>
 				</tr>
 			</thead>
 			<tbody>
 				{Person.map(this.state.results.people, person =>
 					<tr key={person.id}>
-						<td><LinkTo person={person}>{person.rank} {person.name}</LinkTo></td>
-						<td>{person.role}</td>
+						<td>
+							<img src={person.iconUrl()} alt={person.role} />
+							<LinkTo person={person}>{person.rank} {person.name}</LinkTo>
+						</td>
 						<td>{person.phoneNumber}</td>
-						<td>{person.emailAddress}</td>
+						<td>{person.position && <LinkTo position={person.position} />}</td>
+						<td>{person.position && person.position.organization && <LinkTo organization={person.position.organization} />}</td>
 					</tr>
 				)}
 			</tbody>
@@ -215,14 +217,19 @@ export default class Search extends Page {
 			<thead>
 				<tr>
 					<th>Name</th>
-					<th>Type</th>
+					<th>Org</th>
+					<th>Current Occupant</th>
 				</tr>
 			</thead>
 			<tbody>
 				{Position.map(this.state.results.positions, pos =>
 					<tr key={pos.id}>
-						<td><LinkTo position={pos} >{pos.code} {pos.name}</LinkTo></td>
-						<td>{pos.type}</td>
+						<td>
+							<img src={pos.iconUrl()} alt={pos.type} />
+							<LinkTo position={pos} >{pos.code} {pos.name}</LinkTo>
+						</td>
+						<td>{pos.organization && <LinkTo organization={pos.organization} />}</td>
+						<td>{pos.person && <LinkTo person={pos.person} />}</td>
 					</tr>
 				)}
 			</tbody>

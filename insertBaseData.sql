@@ -263,21 +263,21 @@ INSERT INTO organizations (shortName, longName, type, createdAt, updatedAt) VALU
 INSERT INTO organizations (shortName, longName, type, createdAt, updatedAt) VALUES ('MoI', 'Ministry of Interior', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 INSERT INTO positions (name, code, type, currentPersonId, organizationId, createdAt, updatedAt)
-	VALUES ('Minister of Defense', 'MOD-FO-00001', 1, NULL, (SELECT id FROM organizations WHERE shortName ='Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	VALUES ('Minister of Defense', 'MOD-FO-00001', 1, NULL, (SELECT id FROM organizations WHERE longName ='Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, code, type, currentPersonId, organizationId, createdAt, updatedAt)
-	VALUES ('Chief of Staff - MoD', 'MOD-FO-00002', 1, NULL, (SELECT id FROM organizations WHERE shortName ='Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	VALUES ('Chief of Staff - MoD', 'MOD-FO-00002', 1, NULL, (SELECT id FROM organizations WHERE longName ='Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, code, type, currentPersonId, organizationId, createdAt, updatedAt)
-	VALUES ('Executive Assistant to the MoD', 'MOD-FO-00003', 1, NULL, (SELECT id FROM organizations WHERE shortName ='Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	VALUES ('Executive Assistant to the MoD', 'MOD-FO-00003', 1, NULL, (SELECT id FROM organizations WHERE longName ='Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, code, type, currentPersonId, organizationId, createdAt, updatedAt)
-	VALUES ('Planning Captain', 'MOD-FO-00004', 1, NULL, (SELECT id FROM organizations WHERE shortName ='Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	VALUES ('Planning Captain', 'MOD-FO-00004', 1, NULL, (SELECT id FROM organizations WHERE longName ='Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, code, type, currentPersonId, organizationId, createdAt, updatedAt)
-	VALUES ('Director of Budgeting - MoD', 'MOD-Bud-00001', 1, NULL, (SELECT id FROM organizations WHERE shortName ='Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	VALUES ('Director of Budgeting - MoD', 'MOD-Bud-00001', 1, NULL, (SELECT id FROM organizations WHERE longName ='Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, code, type, currentPersonId, organizationId, createdAt, updatedAt)
-	VALUES ('Writer of Expenses - MoD', 'MOD-Bud-00002', 1, NULL, (SELECT id FROM organizations WHERE shortName ='Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	VALUES ('Writer of Expenses - MoD', 'MOD-Bud-00002', 1, NULL, (SELECT id FROM organizations WHERE longName ='Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, code, type, currentPersonId, organizationId, createdAt, updatedAt)
-	VALUES ('Cost Adder - MoD', 'MOD-Bud-00003', 1, NULL, (SELECT id FROM organizations WHERE shortName ='Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	VALUES ('Cost Adder - MoD', 'MOD-Bud-00003', 1, NULL, (SELECT id FROM organizations WHERE longName ='Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, code, type, currentPersonId, organizationId, createdAt, updatedAt)
-	VALUES ('Chief of Police', 'MOI-Pol-HQ-00001',1, NULL, (SELECT id FROM organizations WHERE shortName ='Ministry of Interior'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	VALUES ('Chief of Police', 'MOI-Pol-HQ-00001',1, NULL, (SELECT id FROM organizations WHERE longName ='Ministry of Interior'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Put Steve into a Tashkil and associate with the EF1 Advisor Billet
 INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES
@@ -316,7 +316,7 @@ INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, nextSteps, 
 	'Today I met with this dude to tell him all the great things that he can do to improve his budgeting process. I hope he listened to me',
 	'Meet with the dude again next week',
 	(SELECT id FROM people where emailAddress='hunter+jack@dds.mil'), 2, '2016-05-25', 0,
-	(SELECT id FROM organizations where shortName = 'EF2.1'), (SELECT id FROM organizations WHERE shortName='Ministry of Defense'));
+	(SELECT id FROM organizations where shortName = 'EF2.1'), (SELECT id FROM organizations WHERE longName='Ministry of Defense'));
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 	(SELECT id FROM people where emailAddress='hunter+steve@dds.mil'), (SELECT max(id) FROM reports), 1);
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
@@ -327,7 +327,7 @@ INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, keyOutcomes
 	'Today we discussed the fiscal details of how spreadsheets break down numbers into rows and columns and then text is used to fill up space on a web page, it was very interesting and other adjectives',
 	'we read over the spreadsheets for the FY17 Budget',
 	'meet with him again :(', (SELECT id FROM people where domainUsername='jack'), 2, '2016-06-01', 0,
-	(SELECT id FROM organizations where shortName = 'EF2.1'), (SELECT id FROM organizations WHERE shortName='Ministry of Defense'));
+	(SELECT id FROM organizations where shortName = 'EF2.1'), (SELECT id FROM organizations WHERE longName='Ministry of Defense'));
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 	(SELECT id FROM people where emailAddress='hunter+steve@dds.mil'), (SELECT max(id) from reports), 1);
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
@@ -342,7 +342,7 @@ INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, keyOutcomes
 	'This report needs to fill up more space',
 	'putting something in the database to take up space',
 	'to be more creative next time', (SELECT id FROM people where domainUsername='jack'), 2, '2016-06-03', 0,
-	(SELECT id FROM organizations where shortName = 'EF2.1'), (SELECT id FROM organizations WHERE shortName='Ministry of Defense'));
+	(SELECT id FROM organizations where shortName = 'EF2.1'), (SELECT id FROM organizations WHERE longName='Ministry of Defense'));
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 	(SELECT id FROM people where emailAddress='hunter+steve@dds.mil'), (SELECT max(id) from reports), 1);
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
@@ -354,7 +354,7 @@ INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, keyOutcomes
 	'Met with Nobody in this engagement and discussed no poams, what a waste of time',
 	'None',
 	'Head over to the MoD Headquarters buildling for the next engagement', (SELECT id FROM people where domainUsername='jack'), 2, '2016-06-10', 0,
-	(SELECT id FROM organizations where shortName = 'EF2.1'), (SELECT id FROM organizations WHERE shortName='Ministry of Defense'));
+	(SELECT id FROM organizations where shortName = 'EF2.1'), (SELECT id FROM organizations WHERE longName='Ministry of Defense'));
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 	(SELECT id FROM people where emailAddress='hunter+steve@dds.mil'), (SELECT max(id) from reports), 1);
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
@@ -365,7 +365,7 @@ INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, nextSteps, 
 	(CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (select id from locations where name='MoD Headquarters Kabul'), 'Meet with Leadership regarding monthly status update',
 	'This engagement was sooooo interesting',
 	'Meet up with Roger next week to look at the numbers on the charts', (SELECT id FROM people where domainUsername='jack'), 2, '2016-06-12', 2,
-	(SELECT id FROM organizations where shortName = 'EF2.1'), (SELECT id FROM organizations WHERE shortName='Ministry of Defense'));
+	(SELECT id FROM organizations where shortName = 'EF2.1'), (SELECT id FROM organizations WHERE longName='Ministry of Defense'));
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 	(SELECT id FROM people where emailAddress='hunter+steve@dds.mil'), (SELECT max(id) from reports), 1);
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
@@ -379,7 +379,7 @@ INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, keyOutcomes
 	'Went over to the fort to look at the beds and the spreadsheets and the numbers and the whiteboards and the planning and all of the budgets. It was GREAT!',
 	'Seeing the whiteboards firsthand',
 	'head to Cabot Tower and inspect their whiteboards next week', (SELECT id FROM people where domainUsername='jack'), 2, '2016-06-13', 0,
-	(SELECT id FROM organizations where shortName = 'EF2.1'), (SELECT id FROM organizations WHERE shortName='Ministry of Defense'));
+	(SELECT id FROM organizations where shortName = 'EF2.1'), (SELECT id FROM organizations WHERE longName='Ministry of Defense'));
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 	(SELECT id FROM people where emailAddress='hunter+roger@dds.mil'), (SELECT max(id) from reports), 1);
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
@@ -390,7 +390,7 @@ INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, nextSteps, 
 	(CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (select id from locations where name='Cabot Tower'), 'Inspect Cabot Tower Budgeting Facility',
 	'Looked over the places around Cabot Tower for all of the things that people do when they need to do math.  There were calculators, and slide rules, and paper, and computers',
 	'keep writing fake reports to fill the database!!!', (SELECT id FROM people where domainUsername='jack'), 1, '2016-06-20', 1,
-	(SELECT id FROM organizations where shortName = 'EF2.1'), (SELECT id FROM organizations WHERE shortName='Ministry of Defense'));
+	(SELECT id FROM organizations where shortName = 'EF2.1'), (SELECT id FROM organizations WHERE longName='Ministry of Defense'));
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 	(SELECT id FROM people where emailAddress='hunter+steve@dds.mil'), (SELECT max(id) from reports), 1);
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
@@ -401,7 +401,7 @@ INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, nextSteps, 
 	(CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from locations where name='General Hospital'), 'Discuss discrepancies in monthly budgets',
 	'Back to the hospital this week to test the recent locations feature of ANET, and also to look at math and numbers and budgets and things',
 	'Meet with the dude again next week',(SELECT id FROM people where emailAddress='hunter+jack@dds.mil'), 1, '2016-06-25', 0,
-	(SELECT id FROM organizations where shortName = 'EF2.1'), (SELECT id FROM organizations WHERE shortName='Ministry of Defense'));
+	(SELECT id FROM organizations where shortName = 'EF2.1'), (SELECT id FROM organizations WHERE longName='Ministry of Defense'));
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 	(SELECT id FROM people where emailAddress='hunter+steve@dds.mil'), (SELECT max(id) FROM reports), 1);
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
@@ -412,7 +412,7 @@ INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, nextSteps, 
 	(CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from locations where name='St Johns Airport'), 'Inspect Air Operations Capabilities',
 	'We went to the Aiport and looked at the planes, and the hangers, and the other things that airports have. ',
 	'Go over to the Airport next week to look at the helicopters',(SELECT id FROM people where domainUsername='elizabeth'), 2, '2016-05-20', 0,
-	(SELECT id FROM organizations where shortName = 'EF2.1'), (SELECT id FROM organizations WHERE shortName='Ministry of Defense'));
+	(SELECT id FROM organizations where shortName = 'EF2.1'), (SELECT id FROM organizations WHERE longName='Ministry of Defense'));
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 	(SELECT id FROM people where emailAddress='hunter+roger@dds.mil'), (SELECT max(id) FROM reports), 1);
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
@@ -423,7 +423,7 @@ INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, nextSteps, 
 	(CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from locations where name='St Johns Airport'), 'Inspect Helicopter Capabilities',
 	'Today we looked at the helicopters at the aiport and talked in depth about how they were not in good condition and the AAF needed new equipment.  I expressed my concerns to the pilots and promised to see what we can do.',
 	'Figure out what can be done about the helicopters',(SELECT id FROM people where domainUsername='elizabeth'), 2, '2016-05-22', 0,
-	(SELECT id FROM organizations where shortName = 'EF2.1'), (SELECT id FROM organizations WHERE shortName='Ministry of Defense'));
+	(SELECT id FROM organizations where shortName = 'EF2.1'), (SELECT id FROM organizations WHERE longName='Ministry of Defense'));
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 	(SELECT id FROM people where emailAddress='hunter+roger@dds.mil'), (SELECT max(id) FROM reports), 1);
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
