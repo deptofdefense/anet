@@ -83,7 +83,7 @@ export default class FormField extends Component {
 		if (extra)
 			children.splice(children.indexOf(extra), 1)
 
-		let defaultValue = this.getDefaultValue(this.props)
+		let defaultValue = this.getDefaultValue(this.props, this.context)
 
 		let state = this.state
 		if (Array.isArray(defaultValue))
@@ -138,8 +138,8 @@ export default class FormField extends Component {
 		)
 	}
 
-	shouldComponentUpdate(newProps, newState) {
-		let newValue = this.getDefaultValue(newProps)
+	shouldComponentUpdate(newProps, newState, newContext) {
+		let newValue = this.getDefaultValue(newProps, newContext)
 		let oldValue = this.state.value
 
 		if (newValue !== oldValue)
@@ -151,18 +151,18 @@ export default class FormField extends Component {
 		return false
 	}
 
-	getValue() {
-		let formContext = this.context.formFor
-		let id = this.props.id
-		let getter = this.props.getter
+	getValue(props, context) {
+		let formContext = context.formFor
+		let id = props.id
+		let getter = props.getter
 		if (formContext) {
 			let value = formContext[id]
 			return getter ? getter(value) : value
 		}
 	}
 
-	getDefaultValue(props) {
-		return props.value || this.getValue() || ''
+	getDefaultValue(props, context) {
+		return props.value || this.getValue(props, context) || ''
 	}
 
 	@autobind
