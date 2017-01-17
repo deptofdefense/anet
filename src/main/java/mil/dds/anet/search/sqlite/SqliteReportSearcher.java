@@ -51,6 +51,15 @@ public class SqliteReportSearcher implements IReportSearcher {
 			args.put("endDate", sqlitePattern.print(query.getEngagementDateEnd()));
 		}
 		
+		if (query.getCreatedAtStart() != null) { 
+			whereClauses.add("reports.createdAt >= DateTime(:startCreatedAt)");
+			args.put("startCreatedAt", sqlitePattern.print(query.getCreatedAtStart()));
+		}
+		if (query.getCreatedAtEnd() != null) { 
+			whereClauses.add("reports.createdAt <= DateTime(:endCreatedAt)");
+			args.put("endCreatedAt", sqlitePattern.print(query.getCreatedAtEnd()));
+		}
+		
 		if (query.getAttendeeId() != null) { 
 			 whereClauses.add("reports.id IN (SELECT reportId from reportPeople where personId = :attendeeId)");
 			 args.put("attendeeId", query.getAttendeeId());

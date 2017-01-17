@@ -14,7 +14,6 @@ export default class ReportSummary extends Component {
 
 	render() {
 		let report = new Report(this.props.report)
-		console.log("report summary", report)
 
 		return <Grid fluid>
 			<Row>

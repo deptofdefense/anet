@@ -206,7 +206,7 @@ public class AnetResourceDataFetcher implements DataFetcher {
 					}
 				} else {
 					System.out.println("c: Arg is " + arg.getClass() + " and param is " + param.getType());
-					throw new WebApplicationException("Type mismatch on arg, wanted " + param.getType() + " got " + arg.getClass());
+					throw new WebApplicationException("Type mismatch on arg, wanted " + param.getType() + " got " + arg.getClass() + " on " + method.getName());
 				}
 			}
 			args.add(arg);

@@ -17,7 +17,7 @@ export default class SearchBar extends Component {
 				<InputGroup>
 					<FormControl value={this.state.query} placeholder="Search for people, reports, positions, or locations" onChange={this.onChange}/>
 					<InputGroup.Button>
-						<Button>🔍</Button>
+						<Button onClick={this.onSubmit} >🔍</Button>
 					</InputGroup.Button>
 				</InputGroup>
 			</Form>

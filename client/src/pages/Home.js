@@ -1,39 +1,65 @@
-import React, {Component} from 'react'
-import {Button, Modal} from 'react-bootstrap'
+import React from 'react'
+import Page from 'components/Page'
+import {Grid, Row, Col} from 'react-bootstrap'
 
 import Breadcrumbs from 'components/Breadcrumbs'
+import API from 'api'
 
-export default class Home extends Component {
+export default class Home extends Page {
 	constructor(props) {
 		super(props)
-		this.state = {showModal: false}
+		this.state = {
+			pendingMe: null,
+			myOrgToday: null,
+			myReportsToday: null
+		}
+	}
+
+	fetchData() {
+		API.query(/*GraphQL */`
+			pendingMe: reports(f:pendingMyApproval) { id },
+			myOrg: reports(f:myOrgToday) { id },
+			myReports: reports(f:myReportsToday) {  id }
+		`).then(data => {
+			this.setState({
+				pendingMe: data.pendingMe,
+				myOrgToday: data.myOrg,
+				myReportsToday: data.myReports
+			});
+		})
 	}
 
 	render() {
+		let {pendingMe, myOrgToday, myReportsToday} = this.state
+
 		return (
 			<div>
 				<Breadcrumbs />
 
-				<Button bsStyle="primary" onClick={this.openModal}>Open Modal</Button>
+				<fieldset>
+					<legend>My ANET Snapshot</legend>
+					<Grid fluid>
+						<Row>
+							<Col md={4} style={{textAlign: 'center'}} >
+								<h1>{pendingMe && pendingMe.length}</h1>
+								Pending Approval
+							</Col>
+							<Col md={4} style={{textAlign: 'center'}} >
+								<h1>{myOrgToday && myOrgToday.length}</h1>
+								In my Organization in last 24hrs
+							</Col>
+							<Col md={4} style={{textAlign: 'center'}} >
+								<h1>{myReportsToday && myReportsToday.length}</h1>
+								My reports in last 24 hrs
+							</Col>
+						</Row>
+					</Grid>
+				</fieldset>
 
-				<Modal show={this.state.showModal} onHide={this.closeModal}>
-					<Modal.Header closeButton>
-						<Modal.Title>Header</Modal.Title>
-					</Modal.Header>
-
-					<Modal.Body>
-						This is the modal body.
-					</Modal.Body>
-				</Modal>
+				<fieldset>
+					<legend>Subscribed Searches</legend>
+				</fieldset>
 			</div>
 		)
-	}
-
-	openModal = () => {
-		this.setState({showModal: true})
-	}
-
-	closeModal = () => {
-		this.setState({showModal: false})
 	}
 }

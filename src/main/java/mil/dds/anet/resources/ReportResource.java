@@ -22,9 +22,11 @@ import javax.ws.rs.core.Response.Status;
 
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;
+import org.joda.time.DateTime;
 
 import com.codahale.metrics.annotation.Timed;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import io.dropwizard.auth.Auth;
@@ -40,6 +42,7 @@ import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.beans.Poam;
+import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
@@ -420,6 +423,29 @@ public class ReportResource implements IGraphQLResource {
 	@GraphQLFetcher
 	@Path("/search")
 	public List<Report> search(@GraphQLParam("query") ReportSearchQuery query) {
+		return dao.search(query);
+	}
+	
+	@GraphQLFetcher("myOrgToday")
+	public List<Report> myOrgReportsToday(@Auth Person user) { 
+		Position pos = user.loadPosition();
+		if (pos == null) { return ImmutableList.of(); } 
+		Organization org = pos.loadOrganization();
+		if (org == null) { return ImmutableList.of(); } 
+		
+		ReportSearchQuery query = new ReportSearchQuery();
+		query.setAuthorOrgId(org.getId());
+		query.setCreatedAtStart(DateTime.now().minusDays(1));
+		
+		return dao.search(query);
+	}
+	
+	@GraphQLFetcher("myReportsToday")
+	public List<Report> myReportsToday(@Auth Person user) { 
+		ReportSearchQuery query = new ReportSearchQuery();
+		query.setAuthorId(user.getId());
+		query.setCreatedAtStart(DateTime.now().minusDays(1));
+		
 		return dao.search(query);
 	}
 
