@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
-import {Table, DropdownButton, MenuItem} from 'react-bootstrap'
+import {Table, DropdownButton, MenuItem, FormControl, FormGroup, Col, ControlLabel} from 'react-bootstrap'
 import moment from 'moment'
 import autobind from 'autobind-decorator'
 
@@ -38,7 +38,12 @@ export default class PersonShow extends Page {
 					id,
 					name,
 					organization {
-						id, shortName, longName
+						id, shortName
+					},
+					associatedPositions {
+						id, name,
+						person { id, name, rank },
+						organization { id, shortName }
 					}
 				},
 				authoredReports(pageNum:0,pageSize:10) {
@@ -73,16 +78,6 @@ export default class PersonShow extends Page {
 		let position = person.position
 		let org = position && position.organization
 
-		let currentPositionRow = <tr><td>This person is not assigned to a position</td></tr>
-
-		if (position && position.id) {
-			currentPositionRow = <tr>
-				<td>Now</td>
-				<td><LinkTo organization={org} /></td>
-				<td><LinkTo position={position}>{position.name}</LinkTo></td>
-			</tr>
-		}
-
 		//User can always edit themselves, or Super Users/Admins.
 		let currentUser = this.context.app.state.currentUser;
 		let canEdit = currentUser && (currentUser.id === person.id ||
@@ -116,16 +111,34 @@ export default class PersonShow extends Page {
 					</fieldset>
 
 					<fieldset>
-						<legend>Positions</legend>
-						<Table>
-							<thead>
-							<tr><th>Date</th><th>Org</th><th>Position</th></tr>
-							</thead>
-							<tbody>
-								{currentPositionRow}
-								<tr><td colSpan="3" className="todo">TODO: Previous Positions</td></tr>
-							</tbody>
-						</Table>
+						<legend>Position</legend>
+						{position && position.id &&
+							<div>
+							<Form.Field id="position" label="Current Position">
+								<LinkTo position={position} /> (<LinkTo organization={position.organization} />)
+							</Form.Field>
+
+							<FormGroup controlId="counterparts" >
+								<Col sm={2} componentClass={ControlLabel}>Assigned Counterparts</Col>
+								<Col sm={7} >
+									<Table striped>
+										<thead>
+											<tr><th>Name</th><th>Position</th><th>Organization</th></tr>
+										</thead>
+										<tbody>
+											{position.associatedPositions.map( assocPos =>
+												<tr key={assocPos.id}>
+													<td>{assocPos.person && <LinkTo person={assocPos.person} /> }</td>
+													<td><LinkTo position={assocPos} /></td>
+													<td><LinkTo organization={assocPos.organization} /></td>
+												</tr>
+											)}
+										</tbody>
+									</Table>
+								</Col>
+							</FormGroup>
+							</div>
+						}
 					</fieldset>
 
 					<fieldset>
