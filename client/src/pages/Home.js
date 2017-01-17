@@ -1,13 +1,18 @@
-import React from 'react'
+import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 import {Grid, Row, Col, FormControl, FormGroup, ControlLabel} from 'react-bootstrap'
 import SavedSearchTable from 'components/SavedSearchTable'
+import {Link} from 'react-router'
 
 import Breadcrumbs from 'components/Breadcrumbs'
 import API from 'api'
 import autobind from 'autobind-decorator'
 
 export default class Home extends Page {
+	static contextTypes = {
+		app: PropTypes.object.isRequired,
+	}
+
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -39,26 +44,36 @@ export default class Home extends Page {
 
 	render() {
 		let {pendingMe, myOrgToday, myReportsToday} = this.state
+		let currentUser = this.context.app.state.currentUser;
+		let org = currentUser && currentUser.position && currentUser.position.organization
 
 		return (
 			<div>
 				<Breadcrumbs />
 
-				<fieldset>
+				<fieldset className="homeTileRow">
 					<legend>My ANET Snapshot</legend>
 					<Grid fluid>
 						<Row>
-							<Col md={4} style={{textAlign: 'center'}} >
-								<h1>{pendingMe && pendingMe.length}</h1>
-								Pending Approval
+							<Col md={4} className="homeTile">
+								<Link to={"/search?type=reports&pendingMyApproval=true"}>
+									<h1>{pendingMe && pendingMe.length}</h1>
+									Pending Approval
+								</Link>
 							</Col>
-							<Col md={4} style={{textAlign: 'center'}} >
-								<h1>{myOrgToday && myOrgToday.length}</h1>
-								In my Organization in last 24hrs
+							<Col md={4} className="homeTile" >
+								{org &&
+									<Link to={"/search?type=reports&authorOrgId=" + org.id}>
+										<h1>{myOrgToday && myOrgToday.length}</h1>
+										{org.shortName}s recent reports
+									</Link>
+								}
 							</Col>
-							<Col md={4} style={{textAlign: 'center'}} >
-								<h1>{myReportsToday && myReportsToday.length}</h1>
-								My reports in last 24 hrs
+							<Col md={4} className="homeTile" >
+								<Link to={"/search?type=reports&authorId=" + currentUser.id}>
+									<h1>{myReportsToday && myReportsToday.length}</h1>
+									My reports in last 24 hrs
+								</Link>
 							</Col>
 						</Row>
 					</Grid>

@@ -94,3 +94,24 @@ fieldset legend small {
 .todo {
 	background-color: red;
 }
+
+.homeTileRow { 
+	padding: 0 0 0 0
+}
+
+.homeTile { 
+	text-align: center;
+	color:#5c5c5c;
+	padding-top:20px;
+	padding-bottom:20px;
+}
+.homeTile a { 
+	color:#5c5c5c;
+	text-decoration: none; 
+}
+.homeTile h1 { 
+	font-weight: 900;
+}
+.homeTile:hover { 
+	background-color: #dae3ee;
+}
