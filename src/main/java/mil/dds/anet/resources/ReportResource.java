@@ -449,4 +449,11 @@ public class ReportResource implements IGraphQLResource {
 		return dao.search(query);
 	}
 
+	@GET
+	@Timed
+	@GraphQLFetcher
+	@Path("/releasedToday")
+	public List<Report> releasedToday() {
+		return dao.getRecentReleased();
+	}
 }
