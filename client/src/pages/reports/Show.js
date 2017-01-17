@@ -155,10 +155,10 @@ export default class ReportShow extends Page {
 
 				<div className="pull-right">
 					<DropdownButton bsStyle="primary" title="Actions" id="actions"
-							className="pull-right" onSelect={this.actionSelect}>
+						className="pull-right" onSelect={this.actionSelect}>
 						{canEdit && <MenuItem eventKey="edit" >Edit Report</MenuItem>}
 						{canSubmit && errors.length === 0 && <MenuItem eventKey="submit">Submit</MenuItem>}
-						{canEmail && <MenuItem eventKey="email" className="todo" href={"mailto:?subject="+encodeURIComponent(this.state.report.intent)+"&body="+encodeURIComponent(this.state.report.reportText)}>Email Report</MenuItem>}
+						{canEmail && <MenuItem eventKey="email" className="todo" href={"mailto:?subject="+encodeURIComponent(report.intent)+"&body="+encodeURIComponent(report.reportText)}>Email Report</MenuItem>}
 					</DropdownButton>
 				</div>
 
@@ -290,18 +290,18 @@ export default class ReportShow extends Page {
 								{(errors && errors.length > 0) ?
 									this.renderValidationErrors(errors)
 									:
-									<p>
-										By pressing submit, this report will be sent to
-										<strong> {Object.get(report, 'author.position.organization.name') || 'your organization approver'} </strong>
-										to go through the approval workflow.
-									</p>
+										<p>
+											By pressing submit, this report will be sent to
+											<strong> {Object.get(report, 'author.position.organization.name') || 'your organization approver'} </strong>
+											to go through the approval workflow.
+										</p>
 								}
 							</Col>
 
 							<Col md={3}>
 								<Button type="submit" bsStyle="primary" bsSize="large"
-										onClick={this.submitDraft}
-										disabled={errors && errors.length > 0} >
+									onClick={this.submitDraft}
+									disabled={errors && errors.length > 0}>
 									Submit report
 								</Button>
 							</Col>
@@ -324,7 +324,7 @@ export default class ReportShow extends Page {
 
 						{!report.comments.length && "There are no comments yet."}
 
-						<Form formFor={this.state.newComment} horizontal style={commentFormCss} onSubmit={this.submitComment} onChange={this.onChange} >
+						<Form formFor={this.state.newComment} horizontal style={commentFormCss} onSubmit={this.submitComment} onChange={this.onChange} submitText={false}>
 							<Form.Field id="text" placeholder="Type a comment here" label="">
 								<Form.Field.ExtraCol>
 									<Button bsStyle="primary" type="submit">Save comment</Button>
