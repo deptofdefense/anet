@@ -39,14 +39,6 @@ export default class ReportSummary extends Component {
 				<Col md={6}>{report.primaryPrincipal && this.renderPerson(report.primaryPrincipal)}</Col>
 			</Row>
 			<Row>
-				<Col md={12}>
-					<ul>{report.poams && Poam.map(report.poams, poam =>
-						<li key={poam.id}>{poam.shortName} - {poam.longName}</li>
-					)}
-					</ul>
-				</Col>
-			</Row>
-			<Row>
 				<Col md={12}>The <b>Key Outcomes</b> were {report.keyOutcomesSummary}.  The <b>Next Steps</b> are {report.nextStepsSummary}. </Col>
 			</Row>
 			<Row>
