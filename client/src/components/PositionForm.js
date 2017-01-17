@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {Component, PropTypes} from 'react'
 
 import {Table, Alert} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
@@ -9,12 +9,12 @@ import {Position} from 'models'
 
 export default class PositionForm extends Component {
 	static propTypes = {
-		position: React.PropTypes.object,
-		onChange: React.PropTypes.func,
-		onSubmit: React.PropTypes.func,
-		edit: React.PropTypes.bool,
-		submitText: React.PropTypes.string,
-		error: React.PropTypes.object,
+		position: PropTypes.object,
+		onChange: PropTypes.func,
+		onSubmit: PropTypes.func,
+		edit: PropTypes.bool,
+		submitText: PropTypes.string,
+		error: PropTypes.object,
 	}
 
 	constructor(props) {

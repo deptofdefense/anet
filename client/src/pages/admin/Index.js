@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 import autobind from 'autobind-decorator'
 
@@ -9,7 +9,7 @@ import API from 'api'
 
 export default class AdminIndex extends Page {
 	static contextTypes = {
-		app: React.PropTypes.object,
+		app: PropTypes.object,
 	}
 
 	constructor(props) {

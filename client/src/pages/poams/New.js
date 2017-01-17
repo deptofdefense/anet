@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {PropTypes} from 'react'
 import autobind from 'autobind-decorator'
 
 import {ContentForHeader} from 'components/Header'
@@ -12,7 +12,7 @@ import {Poam,Organization} from 'models'
 
 export default class PoamNew extends Page {
 	static contextTypes = {
-		router: React.PropTypes.object.isRequired
+		router: PropTypes.object.isRequired
 	}
 
 	static pageProps = {

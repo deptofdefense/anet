@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 import autobind from 'autobind-decorator'
 
@@ -12,7 +12,7 @@ import {Organization} from 'models'
 
 export default class OrganizationNew extends Page {
 	static contextTypes = {
-		router: React.PropTypes.object.isRequired
+		router: PropTypes.object.isRequired
 	}
 
 	static pageProps = {

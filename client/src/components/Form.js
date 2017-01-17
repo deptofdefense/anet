@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {Component, PropTypes} from 'react'
 import ReactDOM from 'react-dom'
 import {Form as BSForm, Row, Button} from 'react-bootstrap'
 
@@ -12,11 +12,11 @@ const staticFormStyle = {
 
 export default class Form extends Component {
 	static propTypes = Object.assign({}, BSForm.propTypes, {
-		formFor: React.PropTypes.object,
-		static: React.PropTypes.bool,
-		submitText: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.bool]),
-		submitOnEnter: React.PropTypes.bool,
-		onSubmit: React.PropTypes.func,
+		formFor: PropTypes.object,
+		static: PropTypes.bool,
+		submitText: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
+		submitOnEnter: PropTypes.bool,
+		onSubmit: PropTypes.func,
 	})
 
 	static defaultProps = {
@@ -26,8 +26,8 @@ export default class Form extends Component {
 	}
 
 	static childContextTypes = {
-		formFor: React.PropTypes.object,
-		form: React.PropTypes.object,
+		formFor: PropTypes.object,
+		form: PropTypes.object,
 	}
 
 	getChildContext() {

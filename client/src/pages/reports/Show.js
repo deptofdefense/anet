@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 import {Alert, Table, Button, Col, DropdownButton, MenuItem, Modal} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
@@ -35,7 +35,7 @@ const approvalButtonCss = {
 
 export default class ReportShow extends Page {
 	static contextTypes = {
-		app: React.PropTypes.object,
+		app: PropTypes.object,
 	}
 
 	constructor(props) {

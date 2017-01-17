@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {Component, PropTypes} from 'react'
 
 const SETTING_KEY_TEXT = "SECURITY_BANNER_TEXT"
 const SETTING_KEY_COLOR = "SECURITY_BANNER_COLOR"
@@ -17,11 +17,11 @@ const css = {
 
 export default class SecurityBanner extends Component {
 	static propTypes = {
-		location: React.PropTypes.object.isRequired,
+		location: PropTypes.object.isRequired,
 	}
 
 	static contextTypes = {
-		app: React.PropTypes.object.isRequired,
+		app: PropTypes.object.isRequired,
 	}
 
 	render() {

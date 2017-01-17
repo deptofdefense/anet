@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {Component, PropTypes} from 'react'
 
 import TextEditor from 'components/TextEditor'
 import Autocomplete from 'components/Autocomplete'
@@ -13,17 +13,17 @@ import {Person} from 'models'
 
 export default class ReportForm extends Component {
 	static propTypes = {
-		report: React.PropTypes.object.isRequired,
-		recents: React.PropTypes.object.isRequired,
-		onChange: React.PropTypes.func.isRequired,
-		onSubmit: React.PropTypes.func,
-		edit: React.PropTypes.bool,
-		submitText: React.PropTypes.string,
-		error: React.PropTypes.string,
+		report: PropTypes.object.isRequired,
+		recents: PropTypes.object.isRequired,
+		onChange: PropTypes.func.isRequired,
+		onSubmit: PropTypes.func,
+		edit: PropTypes.bool,
+		submitText: PropTypes.string,
+		error: PropTypes.string,
 	}
 
 	static contextTypes = {
-		app: React.PropTypes.object,
+		app: PropTypes.object,
 	}
 
 	constructor(props) {

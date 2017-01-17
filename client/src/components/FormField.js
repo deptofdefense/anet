@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {Component, PropTypes} from 'react'
 import utils from 'utils'
 import deepEqual from 'deep-equal'
 import autobind from 'autobind-decorator'
@@ -16,8 +16,8 @@ export default class FormField extends Component {
 		this.state = {value: ''}
 	}
 	static contextTypes = {
-		formFor: React.PropTypes.object,
-		form: React.PropTypes.object,
+		formFor: PropTypes.object,
+		form: PropTypes.object,
 	}
 
 	static propTypes = {
@@ -27,32 +27,32 @@ export default class FormField extends Component {
 		// and when the FormField changes, formForObject[idProp] will automatically
 		// be updated. The form will then have its own onChange fired to allow
 		// you to update state or rerender.
-		id: React.PropTypes.string.isRequired,
-		label: React.PropTypes.string,
+		id: PropTypes.string.isRequired,
+		label: PropTypes.string,
 
 		// if you need to do additional formatting on the value returned by
 		// formForObject[idProp], you can specify a getter function which
 		// will be called with the value as its prop
-		getter: React.PropTypes.func,
+		getter: PropTypes.func,
 
 		// This will cause the FormField to be rendered as an InputGroup,
 		// with the node specified by addon appended on the right of the group.
-		addon: React.PropTypes.node,
+		addon: PropTypes.node,
 
 		// If you pass children, we will try to autobind them to the id key
 		// if any of the children have propTypes that include onChange
-		children: React.PropTypes.node,
+		children: PropTypes.node,
 
 		// If you don't pass children, we will automatically create a FormControl.
 		// You can use componentClass to override its type (for example, for a select).
-		componentClass: React.PropTypes.oneOfType([
-			React.PropTypes.string,
-			React.PropTypes.object,
+		componentClass: PropTypes.oneOfType([
+			PropTypes.string,
+			PropTypes.object,
 		]),
 
 		// If you don't want autobinding behavior, you can override them here
-		value: React.PropTypes.string,
-		onChange: React.PropTypes.func,
+		value: PropTypes.string,
+		onChange: PropTypes.func,
 	}
 
 	render() {

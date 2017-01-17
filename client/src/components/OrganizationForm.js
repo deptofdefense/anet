@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {Component, PropTypes} from 'react'
 
 import Autocomplete from 'components/Autocomplete'
 import Form from 'components/Form'
@@ -8,12 +8,12 @@ import autobind from 'autobind-decorator'
 
 export default class OrganizationForm extends Component {
 	static propTypes = {
-		organization: React.PropTypes.object,
-		onChange: React.PropTypes.func,
-		onSubmit: React.PropTypes.func,
-		edit: React.PropTypes.bool,
-		submitText: React.PropTypes.string,
-		error: React.PropTypes.object,
+		organization: PropTypes.object,
+		onChange: PropTypes.func,
+		onSubmit: PropTypes.func,
+		edit: PropTypes.bool,
+		submitText: PropTypes.string,
+		error: PropTypes.object,
 	}
 
 	render() {

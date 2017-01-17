@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 import {Table, DropdownButton, MenuItem} from 'react-bootstrap'
 import moment from 'moment'

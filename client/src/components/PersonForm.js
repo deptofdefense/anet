@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {Component, PropTypes} from 'react'
 
 import TextEditor from 'components/TextEditor'
 import Autocomplete from 'components/Autocomplete'
@@ -8,13 +8,13 @@ import {InputGroup, Alert} from 'react-bootstrap'
 
 export default class PersonForm extends Component {
 	static propTypes = {
-		person: React.PropTypes.object,
-		onChange: React.PropTypes.func,
-		onSubmit: React.PropTypes.func,
-		edit: React.PropTypes.bool,
-		submitText: React.PropTypes.string,
-		error: React.PropTypes.object,
-		showPositionAssignment: React.PropTypes.bool
+		person: PropTypes.object,
+		onChange: PropTypes.func,
+		onSubmit: PropTypes.func,
+		edit: PropTypes.bool,
+		submitText: PropTypes.string,
+		error: PropTypes.object,
+		showPositionAssignment: PropTypes.bool
 	}
 
 	render() {

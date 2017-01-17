@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 import {Table, ListGroup, ListGroupItem, DropdownButton, MenuItem} from 'react-bootstrap'
 
@@ -12,7 +12,7 @@ import LinkTo from 'components/LinkTo'
 
 export default class OrganizationShow extends Page {
 	static contextTypes = {
-		app: React.PropTypes.object.isRequired,
+		app: PropTypes.object.isRequired,
 	}
 
 	constructor(props) {

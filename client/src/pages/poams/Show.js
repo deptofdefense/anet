@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 import {DropdownButton, MenuItem} from 'react-bootstrap'
 
@@ -13,7 +13,7 @@ import {Poam} from 'models'
 
 export default class PoamShow extends Page {
 	static contextTypes = {
-		app: React.PropTypes.object.isRequired,
+		app: PropTypes.object.isRequired,
 	}
 	constructor(props) {
 		super(props)

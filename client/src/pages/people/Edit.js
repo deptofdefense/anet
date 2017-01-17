@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {PropTypes} from 'react'
 import autobind from 'autobind-decorator'
 
 import {ContentForHeader} from 'components/Header'
@@ -13,7 +13,7 @@ import {Person} from 'models'
 
 export default class PersonEdit extends Page {
 	static contextTypes = {
-		app: React.PropTypes.object.isRequired,
+		app: PropTypes.object.isRequired,
 	}
 
 	static pageProps = {

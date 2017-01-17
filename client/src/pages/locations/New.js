@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {PropTypes} from 'react'
 import autobind from 'autobind-decorator'
 
 import {ContentForHeader} from 'components/Header'
@@ -12,7 +12,7 @@ import {Location} from 'models'
 
 export default class LocationNew extends React.Component {
 	static contextTypes = {
-		router: React.PropTypes.object.isRequired
+		router: PropTypes.object.isRequired
 	}
 
 	static pageProps = {

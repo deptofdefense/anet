@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 import History from 'components/History'
 import autobind from 'autobind-decorator'
@@ -17,7 +17,7 @@ export default class ReportEdit extends Page {
 	}
 
 	static contextTypes = {
-		app: React.PropTypes.object,
+		app: PropTypes.object,
 	}
 
 	constructor(props) {
