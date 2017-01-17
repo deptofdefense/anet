@@ -26,7 +26,6 @@ export default class TextEditor extends Component {
 			if (props.onChange) {
 				let value = stateToHTML(editorState.getCurrentContent())
 				props.onChange(value)
-				console.log(value);
 			}
 		}
 

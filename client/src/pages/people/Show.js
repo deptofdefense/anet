@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
-import {Table, DropdownButton, MenuItem, FormControl, FormGroup, Col, ControlLabel} from 'react-bootstrap'
+import {Table, DropdownButton, MenuItem, FormGroup, Col, ControlLabel} from 'react-bootstrap'
 import moment from 'moment'
 import autobind from 'autobind-decorator'
 

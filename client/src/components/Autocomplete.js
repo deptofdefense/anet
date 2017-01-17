@@ -57,7 +57,6 @@ export default class Autocomplete extends Component {
 		let inputProps = Object.without(this.props, 'url', 'clearOnSelect', 'valueKey', 'template', 'urlParams')
 		inputProps.value = this.state.stringValue
 		inputProps.onChange = this.onInputChange
-		console.log(this.state.noSuggestions);
 		return <div>
 			<Autosuggest
 				suggestions={this.state.suggestions}
