@@ -10,6 +10,10 @@ class FormFieldExtraCol extends Component {
 }
 
 export default class FormField extends Component {
+	constructor(props, context) {
+		super(props, context)
+		this.state = {value: ''}
+	}
 	static contextTypes = {
 		formFor: React.PropTypes.object,
 		form: React.PropTypes.object,
@@ -78,7 +82,8 @@ export default class FormField extends Component {
 		if (extra)
 			children.splice(children.indexOf(extra), 1)
 
-		let defaultValue = this.props.value || this.getValue() || ''
+		let state = this.state
+		let defaultValue = state.value = this.getDefaultValue(this.props)
 
 		// if type is static, render out a static value
 		if (this.props.type === 'static' || (!this.props.type && this.context.form.props.static)) {
@@ -127,6 +132,10 @@ export default class FormField extends Component {
 		)
 	}
 
+	shouldComponentUpdate(newProps, newState) {
+		return this.getDefaultValue(newProps) !== this.state.value
+	}
+
 	getValue() {
 		let formContext = this.context.formFor
 		let id = this.props.id
@@ -135,6 +144,10 @@ export default class FormField extends Component {
 			let value = formContext[id]
 			return getter ? getter(value) : value
 		}
+	}
+
+	getDefaultValue(props) {
+		return props.value || this.getValue() || ''
 	}
 
 	@autobind
