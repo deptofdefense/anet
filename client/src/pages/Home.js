@@ -84,7 +84,7 @@ export default class Home extends Page {
 					<FormGroup controlId="savedSearchSelect">
 						<ControlLabel>Select a Saved Search</ControlLabel>
 						<FormControl componentClass="select" onChange={this.onSaveSearchSelect}>
-							{this.state.savedSearches.map( savedSearch =>
+							{this.state.savedSearches && this.state.savedSearches.map( savedSearch =>
 								<option value={savedSearch.id} key={savedSearch.id}>{savedSearch.name}</option>
 							)}
 						</FormControl>
