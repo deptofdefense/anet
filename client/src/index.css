@@ -115,3 +115,10 @@ fieldset legend small {
 .homeTile:hover { 
 	background-color: #dae3ee;
 }
+
+.primaryAttendeeNo>span{ 
+	display:none
+}
+.primaryAttendeeNo:hover>span { 
+	display:block;
+} 
