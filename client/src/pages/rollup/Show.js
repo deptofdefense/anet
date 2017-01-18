@@ -50,9 +50,9 @@ export default class RollupShow extends Page {
 	}
 
 	fetchData(props) {
-		// TODO: this is a hack to make sure we get some data, I am not using the 
+		// TODO: this is a hack to make sure we get some data, I am not using the
 		API.query(/* GraphQL */`
-			reports(f:getAll,pageSize:20,pageNum:0) {
+			reports(f:getAll,pageSize:100,pageNum:0) {
 				id, state, intent
 				advisorOrg {
 					id, shortName
@@ -77,7 +77,7 @@ export default class RollupShow extends Page {
 		// Sets up the data
 		var step1 = d3.nest()
 				.key(function(d){return d.advisorOrg.parentOrg.shortName;})
-				.rollup(function(d){debugger; return {l:d.length,s:d[0].state,r:d}})
+				.rollup(function(d){return {l:d.length,s:d[0].state,r:d}})
 				.entries(reports)
 
 		var svg = d3.select(this.graph),
