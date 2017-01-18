@@ -10,7 +10,7 @@ export default class ReportCard extends Component {
 	render() {
 		let {report} = this.props
 
-		return <div>
+		return <div className="clearfix">
 			<Row>
 				<Col md={6}>
 					<LinkTo organization={report.primaryAdvisor.position.organization} />

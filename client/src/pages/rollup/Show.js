@@ -46,7 +46,7 @@ export default class RollupShow extends Page {
 		super(props)
 		this.state = {
 			date: {},
-			reports: {},
+			reports: [],
 		}
 	}
 
@@ -183,7 +183,11 @@ export default class RollupShow extends Page {
 
 				<fieldset>
 					<legend>Reports - {this.dateLongStr}</legend>
-					<div className="todo" contentEditable suppressContentEditableWarning>Pretty graphs here</div>
+
+					{Report.map(reports, report => <div key={report.id}>
+						<ReportCard report={report} />
+						<hr />
+					</div>)}
 				</fieldset>
 			</div>
 		)
