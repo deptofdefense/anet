@@ -2,8 +2,9 @@ import React from 'react'
 import Page from 'components/Page'
 import autobind from 'autobind-decorator'
 
-import {DropdownButton, MenuItem} from 'react-bootstrap'
+import {DropdownButton, MenuItem, Row, Col} from 'react-bootstrap'
 import Breadcrumbs from 'components/Breadcrumbs'
+import LinkTo from 'components/LinkTo'
 import History from 'components/History'
 
 import API from 'api'
@@ -53,7 +54,18 @@ export default class RollupShow extends Page {
 		// TODO: this is a hack to make sure we get some data, I am not using the
 		API.query(/* GraphQL */`
 			reports(f:getAll,pageSize:100,pageNum:0) {
-				id, state, intent
+				id, state, intent, engagementDate, intent, keyOutcomes
+				location { id, name }
+				poams { id, longName }
+				comments { id }
+				primaryAdvisor {
+					id, name, rank
+					position { organization { id, shortName, longName }}
+				}
+				primaryPrincipal {
+					id, name, rank
+					position { organization { id, shortName, longName }}
+				}
 				advisorOrg {
 					id, shortName
 					parentOrg { id, shortName }
@@ -135,6 +147,7 @@ export default class RollupShow extends Page {
 
 	render() {
 		let {reports} = this.state
+		let reportOTD = reports[0]
 
 		// Admins can edit poams, or super users if this poam is assigned to their org.
 		let currentUser = this.context.app.state.currentUser
@@ -154,16 +167,55 @@ export default class RollupShow extends Page {
 
 				<fieldset>
 					<legend>Daily Rollup - {this.dateLongStr}</legend>
-					<div className="todo" contentEditable suppressContentEditableWarning>Some introductory text regarding {reports && reports.reports && reports.reports.length} reports, using 230 days due to SQLite issues.</div>
+					<div className="todo">Some introductory text regarding {reports && reports.length} reports, using 230 days due to SQLite issues.</div>
 				</fieldset>
+
 				<fieldset>
 					<legend>Summary of Report Input</legend>
 					<svg ref={el => this.graph = el} style={graphCss} />
 				</fieldset>
-				<fieldset>
+
+				{reportOTD && <fieldset>
 					<legend>Report of the Day</legend>
-					<div className="todo" contentEditable suppressContentEditableWarning>Pretty graphs here</div>
-				</fieldset>
+
+					<Row>
+						<Col md={6}>
+							<LinkTo organization={reportOTD.primaryAdvisor.position.organization} />
+							&nbsp;&gt;&nbsp;
+							<LinkTo organization={reportOTD.primaryPrincipal.position.organization} />
+						</Col>
+
+						<Col md={6}>
+							{reportOTD.engagementDate} @ <LinkTo location={reportOTD.location} />
+						</Col>
+					</Row>
+
+					<Row>
+						<Col md={6}>
+							<LinkTo person={reportOTD.primaryAdvisor}>
+								{reportOTD.primaryAdvisor.rank.toUpperCase()}&nbsp;
+								{reportOTD.primaryAdvisor.name}
+							</LinkTo> - <LinkTo organization={reportOTD.primaryAdvisor.position.organization} />
+						</Col>
+
+						<Col md={6}>
+							<LinkTo person={reportOTD.primaryPrincipal}>
+								{reportOTD.primaryPrincipal.rank.toUpperCase()}&nbsp;
+								{reportOTD.primaryPrincipal.name}
+							</LinkTo> - <LinkTo organization={reportOTD.primaryPrincipal.position.organization} />
+						</Col>
+					</Row>
+
+					<p><LinkTo poam={reportOTD.poams[0]} /></p>
+
+					<p><strong>{reportOTD.intent}</strong></p>
+					<p>{reportOTD.keyOutcomes}</p>
+
+					<div className="pull-right">
+						<LinkTo report={reportOTD}>Read full report | {reportOTD.comments.length} comments</LinkTo>
+					</div>
+				</fieldset>}
+
 				<fieldset>
 					<legend>Reports - {this.dateLongStr}</legend>
 					<div className="todo" contentEditable suppressContentEditableWarning>Pretty graphs here</div>
