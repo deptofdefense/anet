@@ -59,7 +59,7 @@ export default class Autocomplete extends Component {
 		inputProps.onChange = this.onInputChange
 		return <div>
 			<Autosuggest
-				suggestions={this.state.noSuggestions ? [{name:"No suggestions found"}] : this.state.suggestions}
+				suggestions={this.state.noSuggestions ? [{}] : this.state.suggestions}
 				onSuggestionsFetchRequested={this.fetchSuggestionsDebounced}
 				onSuggestionsClearRequested={this.clearSuggestions}
 				onSuggestionSelected={this.onSuggestionSelected}
@@ -75,14 +75,13 @@ export default class Autocomplete extends Component {
 	@autobind
 	renderSuggestion(suggestion) {
 		let template = this.props.template
+		if (this.state.noSuggestions){
+			return <span><i>No suggestions found</i></span>
+		}
 		if (template)
 			return template(suggestion)
 		else {
-			if (this.state.noSuggestions){
-				return <span><i>{this.getStringValue(suggestion)}</i></span>
-			} else {
-				return <span>{this.getStringValue(suggestion)}</span>
-			}
+			return <span>{this.getStringValue(suggestion)}</span>
 		}
 	}
 
