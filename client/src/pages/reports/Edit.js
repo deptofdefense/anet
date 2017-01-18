@@ -58,7 +58,7 @@ export default class ReportEdit extends Page {
 
 				<Breadcrumbs items={[['Report #' + report.id, '/reports/' + report.id], ['Edit', "/reports/" + report.id + "/edit"]]} />
 
-				<ReportForm report={report} />
+				<ReportForm edit report={report} />
 			</div>
 		)
 	}
