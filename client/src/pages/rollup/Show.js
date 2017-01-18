@@ -12,6 +12,8 @@ import {Report} from 'models'
 import moment from 'moment'
 import * as d3 from 'd3'
 
+const graphCss = {width: '100%', height: '300px'}
+
 export default class RollupShow extends Page {
 	static propTypes = {
 		date: React.PropTypes.object,
@@ -71,8 +73,8 @@ export default class RollupShow extends Page {
 
 		var svg = d3.select(this.graph),
 			margin = {top: 20, right: 20, bottom: 20, left: 20},
-			width = +svg.attr("width") - margin.left - margin.right,
-			height = +svg.attr("height") - margin.top - margin.bottom,
+			width = this.graph.clientWidth - margin.left - margin.right,
+			height = this.graph.clientHeight - margin.top - margin.bottom,
 			padding = 22,
 			g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -147,7 +149,7 @@ export default class RollupShow extends Page {
 				</fieldset>
 				<fieldset>
 					<legend>Summary of Report Input</legend>
-					<svg ref={el => this.graph = el} />
+					<svg ref={el => this.graph = el} style={graphCss} />
 				</fieldset>
 				<fieldset>
 					<legend>Report of the Day</legend>
