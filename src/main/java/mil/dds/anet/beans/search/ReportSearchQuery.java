@@ -17,6 +17,7 @@ public class ReportSearchQuery implements ISearchQuery {
 	boolean includePrincipalOrgChildren;
 	Integer locationId;
 	Integer poamId;
+	Integer pendingApprovalOf;
 	int pageNum;
 	int pageSize;
 	
@@ -127,6 +128,14 @@ public class ReportSearchQuery implements ISearchQuery {
 
 	public void setPoamId(Integer poamId) {
 		this.poamId = poamId;
+	}
+
+	public Integer getPendingApprovalOf() {
+		return pendingApprovalOf;
+	}
+
+	public void setPendingApprovalOf(Integer pendingApprovalOf) {
+		this.pendingApprovalOf = pendingApprovalOf;
 	}
 
 	@Override

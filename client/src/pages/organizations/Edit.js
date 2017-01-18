@@ -42,7 +42,7 @@ export default class OrganizationEdit extends Page {
 
 	render() {
 		let organization = this.state.organization
-
+		console.log("or edit", organization);
 		return (
 			<div>
 				<ContentForHeader>
