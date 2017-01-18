@@ -108,8 +108,8 @@ export default class Autocomplete extends Component {
 				if (selectedIds)
 					data = data.filter(suggestion => suggestion && suggestion.id && selectedIds.indexOf(suggestion.id) === -1)
 
-				let noSuggstions = data.length === 0
-				this.setState({suggestions: data, noSuggstions})
+				let noSuggestions = data.length === 0
+				this.setState({suggestions: data, noSuggestions})
 			})
 		}
 	}
