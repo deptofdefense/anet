@@ -77,7 +77,6 @@ export default class PersonShow extends Page {
 	render() {
 		let {person} = this.state
 		let position = person.position
-		let org = position && position.organization
 
 		//User can always edit themselves, or Super Users/Admins.
 		let currentUser = this.context.app.state.currentUser;
@@ -167,7 +166,7 @@ export default class PersonShow extends Page {
 								<tr key={assocPos.id}>
 									<td>{assocPos.person && <LinkTo person={assocPos.person} /> }</td>
 									<td><LinkTo position={assocPos} /></td>
-										<td><LinkTo organization={assocPos.organization} /></td>
+									<td><LinkTo organization={assocPos.organization} /></td>
 								</tr>
 							)}
 						</tbody>
