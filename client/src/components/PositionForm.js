@@ -69,7 +69,7 @@ export default class PositionForm extends Component {
 				}
 
 				<Form.Field id="code" placeholder="Postion ID or Number" />
-				<Form.Field id="name" placeholder="Name/Description of Position"/>
+				<Form.Field id="name" label="Position Name" placeholder="Name/Description of Position"/>
 
 				<Form.Field id="person" >
 					<Autocomplete valueKey="name"
