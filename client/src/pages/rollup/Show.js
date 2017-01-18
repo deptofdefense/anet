@@ -39,7 +39,7 @@ export default class RollupShow extends Page {
 	get rollupEnd() { return this.props.date.endOf('day') }
 
 	fetchData(props) {
-		// TODO
+		// TODO: this is a hack to make sure we get some data, I am not using the 
 		API.query(/* GraphQL */`
 				{
   reports(f:getAll,pageSize:20,pageNum:0){
