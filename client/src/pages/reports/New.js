@@ -24,6 +24,11 @@ export default class ReportNew extends Page {
 		}
 	}
 
+	componentWillReceiveProps() {
+		if (this.props.addMyself)
+			this.addMyself()
+	}
+
 	render() {
 		return (
 			<div>
