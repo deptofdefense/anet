@@ -27,7 +27,10 @@ export default class ReportCollection extends Component {
 
 
 	render() {
-		return <fieldset>
+		if (this.props.reports.length === 0) {
+			return <div>No Reports Found</div>
+		}
+		return <div>
 			<div style={{height:"50px"}} >
 				<RadioGroup value={this.state.viewFormat} onChange={this.changeViewFormat} className="pull-right">
 					<Radio value={FORMAT_SUMMARY}>Summary</Radio>
@@ -38,7 +41,7 @@ export default class ReportCollection extends Component {
 			{this.state.viewFormat === FORMAT_TABLE && this.renderTable() }
 			{this.state.viewFormat === FORMAT_SUMMARY && this.renderSummary() }
 			{this.state.viewFormat === FORMAT_MAP && this.renderMap() }
-		</fieldset>
+		</div>
 	}
 
 	renderTable() {

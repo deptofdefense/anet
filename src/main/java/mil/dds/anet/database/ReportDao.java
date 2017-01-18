@@ -11,10 +11,12 @@ import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.Query;
 
 import mil.dds.anet.AnetObjectEngine;
+import mil.dds.anet.beans.ApprovalAction.ApprovalType;
+import mil.dds.anet.beans.Organization.OrganizationType;
+import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.Position;
-import mil.dds.anet.beans.ApprovalAction.ApprovalType;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
@@ -340,6 +342,29 @@ public class ReportDao implements IAnetDao<Report> {
 			.map(new ReportMapper())
 			.list();
 }
+
+	public List<Report> getReportsByOrg(Organization org, int pageNum, int pageSize) {
+		String sql = "SELECT " + REPORT_FIELDS + ", " + PersonDao.PERSON_FIELDS
+			+ "FROM reports JOIN people ON reports.authorId = people.id WHERE ";
+		if (org.getType().equals(OrganizationType.ADVISOR_ORG)) { 
+			sql += "reports.advisorOrganizationId = :orgId ";
+		} else { 
+			sql += "reports.principalOrganizationId = :orgId ";
+		}
+		sql += " ORDER BY reports.createdAt DESC ";
+		if (DaoUtils.isMsSql(dbHandle)) { 
+			sql += " OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY";
+		} else { 
+			sql += " LIMIT :limit OFFSET :offset";
+		}
+		
+		return dbHandle.createQuery(sql)
+			.bind("orgId", DaoUtils.getId(org))
+			.bind("offset", pageNum * pageSize)
+			.bind("limit", pageSize)
+			.map(new ReportMapper())
+			.list();
+	}
 
 
 }

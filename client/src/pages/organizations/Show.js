@@ -9,6 +9,7 @@ import Form from 'components/Form'
 import autobind from 'autobind-decorator'
 import History from 'components/History'
 import LinkTo from 'components/LinkTo'
+import ReportCollection from 'components/ReportCollection'
 
 export default class OrganizationShow extends Page {
 	static contextTypes = {
@@ -22,6 +23,7 @@ export default class OrganizationShow extends Page {
 				id: props.params.id,
 				positions: [],
 				poams: [],
+				reports: []
 			},
 		}
 	}
@@ -45,6 +47,15 @@ export default class OrganizationShow extends Page {
 					approverGroup {
 						id, name, members { id, name , position { id, name} }
 					}
+				},
+				reports(pageNum:0, pageSize:25) {
+					id, intent, engagementDate, keyOutcomesSummary, nextStepsSummary
+					author { id, name },
+					primaryAdvisor { id, name } ,
+					primaryPrincipal {id, name },
+					advisorOrg { id, shortName, longName }
+					principalOrg { id, shortName, longName }
+					location { id, name, lat, lng }
 				}
 			}
 		`).then(data => this.setState({organization: data.organization}))
@@ -112,6 +123,11 @@ export default class OrganizationShow extends Page {
 					</fieldset>
 
 					{poamsContent}
+
+					<fieldset>
+						<legend>Recent Reports</legend>
+						<ReportCollection reports={org.reports} />
+					</fieldset>
 
 					<fieldset>
 						<legend>Positions needing attention</legend>
