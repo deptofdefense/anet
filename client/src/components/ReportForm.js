@@ -61,14 +61,7 @@ export default class ReportForm extends Component {
 				},
 			}
 			this.setState(newState)
-			if (this.context.app.state.currentUser)
-				this.addMyself()
 		})
-	}
-
-	componentWillReceiveProps() {
-		if (this.props.addMyself)
-			this.addMyself()
 	}
 
 	render() {
