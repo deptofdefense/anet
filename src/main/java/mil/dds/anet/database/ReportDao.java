@@ -325,12 +325,12 @@ public class ReportDao implements IAnetDao<Report> {
 			+ "JOIN people ON reports.authorId = people.id "
 			+ "WHERE approvalActions.type = :approvalType "
 			+ "AND reports.state = :reportState ";
-		if (DaoUtils.isMsSql(dbHandle)) { 
+		if (DaoUtils.isMsSql(dbHandle)) {
 			sql +=  "AND approvalActions.createdAt > :startTime "
-					+ "AND reports.engagementDate > :twoWeeksAgo ";
+				+ "AND reports.engagementDate > :twoWeeksAgo ";
 		} else { 
 			sql +=  "AND approvalActions.createdAt > DateTime(:startTimeSqlite) "
-					+ "AND reports.engagementDate > DateTime(:twoWeeksAgoSqlite) ";
+				+ "AND reports.engagementDate > DateTime(:twoWeeksAgoSqlite) ";
 		}
 		return dbHandle.createQuery(sql)
 			.bind("approvalType", DaoUtils.getEnumId(ApprovalType.APPROVE))

@@ -126,7 +126,6 @@ export default class ReportForm extends Component {
 								<th></th>
 								<th>Primary</th>
 								<th>Name</th>
-								<th>Type</th>
 								<th>Position</th>
 								<th>Org</th>
 							</tr>
@@ -140,12 +139,14 @@ export default class ReportForm extends Component {
 
 									<td onClick={this.setPrimaryAttendee.bind(this, person)} className={"primaryAttendee" + (person.primary ? "Yes" : "No") }>
 										<span style={{cursor: 'pointer'}} >
-											<img alt="star" src={"/assets/img/" + (person.primary ? "star_yellow.png" : "star_outline.png" )} />
+											<img alt="star" src={"/assets/img/" + (person.primary ? "star_yellow.png" : "star_outline.png" )} width={18} height={18}/>
 										</span>
 									</td>
 
-									<td>{person.name} {person.rank && person.rank.toUpperCase()}</td>
-									<td>{person.role}</td>
+									<td>
+										<img src={person.iconUrl()} alt={person.role} height={20} width={20} className="personIcon" />
+										{person.name} {person.rank && person.rank.toUpperCase()}
+									</td>
 									<td><LinkTo position={person.position} /></td>
 									<td>{person.position && person.organization && person.position.organization.shortName}</td>
 								</tr>

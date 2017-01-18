@@ -50,7 +50,7 @@ export default class ReportSummary extends Component {
 	renderPerson(person) {
 		person = new Person(person);
 		return <div>
-			<img src={person.iconUrl()} alt={person.role} />
+			<img height={20} width={20} src={person.iconUrl()} alt={person.role} className="personIcon" />
 			<LinkTo person={person} />
 			{person.position && person.position.organization &&
 				<span> -&nbsp;
