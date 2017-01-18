@@ -31,7 +31,6 @@ export default class PositionForm extends Component {
 
 	render() {
 		let {onChange, onSubmit, submitText, error} = this.props
-		console.log(this.state)
 		let position = this.state.position;
 		let relationshipPositionType = (position.type === "PRINCIPAL") ? "ADVISOR" : "PRINCIPAL";
 
@@ -130,9 +129,13 @@ export default class PositionForm extends Component {
 		let rels = position.associatedPositions;
 
 		if (!rels.find(relPos => relPos.id === newRelatedPos.id)) {
-			rels.push(new Position(newRelatedPos))
+			let newRels = rels.splice();
+			newRels.push(new Position(newRelatedPos))
+
+			position.associatedPositions = newRels;
+			this.setState({position})
+			this.props.onChange();
 		}
-		this.setState({position})
 	}
 
 	@autobind
