@@ -1,4 +1,4 @@
-import React, {Component, PropTypes} from 'react'
+import React, {Component} from 'react'
 
 import L from 'leaflet'
 import autobind from 'autobind-decorator'
@@ -9,10 +9,10 @@ const css = {
 
 export default class Leaflet extends Component {
 	static propTypes = {
-		markers: PropTypes.array,
+		markers: React.PropTypes.array,
 	}
 	static contextTypes = {
-		app: PropTypes.object.isRequired
+		app: React.PropTypes.object.isRequired
 	}
 
 	constructor(props) {
@@ -41,7 +41,6 @@ export default class Leaflet extends Component {
 	componentDidMount() {
 		let app = this.context.app;
 		let mapLayers = app.state.settings["MAP_LAYERS"];
-		console.log(mapLayers);
 
 		let map = L.map('map', {zoomControl:true}).setView([34.52, 69.16], 10);
 /*		let nexrad = L.tileLayer.wms("http://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r.cgi", {
@@ -91,7 +90,7 @@ export default class Leaflet extends Component {
 
 		let existingMarkers = this.state.markerLayer.getLayers();
 		let markersToAdd = nextProps.markers.filter(m =>
-			existingMarkers.findIndex(el => el.options.id === m.id) === -1
+			existingMarkers.findIndex(el => el.id === m.id) === -1
 		)
 		this.updateMarkerLayer(markersToAdd)
 	}
@@ -112,6 +111,7 @@ export default class Leaflet extends Component {
 			newMarkers.push(marker);
 			markerLayer.addLayer(marker);
 		})
+
 
 		if (newMarkers.length > 0) {
 			if (markerLayer.getBounds() && markerLayer.getBounds().isValid()) {
@@ -155,7 +155,6 @@ export default class Leaflet extends Component {
 		return (
 			<div>
 				<div id="map" style={css} />
-				<span>{this.state.center}</span>
 			</div>
 		)
 	}
@@ -164,6 +163,7 @@ export default class Leaflet extends Component {
 	moveEnd(event) {
 		let map = this.state.map;
 		let center = map.getCenter()
+
 		this.setState({map, center: [center.lat, center.lng].join(',')})
 	}
 
