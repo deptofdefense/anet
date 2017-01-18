@@ -58,6 +58,7 @@ public class SavedSearchDao implements IAnetDao<SavedSearch> {
 				+ "VALUES (:ownerId, :name, :objectType, :query)")
 			.bindFromProperties(obj)
 			.bind("ownerId", obj.getOwner().getId())
+			.bind("objectType", DaoUtils.getEnumId(obj.getObjectType()))
 			.executeAndReturnGeneratedKeys();
 		obj.setId(DaoUtils.getGeneratedId(keys));
 		return obj;

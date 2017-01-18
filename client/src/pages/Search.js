@@ -157,11 +157,13 @@ export default class Search extends Page {
 							<Radio value={FORMAT_TABLE}>Table</Radio>
 						</RadioGroup>
 					</legend>
-					<div className="pull-right">
-						<DropdownButton bsStyle="primary" title="Actions" id="actions" onSelect={this.actionSelect}>
-							<MenuItem eventKey="saveReportSearch">Save Search</MenuItem>
-						</DropdownButton>
-					</div><br /><br/>
+					{ props.location.query.q &&
+						<div className="pull-right">
+							<DropdownButton bsStyle="primary" title="Actions" id="actions" onSelect={this.actionSelect}>
+								<MenuItem eventKey="saveReportSearch">Save Search</MenuItem>
+							</DropdownButton>
+						</div><br /><br/>
+					}
 					{this.state.viewFormat === FORMAT_TABLE ? this.renderTable() : this.renderExsums()}
 				</fieldset>
 				}
