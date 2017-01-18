@@ -47,7 +47,7 @@
 		window.ANET_DATA = {
 			currentUser: {
 				id: "${currentUser.id}",
-				name: "${currentUser.name}",
+				name: "${currentUser.name!}",
 				role:"<#if (currentUser.position)?? >${currentUser.position.type!'ADVISOR'}<#else>ADVISOR</#if>",
 			},
 			adminSettings: [

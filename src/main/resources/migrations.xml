@@ -494,4 +494,10 @@
 			constraintName="fk_savedSearch_owner" onDelete="NO ACTION" onUpdate="NO ACTION"
 			referencedColumnNames="id" referencedTableName="people" />
 	</changeSet>
+
+	<changeSet id="21" author="hpitelka" dbms="mssql">
+		<sql dbms="mssql">
+			ALTER FULLTEXT INDEX ON organizations ADD (shortName)
+		</sql>
+	</changeSet>
 </databaseChangeLog>

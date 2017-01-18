@@ -43,6 +43,7 @@ public class AnetAuthenticationFilter implements ContainerRequestFilter, Authori
 				//First time this user has ever logged in. 
 				person = new Person();
 				person.setDomainUsername(domainUsername);
+				person.setName("");
 				person.setRole(Role.ADVISOR);
 				person.setStatus(Person.Status.NEW_USER);
 				person = engine.getPersonDao().insert(person);
