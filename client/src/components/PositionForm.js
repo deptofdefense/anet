@@ -31,8 +31,9 @@ export default class PositionForm extends Component {
 
 	render() {
 		let {onChange, onSubmit, submitText, error} = this.props
+		console.log(this.state)
 		let position = this.state.position;
-		let relationshipPositionType = (position.type === "ADVISOR") ? "PRINCIPAL" : "ADVISOR";
+		let relationshipPositionType = (position.type === "PRINCIPAL") ? "ADVISOR" : "PRINCIPAL";
 
 		//TODO: only allow you to set positon to admin if you are an admin.
 
@@ -49,7 +50,7 @@ export default class PositionForm extends Component {
 			<fieldset>
 				<legend>Create a new Position</legend>
 
-				<Form.Field id="organization" >
+				<Form.Field id="organization" value={position.organization}>
 					<Autocomplete valueKey="shortName"
 						placeholder="Select the organization for this position"
 						url="/api/organizations/search"

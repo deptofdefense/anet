@@ -79,7 +79,7 @@ public class AnetApplication extends Application<AnetConfiguration> {
 
 		//Serve assets on /assets
 		bootstrap.addBundle(new AssetsBundle("/assets", "/assets", "index.html"));
-		bootstrap.addBundle(new AssetsBundle("/imagery", "/imagery"));
+		bootstrap.addBundle(new AssetsBundle("/imagery", "/imagery", null, "imagery"));
 
 		//Use Freemarker to handle rendering TEXT_HTML views. 
 		bootstrap.addBundle(new ViewBundle<AnetConfiguration>() {

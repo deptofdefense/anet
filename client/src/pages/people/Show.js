@@ -108,7 +108,9 @@ export default class PersonShow extends Page {
 						<Form.Field id="country" />
 						<Form.Field id="gender" />
 						<Form.Field label="End of Tour Date" id="endOfTourDate" value={moment(person.endOfTourDate).format("D MMM YYYY")} />
-						<Form.Field label="Bio" id="biography" />
+						<Form.Field label="Bio" id="biography" >
+							<div dangerouslySetInnerHTML={{__html: person.biography}} />
+						</Form.Field>
 					</fieldset>
 
 					<fieldset>
@@ -144,7 +146,7 @@ export default class PersonShow extends Page {
 
 	@autobind
 	renderPosition(position) {
-		let assocTitle = position.type === "ADVISOR" ? "Advises" : "Is advised by"
+		let assocTitle = position.type === "PRINCIPAL" ? "Is advised by" : "Advises"
 		return <div>
 			<Form.Field id="position" label="Current Position">
 				<LinkTo position={position} /> (<LinkTo organization={position.organization} />)
