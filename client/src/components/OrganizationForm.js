@@ -37,7 +37,7 @@ export default class OrganizationForm extends Component {
 				</Form.Field>
 
 				<Form.Field id="parentOrg" label="Parent Org" >
-					<Autocomplete valueKey="name"
+					<Autocomplete valueKey="shortName"
 							placeholder="Choose the parent organization"
 							url="/api/organizations/search"
 							urlParams={"&type=" + organization.type} />
