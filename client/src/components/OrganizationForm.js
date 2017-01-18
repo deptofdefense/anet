@@ -77,7 +77,7 @@ export default class OrganizationForm extends Component {
 			<Form.Field id="approverGroupName"
 				value={group.name}
 				onChange={this.setStepName.bind(this, idx)}/>
-			<Form.Field id="addApprover" label="Add an Approver">
+			<Form.Field id="addApprover" label="Add an Approver" value={members} >
 				<Autocomplete valueKey="name"
 					placeholder="Choose a person"
 					url="/api/people/search"
@@ -113,7 +113,9 @@ export default class OrganizationForm extends Component {
 	addApprover(index, person) {
 		let org = this.props.organization;
 		let step = org.approvalSteps[index];
-		step.approverGroup.members.push(person);
+		let newMembers = step.approverGroup.members.slice();
+		newMembers.push(person);
+		step.approverGroup.members = newMembers;
 
 		this.props.onChange();
 	}
