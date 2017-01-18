@@ -12,7 +12,16 @@ import {Report} from 'models'
 import moment from 'moment'
 import * as d3 from 'd3'
 
-const graphCss = {width: '100%', height: '300px'}
+const graphCss = {
+	width: '100%',
+	height: '300px'
+}
+
+const barColors = {
+	verified: '#9CBDA4',
+	unverified: '#F5D98C',
+	incoming: '#DA9795',
+}
 
 export default class RollupShow extends Page {
 	static propTypes = {
@@ -68,7 +77,7 @@ export default class RollupShow extends Page {
 		// Sets up the data
 		var step1 = d3.nest()
 				.key(function(d){return d.advisorOrg.parentOrg.shortName;})
-				.rollup(function(d){return {l:d.length,s:d[0].state,r:d}})
+				.rollup(function(d){debugger; return {l:d.length,s:d[0].state,r:d}})
 				.entries(reports)
 
 		var svg = d3.select(this.graph),
@@ -121,7 +130,7 @@ export default class RollupShow extends Page {
 			.attr("x",function(d,i){return x(d.key) + (width / (step1.length + padding))})
 			.attr("height", function(d,i){return height - y(d.value.l)})
 			.attr("y",function(d,i){return y(d.value.l) })
-			.attr("fill", function(d){return "green"})
+			.attr("fill", function(d){return barColors.verified})
 	}
 
 	render() {
