@@ -2,10 +2,10 @@ import React from 'react'
 import Page from 'components/Page'
 import autobind from 'autobind-decorator'
 
-import {DropdownButton, MenuItem, Row, Col} from 'react-bootstrap'
+import {DropdownButton, MenuItem} from 'react-bootstrap'
 import Breadcrumbs from 'components/Breadcrumbs'
-import LinkTo from 'components/LinkTo'
 import History from 'components/History'
+import ReportCard from 'components/ReportCard'
 
 import API from 'api'
 import {Report} from 'models'
@@ -178,42 +178,7 @@ export default class RollupShow extends Page {
 				{reportOTD && <fieldset>
 					<legend>Report of the Day</legend>
 
-					<Row>
-						<Col md={6}>
-							<LinkTo organization={reportOTD.primaryAdvisor.position.organization} />
-							&nbsp;&gt;&nbsp;
-							<LinkTo organization={reportOTD.primaryPrincipal.position.organization} />
-						</Col>
-
-						<Col md={6}>
-							{reportOTD.engagementDate} @ <LinkTo location={reportOTD.location} />
-						</Col>
-					</Row>
-
-					<Row>
-						<Col md={6}>
-							<LinkTo person={reportOTD.primaryAdvisor}>
-								{reportOTD.primaryAdvisor.rank.toUpperCase()}&nbsp;
-								{reportOTD.primaryAdvisor.name}
-							</LinkTo> - <LinkTo organization={reportOTD.primaryAdvisor.position.organization} />
-						</Col>
-
-						<Col md={6}>
-							<LinkTo person={reportOTD.primaryPrincipal}>
-								{reportOTD.primaryPrincipal.rank.toUpperCase()}&nbsp;
-								{reportOTD.primaryPrincipal.name}
-							</LinkTo> - <LinkTo organization={reportOTD.primaryPrincipal.position.organization} />
-						</Col>
-					</Row>
-
-					<p><LinkTo poam={reportOTD.poams[0]} /></p>
-
-					<p><strong>{reportOTD.intent}</strong></p>
-					<p>{reportOTD.keyOutcomes}</p>
-
-					<div className="pull-right">
-						<LinkTo report={reportOTD}>Read full report | {reportOTD.comments.length} comments</LinkTo>
-					</div>
+					<ReportCard report={reportOTD} />
 				</fieldset>}
 
 				<fieldset>
