@@ -31,7 +31,7 @@ export default class Home extends Page {
 			myReports: reports(f:myReportsToday) {id },
 			savedSearches: savedSearchs(f:mine) {id, name}
 		`).then(data => {
-			let selectedSearchId = data.savedSearches.length > 0 ? data.savedSearches[0].id : null;
+			let selectedSearchId = data.savedSearches && data.savedSearches.length > 0 ? data.savedSearches[0].id : null;
 			this.setState({
 				pendingMe: data.pendingMe,
 				myOrgToday: data.myOrg,
