@@ -129,6 +129,7 @@ export default class ReportForm extends Component {
 								<th>Name</th>
 								<th>Type</th>
 								<th>Position</th>
+								<th>Org</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -147,6 +148,7 @@ export default class ReportForm extends Component {
 									<td>{person.name} {person.rank && person.rank.toUpperCase()}</td>
 									<td>{person.role}</td>
 									<td><LinkTo position={person.position} /></td>
+									<td>{person.position && person.organization && person.position.organization.shortName}</td>
 								</tr>
 							)}
 						</tbody>
