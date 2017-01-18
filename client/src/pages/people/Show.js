@@ -148,8 +148,11 @@ export default class PersonShow extends Page {
 	renderPosition(position) {
 		let assocTitle = position.type === "PRINCIPAL" ? "Is advised by" : "Advises"
 		return <div>
+			<Form.Field id="organization" label="Organization">
+				<LinkTo organization={position.organization} />
+			</Form.Field>
 			<Form.Field id="position" label="Current Position">
-				<LinkTo position={position} /> (<LinkTo organization={position.organization} />)
+				<LinkTo position={position} />
 			</Form.Field>
 
 			<FormGroup controlId="counterparts" >

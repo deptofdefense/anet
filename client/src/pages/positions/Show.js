@@ -75,7 +75,7 @@ export default class PositionShow extends Page {
 						<Form.Field id="code" />
 						<Form.Field id="type" />
 
-						{position.organization && <Form.Field id="organization" label="Organization" value={position.organization} >
+						{position.organization && <Form.Field id="organization" label="Organization" value={position.organization && position.organization.shortName} >
 							<Link to={Organization.pathFor(position.organization)}>
 								{position.organization.shortName} {position.organization.longName}
 							</Link>
@@ -85,7 +85,7 @@ export default class PositionShow extends Page {
 							{position.location && <Link to={"/locations/" + position.location.id}>{position.location.name}</Link>}
 						</Form.Field>
 
-						{position.person && <Form.Field id="person" label="Current Assigned Person" value={position.person} >
+						{position.person && <Form.Field id="person" label="Current Assigned Person" value={position.person && position.person.name} >
 							<Link to={Person.pathFor(position.person)}>
 								{position.person.rank} {position.person.name}
 							</Link>

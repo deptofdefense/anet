@@ -51,7 +51,11 @@ export default class FormField extends Component {
 		]),
 
 		// If you don't want autobinding behavior, you can override them here
-		value: PropTypes.string,
+		value: PropTypes.oneOfType([
+			PropTypes.string,
+			PropTypes.object,
+		]),
+
 		onChange: PropTypes.func,
 	}
 
