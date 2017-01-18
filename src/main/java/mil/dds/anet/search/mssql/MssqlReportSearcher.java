@@ -101,6 +101,13 @@ public class MssqlReportSearcher implements IReportSearcher {
 			args.put("locationId", query.getLocationId());
 		}
 		
+		if (query.getPendingApprovalOf() != null) { 
+			whereClauses.add("reports.approvalStepId IN "
+				+ "(SELECT id from approvalSteps where approverGroupId IN "
+				+ "(SELECT groupId FROM groupMemberships where personId=:approverId))");
+			args.put("approverId", query.getPendingApprovalOf());
+		}
+		
 		sql.append(" WHERE ");
 		sql.append(Joiner.on(" AND ").join(whereClauses));
 		sql.append(" ORDER BY createdAt DESC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY)");

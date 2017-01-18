@@ -56,7 +56,7 @@ export default class Home extends Page {
 					<Grid fluid>
 						<Row>
 							<Col md={4} className="homeTile">
-								<Link to={"/search?type=reports&pendingMyApproval=true"}>
+								<Link to={"/search?type=reports&pendingApprovalOf=" + currentUser.id}>
 									<h1>{pendingMe && pendingMe.length}</h1>
 									Pending Approval
 								</Link>
