@@ -4,8 +4,8 @@ import Page from 'components/Page'
 import {ContentForHeader} from 'components/Header'
 import Breadcrumbs from 'components/Breadcrumbs'
 import ReportForm from 'components/ReportForm'
-
-import {Report} from 'models'
+import autobind from 'autobind-decorator'
+import {Report, Person} from 'models'
 
 export default class ReportNew extends Page {
 	static pageProps = {
@@ -17,16 +17,18 @@ export default class ReportNew extends Page {
 	}
 
 	constructor(props, context) {
-		super(props)
+		super(props, context)
 
 		this.state = {
 			report: new Report(),
+			hasAddedAuthor: false
 		}
+
+		this.addMyself();
 	}
 
 	componentWillReceiveProps() {
-		if (this.props.addMyself)
-			this.addMyself()
+		this.addMyself()
 	}
 
 	render() {
@@ -38,8 +40,24 @@ export default class ReportNew extends Page {
 
 				<Breadcrumbs items={[['Submit a report', Report.pathForNew()]]} />
 
-				<ReportForm addMyself report={this.state.report} />
+				<ReportForm report={this.state.report} />
 			</div>
 		)
 	}
+
+	@autobind
+	addMyself() {
+		let {currentUser} = this.context.app.state
+		if (currentUser && currentUser.id && (!this.state.hasAddedAuthor)) {
+			let report = this.state.report;
+			let attendee = new Person(currentUser)
+			attendee.primary = true
+			let attendees = report.attendees.slice()
+			attendees.push(attendee)
+			report.attendees = attendees;
+			this.setState({report: report, hasAddedAuthor: true});
+		}
+	}
+
+
 }

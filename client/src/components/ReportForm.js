@@ -18,7 +18,6 @@ export default class ReportForm extends Component {
 	static propTypes = {
 		report: PropTypes.instanceOf(Report).isRequired,
 		edit: PropTypes.bool,
-		addMyself: PropTypes.bool,
 	}
 
 	static contextTypes = {
@@ -278,13 +277,6 @@ export default class ReportForm extends Component {
 		})
 
 		this.onChange()
-	}
-
-	@autobind
-	addMyself() {
-		let {currentUser} = this.context.app.state
-		this.addAttendee(currentUser)
-		this.setPrimaryAttendee(currentUser)
 	}
 
 	@autobind
