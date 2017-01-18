@@ -52,12 +52,14 @@
     "webpack": "1.13.2",
     "webpack-dev-server": "1.16.2",
     "webpack-manifest-plugin": "1.1.0",
+    "webpack-stats-plugin": "^0.1.4",
     "whatwg-fetch": "1.0.0"
   },
   "dependencies": {
     "bootstrap": "^3.3.7",
     "change-case": "^3.0.0",
     "core-js": "^2.4.1",
+    "d3": "^4.4.1",
     "debounce": "1.0.0",
     "deep-equal": "^1.0.1",
     "draft-js": "^0.9.1",
