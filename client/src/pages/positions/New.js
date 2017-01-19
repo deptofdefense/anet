@@ -70,7 +70,7 @@ export default class PositionNew extends Page {
 		if ((!position.type) && position.organization) {
 			if (position.organization.type === "ADVISOR_ORG") {
 				position.type = "ADVISOR"
-			} else {
+			} else if(position.organization.type === "PRINCIPAL_ORG") {
 				position.type = "PRINCIPAL"
 			}
 		}
@@ -84,7 +84,6 @@ export default class PositionNew extends Page {
 
 		let position = this.state.position
 		position.organization = {id: position.organization.id}
-		console.log(position)
 
 		API.send('/api/positions/new', position, {disableSubmits: true})
 			.then(response => {

@@ -33,7 +33,7 @@ export default class PositionForm extends Component {
 	render() {
 		let {onChange, onSubmit, submitText, error, success} = this.props
 		let position = this.state.position;
-		let relationshipPositionType = (position.type === "PRINCIPAL") ? "ADVISOR" : "PRINCIPAL";
+		let relationshipPositionType = (position.type === "PRINCIPAL") ? "ADVISOR" : "PRINCIPAL"
 
 		//TODO: only allow you to set positon to admin if you are an admin.
 
@@ -82,7 +82,7 @@ export default class PositionForm extends Component {
 					<Autocomplete
 						placeholder="Assign new Position Relationship"
 						objectType={Position}
-						fields={"id, name, person { id, name, rank }"}
+						fields={"id, name, type, person { id, name, rank }"}
 						template={pos =>
 							<span>{pos.name} ({(pos.person) ? pos.person.name : <i>empty</i>})</span>
 						}
