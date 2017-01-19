@@ -16,7 +16,7 @@ export default class ReportsIndex extends Page {
 	fetchData() {
 		API.query(/* GraphQL */`
 			reports(f:getAll, pageSize:100, pageNum:0) {
-				id, intent, state
+				id, intent, state, engagementDate
 				author {
 					id
 					name
