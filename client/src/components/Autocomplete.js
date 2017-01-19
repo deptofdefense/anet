@@ -128,12 +128,9 @@ export default class Autocomplete extends Component {
 
 			API.query(graphQlQuery, { query: queryVars}, variableDef)
 				.then(data => {
-					console.log(data)
 					let noSuggestions = data[resource].length === 0
 					this.setState({suggestions: data[resource], noSuggestions})
-				}).catch( error =>
-					console.log(error)
-				)
+				})
 		}
 	}
 
