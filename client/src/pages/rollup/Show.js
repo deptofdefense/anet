@@ -168,10 +168,7 @@ export default class RollupShow extends Page {
 					</div>
 				}
 
-				<fieldset>
-					<legend>Daily Rollup - {this.dateLongStr}</legend>
-					<div className="todo">Some introductory text regarding {reports && reports.length} reports, using 230 days due to SQLite issues.</div>
-				</fieldset>
+				<h1>Daily Rollup - {this.dateLongStr}</h1>
 
 				<fieldset>
 					<legend>Summary of Report Input</legend>

@@ -2,6 +2,7 @@ import React, {Component, PropTypes} from 'react'
 import {Nav, NavItem, NavDropdown, MenuItem} from 'react-bootstrap'
 import {IndexLinkContainer as Link} from 'react-router-bootstrap'
 import LinkTo from 'components/LinkTo'
+import moment from 'moment'
 
 import {Organization} from 'models'
 
@@ -37,6 +38,12 @@ export default class extends Component {
 				<Link to="/rollup">
 					<NavItem>Daily Rollup</NavItem>
 				</Link>
+
+				{currentUser.isAdmin() &&
+					<Link to={"/search?type=reports&pageSize=100&engagementDateStart=" + moment().add(1, 'days').valueOf() } >
+						<NavItem>Future Engagements</NavItem>
+					</Link>
+				}
 
 				{process.env.NODE_ENV === 'development' &&
 					<Link to="/graphiql">
