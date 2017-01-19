@@ -6,6 +6,16 @@ export default {
 	pluralize,
 	resourceize: function(string) {
 		return pluralize(changeCase.camel(string))
+	},
+	createUrlParams: function (obj) {
+		let str = "";
+		Object.forEach(obj, (key, val) => {
+			if (str !== "") {
+				str += "&";
+			}
+			str += key + "=" + encodeURIComponent(val);
+		})
+		return str;
 	}
 }
 
