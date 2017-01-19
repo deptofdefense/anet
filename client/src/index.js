@@ -42,6 +42,8 @@ import PositionShow from './pages/positions/Show'
 import PositionEdit from './pages/positions/Edit'
 import PositionNew from './pages/positions/New'
 
+import RollupShow from './pages/rollup/Show'
+
 import AdminIndex from './pages/admin/Index'
 
 import GraphiQL from './pages/GraphiQL'
@@ -96,6 +98,8 @@ ReactDOM.render((
 					<Route path=":id/edit" component={PoamEdit} />
 					<Route path=":id" component={PoamShow} />
 				</Route>
+
+				<Route path="rollup" component={RollupShow} />
 
 				<Route path="graphiql" component={GraphiQL} />
 
