@@ -375,7 +375,7 @@ export default class ReportShow extends Page {
 			this.setState({error:null})
 		}, data => {
 			this.setState({success:null})
-			this.handleError()
+			this.handleError(data)
 		})
 	}
 
@@ -383,9 +383,11 @@ export default class ReportShow extends Page {
 	approveReport() {
 		API.send(`/api/reports/${this.state.report.id}/approve`).then(data => {
 			this.updateReport()
+			this.setState({error:null})
 			this.setState({success:"Successfully subbmited report"})
 		}, data => {
-			this.handleError()
+			this.setState({success:null})
+			this.handleError(data)
 		})
 	}
 
