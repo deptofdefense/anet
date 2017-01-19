@@ -151,7 +151,7 @@ export default class Search extends Page {
 							}
 						</div>
 						<br />
-						<ReportCollection reports={this.state.results.reports} />
+						<fieldset><ReportCollection reports={this.state.results.reports} /></fieldset>
 					</div>
 				}
 
