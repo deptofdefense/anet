@@ -6,6 +6,7 @@ import {Table, DropdownButton, MenuItem} from 'react-bootstrap'
 import API from 'api'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
+import Messages , {setMessages} from 'components/Messages'
 import autobind from 'autobind-decorator'
 import {browserHistory as History} from 'react-router'
 
@@ -23,6 +24,7 @@ export default class PositionShow extends Page {
 				id: props.params.id
 			}),
 		}
+		setMessages(props,this.state)
 	}
 
 	fetchData(props) {
@@ -56,6 +58,7 @@ export default class PositionShow extends Page {
 		return (
 			<div>
 				<Breadcrumbs items={[[position.name || 'Position', Position.pathFor(position)]]} />
+				<Messages success={this.state.success} error={this.state.error} />
 
 				{canEdit &&
 					<div className="pull-right">

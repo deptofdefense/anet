@@ -9,6 +9,7 @@ import Form from 'components/Form'
 import autobind from 'autobind-decorator'
 import History from 'components/History'
 import LinkTo from 'components/LinkTo'
+import Messages , {setMessages} from 'components/Messages'
 
 export default class OrganizationShow extends Page {
 	static contextTypes = {
@@ -22,8 +23,9 @@ export default class OrganizationShow extends Page {
 				id: props.params.id,
 				positions: [],
 				poams: [],
-			},
+			}
 		}
+		setMessages(props,this.state)
 	}
 
 	fetchData(props) {
@@ -72,6 +74,8 @@ export default class OrganizationShow extends Page {
 		return (
 			<div>
 				<Breadcrumbs items={[[org.shortName || 'Organization', Organization.pathFor(org)]]} />
+
+				<Messages error={this.state.error} success={this.state.success} />
 
 				{ showActions &&
 					<div className="pull-right">

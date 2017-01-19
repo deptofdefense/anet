@@ -1,5 +1,5 @@
 import React, {Component, PropTypes} from 'react'
-import {InputGroup, Radio, Checkbox, Table, Button, Collapse, Alert} from 'react-bootstrap'
+import {InputGroup, Radio, Checkbox, Table, Button, Collapse} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
 import Form from 'components/Form'
@@ -66,17 +66,9 @@ export default class ReportForm extends Component {
 
 	render() {
 		let {report} = this.props
-		let {recents, error} = this.state
+		let {recents} = this.state
 
 		return <Form formFor={report} horizontal onChange={this.onChange} onSubmit={this.onSubmit} submitText="Save report">
-
-			{error &&
-				<Alert bsStyle="danger">
-					<p>There was a problem saving this report</p>
-					<p>{error}</p>
-				</Alert>
-			}
-
 			<fieldset>
 				<legend>Engagement Details<small>Required</small></legend>
 
@@ -312,11 +304,12 @@ export default class ReportForm extends Component {
 		let url = `/api/reports/${this.props.edit ? 'update' : 'new'}`
 		API.send(url, report)
 			.then(response => {
-				History.push(Report.pathFor(response))
+				History.push({pathname:Report.pathFor(report),query:{},state:{
+					success: "Saved Report"}})
 				window.scrollTo(0, 0)
 			})
 			.catch(response => {
-				this.setState({error: response.message || response.error})
+				this.setState({error: {message: response.message || response.error}})
 				window.scrollTo(0, 0)
 			})
 	}

@@ -2,7 +2,7 @@ import React from 'react'
 import Page from 'components/Page'
 import moment from 'moment'
 
-import {Alert, Radio, Table, DropdownButton, MenuItem, Modal, Button} from 'react-bootstrap'
+import {Radio, Table, DropdownButton, MenuItem, Modal, Button} from 'react-bootstrap'
 import {Link} from 'react-router'
 
 import RadioGroup from 'components/RadioGroup'
@@ -10,6 +10,7 @@ import Breadcrumbs from 'components/Breadcrumbs'
 import LinkTo from 'components/LinkTo'
 import ReportSummary from 'components/ReportSummary'
 import Form from 'components/Form'
+import Messages from 'components/Messages'
 
 import API from 'api'
 import {Report, Person, Organization, Position, Poam} from 'models'
@@ -135,18 +136,14 @@ export default class Search extends Page {
 	}
 
 	render() {
-		let results = this.state.results;
+		let results = this.state.results
+		let error = this.state.error
+		let success = this.state.success
 		return (
 			<div>
 				<Breadcrumbs items={[['Searching for "' + this.state.query + '"', '/search']]} />
 
-				{this.state.error && <Alert bsStyle="danger">
-					{this.state.error.message}
-				</Alert>}
-
-				{this.state.success && <Alert bsStyle="success">
-					{this.state.success}
-				</Alert>}
+				<Messages error={error} success={success} />
 
 				{results.reports && results.reports.length > 0 &&
 				<fieldset>

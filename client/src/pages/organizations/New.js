@@ -81,7 +81,7 @@ export default class OrganizationNew extends Page {
 		API.send('/api/organizations/new', organization, {disableSubmits: true})
 			.then(org => {
 				if (org.code) throw org.code
-				History.push(Organization.pathFor(org))
+				History.push({pathname:Organization.pathFor(org),query:{},state:{success:"Created Organization"}})
 			}).catch(error => {
 				this.setState({error: error})
 				window.scrollTo(0, 0)

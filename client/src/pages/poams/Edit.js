@@ -5,6 +5,7 @@ import {ContentForHeader} from 'components/Header'
 import History from 'components/History'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Page from 'components/Page'
+import Messages from 'components/Messages'
 import PoamForm from 'components/PoamForm'
 
 import API from 'api'
@@ -46,13 +47,15 @@ export default class PoamEdit extends Page {
 				</ContentForHeader>
 
 				<Breadcrumbs items={[[`Edit ${poam.shortName}`, `/poams/${poam.id}/edit`]]} />
+				<Messages error={this.state.error} success={this.state.success} />
+
 				<PoamForm
 					poam={poam}
 					onChange={this.onChange}
 					onSubmit={this.onSubmit}
 					submitText="Save Poam"
 					edit
-					error={this.state.error}/>
+					/>
 			</div>
 		)
 	}
@@ -71,7 +74,7 @@ export default class PoamEdit extends Page {
 		API.send('/api/poams/update', this.state.poam, {disableSubmits: true})
 			.then(response => {
 				if (response.code) throw response.code
-				History.push(Poam.pathFor(this.state.poam))
+				History.push({pathname:Poam.pathFor(this.state.poam),query:{},state:{success:"Saved Poam"}})
 			}).catch(error => {
 				this.setState({error: error})
 				window.scrollTo(0, 0)

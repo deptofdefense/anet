@@ -4,6 +4,7 @@ import autobind from 'autobind-decorator'
 import {ContentForHeader} from 'components/Header'
 import History from 'components/History'
 import Breadcrumbs from 'components/Breadcrumbs'
+import Messages from 'components/Messages'
 import Page from 'components/Page'
 import PositionForm from 'components/PositionForm'
 
@@ -47,6 +48,7 @@ export default class PositionEdit extends Page {
 				</ContentForHeader>
 
 				<Breadcrumbs items={[[`Edit ${position.name}`, `/positions/${position.id}/edit`]]} />
+				<Messages success={this.state.success} error={this.state.error} />
 				<PositionForm
 					position={position}
 					onChange={this.onChange}
@@ -72,7 +74,7 @@ export default class PositionEdit extends Page {
 		API.send('/api/positions/update', this.state.position, {disableSubmits: true})
 			.then(response => {
 				if (response.code) throw response.code
-				History.push(Position.pathFor(this.state.position))
+				History.push({pathname:Position.pathFor(this.state.position),state:{success:"Saved Position"}})
 			}).catch(error => {
 				this.setState({error: error})
 				window.scrollTo(0, 0)

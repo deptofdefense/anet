@@ -12,6 +12,7 @@ import History from 'components/History'
 
 import API from 'api'
 import {Person} from 'models'
+import Messages , {setMessages} from 'components/Messages'
 
 export default class PersonShow extends Page {
 	static contextTypes = {
@@ -27,6 +28,7 @@ export default class PersonShow extends Page {
 				attendedReports: [],
 			}),
 		}
+		setMessages(props,this.state)
 	}
 
 	fetchData(props) {
@@ -77,7 +79,7 @@ export default class PersonShow extends Page {
 	render() {
 		let {person} = this.state
 		let position = person.position
-		let org = position && position.organization
+		// let org = position && position.organization
 
 		//User can always edit themselves, or Super Users/Admins.
 		let currentUser = this.context.app.state.currentUser;
@@ -87,6 +89,7 @@ export default class PersonShow extends Page {
 		return (
 			<div>
 				<Breadcrumbs items={[[person.name, Person.pathFor(person)]]} />
+				<Messages error={this.state.error} success={this.state.success} />
 
 				{canEdit &&
 					<div className="pull-right">

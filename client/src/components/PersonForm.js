@@ -4,7 +4,7 @@ import TextEditor from 'components/TextEditor'
 import Autocomplete from 'components/Autocomplete'
 import Form from 'components/Form'
 import DatePicker from 'react-bootstrap-date-picker'
-import {InputGroup, Alert} from 'react-bootstrap'
+import {InputGroup} from 'react-bootstrap'
 
 export default class PersonForm extends Component {
 	static propTypes = {
@@ -13,22 +13,15 @@ export default class PersonForm extends Component {
 		onSubmit: PropTypes.func,
 		edit: PropTypes.bool,
 		submitText: PropTypes.string,
-		error: PropTypes.object,
 		showPositionAssignment: PropTypes.bool
 	}
 
 	render() {
-		let {person, onChange, onSubmit, submitText, error, edit, showPositionAssignment} = this.props
+		let {person, onChange, onSubmit, submitText, edit, showPositionAssignment} = this.props
 
 		return <Form formFor={person} onChange={onChange}
 			onSubmit={onSubmit} horizontal
 			submitText={submitText}>
-
-			{error &&
-				<Alert bsStyle="danger">
-					<p>There was a problem saving this person</p>
-					<p>{error.statusText}: {error.message}</p>
-				</Alert>}
 
 			<fieldset>
 				<legend>{edit ? "Edit " + person.name : "Create a new Person"}</legend>

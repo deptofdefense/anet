@@ -5,8 +5,8 @@ import API from 'api'
 import {Location} from 'models'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
+import Messages, {setMessages} from 'components/Messages'
 import Leaflet from 'components/Leaflet'
-
 
 export default class LocationShow extends Page {
 	constructor(props) {
@@ -14,6 +14,7 @@ export default class LocationShow extends Page {
 		this.state = {
 			location: new Location()
 		}
+		setMessages(props,this.state)
 	}
 
 	fetchData(props) {
@@ -38,6 +39,8 @@ export default class LocationShow extends Page {
 		return (
 			<div>
 				<Breadcrumbs items={[[loc.name || 'Location', Location.pathFor(loc)]]} />
+
+				<Messages success={this.state.success} error={this.state.error} />
 
 				<Form static formFor={loc} horizontal>
 					<fieldset>

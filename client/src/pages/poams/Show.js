@@ -10,6 +10,7 @@ import History from 'components/History'
 
 import API from 'api'
 import {Poam} from 'models'
+import Messages, {setMessages} from 'components/Messages'
 
 export default class PoamShow extends Page {
 	static contextTypes = {
@@ -25,6 +26,7 @@ export default class PoamShow extends Page {
 				responsibleOrg: props.params.responsibleOrg
 			}),
 		}
+		setMessages(props,this.state)
 	}
 
 	fetchData(props) {
@@ -53,6 +55,7 @@ export default class PoamShow extends Page {
 		return (
 			<div>
 				<Breadcrumbs items={[[poam.shortName, Poam.pathFor(poam)]]} />
+				<Messages success={this.state.success} error={this.state.error} />
 
 				{canEdit &&
 					<div className="pull-right">
