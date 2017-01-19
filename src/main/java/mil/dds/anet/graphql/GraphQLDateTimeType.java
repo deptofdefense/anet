@@ -5,7 +5,6 @@ import java.math.BigInteger;
 import org.joda.time.DateTime;
 
 import graphql.language.IntValue;
-import graphql.language.StringValue;
 import graphql.schema.Coercing;
 import graphql.schema.GraphQLScalarType;
 
@@ -19,7 +18,11 @@ public class GraphQLDateTimeType extends GraphQLScalarType {
 
         @Override
         public Object parseValue(Object input) {
-        	return new DateTime((Long)input);
+        	if (input instanceof Long) { 
+            	return new DateTime((Long)input);
+        	} else {  
+        		return new DateTime(Long.parseLong(input.toString()));
+        	}
         }
 
         @Override
