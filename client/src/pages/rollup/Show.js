@@ -183,7 +183,7 @@ export default class RollupShow extends Page {
 					<ReportSummary report={reportOTD} />
 				</fieldset>}
 
-				<fieldset>
+				<fieldset style={{maxHeight: "400px"}}>
 					<legend>Reports - {this.dateLongStr}</legend>
 					<ReportCollection reports={reports} />
 				</fieldset>
