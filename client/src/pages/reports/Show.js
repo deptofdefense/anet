@@ -337,6 +337,7 @@ export default class ReportShow extends Page {
 	submitDraft() {
 		API.send(`/api/reports/${this.state.report.id}/submit`).then(data => {
 			this.updateReport()
+			this.setState({error:null})
 			this.setState({success:"Successfully subbmited report"})
 		}, data => {
 			this.handleError(data)
@@ -351,6 +352,7 @@ export default class ReportShow extends Page {
 			this.updateReport()
 			this.setState({newComment:new Comment()})
 		}, data => {
+			this.setState({success:null})
 			this.handleError(data)
 		})
 
@@ -361,14 +363,18 @@ export default class ReportShow extends Page {
 	@autobind
 	rejectReport() {
 		if (this.state.approvalComment.text.length === 0){
-			this.handleError({error:"Please include a comment when rejecting a report."})
+			this.setState({success:null})
+			this.handleError({message:"Please include a comment when rejecting a report."})
 			return
 		}
 
+		this.state.approvalComment.text = "REJECTED: " + this.state.approvalComment.text
 		API.send(`/api/reports/${this.state.report.id}/reject`, this.state.approvalComment).then(data => {
 			this.updateReport()
-			this.setState({success:"Successfully subbmited report"})
+			this.setState({success:"Successfully rejected report"})
+			this.setState({error:null})
 		}, data => {
+			this.setState({success:null})
 			this.handleError()
 		})
 	}
