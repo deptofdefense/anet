@@ -33,7 +33,7 @@ export default class OrganizationForm extends Component {
 					<Autocomplete valueKey="shortName"
 							placeholder="Choose the parent organization"
 							url="/api/organizations/search"
-							urlParams={"&type=" + organization.type} />
+							queryParams={{ type:organization.type}} />
 				</Form.Field>
 
 				<Form.Field id="shortName" />
@@ -74,7 +74,7 @@ export default class OrganizationForm extends Component {
 				<Autocomplete valueKey="name"
 					placeholder="Choose a person"
 					url="/api/people/search"
-					urlParams="&role=ADVISOR"
+					queryParams={{role: "ADVISOR"}}
 					onChange={this.addApprover.bind(this, idx)}
 					clearOnSelect={true} />
 				<Table striped>

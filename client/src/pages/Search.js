@@ -8,7 +8,7 @@ import {Link} from 'react-router'
 import RadioGroup from 'components/RadioGroup'
 import Breadcrumbs from 'components/Breadcrumbs'
 import LinkTo from 'components/LinkTo'
-import ReportSummary from 'components/ReportSummary'
+import ReportCollection from 'components/ReportCollection'
 import Form from 'components/Form'
 import Messages from 'components/Messages'
 
@@ -16,18 +16,13 @@ import API from 'api'
 import {Report, Person, Organization, Position, Poam} from 'models'
 import autobind from 'autobind-decorator'
 
-const FORMAT_EXSUM = 'exsum'
-const FORMAT_TABLE = 'table'
-
 export default class Search extends Page {
 
 	constructor(props) {
 		super(props)
 
-
 		this.state = {
 			query: props.location.query.q,
-			viewFormat: FORMAT_EXSUM,
 			saveSearch: {show: false},
 			results: {
 				reports: [],
@@ -40,17 +35,16 @@ export default class Search extends Page {
 			error: null,
 			success: null
 		}
-
-		this.changeViewFormat = this.changeViewFormat.bind(this)
 	}
 
 	fetchData(props) {
-		let reportFields = `id, intent, engagementDate, keyOutcomesSummary, nextStepsSummary
+		let reportFields = `id, intent, engagementDate, keyOutcomesSummary, nextStepsSummary,
+			author { id, name }
 			primaryAdvisor { id, name, role, position { organization { id, shortName}}},
 			primaryPrincipal { id, name, role, position { organization { id, shortName}}},
 			advisorOrg { id, shortName},
 			principalOrg { id, shortName},
-			location { id, name},
+			location { id, name, lat, lng},
 			poams {id, shortName, longName}`
 
 		let peopleFields = "id, name, rank, emailAddress, role , position { id, name, organization { id, shortName} }";
@@ -146,23 +140,20 @@ export default class Search extends Page {
 				<Messages error={error} success={success} />
 
 				{results.reports && results.reports.length > 0 &&
-				<fieldset>
-						<legend>
-						Reports
-						<RadioGroup value={this.state.viewFormat} onChange={this.changeViewFormat} className="pull-right">
-							<Radio value={FORMAT_EXSUM}>EXSUM</Radio>
-							<Radio value={FORMAT_TABLE}>Table</Radio>
-						</RadioGroup>
-					</legend>
-					<div className="pull-right">
-						{ this.props.location.query.q &&
-							<DropdownButton bsStyle="primary" title="Actions" id="actions" onSelect={this.actionSelect}>
-								<MenuItem eventKey="saveReportSearch">Save Search</MenuItem>
-							</DropdownButton>
-						}
-					</div><br /><br/>
-					{this.state.viewFormat === FORMAT_TABLE ? this.renderTable() : this.renderExsums()}
-				</fieldset>
+					<div>
+						<div className="pull-left">
+							<h3>Reports</h3>
+						</div>
+						<div className="pull-right">
+							{ this.props.location.query.q &&
+								<DropdownButton bsStyle="primary" title="Actions" id="actions" onSelect={this.actionSelect}>
+									<MenuItem eventKey="saveReportSearch">Save Search</MenuItem>
+								</DropdownButton>
+							}
+						</div>
+						<br />
+						<ReportCollection reports={this.state.results.reports} />
+					</div>
 				}
 
 				{results.people && results.people.length > 0 &&
@@ -205,38 +196,6 @@ export default class Search extends Page {
 		)
 	}
 
-	renderTable() {
-		return <Table responsive hover striped>
-			<thead>
-				<tr>
-					<th>Date</th>
-					<th>AO</th>
-					<th>Summary</th>
-				</tr>
-			</thead>
-			<tbody>
-				{Report.map(this.state.results.reports, report =>
-					<tr key={report.id}>
-						<td><LinkTo report={report}>{moment(report.engagementDate).format('D MMM YYYY')}</LinkTo></td>
-						<td>TODO</td>
-						<td>{report.intent}</td>
-					</tr>
-				)}
-			</tbody>
-		</Table>
-	}
-
-	renderExsums() {
-		return <Table responsive>
-			<tbody>
-				{this.state.results.reports.map(report =>
-					<tr key={report.id}>
-						<td><ReportSummary report={report} /></td>
-					</tr>
-				)}
-			</tbody>
-		</Table>
-	}
 
 	renderPeople() {
 		return <Table responsive hover striped>
@@ -360,9 +319,6 @@ export default class Search extends Page {
 		</Modal>
 	}
 
-	changeViewFormat(newFormat) {
-		this.setState({viewFormat: newFormat})
-	}
 
 	@autobind
 	onChangeSaveSearch() {

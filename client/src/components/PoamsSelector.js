@@ -28,7 +28,6 @@ export default class PoamsSelector extends Component {
 						<tr>
 							<th></th>
 							<th>Name</th>
-							<th>AO</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -37,8 +36,7 @@ export default class PoamsSelector extends Component {
 								<td onClick={this.removePoam.bind(this, poam)}>
 									<span style={{cursor: 'pointer'}}>⛔️</span>
 								</td>
-								<td>{poam.longName}</td>
-								<td>{poam.shortName}</td>
+								<td>{poam.shortName} - {poam.longName}</td>
 							</tr>
 						)}
 					</tbody>

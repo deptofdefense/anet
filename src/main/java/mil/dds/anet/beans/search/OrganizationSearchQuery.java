@@ -41,6 +41,7 @@ public class OrganizationSearchQuery implements ISearchQuery {
 	}
 	@Override
 	public void setPageSize(int pageSize) {
+		if (pageSize == 0) { return; } // that makes no sense. 
 		this.pageSize = pageSize;
 	}
 	

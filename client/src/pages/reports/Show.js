@@ -204,10 +204,10 @@ export default class ReportShow extends Page {
 								{Person.map(report.attendees, person =>
 									<tr key={person.id}>
 										<td>
-											<img src={person.iconUrl()} alt={person.role}/>
+											<img src={person.iconUrl()} alt={person.role} height={20} width={20} className="personIcon" />
 											<LinkTo person={person} />
 											{person.primary &&
-												<img src="/assets/img/star.png" alt="primary" />
+												<img src="/assets/img/star_yellow.png" alt="primary" width={18} height={18} className="primaryAttendeeStar" />
 											}
 										</td>
 										<td><LinkTo position={person.position} /></td>

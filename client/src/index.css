@@ -121,4 +121,11 @@ fieldset legend small {
 }
 .primaryAttendeeNo:hover>span { 
 	display:block;
-} 
+}
+
+.personIcon { 
+	margin-right:4px;
+}
+.primaryAttendeeStar { 
+	margin-left: 5px;
+}

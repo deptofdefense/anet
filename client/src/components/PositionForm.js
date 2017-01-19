@@ -81,11 +81,14 @@ export default class PositionForm extends Component {
 				<Form.Field id="associatedPositions">
 					<Autocomplete
 						placeholder="Assign new Position Relationship"
-						url="/api/positions/search"
-						valueKey="name"
+						objectType={Position}
+						fields={"id, name, person { id, name, rank }"}
+						template={pos =>
+							<span>{pos.name} ({(pos.person) ? pos.person.name : <i>empty</i>})</span>
+						}
 						onChange={this.addPositionRelationship}
 						clearOnSelect={true}
-						urlParams={"&type=" + relationshipPositionType} />
+						queryParams={{type: relationshipPositionType}} />
 
 					<Table hover striped>
 						<thead>
@@ -99,9 +102,9 @@ export default class PositionForm extends Component {
 						{Position.map(position.associatedPositions, relPos =>
 							<tr key={relPos.id}>
 								<td onClick={this.removePositionRelationship.bind(this, relPos)}>
-									<span style={{cursor:'pointer'}}>Del</span>
+									<span style={{cursor: 'pointer'}}>⛔️</span>
 								</td>
-								<td className="todo"></td>
+								<td>{relPos.person && relPos.person.name}</td>
 								<td>{relPos.name}</td>
 							</tr>
 						)}

@@ -14,14 +14,9 @@ export default class RadioGroup extends Component {
 
 	constructor(props, context) {
 		super(props, context)
-		this.state = {value: props.value}
 
 		let formGroup = context.$bs_formGroup
 		this.id = props.id || (formGroup && formGroup.controlId)
-	}
-
-	componentWillReceiveProps(props) {
-		this.setState({value: props.value})
 	}
 
 	render() {
@@ -30,14 +25,14 @@ export default class RadioGroup extends Component {
 		return (
 			<ButtonGroup data-toggle="buttons" {...props}>
 				{children.map((child, index) =>
-					<Button key={child.props.value} active={this.state.value === child.props.value} onClick={this.onButtonClick}>
+					<Button key={child.props.value} active={this.props.value === child.props.value} onClick={this.onButtonClick}>
 						<Radio
 							id={this.id + '-' + child.props.value}
 							name={this.id}
 							{...child.props}
 							onChange={this.onRadioChange}
 							inline
-							checked={this.state.value === child.props.value}
+							checked={this.props.value === child.props.value}
 						/>
 					</Button>
 				)}
@@ -52,7 +47,6 @@ export default class RadioGroup extends Component {
 			return
 
 		let radio = element.querySelector('[type=radio]')
-		this.setState({value: radio && radio.value})
 
 		// since this isn't an actual form input changing, we need to manually
 		// call our onChange event
@@ -63,6 +57,6 @@ export default class RadioGroup extends Component {
 	@autobind
 	onRadioChange(event) {
 		let checked = event.target
-		this.setState({value: checked.value})
+		this.props.onChange(checked.value);
 	}
 }

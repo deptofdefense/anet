@@ -28,7 +28,7 @@ export default class PositionNew extends Page {
 		if (props.location.query.organizationId) {
 			API.query( /*GraphQL */`
 				organization(id:${props.location.query.organizationId}) {
-					id, name, type
+					id, shortName, longName, type
 				}
 			`).then(data => {
 				let organization = new Organization(data.organization)

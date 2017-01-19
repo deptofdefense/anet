@@ -9,21 +9,22 @@ import moment from 'moment'
 export default class ReportTable extends Component {
 	static propTypes = {
 		showAuthors: PropTypes.bool,
+		showStatus: PropTypes.bool,
 		reports: PropTypes.array.isRequired,
 	}
 
 	render() {
-		let {showAuthors} = this.props
+		let {showAuthors, showStatus} = this.props
 		let reports = Report.fromArray(this.props.reports)
 
 		return <Table striped>
 			<thead>
 				<tr>
 					{showAuthors && <th>Author</th>}
-					<th>AO</th>
+					<th>Org</th>
 					<th>Summary</th>
-					<th>Status</th>
-					<th>Last updated</th>
+					{showStatus && <th>Status</th>}
+					<th>Date</th>
 				</tr>
 			</thead>
 
@@ -33,8 +34,8 @@ export default class ReportTable extends Component {
 						{showAuthors && <td><LinkTo person={report.author} /></td>}
 						<td>{<LinkTo organization={report.advisorOrg} />}</td>
 						<td>{<LinkTo report={report} />}</td>
-						<td>{report.state}</td>
-						<td>{moment(report.updatedAt).fromNow()}</td>
+						{showStatus && <td>{report.state}</td>}
+						<td>{moment(report.engagementDate).format('DD MMM YYYY')}</td>
 					</tr>
 				)}
 			</tbody>

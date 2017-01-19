@@ -3,11 +3,16 @@ package mil.dds.anet.beans;
 import java.util.List;
 import java.util.Objects;
 
+import javax.ws.rs.DefaultValue;
+
 import org.joda.time.DateTime;
+
+import com.google.common.collect.ImmutableList;
 
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.graphql.GraphQLFetcher;
 import mil.dds.anet.graphql.GraphQLIgnore;
+import mil.dds.anet.graphql.GraphQLParam;
 import mil.dds.anet.views.AbstractAnetBean;
 
 public class Organization extends AbstractAnetBean {
@@ -127,6 +132,11 @@ public class Organization extends AbstractAnetBean {
 	
 	public void setPoams(List<Poam> poams) { 
 		this.poams = poams;
+	}
+	
+	@GraphQLFetcher("reports")
+	public List<Report> fetchReports(@GraphQLParam("pageNum") int pageNum, @GraphQLParam("pageSize") int pageSize) {
+		return AnetObjectEngine.getInstance().getReportDao().getReportsByOrg(this, pageNum, pageSize);
 	}
 	
 	public static Organization create(String shortName, OrganizationType type) { 
