@@ -7,6 +7,7 @@ import moment from 'moment'
 import {Report, Person, Poam, Comment} from 'models'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
+import Messages from 'components/Messages'
 import LinkTo from 'components/LinkTo'
 import History from 'components/History'
 
@@ -133,6 +134,7 @@ export default class ReportShow extends Page {
 			<div>
 				<Breadcrumbs items={[['Reports', '/reports'], [report.intent || 'Report #' + report.id, Report.pathFor(report)]]} />
 
+				<Messages error={this.state.error} success={this.state.success} />
 
 				{report.isDraft() &&
 					<fieldset style={{textAlign: 'center'}}>
@@ -163,12 +165,6 @@ export default class ReportShow extends Page {
 				</div>
 
 				<Form static formFor={report} horizontal>
-					{this.state.error &&
-						<fieldset className="text-danger">
-							<p>There was a problem saving this report.</p>
-							<p>{this.state.error}</p>
-						</fieldset>
-					}
 
 					<fieldset>
 						<legend>Report #{report.id}</legend>

@@ -5,6 +5,7 @@ import {ContentForHeader} from 'components/Header'
 import History from 'components/History'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Page from 'components/Page'
+import Messages from 'components/Messages'
 import OrganizationForm from 'components/OrganizationForm'
 
 import API from 'api'
@@ -50,13 +51,13 @@ export default class OrganizationEdit extends Page {
 				</ContentForHeader>
 
 				<Breadcrumbs items={[[`Edit ${organization.shortName}`, `/organizations/${organization.id}/edit`]]} />
+				<Messages error={this.state.error} success={this.state.success} />
 				<OrganizationForm
 					organization={organization}
 					onChange={this.onChange}
 					onSubmit={this.onSubmit}
 					submitText="Save Organization"
-					edit
-					error={this.state.error}/>
+					edit />
 			</div>
 		)
 	}
@@ -77,7 +78,7 @@ export default class OrganizationEdit extends Page {
 		API.send('/api/organizations/update', org, {disableSubmits: true})
 			.then(response => {
 				if (response.code) throw response.code
-				History.push(Organization.pathFor(this.state.organization))
+				History.push({pathname:Organization.pathFor(this.state.organization),query:{},state:{success:"Updated Organization"}})
 			}).catch(response => {
 				this.setState({error: response})
 				window.scrollTo(0, 0)

@@ -5,6 +5,7 @@ import {ContentForHeader} from 'components/Header'
 import History from 'components/History'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Page from 'components/Page'
+import Messages from 'components/Messages'
 import PersonForm from 'components/PersonForm'
 import moment from 'moment'
 
@@ -63,6 +64,7 @@ export default class PersonEdit extends Page {
 				</ContentForHeader>
 
 				<Breadcrumbs items={[[`Edit ${person.name}`, `/people/${person.id}/edit`]]} />
+				<Messages success={this.state.success} error={this.state.error} />
 				<PersonForm
 					person={person}
 					onChange={this.onChange}
@@ -89,7 +91,7 @@ export default class PersonEdit extends Page {
 		API.send('/api/people/update', this.state.person, {disableSubmits: true})
 			.then(response => {
 				if (response.code) throw response.code
-				History.push(Person.pathFor(this.state.person))
+				History.push({pathname:Person.pathFor(this.state.person),query:{},state:{success:"Saved Person"}})
 			}).catch(response => {
 				this.setState({error: response})
 				window.scrollTo(0, 0)

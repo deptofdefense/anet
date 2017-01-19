@@ -3,6 +3,7 @@ import Page from 'components/Page'
 
 import {ContentForHeader} from 'components/Header'
 import Breadcrumbs from 'components/Breadcrumbs'
+import Messages from 'components/Messages'
 import ReportForm from 'components/ReportForm'
 import autobind from 'autobind-decorator'
 import {Report, Person} from 'models'
@@ -39,6 +40,7 @@ export default class ReportNew extends Page {
 				</ContentForHeader>
 
 				<Breadcrumbs items={[['Submit a report', Report.pathForNew()]]} />
+				<Messages error={this.state.error} />
 
 				<ReportForm report={this.state.report} />
 			</div>

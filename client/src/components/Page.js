@@ -1,4 +1,5 @@
 import {Component} from 'react'
+import {setMessages} from 'components/Messages'
 
 export default class Page extends Component {
 	fetchData(props) {
@@ -10,6 +11,7 @@ export default class Page extends Component {
 	}
 
 	componentDidMount() {
+		setMessages(this.props,this.state)
 		this.fetchData(this.props)
 	}
 

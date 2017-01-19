@@ -6,6 +6,7 @@ import {ContentForHeader} from 'components/Header'
 import History from 'components/History'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Page from 'components/Page'
+import Messages from 'components/Messages'
 import PersonForm from 'components/PersonForm'
 
 import API from 'api'
@@ -38,6 +39,7 @@ export default class PersonNew extends Page {
 				</ContentForHeader>
 
 				<Breadcrumbs items={[['Create new Person', '/people/new']]} />
+				<Messages error={this.state.error} />
 				<PersonForm
 					person={person}
 					onChange={this.onChange}
@@ -63,7 +65,7 @@ export default class PersonNew extends Page {
 		API.send('/api/people/new', this.state.person, {disableSubmits: true})
 			.then(person => {
 				if (person.code) throw person.code
-				History.push(Person.pathFor(person))
+				History.push({pathname:Person.pathFor(person),query:{},state:{success:"Created Person"}})
 			}).catch(error => {
 				this.setState({error: error})
 				window.scrollTo(0, 0)

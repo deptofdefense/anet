@@ -5,6 +5,7 @@ import {ContentForHeader} from 'components/Header'
 import History from 'components/History'
 import Form from 'components/Form'
 import Breadcrumbs from 'components/Breadcrumbs'
+import Messages from 'components/Messages'
 import Leaflet from 'components/Leaflet'
 
 import API from 'api'
@@ -39,6 +40,7 @@ export default class LocationNew extends React.Component {
 				</ContentForHeader>
 
 				<Breadcrumbs items={[['Create new Location', Location.pathForNew()]]} />
+				<Messages success={this.state.success} error={this.state.error} />
 
 				<Form formFor={location} onChange={this.onChange} onSubmit={this.onSubmit} horizontal submitText="Create location">
 					{this.state.error && <fieldset><p>There was a problem saving this location</p><p>{this.state.error}</p></fieldset>}
@@ -80,7 +82,7 @@ export default class LocationNew extends React.Component {
 
 		API.send("/api/locations/new", this.state.location, {disableSubmits: true})
 			.then(location => {
-				History.push(Location.pathFor(location))
+				History.push({pathName:Location.pathFor(location),state:{success:"Saved Location"}})
 			}).catch(error => {
 				this.setState({error: error})
 				window.scrollTo(0, 0)

@@ -1,9 +1,10 @@
 import React, {Component, PropTypes} from 'react'
 
-import {Table, Alert} from 'react-bootstrap'
+import {Table} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
 import Form from 'components/Form'
+import Messages from 'components/Messages'
 import Autocomplete from 'components/Autocomplete'
 import {Position} from 'models'
 
@@ -30,7 +31,7 @@ export default class PositionForm extends Component {
 	}
 
 	render() {
-		let {onChange, onSubmit, submitText, error} = this.props
+		let {onChange, onSubmit, submitText, error, success} = this.props
 		let position = this.state.position;
 		let relationshipPositionType = (position.type === "PRINCIPAL") ? "ADVISOR" : "PRINCIPAL";
 
@@ -40,11 +41,7 @@ export default class PositionForm extends Component {
 				onSubmit={onSubmit} horizontal
 				submitText={submitText} >
 
-			{error &&
-				<Alert bsStyle="danger">
-					<p>There was a problem saving this organization</p>
-					<p>{error.statusText}: {error.message}</p>
-				</Alert>}
+			<Messages error={error} success={success} />
 
 			<fieldset>
 				<legend>Create a new Position</legend>
