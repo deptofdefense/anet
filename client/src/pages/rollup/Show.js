@@ -5,7 +5,7 @@ import autobind from 'autobind-decorator'
 import {DropdownButton, MenuItem} from 'react-bootstrap'
 import Breadcrumbs from 'components/Breadcrumbs'
 import History from 'components/History'
-import ReportCard from 'components/ReportCard'
+import ReportSummary from 'components/ReportSummary'
 
 import API from 'api'
 import {Report} from 'models'
@@ -53,7 +53,7 @@ export default class RollupShow extends Page {
 	fetchData(props) {
 		// TODO: this is a hack to make sure we get some data, I am not using the
 		API.query(/* GraphQL */`
-			reports(f:getAll,pageSize:100,pageNum:0) {
+			reports(f:releasedToday) {
 				id, state, intent, engagementDate, intent, keyOutcomes
 				location { id, name }
 				poams { id, longName }
@@ -88,7 +88,7 @@ export default class RollupShow extends Page {
 
 		// Sets up the data
 		var step1 = d3.nest()
-				.key(function(d){return d.advisorOrg.parentOrg.shortName;})
+				.key(function(d){return d.advisorOrg.shortName;})
 				.rollup(function(d){return {l:d.length,s:d[0].state,r:d}})
 				.entries(reports)
 
@@ -147,7 +147,7 @@ export default class RollupShow extends Page {
 
 	render() {
 		let {reports} = this.state
-		let reportOTD = reports[0]
+		let reportOTD = null; //reports[0]
 
 		// Admins can edit poams, or super users if this poam is assigned to their org.
 		let currentUser = this.context.app.state.currentUser
@@ -178,14 +178,15 @@ export default class RollupShow extends Page {
 				{reportOTD && <fieldset>
 					<legend>Report of the Day</legend>
 
-					<ReportCard report={reportOTD} />
+					<ReportSummary report={reportOTD} />
 				</fieldset>}
 
 				<fieldset>
 					<legend>Reports - {this.dateLongStr}</legend>
 
 					{Report.map(reports, report => <div key={report.id}>
-						<ReportCard report={report} />
+						<ReportSummary report={report} />
+
 						<hr />
 					</div>)}
 				</fieldset>

@@ -329,8 +329,8 @@ public class ReportDao implements IAnetDao<Report> {
 			sql +=  "AND approvalActions.createdAt > :startTime "
 					+ "AND reports.engagementDate > :twoWeeksAgo ";
 		} else { 
-			sql +=  "AND approvalActions.createdAt > DateTime(:startTimeSqlite) "
-					+ "AND reports.engagementDate > DateTime(:twoWeeksAgoSqlite) ";
+			sql +=  "AND approvalActions.createdAt > :startTimeSqlite "
+					+ "AND reports.engagementDate > :twoWeeksAgoSqlite ";
 		}
 		return dbHandle.createQuery(sql)
 			.bind("approvalType", DaoUtils.getEnumId(ApprovalType.APPROVE))
