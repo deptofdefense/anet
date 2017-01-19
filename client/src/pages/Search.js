@@ -1,6 +1,5 @@
 import React from 'react'
 import Page from 'components/Page'
-import moment from 'moment'
 
 import {Radio, Table, DropdownButton, MenuItem, Modal, Button} from 'react-bootstrap'
 import {Link} from 'react-router'
@@ -13,7 +12,7 @@ import Form from 'components/Form'
 import Messages from 'components/Messages'
 
 import API from 'api'
-import {Report, Person, Organization, Position, Poam} from 'models'
+import {Person, Organization, Position, Poam} from 'models'
 import autobind from 'autobind-decorator'
 
 export default class Search extends Page {

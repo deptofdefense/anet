@@ -40,7 +40,6 @@ export default class Leaflet extends Component {
 
 	componentDidMount() {
 		let app = this.context.app;
-		let mapLayers = app.state.settings["MAP_LAYERS"];
 
 		let map = L.map('map', {zoomControl:true}).setView([34.52, 69.16], 10);
 /*		let nexrad = L.tileLayer.wms("http://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r.cgi", {

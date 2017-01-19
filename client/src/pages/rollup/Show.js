@@ -5,6 +5,7 @@ import autobind from 'autobind-decorator'
 import {DropdownButton, MenuItem} from 'react-bootstrap'
 import Breadcrumbs from 'components/Breadcrumbs'
 import History from 'components/History'
+import ReportCollection from 'components/ReportCollection'
 import ReportSummary from 'components/ReportSummary'
 
 import API from 'api'
@@ -55,7 +56,8 @@ export default class RollupShow extends Page {
 		API.query(/* GraphQL */`
 			reports(f:releasedToday) {
 				id, state, intent, engagementDate, intent, keyOutcomes
-				location { id, name }
+				author { id, name }
+				location { id, name, lat, lng}
 				poams { id, longName }
 				comments { id }
 				primaryAdvisor {
@@ -183,12 +185,7 @@ export default class RollupShow extends Page {
 
 				<fieldset>
 					<legend>Reports - {this.dateLongStr}</legend>
-
-					{Report.map(reports, report => <div key={report.id}>
-						<ReportSummary report={report} />
-
-						<hr />
-					</div>)}
+					<ReportCollection reports={reports} />
 				</fieldset>
 			</div>
 		)
