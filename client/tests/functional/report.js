@@ -32,7 +32,7 @@ define([
 				.findById('react-autowhatever-1--item-0')
 					.click().end()
 				.sleep(100)
-				.findByCssSelector('#root > div > div.container > div > form > fieldset:nth-child(1) > div:nth-child(6) > div > div > button:nth-child(2)')
+				.findByCssSelector('#root > div > div.container > div > form > fieldset:nth-child(1) > div:nth-child(5) > div > div > button:nth-child(2)')
 					.click().end()
 				.findById('atmosphereDetails')
 					.type("Good, but not great atmosphere").end()
@@ -51,6 +51,9 @@ define([
 					.type('Some Outcomes').end()
 				.findById('nextStepsSummary')
 					.type('Some Steps').end()
+				.findByCssSelector('#root > div > div.container > div > form > fieldset:nth-child(5) > button')
+					.click().end()
+					.sleep(100)
 				.then(function () {
 					assert.ok(1 == 1, 'One should equal one.');
 				});
