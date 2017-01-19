@@ -108,7 +108,6 @@ export default class ReportShow extends Page {
 				}
 			}
 		`).then(data => {
-			debugger;
 			this.setState({report: new Report(data.report)})
 		})
 	}
