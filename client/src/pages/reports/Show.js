@@ -107,7 +107,10 @@ export default class ReportShow extends Page {
 					}
 				}
 			}
-		`).then(data => this.setState({report: new Report(data.report)}))
+		`).then(data => {
+			debugger;
+			this.setState({report: new Report(data.report)})
+		})
 	}
 
 	render() {
@@ -333,14 +336,24 @@ export default class ReportShow extends Page {
 
 	@autobind
 	submitDraft() {
-		API.send(`/api/reports/${this.state.report.id}/submit`).then(this.updateReport, this.handleError)
+		API.send(`/api/reports/${this.state.report.id}/submit`).then(data => {
+			this.updateReport()
+			this.setState({success:"Successfully subbmited report"})
+		}, data => {
+			this.handleError(data)
+		})
 	}
 
 	@autobind
 	submitComment(event){
 		API.send(`/api/reports/${this.state.report.id}/comments`,
 			this.state.newComment)
-		.then(this.updateReport, this.handleError)
+		.then(data => {
+			this.updateReport()
+			// this.setState({success:"Successfully subbmited report"})
+		}, data => {
+			this.handleError(data)
+		})
 
 		event.stopPropagation()
 		event.preventDefault()
@@ -353,12 +366,22 @@ export default class ReportShow extends Page {
 			return
 		}
 
-		API.send(`/api/reports/${this.state.report.id}/reject`, this.state.approvalComment).then(this.updateReport, this.handleError)
+		API.send(`/api/reports/${this.state.report.id}/reject`, this.state.approvalComment).then(data => {
+			this.updateReport()
+			this.setState({success:"Successfully subbmited report"})
+		}, data => {
+			this.handleError()
+		})
 	}
 
 	@autobind
 	approveReport() {
-		API.send(`/api/reports/${this.state.report.id}/approve`).then(this.updateReport, this.handleError)
+		API.send(`/api/reports/${this.state.report.id}/approve`).then(data => {
+			this.updateReport()
+			this.setState({success:"Successfully subbmited report"})
+		}, data => {
+			this.handleError()
+		})
 	}
 
 	@autobind
@@ -387,7 +410,7 @@ export default class ReportShow extends Page {
 
 	@autobind
 	handleError(response) {
-		this.setState({error: response.error})
+		this.setState({error: response})
 		window.scrollTo(0, 0)
 	}
 

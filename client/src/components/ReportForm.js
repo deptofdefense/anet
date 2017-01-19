@@ -300,7 +300,8 @@ export default class ReportForm extends Component {
 		let url = `/api/reports/${this.props.edit ? 'update' : 'new'}`
 		API.send(url, report)
 			.then(response => {
-				History.push({pathname:Report.pathFor(report),query:{},state:{
+				let id = this.props.edit ? "" : ""+response.id
+				History.push({pathname:Report.pathFor(report) + id,query:{},state:{
 					success: "Saved Report"}})
 				window.scrollTo(0, 0)
 			})
