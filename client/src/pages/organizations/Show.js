@@ -11,6 +11,7 @@ import History from 'components/History'
 import LinkTo from 'components/LinkTo'
 import Messages , {setMessages} from 'components/Messages'
 import ReportCollection from 'components/ReportCollection'
+import ScrollableFieldset from 'components/ScrollableFieldset'
 
 export default class OrganizationShow extends Page {
 	static contextTypes = {
@@ -71,10 +72,9 @@ export default class OrganizationShow extends Page {
 
 		let poamsContent = ''
 		if (org.type === 'ADVISOR_ORG') {
-			poamsContent = <fieldset>
-				<legend>POAMs / Pillars</legend>
+			poamsContent = <ScrollableFieldset title="PoAMs / Pillars" height={500} >
 				{this.renderPoamsTable(org.poams)}
-			</fieldset>
+			</ScrollableFieldset>
 		}
 
 		let currentUser = this.context.app.state.currentUser;
@@ -128,10 +128,9 @@ export default class OrganizationShow extends Page {
 
 					{poamsContent}
 
-					<fieldset>
-						<legend>Recent Reports</legend>
+					<ScrollableFieldset title="Recent Reports" height={500} >
 						<ReportCollection reports={org.reports} />
-					</fieldset>
+					</ScrollableFieldset>
 
 					<fieldset>
 						<legend>Positions needing attention</legend>
