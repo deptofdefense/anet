@@ -47,16 +47,16 @@ export default class PoamNew extends Page {
 		return (
 			<div>
 				<ContentForHeader>
-					<h2>Create a new Poam</h2>
+					<h2>Create a new PoAM</h2>
 				</ContentForHeader>
 
-				<Breadcrumbs items={[['Create new Poam', '/poams/new']]} />
+				<Breadcrumbs items={[['Create new PoAM', '/poams/new']]} />
 				<Messages error={this.state.error} success={this.state.success} />
 				<PoamForm
 					poam={poam}
 					onChange={this.onChange}
 					onSubmit={this.onSubmit}
-					submitText="Create Poam" />
+					submitText="Create PoAM" />
 			</div>
 		)
 	}
@@ -75,8 +75,10 @@ export default class PoamNew extends Page {
 		API.send('/api/poams/new', this.state.poam, {disableSubmits: true})
 			.then(poam => {
 				if (poam.code) throw poam.code
-				History.push({pathname:Poam.pathFor(poam),state:{success:"Saved POAM"}})
+				History.push({pathname:Poam.pathFor(poam),state:{success:"Saved PoAM"}})
+				this.setState({error: null})
 			}).catch(error => {
+				this.setState({success: null})
 				this.setState({error: error})
 				window.scrollTo(0, 0)
 			})

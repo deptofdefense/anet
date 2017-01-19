@@ -1,7 +1,7 @@
 import Model from 'components/Model'
 
 export default class Poam extends Model {
-	static resourceName = "Poam"
+	static resourceName = "PoAM"
 
 	static schema = {
 		shortName: '',
