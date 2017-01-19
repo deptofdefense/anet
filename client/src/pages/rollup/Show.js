@@ -4,6 +4,7 @@ import autobind from 'autobind-decorator'
 
 import {DropdownButton, MenuItem} from 'react-bootstrap'
 import Breadcrumbs from 'components/Breadcrumbs'
+import ScrollableFieldset from 'components/ScrollableFieldset'
 import History from 'components/History'
 import ReportCollection from 'components/ReportCollection'
 import ReportSummary from 'components/ReportSummary'
@@ -183,10 +184,9 @@ export default class RollupShow extends Page {
 					<ReportSummary report={reportOTD} />
 				</fieldset>}
 
-				<fieldset style={{maxHeight: "400px"}}>
-					<legend>Reports - {this.dateLongStr}</legend>
+				<ScrollableFieldset title={`Reports - ${this.dateLongStr}`} height={400}>
 					<ReportCollection reports={reports} />
-				</fieldset>
+				</ScrollableFieldset>
 			</div>
 		)
 	}
