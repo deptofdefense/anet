@@ -21,9 +21,10 @@ export default class extends Component {
 					<NavItem>Home</NavItem>
 				</Link>
 
-				<Link to="/reports">
+				{currentUser && <Link to={"search?type=reports&authorId=" + currentUser.id}>
 					<NavItem>My Reports</NavItem>
 				</Link>
+				}
 
 				<NavDropdown title="Organizations" id="organizations">
 					{Organization.map(organizations, org =>
