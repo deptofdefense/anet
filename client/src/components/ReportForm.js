@@ -192,7 +192,7 @@ export default class ReportForm extends Component {
 				</Collapse>
 
 				<Button bsStyle="link" onClick={this.toggleReportText} >
-					{this.state.showReportText ? "Hide" : "Add" } additional report details
+					{this.state.showReportText ? "Hide" : "Add" } detailed comments
 				</Button>
 				<Collapse in={this.state.showReportText}>
 					<div>
