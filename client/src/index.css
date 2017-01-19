@@ -95,37 +95,37 @@ fieldset legend small {
 	background-color: red;
 }
 
-.homeTileRow { 
+.homeTileRow {
 	padding: 0 0 0 0
 }
 
-.homeTile { 
+.homeTile {
 	text-align: center;
 	color:#5c5c5c;
 	padding-top:20px;
 	padding-bottom:20px;
 }
-.homeTile a { 
+.homeTile a {
 	color:#5c5c5c;
-	text-decoration: none; 
+	text-decoration: none;
 }
-.homeTile h1 { 
+.homeTile h1 {
 	font-weight: 900;
 }
-.homeTile:hover { 
+.homeTile:hover {
 	background-color: #dae3ee;
 }
 
-.primaryAttendeeNo>span{ 
+.primaryAttendeeNo>span{
 	display:none
 }
-.primaryAttendeeNo:hover>span { 
+.primaryAttendeeNo:hover>span {
 	display:block;
 }
 
-.personIcon { 
+.personIcon {
 	margin-right:4px;
 }
-.primaryAttendeeStar { 
+.primaryAttendeeStar {
 	margin-left: 5px;
 }

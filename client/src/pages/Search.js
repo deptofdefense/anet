@@ -1,7 +1,7 @@
 import React from 'react'
 import Page from 'components/Page'
 
-import {Radio, Table, DropdownButton, MenuItem, Modal, Button} from 'react-bootstrap'
+import {Alert, Radio, Table, DropdownButton, MenuItem, Modal, Button} from 'react-bootstrap'
 import {Link} from 'react-router'
 
 import RadioGroup from 'components/RadioGroup'
@@ -132,11 +132,25 @@ export default class Search extends Page {
 		let results = this.state.results
 		let error = this.state.error
 		let success = this.state.success
+
+		let numResults = ((results.reports) ? results.reports.length : 0) +
+			((results.people) ? results.people.length : 0) +
+			((results.positions) ? results.positions.length : 0) +
+			((results.locations) ? results.locations.length : 0) +
+			((results.organizations) ? results.organizations.length : 0);
+		let noResults = numResults === 0;
+
 		return (
 			<div>
 				<Breadcrumbs items={[['Searching for "' + this.state.query + '"', '/search']]} />
 
 				<Messages error={error} success={success} />
+
+				{noResults &&
+					<Alert bsStyle="warning">
+						<b>No Search Results found!</b>
+					</Alert>
+				}
 
 				{results.reports && results.reports.length > 0 &&
 					<div>
