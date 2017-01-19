@@ -3,6 +3,7 @@ import Page from 'components/Page'
 
 import Breadcrumbs from 'components/Breadcrumbs'
 import ReportTable from 'components/ReportTable'
+import ScrollableFieldset from 'components/ScrollableFieldset'
 
 import API from 'api'
 import {Report} from 'models'
@@ -29,7 +30,9 @@ export default class ReportsIndex extends Page {
 		return (
 			<div>
 				<Breadcrumbs items={[['My reports', '/reports']]} />
-				<ReportTable reports={this.state.reports} showAuthors={true} showStatus={true}/>
+				<ScrollableFieldset title="All reports" height={500}>
+					<ReportTable reports={this.state.reports} showAuthors={true} showStatus={true}/>
+				</ScrollableFieldset>
 			</div>
 		)
 	}
