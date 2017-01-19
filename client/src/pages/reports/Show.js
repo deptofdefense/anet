@@ -349,7 +349,7 @@ export default class ReportShow extends Page {
 			this.state.newComment)
 		.then(data => {
 			this.updateReport()
-			// this.setState({success:"Successfully subbmited report"})
+			this.setState({newComment:new Comment()})
 		}, data => {
 			this.handleError(data)
 		})
