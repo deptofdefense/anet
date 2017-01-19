@@ -162,7 +162,7 @@ export default class ReportShow extends Page {
 						className="pull-right" onSelect={this.actionSelect}>
 						{canEdit && <MenuItem eventKey="edit" >Edit Report</MenuItem>}
 						{canSubmit && errors.length === 0 && <MenuItem eventKey="submit">Submit</MenuItem>}
-						{canEmail && <MenuItem eventKey="email" className="todo" href={"mailto:?subject="+encodeURIComponent(report.intent)+"&body="+encodeURIComponent(report.reportText)}>Email Report</MenuItem>}
+						{canEmail && <MenuItem eventKey="email" className="todo" href={this.emailReport()}>Email Report</MenuItem>}
 					</DropdownButton>
 				</div>
 
@@ -474,4 +474,17 @@ export default class ReportShow extends Page {
 		approverGroup.showModal = false
 		this.setState(this.state)
 	}
+
+	@autobind
+	emailReport() {
+		let report = this.state.report
+		let subject = report.intent
+		let body = `${report.intent}\n`
+			+ `Author: ${report.author && report.author.name}\n`
+			+ `Date: ${moment(report.engagementDate).format("D MMM YYYY")}\n`
+			+ `Key Outcomes: ${report.keyOutcomesSummary}\n`
+			+ `Next Steps: ${report.nextStepsSummary}\n`;
+		return "mailto:?subject=" + subject +"&body=" + encodeURIComponent(body);
+	}
+
 }
