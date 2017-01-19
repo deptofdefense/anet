@@ -132,7 +132,7 @@ export default class ReportForm extends Component {
 										<span style={{cursor: 'pointer'}}>⛔️</span>
 									</td>
 
-									<td onClick={this.setPrimaryAttendee.bind(this, person)} className={"primaryAttendee" + (person.primary ? "Yes" : "No") }>
+									<td onClick={this.setPrimaryAttendee.bind(this, person)} className={"primaryAttendee" + person.primary ? "Yes" : "No" }>
 										<span style={{cursor: 'pointer'}} >
 											<img alt="star" src={"/assets/img/" + (person.primary ? "star_yellow.png" : "star_outline.png" )} width={18} height={18}/>
 										</span>
