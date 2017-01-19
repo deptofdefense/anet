@@ -27,7 +27,7 @@ public class LocationDao implements IAnetDao<Location> {
 	}
 	
 	public List<Location> getAll(int pageNum, int pageSize) { 
-		Query<Location> query = dbHandle.createQuery("SELECT * from locationsORDER BY createdAt ASC LIMIT :limit OFFSET :offset")
+		Query<Location> query = dbHandle.createQuery("SELECT * from locations ORDER BY createdAt ASC LIMIT :limit OFFSET :offset")
 				.bind("limit", pageSize)
 				.bind("offset", pageSize * pageNum)
 				.map(new LocationMapper());

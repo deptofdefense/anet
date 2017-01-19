@@ -116,10 +116,13 @@ export default class ReportForm extends Component {
 				<legend>Meeting Attendance<small>Required</small></legend>
 
 				<Form.Field id="attendees">
-					<Autocomplete placeholder="Who was there?" url="/api/people/search" template={person =>
-						<span>{person.name} {person.rank && person.rank.toUpperCase()}</span>
-					} onChange={this.addAttendee} clearOnSelect={true} />
-
+					<Autocomplete objectType={Person} onChange={this.addAttendee}
+						clearOnSelect={true}
+						fields={"id, name, position { id, name} "}
+						template={person =>
+							<span>{person.name} {person.rank && person.rank.toUpperCase()}</span>
+						}
+						valueKey="name" />
 					<Table hover striped>
 						<thead>
 							<tr>

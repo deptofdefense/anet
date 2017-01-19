@@ -5,6 +5,8 @@ import {FormControl} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
 import API from 'api'
+import utils from 'utils'
+import * as changeCase from 'change-case'
 
 import './Autocomplete.css'
 
@@ -16,10 +18,11 @@ export default class Autocomplete extends Component {
 		]),
 		valueKey: PropTypes.string,
 		clearOnSelect: PropTypes.bool,
-		url: PropTypes.string.isRequired,
 		template: PropTypes.func,
 		onChange: PropTypes.func,
-		urlParams: PropTypes.string
+		queryParams: PropTypes.object,
+		objectType: PropTypes.func,
+		fields: PropTypes.string
 	}
 
 	constructor(props) {
@@ -33,7 +36,7 @@ export default class Autocomplete extends Component {
 			value: value,
 			stringValue: this.getStringValue(value),
 		}
-        this.fetchSuggestionsDebounced = debounce(this.fetchSuggestions,200)
+		this.fetchSuggestionsDebounced = debounce(this.fetchSuggestions,200)
 	}
 
 	componentWillReceiveProps(props) {
@@ -54,7 +57,7 @@ export default class Autocomplete extends Component {
 	}
 
 	render() {
-		let inputProps = Object.without(this.props, 'url', 'clearOnSelect', 'valueKey', 'template', 'urlParams')
+		let inputProps = Object.without(this.props, 'url', 'clearOnSelect', 'valueKey', 'template', 'queryParams', 'objectType', 'fields')
 		inputProps.value = this.state.stringValue
 		inputProps.onChange = this.onInputChange
 		return <div>
@@ -92,17 +95,14 @@ export default class Autocomplete extends Component {
 
 	@autobind
 	fetchSuggestions(value) {
+		if(value.value.trim().length < 2) {
+			this.setState({suggestions: [], noSuggestions: false})
+			return
+		}
 		if (this.props.url) {
-            if(value.value.trim().length < 2) {
-				this.setState({suggestions: [], noSuggestions: false})
-				return
-            }
 			let url = this.props.url + '?text=' + value.value
-			if (this.props.urlParams) {
-				if (this.props.urlParams[0] !== '&') {
-					url += "&"
-				}
-				url += this.props.urlParams
+			if (this.props.queryParams) {
+				url += "&" + utils.createUrlParams(this.props.queryParams);
 			}
 
 			let selectedIds = this.selectedIds
@@ -114,6 +114,26 @@ export default class Autocomplete extends Component {
 				let noSuggestions = data.length === 0
 				this.setState({suggestions: data, noSuggestions})
 			})
+		} else {
+			let resourceName = this.props.objectType.resourceName
+			let resource = changeCase.camel(resourceName) + "s";
+			let graphQlQuery = resource + "(f:search, query: $query) { "
+					+ this.props.fields
+					+ "}";
+			let variableDef = "($query: " + resourceName + "SearchQuery)";
+			let queryVars = { text: value.value }
+			if (this.props.queryParams) {
+				Object.forEach(this.props.queryParams, (key,val) => queryVars[key] = val)
+			}
+
+			API.query(graphQlQuery, { query: queryVars}, variableDef)
+				.then(data => {
+					console.log(data)
+					let noSuggestions = data[resource].length === 0
+					this.setState({suggestions: data[resource], noSuggestions})
+				}).catch( error =>
+					console.log(error)
+				)
 		}
 	}
 
