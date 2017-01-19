@@ -29,7 +29,7 @@ export default class ReportsIndex extends Page {
 		return (
 			<div>
 				<Breadcrumbs items={[['My reports', '/reports']]} />
-				<ReportTable reports={this.state.reports} showAuthors={true} />
+				<ReportTable reports={this.state.reports} showAuthors={true} showStatus={true}/>
 			</div>
 		)
 	}
