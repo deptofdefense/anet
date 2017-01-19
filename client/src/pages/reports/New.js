@@ -24,13 +24,9 @@ export default class ReportNew extends Page {
 			report: new Report(),
 			hasAddedAuthor: false
 		}
-
 		this.addMyself();
 	}
 
-	componentWillReceiveProps() {
-		this.addMyself()
-	}
 
 	render() {
 		return (
@@ -52,12 +48,14 @@ export default class ReportNew extends Page {
 		let {currentUser} = this.context.app.state
 		if (currentUser && currentUser.id && (!this.state.hasAddedAuthor)) {
 			let report = this.state.report;
+			report.poams = []
 			let attendee = new Person(currentUser)
 			attendee.primary = true
 			let attendees = report.attendees.slice()
 			attendees.push(attendee)
 			report.attendees = attendees;
-			this.setState({report: report, hasAddedAuthor: true});
+			this.state.report = report
+			this.state.hasAddedAuthor = true
 		}
 	}
 
