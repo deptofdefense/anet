@@ -174,13 +174,25 @@ export default class OrganizationShow extends Page {
 	}
 
 	renderPositionTable(positions) {
+		let posCodeHeader, posNameHeader, otherCodeHeader, otherNameHeader
+		if (this.state.organization.type === "ADVISOR_ORG") {
+			posCodeHeader = "NATO Billet"
+			posNameHeader = "Advisor"
+			otherCodeHeader = "Afghan Tashkil"
+			otherNameHeader = "Afghan"
+		} else {
+			otherCodeHeader = "NATO Billet"
+			otherNameHeader = "Advisor"
+			posCodeHeader = "Afghan Tashkil"
+			posNameHeader = "Afghan"
+		}
 		return <Table>
 			<thead>
 				<tr>
-					<th>NATO billet</th>
-					<th>Advisor</th>
-					<th>Afghan billet</th>
-					<th>Afghan</th>
+					<th>{posCodeHeader}</th>
+					<th>{posNameHeader}</th>
+					<th>{otherCodeHeader}</th>
+					<th>{otherNameHeader}</th>
 				</tr>
 			</thead>
 			<tbody>
