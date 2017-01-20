@@ -140,9 +140,37 @@ export default class Search extends Page {
 			((results.organizations) ? results.organizations.length : 0);
 		let noResults = numResults === 0;
 
+		let t = this.props.location.query.type
+		let query = this.props.location.query
+		let queryString = 'TODO'
+		switch (t) {
+			case "reports":
+				switch (Object.keys(query)[1]) {
+					case "pendingApprovalOf" :
+						queryString = "reports pending your approval"
+						break
+					case "authorOrgId" :
+						queryString = "reports recently authored by your organization"
+						break
+					case "authorId" :
+						queryString = "reports you recently authored"
+						break
+				}
+				break
+			case "organizations":
+				queryString = "Organizations TODO"
+				break
+			case "people":
+				queryString = "People TODO"
+				break
+		}
+							
+
+		let type = this.props.location.query.type
+
 		return (
 			<div>
-				<Breadcrumbs items={[['Searching for "' + this.state.query + '"', '/search']]} />
+				<Breadcrumbs items={[['Searching for ' + queryString, '/search']]} />
 
 				<Messages error={error} success={success} />
 
