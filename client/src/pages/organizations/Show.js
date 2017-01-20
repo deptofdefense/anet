@@ -185,17 +185,18 @@ export default class OrganizationShow extends Page {
 			</thead>
 			<tbody>
 				{Position.map(positions, position =>
-					position.associatedPositions.length
-					? Position.map(position.associatedPositions, other => this.renderPositionRow(position, other))
-					: this.renderPositionRow(position)
+					Position.map(position.associatedPositions, (other, idx) =>
+						this.renderPositionRow(position, other, idx)
+					)
 				)}
 			</tbody>
 		</Table>
 	}
 
-	renderPositionRow(position, other) {
+	renderPositionRow(position, other, otherIndex) {
+		console.log("rpw", position, other, otherIndex)
 		let key = position.id
-		let otherCodeCol, otherNameCol
+		let otherCodeCol, otherNameCol, positionCodeCol, positionNameCol
 		if (other) {
 			key += '.' + other.id
 			otherCodeCol = <td><LinkTo position={other} /></td>
@@ -205,17 +206,23 @@ export default class OrganizationShow extends Page {
 				: <td className="text-danger">Unfilled</td>
 		}
 
+		if (otherIndex === 0) {
+			positionCodeCol = <td><LinkTo position={position} /></td>
+			positionNameCol = (position.person)
+					? <td><LinkTo person={position.person} /></td>
+					: <td className="text-danger">Unfilled</td>
+		}
+
 		otherCodeCol = otherCodeCol || <td></td>
 		otherNameCol = otherNameCol || <td></td>
+		positionCodeCol = positionCodeCol || <td></td>
+		positionNameCol = positionNameCol || <td></td>
+
+
 
 		return <tr key={key}>
-			<td><LinkTo position={position} /></td>
-
-			{position.person
-				? <td><LinkTo person={position.person} /></td>
-				: <td className="text-danger">Unfilled</td>
-			}
-
+			{positionCodeCol}
+			{positionNameCol}
 			{otherCodeCol}
 			{otherNameCol}
 		</tr>

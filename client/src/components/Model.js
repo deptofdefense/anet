@@ -18,10 +18,10 @@ export default class Model {
 		if (!array)
 			return []
 
-		return array.map(object =>
+		return array.map((object, idx) =>
 			object instanceof this
-				? func(object)
-				: func(new this(object))
+				? func(object, idx)
+				: func(new this(object), idx)
 		)
 	}
 
