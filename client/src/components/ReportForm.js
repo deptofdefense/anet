@@ -46,7 +46,7 @@ export default class ReportForm extends Component {
 				id, name
 			}
 			persons(f:recents) {
-				id, name, rank, role
+				id, name, rank, role, position { id, name, organization {id, shortName}}
 			}
 			poams(f:recents) {
 				id, shortName, longName
@@ -110,7 +110,7 @@ export default class ReportForm extends Component {
 				<Form.Field id="attendees">
 					<Autocomplete objectType={Person} onChange={this.addAttendee}
 						clearOnSelect={true}
-						fields={"id, name, role, position { id, name} "}
+						fields={"id, name, role, position { id, name, organization { id, shortName}} "}
 						template={person =>
 							<span>{person.name} {person.rank && person.rank.toUpperCase()}</span>
 						}
@@ -143,7 +143,7 @@ export default class ReportForm extends Component {
 										{person.name} {person.rank && person.rank.toUpperCase()}
 									</td>
 									<td><LinkTo position={person.position} /></td>
-									<td>{person.position && person.organization && person.position.organization.shortName}</td>
+									<td>{person.position && person.position.organization && person.position.organization.shortName}</td>
 								</tr>
 							)}
 						</tbody>
