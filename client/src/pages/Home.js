@@ -52,13 +52,6 @@ export default class Home extends Page {
 			<div>
 				<Breadcrumbs />
 
-				{firstTime &&
-					<Alert bsStyle="info" >
-						<h4>Welcome to ANET!</h4>
-						<p>We noticed this is your first time here, Can we <b><a onClick={this.pageIntroduction}>Show you Around</a></b>?</p>
-					</Alert>
-				}
-
 				<fieldset className="homeTileRow">
 					<legend>My ANET Snapshot</legend>
 					<Grid fluid>
@@ -104,28 +97,6 @@ export default class Home extends Page {
 				</fieldset>
 			</div>
 		)
-	}
-
-	@autobind
-	pageIntroduction() {
-		let intro = introJs();
-		intro.setOptions({
-			steps: [
-				{
-					element: document.querySelector(".intro-snapshot"),
-					intro: "This is your ANET Snapshot. It includes links to reports that are immediately relevant to you."
-				},
-				{
-					element: document.querySelector(".intro-search"),
-					intro: "Use the search bar to look for Reports, People, Positions, Organizations, PoAMs, or Organizations. You can type in anything you want here"
-				},
-				{
-					element: document.querySelector(".intro-createReport"),
-					intro: "This button allows easy access to quickly create a new Report"
-				}
-			]
-		});
-		intro.start();
 	}
 
 	@autobind
