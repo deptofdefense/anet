@@ -142,7 +142,7 @@ export default class Search extends Page {
 
 		let t = this.props.location.query.type
 		let query = this.props.location.query
-		let queryString = 'TODO'
+		let queryString = query.q || 'TODO'
 		switch (t) {
 			case "reports":
 				switch (Object.keys(query)[1]) {
