@@ -110,7 +110,7 @@ export default class ReportForm extends Component {
 				<Form.Field id="attendees">
 					<Autocomplete objectType={Person} onChange={this.addAttendee}
 						clearOnSelect={true}
-						fields={"id, name, position { id, name} "}
+						fields={"id, name, role, position { id, name} "}
 						template={person =>
 							<span>{person.name} {person.rank && person.rank.toUpperCase()}</span>
 						}

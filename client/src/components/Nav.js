@@ -39,12 +39,6 @@ export default class extends Component {
 					<NavItem>Daily Rollup</NavItem>
 				</Link>
 
-				{currentUser.isAdmin() &&
-					<Link to={"/search?type=reports&pageSize=100&engagementDateStart=" + moment().add(1, 'days').hour(0).valueOf() } >
-						<NavItem>Future Engagements</NavItem>
-					</Link>
-				}
-
 				{process.env.NODE_ENV === 'development' &&
 					<Link to="/graphiql">
 						<NavItem>GraphQL</NavItem>
