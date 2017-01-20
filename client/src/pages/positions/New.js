@@ -73,6 +73,8 @@ export default class PositionNew extends Page {
 			} else if(position.organization.type === "PRINCIPAL_ORG") {
 				position.type = "PRINCIPAL"
 			}
+		} else if (position.organization && position.organization.type === "PRINCIPAL_ORG") {
+			position.type = "PRINCIPAL"
 		}
 		this.setState({position})
 	}

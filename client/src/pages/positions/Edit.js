@@ -44,7 +44,7 @@ export default class PositionEdit extends Page {
 		return (
 			<div>
 				<ContentForHeader>
-					<h2>Create a new Position</h2>
+					<h2>Edit Position</h2>
 				</ContentForHeader>
 
 				<Breadcrumbs items={[[`Edit ${position.name}`, `/positions/${position.id}/edit`]]} />

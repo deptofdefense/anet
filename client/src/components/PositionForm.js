@@ -54,7 +54,7 @@ export default class PositionForm extends Component {
 				</Form.Field>
 
 				{position.organization && position.organization.type === "PRINCIPAL_ORG" &&
-					<Form.Field type="static" value="Afghan Principal" label="Type" id="type" /> }
+					<Form.Field type="static" value="PRINCIPAL" label="Type" id="type" >Afghan Principal</Form.Field> }
 
 				{position.organization && position.organization.type === "ADVISOR_ORG" &&
 					<Form.Field id="type" componentClass="select">
@@ -71,6 +71,7 @@ export default class PositionForm extends Component {
 					<Autocomplete valueKey="name"
 						placeholder="Select the person in this position"
 						url="/api/people/search"
+						queryParams={position.type ? {role: position.type} : {}}
 					/>
 				</Form.Field>
 			</fieldset>
