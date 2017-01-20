@@ -40,7 +40,7 @@ export default class extends Component {
 				</Link>
 
 				{currentUser.isAdmin() &&
-					<Link to={"/search?type=reports&pageSize=100&engagementDateStart=" + moment().add(1, 'days').valueOf() } >
+					<Link to={"/search?type=reports&pageSize=100&engagementDateStart=" + moment().add(1, 'days').hour(0).valueOf() } >
 						<NavItem>Future Engagements</NavItem>
 					</Link>
 				}

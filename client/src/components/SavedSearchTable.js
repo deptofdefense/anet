@@ -1,6 +1,6 @@
 import React, {Component, PropTypes} from 'react'
 
-import ReportSummary from 'components/ReportSummary'
+import ReportCollection from 'components/ReportCollection'
 import autobind from 'autobind-decorator'
 import API from 'api'
 import {Table} from 'react-bootstrap'
@@ -54,15 +54,7 @@ export default class SavedSearchTable extends Component {
 	}
 
 	render() {
-		return <Table responsive>
-			<tbody>
-				{this.state.searchResults.reports.map(report =>
-					<tr key={report.id}>
-						<td><ReportSummary report={report} /></td>
-					</tr>
-				)}
-			</tbody>
-		</Table>
+		return <ReportCollection reports={this.state.searchResults.reports} />
 	}
 
 }
