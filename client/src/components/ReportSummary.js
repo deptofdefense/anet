@@ -39,7 +39,11 @@ export default class ReportSummary extends Component {
 				<Col md={6}>{report.primaryPrincipal && this.renderPerson(report.primaryPrincipal)}</Col>
 			</Row>
 			<Row>
-				<Col md={12}>The <b>Key Outcomes</b> were {report.keyOutcomesSummary}.  The <b>Next Steps</b> are {report.nextStepsSummary}. </Col>
+				<Col md={12}>
+					{report.intent}. &nbsp;
+					{report.keyOutcomesSummary && <span>The <b>Key Outcomes</b> were {report.keyOutcomesSummary}.</span>} &nbsp;
+					{report.nextStepsSummary && <span>The <b>Next Steps</b> are {report.nextStepsSummary}.</span>}
+				</Col>
 			</Row>
 			<Row>
 				<Col md={4} mdOffset={8}><LinkTo report={report} >Read Full Report</LinkTo></Col>
