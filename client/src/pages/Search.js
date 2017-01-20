@@ -251,7 +251,7 @@ export default class Search extends Page {
 				{Person.map(this.state.results.people, person =>
 					<tr key={person.id}>
 						<td>
-							<img src={person.iconUrl()} alt={person.role} />
+							<img src={person.iconUrl()} alt={person.role} height={20} className="personIcon" />
 							<LinkTo person={person}>{person.rank} {person.name}</LinkTo>
 						</td>
 						<td>{person.phoneNumber}</td>
@@ -297,7 +297,7 @@ export default class Search extends Page {
 				{Position.map(this.state.results.positions, pos =>
 					<tr key={pos.id}>
 						<td>
-							<img src={pos.iconUrl()} alt={pos.type} />
+							<img src={pos.iconUrl()} alt={pos.type} height={20} className="personIcon" />
 							<LinkTo position={pos} >{pos.code} {pos.name}</LinkTo>
 						</td>
 						<td>{pos.organization && <LinkTo organization={pos.organization} />}</td>

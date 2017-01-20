@@ -174,28 +174,41 @@ export default class OrganizationShow extends Page {
 	}
 
 	renderPositionTable(positions) {
+		let posCodeHeader, posNameHeader, otherCodeHeader, otherNameHeader
+		if (this.state.organization.type === "ADVISOR_ORG") {
+			posCodeHeader = "NATO Billet"
+			posNameHeader = "Advisor"
+			otherCodeHeader = "Afghan Tashkil"
+			otherNameHeader = "Afghan"
+		} else {
+			otherCodeHeader = "NATO Billet"
+			otherNameHeader = "Advisor"
+			posCodeHeader = "Afghan Tashkil"
+			posNameHeader = "Afghan"
+		}
 		return <Table>
 			<thead>
 				<tr>
-					<th>NATO billet</th>
-					<th>Advisor</th>
-					<th>Afghan billet</th>
-					<th>Afghan</th>
+					<th>{posCodeHeader}</th>
+					<th>{posNameHeader}</th>
+					<th>{otherCodeHeader}</th>
+					<th>{otherNameHeader}</th>
 				</tr>
 			</thead>
 			<tbody>
 				{Position.map(positions, position =>
-					position.associatedPositions.length
-					? Position.map(position.associatedPositions, other => this.renderPositionRow(position, other))
-					: this.renderPositionRow(position)
+					Position.map(position.associatedPositions, (other, idx) =>
+						this.renderPositionRow(position, other, idx)
+					)
 				)}
 			</tbody>
 		</Table>
 	}
 
-	renderPositionRow(position, other) {
+	renderPositionRow(position, other, otherIndex) {
+		console.log("rpw", position, other, otherIndex)
 		let key = position.id
-		let otherCodeCol, otherNameCol
+		let otherCodeCol, otherNameCol, positionCodeCol, positionNameCol
 		if (other) {
 			key += '.' + other.id
 			otherCodeCol = <td><LinkTo position={other} /></td>
@@ -205,17 +218,23 @@ export default class OrganizationShow extends Page {
 				: <td className="text-danger">Unfilled</td>
 		}
 
+		if (otherIndex === 0) {
+			positionCodeCol = <td><LinkTo position={position} /></td>
+			positionNameCol = (position.person)
+					? <td><LinkTo person={position.person} /></td>
+					: <td className="text-danger">Unfilled</td>
+		}
+
 		otherCodeCol = otherCodeCol || <td></td>
 		otherNameCol = otherNameCol || <td></td>
+		positionCodeCol = positionCodeCol || <td></td>
+		positionNameCol = positionNameCol || <td></td>
+
+
 
 		return <tr key={key}>
-			<td><LinkTo position={position} /></td>
-
-			{position.person
-				? <td><LinkTo person={position.person} /></td>
-				: <td className="text-danger">Unfilled</td>
-			}
-
+			{positionCodeCol}
+			{positionNameCol}
 			{otherCodeCol}
 			{otherNameCol}
 		</tr>
