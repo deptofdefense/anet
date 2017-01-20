@@ -72,7 +72,7 @@
     "nprogress": "^0.2.0",
     "pluralize": "^3.1.0",
     "react": "^15.4.1",
-    "react-autosuggest": "^7.0.1",
+    "react-autosuggest-ie11-compatible": "^8.0.5",
     "react-bootstrap": "^0.30.7",
     "react-bootstrap-date-picker": "nickjs/react-bootstrap-date-picker",
     "react-dom": "^15.4.1",
