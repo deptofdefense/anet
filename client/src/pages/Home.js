@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
-import {Grid, Row, Col, FormControl, FormGroup, ControlLabel} from 'react-bootstrap'
+import {Button, Grid, Row, Col, FormControl, FormGroup, ControlLabel, Alert} from 'react-bootstrap'
 import SavedSearchTable from 'components/SavedSearchTable'
 import {Link} from 'react-router'
 
@@ -46,10 +46,18 @@ export default class Home extends Page {
 		let {pendingMe, myOrgToday, myReportsToday} = this.state
 		let currentUser = this.context.app.state.currentUser;
 		let org = currentUser && currentUser.position && currentUser.position.organization
+		let firstTime = true;
 
 		return (
 			<div>
 				<Breadcrumbs />
+
+				{firstTime &&
+					<Alert bsStyle="info" >
+						<h4>Welcome to ANET!</h4>
+						<p>We noticed this is your first time here, Can we <b><a onClick={this.pageIntroduction}>Show you Around</a></b>?</p>
+					</Alert>
+				}
 
 				<fieldset className="homeTileRow">
 					<legend>My ANET Snapshot</legend>
@@ -96,6 +104,28 @@ export default class Home extends Page {
 				</fieldset>
 			</div>
 		)
+	}
+
+	@autobind
+	pageIntroduction() {
+		let intro = introJs();
+		intro.setOptions({
+			steps: [
+				{
+					element: document.querySelector(".intro-snapshot"),
+					intro: "This is your ANET Snapshot. It includes links to reports that are immediately relevant to you."
+				},
+				{
+					element: document.querySelector(".intro-search"),
+					intro: "Use the search bar to look for Reports, People, Positions, Organizations, PoAMs, or Organizations. You can type in anything you want here"
+				},
+				{
+					element: document.querySelector(".intro-createReport"),
+					intro: "This button allows easy access to quickly create a new Report"
+				}
+			]
+		});
+		intro.start();
 	}
 
 	@autobind

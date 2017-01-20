@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
-import {Table, ListGroup, ListGroupItem, DropdownButton, MenuItem} from 'react-bootstrap'
+import {Grid, Row, Col, Table, ListGroup, ListGroupItem, DropdownButton, MenuItem} from 'react-bootstrap'
 
 import API from 'api'
 import {Organization, Position, Poam} from 'models'
@@ -12,6 +12,7 @@ import LinkTo from 'components/LinkTo'
 import Messages , {setMessages} from 'components/Messages'
 import ReportCollection from 'components/ReportCollection'
 import ScrollableFieldset from 'components/ScrollableFieldset'
+import CollapsableFieldset, {CollapsedContent, ExpandedContent} from 'components/CollapsableFieldset'
 
 export default class OrganizationShow extends Page {
 	static contextTypes = {
@@ -128,37 +129,45 @@ export default class OrganizationShow extends Page {
 
 					{poamsContent}
 
+					<CollapsableFieldset title="Personnel Laydown">
+						<ExpandedContent>
+							<fieldset>
+								<legend>Positions needing attention</legend>
+								{this.renderPositionTable(positionsNeedingAttention)}
+							</fieldset>
+
+							<fieldset>
+								<legend>Supported laydown</legend>
+								{this.renderPositionTable(supportedPositions)}
+							</fieldset>
+						</ExpandedContent>
+						<CollapsedContent>
+							<Grid>
+								<Row>
+									<Col md={3}>
+										<b>Vacancy or Requires Action</b>
+									</Col>
+									<Col md={4}>
+										{positionsNeedingAttention.length} positions
+									</Col>
+								</Row>
+								<Row>
+									<Col md={3}>
+										<b>Supported Laydown</b>
+									</Col>
+									<Col md={4}>
+										{supportedPositions.length} positions
+									</Col>
+								</Row>
+							</Grid>
+						</CollapsedContent>
+					</CollapsableFieldset>
+
+					{this.renderApprovalProcess()}
+
 					<ScrollableFieldset title="Recent Reports" height={500} >
 						<ReportCollection reports={org.reports} />
 					</ScrollableFieldset>
-
-					<fieldset>
-						<legend>Positions needing attention</legend>
-						{this.renderPositionTable(positionsNeedingAttention)}
-					</fieldset>
-
-					<fieldset>
-						<legend>Supported laydown</legend>
-						{this.renderPositionTable(supportedPositions)}
-					</fieldset>
-
-					<h2>Approval Process</h2>
-					{org.approvalSteps && org.approvalSteps.map((step, idx) =>
-						<fieldset key={"step_" + idx}>
-							<legend>Step {idx + 1}: {step.approverGroup.name}</legend>
-							<Table>
-								<thead><tr><th>Name</th><th>Position</th></tr></thead>
-								<tbody>
-									{step.approverGroup.members.map(person =>
-										<tr key={person.id}>
-											<td><LinkTo person={person} /></td>
-											<td>{person.position && <LinkTo position={person.position} />}</td>
-										</tr>
-									)}
-								</tbody>
-							</Table>
-						</fieldset>
-					)}
 				</Form>
 			</div>
 		)
@@ -244,5 +253,45 @@ export default class OrganizationShow extends Page {
 		} else {
 			console.log("Unimplemented Action: " + eventKey);
 		}
+	}
+
+	@autobind
+	renderApprovalProcess() {
+		let org = this.state.organization
+		let approvalSteps = org.approvalSteps
+		return <CollapsableFieldset title="Approval Process">
+			<ExpandedContent>
+				{approvalSteps && approvalSteps.map((step, idx) =>
+					<fieldset key={"step_" + idx}>
+						<legend>Step {idx + 1}: {step.approverGroup.name}</legend>
+						<Table>
+							<thead><tr><th>Name</th><th>Position</th></tr></thead>
+							<tbody>
+								{step.approverGroup.members.map(person =>
+									<tr key={person.id}>
+										<td><LinkTo person={person} /></td>
+										<td>{person.position && <LinkTo position={person.position} />}</td>
+									</tr>
+								)}
+							</tbody>
+						</Table>
+					</fieldset>
+				)}
+			</ExpandedContent>
+			<CollapsedContent>
+				<Grid>
+				{approvalSteps && approvalSteps.map((step, idx) =>
+					<Row key={idx}>
+						<Col md={3}>
+							<b>Step #{idx + 1}: {step.approverGroup.name}</b>
+						</Col>
+						<Col md={4}>
+							{step.approverGroup.members.length} people
+						</Col>
+					</Row>
+				)}
+				</Grid>
+			</CollapsedContent>
+		</CollapsableFieldset>
 	}
 }
