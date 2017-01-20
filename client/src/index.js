@@ -49,6 +49,7 @@ import AdminIndex from './pages/admin/Index'
 import GraphiQL from './pages/GraphiQL'
 
 function showLoader() {
+	window.scrollTo(0,0)
 	NProgress.start()
 	setTimeout(function() {
 		if (NProgress.status < 0.5)
