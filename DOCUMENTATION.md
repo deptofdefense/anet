@@ -31,7 +31,7 @@ ANET2 is built primarily using Open Source languages, frameworks, and libraries 
 The client can be any users on the appropiate network with a modern web-browser. ANET uses HTTP/HTTPS (ports 80/443) to communicate between the client and server. (IS THERE ANY SPECIFIC BROWSER FEATURE THAT NEEDS TO BE TURNED ON?)
 
 ### Application Server
-The ANET2 Application Server can run on any Windows Server operating system.  System requirements are: 100 GB HDD, 32 GB RAM, 4x CPUs.  Recommended system configuration is: 300 GB HDD, 64 GB RAM, and 8x CPUs.  The Application server must be able to communicate with the Database server, the Windows Domain Controller for AD Authentication, and the SMTP server for outbound mail. 
+The ANET2 Application Server can run on any Windows Server operating system.  Recommended system configuration is: 300 GB HDD, 64 GB RAM, and 8x CPUs.  The Application server must be able to communicate with the Database server, the Windows Domain Controller for AD Authentication, and the SMTP server for outbound mail. 
 
 ### Database
 ANET2 Requires at least a Microsoft SQL Server 2014 Database. 
@@ -149,19 +149,20 @@ This is an attempt to describe the complete start to finish of how a request mak
 	POST    /advisorOrganizations/new (mil.dds.anet.resources.AdvisorOrganizationResource)
 	POST    /advisorOrganizations/update (mil.dds.anet.resources.AdvisorOrganizationResource)
 	GET     /advisorOrganizations/{id} (mil.dds.anet.resources.AdvisorOrganizationResource)
+	..... (continued) ....
 ```
 
 4. This tells you the URL, and then the class that will serve that URL.
 5. Parameters into those methods are autowired in based on the HTTP request
-	- `@PathParam` will pull a named parameter out of the @Path annotation on the method
+	- `@PathParam` will pull a named parameter out of the @Path annotation on the method (ie /api/people/{id} )
 	- `@QueryParam` will pull a named parameter out of the URL query string (ie ?foo=bar)
 	- Objects without annotations will be deserialized by Jackson from the HTTP entity
 	- `@Auth` will pull the current logged in user
 		- If Authentication is required, the Auth filter in `mil.dds.anet.AnetAuthenticator` will determine your user principal.
-	- `@Produces` annotations describe which content type the method can produce. Typically this is going to be either `application/json` if the endpoint only serves JSON, or `text/html` if this endpoint can also return HTML (more on how that is determined later).
+	- `@Produces` annotations describe which content type the method can produce. This is almost always going to be `application/json`.
 	- `@GET`, `@POST` , and similar annotations describe which HTTP methods this method will respond to.
 6. Within each Resource class, there is a `dao` (Database Access Object).  Each DAO contains all of the SQL logic for communicating with the database.
-7. Each first-class object that ANET deals with (People, Reports, Positions, Comments, Poams, Organizations, etc), is represented by a single class that contains all of the properties and methods that that object can do. These are all in the `mil.dds.anet.beans` package.
+7. Each of the core ANET object types is represented by a bean that contains all of the properties and methods that that object can do. These are all in the `mil.dds.anet.beans` package.
 	- These objects are deserialized from JSON when they are passed in the HTTP request body as part of a POST
 	- These objects can be serialized back into JSON if they are returned by a method that is annotated with `@Produces(MediaType.APPLICATION_JSON)`
 ```
@@ -172,13 +173,9 @@ public Report getReportById(@PathParam("id") int id) {
 	return dao.getById(id);
 }
 ```
-8. After a Resource method returns, any registered post filters will run
-	- Currently `mil.dds.anet.views.ViewResponseFilter` is the only filter.  This filter will attach the user principal as well as the current URL onto the view object if that's part of the response.
 
 ## How the GraphQL API Works
-GraphQL (http://graphql.org/) is a query language developed by Facebook to allow API consumers to explore a 'Graph' without requiring the server to have implemented every possible API call ahead of time.  The client developer can ask for what data they want, and the GraphQL layer will figure out what data it needs to fetch and then fetch specifcally that data.  This reduces the number of round-trip HTTP calls that need to be done between a client and a server.
-
-In ANET, we implemented GraphQL using the graphql-java (https://github.com/graphql-java/graphql-java) implementation on top of our REST interface.  Here is a brief run-through of how a graphql query gets executed:
+GraphQL is the mechanism by which most data is fetched to be displayed in the web-frontend.  In ANET, we implemented GraphQL using the graphql-java (https://github.com/graphql-java/graphql-java) implementation on top of our REST interface.  By using GraphQL we call the exact same functions that the REST API does, but we are able to be much more descriptive about what data we want back, and therefore reduce the number of round-trips between the client and the server.  Here is a brief run-through of how a graphql query gets executed:
 
 1. All GraphQL queries go to the `GraphQLResource#graphql()` method.  This resource is initalized by being passed all of the other REST Resources within ANET.
 2. The GraphQLResource will scan through all of the other REST Resources and look for methods that are annotated with the `@GraphQLFetcher` annotation. This annotation tells GraphQL that it can use this method as a "entry point" into the ANET Graph. 
@@ -212,16 +209,15 @@ person(id:123) {
 2. The `graphql-java` library will parse the structure and validate the input. 
 3. The `person` keyword will tell GraphQL that you want to access the `person` object type at the root level. This goes to the `PersonResource`. 
 4. The `AnetResourceDataFetcher` is the class that will get asked to load the person object. It looks at all of the methods on `PersonResource` that are annotated with `@GraphQLFetcher` and figures out which one has the right arguments to call. In this case it will be `getById(int id)`.  That method is called and it will do a database load and return the person. 
-5. GraphQL next looks at the fields on the Person that we need to load, in this case `id, name, position, authoredReports`.  For each of these fields, they were defined on the person type by the `GraphQLResource.buildTypeFromBean` method, which scans a Bean class for getter methods and wires them up to be used later.  In this case it will look for methods called `getId()`, `getName()`, `getPosition()` and `getAuthoredReports()`.  Each of these exist except for the `getAuthoredReports()`, we'll get to that. 
-6. Each of these other methods are called and the values returned.  For `getPosition()` this causes a DB query to fire, which loads the Position (if necessary).
+5. GraphQL next looks at the fields on the Person that we need to load, in this case `id, name, position, authoredReports`.  For each of these fields, they were defined on the person type by the `GraphQLResource.buildTypeFromBean` method, which scans a Bean class for getter methods and wires them up to be used later.  In this case it will look for methods called `getId()`, `getName()`.  For `authoredReports` and `positions` it will find the methods `loadAuthoredReports()` and `loadPosition` because they are annotated with `@GraphQLFetcher`.  
+	- As a convention, methods starting with `get` will never perform a database load and always return the value currently in memory.  `load` functions will execute a database query if necessary in order to return the correct value. 
+6. Each of these methods are called and the values returned.  
 7. For `getAuthoredReports`, when `buildTypeFromBean()` was scanning the Person Bean it noticed that this method required arguments, so it kept track of those.  When you try to call this method it will inspect the query to see if you passed the correct arguments. If so it will pass those arguments, and if not then it will throw an error. 
     - Bottom line: All `get*()` methods on Beans are exposed. If they require arguments, you *MUST* annotate them with `@GraphQLParam`.
 	- You can use `@GraphQLIgnore` to tell GraphQL to not expose a getter method. 
 
-
 * Note: GraphQL does _not_ use Jackson to serialize anything into JSON, it individually fetches the exact fields the client requests and transforms those into JSON using its own type system. 
 * Note: While GraphQL does technically support writing data to the server through mutations, we do not have any of that implemented.  You must still use the REST api to write any data to ANET. 
-
 
 
 ### Advanced Search
