@@ -16,6 +16,7 @@ database:
   properties:
    date_string_format: ${ANET_DB_DATE_STRING_FORMAT}
    date_class: ${ANET_DB_DATE_CLASS}
+
 waffleConfig:
   principalFormat: fqn
   roleFormat: both
