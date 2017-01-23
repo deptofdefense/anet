@@ -12,8 +12,6 @@ import ReactDOM from 'react-dom'
 import {Router, Route, IndexRoute, browserHistory} from 'react-router'
 import {InjectablesProvider} from 'react-injectables'
 
-import NProgress from 'nprogress'
-
 import App from './pages/App'
 import Home from './pages/Home'
 import Search from './pages/Search'
@@ -48,18 +46,14 @@ import AdminIndex from './pages/admin/Index'
 
 import GraphiQL from './pages/GraphiQL'
 
-function showLoader() {
-	window.scrollTo(0,0)
-	NProgress.start()
-	setTimeout(function() {
-		if (NProgress.status < 0.5)
-			NProgress.done()
-	})
+
+function onRender() {
+console.log('RENDERRRR');
 }
 
 ReactDOM.render((
 	<InjectablesProvider>
-		<Router history={browserHistory} onUpdate={showLoader}>
+		<Router history={browserHistory} onUpdate={onRender}>
 			<Route path="/" component={App}>
 				<IndexRoute component={Home} />
 				<Route path="search" component={Search} />

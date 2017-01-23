@@ -1,12 +1,3 @@
-import NProgress from 'nprogress'
-import 'nprogress/nprogress.css'
-
-if (process.env.NODE_ENV !== 'test') {
-	NProgress.configure({
-		parent: '.header'
-	})
-}
-
 const API = {
 	fetch(url, params) {
 		params = params || {}
@@ -15,14 +6,8 @@ const API = {
 		params.headers = params.headers || {}
 		params.headers['Accept'] = 'application/json'
 
-		if (params.showLoader !== false)
-			API.startLoading()
-		delete params.showLoader
-
 		return window.fetch(url, params)
 					.then(response => {
-						API.stopLoading()
-
 						let isOk = response.ok
 
 						if (response.headers.get('content-type') === 'application/json') {
@@ -86,15 +71,6 @@ const API = {
 		variableDef = variableDef || ""
 		query = 'query ' + variableDef + ' { ' + query + ' }'
 		return API.send('/graphql', {query, variables}).then(json => json.data)
-	},
-
-	startLoading() {
-		NProgress.start()
-		NProgress.set(0.5)
-	},
-
-	stopLoading() {
-		NProgress.done()
 	},
 }
 
