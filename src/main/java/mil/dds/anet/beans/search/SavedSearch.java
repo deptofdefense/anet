@@ -58,4 +58,8 @@ public class SavedSearch extends AbstractAnetBean {
 				getId(), name, query, owner.getId());
 	}
 	
+	@Override
+	public int hashCode() { 
+		return Objects.hashCode(id, name, owner, objectType, query);
+	}
 }

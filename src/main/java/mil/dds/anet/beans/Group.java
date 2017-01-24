@@ -12,7 +12,6 @@ public class Group extends AbstractAnetBean {
 
 	String name;
 	List<Person> members;
-	DateTime createdAt;
 	
 	public Group() { 
 		this.members = Collections.emptyList();

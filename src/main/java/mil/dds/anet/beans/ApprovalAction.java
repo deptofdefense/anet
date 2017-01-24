@@ -20,7 +20,6 @@ public class ApprovalAction extends AbstractAnetBean {
 	ApprovalStep step;
 	Person person;
 	Report report;
-	DateTime createdAt;
 	ApprovalType type;
 	
 	@Override

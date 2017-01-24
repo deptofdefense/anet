@@ -13,13 +13,16 @@ ANET2 is comprised of three major components: the Database, an Application serve
 #### Software, Licenses, Skillsets/Roles
 ANET2 is built primarily using Open Source languages, frameworks, and libraries that are standard throughout the software industry.  The only proprietary software that ANET2 depends on is Microsoft SQLServer.  To successfully develop, build, run, and manage a deployment of ANET2, the following roles and skillsets are recommended: 
 
-1. **DBA**: Somebody needs to take care of your database, this role can easily be shared with other projects and does not need to dedicates to ANET2. Responsiblities include patching and upgrading the Database software, ensuring backups are taken and reliable, and advising on query performance/tuning. 
-2. **Full-stack Software Engineer**: This person/people will be the primary developer of new features on ANET2 and troubleshoot any bugs/issues.  This person should have a strong understanding, or willingness to learn, the following concepts/languages: 
+1. **DBA**: Somebody needs to take care of your database, this role can easily be shared with other projects and does not need to dedicated to ANET2. Responsiblities include patching and upgrading the Database software, ensuring backups are taken and reliable, and advising on query performance/tuning. 
+2. **Full-stack Software Engineer**: This person/people will be the primary developer of new features on ANET2 and troubleshoot any bugs/issues that arise. This person should have a strong background in developing user-centric applications in an agile-development lifecycle and can react quickly to changing requirements.  They should have a strong understanding, or willingness to learn, the following concepts/languages: 
 	* SQL
 	* Java
 	* REST APIs 
 	* HTTP servers / The Internet. 
 	* Javascript, HTML, CSS
+	* React
+	* Git for version control
+As the lead developer, this individual will work closely with users to understand needs and issues, work closely with the ANET2 Administrator, and the Product Owner to determine the correct solution, and then implement, test, and iterate on that solution. 
 3. **System Administrator**: Somebody needs to manage your Windows server, patches, and keep the service running.  This role can easily be shared with other projects and does not need to be dedicated to ANET2.  Responsiblities include patching and upgrade of the Server Operating Systems, providing support to release new versions of the ANET2 platform on a regular basis, and ensuring performance and uptime of the server environment. 
 4. **ANET2 Administrator / Level-1 Support**: This role provides the day-to-day management of the system, working with users on any issues, serving as the initial triage of incoming requests, performing management of top level data structures within the system (Organizations, Poams).  This person should have a basic understanding of, or willingness to learn, Databases, application servers, and websites. This role does not need to be overly technical in nature and should be focused on engaging with and supporting users of the platform. 
 
