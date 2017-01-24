@@ -89,7 +89,7 @@ export default class Leaflet extends Component {
 
 		let existingMarkers = this.state.markerLayer.getLayers();
 		let markersToAdd = nextProps.markers.filter(m =>
-			existingMarkers.findIndex(el => el.id === m.id) === -1
+			existingMarkers.findIndex(el => el.options.id === m.id) === -1
 		)
 		this.updateMarkerLayer(markersToAdd)
 	}
