@@ -46,14 +46,9 @@ import AdminIndex from './pages/admin/Index'
 
 import GraphiQL from './pages/GraphiQL'
 
-
-function onRender() {
-console.log('RENDERRRR');
-}
-
 ReactDOM.render((
 	<InjectablesProvider>
-		<Router history={browserHistory} onUpdate={onRender}>
+		<Router history={browserHistory}>
 			<Route path="/" component={App}>
 				<IndexRoute component={Home} />
 				<Route path="search" component={Search} />
