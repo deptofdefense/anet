@@ -300,9 +300,23 @@ export default class ReportForm extends Component {
 		let url = `/api/reports/${this.props.edit ? 'update' : 'new'}`
 		API.send(url, report)
 			.then(response => {
-				let id = this.props.edit ? "" : ""+response.id
-				History.push({pathname:Report.pathFor(report) + id,query:{},state:{
-					success: "Saved Report"}})
+				if (response.id) {
+					report.id = response.id
+				}
+
+				// this updates the current page URL on model/new to be the edit page,
+				// so that if you press back after saving a new model, it takes you
+				// back to editing the model you just saved
+				History.replace({
+					pathname: Report.pathForEdit(report),
+				})
+
+				// then after, we redirect you to the to page
+				History.push({
+					pathname: Report.pathFor(report),
+					state: {success: "Saved Report"},
+				})
+
 				window.scrollTo(0, 0)
 			})
 			.catch(response => {
