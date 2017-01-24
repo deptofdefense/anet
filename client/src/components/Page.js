@@ -24,6 +24,8 @@ export default class Page extends Component {
 
 	loadData(props) {
 		if (this.fetchData) {
+			document.body.classList.add('loading')
+
 			this.fetchData(props || this.props)
 
 			let promise = API.inProgress
@@ -32,10 +34,12 @@ export default class Page extends Component {
 
 				promise.then(response => {
 					NProgress.done()
+					document.body.classList.remove('loading')
 					return response
 				})
 			} else {
 				NProgress.done()
+				document.body.classList.remove('loading')
 			}
 
 			return promise
