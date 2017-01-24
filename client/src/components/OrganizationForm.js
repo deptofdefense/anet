@@ -1,9 +1,10 @@
 import React, {Component, PropTypes} from 'react'
+import {Button, Table, Radio} from 'react-bootstrap'
 
-import Autocomplete from 'components/Autocomplete'
 import Form from 'components/Form'
+import RadioGroup from 'components/RadioGroup'
+import Autocomplete from 'components/Autocomplete'
 import PoamsSelector from 'components/PoamsSelector'
-import {Button, Table} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
 export default class OrganizationForm extends Component {
@@ -24,20 +25,22 @@ export default class OrganizationForm extends Component {
 
 			<fieldset>
 				<legend>{edit ? "Editing " + organization.shortName : "Create a new Organization"}</legend>
-				<Form.Field id="type" componentClass="select">
-					<option value="ADVISOR_ORG">Advisor Organization</option>
-					<option value="PRINCIPAL_ORG">Afghan Govt Organization</option>
+				<Form.Field id="type">
+					<RadioGroup>
+						<Radio value="ADVISOR_ORG">Advisor Organization</Radio>
+						<Radio value="PRINCIPAL_ORG">Afghan Govt Organization</Radio>
+					</RadioGroup>
 				</Form.Field>
 
-				<Form.Field id="parentOrg" label="Parent Org" >
+				<Form.Field id="parentOrg" label="Parent organization">
 					<Autocomplete valueKey="shortName"
-							placeholder="Choose the parent organization"
-							url="/api/organizations/search"
-							queryParams={{ type:organization.type}} />
+						placeholder="Start typing to search for a higher level organization..."
+						url="/api/organizations/search"
+						queryParams={{type: organization.type}} />
 				</Form.Field>
 
-				<Form.Field id="shortName" />
-				<Form.Field id="longName" />
+				<Form.Field id="shortName" label="Name" placeholder="e.g. EF1.1" />
+				<Form.Field id="longName" label="Description" placeholder="e.g. Force Sustainment" />
 			</fieldset>
 
 			{ organization.type === "ADVISOR_ORG" &&
