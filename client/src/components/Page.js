@@ -22,9 +22,9 @@ export default class Page extends Component {
 		}
 	}
 
-	_fetchData(props) {
+	loadData(props) {
 		if (this.fetchData) {
-			this.fetchData(props)
+			this.fetchData(props || this.props)
 
 			let promise = API.inProgress
 			if (promise && promise instanceof Promise) {
@@ -46,12 +46,12 @@ export default class Page extends Component {
 
 	componentWillReceiveProps(props) {
 		if (props !== this.props) {
-			this._fetchData(props)
+			this.loadData(props)
 		}
 	}
 
 	componentDidMount() {
-		setMessages(this.props,this.state)
-		this._fetchData(this.props)
+		setMessages(this.props, this.state)
+		this.loadData(this.props)
 	}
 }
