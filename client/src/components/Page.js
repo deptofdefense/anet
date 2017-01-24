@@ -1,5 +1,6 @@
 import {Component} from 'react'
 import {setMessages} from 'components/Messages'
+import API from 'api'
 
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
@@ -23,7 +24,9 @@ export default class Page extends Component {
 
 	_fetchData(props) {
 		if (this.fetchData) {
-			let promise = this.fetchData(props)
+			this.fetchData(props)
+
+			let promise = API.inProgress
 			if (promise && promise instanceof Promise) {
 				NProgress.set(0.5)
 

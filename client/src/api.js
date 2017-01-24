@@ -6,9 +6,13 @@ const API = {
 		params.headers = params.headers || {}
 		params.headers['Accept'] = 'application/json'
 
-		return window.fetch(url, params)
+		let promise = window.fetch(url, params)
 					.then(response => {
 						let isOk = response.ok
+
+						if (API.inProgress === promise) {
+							API.inProgress = null
+						}
 
 						if (response.headers.get('content-type') === 'application/json') {
 							let respBody = response.json()
@@ -32,6 +36,9 @@ const API = {
 
 						return response
 					})
+
+		API.inProgress = promise
+		return promise
 	},
 
 	send(url, data, params) {
