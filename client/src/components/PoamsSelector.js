@@ -19,7 +19,7 @@ export default class PoamsSelector extends Component {
 		return <fieldset>
 			<legend>Plans of Action and Milestones / Pillars</legend>
 
-			<Form.Field id="poams">
+			<Form.Field id="poams" label="PoAMs">
 				<Autocomplete
 					url="/api/poams/search"
 					placeholder="Start typing to search for PoAMs..."

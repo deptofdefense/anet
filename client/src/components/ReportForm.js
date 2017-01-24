@@ -163,23 +163,23 @@ export default class ReportForm extends Component {
 			<PoamsSelector poams={report.poams} shortcuts={recents.poams} onChange={this.onChange} optional={true} />
 
 			<fieldset>
-				<legend>Meeting Discussion<small>Required</small></legend>
+				<legend>Meeting Discussion <small>Required</small></legend>
 				<Form.Field id="keyOutcomesSummary">
 					<Form.Field.ExtraCol>{250 - report.keyOutcomesSummary.length} characters remaining</Form.Field.ExtraCol>
 				</Form.Field>
-				<Button bsStyle="link" onClick={this.toggleKeyOutcomesText} >
+				<Button bsStyle="link" onClick={this.toggleKeyOutcomesText}>
 					{this.state.showKeyOutcomesText ? "Hide" : "Add" } details to Key Outcomes
 				</Button>
 
 				<Collapse in={this.state.showKeyOutcomesText}>
 					<div>
-					<Form.Field id="keyOutcomes" label="" horizontal={false}>
-						<TextEditor label="Key outcomes" />
-					</Form.Field>
+						<Form.Field id="keyOutcomes" label="" horizontal={false}>
+							<TextEditor label="Key outcomes" />
+						</Form.Field>
 					</div>
 				</Collapse>
 
-				<Form.Field id="nextStepsSummary" >
+				<Form.Field id="nextStepsSummary">
 					<Form.Field.ExtraCol>{250 - report.nextStepsSummary.length} characters remaining</Form.Field.ExtraCol>
 				</Form.Field>
 				<Button bsStyle="link" onClick={this.toggleNextStepsText}>
@@ -196,6 +196,7 @@ export default class ReportForm extends Component {
 				<Button bsStyle="link" onClick={this.toggleReportText} >
 					{this.state.showReportText ? "Hide" : "Add" } detailed comments
 				</Button>
+
 				<Collapse in={this.state.showReportText}>
 					<div>
 						<Form.Field id="reportText" label="" horizontal={false}>
