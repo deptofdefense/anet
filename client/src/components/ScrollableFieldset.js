@@ -12,7 +12,7 @@ export default class ScrollableFieldset extends Component {
 		return (
 			<fieldset>
 				{title && <legend>{title}</legend>}
-				<div style={{maxHeight: height + "px", overflowY: "scroll"}}>
+				<div style={{maxHeight: height + "px", overflowY: "auto"}}>
 					{children}
 				</div>
 			</fieldset>
