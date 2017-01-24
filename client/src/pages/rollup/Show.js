@@ -39,8 +39,8 @@ export default class RollupShow extends Page {
 		app: React.PropTypes.object.isRequired,
 	}
 
-	get dateStr() { return this.props.date.format('YYYY-MM-DD') }
-	get dateLongStr() { return this.props.date.format('MMMM DD, YYYY') }
+	get dateStr() { return this.props.date.format('DD MMM YYYY') }
+	get dateLongStr() { return this.props.date.format('DD MMMM YYYY') }
 	get rollupStart() { return this.props.date.startOf('day') }
 	get rollupEnd() { return this.props.date.endOf('day') }
 
