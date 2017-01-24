@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.skife.jdbi.v2.Handle;
 
+import com.google.common.collect.ImmutableList;
+
 import jersey.repackaged.com.google.common.base.Joiner;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.search.ReportSearchQuery;
@@ -107,6 +109,8 @@ public class MssqlReportSearcher implements IReportSearcher {
 				+ "(SELECT groupId FROM groupMemberships where personId=:approverId))");
 			args.put("approverId", query.getPendingApprovalOf());
 		}
+		
+		if (whereClauses.size() == 0) { return ImmutableList.of(); }
 		
 		sql.append(" WHERE ");
 		sql.append(Joiner.on(" AND ").join(whereClauses));

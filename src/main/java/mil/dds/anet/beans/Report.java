@@ -309,6 +309,10 @@ public class Report extends AbstractAnetBean {
 		
 		if (this.getState() == ReportState.RELEASED) {
 			//Compact to only get the most recent event for each step.
+			if (actions.size() == 0) { 
+				//Magically released, probably imported this way. 
+				return actions;
+			}
 			ApprovalAction last = actions.get(0);
 			List<ApprovalAction> compacted = new LinkedList<ApprovalAction>();
 			for (ApprovalAction action : actions) { 

@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.skife.jdbi.v2.Handle;
 
+import com.google.common.collect.ImmutableList;
+
 import jersey.repackaged.com.google.common.base.Joiner;
 import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.search.PositionSearchQuery;
@@ -64,6 +66,8 @@ public class SqlitePositionSearcher implements IPositionSearcher {
 			whereClauses.add("positions.locationId = :locationId");
 			sqlArgs.put("locationId", query.getLocationId());
 		}
+		
+		if (whereClauses.size() == 0) { return ImmutableList.of(); }
 		
 		sql.append(Joiner.on(" AND ").join(whereClauses));
 		

@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.skife.jdbi.v2.Handle;
 
+import com.google.common.collect.ImmutableList;
+
 import jersey.repackaged.com.google.common.base.Joiner;
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.search.PoamSearchQuery;
@@ -38,6 +40,8 @@ public class SqlitePoamSearcher implements IPoamSearcher {
 			whereClauses.add("category = :category");
 			args.put("category", query.getCategory());
 		}
+		
+		if (whereClauses.size() == 0) { return ImmutableList.of(); }
 		
 		sql.append(Joiner.on(" AND ").join(whereClauses));
 		sql.append(" LIMIT :limit OFFSET :offset");

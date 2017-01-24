@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.skife.jdbi.v2.Handle;
 
+import com.google.common.collect.ImmutableList;
+
 import jersey.repackaged.com.google.common.base.Joiner;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.search.PersonSearchQuery;
@@ -35,7 +37,6 @@ public class SqlitePersonSearcher implements IPersonSearcher {
 			whereClauses.add("(name LIKE '%' || :text || '%' OR emailAddress LIKE '%' || :text || '%' OR biography LIKE '%' || :text || '%')");
 			sqlArgs.put("text", text);
 		}
-		
 		
 		if (query.getRole() != null) { 
 			whereClauses.add(" people.role = :role ");
@@ -75,6 +76,8 @@ public class SqlitePersonSearcher implements IPersonSearcher {
 			whereClauses.add(" positions.locationId = :locationId ");
 			sqlArgs.put("locationId", query.getLocationId());
 		}
+		
+		if (whereClauses.size() == 0) { return ImmutableList.of(); }
 		
 		sql.append(Joiner.on(" AND ").join(whereClauses));
 		

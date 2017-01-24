@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.skife.jdbi.v2.Handle;
 
+import com.google.common.collect.ImmutableList;
+
 import jersey.repackaged.com.google.common.base.Joiner;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.search.OrganizationSearchQuery;
@@ -36,6 +38,10 @@ public class MssqlOrganizationSearcher implements IOrganizationSearcher {
 		if (query.getType() != null) { 
 			whereClauses.add(" organizations.type = :type ");
 			sqlArgs.put("type", DaoUtils.getEnumId(query.getType()));
+		}
+		
+		if (whereClauses.size() == 0) { 
+			return ImmutableList.of();
 		}
 		
 		sql.append(Joiner.on(" AND ").join(whereClauses));

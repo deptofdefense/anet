@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.skife.jdbi.v2.Handle;
 
+import com.google.common.collect.ImmutableList;
+
 import jersey.repackaged.com.google.common.base.Joiner;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.search.PersonSearchQuery;
@@ -76,6 +78,8 @@ public class MssqlPersonSearcher implements IPersonSearcher {
 			whereClauses.add(" positions.locationId = :locationId ");
 			sqlArgs.put("locationId", query.getLocationId());
 		}
+		
+		if (whereClauses.size() == 0) { return ImmutableList.of(); }
 		
 		sql.append(Joiner.on(" AND ").join(whereClauses));
 		
