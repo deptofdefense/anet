@@ -19,9 +19,14 @@ export default class PoamsSelector extends Component {
 			<legend>Plan of Action and Milestones / Pillars</legend>
 
 			<Form.Field id="poams">
-				<Autocomplete url="/api/poams/search" template={poam =>
-					<span>{[poam.shortName, poam.longName].join(' - ')}</span>
-				} onChange={this.addPoam} clearOnSelect={true} />
+				<Autocomplete
+					url="/api/poams/search"
+					placeholder="Start typing to search for PoAMs..."
+					template={poam =>
+						<span>{[poam.shortName, poam.longName].join(' - ')}</span>
+					}
+					onChange={this.addPoam}
+					clearOnSelect={true} />
 
 				<Table hover striped>
 					<thead>

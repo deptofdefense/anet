@@ -82,7 +82,7 @@ export default class ReportForm extends Component {
 				</Form.Field>
 
 				<Form.Field id="location" addon="📍">
-					<Autocomplete valueKey="name" placeholder="Where did it happen?" url="/api/locations/search" />
+					<Autocomplete valueKey="name" placeholder="Start typing to search for the location where this happened..." url="/api/locations/search" />
 				</Form.Field>
 
 				{false && <Form.Field id="cancelled" label="">
@@ -105,7 +105,7 @@ export default class ReportForm extends Component {
 			</fieldset>
 
 			<fieldset>
-				<legend>Meeting Attendance<small>Required</small></legend>
+				<legend>Meeting Attendance <small>Required</small></legend>
 
 				<Form.Field id="attendees">
 					<Autocomplete objectType={Person} onChange={this.addAttendee}
@@ -114,6 +114,7 @@ export default class ReportForm extends Component {
 						template={person =>
 							<span>{person.name} {person.rank && person.rank.toUpperCase()}</span>
 						}
+						placeholder="Start typing to search for people who attended the meeting..."
 						valueKey="name" />
 					<Table hover striped>
 						<thead>
