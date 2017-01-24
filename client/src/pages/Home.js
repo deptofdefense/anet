@@ -27,13 +27,15 @@ export default class Home extends Page {
 	}
 
 	fetchData() {
+		let futureQuery = { engagementDateStart: moment().add(1, 'days').hour(0).valueOf() }
 		API.query(/*GraphQL */`
 			pendingMe: reports(f:pendingMyApproval) { id },
 			myOrg: reports(f:myOrgToday) { id },
 			myReports: reports(f:myReportsToday) {id },
 			savedSearches: savedSearchs(f:mine) {id, name}
-			upcomingEngagements: reports(f:releasedToday) { id }
-		`).then(data => {
+			upcomingEngagements: reports(f:search, query: $futureQuery) { id }
+		`, {futureQuery}, "($futureQuery: ReportSearchQuery)")
+		.then(data => {
 			let selectedSearchId = data.savedSearches && data.savedSearches.length > 0 ? data.savedSearches[0].id : null;
 			this.setState({
 				pendingMe: data.pendingMe,
