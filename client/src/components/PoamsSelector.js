@@ -9,7 +9,8 @@ export default class PoamsSelector extends Component {
 	static propTypes = {
 		poams: PropTypes.array.isRequired,
 		onChange: PropTypes.func.isRequired,
-		shortcuts: PropTypes.array
+		shortcuts: PropTypes.array,
+		optional: PropTypes.bool,
 	}
 
 	render() {
@@ -48,7 +49,9 @@ export default class PoamsSelector extends Component {
 				</Table>
 
 				{poams.length === 0 && <p style={{textAlign: 'center'}}>
-					No PoAMs selected (this is fine if no PoAMs were discussed).
+					No PoAMs selected
+					{this.props.optional && " (this is fine if no PoAMs were discussed)"}
+					.
 				</p>}
 
 				{ shortcuts && this.renderShortcuts() }

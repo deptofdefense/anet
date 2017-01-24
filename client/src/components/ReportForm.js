@@ -116,6 +116,7 @@ export default class ReportForm extends Component {
 						}
 						placeholder="Start typing to search for people who attended the meeting..."
 						valueKey="name" />
+
 					<Table hover striped>
 						<thead>
 							<tr>
@@ -159,7 +160,7 @@ export default class ReportForm extends Component {
 				</Form.Field>
 			</fieldset>
 
-			<PoamsSelector poams={report.poams} shortcuts={recents.poams} onChange={this.onChange} />
+			<PoamsSelector poams={report.poams} shortcuts={recents.poams} onChange={this.onChange} optional={true} />
 
 			<fieldset>
 				<legend>Meeting Discussion<small>Required</small></legend>
