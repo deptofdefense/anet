@@ -4,9 +4,6 @@ import './index.css'
 import 'core-js/shim'
 import './utils'
 
-import 'leaflet/dist/leaflet.css'
-import 'leaflet/dist/leaflet'
-
 import React from 'react'
 import ReactDOM from 'react-dom'
 import {Router, Route, IndexRoute, browserHistory} from 'react-router'
