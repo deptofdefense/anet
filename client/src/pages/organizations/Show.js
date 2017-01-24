@@ -2,8 +2,6 @@ import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 import {Grid, Row, Col, Table, ListGroup, ListGroupItem, DropdownButton, MenuItem} from 'react-bootstrap'
 
-import API from 'api'
-import {Organization, Position, Poam} from 'models'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
 import autobind from 'autobind-decorator'
@@ -13,6 +11,9 @@ import Messages , {setMessages} from 'components/Messages'
 import ReportCollection from 'components/ReportCollection'
 import ScrollableFieldset from 'components/ScrollableFieldset'
 import CollapsableFieldset, {CollapsedContent, ExpandedContent} from 'components/CollapsableFieldset'
+
+import API from 'api'
+import {Organization, Position, Poam} from 'models'
 
 export default class OrganizationShow extends Page {
 	static contextTypes = {

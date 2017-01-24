@@ -1,5 +1,6 @@
 import React from 'react'
 import Page from 'components/Page'
+import autobind from 'autobind-decorator'
 
 import {Alert, Radio, Table, DropdownButton, MenuItem, Modal, Button} from 'react-bootstrap'
 import {Link} from 'react-router'
@@ -13,10 +14,18 @@ import Messages from 'components/Messages'
 
 import API from 'api'
 import {Person, Organization, Position, Poam} from 'models'
-import autobind from 'autobind-decorator'
+
+const QUERY_STRINGS = {
+	reports: {
+		pendingApprovalOf: "reports pending your approval",
+		authorOrgId: "reports recently authored by your organization",
+		authorId: "reports you recently authored",
+	},
+	organizations: "Organizations TODO",
+	people: "People TODO",
+}
 
 export default class Search extends Page {
-
 	constructor(props) {
 		super(props)
 
@@ -95,13 +104,13 @@ export default class Search extends Page {
 		} else {
 			this.setState({query})
 			//TODO: escape query in the graphQL query
-			API.query(/*GraphQL */ `
+			API.query(/* GraphQL */`
 				searchResults(f:search, q:"${query}") {
-					reports { ` + reportFields +  `},
-					people { ` + peopleFields + `}
-					positions { ` + positionFields + `}
-					poams { ` + poamFields + `}
-					locations { id, name, lat, lng}
+					reports { ${reportFields} }
+					people { ${peopleFields} }
+					positions { ${positionFields} }
+					poams { ${poamFields} }
+					locations { id, name, lat, lng }
 					organizations { id, shortName, longName }
 				}
 			`).then(data =>
@@ -133,40 +142,20 @@ export default class Search extends Page {
 		let error = this.state.error
 		let success = this.state.success
 
-		let numResults = ((results.reports) ? results.reports.length : 0) +
-			((results.people) ? results.people.length : 0) +
-			((results.positions) ? results.positions.length : 0) +
-			((results.locations) ? results.locations.length : 0) +
-			((results.organizations) ? results.organizations.length : 0);
-		let noResults = numResults === 0;
+		let numResults = (results.reports ? results.reports.length : 0) +
+			(results.people ? results.people.length : 0) +
+			(results.positions ? results.positions.length : 0) +
+			(results.locations ? results.locations.length : 0) +
+			(results.organizations ? results.organizations.length : 0)
 
-		let t = this.props.location.query.type
+		let noResults = numResults === 0
+
 		let query = this.props.location.query
-		let queryString = query.q || 'TODO'
-		switch (t) {
-			case "reports":
-				switch (Object.keys(query)[1]) {
-					case "pendingApprovalOf" :
-						queryString = "reports pending your approval"
-						break
-					case "authorOrgId" :
-						queryString = "reports recently authored by your organization"
-						break
-					case "authorId" :
-						queryString = "reports you recently authored"
-						break
-				}
-				break
-			case "organizations":
-				queryString = "Organizations TODO"
-				break
-			case "people":
-				queryString = "People TODO"
-				break
-		}
-							
+		let queryString = QUERY_STRINGS[query.type] || query.q || "TODO"
 
-		let type = this.props.location.query.type
+		if (typeof queryString === 'object') {
+			queryString = queryString[Object.keys(query)[1]]
+		}
 
 		return (
 			<div>
@@ -318,7 +307,7 @@ export default class Search extends Page {
 			<tbody>
 				{this.state.results.locations.map(loc =>
 					<tr key={loc.id}>
-						<td><Link to={"/locations/" + loc.id}>{loc.name}</Link></td>
+						<td><LinkTo location={location} /></td>
 					</tr>
 				)}
 			</tbody>
@@ -352,7 +341,7 @@ export default class Search extends Page {
 
 			<Modal.Body>
 				<Form formFor={this.state.saveSearch} onChange={this.onChangeSaveSearch}
-						onSubmit={this.onSubmitSaveSearch} submitText={false}>
+					onSubmit={this.onSubmitSaveSearch} submitText={false}>
 					<Form.Field id="name" placeholder="Give this saved search a name" />
 					<Button type="submit" bsStyle="primary">Save</Button>
 				</Form>

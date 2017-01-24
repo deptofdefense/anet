@@ -9,19 +9,25 @@ export default class PoamsSelector extends Component {
 	static propTypes = {
 		poams: PropTypes.array.isRequired,
 		onChange: PropTypes.func.isRequired,
-		shortcuts: PropTypes.array
+		shortcuts: PropTypes.array,
+		optional: PropTypes.bool,
 	}
 
 	render() {
 		let {poams, shortcuts} = this.props;
 
 		return <fieldset>
-			<legend>Plan of Action and Milestones / Pillars</legend>
+			<legend>Plans of Action and Milestones / Pillars</legend>
 
-			<Form.Field id="poams">
-				<Autocomplete url="/api/poams/search" template={poam =>
-					<span>{[poam.shortName, poam.longName].join(' - ')}</span>
-				} onChange={this.addPoam} clearOnSelect={true} />
+			<Form.Field id="poams" label="PoAMs">
+				<Autocomplete
+					url="/api/poams/search"
+					placeholder="Start typing to search for PoAMs..."
+					template={poam =>
+						<span>{[poam.shortName, poam.longName].join(' - ')}</span>
+					}
+					onChange={this.addPoam}
+					clearOnSelect={true} />
 
 				<Table hover striped>
 					<thead>
@@ -41,6 +47,12 @@ export default class PoamsSelector extends Component {
 						)}
 					</tbody>
 				</Table>
+
+				{poams.length === 0 && <p style={{textAlign: 'center'}}>
+					No PoAMs selected
+					{this.props.optional && " (this is fine if no PoAMs were discussed)"}
+					.
+				</p>}
 
 				{ shortcuts && this.renderShortcuts() }
 			</Form.Field>

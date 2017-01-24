@@ -44,6 +44,10 @@ export default class Model {
 		return ['', resourceName, 'new'].join('/')
 	}
 
+	static pathForEdit(instance) {
+		return this.pathFor(instance) + '/edit'
+	}
+
 	static isEqual(a, b) {
 		return a && b && a.id === b.id
 	}

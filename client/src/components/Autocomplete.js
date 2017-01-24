@@ -15,6 +15,7 @@ export default class Autocomplete extends Component {
 		value: PropTypes.oneOfType([
 			PropTypes.object,
 			PropTypes.array,
+			PropTypes.string,
 		]),
 		valueKey: PropTypes.string,
 		clearOnSelect: PropTypes.bool,

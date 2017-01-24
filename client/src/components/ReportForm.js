@@ -82,7 +82,7 @@ export default class ReportForm extends Component {
 				</Form.Field>
 
 				<Form.Field id="location" addon="📍">
-					<Autocomplete valueKey="name" placeholder="Where did it happen?" url="/api/locations/search" />
+					<Autocomplete valueKey="name" placeholder="Start typing to search for the location where this happened..." url="/api/locations/search" />
 				</Form.Field>
 
 				{false && <Form.Field id="cancelled" label="">
@@ -105,7 +105,7 @@ export default class ReportForm extends Component {
 			</fieldset>
 
 			<fieldset>
-				<legend>Meeting Attendance<small>Required</small></legend>
+				<legend>Meeting Attendance <small>Required</small></legend>
 
 				<Form.Field id="attendees">
 					<Autocomplete objectType={Person} onChange={this.addAttendee}
@@ -114,7 +114,9 @@ export default class ReportForm extends Component {
 						template={person =>
 							<span>{person.name} {person.rank && person.rank.toUpperCase()}</span>
 						}
+						placeholder="Start typing to search for people who attended the meeting..."
 						valueKey="name" />
+
 					<Table hover striped>
 						<thead>
 							<tr>
@@ -158,26 +160,26 @@ export default class ReportForm extends Component {
 				</Form.Field>
 			</fieldset>
 
-			<PoamsSelector poams={report.poams} shortcuts={recents.poams} onChange={this.onChange} />
+			<PoamsSelector poams={report.poams} shortcuts={recents.poams} onChange={this.onChange} optional={true} />
 
 			<fieldset>
-				<legend>Meeting Discussion<small>Required</small></legend>
+				<legend>Meeting Discussion <small>Required</small></legend>
 				<Form.Field id="keyOutcomesSummary">
 					<Form.Field.ExtraCol>{250 - report.keyOutcomesSummary.length} characters remaining</Form.Field.ExtraCol>
 				</Form.Field>
-				<Button bsStyle="link" onClick={this.toggleKeyOutcomesText} >
+				<Button bsStyle="link" onClick={this.toggleKeyOutcomesText}>
 					{this.state.showKeyOutcomesText ? "Hide" : "Add" } details to Key Outcomes
 				</Button>
 
 				<Collapse in={this.state.showKeyOutcomesText}>
 					<div>
-					<Form.Field id="keyOutcomes" label="" horizontal={false}>
-						<TextEditor label="Key outcomes" />
-					</Form.Field>
+						<Form.Field id="keyOutcomes" label="" horizontal={false}>
+							<TextEditor label="Key outcomes" />
+						</Form.Field>
 					</div>
 				</Collapse>
 
-				<Form.Field id="nextStepsSummary" >
+				<Form.Field id="nextStepsSummary">
 					<Form.Field.ExtraCol>{250 - report.nextStepsSummary.length} characters remaining</Form.Field.ExtraCol>
 				</Form.Field>
 				<Button bsStyle="link" onClick={this.toggleNextStepsText}>
@@ -194,6 +196,7 @@ export default class ReportForm extends Component {
 				<Button bsStyle="link" onClick={this.toggleReportText} >
 					{this.state.showReportText ? "Hide" : "Add" } detailed comments
 				</Button>
+
 				<Collapse in={this.state.showReportText}>
 					<div>
 						<Form.Field id="reportText" label="" horizontal={false}>
@@ -300,9 +303,23 @@ export default class ReportForm extends Component {
 		let url = `/api/reports/${this.props.edit ? 'update' : 'new'}`
 		API.send(url, report)
 			.then(response => {
-				let id = this.props.edit ? "" : ""+response.id
-				History.push({pathname:Report.pathFor(report) + id,query:{},state:{
-					success: "Saved Report"}})
+				if (response.id) {
+					report.id = response.id
+				}
+
+				// this updates the current page URL on model/new to be the edit page,
+				// so that if you press back after saving a new model, it takes you
+				// back to editing the model you just saved
+				History.replace({
+					pathname: Report.pathForEdit(report),
+				})
+
+				// then after, we redirect you to the to page
+				History.push({
+					pathname: Report.pathFor(report),
+					state: {success: "Saved Report"},
+				})
+
 				window.scrollTo(0, 0)
 			})
 			.catch(response => {
