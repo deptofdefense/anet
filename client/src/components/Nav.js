@@ -2,7 +2,6 @@ import React, {Component, PropTypes} from 'react'
 import {Nav, NavItem, NavDropdown, MenuItem} from 'react-bootstrap'
 import {IndexLinkContainer as Link} from 'react-router-bootstrap'
 import LinkTo from 'components/LinkTo'
-import moment from 'moment'
 
 import {Organization} from 'models'
 

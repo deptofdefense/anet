@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
-import {Button, Grid, Row, Col, FormControl, FormGroup, ControlLabel, Alert} from 'react-bootstrap'
+import {Grid, Row, Col, FormControl, FormGroup, ControlLabel} from 'react-bootstrap'
 import SavedSearchTable from 'components/SavedSearchTable'
 import {Link} from 'react-router'
 import moment from 'moment'
@@ -50,7 +50,6 @@ export default class Home extends Page {
 		let {pendingMe, myOrgToday, myReportsToday, upcomingEngagements} = this.state
 		let currentUser = this.context.app.state.currentUser;
 		let org = currentUser && currentUser.position && currentUser.position.organization
-		let firstTime = true;
 
 		return (
 			<div>

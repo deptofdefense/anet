@@ -1,9 +1,9 @@
 import React, {Component, PropTypes} from 'react'
+import autobind from 'autobind-decorator'
 
 import ReportCollection from 'components/ReportCollection'
-import autobind from 'autobind-decorator'
+
 import API from 'api'
-import {Table} from 'react-bootstrap'
 
 export default class SavedSearchTable extends Component {
 	static propTypes = {
