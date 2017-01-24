@@ -91,7 +91,7 @@ export default class RollupShow extends Page {
 
 		// Sets up the data
 		var step1 = d3.nest()
-				.key(function(d){return d.advisorOrg.shortName;})
+				.key(function(d){return (d.advisorOrg && d.advisorOrg.shortName);})
 				.rollup(function(d){return {l:d.length,s:d[0].state,r:d}})
 				.entries(reports)
 
