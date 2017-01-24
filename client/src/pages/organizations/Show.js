@@ -252,7 +252,7 @@ export default class OrganizationShow extends Page {
 			<tbody>
 				{Poam.map(poams, poam =>
 					<tr key={poam.id}>
-						<td><LinkTo poam={poam} /></td>
+						<td><LinkTo poam={poam} >{poam.shortName}</LinkTo></td>
 						<td>{poam.longName}</td>
 					</tr>
 				)}
