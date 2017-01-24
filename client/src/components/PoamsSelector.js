@@ -16,7 +16,7 @@ export default class PoamsSelector extends Component {
 		let {poams, shortcuts} = this.props;
 
 		return <fieldset>
-			<legend>Plan of Action and Milestones / Pillars</legend>
+			<legend>Plans of Action and Milestones / Pillars</legend>
 
 			<Form.Field id="poams">
 				<Autocomplete
@@ -48,7 +48,7 @@ export default class PoamsSelector extends Component {
 				</Table>
 
 				{poams.length === 0 && <p style={{textAlign: 'center'}}>
-					No Poams selected (this is fine if no Poams were discussed).
+					No PoAMs selected (this is fine if no PoAMs were discussed).
 				</p>}
 
 				{ shortcuts && this.renderShortcuts() }
