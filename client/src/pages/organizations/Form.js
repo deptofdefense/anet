@@ -157,9 +157,6 @@ export default class OrganizationForm extends Component {
 
 	@autobind
 	onSubmit(event) {
-		event.stopPropagation()
-		event.preventDefault()
-
 		let organization = Object.without(this.props.organization, 'childrenOrgs', 'positions')
 		if (organization.parentOrg) {
 			organization.parentOrg = {id: organization.parentOrg.id}
