@@ -119,13 +119,13 @@ export default class ReportShow extends Page {
 		let canApprove = report.isPending() &&
 			report.approvalStep.approverGroup.members.find(member => member.id === currentUser.id)
 
-		//Authors can approve in draft mode or Pending Mode
-		let canEdit = (report.isDraft() || report.isPending()) && (currentUser.id === report.author.id)
+		//Authors can edit in draft mode, rejected mode, or Pending Mode
+		let canEdit = (report.isDraft() || report.isPending() || report.isRejected()) && (currentUser.id === report.author.id)
 		//Approvers can edit.
 		canEdit = canEdit || canApprove
 
-		//Only the author can submit when report is in Draft.
-		let canSubmit = report.isDraft() && (currentUser.id === report.author.id)
+		//Only the author can submit when report is in Draft or rejected
+		let canSubmit = (report.isDraft() || report.isRejected()) && (currentUser.id === report.author.id)
 
 		//Anbody can email a report as long as it's not in draft.
 		let canEmail = !report.isDraft();
@@ -137,6 +137,13 @@ export default class ReportShow extends Page {
 				<Breadcrumbs items={[['Reports', '/reports'], [report.intent || 'Report #' + report.id, Report.pathFor(report)]]} />
 
 				<Messages error={this.state.error} success={this.state.success} />
+
+				{report.isRejected() &&
+					<fieldset style={{textAlign: 'center' }}>
+						<h4 className="text-danger">This report was REJECTED. </h4>
+						<p>You can review the comments below, fix the report and re-submit</p>
+					</fieldset>
+				}
 
 				{report.isDraft() &&
 					<fieldset style={{textAlign: 'center'}}>

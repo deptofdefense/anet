@@ -20,7 +20,7 @@ import mil.dds.anet.views.AbstractAnetBean;
 
 public class Report extends AbstractAnetBean {
 
-	public enum ReportState { DRAFT, PENDING_APPROVAL, RELEASED }
+	public enum ReportState { DRAFT, PENDING_APPROVAL, RELEASED, REJECTED }
 	public enum Atmosphere { POSITIVE, NEUTRAL, NEGATIVE }
 
 	ApprovalStep approvalStep;

@@ -114,7 +114,7 @@ public class MssqlReportSearcher implements IReportSearcher {
 		
 		sql.append(" WHERE ");
 		sql.append(Joiner.on(" AND ").join(whereClauses));
-		sql.append(" ORDER BY createdAt DESC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY)");
+		sql.append(" ORDER BY reports.createdAt DESC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY)");
 		
 		if (commonTableExpression != null) { 
 			sql.insert(0, commonTableExpression);

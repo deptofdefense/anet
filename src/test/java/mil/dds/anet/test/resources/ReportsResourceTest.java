@@ -200,9 +200,9 @@ public class ReportsResourceTest extends AbstractResourceTest {
 				.post(Entity.json(Comment.withText("a test rejection")));
 		assertThat(resp.getStatus()).isEqualTo(200);
 
-		//Check on report status to verify it got put back to draft.
+		//Check on report status to verify it was rejected
 		returned = httpQuery(String.format("/api/reports/%d", created.getId()), author).get(Report.class);
-		assertThat(returned.getState()).isEqualTo(ReportState.DRAFT);
+		assertThat(returned.getState()).isEqualTo(ReportState.REJECTED);
 		assertThat(returned.getApprovalStep()).isNull();
 
 		//Author needs to re-submit

@@ -216,12 +216,13 @@ public class ReportDao implements IAnetDao<Report> {
 		return dbHandle.createQuery("SELECT " + REPORT_FIELDS + ", " + PersonDao.PERSON_FIELDS
 				+ "FROM reports, people "
 				+ "WHERE reports.authorId = :authorId "
-				+ "AND reports.state IN (:pending, :draft) "
+				+ "AND reports.state IN (:pending, :draft, :rejected) "
 				+ "AND reports.authorId = people.id "
 				+ "ORDER BY reports.createdAt DESC")
 			.bind("authorId", p.getId())
 			.bind("pending", ReportState.PENDING_APPROVAL.ordinal())
 			.bind("draft", ReportState.DRAFT.ordinal())
+			.bind("rejected", ReportState.REJECTED.ordinal())
 			.map(new ReportMapper())
 			.list();
 	}

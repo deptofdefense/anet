@@ -184,6 +184,7 @@ public class ReportResource implements IGraphQLResource {
 		String permError = "You do not have permission to edit this report. ";
 		switch (report.getState()) {
 		case DRAFT:
+		case REJECTED:
 			//Must be the author
 			if (!report.getAuthor().getId().equals(editor.getId())) {
 				throw new WebApplicationException(permError + "Must be the author of this report.", Status.FORBIDDEN);
@@ -325,10 +326,10 @@ public class ReportResource implements IGraphQLResource {
 	}
 
 	/**
-	 * Rejects a report and moves it one step back in the approval process.
+	 * Rejects a report and moves it back to the author with state REJECTED. 
 	 * @param id the Report ID to reject
 	 * @param reason : A @link Comment object which will be posted to the report with the reason why the report was rejected.
-	 * @return 200 on a successful reject, 401 if you don't have privelages to reject this report.
+	 * @return 200 on a successful reject, 401 if you don't have privileges to reject this report.
 	 */
 	@POST
 	@Timed
@@ -354,14 +355,8 @@ public class ReportResource implements IGraphQLResource {
 		engine.getApprovalActionDao().insert(approval);
 
 		//Update the report
-		ApprovalStep prevStep = engine.getApprovalStepDao().getStepByNextStepId(step.getId());
-		if (prevStep == null) {
-			r.setApprovalStep(null);
-			r.setState(ReportState.DRAFT);
-		} else {
-			r.setApprovalStep(prevStep);
-			sendApprovalNeededEmail(r);
-		}
+		r.setApprovalStep(null);
+		r.setState(ReportState.REJECTED);
 		dao.update(r);
 
 		//Add the comment

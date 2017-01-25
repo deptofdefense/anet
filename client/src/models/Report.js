@@ -28,6 +28,10 @@ export default class Report extends Model {
 		return this.state === 'PENDING_APPROVAL'
 	}
 
+	isRejected() {
+		return this.state === 'REJECTED'
+	}
+
 	toString() {
 		return this.intent || "None"
 	}
