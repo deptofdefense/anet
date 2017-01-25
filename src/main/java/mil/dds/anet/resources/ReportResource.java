@@ -284,7 +284,7 @@ public class ReportResource implements IGraphQLResource {
 	@POST
 	@Timed
 	@Path("/{id}/approve")
-	public Report approveReport(@Auth Person approver, @PathParam("id") int id) {
+	public Report approveReport(@Auth Person approver, @PathParam("id") int id, Comment comment) {
 		Report r = dao.getById(id);
 		if (r == null) {
 			throw new WebApplicationException("Report not found", Status.NOT_FOUND);
@@ -320,6 +320,13 @@ public class ReportResource implements IGraphQLResource {
 			sendApprovalNeededEmail(r);
 		}
 		dao.update(r);
+		
+		//Add the comment
+		if (comment != null && comment.getText().trim().length() > 0)  {
+			comment.setReportId(r.getId());
+			comment.setAuthor(approver);
+			engine.getCommentDao().insert(comment);
+		}
 		//TODO: close the transaction.
 
 		return r;

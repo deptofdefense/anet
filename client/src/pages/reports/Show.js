@@ -268,17 +268,20 @@ export default class ReportShow extends Page {
 						<fieldset>
 							<a name="approvals" />
 							<legend>Approvals</legend>
-
 							{report.approvalStatus.map(action =>
 								this.renderApprovalAction(action)
 							)}
-
 							{canApprove &&
-								<Form.Field id="author" style={Object.assign({width:"200%"},commentFormCss)} type="text" className="pull-left" placeholder="Type a comment here" getter={this.getApprovalComment} onChange={this.onChangeComment}>
+								<Form.Field id="author" label=""
+										style={commentFormCss}
+										componentClass="textarea"
+										placeholder="Type a comment here"
+										getter={this.getApprovalComment}
+										onChange={this.onChangeComment} >
 								</Form.Field>
 							}
 							{canApprove &&
-								<div className="pull-right" style={commentFormCss}>
+								<div style={commentFormCss}>
 									<Button bsStyle="danger" style={approvalButtonCss} onClick={this.rejectReport}>Reject with comment</Button>
 									<Button bsStyle="warning" style={approvalButtonCss} onClick={this.actionSelect.bind(this, "edit")} >Edit report</Button>
 									<Button bsStyle="primary" style={approvalButtonCss} onClick={this.approveReport}>Approve</Button>
@@ -388,7 +391,8 @@ export default class ReportShow extends Page {
 
 	@autobind
 	approveReport() {
-		API.send(`/api/reports/${this.state.report.id}/approve`).then(data => {
+		let comment = (this.state.approvalComment.text.length > 0) ? this.state.approvalComment : {}
+		API.send(`/api/reports/${this.state.report.id}/approve`, comment).then(data => {
 			this.updateReport()
 			this.setState({error:null})
 			this.setState({success:"Successfully subbmited report"})
