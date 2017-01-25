@@ -1,10 +1,8 @@
 import React from 'react'
-import autobind from 'autobind-decorator'
+import Page from 'components/Page'
 
 import {ContentForHeader} from 'components/Header'
-import History from 'components/History'
 import Breadcrumbs from 'components/Breadcrumbs'
-import Page from 'components/Page'
 import Messages from 'components/Messages'
 import OrganizationForm from 'components/OrganizationForm'
 
@@ -25,7 +23,7 @@ export default class OrganizationEdit extends Page {
 	}
 
 	fetchData(props) {
-		API.query(/*GraphQL*/ `
+		API.query(/* GraphQL */`
 			organization(id:${props.params.id}) {
 				id, shortName, longName, type,
 				parentOrg { id, shortName, longName }
@@ -43,46 +41,18 @@ export default class OrganizationEdit extends Page {
 
 	render() {
 		let organization = this.state.organization
-		console.log("or edit", organization);
+
 		return (
 			<div>
 				<ContentForHeader>
 					<h2>Edit {organization.shortName}</h2>
 				</ContentForHeader>
 
-				<Breadcrumbs items={[[`Edit ${organization.shortName}`, `/organizations/${organization.id}/edit`]]} />
+				<Breadcrumbs items={[[`Edit ${organization.shortName}`, Organization.pathForEdit(organization)]]} />
 				<Messages error={this.state.error} success={this.state.success} />
-				<OrganizationForm
-					organization={organization}
-					onChange={this.onChange}
-					onSubmit={this.onSubmit}
-					submitText="Save Organization"
-					edit />
+
+				<OrganizationForm organization={organization} edit />
 			</div>
 		)
 	}
-
-	@autobind
-	onChange() {
-		let organization = this.state.organization
-		this.setState({organization})
-	}
-
-	@autobind
-	onSubmit(event) {
-		event.stopPropagation()
-		event.preventDefault()
-
-		let org = Object.without(this.state.organization, 'childrenOrgs', 'positions')
-
-		API.send('/api/organizations/update', org, {disableSubmits: true})
-			.then(response => {
-				if (response.code) throw response.code
-				History.push({pathname:Organization.pathFor(this.state.organization),query:{},state:{success:"Updated Organization"}})
-			}).catch(response => {
-				this.setState({error: response})
-				window.scrollTo(0, 0)
-			})
-	}
-
 }
