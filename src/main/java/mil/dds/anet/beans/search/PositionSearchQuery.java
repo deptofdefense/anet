@@ -5,6 +5,7 @@ import mil.dds.anet.beans.Position.PositionType;
 public class PositionSearchQuery implements ISearchQuery {
 
 	String text;
+	Boolean matchPersonName;
 	Integer organizationId;
 	Boolean includeChildrenOrgs;
 	PositionType type;
@@ -16,6 +17,7 @@ public class PositionSearchQuery implements ISearchQuery {
 	public PositionSearchQuery() { 
 		this.pageNum = 0;
 		this.pageSize = 10;
+		this.matchPersonName = false;
 	}
 	
 	public String getText() {
@@ -23,6 +25,12 @@ public class PositionSearchQuery implements ISearchQuery {
 	}
 	public void setText(String text) {
 		this.text = text;
+	}
+	public Boolean getMatchPersonName() {
+		return matchPersonName;
+	}
+	public void setMatchPersonName(Boolean matchPersonName) {
+		this.matchPersonName = matchPersonName;
 	}
 	public Integer getOrganizationId() {
 		return organizationId;

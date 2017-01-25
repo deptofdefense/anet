@@ -83,13 +83,13 @@ export default class PositionForm extends Component {
 					<Autocomplete
 						placeholder="Assign new Position Relationship"
 						objectType={Position}
-						fields={"id, name, type, person { id, name, rank }"}
+						fields={"id, name, code, type, person { id, name, rank }"}
 						template={pos =>
-							<span>{pos.name} ({(pos.person) ? pos.person.name : <i>empty</i>})</span>
+							<span>{pos.name} - {pos.code} ({(pos.person) ? pos.person.name : <i>empty</i>})</span>
 						}
 						onChange={this.addPositionRelationship}
 						clearOnSelect={true}
-						queryParams={{type: relationshipPositionType}} />
+						queryParams={{type: relationshipPositionType, matchPersonName: true}} />
 
 					<Table hover striped>
 						<thead>

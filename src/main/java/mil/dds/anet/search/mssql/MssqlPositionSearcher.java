@@ -26,13 +26,21 @@ public class MssqlPositionSearcher implements IPositionSearcher {
 		Map<String,Object> sqlArgs = new HashMap<String,Object>();
 		String commonTableExpression = null;
 		
+		if (query.getMatchPersonName() != null && query.getMatchPersonName()) { 
+			sql.append(" LEFT JOIN people ON positions.currentPersonId = people.id ");
+		}
+		
 		sql.append(" WHERE ");
 		List<String> whereClauses = new LinkedList<String>();
 		
 		String text = query.getText();
 		if (text != null && text.trim().length() > 0) {
 			text = "\"" + text + "*\"";
-			whereClauses.add("CONTAINS((name, code), :text)");
+			if (query.getMatchPersonName() != null && query.getMatchPersonName()) { 
+				whereClauses.add("(CONTAINS((positions.name, positions.code), :text) OR (CONTAINS(people.name, :text)))");
+			} else { 
+				whereClauses.add("CONTAINS((name, code), :text)");
+			}
 			sqlArgs.put("text", text);
 		}
 		
@@ -72,7 +80,7 @@ public class MssqlPositionSearcher implements IPositionSearcher {
 		
 		sql.append(Joiner.on(" AND ").join(whereClauses));
 		
-		sql.append(" ORDER BY createdAt DESC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY )");
+		sql.append(" ORDER BY positions.createdAt DESC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY )");
 		
 		if (commonTableExpression != null) { 
 			sql.insert(0, commonTableExpression);

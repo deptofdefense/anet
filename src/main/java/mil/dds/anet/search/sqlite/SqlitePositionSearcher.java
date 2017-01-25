@@ -26,12 +26,22 @@ public class SqlitePositionSearcher implements IPositionSearcher {
 		Map<String,Object> sqlArgs = new HashMap<String,Object>();
 		String commonTableExpression = null;
 		
+		if (query.getMatchPersonName() != null && query.getMatchPersonName()) { 
+			sql.append(" LEFT JOIN people ON positions.currentPersonId = people.id ");
+		}
+		
 		sql.append(" WHERE ");
 		List<String> whereClauses = new LinkedList<String>();
 		
 		String text = query.getText();
 		if (text != null && text.trim().length() > 0) {
-			whereClauses.add("(name LIKE '%' || :text || '%' OR code LIKE '%' || :text || '%')");
+			if (query.getMatchPersonName() != null && query.getMatchPersonName()) { 
+				whereClauses.add("((positions.name LIKE '%' || :text || '%' OR positions.code LIKE '%' || :text || '%') OR (people.name LIKE '%' || :text || '%'))");
+			} else { 
+				whereClauses.add("(name LIKE '%' || :text || '%' OR code LIKE '%' || :text || '%')");
+			}
+			
+			
 			sqlArgs.put("text", text);
 		}
 		
