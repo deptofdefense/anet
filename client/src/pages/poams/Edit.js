@@ -1,10 +1,8 @@
 import React from 'react'
 import Page from 'components/Page'
-import autobind from 'autobind-decorator'
 
 import PoamForm from './Form'
 import {ContentForHeader} from 'components/Header'
-import History from 'components/History'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Messages from 'components/Messages'
 
@@ -25,7 +23,7 @@ export default class PoamEdit extends Page {
 	}
 
 	fetchData(props) {
-		API.query(/*GraphQL*/ `
+		API.query(/* GraphQL */`
 			poam(id:${props.params.id}) {
 				id,
 				shortName,
@@ -46,39 +44,12 @@ export default class PoamEdit extends Page {
 					<h2>Create a new PoAM</h2>
 				</ContentForHeader>
 
-				<Breadcrumbs items={[[`Edit ${poam.shortName}`, `/poams/${poam.id}/edit`]]} />
+				<Breadcrumbs items={[[`Edit ${poam.shortName}`, Poam.pathForEdit(poam)]]} />
+
 				<Messages error={this.state.error} success={this.state.success} />
 
-				<PoamForm
-					poam={poam}
-					onChange={this.onChange}
-					onSubmit={this.onSubmit}
-					submitText="Save PoAM"
-					edit
-					/>
+				<PoamForm poam={poam} edit />
 			</div>
 		)
 	}
-
-	@autobind
-	onChange() {
-		let poam = this.state.poam
-		this.setState({poam})
-	}
-
-	@autobind
-	onSubmit(event) {
-		event.stopPropagation()
-		event.preventDefault()
-
-		API.send('/api/poams/update', this.state.poam, {disableSubmits: true})
-			.then(response => {
-				if (response.code) throw response.code
-				History.push({pathname:Poam.pathFor(this.state.poam),query:{},state:{success:"Saved PoAM"}})
-			}).catch(error => {
-				this.setState({error: error})
-				window.scrollTo(0, 0)
-			})
-	}
-
 }

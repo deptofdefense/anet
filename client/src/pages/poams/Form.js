@@ -1,25 +1,32 @@
 import React, {Component, PropTypes} from 'react'
+import autobind from 'autobind-decorator'
 
 import Autocomplete from 'components/Autocomplete'
 import Form from 'components/Form'
+import History from 'components/History'
+
+import API from 'api'
+import {Poam} from 'models'
 
 export default class PoamForm extends Component {
 	static propTypes = {
-		poam: PropTypes.object,
-		onChange: PropTypes.func,
-		onSubmit: PropTypes.func,
+		poam: PropTypes.object.isRequired,
 		edit: PropTypes.bool,
-		submitText: PropTypes.string,
 	}
 
 	render() {
-		let {poam, onChange, onSubmit, submitText} = this.props
+		let {poam} = this.props
 
-		return <Form formFor={poam} onChange={onChange}
-			onSubmit={onSubmit} horizontal
-			submitText={submitText}>
+		return (
+			<Form
+				formFor={poam}
+				onChange={this.onChange}
+				onSubmit={this.onSubmit}
+				submitText="Save PoAM"
+				horizontal
+			>
 
-			<fieldset>
+				<fieldset>
 					<legend>Create a new Poam</legend>
 					<Form.Field id="shortName" />
 					<Form.Field id="longName" />
@@ -29,6 +36,35 @@ export default class PoamForm extends Component {
 							url="/api/organizations/search" />
 					</Form.Field>
 				</fieldset>
-            </Form>
+			</Form>
+		)
+	}
+
+	@autobind
+	onChange() {
+		this.forceUpdate()
+	}
+
+	@autobind
+	onSubmit(event) {
+		let {poam, edit} = this.props
+
+		let url = `/api/poams/${edit ? 'update' : 'new'}`
+		API.send(url, poam, {disableSubmits: true})
+			.then(response => {
+				if (response.code) {
+					throw response.code
+				}
+
+				if (response.id) {
+					poam.id = response.id
+				}
+
+				History.replace(Poam.pathForEdit(poam), false)
+				History.push(Poam.pathFor(poam), {success: "PoAM saved successfully"})
+			}).catch(error => {
+				this.setState({error: error})
+				window.scrollTo(0, 0)
+			})
 	}
 }
