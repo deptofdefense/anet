@@ -15,6 +15,10 @@ button {
 	z-index:2;
 }
 
+input[type=checkbox][readonly] {
+	cursor: not-allowed;
+}
+
 fieldset {
 	background: #fff;
 	border: 1px solid #e0e0e0;
@@ -128,18 +132,14 @@ fieldset.collapsable legend div.collapsableToggle {
 	background-color: #dae3ee;
 }
 
-.primaryAttendeeNo>span{
-	display:none
-}
-.primaryAttendeeNo:hover>span {
-	display:block;
-}
-
 .personIcon {
 	margin-right:4px;
 }
-.primaryAttendeeStar {
-	margin-left: 5px;
+
+.primaryAttendee .checkbox {
+	padding: 0;
+	margin: 0;
+	text-align: center;
 }
 
 .loading .anet section {
