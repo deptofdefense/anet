@@ -1,7 +1,6 @@
 import React, {Component, PropTypes} from 'react'
-import debounce from 'debounce'
-import Autosuggest from 'react-autosuggest-ie11-compatible'
 import {FormControl} from 'react-bootstrap'
+import Autosuggest from 'react-autosuggest-ie11-compatible'
 import autobind from 'autobind-decorator'
 
 import API from 'api'
@@ -23,7 +22,7 @@ export default class Autocomplete extends Component {
 		onChange: PropTypes.func,
 		queryParams: PropTypes.object,
 		objectType: PropTypes.func,
-		fields: PropTypes.string
+		fields: PropTypes.string,
 	}
 
 	constructor(props) {
@@ -37,7 +36,6 @@ export default class Autocomplete extends Component {
 			value: value,
 			stringValue: this.getStringValue(value),
 		}
-		this.fetchSuggestionsDebounced = debounce(this.fetchSuggestions,200)
 	}
 
 	componentWillReceiveProps(props) {
@@ -64,7 +62,7 @@ export default class Autocomplete extends Component {
 		return <div>
 			<Autosuggest
 				suggestions={this.state.noSuggestions ? [{}] : this.state.suggestions}
-				onSuggestionsFetchRequested={this.fetchSuggestionsDebounced}
+				onSuggestionsFetchRequested={this.fetchSuggestions}
 				onSuggestionsClearRequested={this.clearSuggestions}
 				onSuggestionSelected={this.onSuggestionSelected}
 				getSuggestionValue={this.getStringValue}
@@ -78,13 +76,14 @@ export default class Autocomplete extends Component {
 
 	@autobind
 	renderSuggestion(suggestion) {
-		let template = this.props.template
-		if (this.state.noSuggestions){
+		if (this.state.noSuggestions) {
 			return <span><i>No suggestions found</i></span>
 		}
-		if (template)
+
+		let template = this.props.template
+		if (template) {
 			return template(suggestion)
-		else {
+		} else {
 			return <span>{this.getStringValue(suggestion)}</span>
 		}
 	}
