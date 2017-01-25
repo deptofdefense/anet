@@ -58,7 +58,7 @@ public class GraphQLResourceTest extends AbstractResourceTest{
 					
 					Map<String,Object> resp = httpQuery("/graphql", arthur).post(Entity.json(query), new GenericType<Map<String,Object>>() {});
 					assertThat(resp).isNotNull();
-					assertThat(resp.containsKey("errors")).as("Has Errors on " + f.getName(), resp.values()).isFalse();
+					assertThat(resp.containsKey("errors")).as("Has Errors on " + f.getName() + ": " + resp.get("errors"), resp.values()).isFalse();
 					assertThat(resp.containsKey("data")).as("Missing Data on " + f.getName(), resp).isTrue();
 					
 				} catch (IOException e) { 

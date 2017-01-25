@@ -1,9 +1,9 @@
 searchResults(f:search, q:"${searchQuery}") {
 	reports { id, intent, engagementDate, keyOutcomesSummary, nextStepsSummary
-        primaryAdvisor { id, name, position { organization { id, name}}},
-        primaryPrincipal { id, name, position { organization { id, name}}},
-        advisorOrg { id, name},
-        principalOrg { id, name},
+        primaryAdvisor { id, name, position { organization { id, shortName, longName}}},
+        primaryPrincipal { id, name, position { organization { id, shortName, longName}}},
+        advisorOrg { id, shortName, longName},
+        principalOrg { id, shortName, longName},
         location { id, name},
         poams {id, shortName, longName}
 	},
@@ -11,5 +11,5 @@ searchResults(f:search, q:"${searchQuery}") {
     positions { id }
     poams { id, shortName, longName}
     locations { id, name, lat, lng}
-    organizations { id, name }
+    organizations { id, shortName, longName }
 }

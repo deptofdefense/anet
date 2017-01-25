@@ -427,7 +427,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
         Report returned4 = httpQuery("/api/reports/" + returned.getId(), elizabeth).get(Report.class);
         assertThat(returned4.getReportText()).endsWith("Bob!!");
         assertThat(returned4.loadAttendees()).hasSize(2);
-        assertThat(returned4.loadAttendees()).contains(PersonTest.personToReportPerson(nick));
+        assertThat(returned4.loadAttendees()).contains(PersonTest.personToPrimaryReportPerson(nick));
         assertThat(returned4.loadPoams()).hasSize(2);
 
         resp = httpQuery("/api/reports/" + returned.getId() + "/approve", bob).post(null);

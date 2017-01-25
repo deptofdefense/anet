@@ -495,9 +495,10 @@
 			referencedColumnNames="id" referencedTableName="people" />
 	</changeSet>
 
-	<changeSet id="21" author="hpitelka" dbms="mssql">
+	<changeSet id="21" author="hpitelka" dbms="mssql" runInTransaction="false">
 		<sql dbms="mssql">
-			ALTER FULLTEXT INDEX ON organizations ADD (shortName)
+			DROP FULLTEXT INDEX ON organizations;
+			CREATE FULLTEXT INDEX ON organizations(shortName, longName) KEY INDEX PK_ORGANIZATIONS;
 		</sql>
 	</changeSet>
 </databaseChangeLog>

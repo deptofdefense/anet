@@ -69,7 +69,7 @@ public class MssqlPersonSearcher implements IPersonSearcher {
 					+ ") ";
 				whereClauses.add(" positions.organizationId IN (SELECT id from parent_orgs)");
 			} else { 
-				sql.append(" positions.organizationId = :orgId " );
+				whereClauses.add(" positions.organizationId = :orgId " );
 			}
 			sqlArgs.put("orgId", query.getOrgId());
 		}
@@ -83,7 +83,7 @@ public class MssqlPersonSearcher implements IPersonSearcher {
 		
 		sql.append(Joiner.on(" AND ").join(whereClauses));
 		
-		sql.append(" ORDER BY createdAt DESC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY)");
+		sql.append(" ORDER BY people.createdAt DESC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY)");
 		
 		if (commonTableExpression != null) { 
 			sql.insert(0, commonTableExpression);

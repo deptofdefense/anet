@@ -42,7 +42,7 @@ public class SavedSearchResourceTest extends AbstractResourceTest {
 		assertThat(mine).contains(created);
 		
 		//Run a saved search and get results. 
-		SearchResults results = httpQuery("/api/search?types=" + created.getObjectType() + "&" + created.getQuery(), jack).get(SearchResults.class);
+		SearchResults results = httpQuery("/api/search?types=" + created.getObjectType() + "&q=" + created.getQuery(), jack).get(SearchResults.class);
 		assertThat(results.getReports()).isNotEmpty();
 	}
 }

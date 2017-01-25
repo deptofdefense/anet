@@ -9,7 +9,7 @@ report(id:${reportId}) {
         id, name
         position {
             organization {
-                name
+                shortName, longName
                 approvalSteps {
                     id
                     approverGroup {
@@ -28,15 +28,15 @@ report(id:${reportId}) {
     primaryAdvisor { id }
     primaryPrincipal { id }
 
-    poams { id, shortName, longName, responsibleOrg { id, name} }
+    poams { id, shortName, longName, responsibleOrg { id, shortName, longName} }
 
     comments {
         id, text, createdAt, updatedAt
         author { id, name, rank }
     }
 
-    principalOrg { id, name }
-    advisorOrg { id, name }
+    principalOrg { id, shortName, longName }
+    advisorOrg { id, shortName, longName }
 
     approvalStatus {
         type, createdAt

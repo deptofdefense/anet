@@ -6,13 +6,13 @@ person(id:${personId}) {
         name,
         organization {
             id,
-            name
+            shortName, longName
         }
     },
     authoredReports(pageNum:0,pageSize:10) {
         id,
         engagementDate,
-        advisorOrg { id, name }
+        advisorOrg { id, shortName, longName }
         intent,
         author {
             id,
@@ -22,7 +22,7 @@ person(id:${personId}) {
     attendedReports(pageNum:0, pageSize:10) {
         id,
         engagementDate,
-        advisorOrg { id, name}
+        advisorOrg { id, shortName, longName}
         intent,
         author {
             id,
