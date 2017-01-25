@@ -1,7 +1,8 @@
 import React, {Component} from 'react'
+import autobind from 'autobind-decorator'
 
 import L from 'leaflet'
-import autobind from 'autobind-decorator'
+import 'leaflet/dist/leaflet.css'
 
 const css = {
 	height: "500px"

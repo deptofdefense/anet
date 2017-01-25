@@ -4,15 +4,10 @@ import './index.css'
 import 'core-js/shim'
 import './utils'
 
-import 'leaflet/dist/leaflet.css'
-import 'leaflet/dist/leaflet'
-
 import React from 'react'
 import ReactDOM from 'react-dom'
 import {Router, Route, IndexRoute, browserHistory} from 'react-router'
 import {InjectablesProvider} from 'react-injectables'
-
-import NProgress from 'nprogress'
 
 import App from './pages/App'
 import Home from './pages/Home'
@@ -48,18 +43,9 @@ import AdminIndex from './pages/admin/Index'
 
 import GraphiQL from './pages/GraphiQL'
 
-function showLoader() {
-	window.scrollTo(0,0)
-	NProgress.start()
-	setTimeout(function() {
-		if (NProgress.status < 0.5)
-			NProgress.done()
-	})
-}
-
 ReactDOM.render((
 	<InjectablesProvider>
-		<Router history={browserHistory} onUpdate={showLoader}>
+		<Router history={browserHistory}>
 			<Route path="/" component={App}>
 				<IndexRoute component={Home} />
 				<Route path="search" component={Search} />
