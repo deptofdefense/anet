@@ -198,9 +198,12 @@ export default class OrganizationShow extends Page {
 			</thead>
 			<tbody>
 				{Position.map(positions, position =>
-					Position.map(position.associatedPositions, (other, idx) =>
-						this.renderPositionRow(position, other, idx)
-					)
+					position.associatedPositions.length ?
+						Position.map(position.associatedPositions, (other, idx) =>
+							this.renderPositionRow(position, other, idx)
+						)
+						:
+						this.renderPositionRow(position, null, 0)
 				)}
 			</tbody>
 		</Table>

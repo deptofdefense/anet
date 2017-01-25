@@ -129,6 +129,9 @@ export default class PersonForm extends Component {
 						<Autocomplete valueKey="name"
 							placeholder="Select a position for this person"
 							url="/api/positions/search"
+							template={pos =>
+								<span>{[pos.name, pos.code].join(' - ')}</span>
+							}
 							queryParams={{type: person.role}} />
 					</Form.Field>
 					<span>You can optionally assign this person to a position now</span>
