@@ -25,7 +25,7 @@ export default class OrganizationForm extends Component {
 			onChange={this.onChange}
 			onSubmit={this.onSubmit}
 			submitText="Save organization"
-				   horizontal>
+			horizontal>
 
 			<fieldset>
 				<legend>{edit ? "Editing " + organization.shortName : "Create a new Organization"}</legend>
@@ -178,7 +178,6 @@ export default class OrganizationForm extends Component {
 
 				History.replace(Organization.pathForEdit(organization), false)
 				History.push(Organization.pathFor(organization), {success: "Organization saved successfully"})
-				window.scrollTo(0, 0)
 			}).catch(error => {
 				this.setState({error})
 				window.scrollTo(0, 0)

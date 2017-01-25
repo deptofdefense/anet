@@ -1,27 +1,37 @@
 import React, {Component, PropTypes} from 'react'
+import {InputGroup} from 'react-bootstrap'
+import DatePicker from 'react-bootstrap-date-picker'
+import autobind from 'autobind-decorator'
 
+import Form from 'components/Form'
+import Messages from 'components/Messages'
 import TextEditor from 'components/TextEditor'
 import Autocomplete from 'components/Autocomplete'
-import Form from 'components/Form'
-import DatePicker from 'react-bootstrap-date-picker'
-import {InputGroup} from 'react-bootstrap'
+import History from 'components/History'
+
+import API from 'api'
+import {Person} from 'models'
 
 export default class PersonForm extends Component {
 	static propTypes = {
-		person: PropTypes.object,
-		onChange: PropTypes.func,
-		onSubmit: PropTypes.func,
+		person: PropTypes.object.isRequired,
 		edit: PropTypes.bool,
-		submitText: PropTypes.string,
-		showPositionAssignment: PropTypes.bool
+		showPositionAssignment: PropTypes.bool,
+	}
+
+	constructor(props) {
+		super(props)
+
+		this.state = {
+			error: null,
+		}
 	}
 
 	render() {
-		let {person, onChange, onSubmit, submitText, edit, showPositionAssignment} = this.props
+		let {person, edit, showPositionAssignment} = this.props
 
-		return <Form formFor={person} onChange={onChange}
-			onSubmit={onSubmit} horizontal
-			submitText={submitText}>
+		return <Form formFor={person} onChange={this.onChange} onSubmit={this.onSubmit} horizontal submitText="Save person">
+			<Messages error={this.state.error} />
 
 			<fieldset>
 				<legend>{edit ? "Edit " + person.name : "Create a new Person"}</legend>
@@ -124,7 +134,37 @@ export default class PersonForm extends Component {
 					<span>You can optionally assign this person to a position now</span>
 				</fieldset>
 			}
-
 		</Form>
+	}
+
+	@autobind
+	onChange() {
+		this.forceUpdate()
+	}
+
+	@autobind
+	onSubmit(event) {
+		event.stopPropagation()
+		event.preventDefault()
+
+		let {person, edit} = this.props
+
+		let url = `/api/people/${edit ? 'update' : 'new'}`
+		API.send(url, person, {disableSubmits: true})
+			.then(response => {
+				if (response.code) {
+					throw response.code
+				}
+
+				if (response.id) {
+					person.id = response.id
+				}
+
+				History.replace(Person.pathForEdit(person), false)
+				History.push(Person.pathFor(person), {success: "Person saved successfully"})
+			}).catch(error => {
+				this.setState({error: error})
+				window.scrollTo(0, 0)
+			})
 	}
 }

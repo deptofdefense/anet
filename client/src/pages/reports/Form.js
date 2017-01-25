@@ -313,8 +313,6 @@ export default class ReportForm extends Component {
 
 				// then after, we redirect you to the to page
 				History.push(Report.pathFor(report), {success: "Report saved successfully"})
-
-				window.scrollTo(0, 0)
 			})
 			.catch(response => {
 				this.setState({error: {message: response.message || response.error}})
