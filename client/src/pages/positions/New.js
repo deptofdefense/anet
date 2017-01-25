@@ -2,11 +2,11 @@ import React from 'react'
 import Page from 'components/Page'
 import autobind from 'autobind-decorator'
 
+import PositionForm from './Form'
 import {ContentForHeader} from 'components/Header'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Messages from 'components/Messages'
 import History from 'components/History'
-import PositionForm from 'components/PositionForm'
 
 import API from 'api'
 import {Position, Organization} from 'models'

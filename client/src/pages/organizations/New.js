@@ -1,8 +1,8 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 
+import OrganizationForm from './Form'
 import {ContentForHeader} from 'components/Header'
-import OrganizationForm from 'components/OrganizationForm'
 import Breadcrumbs from 'components/Breadcrumbs'
 
 import API from 'api'

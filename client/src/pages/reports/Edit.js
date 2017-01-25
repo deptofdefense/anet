@@ -1,10 +1,10 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
+import moment from 'moment'
 
+import ReportForm from './Form'
 import {ContentForHeader} from 'components/Header'
 import Breadcrumbs from 'components/Breadcrumbs'
-import ReportForm from 'components/ReportForm'
-import moment from 'moment'
 
 import API from 'api'
 import {Report} from 'models'

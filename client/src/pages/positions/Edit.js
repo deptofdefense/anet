@@ -1,12 +1,12 @@
 import React from 'react'
+import Page from 'components/Page'
 import autobind from 'autobind-decorator'
 
+import PositionForm from './Form'
 import {ContentForHeader} from 'components/Header'
 import History from 'components/History'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Messages from 'components/Messages'
-import Page from 'components/Page'
-import PositionForm from 'components/PositionForm'
 
 import API from 'api'
 import {Position} from 'models'

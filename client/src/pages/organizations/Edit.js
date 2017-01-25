@@ -1,10 +1,10 @@
 import React from 'react'
 import Page from 'components/Page'
 
+import OrganizationForm from './Form'
 import {ContentForHeader} from 'components/Header'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Messages from 'components/Messages'
-import OrganizationForm from 'components/OrganizationForm'
 
 import API from 'api'
 import {Organization} from 'models'

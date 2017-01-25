@@ -1,13 +1,12 @@
 import React, {PropTypes} from 'react'
+import Page from 'components/Page'
 import autobind from 'autobind-decorator'
 
-
+import PersonForm from './Form'
 import {ContentForHeader} from 'components/Header'
 import History from 'components/History'
 import Breadcrumbs from 'components/Breadcrumbs'
-import Page from 'components/Page'
 import Messages from 'components/Messages'
-import PersonForm from 'components/PersonForm'
 
 import API from 'api'
 import {Person} from 'models'
