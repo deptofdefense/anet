@@ -9,6 +9,8 @@ import Form from 'components/Form'
 import Messages , {setMessages} from 'components/Messages'
 import autobind from 'autobind-decorator'
 import {browserHistory as History} from 'react-router'
+import LinkTo from 'components/LinkTo'
+import moment from 'moment'
 
 import {Person, Position, Organization} from 'models'
 
@@ -21,7 +23,8 @@ export default class PositionShow extends Page {
 		super(props)
 		this.state = {
 			position: new Position( {
-				id: props.params.id
+				id: props.params.id,
+				previousPeople: []
 			}),
 		}
 		setMessages(props,this.state)
@@ -37,6 +40,7 @@ export default class PositionShow extends Page {
 					id, name,
 					person { id, name }
 				},
+				previousPeople { startTime, endTime, person { id, name, rank }}
 				location { id, name }
 			}
 		`).then(data => this.setState({position: new Position(data.position)}))
@@ -125,9 +129,15 @@ export default class PositionShow extends Page {
 								</tr>
 							</thead>
 							<tbody>
-								<tr>
-									<td colSpan="2" className="todo">TODO</td>
-								</tr>
+								{position.previousPeople.map( pp =>
+									<tr key={pp.person.id} >
+										<td><LinkTo person={pp.person} /></td>
+										<td>
+											{moment(pp.startTime).format("D MMM YYYY")} - &nbsp;
+											{pp.endTime && moment(pp.endTime).format("D MMM YYYY")}
+										</td>
+									</tr>
+								)}
 							</tbody>
 						</Table>
 					</fieldset>

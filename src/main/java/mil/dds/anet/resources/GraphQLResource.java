@@ -165,6 +165,7 @@ public class GraphQLResource {
 	        		.map(e -> e.getMessage())
 	        		.collect(Collectors.toList()));
 	        log.warn("Errors: {}", executionResult.getErrors());
+	        //TODO: pull out the errors and figure out the actual status code if it was thrown via a WebApplicationException
 	        return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
 	    }
 	    result.put("data", executionResult.getData());
