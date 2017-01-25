@@ -287,10 +287,7 @@ export default class ReportForm extends Component {
 
 	@autobind
 	onSubmit(event) {
-		event.stopPropagation()
-		event.preventDefault()
-
-		let report = this.props.report
+		let {report, edit} = this.props
 
 		if(report.primaryAdvisor) { report.attendees.find(a => a.id === report.primaryAdvisor.id).isPrimary = true }
 		if(report.primaryPrincipal) { report.attendees.find(a => a.id === report.primaryPrincipal.id).isPrimary = true }
@@ -299,7 +296,7 @@ export default class ReportForm extends Component {
 		delete report.primaryAdvisor
 		delete report.cancelled
 
-		let url = `/api/reports/${this.props.edit ? 'update' : 'new'}`
+		let url = `/api/reports/${edit ? 'update' : 'new'}`
 		API.send(url, report, {disableSubmits: true})
 			.then(response => {
 				if (response.id) {

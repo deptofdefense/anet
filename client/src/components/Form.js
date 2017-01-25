@@ -1,6 +1,7 @@
 import React, {Component, PropTypes} from 'react'
 import ReactDOM from 'react-dom'
 import {Form as BSForm, Row, Button} from 'react-bootstrap'
+import autobind from 'autobind-decorator'
 
 import {ContentForHeader} from 'components/Header'
 import FormField from 'components/FormField'
@@ -17,6 +18,7 @@ export default class Form extends Component {
 		submitText: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
 		submitOnEnter: PropTypes.bool,
 		onSubmit: PropTypes.func,
+		onChange: PropTypes.func,
 	})
 
 	static defaultProps = {
@@ -59,6 +61,7 @@ export default class Form extends Component {
 		}
 
 		let showSubmit = bsProps.onSubmit && submitText !== false
+		bsProps.onSubmit = this.onSubmit
 
 		return (
 			<BSForm {...bsProps} ref="container">
@@ -88,6 +91,14 @@ export default class Form extends Component {
 			event.preventDefault()
 			event.stopPropagation()
 		}
+	}
+
+	@autobind
+	onSubmit(event) {
+		event.stopPropagation()
+		event.preventDefault()
+
+		this.props.onSubmit && this.props.onSubmit(event)
 	}
 }
 

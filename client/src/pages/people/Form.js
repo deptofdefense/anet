@@ -147,9 +147,6 @@ export default class PersonForm extends Component {
 
 	@autobind
 	onSubmit(event) {
-		event.stopPropagation()
-		event.preventDefault()
-
 		let {person, edit} = this.props
 
 		let url = `/api/people/${edit ? 'update' : 'new'}`
