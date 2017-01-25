@@ -57,17 +57,17 @@ export default class Home extends Page {
 			<div>
 				<Breadcrumbs />
 
-				<fieldset className="homeTileRow">
+				<fieldset className="home-tile-row">
 					<legend>My ANET Snapshot</legend>
 					<Grid fluid>
 						<Row>
-							<Col md={3} className="homeTile">
+							<Col md={3} className="home-tile">
 								<Link to={"/search?type=reports&pendingApprovalOf=" + currentUser.id}>
 									<h1>{pendingMe && pendingMe.length}</h1>
 									Pending My Approval
 								</Link>
 							</Col>
-							<Col md={3} className="homeTile" >
+							<Col md={3} className="home-tile" >
 								{org &&
 									<Link to={"/search?type=reports&authorOrgId=" + org.id}>
 										<h1>{myOrgToday && myOrgToday.length}</h1>
@@ -75,13 +75,13 @@ export default class Home extends Page {
 									</Link>
 								}
 							</Col>
-							<Col md={3} className="homeTile" >
+							<Col md={3} className="home-tile" >
 								<Link to={"/search?type=reports&authorId=" + currentUser.id}>
 									<h1>{myReportsToday && myReportsToday.length}</h1>
 									My reports in last 24 hrs
 								</Link>
 							</Col>
-							<Col md={3} className="homeTile" >
+							<Col md={3} className="home-tile" >
 								<Link to={"/search?type=reports&pageSize=100&engagementDateStart=" + moment().add(1, 'days').hour(0).valueOf() } >
 									<h1>{upcomingEngagements && upcomingEngagements.length}</h1>
 									Upcoming Engagements

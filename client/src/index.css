@@ -111,32 +111,32 @@ fieldset.collapsable legend div.collapsableToggle {
 	background-color: red;
 }
 
-.homeTileRow {
+.home-tile-row {
 	padding: 0 0 0 0
 }
 
-.homeTile {
+.home-tile {
 	text-align: center;
 	color:#5c5c5c;
 	padding-top:20px;
 	padding-bottom:20px;
 }
-.homeTile a {
+.home-tile a {
 	color:#5c5c5c;
 	text-decoration: none;
 }
-.homeTile h1 {
+.home-tile h1 {
 	font-weight: 900;
 }
-.homeTile:hover {
+.home-tile:hover {
 	background-color: #dae3ee;
 }
 
-.personIcon {
+.person-icon {
 	margin-right:4px;
 }
 
-.primaryAttendee .checkbox {
+.primary-attendee .checkbox {
 	padding: 0;
 	margin: 0;
 	text-align: center;
