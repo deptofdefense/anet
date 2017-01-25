@@ -1,7 +1,9 @@
 package mil.dds.anet.database;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.joda.time.DateTime;
 import org.skife.jdbi.v2.GeneratedKeys;
@@ -11,6 +13,7 @@ import org.skife.jdbi.v2.Query;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.PersonPositionHistory;
 import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Position.PositionType;
 import mil.dds.anet.beans.search.PositionSearchQuery;
@@ -71,8 +74,6 @@ public class PositionDao implements IAnetDao<Position> {
 		}
 		return p;
 	}
-	
-	
 	
 	public Position getById(int id) { 
 		Query<Position> query = dbHandle.createQuery("SELECT " + POSITIONS_FIELDS + ", " + PersonDao.PERSON_FIELDS
@@ -308,6 +309,39 @@ public class PositionDao implements IAnetDao<Position> {
 	public List<Position> search(PositionSearchQuery query) { 
 		return AnetObjectEngine.getInstance().getSearcher()
 				.getPositionSearcher().runSearch(query, dbHandle);
+	}
+
+	public List<PersonPositionHistory> getPositionHistory(Position position) {
+		List<Map<String, Object>> results = dbHandle.createQuery("SELECT * FROM peoplePositions WHERE positionId = :positionId ORDER BY createdAt ASC")
+			.bind("positionId", DaoUtils.getId(position))
+			.list();
+		
+		//Each row is a change of the person/position relationship for this person
+		//If the personId is null that means that the previous person was removed from this entry
+		//Otherwise the person with that ID was placed in this position, and the previous person removed.
+		
+		List<PersonPositionHistory> history = new LinkedList<PersonPositionHistory>();
+		PersonPositionHistory curr = new PersonPositionHistory();
+		for (Map<String,Object> row : results) { 
+			Integer personId = (Integer) row.get("personId");
+			DateTime createdAt = new DateTime(row.get("positions_createdAt"));
+
+			if (DaoUtils.getId(curr.getPerson()) != null) { 
+				curr.setEndTime(createdAt);
+				history.add(curr);
+				curr = new PersonPositionHistory();
+				if (personId != null) { 
+					curr.setPerson(Person.createWithId(personId));
+					curr.setStartTime(createdAt);
+				}
+			} else {
+				curr.setPerson(Person.createWithId(personId));
+				curr.setStartTime(createdAt);
+			}
+			
+		}
+		history.add(curr);
+		return history;
 	}
 
 }

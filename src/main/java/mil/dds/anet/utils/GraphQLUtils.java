@@ -29,8 +29,8 @@ import mil.dds.anet.beans.search.ISearchQuery;
 import mil.dds.anet.graphql.GraphQLDateTimeType;
 import mil.dds.anet.graphql.GraphQLIgnore;
 import mil.dds.anet.graphql.GraphQLParam;
+import mil.dds.anet.graphql.IGraphQLBean;
 import mil.dds.anet.graphql.PropertyDataFetcherWithArgs;
-import mil.dds.anet.views.AbstractAnetBean;
 
 public class GraphQLUtils {
 
@@ -79,7 +79,7 @@ public class GraphQLUtils {
 			@SuppressWarnings("unchecked")
 			Class<? extends Enum<?>> enumType = (Class<? extends Enum<?>>) type;
 			gType = gEnumBuilder(enumType);
-		} else if (clazz != null && AbstractAnetBean.class.isAssignableFrom(clazz)) { 
+		} else if (clazz != null && IGraphQLBean.class.isAssignableFrom(clazz)) { 
 			gType = new GraphQLTypeReference(lowerCaseFirstLetter(clazz.getSimpleName()));
 		} else if (clazz != null && List.class.isAssignableFrom(clazz)) {
 			Type innerType = ((ParameterizedType)type).getActualTypeArguments()[0];
