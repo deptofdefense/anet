@@ -29,7 +29,7 @@ public class LocationDao implements IAnetDao<Location> {
 	public List<Location> getAll(int pageNum, int pageSize) { 
 		String sql;
 		if (DaoUtils.isMsSql(dbHandle)) { 
-			sql = "SELECT * from locations ORDER BY reports.createdAt DESC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY";
+			sql = "SELECT * from locations ORDER BY createdAt DESC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY";
 		} else {
 			sql = "SELECT * from locations ORDER BY createdAt ASC LIMIT :limit OFFSET :offset";
 		}
