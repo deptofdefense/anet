@@ -95,10 +95,6 @@ export default class Autocomplete extends Component {
 
 	@autobind
 	fetchSuggestions(value) {
-		if(value.value.trim().length < 2) {
-			this.setState({suggestions: [], noSuggestions: false})
-			return
-		}
 		if (this.props.url) {
 			let url = this.props.url + '?text=' + value.value
 			if (this.props.queryParams) {
