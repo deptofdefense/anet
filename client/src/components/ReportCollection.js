@@ -3,10 +3,10 @@ import autobind from 'autobind-decorator'
 
 import ReportSummary from 'components/ReportSummary'
 import ReportTable from 'components/ReportTable'
-import RadioGroup from 'components/RadioGroup'
+import ButtonToggleGroup from 'components/ButtonToggleGroup'
 import Leaflet from 'components/Leaflet'
 
-import {Radio, Table} from 'react-bootstrap'
+import {Table, Button} from 'react-bootstrap'
 
 const FORMAT_SUMMARY = 'summary'
 const FORMAT_TABLE = 'table'
@@ -32,11 +32,11 @@ export default class ReportCollection extends Component {
 		}
 		return <div>
 			<div style={{height:"50px"}} >
-				<RadioGroup value={this.state.viewFormat} onChange={this.changeViewFormat} className="pull-right">
-					<Radio value={FORMAT_SUMMARY}>Summary</Radio>
-					<Radio value={FORMAT_TABLE}>Table</Radio>
-					<Radio value={FORMAT_MAP}>Map</Radio>
-				</RadioGroup>
+				<ButtonToggleGroup value={this.state.viewFormat} onChange={this.changeViewFormat} className="pull-right">
+					<Button value={FORMAT_SUMMARY}>Summary</Button>
+					<Button value={FORMAT_TABLE}>Table</Button>
+					<Button value={FORMAT_MAP}>Map</Button>
+				</ButtonToggleGroup>
 			</div>
 			{this.state.viewFormat === FORMAT_TABLE && this.renderTable() }
 			{this.state.viewFormat === FORMAT_SUMMARY && this.renderSummary() }
@@ -71,8 +71,7 @@ export default class ReportCollection extends Component {
 	}
 
 	@autobind
-	changeViewFormat(event) {
-		let value = event && event.target && event.target.value;
+	changeViewFormat(value) {
 		this.setState({viewFormat: value})
 	}
 

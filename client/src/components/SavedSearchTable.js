@@ -37,6 +37,7 @@ export default class SavedSearchTable extends Component {
 				reports { id, intent, engagementDate, keyOutcomesSummary, nextStepsSummary
 					primaryAdvisor { id, name, role, position { organization { id, shortName}}},
 					primaryPrincipal { id, name, role, position { organization { id, shortName}}},
+					author{ id, name},
 					advisorOrg { id, shortName},
 					principalOrg { id, shortName},
 					location { id, name},
