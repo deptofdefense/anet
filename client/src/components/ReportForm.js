@@ -282,8 +282,7 @@ export default class ReportForm extends Component {
 
 	@autobind
 	onChange() {
-		let report = this.state.report
-		this.setState({report})
+		this.forceUpdate()
 	}
 
 	@autobind
@@ -301,7 +300,7 @@ export default class ReportForm extends Component {
 		delete report.cancelled
 
 		let url = `/api/reports/${this.props.edit ? 'update' : 'new'}`
-		API.send(url, report)
+		API.send(url, report, {disableSubmits: true})
 			.then(response => {
 				if (response.id) {
 					report.id = response.id
