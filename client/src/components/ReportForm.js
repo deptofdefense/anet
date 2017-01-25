@@ -309,15 +309,10 @@ export default class ReportForm extends Component {
 				// this updates the current page URL on model/new to be the edit page,
 				// so that if you press back after saving a new model, it takes you
 				// back to editing the model you just saved
-				History.replace({
-					pathname: Report.pathForEdit(report),
-				})
+				History.replace(Report.pathForEdit(report))
 
 				// then after, we redirect you to the to page
-				History.push({
-					pathname: Report.pathFor(report),
-					state: {success: "Saved Report"},
-				})
+				History.push(Report.pathFor(report), {success: "Report saved successfully"})
 
 				window.scrollTo(0, 0)
 			})
