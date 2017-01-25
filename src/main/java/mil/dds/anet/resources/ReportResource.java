@@ -1,5 +1,6 @@
 package mil.dds.anet.resources;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -401,6 +402,23 @@ public class ReportResource implements IGraphQLResource {
 		return (numRows == 1) ? Response.ok().build() : ResponseUtils.withMsg("Unable to delete comment", Status.NOT_FOUND);
 	}
 
+	@POST
+	@Timed
+	@Path("/{id}/email")
+	public Response emailReport(@Auth Person user, @PathParam("id") int reportId, AnetEmail email) { 
+		Report r = dao.getById(reportId);
+		if (r == null) { return Response.status(Status.NOT_FOUND).build(); }
+		
+		if (email.getContext() == null) { email.setContext(new HashMap<String,Object>()); }
+		
+		email.setTemplateName("/emails/emailReport.ftl");
+		email.setSubject("Sharing a report in ANET");
+		email.getContext().put("report", r);
+		email.getContext().put("sender", user);
+		AnetEmailWorker.sendEmailAsync(email);
+		return Response.ok().build();
+	}
+	
 	@GET
 	@Timed
 	@GraphQLFetcher("pendingMyApproval")

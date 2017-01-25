@@ -10,6 +10,7 @@ import Form from 'components/Form'
 import Messages from 'components/Messages'
 import LinkTo from 'components/LinkTo'
 import History from 'components/History'
+import Autocomplete from 'components/Autocomplete'
 
 import API from 'api'
 
@@ -45,6 +46,8 @@ export default class ReportShow extends Page {
 			report: new Report({id: props.params.id}),
 			newComment: new Comment(),
 			approvalComment: new Comment(),
+			showEmailModal: false,
+			email: { toAddresses: "", comment: "" , errors: null}
 		}
 	}
 
@@ -169,12 +172,13 @@ export default class ReportShow extends Page {
 						className="pull-right" onSelect={this.actionSelect}>
 						{canEdit && <MenuItem eventKey="edit" >Edit Report</MenuItem>}
 						{canSubmit && errors.length === 0 && <MenuItem eventKey="submit">Submit</MenuItem>}
-						{canEmail && <MenuItem eventKey="email" className="todo" href={this.emailReport()}>Email Report</MenuItem>}
+						{canEmail && <MenuItem eventKey="email" className="todo" onClick={this.toggleEmailModal}>Email Report</MenuItem>}
 					</DropdownButton>
 				</div>
 
-				<Form static formFor={report} horizontal>
+				{this.renderEmailModal()}
 
+				<Form static formFor={report} horizontal>
 					<fieldset>
 						<legend>Report #{report.id}</legend>
 
@@ -344,6 +348,62 @@ export default class ReportShow extends Page {
 	}
 
 	@autobind
+	renderEmailModal() {
+		let email = this.state.email
+		return <Modal show={this.state.showEmailModal} onHide={this.toggleEmailModal} >
+			<Modal.Header closeButton>
+				<Modal.Title>Email Report</Modal.Title>
+			</Modal.Header>
+			<Modal.Body>
+				{email.errors &&
+					<Alert bsStyle="danger">{email.errors}</Alert>
+				}
+				<Form formFor={email} onChange={this.onChange} submitText={false} >
+					<Form.Field id="to" label="To:" >
+						<Autocomplete valueKey="name"
+							placeholder="Select the person to email"
+							url="/api/people/search"
+							queryParams={{role: "ADVISOR"}}
+						/>
+					</Form.Field>
+					<Form.Field componentClass="textarea" id="comment" />
+				</Form>
+			</Modal.Body>
+			<Modal.Footer>
+				<Button bsStyle="primary" onClick={this.emailReport}>Send Email</Button>
+			</Modal.Footer>
+		</Modal>
+	}
+
+	@autobind
+	toggleEmailModal() {
+		this.setState({showEmailModal : !this.state.showEmailModal});
+	}
+
+	@autobind
+	emailReport() {
+		let email = this.state.email;
+		if (!email.to) {
+			email.errors = "You must select a person to send this to"
+			this.setState({email})
+			return;
+		}
+
+		email = {
+			toAddresses: [email.to.emailAddress],
+			context: {comment: email.comment },
+			subject: "Sharing an email from ANET"
+		}
+		API.send(`/api/reports/${this.state.report.id}/email`, email).then (() =>
+			this.setState({
+				success: "Email successfully sent",
+				showEmailModal: false,
+				email: {}
+			})
+		)
+	}
+
+	@autobind
 	submitDraft() {
 		API.send(`/api/reports/${this.state.report.id}/submit`).then(data => {
 			this.updateReport()
@@ -405,7 +465,8 @@ export default class ReportShow extends Page {
 	@autobind
 	onChange() {
 		let report = this.state.report
-		this.setState({report})
+		let email = this.state.email
+		this.setState({report, email})
 	}
 
 	@autobind
@@ -494,16 +555,5 @@ export default class ReportShow extends Page {
 		this.setState(this.state)
 	}
 
-	@autobind
-	emailReport() {
-		let report = this.state.report
-		let subject = report.intent
-		let body = `${report.intent}\n`
-			+ `Author: ${report.author && report.author.name}\n`
-			+ `Date: ${moment(report.engagementDate).format("D MMM YYYY")}\n`
-			+ `Key Outcomes: ${report.keyOutcomesSummary}\n`
-			+ `Next Steps: ${report.nextStepsSummary}\n`;
-		return "mailto:?subject=" + subject +"&body=" + encodeURIComponent(body);
-	}
 
 }
