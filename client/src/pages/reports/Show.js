@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
-import {Alert, Table, Button, Col, DropdownButton, MenuItem, Modal} from 'react-bootstrap'
+import {Alert, Table, Button, Col, DropdownButton, MenuItem, Modal, Checkbox} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 import moment from 'moment'
 
@@ -208,6 +208,7 @@ export default class ReportShow extends Page {
 						<Table>
 							<thead>
 								<tr>
+									<th style={{textAlign: 'center'}}>Primary</th>
 									<th>Name</th>
 									<th>Position</th>
 								</tr>
@@ -216,12 +217,12 @@ export default class ReportShow extends Page {
 							<tbody>
 								{Person.map(report.attendees, person =>
 									<tr key={person.id}>
+										<td className="primaryAttendee">
+											{person.primary && <Checkbox readOnly checked />}
+										</td>
 										<td>
 											<img src={person.iconUrl()} alt={person.role} height={20} width={20} className="personIcon" />
 											<LinkTo person={person} />
-											{person.primary &&
-												<img src="/assets/img/star_yellow.png" alt="primary" width={18} height={18} className="primaryAttendeeStar" />
-											}
 										</td>
 										<td><LinkTo position={person.position} /></td>
 									</tr>
