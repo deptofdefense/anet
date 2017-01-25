@@ -172,8 +172,16 @@ export default class OrganizationForm extends Component {
 					throw response.code
 				}
 
+				if (response.id) {
+					organization.id = response.id
+				}
+
+				History.replace({
+					pathname: Organization.pathForEdit(organization)
+				})
+
 				History.push({
-					pathname: Organization.pathFor(response),
+					pathname: Organization.pathFor(organization),
 					state: {success: "Organization saved successfully"},
 				})
 			}).catch(error => {
