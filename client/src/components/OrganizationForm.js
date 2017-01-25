@@ -176,7 +176,7 @@ export default class OrganizationForm extends Component {
 					organization.id = response.id
 				}
 
-				History.replace(Organization.pathForEdit(organization))
+				History.replace(Organization.pathForEdit(organization), false)
 				History.push(Organization.pathFor(organization), {success: "Organization saved successfully"})
 				window.scrollTo(0, 0)
 			}).catch(error => {
