@@ -282,8 +282,7 @@ export default class ReportForm extends Component {
 
 	@autobind
 	onChange() {
-		let report = this.state.report
-		this.setState({report})
+		this.forceUpdate()
 	}
 
 	@autobind
@@ -301,7 +300,7 @@ export default class ReportForm extends Component {
 		delete report.cancelled
 
 		let url = `/api/reports/${this.props.edit ? 'update' : 'new'}`
-		API.send(url, report)
+		API.send(url, report, {disableSubmits: true})
 			.then(response => {
 				if (response.id) {
 					report.id = response.id
@@ -310,17 +309,10 @@ export default class ReportForm extends Component {
 				// this updates the current page URL on model/new to be the edit page,
 				// so that if you press back after saving a new model, it takes you
 				// back to editing the model you just saved
-				History.replace({
-					pathname: Report.pathForEdit(report),
-				})
+				History.replace(Report.pathForEdit(report), false)
 
 				// then after, we redirect you to the to page
-				History.push({
-					pathname: Report.pathFor(report),
-					state: {success: "Saved Report"},
-				})
-
-				window.scrollTo(0, 0)
+				History.push(Report.pathFor(report), {success: "Report saved successfully"})
 			})
 			.catch(response => {
 				this.setState({error: {message: response.message || response.error}})

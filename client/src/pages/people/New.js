@@ -1,15 +1,10 @@
 import React, {PropTypes} from 'react'
-import autobind from 'autobind-decorator'
-
-
-import {ContentForHeader} from 'components/Header'
-import History from 'components/History'
-import Breadcrumbs from 'components/Breadcrumbs'
 import Page from 'components/Page'
-import Messages from 'components/Messages'
-import PersonForm from 'components/PersonForm'
 
-import API from 'api'
+import PersonForm from './Form'
+import {ContentForHeader} from 'components/Header'
+import Breadcrumbs from 'components/Breadcrumbs'
+
 import {Person} from 'models'
 
 export default class PersonNew extends Page {
@@ -38,38 +33,10 @@ export default class PersonNew extends Page {
 					<h2>Create a new Person</h2>
 				</ContentForHeader>
 
-				<Breadcrumbs items={[['Create new Person', '/people/new']]} />
-				<Messages error={this.state.error} />
-				<PersonForm
-					person={person}
-					onChange={this.onChange}
-					onSubmit={this.onSubmit}
-					submitText="Create Person"
-					showPositionAssignment={true}
-					error={this.state.error}/>
+				<Breadcrumbs items={[['Create new Person', Person.pathForNew()]]} />
+
+				<PersonForm person={person} showPositionAssignment={true} />
 			</div>
 		)
 	}
-
-	@autobind
-	onChange() {
-		let person = this.state.person
-		this.setState({person})
-	}
-
-	@autobind
-	onSubmit(event) {
-		event.stopPropagation()
-		event.preventDefault()
-
-		API.send('/api/people/new', this.state.person, {disableSubmits: true})
-			.then(person => {
-				if (person.code) throw person.code
-				History.push({pathname:Person.pathFor(person),query:{},state:{success:"Created Person"}})
-			}).catch(error => {
-				this.setState({error: error})
-				window.scrollTo(0, 0)
-			})
-	}
-
 }

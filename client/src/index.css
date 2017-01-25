@@ -39,15 +39,15 @@ fieldset legend small {
 	font-size: 1.2rem;
 }
 
-fieldset.collapsable { 
+fieldset.collapsable {
 	background: none;
 	border: none;
 }
-fieldset.collapsable legend hr { 
+fieldset.collapsable legend hr {
 	border: 1px solid #e0e0e0;
 	margin-top: 10px;
 }
-fieldset.collapsable legend div.collapsableToggle { 
+fieldset.collapsable legend div.collapsableToggle {
 	margin-right: 5px;
 }
 
@@ -140,4 +140,14 @@ fieldset.collapsable legend div.collapsableToggle {
 }
 .primaryAttendeeStar {
 	margin-left: 5px;
+}
+
+.loading .anet section {
+	visibility: hidden;
+}
+
+.loading .anet section:before {
+	content: "Loading...";
+	visibility: visible;
+	font-size: 2rem;
 }

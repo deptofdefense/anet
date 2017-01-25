@@ -1,13 +1,10 @@
 import React, {PropTypes} from 'react'
-import autobind from 'autobind-decorator'
-
-import {ContentForHeader} from 'components/Header'
-import History from 'components/History'
-import Breadcrumbs from 'components/Breadcrumbs'
 import Page from 'components/Page'
-import Messages from 'components/Messages'
-import PersonForm from 'components/PersonForm'
 import moment from 'moment'
+
+import PersonForm from './Form'
+import {ContentForHeader} from 'components/Header'
+import Breadcrumbs from 'components/Breadcrumbs'
 
 import API from 'api'
 import {Person} from 'models'
@@ -63,39 +60,10 @@ export default class PersonEdit extends Page {
 					<h2>Edit {person.name}</h2>
 				</ContentForHeader>
 
-				<Breadcrumbs items={[[`Edit ${person.name}`, `/people/${person.id}/edit`]]} />
-				<Messages success={this.state.success} error={this.state.error} />
-				<PersonForm
-					person={person}
-					onChange={this.onChange}
-					onSubmit={this.onSubmit}
-					submitText="Save Person"
-					edit
-					showPositionAssignment={canEditPosition}
-					error={this.state.error}/>
+				<Breadcrumbs items={[[`Edit ${person.name}`, Person.pathForEdit(person)]]} />
+
+				<PersonForm person={person} edit showPositionAssignment={canEditPosition} />
 			</div>
 		)
 	}
-
-	@autobind
-	onChange() {
-		let person = this.state.person
-		this.setState({person})
-	}
-
-	@autobind
-	onSubmit(event) {
-		event.stopPropagation()
-		event.preventDefault()
-
-		API.send('/api/people/update', this.state.person, {disableSubmits: true})
-			.then(response => {
-				if (response.code) throw response.code
-				History.push({pathname:Person.pathFor(this.state.person),query:{},state:{success:"Saved Person"}})
-			}).catch(response => {
-				this.setState({error: response})
-				window.scrollTo(0, 0)
-			})
-	}
-
 }

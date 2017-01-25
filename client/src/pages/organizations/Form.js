@@ -1,30 +1,35 @@
 import React, {Component, PropTypes} from 'react'
 import {Button, Table, Radio} from 'react-bootstrap'
+import autobind from 'autobind-decorator'
 
 import Form from 'components/Form'
 import RadioGroup from 'components/RadioGroup'
 import Autocomplete from 'components/Autocomplete'
 import PoamsSelector from 'components/PoamsSelector'
-import autobind from 'autobind-decorator'
+import History from 'components/History'
+
+import API from 'api'
+import Organization from 'models/Organization'
 
 export default class OrganizationForm extends Component {
 	static propTypes = {
 		organization: PropTypes.object,
-		onChange: PropTypes.func,
-		onSubmit: PropTypes.func,
 		edit: PropTypes.bool,
-		submitText: PropTypes.string
 	}
 
 	render() {
-		let {organization, onChange, onSubmit, submitText, edit} = this.props
+		let {organization, edit} = this.props
+		let {approvalSteps} = organization
 
-		return <Form formFor={organization} onChange={onChange}
-			onSubmit={onSubmit} horizontal
-			submitText={submitText}>
+		return <Form formFor={organization}
+			onChange={this.onChange}
+			onSubmit={this.onSubmit}
+			submitText="Save organization"
+			horizontal>
 
 			<fieldset>
 				<legend>{edit ? "Editing " + organization.shortName : "Create a new Organization"}</legend>
+
 				<Form.Field id="type">
 					<RadioGroup>
 						<Radio value="ADVISOR_ORG">Advisor Organization</Radio>
@@ -43,43 +48,43 @@ export default class OrganizationForm extends Component {
 				<Form.Field id="longName" label="Description" placeholder="e.g. Force Sustainment" />
 			</fieldset>
 
-			{ organization.type === "ADVISOR_ORG" &&
-				<PoamsSelector poams={organization.poams} onChange={onChange}/>
-			}
+			{organization.type === "ADVISOR_ORG" && <div>
+				<PoamsSelector poams={organization.poams} onChange={this.onChange} />
 
-			{ organization.type === "ADVISOR_ORG" &&
-				this.renderApprovalSteps()
-			}
+				<fieldset>
+					<legend>Approval Process</legend>
+
+					<Button className="pull-right" onClick={this.addApprovalStep}>
+						Add an Approval Step
+					</Button>
+
+					{approvalSteps && approvalSteps.map((step, index) =>
+						this.renderApprovalStep(step, index)
+					)}
+				</fieldset>
+			</div>}
 		</Form>
 	}
 
-	renderApprovalSteps() {
-		let approvalSteps = this.props.organization.approvalSteps
-		return <fieldset>
-			<legend>Approval Process</legend>
-			<Button className="pull-right" onClick={this.addApprovalStep}>Add an Approval Step</Button>
+	renderApprovalStep(step, index) {
+		let group = step.approverGroup
+		let members = group.members
 
-			{approvalSteps && approvalSteps.map((step, idx) =>
-				this.renderApprovalStep(step, idx)
-			)}
-		</fieldset>
-	}
+		return <fieldset key={index}>
+			<legend>Step {index + 1}</legend>
 
-	renderApprovalStep(step, idx) {
-		let group = step.approverGroup;
-		let members = group.members;
-		return <fieldset key={"step_" + idx}>
-			<legend>Step {idx + 1}</legend>
 			<Form.Field id="approverGroupName"
 				value={group.name}
-				onChange={this.setStepName.bind(this, idx)}/>
+				onChange={this.setStepName.bind(this, index)} />
+
 			<Form.Field id="addApprover" label="Add an Approver" value={members} >
 				<Autocomplete valueKey="name"
 					placeholder="Choose a person"
 					url="/api/people/search"
 					queryParams={{role: "ADVISOR"}}
-					onChange={this.addApprover.bind(this, idx)}
+					onChange={this.addApprover.bind(this, index)}
 					clearOnSelect={true} />
+
 				<Table striped>
 					<thead>
 						<tr>
@@ -91,7 +96,7 @@ export default class OrganizationForm extends Component {
 					<tbody>
 						{members.map(member =>
 							<tr key={member.id}>
-								<td onClick={this.removeApprover.bind(this, member, idx)}>
+								<td onClick={this.removeApprover.bind(this, member, index)}>
 									<span style={{cursor: 'pointer'}}>⛔️</span>
 								</td>
 								<td>{member.name}</td>
@@ -102,7 +107,6 @@ export default class OrganizationForm extends Component {
 				</Table>
 			</Form.Field>
 		</fieldset>
-
 	}
 
 	@autobind
@@ -120,10 +124,10 @@ export default class OrganizationForm extends Component {
 	removeApprover(approver, index) {
 		let step = this.props.organization.approvalSteps[index];
 		let approvers = step.approverGroup.members;
-		let approverIdx = approvers.findIndex(m => m.id === approver.id );
+		let approverIndex = approvers.findIndex(m => m.id === approver.id );
 
 		if (index !== -1) {
-			approvers.splice(approverIdx, 1);
+			approvers.splice(approverIndex, 1);
 			this.props.onChange();
 		}
 	}
@@ -144,5 +148,39 @@ export default class OrganizationForm extends Component {
 		approvalSteps.push({approverGroup: {name: "", members:[]}});
 
 		this.props.onChange()
+	}
+
+	@autobind
+	onChange() {
+		this.forceUpdate()
+	}
+
+	@autobind
+	onSubmit(event) {
+		event.stopPropagation()
+		event.preventDefault()
+
+		let organization = Object.without(this.props.organization, 'childrenOrgs', 'positions')
+		if (organization.parentOrg) {
+			organization.parentOrg = {id: organization.parentOrg.id}
+		}
+
+		let url = `/api/organizations/${this.props.edit ? 'update' : 'new'}`
+		API.send(url, organization, {disableSubmits: true})
+			.then(response => {
+				if (response.code) {
+					throw response.code
+				}
+
+				if (response.id) {
+					organization.id = response.id
+				}
+
+				History.replace(Organization.pathForEdit(organization), false)
+				History.push(Organization.pathFor(organization), {success: "Organization saved successfully"})
+			}).catch(error => {
+				this.setState({error})
+				window.scrollTo(0, 0)
+			})
 	}
 }

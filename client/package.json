@@ -60,7 +60,6 @@
     "change-case": "^3.0.0",
     "core-js": "^2.4.1",
     "d3": "^4.4.2",
-    "debounce": "1.0.0",
     "deep-equal": "^1.0.1",
     "draft-js": "^0.9.1",
     "draft-js-export-html": "^0.5.2",

@@ -1,11 +1,11 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
+import autobind from 'autobind-decorator'
 
+import ReportForm from './Form'
 import {ContentForHeader} from 'components/Header'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Messages from 'components/Messages'
-import ReportForm from 'components/ReportForm'
-import autobind from 'autobind-decorator'
 import {Report, Person} from 'models'
 
 export default class ReportNew extends Page {
