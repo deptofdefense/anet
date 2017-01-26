@@ -46,7 +46,7 @@ export default class Search extends Page {
 	}
 
 	fetchData(props) {
-		let reportFields = `id, intent, engagementDate, keyOutcomesSummary, nextStepsSummary,
+		let reportFields = `id, intent, engagementDate, keyOutcomes, nextSteps,
 			author { id, name }
 			primaryAdvisor { id, name, role, position { organization { id, shortName}}},
 			primaryPrincipal { id, name, role, position { organization { id, shortName}}},

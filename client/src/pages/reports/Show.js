@@ -55,7 +55,7 @@ export default class ReportShow extends Page {
 		API.query(/* GraphQL */`
 			report(id:${props.params.id}) {
 				id, intent, engagementDate, atmosphere, atmosphereDetails
-				keyOutcomesSummary, keyOutcomes, nextStepsSummary, reportText, nextSteps
+				keyOutcomes, reportText, nextSteps
 
 				state
 
@@ -257,12 +257,10 @@ export default class ReportShow extends Page {
 						<legend>Meeting discussion</legend>
 
 						<h5>Key outcomes</h5>
-						<span>{report.keyOutcomesSummary}</span>
-						<div dangerouslySetInnerHTML={{__html: report.keyOutcomes}} />
+						<div>{report.keyOutcomes}</div>
 
 						<h5>Next steps</h5>
-						<span>{report.nextStepsSummary}</span>
-						<div dangerouslySetInnerHTML={{__html: report.nextSteps}} />
+						<div>{report.nextSteps}</div>
 
 						<h5>Report Details</h5>
 						<div dangerouslySetInnerHTML={{__html: report.reportText}} />

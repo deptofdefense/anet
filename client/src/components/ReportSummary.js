@@ -29,7 +29,7 @@ export default class ReportSummary extends Component {
 					{report.engagementDate && moment(report.engagementDate).format("D MMM YYYY")}
 					{report.location &&
 						<span> @&nbsp;
-						<Link to={"/locations/" + report.location.id}>{report.location.name}</Link>
+							<Link to={"/locations/" + report.location.id}>{report.location.name}</Link>
 						</span>
 					}
 				</Col>
@@ -41,8 +41,8 @@ export default class ReportSummary extends Component {
 			<Row>
 				<Col md={12}>
 					{report.intent}. &nbsp;
-					{report.keyOutcomesSummary && <span>The <b>Key Outcomes</b> were {report.keyOutcomesSummary}.</span>} &nbsp;
-					{report.nextStepsSummary && <span>The <b>Next Steps</b> are {report.nextStepsSummary}.</span>}
+					{report.keyOutcomes && <span>The <b>Key Outcomes</b> were {report.keyOutcomes}.</span>} &nbsp;
+					{report.nextSteps && <span>The <b>Next Steps</b> are {report.nextSteps}.</span>}
 				</Col>
 			</Row>
 			<Row>

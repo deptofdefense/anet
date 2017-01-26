@@ -68,7 +68,7 @@ export default class RollupShow extends Page {
 		// TODO: this is a hack to make sure we get some data, I am not using the
 		API.query(/* GraphQL */`
 			reports(f:releasedToday) {
-				id, state, intent, engagementDate, intent, keyOutcomesSummary, nextStepsSummary
+				id, state, intent, engagementDate, intent, keyOutcomes, nextSteps
 				author { id, name }
 				location { id, name, lat, lng}
 				poams { id, longName }

@@ -34,7 +34,7 @@ export default class SavedSearchTable extends Component {
 	runSearch(searchId) {
 		API.query(/*GraphQL */`
 			searchResults(f:runSavedSearch, searchId:${searchId}) {
-				reports { id, intent, engagementDate, keyOutcomesSummary, nextStepsSummary
+				reports { id, intent, engagementDate, keyOutcomes, nextSteps
 					primaryAdvisor { id, name, role, position { organization { id, shortName}}},
 					primaryPrincipal { id, name, role, position { organization { id, shortName}}},
 					author{ id, name},
