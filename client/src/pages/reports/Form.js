@@ -18,10 +18,7 @@ export default class ReportForm extends Component {
 	static propTypes = {
 		report: PropTypes.instanceOf(Report).isRequired,
 		edit: PropTypes.bool,
-	}
-
-	static contextTypes = {
-		app: PropTypes.object,
+		defaultAttendee: PropTypes.instanceOf(Person),
 	}
 
 	constructor(props) {
@@ -61,6 +58,13 @@ export default class ReportForm extends Component {
 			}
 			this.setState(newState)
 		})
+	}
+
+	componentDidUpdate() {
+		let {report, defaultAttendee} = this.props
+		if (defaultAttendee.id && !report.attendees.length) {
+			this.addAttendee(defaultAttendee)
+		}
 	}
 
 	render() {
