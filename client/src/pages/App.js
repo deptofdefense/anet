@@ -93,7 +93,6 @@ export default class App extends Page {
 
 				<Header />
 
-				<section className={pageProps.fluidContainer ? "container-fluid" : "container"}>
 					{pageProps.useNavigation === false
 						? this.props.children
 						: <Grid>
@@ -107,7 +106,6 @@ export default class App extends Page {
 							</Row>
 						</Grid>
 					}
-				</section>
 			</div>
 		)
 	}

@@ -41,16 +41,22 @@ class Header extends Component {
 		return (
 			<header style={backgroundCss} className="header">
 				<div className="container">
-					{leftContent || <Link to="/" className="pull-left">
-						<img src={logo} alt="ANET logo" style={logoCss} />
-					</Link>}
-
-					<div className="pull-left header-content">
-						{middleContent || <SearchBar />}
-					</div>
-
-					<div className="pull-right">
-						{rightContent || <CreateButton />}
+					<div className="row">
+						<div className="col-sm-3">
+							{leftContent || <Link to="/" className="pull-left">
+								<img src={logo} alt="ANET logo" style={logoCss} />
+							</Link>}
+						</div>
+						<div className="col-sm-7">
+							<div className="pull-left header-content">
+								{middleContent || <SearchBar />}
+							</div>
+						</div>
+						<div className="col-sm-2">
+							<div className="pull-right">
+								{rightContent || <CreateButton />}
+							</div>
+						</div>
 					</div>
 				</div>
 			</header>
