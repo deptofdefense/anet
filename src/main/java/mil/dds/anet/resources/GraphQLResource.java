@@ -23,6 +23,7 @@ import graphql.GraphQL;
 import graphql.schema.GraphQLFieldDefinition;
 import graphql.schema.GraphQLList;
 import graphql.schema.GraphQLObjectType;
+import graphql.schema.GraphQLOutputType;
 import graphql.schema.GraphQLSchema;
 import io.dropwizard.auth.Auth;
 import mil.dds.anet.beans.ApprovalAction;
@@ -74,9 +75,16 @@ public class GraphQLResource {
 			
 			
 			AnetResourceDataFetcher listFetcher = new AnetResourceDataFetcher(resource, true);
-			if (listFetcher.validArguments().size() > 0) { 
+			if (listFetcher.validArguments().size() > 0) {
+				Class<?> listClass = resource.getBeanListClass();
+				GraphQLOutputType listType;
+				if (List.class.isAssignableFrom(listClass)) { 
+					listType = new GraphQLList(objectType);
+				} else { 
+					listType = buildTypeFromBean(name + "s", (Class<? extends IGraphQLBean>) resource.getBeanListClass());
+				}
 				GraphQLFieldDefinition listField = GraphQLFieldDefinition.newFieldDefinition()
-					.type(new GraphQLList(objectType))
+					.type(listType)
 					.name(name + "s")
 					.argument(listFetcher.validArguments())
 					.dataFetcher(listFetcher)

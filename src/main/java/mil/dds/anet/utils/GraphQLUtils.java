@@ -84,9 +84,9 @@ public class GraphQLUtils {
 		} else if (clazz != null && List.class.isAssignableFrom(clazz)) {
 			Type innerType = ((ParameterizedType)type).getActualTypeArguments()[0];
 			gType = new GraphQLList(getGraphQLTypeForJavaType(innerType));
-		} else if (DateTime.class.equals(clazz)) { 
+		} else if (DateTime.class.equals(clazz)) {
 			gType = new GraphQLDateTimeType();
-		} else if (clazz != null && ISearchQuery.class.isAssignableFrom(clazz)) { 
+		} else if (clazz != null && ISearchQuery.class.isAssignableFrom(clazz)) {
 			gType = getGraphQLTypeForSearch(clazz);
 		} else {
 			throw new RuntimeException("Type: " + type + " is not supported in GraphQL!");
@@ -104,6 +104,9 @@ public class GraphQLUtils {
 	}
 	
 	public static String lowerCaseFirstLetter(String str) { 
+		if (str.length() < 1) { 
+			System.out.println("wtf bbq");
+		}
 		return str.substring(0, 1).toLowerCase() + str.substring(1);
 	}
 	

@@ -1,7 +1,5 @@
 package mil.dds.anet.resources;
 
-import java.util.List;
-
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
@@ -25,7 +23,7 @@ import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Position;
-import mil.dds.anet.beans.Position.PositionType;
+import mil.dds.anet.beans.lists.AbstractAnetBeanList.PositionList;
 import mil.dds.anet.beans.search.PositionSearchQuery;
 import mil.dds.anet.database.PositionDao;
 import mil.dds.anet.graphql.GraphQLFetcher;
@@ -53,12 +51,13 @@ public class PositionResource implements IGraphQLResource {
 
 	@Override
 	public Class<Position> getBeanClass() { return Position.class; }
+	public Class<PositionList> getBeanListClass() { return PositionList.class; } 
 	
 	@GET
 	@GraphQLFetcher
 	@Path("/")
-	public List<Position> getAll(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
-		return dao.getAll(pageNum, pageSize);
+	public PositionList getAll(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
+		return new PositionList(pageNum, pageSize, dao.getAll(pageNum, pageSize));
 	}
 	
 	@GET
@@ -161,10 +160,10 @@ public class PositionResource implements IGraphQLResource {
 	
 	@GET
 	@Path("/{id}/associated")
-	public List<Position> getAssociatedTashkils(@PathParam("id") int positionId) { 
+	public PositionList getAssociatedTashkils(@PathParam("id") int positionId) { 
 		Position b = Position.createWithId(positionId);
 		
-		return dao.getAssociatedPositions(b);
+		return new PositionList(dao.getAssociatedPositions(b));
 	}
 	
 	@POST
@@ -183,22 +182,10 @@ public class PositionResource implements IGraphQLResource {
 		dao.deletePositionAssociation(a, b);
 		return Response.ok().build();
 	}
-	
-	@GET
-	@Path("/empty")
-	public List<Position> getEmptyPositions(@QueryParam("type") PositionType type) { 
-		return dao.getEmptyPositions(type);
-	}
-	
-	@GET
-	@Path("/byCode")
-	public List<Position> getByCode(@QueryParam("code") String code, @QueryParam("prefixMatch") @DefaultValue("false") Boolean prefixMatch, @QueryParam("type") PositionType type) {
-		return dao.getByCode(code, prefixMatch, type);
-	}
 
 	@GET
 	@Path("/search")
-	public List<Position> search(@Context HttpServletRequest request) {
+	public PositionList search(@Context HttpServletRequest request) {
 		try { 
 			return search(ResponseUtils.convertParamsToBean(request, PositionSearchQuery.class));
 		} catch (IllegalArgumentException e) { 
@@ -209,8 +196,8 @@ public class PositionResource implements IGraphQLResource {
 	@POST
 	@GraphQLFetcher
 	@Path("/search")
-	public List<Position> search(@GraphQLParam("query") PositionSearchQuery query) {
-		return dao.search(query);
+	public PositionList search(@GraphQLParam("query") PositionSearchQuery query) {
+		return new PositionList(query.getPageNum(), query.getPageSize(), dao.search(query));
 	}
 	
 }

@@ -46,6 +46,8 @@ public class PoamResource implements IGraphQLResource {
 	
 	@Override
 	public Class<Poam> getBeanClass() { return Poam.class; } 
+	@SuppressWarnings("rawtypes")
+	public Class<List> getBeanListClass() { return List.class; } 
 	
 	@Override
 	public String getDescription() { return "Poams"; } 

@@ -1,7 +1,5 @@
 package mil.dds.anet.resources;
 
-import java.util.List;
-
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +24,7 @@ import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Position.PositionType;
+import mil.dds.anet.beans.lists.AbstractAnetBeanList.PersonList;
 import mil.dds.anet.beans.search.PersonSearchQuery;
 import mil.dds.anet.database.PersonDao;
 import mil.dds.anet.graphql.GraphQLFetcher;
@@ -46,6 +45,7 @@ public class PersonResource implements IGraphQLResource {
 	
 	@Override
 	public Class<Person> getBeanClass() { return Person.class; } 
+	public Class<PersonList> getBeanListClass() { return PersonList.class; } 
 	
 	@Override
 	public String getDescription() { return "People"; } 
@@ -60,8 +60,8 @@ public class PersonResource implements IGraphQLResource {
 	@Timed
 	@GraphQLFetcher
 	@Path("/")
-	public List<Person> getAll(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
-		return dao.getAll(pageNum, pageSize);
+	public PersonList getAll(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
+		return new PersonList(pageNum, pageSize, dao.getAll(pageNum, pageSize));
 	}
 	
 	/**
@@ -175,14 +175,14 @@ public class PersonResource implements IGraphQLResource {
 	@Timed
 	@GraphQLFetcher
 	@Path("/search")
-	public List<Person> search(@GraphQLParam("query") PersonSearchQuery query) {
-		return dao.search(query);
+	public PersonList search(@GraphQLParam("query") PersonSearchQuery query) {
+		return new PersonList(query.getPageNum(), query.getPageSize(), dao.search(query));
 	}
 	
 	@GET
 	@Timed
 	@Path("/search")
-	public List<Person> search(@Context HttpServletRequest request) {
+	public PersonList search(@Context HttpServletRequest request) {
 		try { 
 			return search(ResponseUtils.convertParamsToBean(request, PersonSearchQuery.class));
 		} catch (IllegalArgumentException e) { 
@@ -205,8 +205,8 @@ public class PersonResource implements IGraphQLResource {
 	@Timed
 	@GraphQLFetcher
 	@Path("/recent")
-	public List<Person> recents(@Auth Person user) { 
-		return dao.getRecentPeople(user);
+	public PersonList recents(@Auth Person user) { 
+		return new PersonList(dao.getRecentPeople(user));
 	}
 	
 	@GET

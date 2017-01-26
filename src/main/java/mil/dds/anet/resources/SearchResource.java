@@ -92,5 +92,6 @@ public class SearchResource implements IGraphQLResource  {
 	public Class<? extends IGraphQLBean> getBeanClass() {
 		return SearchResults.class;
 	}
+	public Class<?> getBeanListClass() { return null; } 
 	
 }

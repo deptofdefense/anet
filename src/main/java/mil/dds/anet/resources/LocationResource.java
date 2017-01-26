@@ -98,5 +98,7 @@ public class LocationResource implements IGraphQLResource {
 
 	@Override
 	public Class<Location> getBeanClass() { return Location.class;}
+	@SuppressWarnings("rawtypes")
+	public Class<List> getBeanListClass() { return List.class; } 
 	
 }

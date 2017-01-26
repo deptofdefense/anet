@@ -4,13 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import mil.dds.anet.beans.search.ReportSearchQuery;
 
 public class ResponseUtils {
 

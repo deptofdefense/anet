@@ -35,6 +35,8 @@ public class GroupResource implements IGraphQLResource{
 	
 	@Override
 	public Class<Group> getBeanClass() { return Group.class; } 
+	@SuppressWarnings("rawtypes")
+	public Class<List> getBeanListClass() { return List.class; } 
 	
 	@Override
 	public String getDescription() { return "Groups"; } 

@@ -2,7 +2,6 @@ package mil.dds.anet.graphql;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -103,18 +102,15 @@ public class AnetResourceDataFetcher implements DataFetcher {
 	private boolean shouldUseMethod(Method m, boolean isListFetcher) { 
 		if (m.getReturnType().equals(resource.getBeanClass())) { 
 			return !isListFetcher; //Only use this if this is NOT a list fetcher 
-		} else if (List.class.isAssignableFrom(m.getReturnType())) { 
-			ParameterizedType pType = (ParameterizedType) m.getGenericReturnType();
-			Type type = pType.getActualTypeArguments()[0];
-			//This needs to be a List of the Bean class
-			if (type.equals(resource.getBeanClass())) { 
-				return isListFetcher; //Only use this if this IS a list fetcher.	
-			}
+		} else if (m.getReturnType().equals(resource.getBeanListClass())) { 
+			return isListFetcher; //Only use this if this IS a list fetcher.	
 		}
 		
 		throw new UnsupportedOperationException(
-			String.format("Unable to use method %s as GraphQLFetcher on resource %s because it does not return a %s or a List of those",
-				m.getName(), resource.getClass().getSimpleName(), resource.getBeanClass().getSimpleName()));
+			String.format("Unable to use method %s as GraphQLFetcher on resource %s because it does not return a %s or %s",
+				m.getName(), resource.getClass().getSimpleName(), 
+				resource.getBeanClass().getSimpleName(), 
+				resource.getBeanListClass().getSimpleName()));
 	}
 	
 	private void buildValidArgs(boolean isListFetcher) { 
