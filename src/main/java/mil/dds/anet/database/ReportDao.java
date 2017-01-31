@@ -202,10 +202,10 @@ public class ReportDao implements IAnetDao<Report> {
 	/* Returns reports that the given person can currently approve */
 	public List<Report> getReportsForMyApproval(Person p) {
 		return dbHandle.createQuery("SELECT " + REPORT_FIELDS + ", " + PersonDao.PERSON_FIELDS
-				+ "FROM reports, groupMemberships, approvalSteps, people "
-				+ "WHERE groupMemberships.personId = :personId "
-				+ "AND groupMemberships.groupId = approvalSteps.approverGroupId "
-				+ "AND approvalSteps.id = reports.approvalStepId "
+				+ "FROM reports, approvers, positions, people "
+				+ "WHERE positions.currentPersonId = :personId "
+				+ "AND approvers.positionId = positions.id "
+				+ "AND approvers.approvalStepId = reports.approvalStepId "
 				+ "AND reports.authorId = people.id")
 			.bind("personId", p.getId())
 			.map(new ReportMapper())

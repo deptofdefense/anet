@@ -1,6 +1,6 @@
 <html>
 <body>
-Hello ${approvalGroup.name}, 
+Hello ${approvalStepName}, 
 
 <div>A report in ANET is ready for your approval!:</div>
 <ul>

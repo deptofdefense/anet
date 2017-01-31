@@ -22,11 +22,9 @@ public class OrganizationDao implements IAnetDao<Organization> {
 	public static String ORGANIZATION_FIELDS = DaoUtils.buildFieldAliases(tableName, fields);
 	
 	Handle dbHandle;
-	GroupDao groupDao;
 	
-	public OrganizationDao(Handle dbHandle, GroupDao groupDao) { 
+	public OrganizationDao(Handle dbHandle) { 
 		this.dbHandle = dbHandle;
-		this.groupDao = groupDao;
 	}
 	
 	public List<Organization> getAll(int pageNum, int pageSize) {
