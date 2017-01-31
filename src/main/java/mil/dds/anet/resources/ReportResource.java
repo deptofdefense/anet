@@ -323,7 +323,7 @@ public class ReportResource implements IGraphQLResource {
 		dao.update(r);
 		
 		//Add the comment
-		if (comment != null && comment.getText().trim().length() > 0)  {
+		if (comment != null && comment.getText() != null && comment.getText().trim().length() > 0)  {
 			comment.setReportId(r.getId());
 			comment.setAuthor(approver);
 			engine.getCommentDao().insert(comment);
