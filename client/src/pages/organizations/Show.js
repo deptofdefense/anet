@@ -49,9 +49,7 @@ export default class OrganizationShow extends Page {
 				},
 				childrenOrgs { id, shortName, longName },
 				approvalSteps {
-					approverGroup {
-						id, name, members { id, name , position { id, name} }
-					}
+					id, name, approvers { id, name, person { id, name}}
 				},
 				reports(pageNum:0, pageSize:25) {
 					id, intent, engagementDate, keyOutcomesSummary, nextStepsSummary
@@ -210,7 +208,6 @@ export default class OrganizationShow extends Page {
 	}
 
 	renderPositionRow(position, other, otherIndex) {
-		console.log("rpw", position, other, otherIndex)
 		let key = position.id
 		let otherCodeCol, otherNameCol, positionCodeCol, positionNameCol
 		if (other) {
@@ -286,14 +283,14 @@ export default class OrganizationShow extends Page {
 			<ExpandedContent>
 				{approvalSteps && approvalSteps.map((step, idx) =>
 					<fieldset key={"step_" + idx}>
-						<legend>Step {idx + 1}: {step.approverGroup.name}</legend>
+						<legend>Step {idx + 1}: {step.name}</legend>
 						<Table>
 							<thead><tr><th>Name</th><th>Position</th></tr></thead>
 							<tbody>
-								{step.approverGroup.members.map(person =>
-									<tr key={person.id}>
-										<td><LinkTo person={person} /></td>
-										<td>{person.position && <LinkTo position={person.position} />}</td>
+								{step.approvers.map(position =>
+									<tr key={position.id}>
+										<td>{position.person && <LinkTo person={position.person} />}</td>
+										<td><LinkTo position={position} /></td>
 									</tr>
 								)}
 							</tbody>
@@ -306,10 +303,10 @@ export default class OrganizationShow extends Page {
 				{approvalSteps && approvalSteps.map((step, idx) =>
 					<Row key={idx}>
 						<Col md={3}>
-							<b>Step #{idx + 1}: {step.approverGroup.name}</b>
+							<b>Step #{idx + 1}: {step.name}</b>
 						</Col>
 						<Col md={4}>
-							{step.approverGroup.members.length} people
+							{step.approvers.length} people
 						</Col>
 					</Row>
 				)}

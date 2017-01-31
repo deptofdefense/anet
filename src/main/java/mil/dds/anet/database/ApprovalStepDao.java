@@ -138,14 +138,14 @@ public class ApprovalStepDao implements IAnetDao<ApprovalStep> {
 	public int addApprover(ApprovalStep step, Position position) { 
 		return dbHandle.createStatement("INSERT INTO approvers (approvalStepId, positionId) VALUES (:stepId, :positionId)")
 				.bind("stepId", step.getId())
-				.bind("personId", position.getId())
+				.bind("positionId", position.getId())
 				.execute();
 	}
 	
 	public int removeApprover(ApprovalStep step, Position position) { 
 		return dbHandle.createStatement("DELETE FROM approvers WHERE approvalStepId = :stepId AND personId = :positionId)")
 				.bind("stepId", step.getId())
-				.bind("personId", position.getId())
+				.bind("positionId", position.getId())
 				.execute();
 	}
 }
