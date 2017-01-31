@@ -134,12 +134,12 @@ export default class ReportForm extends Component {
 										<span style={{cursor: 'pointer'}}>⛔️</span>
 									</td>
 
-									<td className="primaryAttendee">
+									<td className="primary-attendee">
 										<Checkbox checked={person.primary} onChange={this.setPrimaryAttendee.bind(this, person)} />
 									</td>
 
 									<td>
-										<img src={person.iconUrl()} alt={person.role} height={20} width={20} className="personIcon" />
+										<img src={person.iconUrl()} alt={person.role} height={20} width={20} className="person-icon" />
 										{person.name} {person.rank && person.rank.toUpperCase()}
 									</td>
 									<td><LinkTo position={person.position} /></td>

@@ -217,11 +217,11 @@ export default class ReportShow extends Page {
 							<tbody>
 								{Person.map(report.attendees, person =>
 									<tr key={person.id}>
-										<td className="primaryAttendee">
+										<td className="primary-attendee">
 											{person.primary && <Checkbox readOnly checked />}
 										</td>
 										<td>
-											<img src={person.iconUrl()} alt={person.role} height={20} width={20} className="personIcon" />
+											<img src={person.iconUrl()} alt={person.role} height={20} width={20} className="person-icon" />
 											<LinkTo person={person} />
 										</td>
 										<td><LinkTo position={person.position} /></td>

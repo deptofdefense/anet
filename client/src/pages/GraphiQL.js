@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 
 import Breadcrumbs from 'components/Breadcrumbs'
 
-var GraphiQL = null
+var GraphiQL = null/* required later */
 
 export default class extends Component {
 	static pageProps = {
