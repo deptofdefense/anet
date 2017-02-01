@@ -62,6 +62,8 @@ if (dbDriver == "sqlserver") {
 	run.environment("ANET_DB_DATE_CLASS", "text")
 }
 
+test.environment = run.environment
+
 run.args = ["server","anet.yml"]
 
 task dbStatus(dependsOn: 'compileJava', type: JavaExec) {
