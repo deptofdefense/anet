@@ -182,7 +182,7 @@ public class Person extends AbstractAnetBean implements Principal{
 	
 	@Override
 	public String toString() { 
-		return String.format("%s (%s)", name, emailAddress);
+		return String.format("[id:%d, name:%s, emailAddress:%s]", id, name, emailAddress);
 	}
 	
 	public static Person createWithId(Integer id) {

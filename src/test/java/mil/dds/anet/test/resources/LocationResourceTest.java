@@ -13,6 +13,7 @@ import javax.ws.rs.core.Response;
 import org.junit.Test;
 
 import io.dropwizard.client.JerseyClientBuilder;
+import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.geo.Location;
 
 public class LocationResourceTest extends AbstractResourceTest {
@@ -25,10 +26,11 @@ public class LocationResourceTest extends AbstractResourceTest {
 	
 	
 	@Test
-	public void locationTest() throws UnsupportedEncodingException { 
+	public void locationTest() throws UnsupportedEncodingException {
+		Person arthur = getArthurDmin();
 		Location l = Location.create("The Boat Dock", 12.34,-56.78);
 		
-		Location created = httpQuery("/api/locations/new")
+		Location created = httpQuery("/api/locations/new", arthur)
 				.post(Entity.json(l), Location.class);
 		assertThat(created.getName()).isEqualTo(l.getName());
 		assertThat(created).isNotEqualTo(l);
@@ -47,7 +49,7 @@ public class LocationResourceTest extends AbstractResourceTest {
 		
 		//Update
 		created.setName("Down by the Bay");
-		Response resp = httpQuery("/api/locations/update").post(Entity.json(created));
+		Response resp = httpQuery("/api/locations/update", arthur).post(Entity.json(created));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
 		Location returned = httpQuery(String.format("/api/locations/%d", created.getId())).get(Location.class);

@@ -32,6 +32,7 @@ import mil.dds.anet.database.OrganizationDao;
 import mil.dds.anet.graphql.GraphQLFetcher;
 import mil.dds.anet.graphql.GraphQLParam;
 import mil.dds.anet.graphql.IGraphQLResource;
+import mil.dds.anet.utils.AnetAuditLogger;
 import mil.dds.anet.utils.AuthUtils;
 import mil.dds.anet.utils.DaoUtils;
 import mil.dds.anet.utils.ResponseUtils;
@@ -94,6 +95,7 @@ public class OrganizationResource implements IGraphQLResource {
 			}
 		}
 		
+		AnetAuditLogger.log("Organization {} created by {}", org, user);
 		return created; 
 	}
 	
@@ -149,6 +151,7 @@ public class OrganizationResource implements IGraphQLResource {
 			}
 		}
 		
+		AnetAuditLogger.log("Organization {} edited by {}", org, user);
 		return (numRows == 1) ? Response.ok().build() : Response.status(Status.NOT_FOUND).build();
 	}
 	
