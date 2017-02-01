@@ -110,7 +110,6 @@ export default class PositionForm extends Component {
 							</tbody>
 						</Table>
 					</Form.Field>
-					<div className="todo">Should be able to search by person name too, but only people in positions.... and then pull up their position... </div>
 				</fieldset>
 
 				<fieldset>

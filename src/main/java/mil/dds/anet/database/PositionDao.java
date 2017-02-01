@@ -321,6 +321,7 @@ public class PositionDao implements IAnetDao<Position> {
 		//Otherwise the person with that ID was placed in this position, and the previous person removed.
 		
 		List<PersonPositionHistory> history = new LinkedList<PersonPositionHistory>();
+		if (results.size() == 0) { return history; }
 		PersonPositionHistory curr = new PersonPositionHistory();
 		for (Map<String,Object> row : results) { 
 			Integer personId = (Integer) row.get("personId");
@@ -340,7 +341,9 @@ public class PositionDao implements IAnetDao<Position> {
 			}
 			
 		}
-		history.add(curr);
+		if (DaoUtils.getId(curr.getPerson()) != null) { 
+			history.add(curr);
+		}
 		return history;
 	}
 
