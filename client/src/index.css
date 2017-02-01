@@ -3,6 +3,10 @@ body {
 	margin-top: 152px;
 }
 
+.container {
+	max-width: 1024px;
+}
+
 h5 {
 	text-decoration: underline;
 }
