@@ -47,12 +47,12 @@
 		window.ANET_DATA = {
 			currentUser: {
 				id: "${currentUser.id}",
-				name: "${currentUser.name}",
-				role: "${currentUser.role}",
+				name: "${currentUser.name!}",
+				role:"<#if (currentUser.position)?? >${currentUser.position.type!'ADVISOR'}<#else>ADVISOR</#if>",
 			},
 			adminSettings: [
-				{key: "SECURITY_BANNER_TEXT", value: "${securityBannerText}"},
-				{key: "SECURITY_BANNER_COLOR", value: "${securityBannerColor}"},
+				{key: "SECURITY_BANNER_TEXT", value: "${securityBannerText!\"Set SECURITY_BANNER_TEXT adminSetting\"}"},
+				{key: "SECURITY_BANNER_COLOR", value: "${securityBannerColor!\"green\"}"},
 			],
 		}
 		</script>

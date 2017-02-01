@@ -1,39 +1,118 @@
-import React, {Component} from 'react'
-import {Button, Modal} from 'react-bootstrap'
+import React, {PropTypes} from 'react'
+import Page from 'components/Page'
+import {Grid, Row, Col, FormControl, FormGroup, ControlLabel} from 'react-bootstrap'
+import SavedSearchTable from 'components/SavedSearchTable'
+import {Link} from 'react-router'
+import moment from 'moment'
 
 import Breadcrumbs from 'components/Breadcrumbs'
+import API from 'api'
+import autobind from 'autobind-decorator'
 
-export default class Home extends Component {
+export default class Home extends Page {
+	static contextTypes = {
+		app: PropTypes.object.isRequired,
+	}
+
 	constructor(props) {
 		super(props)
-		this.state = {showModal: false}
+		this.state = {
+			pendingMe: null,
+			myOrgToday: null,
+			myReportsToday: null,
+			upcomingEngagements: null,
+			savedSearches: [],
+			selectedSearchId: null
+		}
+	}
+
+	fetchData() {
+		let futureQuery = { engagementDateStart: moment().add(1, 'days').hour(0).valueOf() }
+		API.query(/*GraphQL */`
+			pendingMe: reports(f:pendingMyApproval) { id },
+			myOrg: reports(f:myOrgToday) { id },
+			myReports: reports(f:myReportsToday) {id },
+			savedSearches: savedSearchs(f:mine) {id, name}
+			upcomingEngagements: reports(f:search, query: $futureQuery) { id }
+		`, {futureQuery}, "($futureQuery: ReportSearchQuery)")
+		.then(data => {
+			let selectedSearchId = data.savedSearches && data.savedSearches.length > 0 ? data.savedSearches[0].id : null;
+			this.setState({
+				pendingMe: data.pendingMe,
+				myOrgToday: data.myOrg,
+				myReportsToday: data.myReports,
+				savedSearches: data.savedSearches,
+				upcomingEngagements: data.upcomingEngagements,
+				selectedSearchId: selectedSearchId
+			});
+		})
 	}
 
 	render() {
+		let {pendingMe, myOrgToday, myReportsToday, upcomingEngagements} = this.state
+		let currentUser = this.context.app.state.currentUser;
+		let org = currentUser && currentUser.position && currentUser.position.organization
+
 		return (
 			<div>
 				<Breadcrumbs />
 
-				<Button bsStyle="primary" onClick={this.openModal}>Open Modal</Button>
+				<fieldset className="home-tile-row">
+					<legend>My ANET Snapshot</legend>
+					<Grid fluid>
+						<Row>
+							<Col md={3} className="home-tile">
+								<Link to={"/search?type=reports&pendingApprovalOf=" + currentUser.id}>
+									<h1>{pendingMe && pendingMe.length}</h1>
+									Pending My Approval
+								</Link>
+							</Col>
+							<Col md={3} className="home-tile" >
+								{org &&
+									<Link to={"/search?type=reports&authorOrgId=" + org.id}>
+										<h1>{myOrgToday && myOrgToday.length}</h1>
+										{org.shortName}s recent reports
+									</Link>
+								}
+							</Col>
+							<Col md={3} className="home-tile" >
+								<Link to={"/search?type=reports&authorId=" + currentUser.id}>
+									<h1>{myReportsToday && myReportsToday.length}</h1>
+									My reports in last 24 hrs
+								</Link>
+							</Col>
+							<Col md={3} className="home-tile" >
+								<Link to={"/search?type=reports&pageSize=100&engagementDateStart=" + moment().add(1, 'days').hour(0).valueOf() } >
+									<h1>{upcomingEngagements && upcomingEngagements.length}</h1>
+									Upcoming Engagements
+								</Link>
+							</Col>
+						</Row>
+					</Grid>
+				</fieldset>
 
-				<Modal show={this.state.showModal} onHide={this.closeModal}>
-					<Modal.Header closeButton>
-						<Modal.Title>Header</Modal.Title>
-					</Modal.Header>
+				<fieldset>
+					<legend>Subscribed Searches</legend>
+					<FormGroup controlId="savedSearchSelect">
+						<ControlLabel>Select a Saved Search</ControlLabel>
+						<FormControl componentClass="select" onChange={this.onSaveSearchSelect}>
+							{this.state.savedSearches && this.state.savedSearches.map( savedSearch =>
+								<option value={savedSearch.id} key={savedSearch.id}>{savedSearch.name}</option>
+							)}
+						</FormControl>
+					</FormGroup>
 
-					<Modal.Body>
-						This is the modal body.
-					</Modal.Body>
-				</Modal>
+					{this.state.selectedSearchId &&
+						<SavedSearchTable searchId={this.state.selectedSearchId} />
+					}
+				</fieldset>
 			</div>
 		)
 	}
 
-	openModal = () => {
-		this.setState({showModal: true})
-	}
-
-	closeModal = () => {
-		this.setState({showModal: false})
+	@autobind
+	onSaveSearchSelect(event) {
+		let value = event && event.target ? event.target.value : event
+		this.setState({selectedSearchId: value});
 	}
 }

@@ -3,6 +3,7 @@ import Page from 'components/Page'
 
 import Breadcrumbs from 'components/Breadcrumbs'
 import ReportTable from 'components/ReportTable'
+import ScrollableFieldset from 'components/ScrollableFieldset'
 
 import API from 'api'
 import {Report} from 'models'
@@ -16,7 +17,7 @@ export default class ReportsIndex extends Page {
 	fetchData() {
 		API.query(/* GraphQL */`
 			reports(f:getAll, pageSize:100, pageNum:0) {
-				id, intent, state
+				id, intent, state, engagementDate
 				author {
 					id
 					name
@@ -29,7 +30,9 @@ export default class ReportsIndex extends Page {
 		return (
 			<div>
 				<Breadcrumbs items={[['My reports', '/reports']]} />
-				<ReportTable reports={this.state.reports} showAuthors={true} />
+				<ScrollableFieldset title="All reports" height={500}>
+					<ReportTable reports={this.state.reports} showAuthors={true} showStatus={true}/>
+				</ScrollableFieldset>
 			</div>
 		)
 	}

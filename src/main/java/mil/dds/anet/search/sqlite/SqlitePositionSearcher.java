@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.skife.jdbi.v2.Handle;
 
+import com.google.common.collect.ImmutableList;
+
 import jersey.repackaged.com.google.common.base.Joiner;
 import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.search.PositionSearchQuery;
@@ -24,12 +26,22 @@ public class SqlitePositionSearcher implements IPositionSearcher {
 		Map<String,Object> sqlArgs = new HashMap<String,Object>();
 		String commonTableExpression = null;
 		
+		if (query.getMatchPersonName() != null && query.getMatchPersonName()) { 
+			sql.append(" LEFT JOIN people ON positions.currentPersonId = people.id ");
+		}
+		
 		sql.append(" WHERE ");
 		List<String> whereClauses = new LinkedList<String>();
 		
 		String text = query.getText();
 		if (text != null && text.trim().length() > 0) {
-			whereClauses.add("(name LIKE '%' || :text || '%')");
+			if (query.getMatchPersonName() != null && query.getMatchPersonName()) { 
+				whereClauses.add("((positions.name LIKE '%' || :text || '%' OR positions.code LIKE '%' || :text || '%') OR (people.name LIKE '%' || :text || '%'))");
+			} else { 
+				whereClauses.add("(name LIKE '%' || :text || '%' OR code LIKE '%' || :text || '%')");
+			}
+			
+			
 			sqlArgs.put("text", text);
 		}
 		
@@ -65,9 +77,11 @@ public class SqlitePositionSearcher implements IPositionSearcher {
 			sqlArgs.put("locationId", query.getLocationId());
 		}
 		
+		if (whereClauses.size() == 0) { return ImmutableList.of(); }
+		
 		sql.append(Joiner.on(" AND ").join(whereClauses));
 		
-		sql.append(")");
+		sql.append(" LIMIT :limit OFFSET :offset)");
 		
 		if (commonTableExpression != null) { 
 			sql.insert(0, commonTableExpression);
@@ -75,6 +89,8 @@ public class SqlitePositionSearcher implements IPositionSearcher {
 		
 		return dbHandle.createQuery(sql.toString())
 			.bindFromMap(sqlArgs)
+			.bind("offset", query.getPageSize() * query.getPageNum())
+			.bind("limit", query.getPageSize())
 			.map(new PositionMapper())
 			.list();
 	}

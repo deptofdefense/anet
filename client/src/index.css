@@ -15,6 +15,10 @@ button {
 	z-index:2;
 }
 
+input[type=checkbox][readonly] {
+	cursor: not-allowed;
+}
+
 fieldset {
 	background: #fff;
 	border: 1px solid #e0e0e0;
@@ -37,6 +41,18 @@ fieldset legend small {
 	top: 16px;
 	right: 4px;
 	font-size: 1.2rem;
+}
+
+fieldset.collapsable {
+	background: none;
+	border: none;
+}
+fieldset.collapsable legend hr {
+	border: 1px solid #e0e0e0;
+	margin-top: 10px;
+}
+fieldset.collapsable legend div.collapsableToggle {
+	margin-right: 5px;
 }
 
 .shortcut-list {
@@ -93,4 +109,57 @@ fieldset legend small {
 
 .todo {
 	background-color: red;
+}
+
+.home-tile-row {
+	padding: 0 0 0 0
+}
+
+.home-tile {
+	text-align: center;
+	color:#5c5c5c;
+	padding-top:20px;
+	padding-bottom:20px;
+}
+.home-tile a {
+	color:#5c5c5c;
+	text-decoration: none;
+}
+.home-tile h1 {
+	font-weight: 900;
+}
+.home-tile:hover {
+	background-color: #dae3ee;
+}
+
+.person-icon {
+	margin-right:4px;
+}
+
+.primary-attendee .checkbox {
+	padding: 0;
+	margin: 0;
+	text-align: center;
+}
+
+.loading .anet section {
+	visibility: hidden;
+}
+
+.loading .anet section:before {
+	content: "Loading...";
+	visibility: visible;
+	font-size: 2rem;
+}
+
+.orgDetailsNav li {
+	padding-left: 30px;
+}
+
+.orgDetailsNav li { 
+	border-left: 4px solid rgba(0,0,0,0) 
+}
+
+.orgDetailsNav li.active  { 
+	border-left:4px solid #1772B8;
 }

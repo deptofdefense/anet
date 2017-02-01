@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.skife.jdbi.v2.Handle;
 
+import com.google.common.collect.ImmutableList;
+
 import jersey.repackaged.com.google.common.base.Joiner;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.search.OrganizationSearchQuery;
@@ -28,9 +30,9 @@ public class MssqlOrganizationSearcher implements IOrganizationSearcher {
 		
 		String text = query.getText();
 		if (text != null && text.trim().length() > 0) {
-			text = "\"" + text + "*\"";
-			whereClauses.add("CONTAINS(name, :text)");
-			sqlArgs.put("text", text);
+			whereClauses.add("(CONTAINS((shortName, longName), :text) OR  shortName LIKE :likeQuery)");
+			sqlArgs.put("text", "\"" + text + "*\"");
+			sqlArgs.put("likeQuery", text + "%");
 		}
 		
 		if (query.getType() != null) { 
@@ -38,12 +40,18 @@ public class MssqlOrganizationSearcher implements IOrganizationSearcher {
 			sqlArgs.put("type", DaoUtils.getEnumId(query.getType()));
 		}
 		
+		if (whereClauses.size() == 0) { 
+			return ImmutableList.of();
+		}
+		
 		sql.append(Joiner.on(" AND ").join(whereClauses));
 		
-		sql.append(")");
+		sql.append(" ORDER BY createdAt DESC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY)");
 		
 		return dbHandle.createQuery(sql.toString())
 			.bindFromMap(sqlArgs)
+			.bind("offset", query.getPageSize() * query.getPageNum())
+			.bind("limit", query.getPageSize())
 			.map(new OrganizationMapper())
 			.list();
 	}

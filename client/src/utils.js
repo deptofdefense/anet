@@ -6,6 +6,16 @@ export default {
 	pluralize,
 	resourceize: function(string) {
 		return pluralize(changeCase.camel(string))
+	},
+	createUrlParams: function (obj) {
+		let str = "";
+		Object.forEach(obj, (key, val) => {
+			if (str !== "") {
+				str += "&";
+			}
+			str += key + "=" + encodeURIComponent(val);
+		})
+		return str;
 	}
 }
 
@@ -27,7 +37,7 @@ Object.get = function(source, keypath) {
 	while (keys[0]) {
 		let key = keys.shift()
 		source = source[key]
-		if (typeof source === 'undefined')
+		if (typeof source === 'undefined' || source === null)
 			return source
 	}
 	return source

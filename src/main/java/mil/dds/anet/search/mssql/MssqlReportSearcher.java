@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.skife.jdbi.v2.Handle;
 
+import com.google.common.collect.ImmutableList;
+
 import jersey.repackaged.com.google.common.base.Joiner;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.search.ReportSearchQuery;
@@ -35,7 +37,7 @@ public class MssqlReportSearcher implements IReportSearcher {
 		String text = query.getText();
 		if (text != null && text.trim().length() > 0) {
 			text = "\"" + text + "*\"";
-			whereClauses.add("CONTAINS ((text, intent), :text)");
+			whereClauses.add("CONTAINS ((text, intent, keyOutcomesSummary, keyOutcomes, nextStepsSummary, nextSteps), :text)");
 			args.put("text", text);
 		}
 		
@@ -46,6 +48,15 @@ public class MssqlReportSearcher implements IReportSearcher {
 		if (query.getEngagementDateEnd() != null) { 
 			whereClauses.add("reports.engagementDate <= :endDate");
 			args.put("endDate", query.getEngagementDateEnd());	
+		}
+		
+		if (query.getCreatedAtStart() != null) { 
+			whereClauses.add("reports.createdAt >= :startCreatedAt");
+			args.put("startCreatedAt", query.getCreatedAtStart());
+		}
+		if (query.getCreatedAtEnd() != null) { 
+			whereClauses.add("reports.createdAt <= :endCreatedAt");
+			args.put("endCreatedAt", query.getCreatedAtEnd());
 		}
 		
 		if (query.getAttendeeId() != null) { 
@@ -92,9 +103,18 @@ public class MssqlReportSearcher implements IReportSearcher {
 			args.put("locationId", query.getLocationId());
 		}
 		
+		if (query.getPendingApprovalOf() != null) { 
+			whereClauses.add("reports.approvalStepId IN "
+				+ "(SELECT id from approvers where positionId IN "
+				+ "(SELECT id FROM positions where currentPersonId = :approverId))");
+			args.put("approverId", query.getPendingApprovalOf());
+		}
+		
+		if (whereClauses.size() == 0) { return ImmutableList.of(); }
+		
 		sql.append(" WHERE ");
 		sql.append(Joiner.on(" AND ").join(whereClauses));
-		sql.append(")");
+		sql.append(" ORDER BY reports.createdAt DESC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY)");
 		
 		if (commonTableExpression != null) { 
 			sql.insert(0, commonTableExpression);
@@ -102,6 +122,8 @@ public class MssqlReportSearcher implements IReportSearcher {
 		
 		return dbHandle.createQuery(sql.toString())
 				.bindFromMap(args)
+				.bind("offset", query.getPageSize() * query.getPageNum())
+				.bind("limit", query.getPageSize())
 				.map(new ReportMapper())
 				.list();
 	}

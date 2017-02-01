@@ -107,9 +107,6 @@ module.exports = {
         include: paths.appSrc,
         loader: 'babel',
         query: {
-          presets: ['stage-1'],
-          plugins: ['transform-decorators-legacy'],
-
           // This is a feature of `babel-loader` for webpack (not Babel itself).
           // It enables caching results in ./node_modules/.cache/react-scripts/
           // directory for faster rebuilds. We use findCacheDir() because of:
@@ -195,7 +192,9 @@ module.exports = {
     // to restart the development server for Webpack to discover it. This plugin
     // makes the discovery automatic so you don't have to restart.
     // See https://github.com/facebookincubator/create-react-app/issues/186
-    new WatchMissingNodeModulesPlugin(paths.appNodeModules)
+    new WatchMissingNodeModulesPlugin(paths.appNodeModules),
+
+    new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en|uk/)
   ],
   // Some libraries import Node modules but don't use them in the browser.
   // Tell Webpack to provide empty mocks for them so importing them works.

@@ -5,6 +5,13 @@ public class PoamSearchQuery implements ISearchQuery {
 	String text;
 	Integer responsibleOrgId;
 	String category;
+	int pageNum;
+	int pageSize;
+	
+	public PoamSearchQuery() { 
+		this.pageNum = 0;
+		this.pageSize = 10;
+	}
 	
 	public String getText() {
 		return text;
@@ -30,6 +37,24 @@ public class PoamSearchQuery implements ISearchQuery {
 		this.category = category;
 	}
 
+	@Override
+	public int getPageNum() {
+		return pageNum;
+	}
+	@Override
+	public void setPageNum(int pageNum) {
+		this.pageNum = pageNum;
+	}
+	@Override
+	public int getPageSize() {
+		return pageSize;
+	}
+	@Override
+	public void setPageSize(int pageSize) {
+		if (pageSize == 0) { return; } // that makes no sense. 
+		this.pageSize = pageSize;
+	}
+	
 	public static PoamSearchQuery withText(String text) {
 		PoamSearchQuery q = new PoamSearchQuery();
 		q.setText(text);

@@ -18,10 +18,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.codahale.metrics.annotation.Timed;
+
 import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.ApprovalStep;
-import mil.dds.anet.beans.Group;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Organization.OrganizationType;
 import mil.dds.anet.beans.Person;
@@ -56,6 +57,7 @@ public class OrganizationResource implements IGraphQLResource {
 	public String getDescription() { return "Organizations"; } 
 	
 	@GET
+	@Timed
 	@GraphQLFetcher
 	@Path("/")
 	public List<Organization> getAllOrgs(@DefaultValue("0") @QueryParam("pageNum") Integer pageNum, @DefaultValue("100") @QueryParam("pageSize") Integer pageSize) {
@@ -63,6 +65,7 @@ public class OrganizationResource implements IGraphQLResource {
 	} 
 
 	@GET
+	@Timed
 	@GraphQLFetcher
 	@Path("/topLevel")
 	public List<Organization> getTopLevelOrgs(@QueryParam("type") OrganizationType type) { 
@@ -70,6 +73,7 @@ public class OrganizationResource implements IGraphQLResource {
 	}
 	
 	@POST
+	@Timed
 	@Path("/new")
 	@RolesAllowed("ADMINISTRATOR")
 	public Organization createNewOrganization(Organization org, @Auth Person user) {
@@ -86,8 +90,6 @@ public class OrganizationResource implements IGraphQLResource {
 			//Create the approval steps 
 			for (ApprovalStep step : org.getApprovalSteps()) { 
 				step.setAdvisorOrganizationId(created.getId());
-				Group createdGroup = engine.getGroupDao().insert(step.getApproverGroup());
-				step.setApproverGroup(createdGroup);
 				engine.getApprovalStepDao().insertAtEnd(step);
 			}
 		}
@@ -96,6 +98,7 @@ public class OrganizationResource implements IGraphQLResource {
 	}
 	
 	@GET
+	@Timed
 	@GraphQLFetcher
 	@Path("/{id}")
 	public Organization getById(@PathParam("id") int id) {
@@ -103,6 +106,7 @@ public class OrganizationResource implements IGraphQLResource {
 	}
 	
 	@POST
+	@Timed
 	@Path("/update")
 	@RolesAllowed("SUPER_USER")
 	public Response updateOrganization(Organization org, @Auth Person user) { 
@@ -127,9 +131,8 @@ public class OrganizationResource implements IGraphQLResource {
 					if (step.getId() != null) { 
 						// if it has an ID then it already exists, so check the group to update name or members. 
 						ApprovalStep existingStep = Utils.getById(existingSteps, step.getId());
-						updateGroup(step.getApproverGroup(), existingStep.loadApproverGroup());
+						ApprovalStepResource.updateStep(step, existingStep);
 					} else {
-						step.setApproverGroup(engine.getGroupDao().insert(step.getApproverGroup()));
 						step = engine.getApprovalStepDao().insert(step);
 					}
 				}
@@ -149,19 +152,10 @@ public class OrganizationResource implements IGraphQLResource {
 		return (numRows == 1) ? Response.ok().build() : Response.status(Status.NOT_FOUND).build();
 	}
 	
-	//Helper method that diffs the name/members of a group and updates them. 
-	private void updateGroup(Group newGroup, Group oldGroup) {
-		newGroup.setId(oldGroup.getId()); //Always want to make changes to the existing group
-		if (newGroup.getName().equals(oldGroup.getName()) == false) { 
-			engine.getGroupDao().update(newGroup);
-		}
-	
-		Utils.addRemoveElementsById(oldGroup.getMembers(), newGroup.getMembers(), 
-				newPerson -> engine.getGroupDao().addPersonToGroup(newGroup, newPerson), 
-				oldPersonId -> engine.getGroupDao().removePersonFromGroup(newGroup, Person.createWithId(oldPersonId)));
-	}
+
 	
 	@POST
+	@Timed
 	@GraphQLFetcher
 	@Path("/search")
 	public List<Organization> search(@GraphQLParam("query") OrganizationSearchQuery query ) {
@@ -169,6 +163,7 @@ public class OrganizationResource implements IGraphQLResource {
 	}
 	
 	@GET
+	@Timed
 	@Path("/search")
 	public List<Organization> search(@Context HttpServletRequest request) {
 		try { 
@@ -179,12 +174,14 @@ public class OrganizationResource implements IGraphQLResource {
 	}
 	
 	@GET
+	@Timed
 	@Path("/{id}/children")
 	public List<Organization> getChildren(@PathParam("id") Integer id) { 
 		return dao.getByParentOrgId(id, null);
 	}
 	
 	@GET
+	@Timed
 	@Path("/{id}/poams")
 	public List<Poam> getPoams(@PathParam("id") Integer orgId) { 
 		return AnetObjectEngine.getInstance().getPoamDao().getPoamsByOrganizationId(orgId);

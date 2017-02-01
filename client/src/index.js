@@ -4,15 +4,10 @@ import './index.css'
 import 'core-js/shim'
 import './utils'
 
-import 'leaflet/dist/leaflet.css'
-import 'leaflet/dist/leaflet'
-
 import React from 'react'
 import ReactDOM from 'react-dom'
 import {Router, Route, IndexRoute, browserHistory} from 'react-router'
 import {InjectablesProvider} from 'react-injectables'
-
-import NProgress from 'nprogress'
 
 import App from './pages/App'
 import Home from './pages/Home'
@@ -31,7 +26,10 @@ import PoamShow from './pages/poams/Show'
 import PoamNew from './pages/poams/New'
 import PoamEdit from './pages/poams/Edit'
 
-import OrganizationShow from './pages/organizations/Show'
+import OrganizationDetails from './pages/organizations/Details'
+import OrganizationApprovals from './pages/organizations/Approvals'
+import OrganizationLaydown from './pages/organizations/Laydown'
+import OrganizationReports from './pages/organizations/Reports'
 import OrganizationNew from './pages/organizations/New'
 import OrganizationEdit from './pages/organizations/Edit'
 
@@ -42,21 +40,15 @@ import PositionShow from './pages/positions/Show'
 import PositionEdit from './pages/positions/Edit'
 import PositionNew from './pages/positions/New'
 
+import RollupShow from './pages/rollup/Show'
+
 import AdminIndex from './pages/admin/Index'
 
 import GraphiQL from './pages/GraphiQL'
 
-function showLoader() {
-	NProgress.start()
-	setTimeout(function() {
-		if (NProgress.status < 0.5)
-			NProgress.done()
-	})
-}
-
 ReactDOM.render((
 	<InjectablesProvider>
-		<Router history={browserHistory} onUpdate={showLoader}>
+		<Router history={browserHistory}>
 			<Route path="/" component={App}>
 				<IndexRoute component={Home} />
 				<Route path="search" component={Search} />
@@ -77,7 +69,10 @@ ReactDOM.render((
 				<Route path="organizations">
 					<Route path="new" component={OrganizationNew} />
 					<Route path=":id/edit" component={OrganizationEdit} />
-					<Route path=":id" component={OrganizationShow} />
+					<Route path=":id" component={OrganizationDetails} />
+					<Route path=":id/reports" component={OrganizationReports} />
+					<Route path=":id/laydown" component={OrganizationLaydown} />
+					<Route path=":id/approvals" component={OrganizationApprovals} />
 				</Route>
 
 				<Route path="locations">
@@ -96,6 +91,8 @@ ReactDOM.render((
 					<Route path=":id/edit" component={PoamEdit} />
 					<Route path=":id" component={PoamShow} />
 				</Route>
+
+				<Route path="rollup" component={RollupShow} />
 
 				<Route path="graphiql" component={GraphiQL} />
 

@@ -7,8 +7,11 @@ import java.util.Map;
 
 import org.skife.jdbi.v2.Handle;
 
+import com.google.common.collect.ImmutableList;
+
 import jersey.repackaged.com.google.common.base.Joiner;
 import mil.dds.anet.beans.Position;
+import mil.dds.anet.beans.Position.PositionType;
 import mil.dds.anet.beans.search.PositionSearchQuery;
 import mil.dds.anet.database.PositionDao;
 import mil.dds.anet.database.mappers.PositionMapper;
@@ -24,19 +27,34 @@ public class MssqlPositionSearcher implements IPositionSearcher {
 		Map<String,Object> sqlArgs = new HashMap<String,Object>();
 		String commonTableExpression = null;
 		
+		if (query.getMatchPersonName() != null && query.getMatchPersonName()) { 
+			sql.append(" LEFT JOIN people ON positions.currentPersonId = people.id ");
+		}
+		
 		sql.append(" WHERE ");
 		List<String> whereClauses = new LinkedList<String>();
 		
 		String text = query.getText();
 		if (text != null && text.trim().length() > 0) {
 			text = "\"" + text + "*\"";
-			whereClauses.add("CONTAINS((name, code), :text)");
+			if (query.getMatchPersonName() != null && query.getMatchPersonName()) { 
+				whereClauses.add("(CONTAINS((positions.name, positions.code), :text) OR (CONTAINS(people.name, :text)))");
+			} else { 
+				whereClauses.add("CONTAINS((name, code), :text)");
+			}
 			sqlArgs.put("text", text);
 		}
 		
 		if (query.getType() != null) { 
-			whereClauses.add("positions.type = :type");
-			sqlArgs.put("type", DaoUtils.getEnumId(query.getType()));
+			if (PositionType.ADVISOR.equals(query.getType())) { 
+				whereClauses.add("positions.type IN (:advisor, :superUser, :admin)");
+				sqlArgs.put("advisor", PositionType.ADVISOR.ordinal());
+				sqlArgs.put("superUser", PositionType.SUPER_USER.ordinal());
+				sqlArgs.put("admin", PositionType.ADMINISTRATOR.ordinal());
+			} else { 
+				whereClauses.add("positions.type = :type");
+				sqlArgs.put("type", DaoUtils.getEnumId(query.getType()));
+			}
 		}
 		
 		if (query.getOrganizationId() != null) { 
@@ -66,9 +84,11 @@ public class MssqlPositionSearcher implements IPositionSearcher {
 			sqlArgs.put("locationId", query.getLocationId());
 		}
 		
+		if (whereClauses.size() == 0) { return ImmutableList.of(); }
+		
 		sql.append(Joiner.on(" AND ").join(whereClauses));
 		
-		sql.append(")");
+		sql.append(" ORDER BY positions.createdAt DESC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY )");
 		
 		if (commonTableExpression != null) { 
 			sql.insert(0, commonTableExpression);
@@ -76,6 +96,8 @@ public class MssqlPositionSearcher implements IPositionSearcher {
 		
 		return dbHandle.createQuery(sql.toString())
 			.bindFromMap(sqlArgs)
+			.bind("offset", query.getPageSize() * query.getPageNum())
+			.bind("limit", query.getPageSize())
 			.map(new PositionMapper())
 			.list();
 	}

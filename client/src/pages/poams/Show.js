@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 import {DropdownButton, MenuItem} from 'react-bootstrap'
 
@@ -10,10 +10,11 @@ import History from 'components/History'
 
 import API from 'api'
 import {Poam} from 'models'
+import Messages, {setMessages} from 'components/Messages'
 
 export default class PoamShow extends Page {
 	static contextTypes = {
-		app: React.PropTypes.object.isRequired,
+		app: PropTypes.object.isRequired,
 	}
 	constructor(props) {
 		super(props)
@@ -25,6 +26,7 @@ export default class PoamShow extends Page {
 				responsibleOrg: props.params.responsibleOrg
 			}),
 		}
+		setMessages(props,this.state)
 	}
 
 	fetchData(props) {
@@ -33,7 +35,7 @@ export default class PoamShow extends Page {
 				id,
 				shortName,
 				longName,
-				responsibleOrg {id,name}
+				responsibleOrg {id, shortName, longName}
 			}
 		`).then(data => {
             this.setState({
@@ -53,17 +55,22 @@ export default class PoamShow extends Page {
 		return (
 			<div>
 				<Breadcrumbs items={[[poam.shortName, Poam.pathFor(poam)]]} />
-				<div className="pull-right">
-					<DropdownButton bsStyle="primary" title="Actions" id="actions" className="pull-right" onSelect={this.actionSelect}>
-						{canEdit && <MenuItem eventKey="edit" >Edit {poam.shortName}</MenuItem>}
-					</DropdownButton>
-				</div>
+				<Messages success={this.state.success} error={this.state.error} />
+
+				{canEdit &&
+					<div className="pull-right">
+						<DropdownButton bsStyle="primary" title="Actions" id="actions" className="pull-right" onSelect={this.actionSelect}>
+							{canEdit && <MenuItem eventKey="edit" >Edit {poam.shortName}</MenuItem>}
+						</DropdownButton>
+					</div>
+				}
+
 				<Form static formFor={poam} horizontal>
 					<fieldset>
-						<legend>{poam.longName}</legend>
+						<legend>{poam.shortName}</legend>
 						<Form.Field id="shortName" />
 						<Form.Field id="longName" />
-						{ poam.responsibleOrg && poam.responsibleOrg !=={} && this.renderOrg()}
+						{ poam.responsibleOrg && poam.responsibleOrg.id && this.renderOrg()}
 					</fieldset>
 				</Form>
 			</div>
@@ -74,14 +81,11 @@ export default class PoamShow extends Page {
     renderOrg() {
 		let responsibleOrg = this.state.poam.responsibleOrg
 		return (
-			<Form static formFor={responsibleOrg} horizontal>
-			<fieldset>
-				<legend>
-					Responsible Organization
-				</legend>
-				<Form.Field id="name"><LinkTo organization={responsibleOrg} /></Form.Field>
-			</fieldset>
-			</Form>
+			<Form.Field id="responsibleOrg" label="Responsible Organization" >
+				<LinkTo organization={responsibleOrg}>
+					{responsibleOrg.shortName} {responsibleOrg.longName}
+				</LinkTo>
+			</Form.Field>
 		)
 	}
 

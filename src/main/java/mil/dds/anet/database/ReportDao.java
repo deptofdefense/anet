@@ -4,11 +4,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.skife.jdbi.v2.GeneratedKeys;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.Query;
 
 import mil.dds.anet.AnetObjectEngine;
+import mil.dds.anet.beans.ApprovalAction.ApprovalType;
+import mil.dds.anet.beans.Organization.OrganizationType;
+import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.Position;
@@ -62,13 +67,13 @@ public class ReportDao implements IAnetDao<Report> {
 		r.setUpdatedAt(r.getCreatedAt());
 
 		//MSSQL requires explicit CAST when a datetime2 might be NULL.
-		StringBuilder sql = new StringBuilder("INSERT INTO reports " 
-				+ "(state, createdAt, updatedAt, locationId, intent, exsum, " 
+		StringBuilder sql = new StringBuilder("INSERT INTO reports "
+				+ "(state, createdAt, updatedAt, locationId, intent, exsum, "
 				+ "text, keyOutcomesSummary, keyOutcomes, nextStepsSummary, "
-				+ "nextSteps, authorId, engagementDate, atmosphere, " 
+				+ "nextSteps, authorId, engagementDate, atmosphere, "
 				+ "atmosphereDetails, advisorOrganizationId, "
-				+ "principalOrganizationId) VALUES " 
-				+ "(:state, :createdAt, :updatedAt, :locationId, :intent, " 
+				+ "principalOrganizationId) VALUES "
+				+ "(:state, :createdAt, :updatedAt, :locationId, :intent, "
 				+ ":exsum, :reportText, :keyOutcomesSummary, :keyOutcomes, "
 				+ ":nextStepsSummary, :nextSteps, :authorId, ");
 		if (DaoUtils.isMsSql(dbHandle)) {
@@ -148,7 +153,7 @@ public class ReportDao implements IAnetDao<Report> {
 			.bindFromProperties(r)
 			.bind("state", DaoUtils.getEnumId(r.getState()))
 			.bind("locationId", DaoUtils.getId(r.getLocation()))
-			.bind("authorId", DaoUtils.getId(r.getAuthor())) 
+			.bind("authorId", DaoUtils.getId(r.getAuthor()))
 			.bind("approvalStepId", DaoUtils.getId(r.getApprovalStep()))
 			.bind("atmosphere", DaoUtils.getEnumId(r.getAtmosphere()))
 			.bind("advisorOrgId", DaoUtils.getId(r.getAdvisorOrg()))
@@ -172,14 +177,14 @@ public class ReportDao implements IAnetDao<Report> {
 			.execute();
 	}
 
-	public int updateAttendeeOnReport(ReportPerson rp, Report r) { 
+	public int updateAttendeeOnReport(ReportPerson rp, Report r) {
 		return dbHandle.createStatement("UPDATE reportPeople SET isPrimary = :isPrimary WHERE reportId = :reportId AND personId = :personId")
 			.bind("reportId", r.getId())
 			.bind("personId", rp.getId())
 			.bind("isPrimary", rp.isPrimary())
 			.execute();
 	}
-	
+
 	public int addPoamToReport(Poam p, Report r) {
 		return dbHandle.createStatement("INSERT INTO reportPoams (poamId, reportId) VALUES (:poamId, :reportId)")
 			.bind("reportId", r.getId())
@@ -197,10 +202,10 @@ public class ReportDao implements IAnetDao<Report> {
 	/* Returns reports that the given person can currently approve */
 	public List<Report> getReportsForMyApproval(Person p) {
 		return dbHandle.createQuery("SELECT " + REPORT_FIELDS + ", " + PersonDao.PERSON_FIELDS
-				+ "FROM reports, groupMemberships, approvalSteps, people "
-				+ "WHERE groupMemberships.personId = :personId "
-				+ "AND groupMemberships.groupId = approvalSteps.approverGroupId "
-				+ "AND approvalSteps.id = reports.approvalStepId "
+				+ "FROM reports, approvers, positions, people "
+				+ "WHERE positions.currentPersonId = :personId "
+				+ "AND approvers.positionId = positions.id "
+				+ "AND approvers.approvalStepId = reports.approvalStepId "
 				+ "AND reports.authorId = people.id")
 			.bind("personId", p.getId())
 			.map(new ReportMapper())
@@ -211,12 +216,13 @@ public class ReportDao implements IAnetDao<Report> {
 		return dbHandle.createQuery("SELECT " + REPORT_FIELDS + ", " + PersonDao.PERSON_FIELDS
 				+ "FROM reports, people "
 				+ "WHERE reports.authorId = :authorId "
-				+ "AND reports.state IN (:pending, :draft) "
+				+ "AND reports.state IN (:pending, :draft, :rejected) "
 				+ "AND reports.authorId = people.id "
 				+ "ORDER BY reports.createdAt DESC")
 			.bind("authorId", p.getId())
 			.bind("pending", ReportState.PENDING_APPROVAL.ordinal())
 			.bind("draft", ReportState.DRAFT.ordinal())
+			.bind("rejected", ReportState.REJECTED.ordinal())
 			.map(new ReportMapper())
 			.list();
 	}
@@ -275,13 +281,13 @@ public class ReportDao implements IAnetDao<Report> {
 				+ "FROM reports "
 				+ "LEFT JOIN people ON reports.authorId = people.id "
 				+ "WHERE authorId = :personId "
-				+ "ORDER BY engagementDate DESC";	
-		if (DaoUtils.isMsSql(dbHandle)) { 
+				+ "ORDER BY engagementDate DESC";
+		if (DaoUtils.isMsSql(dbHandle)) {
 			sql += " OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY";
-		} else { 
+		} else {
 			sql += " LIMIT :limit OFFSET :offset";
 		}
-		
+
 		return dbHandle.createQuery(sql)
 			.bind("personId", p.getId())
 			.bind("limit", pageSize)
@@ -289,7 +295,7 @@ public class ReportDao implements IAnetDao<Report> {
 			.map(new ReportMapper())
 			.list();
 	}
-	
+
 	public List<Report> getReportsByAttendee(Person p, int pageNum, int pageSize) {
 		String sql = "SELECT " + REPORT_FIELDS + ", " + PersonDao.PERSON_FIELDS
 				+ "FROM reports "
@@ -297,9 +303,9 @@ public class ReportDao implements IAnetDao<Report> {
 				+ "JOIN people ON reports.authorId = people.id "
 				+ "WHERE reportPeople.personId = :personId "
 				+ "ORDER BY engagementDate DESC";
-		if (DaoUtils.isMsSql(dbHandle)) { 
+		if (DaoUtils.isMsSql(dbHandle)) {
 			sql += " OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY";
-		} else { 
+		} else {
 			sql += " LIMIT :limit OFFSET :offset";
 		}
 		return dbHandle.createQuery(sql)
@@ -308,7 +314,58 @@ public class ReportDao implements IAnetDao<Report> {
 			.bind("offset", pageNum * pageSize)
 			.map(new ReportMapper())
 			.list();
-	} 
+	}
+
+	DateTimeFormatter sqlitePattern = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+
+
+	public List<Report> getRecentReleased() {
+		String sql = "SELECT " + REPORT_FIELDS + ", " + PersonDao.PERSON_FIELDS
+			+ "FROM reports "
+			+ "JOIN approvalActions ON approvalActions.reportId = reports.id "
+			+ "JOIN people ON reports.authorId = people.id "
+			+ "WHERE approvalActions.type = :approvalType "
+			+ "AND reports.state = :reportState ";
+		if (DaoUtils.isMsSql(dbHandle)) {
+			sql +=  "AND approvalActions.createdAt > :startTime "
+				+ "AND reports.engagementDate > :twoWeeksAgo ";
+		} else {
+			sql +=  "AND approvalActions.createdAt > :startTimeSqlite "
+					+ "AND reports.engagementDate > :twoWeeksAgoSqlite ";
+		}
+		return dbHandle.createQuery(sql)
+			.bind("approvalType", DaoUtils.getEnumId(ApprovalType.APPROVE))
+			.bind("reportState", DaoUtils.getEnumId(ReportState.RELEASED))
+			.bind("startTime", DateTime.now().minusDays(1))
+			.bind("twoWeeksAgo", DateTime.now().minusDays(14))
+			.bind("startTimeSqlite", sqlitePattern.print(DateTime.now().minusDays(1)))
+			.bind("twoWeeksAgoSqlite", sqlitePattern.print(DateTime.now().minusDays(14)))
+			.map(new ReportMapper())
+			.list();
+	}
+
+	public List<Report> getReportsByOrg(Organization org, int pageNum, int pageSize) {
+		String sql = "SELECT " + REPORT_FIELDS + ", " + PersonDao.PERSON_FIELDS
+			+ "FROM reports JOIN people ON reports.authorId = people.id WHERE ";
+		if (org.getType().equals(OrganizationType.ADVISOR_ORG)) {
+			sql += "reports.advisorOrganizationId = :orgId ";
+		} else {
+			sql += "reports.principalOrganizationId = :orgId ";
+		}
+		sql += " ORDER BY reports.createdAt DESC ";
+		if (DaoUtils.isMsSql(dbHandle)) {
+			sql += " OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY";
+		} else {
+			sql += " LIMIT :limit OFFSET :offset";
+		}
+
+		return dbHandle.createQuery(sql)
+			.bind("orgId", DaoUtils.getId(org))
+			.bind("offset", pageNum * pageSize)
+			.bind("limit", pageSize)
+			.map(new ReportMapper())
+			.list();
+	}
 
 
 }

@@ -1,17 +1,19 @@
-import React from 'react'
-import autobind from 'autobind-decorator'
-
-import {ContentForHeader} from 'components/Header'
-import History from 'components/History'
-import Breadcrumbs from 'components/Breadcrumbs'
+import React, {PropTypes} from 'react'
 import Page from 'components/Page'
-import PersonForm from 'components/PersonForm'
 import moment from 'moment'
+
+import PersonForm from './Form'
+import {ContentForHeader} from 'components/Header'
+import Breadcrumbs from 'components/Breadcrumbs'
 
 import API from 'api'
 import {Person} from 'models'
 
 export default class PersonEdit extends Page {
+	static contextTypes = {
+		app: PropTypes.object.isRequired,
+	}
+
 	static pageProps = {
 		useNavigation: false
 	}
@@ -28,7 +30,7 @@ export default class PersonEdit extends Page {
 		API.query(/*GraphQL*/ `
 			person(id:${props.params.id}) {
 				id,
-				name, rank, role, emailAddress, phoneNumber,
+				name, rank, role, emailAddress, phoneNumber, status
 				biography, country, gender, endOfTourDate,
 				position {
 					id, name
@@ -38,6 +40,10 @@ export default class PersonEdit extends Page {
 			if (data.person.endOfTourDate) {
 				data.person.endOfTourDate = moment(data.person.endOfTourDate).format()
 			}
+			if (data.person.status === "NEW_USER") {
+				//this is the inital setup of this user
+				data.person.status = "ACTIVE"
+			}
 			this.setState({person: new Person(data.person)})
 		})
 	}
@@ -45,43 +51,19 @@ export default class PersonEdit extends Page {
 	render() {
 		let person = this.state.person
 
+		let currentUser = this.context.app.state.currentUser
+		let canEditPosition = currentUser && currentUser.isSuperUser()
+
 		return (
 			<div>
 				<ContentForHeader>
 					<h2>Edit {person.name}</h2>
 				</ContentForHeader>
 
-				<Breadcrumbs items={[[`Edit ${person.name}`, `/people/${person.id}/edit`]]} />
-				<PersonForm
-					person={person}
-					onChange={this.onChange}
-					onSubmit={this.onSubmit}
-					actionText="Save Person"
-					edit
-					error={this.state.error}/>
+				<Breadcrumbs items={[[`Edit ${person.name}`, Person.pathForEdit(person)]]} />
+
+				<PersonForm person={person} edit showPositionAssignment={canEditPosition} />
 			</div>
 		)
 	}
-
-	@autobind
-	onChange() {
-		let person = this.state.person
-		this.setState({person})
-	}
-
-	@autobind
-	onSubmit(event) {
-		event.stopPropagation()
-		event.preventDefault()
-
-		API.send('/api/people/update', this.state.person, {disableSubmits: true})
-			.then(response => {
-				if (response.code) throw response.code
-				History.push(Person.pathFor(this.state.person))
-			}).catch(error => {
-				this.setState({error: error})
-				window.scrollTo(0, 0)
-			})
-	}
-
 }

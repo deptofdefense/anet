@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 import {Link} from 'react-router'
 import {Table, DropdownButton, MenuItem} from 'react-bootstrap'
@@ -6,31 +6,41 @@ import {Table, DropdownButton, MenuItem} from 'react-bootstrap'
 import API from 'api'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
+import Messages , {setMessages} from 'components/Messages'
 import autobind from 'autobind-decorator'
 import {browserHistory as History} from 'react-router'
+import LinkTo from 'components/LinkTo'
+import moment from 'moment'
 
 import {Person, Position, Organization} from 'models'
 
 export default class PositionShow extends Page {
+	static contextTypes = {
+		app: PropTypes.object.isRequired,
+	}
+
 	constructor(props) {
 		super(props)
 		this.state = {
 			position: new Position( {
-				id: props.params.id
+				id: props.params.id,
+				previousPeople: []
 			}),
 		}
+		setMessages(props,this.state)
 	}
 
 	fetchData(props) {
 		API.query(/* GraphQL */`
 			position(id:${props.params.id}) {
 				id, name, type, code,
-				organization { id, name },
+				organization { id, shortName, longName },
 				person { id, name, rank },
 				associatedPositions {
 					id, name,
 					person { id, name }
 				},
+				previousPeople { startTime, endTime, person { id, name, rank }}
 				location { id, name }
 			}
 		`).then(data => this.setState({position: new Position(data.position)}))
@@ -40,25 +50,41 @@ export default class PositionShow extends Page {
 		let position = this.state.position
 		let assignedRole = (position.type === "ADVISOR") ? "Afghan Principals" : "Advisors";
 
+		let currentUser = this.context.app.state.currentUser
+		let canEdit = currentUser && (
+			//Super Users can edit any Principal
+			(currentUser.isSuperUser() && position.type === "PRINCIPAL") ||
+			//Admins can edit anybody
+			(currentUser.isAdmin()) ||
+			//Super users can edit positions within their own organization
+			(position.organization && position.organization.id && currentUser.isSuperUserForOrg(position.organization)))
+		console.log(position)
 		return (
 			<div>
 				<Breadcrumbs items={[[position.name || 'Position', Position.pathFor(position)]]} />
+				<Messages success={this.state.success} error={this.state.error} />
+
+				{canEdit &&
+					<div className="pull-right">
+						<DropdownButton bsStyle="primary" title="Actions" id="actions" onSelect={this.actionSelect}>
+							<MenuItem eventKey="edit" >Edit Position</MenuItem>
+						</DropdownButton>
+					</div>
+				}
+
 
 				<Form static formFor={position} horizontal>
 					<fieldset>
 						<legend>
 							{position.name}
-							<DropdownButton bsStyle="primary" title="Actions" id="actions" className="pull-right" onSelect={this.actionSelect}>
-								<MenuItem eventKey="edit" >Edit Position</MenuItem>
-							</DropdownButton>
 						</legend>
 
 						<Form.Field id="code" />
 						<Form.Field id="type" />
 
-						{position.organization && <Form.Field id="org" label="Organization" >
+						{position.organization && <Form.Field id="organization" label="Organization" value={position.organization && position.organization.shortName} >
 							<Link to={Organization.pathFor(position.organization)}>
-								{position.organization.name}
+								{position.organization.shortName} {position.organization.longName}
 							</Link>
 						</Form.Field>}
 
@@ -66,7 +92,7 @@ export default class PositionShow extends Page {
 							{position.location && <Link to={"/locations/" + position.location.id}>{position.location.name}</Link>}
 						</Form.Field>
 
-						{position.person && <Form.Field id="currentPerson" label="Current Assigned Person" >
+						{position.person && <Form.Field id="person" label="Current Assigned Person" value={position.person && position.person.name} >
 							<Link to={Person.pathFor(position.person)}>
 								{position.person.rank} {position.person.name}
 							</Link>
@@ -103,9 +129,15 @@ export default class PositionShow extends Page {
 								</tr>
 							</thead>
 							<tbody>
-								<tr>
-									<td colSpan="2" className="todo">TODO</td>
-								</tr>
+								{position.previousPeople.map( pp =>
+									<tr key={pp.person.id} >
+										<td><LinkTo person={pp.person} /></td>
+										<td>
+											{moment(pp.startTime).format("D MMM YYYY")} - &nbsp;
+											{pp.endTime && moment(pp.endTime).format("D MMM YYYY")}
+										</td>
+									</tr>
+								)}
 							</tbody>
 						</Table>
 					</fieldset>

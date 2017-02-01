@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.skife.jdbi.v2.Handle;
 
+import com.google.common.collect.ImmutableList;
+
 import jersey.repackaged.com.google.common.base.Joiner;
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.search.PoamSearchQuery;
@@ -40,11 +42,15 @@ public class MssqlPoamSearcher implements IPoamSearcher {
 			args.put("category", query.getCategory());
 		}
 		
-		sql.append(Joiner.on(" AND ").join(whereClauses));
+		if (whereClauses.size() == 0) { return ImmutableList.of(); }
 		
+		sql.append(Joiner.on(" AND ").join(whereClauses));
+		sql.append(" ORDER BY createdAt DESC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY");
 		
 		return dbHandle.createQuery(sql.toString())
 			.bindFromMap(args)
+			.bind("offset", query.getPageSize() * query.getPageNum())
+			.bind("limit", query.getPageSize())
 			.map(new PoamMapper())
 			.list();
 	}

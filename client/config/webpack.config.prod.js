@@ -112,8 +112,6 @@ module.exports = {
         include: paths.appSrc,
         loader: 'babel',
         query: {
-          presets: ['stage-1'],
-          plugins: ['transform-decorators-legacy']
         }
       },
       // The notation here is somewhat confusing.
@@ -237,7 +235,9 @@ module.exports = {
     // having to parse `index.html`.
     new ManifestPlugin({
       fileName: 'asset-manifest.json'
-    })
+    }),
+
+    new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en|uk/)
   ],
   // Some libraries import Node modules but don't use them in the browser.
   // Tell Webpack to provide empty mocks for them so importing them works.

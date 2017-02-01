@@ -1,11 +1,9 @@
 import React from 'react'
 import Page from 'components/Page'
-import autobind from 'autobind-decorator'
 
+import PositionForm from './Form'
 import {ContentForHeader} from 'components/Header'
 import Breadcrumbs from 'components/Breadcrumbs'
-import History from 'components/History'
-import PositionForm from 'components/PositionForm'
 
 import API from 'api'
 import {Position, Organization} from 'models'
@@ -25,9 +23,9 @@ export default class PositionNew extends Page {
 
 	fetchData(props) {
 		if (props.location.query.organizationId) {
-			API.query( /*GraphQL */`
+			API.query(/* GraphQL */`
 				organization(id:${props.location.query.organizationId}) {
-					id, name, type
+					id, shortName, longName, type
 				}
 			`).then(data => {
 				let organization = new Organization(data.organization)
@@ -51,46 +49,9 @@ export default class PositionNew extends Page {
 				</ContentForHeader>
 
 				<Breadcrumbs items={[['Create new Position', Position.pathForNew()]]} />
-				<PositionForm
-					position={position}
-					onChange={this.onChange}
-					onSubmit={this.onSubmit}
-					actionText="Create Position"
-					edit
-					error={this.state.error} />
+
+				<PositionForm position={position} />
 			</div>
 		)
-	}
-
-
-	@autobind
-	onChange() {
-		let position = this.state.position
-		if ((!position.type) && position.organization) {
-			if (position.organization.type === "ADVISOR_ORG") {
-				position.type = "ADVISOR"
-			} else {
-				position.type = "PRINCIPAL"
-			}
-		}
-		this.setState({position})
-	}
-
-	@autobind
-	onSubmit(event) {
-		event.stopPropagation()
-		event.preventDefault()
-
-		let position = this.state.position
-		position.organization = {id: position.organization.id}
-		console.log(position)
-
-		API.send('/api/positions/new', position, {disableSubmits: true})
-			.then(response => {
-				History.push("/positions/" + response.id);
-			}).catch(error => {
-				this.setState({error: error})
-				window.scrollTo(0, 0)
-			})
 	}
 }

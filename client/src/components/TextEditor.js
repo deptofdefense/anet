@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
-import {Editor, EditorState, RichUtils, ContentState} from 'draft-js'
+import {Editor, EditorState, RichUtils, ContentState, convertFromHTML} from 'draft-js'
+import {stateToHTML} from 'draft-js-export-html'
 
 import './TextEditor.css'
 
@@ -17,16 +18,15 @@ export default class TextEditor extends Component {
 	constructor(props) {
 		super(props);
 
-		this.state = {
-				editorState: props.value ? EditorState.createWithContent(ContentState.createFromText(props.value)) : EditorState.createEmpty()
-		}
+		this.componentWillReceiveProps(props)
 
 		this.focus = () => this.refs.editor.focus();
 		this.onChange = (editorState) => {
-				this.setState({editorState});
-				if (props.onChange) {
-					props.onChange(editorState.getCurrentContent().getPlainText())
-				}
+			this.setState({editorState});
+			if (props.onChange) {
+				let value = stateToHTML(editorState.getCurrentContent())
+				props.onChange(value)
+			}
 		}
 
 		this.handleKeyCommand = (command) => this._handleKeyCommand(command);
@@ -68,9 +68,18 @@ export default class TextEditor extends Component {
 		);
 	}
 
-	componentWillReceiveProps(props) { 
+	componentWillReceiveProps(props) {
+		let state = null
+		if (props.value) {
+			let blocks = convertFromHTML(props.value)
+			state = ContentState.createFromBlockArray(blocks)
+			state = EditorState.createWithContent(state)
+		} else {
+			state = EditorState.createEmpty()
+		}
+
 		this.state = {
-			editorState: props.value ? EditorState.createWithContent(ContentState.createFromText(props.value)) : EditorState.createEmpty()
+			editorState: state
 		}
 	}
 

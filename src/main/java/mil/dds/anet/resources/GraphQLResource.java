@@ -12,6 +12,8 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;
@@ -26,6 +28,7 @@ import io.dropwizard.auth.Auth;
 import mil.dds.anet.beans.ApprovalAction;
 import mil.dds.anet.beans.Comment;
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.PersonPositionHistory;
 import mil.dds.anet.beans.ReportPerson;
 import mil.dds.anet.graphql.AnetResourceDataFetcher;
 import mil.dds.anet.graphql.GraphQLFetcher;
@@ -95,6 +98,10 @@ public class GraphQLResource {
 				.type(buildTypeFromBean("approvalAction", ApprovalAction.class))
 				.name("approvalAction")
 				.build());
+		queryTypeBuilder.field(GraphQLFieldDefinition.newFieldDefinition()
+				.type(buildTypeFromBean("personPositionHistory", PersonPositionHistory.class))
+				.name("personPositionHistory")
+				.build());
 		
 		GraphQLObjectType queryType = queryTypeBuilder.build();
 		
@@ -142,7 +149,7 @@ public class GraphQLResource {
 	}
 	
 	@POST
-	public Map<String,Object> graphql(@Auth Person user, Map<String,Object> body) {
+	public Response graphql(@Auth Person user, Map<String,Object> body) {
 		buildGraph(); // TODO: remove outside of dev. 
 		String query = (String) body.get("query");
 	    Map<String, Object> variables = (Map<String, Object>) body.get("variables");
@@ -158,9 +165,12 @@ public class GraphQLResource {
 	        		.map(e -> e.getMessage())
 	        		.collect(Collectors.toList()));
 	        log.warn("Errors: {}", executionResult.getErrors());
+	        //TODO: pull out the errors and figure out the actual status code if it was thrown via a WebApplicationException
+	        return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
 	    }
 	    result.put("data", executionResult.getData());
-	    return result;
+	    return Response.ok().entity(result).build();
+	    
 	}
 
 	

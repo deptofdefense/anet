@@ -19,11 +19,15 @@ public class AdminDao {
 	}
 	
 	private Handle dbHandle;
-	private Map<String,String> cachedSettings;
+	private Map<String,String> cachedSettings = null;
 	
 	public AdminDao(Handle db) { 
 		this.dbHandle = db;
 		
+		
+	}
+	
+	private void initCache() { 
 		cachedSettings = new HashMap<String,String>();
 		List<AdminSetting> settings = getAllSettings();
 		for (AdminSetting s : settings){ 
@@ -31,7 +35,8 @@ public class AdminDao {
 		}
 	}
 	
-	public String getSetting(AdminSettingKeys key) { 
+	public String getSetting(AdminSettingKeys key) {
+		if (cachedSettings == null) { initCache(); } 
 		return cachedSettings.get(key.toString());
 	}
 	
@@ -40,9 +45,9 @@ public class AdminDao {
 				.map(new AdminSettingMapper())
 				.list();
 	}
-	
 
 	public int saveSetting(AdminSetting setting) {
+		if (cachedSettings == null) { initCache(); }
 		cachedSettings.put(setting.getKey(), setting.getValue());
 		return dbHandle.createStatement("UPDATE adminSettings SET value = :value WHERE [key] = :key")
 			.bind("key", setting.getKey())

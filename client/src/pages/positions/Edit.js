@@ -1,11 +1,9 @@
 import React from 'react'
-import autobind from 'autobind-decorator'
-
-import {ContentForHeader} from 'components/Header'
-import History from 'components/History'
-import Breadcrumbs from 'components/Breadcrumbs'
 import Page from 'components/Page'
-import PositionForm from 'components/PositionForm'
+
+import PositionForm from './Form'
+import {ContentForHeader} from 'components/Header'
+import Breadcrumbs from 'components/Breadcrumbs'
 
 import API from 'api'
 import {Position} from 'models'
@@ -24,12 +22,12 @@ export default class PositionEdit extends Page {
 	}
 
 	fetchData(props) {
-		API.query(/*GraphQL*/ `
+		API.query(/* GraphQL */`
 			position(id:${props.params.id}) {
 				id, name, code, type
 				location { id, name },
 				associatedPositions { id, name  },
-				organization {id, name, type},
+				organization {id, shortName, longName, type},
 				person { id, name}
 			}
 		`).then(data => {
@@ -43,40 +41,13 @@ export default class PositionEdit extends Page {
 		return (
 			<div>
 				<ContentForHeader>
-					<h2>Create a new Position</h2>
+					<h2>Edit Position</h2>
 				</ContentForHeader>
 
-				<Breadcrumbs items={[[`Edit ${position.name}`, `/positions/${position.id}/edit`]]} />
-				<PositionForm
-					position={position}
-					onChange={this.onChange}
-					onSubmit={this.onSubmit}
-					actionText="Save Position"
-					edit
-					error={this.state.error}/>
+				<Breadcrumbs items={[[`Edit ${position.name}`, Position.pathForEdit(position)]]} />
+
+				<PositionForm position={position} edit success={this.state.success} error={this.state.error} />
 			</div>
 		)
 	}
-
-	@autobind
-	onChange() {
-		let position = this.state.position
-		this.setState({position})
-	}
-
-	@autobind
-	onSubmit(event) {
-		event.stopPropagation()
-		event.preventDefault()
-
-		API.send('/api/positions/update', this.state.position, {disableSubmits: true})
-			.then(response => {
-				if (response.code) throw response.code
-				History.push(Position.pathFor(this.state.position))
-			}).catch(error => {
-				this.setState({error: error})
-				window.scrollTo(0, 0)
-			})
-	}
-
 }

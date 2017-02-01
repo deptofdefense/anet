@@ -1,14 +1,24 @@
 import React, {Component} from 'react'
 
-import GraphiQL from 'graphiql'
-import 'graphiql/graphiql.css'
-
 import Breadcrumbs from 'components/Breadcrumbs'
+
+var GraphiQL = null/* required later */
 
 export default class extends Component {
 	static pageProps = {
 		useNavigation: false,
 		fluidContainer: true,
+	}
+
+	componentDidMount() {
+		if (GraphiQL)
+			return
+
+		require.ensure([], () => {
+			GraphiQL = require('graphiql')
+			require('graphiql/graphiql.css')
+			this.forceUpdate()
+		})
 	}
 
 	fetch(params) {
@@ -23,7 +33,7 @@ export default class extends Component {
 	render() {
 		return <div>
 			<Breadcrumbs items={[['Run GraphQL queries', '/graphiql']]} />
-			<GraphiQL fetcher={this.fetch} />
+			{GraphiQL ? <GraphiQL fetcher={this.fetch} /> : "Loading..."}
 		</div>
 	}
 }

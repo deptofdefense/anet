@@ -1,5 +1,6 @@
-import React, {Component} from 'react'
+import React, {Component, PropTypes} from 'react'
 import utils from 'utils'
+import deepEqual from 'deep-equal'
 import autobind from 'autobind-decorator'
 import {FormGroup, Col, ControlLabel, FormControl, InputGroup} from 'react-bootstrap'
 
@@ -10,9 +11,13 @@ class FormFieldExtraCol extends Component {
 }
 
 export default class FormField extends Component {
+	constructor(props, context) {
+		super(props, context)
+		this.state = {value: ''}
+	}
 	static contextTypes = {
-		formFor: React.PropTypes.object,
-		form: React.PropTypes.object,
+		formFor: PropTypes.object,
+		form: PropTypes.object,
 	}
 
 	static propTypes = {
@@ -22,32 +27,36 @@ export default class FormField extends Component {
 		// and when the FormField changes, formForObject[idProp] will automatically
 		// be updated. The form will then have its own onChange fired to allow
 		// you to update state or rerender.
-		id: React.PropTypes.string.isRequired,
-		label: React.PropTypes.string,
+		id: PropTypes.string.isRequired,
+		label: PropTypes.string,
 
 		// if you need to do additional formatting on the value returned by
 		// formForObject[idProp], you can specify a getter function which
 		// will be called with the value as its prop
-		getter: React.PropTypes.func,
+		getter: PropTypes.func,
 
 		// This will cause the FormField to be rendered as an InputGroup,
 		// with the node specified by addon appended on the right of the group.
-		addon: React.PropTypes.node,
+		addon: PropTypes.node,
 
 		// If you pass children, we will try to autobind them to the id key
 		// if any of the children have propTypes that include onChange
-		children: React.PropTypes.node,
+		children: PropTypes.node,
 
 		// If you don't pass children, we will automatically create a FormControl.
 		// You can use componentClass to override its type (for example, for a select).
-		componentClass: React.PropTypes.oneOfType([
-			React.PropTypes.string,
-			React.PropTypes.object,
+		componentClass: PropTypes.oneOfType([
+			PropTypes.string,
+			PropTypes.object,
 		]),
 
 		// If you don't want autobinding behavior, you can override them here
-		value: React.PropTypes.string,
-		onChange: React.PropTypes.func,
+		value: PropTypes.oneOfType([
+			PropTypes.string,
+			PropTypes.object,
+		]),
+
+		onChange: PropTypes.func,
 	}
 
 	render() {
@@ -78,7 +87,13 @@ export default class FormField extends Component {
 		if (extra)
 			children.splice(children.indexOf(extra), 1)
 
-		let defaultValue = this.props.value || this.getValue() || ''
+		let defaultValue = this.getDefaultValue(this.props, this.context)
+
+		let state = this.state
+		if (Array.isArray(defaultValue))
+			state.value = Array.from(defaultValue)
+		else
+			state.value = defaultValue
 
 		// if type is static, render out a static value
 		if (this.props.type === 'static' || (!this.props.type && this.context.form.props.static)) {
@@ -127,14 +142,31 @@ export default class FormField extends Component {
 		)
 	}
 
-	getValue() {
-		let formContext = this.context.formFor
-		let id = this.props.id
-		let getter = this.props.getter
+	shouldComponentUpdate(newProps, newState, newContext) {
+		let newValue = this.getDefaultValue(newProps, newContext)
+		let oldValue = this.state.value
+
+		if (newValue !== oldValue)
+			return true
+
+		if (Array.isArray(newValue))
+			return !deepEqual(newValue, oldValue)
+
+		return false
+	}
+
+	getValue(props, context) {
+		let formContext = context.formFor
+		let id = props.id
+		let getter = props.getter
 		if (formContext) {
 			let value = formContext[id]
 			return getter ? getter(value) : value
 		}
+	}
+
+	getDefaultValue(props, context) {
+		return props.value || this.getValue(props, context) || ''
 	}
 
 	@autobind

@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.skife.jdbi.v2.Handle;
 
+import com.google.common.collect.ImmutableList;
+
 import jersey.repackaged.com.google.common.base.Joiner;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.search.PersonSearchQuery;
@@ -67,7 +69,7 @@ public class MssqlPersonSearcher implements IPersonSearcher {
 					+ ") ";
 				whereClauses.add(" positions.organizationId IN (SELECT id from parent_orgs)");
 			} else { 
-				sql.append(" positions.organizationId = :orgId " );
+				whereClauses.add(" positions.organizationId = :orgId " );
 			}
 			sqlArgs.put("orgId", query.getOrgId());
 		}
@@ -77,9 +79,11 @@ public class MssqlPersonSearcher implements IPersonSearcher {
 			sqlArgs.put("locationId", query.getLocationId());
 		}
 		
+		if (whereClauses.size() == 0) { return ImmutableList.of(); }
+		
 		sql.append(Joiner.on(" AND ").join(whereClauses));
 		
-		sql.append(")");
+		sql.append(" ORDER BY people.createdAt DESC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY)");
 		
 		if (commonTableExpression != null) { 
 			sql.insert(0, commonTableExpression);
@@ -87,6 +91,8 @@ public class MssqlPersonSearcher implements IPersonSearcher {
 		
 		return dbHandle.createQuery(sql.toString())
 			.bindFromMap(sqlArgs)
+			.bind("offset", query.getPageSize() * query.getPageNum())
+			.bind("limit", query.getPageSize())
 			.map(new PersonMapper())
 			.list();
 	}

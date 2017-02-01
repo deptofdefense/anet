@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 
+import javax.annotation.Priority;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
@@ -17,9 +18,10 @@ import io.dropwizard.auth.Authorizer;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Person.Role;
-import mil.dds.anet.beans.Position.PositionType;
 import mil.dds.anet.beans.Position;
+import mil.dds.anet.beans.Position.PositionType;
 
+@Priority(1500) //Run After Authentication, but before Authorization
 public class AnetAuthenticationFilter implements ContainerRequestFilter, Authorizer<Person> {
 
 	AnetObjectEngine engine;
@@ -40,10 +42,10 @@ public class AnetAuthenticationFilter implements ContainerRequestFilter, Authori
 			if (matches.size() == 0) { 
 				//First time this user has ever logged in. 
 				person = new Person();
-				person.setName(domainUsername);
 				person.setDomainUsername(domainUsername);
+				person.setName("");
 				person.setRole(Role.ADVISOR);
-				person.setStatus(Person.Status.ACTIVE);
+				person.setStatus(Person.Status.NEW_USER);
 				person = engine.getPersonDao().insert(person);
 			} else { 
 				person = matches.get(0);

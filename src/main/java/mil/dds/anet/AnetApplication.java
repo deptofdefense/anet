@@ -12,8 +12,6 @@ import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.joda.time.DateTimeZone;
 import org.skife.jdbi.v2.DBI;
 
-import com.fasterxml.jackson.databind.DeserializationConfig;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 
 import io.dropwizard.Application;
@@ -36,7 +34,6 @@ import mil.dds.anet.config.AnetConfiguration;
 import mil.dds.anet.resources.AdminResource;
 import mil.dds.anet.resources.ApprovalStepResource;
 import mil.dds.anet.resources.GraphQLResource;
-import mil.dds.anet.resources.GroupResource;
 import mil.dds.anet.resources.HomeResource;
 import mil.dds.anet.resources.LocationResource;
 import mil.dds.anet.resources.OrganizationResource;
@@ -44,6 +41,8 @@ import mil.dds.anet.resources.PersonResource;
 import mil.dds.anet.resources.PoamResource;
 import mil.dds.anet.resources.PositionResource;
 import mil.dds.anet.resources.ReportResource;
+import mil.dds.anet.resources.SavedSearchResource;
+import mil.dds.anet.resources.SearchResource;
 import mil.dds.anet.resources.TestingResource;
 import mil.dds.anet.views.ViewResponseFilter;
 import waffle.servlet.NegotiateSecurityFilter;
@@ -79,6 +78,7 @@ public class AnetApplication extends Application<AnetConfiguration> {
 
 		//Serve assets on /assets
 		bootstrap.addBundle(new AssetsBundle("/assets", "/assets", "index.html"));
+		bootstrap.addBundle(new AssetsBundle("/imagery", "/imagery", null, "imagery"));
 
 		//Use Freemarker to handle rendering TEXT_HTML views. 
 		bootstrap.addBundle(new ViewBundle<AnetConfiguration>() {
@@ -127,7 +127,6 @@ public class AnetApplication extends Application<AnetConfiguration> {
 	    
 		TestingResource test = new TestingResource(engine, configuration);
 		PersonResource personResource = new PersonResource(engine);
-		GroupResource groupResource = new GroupResource(engine);
 		PoamResource poamResource =  new PoamResource(engine);
 		LocationResource locationResource = new LocationResource(engine);
 		OrganizationResource orgResource = new OrganizationResource(engine);
@@ -136,10 +135,11 @@ public class AnetApplication extends Application<AnetConfiguration> {
 		ReportResource reportResource = new ReportResource(engine);
 		AdminResource adminResource = new AdminResource(engine);
 		HomeResource homeResource = new HomeResource(engine);
+		SearchResource searchResource = new SearchResource(engine);
+		SavedSearchResource savedSearchResource = new SavedSearchResource(engine);
 
 		environment.jersey().register(test);
 		environment.jersey().register(personResource);
-		environment.jersey().register(groupResource);
 		environment.jersey().register(poamResource);
 		environment.jersey().register(locationResource);
 		environment.jersey().register(orgResource);
@@ -148,12 +148,14 @@ public class AnetApplication extends Application<AnetConfiguration> {
 		environment.jersey().register(reportResource);
 		environment.jersey().register(adminResource);
 		environment.jersey().register(homeResource);
+		environment.jersey().register(searchResource);
+		environment.jersey().register(savedSearchResource);
 		environment.jersey().register(new ViewResponseFilter(configuration));
 		environment.jersey().register(new GraphQLResource(
 			ImmutableList.of(reportResource, personResource, 
 				positionResource, locationResource,
 				orgResource, asResource, poamResource, 
-				groupResource, adminResource, homeResource)));
+				adminResource, searchResource, savedSearchResource)));
 
 	}
 

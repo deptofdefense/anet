@@ -15,7 +15,7 @@ import mil.dds.anet.views.AbstractAnetBean;
 
 public class Person extends AbstractAnetBean implements Principal{
 
-	public static enum Status { ACTIVE, INACTIVE }
+	public static enum Status { ACTIVE, INACTIVE, NEW_USER }
 	public static enum Role { ADVISOR, PRINCIPAL }
 	
 	private String name;
@@ -125,7 +125,7 @@ public class Person extends AbstractAnetBean implements Principal{
 	}
 
 	@GraphQLFetcher("position")
-	public Position loadPosition() { 
+	public Position loadPosition() {
 		if (position == null) {
 			position = Optional.ofNullable(AnetObjectEngine.getInstance()
 					.getPositionDao().getCurrentPositionForPerson(this));

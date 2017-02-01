@@ -3,18 +3,24 @@ package mil.dds.anet.beans;
 import java.util.List;
 import java.util.Objects;
 
+import javax.ws.rs.DefaultValue;
+
 import org.joda.time.DateTime;
+
+import com.google.common.collect.ImmutableList;
 
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.graphql.GraphQLFetcher;
 import mil.dds.anet.graphql.GraphQLIgnore;
+import mil.dds.anet.graphql.GraphQLParam;
 import mil.dds.anet.views.AbstractAnetBean;
 
 public class Organization extends AbstractAnetBean {
 
 	public static enum OrganizationType { ADVISOR_ORG, PRINCIPAL_ORG }
 	
-	String name;
+	String shortName;
+	String longName;
 	Organization parentOrg;
 	OrganizationType type;
 	
@@ -23,13 +29,21 @@ public class Organization extends AbstractAnetBean {
 	List<Organization> childrenOrgs; /* Lazy loaded */
 	List<Poam> poams; /* Lazy Loaded */
 	
-	public String getName() {
-		return name;
+	public String getShortName() {
+		return shortName;
 	}
-	public void setName(String name) {
-		this.name = name;
+	public void setShortName(String shortName) {
+		this.shortName = shortName;
 	}
 
+	public String getLongName() { 
+		return longName;
+	}
+	
+	public void setLongName(String longName) { 
+		this.longName = longName;
+	}
+	
 	@GraphQLFetcher("parentOrg")
 	public Organization loadParentOrg() { 
 		if (parentOrg == null || parentOrg.getLoadLevel() == null) { return parentOrg; }
@@ -120,9 +134,14 @@ public class Organization extends AbstractAnetBean {
 		this.poams = poams;
 	}
 	
-	public static Organization create(String name, OrganizationType type) { 
+	@GraphQLFetcher("reports")
+	public List<Report> fetchReports(@GraphQLParam("pageNum") int pageNum, @GraphQLParam("pageSize") int pageSize) {
+		return AnetObjectEngine.getInstance().getReportDao().getReportsByOrg(this, pageNum, pageSize);
+	}
+	
+	public static Organization create(String shortName, OrganizationType type) { 
 		Organization org = new Organization();
-		org.setName(name);
+		org.setShortName(shortName);
 		org.setType(type);
 		return org;
 	}
@@ -141,12 +160,13 @@ public class Organization extends AbstractAnetBean {
 		}
 		Organization other = (Organization) o;
 		return Objects.equals(other.getId(), id) &&
-				Objects.equals(other.getName(), name) &&
+				Objects.equals(other.getShortName(), shortName) &&
+				Objects.equals(other.getLongName(), longName) && 
 				Objects.equals(other.getType(), type);
 	}
 	
 	@Override
 	public int hashCode() { 
-		return Objects.hash(id, name, type, createdAt, updatedAt);
+		return Objects.hash(id, shortName, longName, type, createdAt, updatedAt);
 	}
 }

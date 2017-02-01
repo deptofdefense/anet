@@ -1,24 +1,28 @@
-import React, {Component} from 'react'
-import Autosuggest from 'react-autosuggest'
+import React, {Component, PropTypes} from 'react'
 import {FormControl} from 'react-bootstrap'
+import Autosuggest from 'react-autosuggest-ie11-compatible'
 import autobind from 'autobind-decorator'
 
 import API from 'api'
+import utils from 'utils'
+import * as changeCase from 'change-case'
 
 import './Autocomplete.css'
 
 export default class Autocomplete extends Component {
 	static propTypes = {
-		value: React.PropTypes.oneOfType([
-			React.PropTypes.object,
-			React.PropTypes.array,
+		value: PropTypes.oneOfType([
+			PropTypes.object,
+			PropTypes.array,
+			PropTypes.string,
 		]),
-		valueKey: React.PropTypes.string,
-		clearOnSelect: React.PropTypes.bool,
-		url: React.PropTypes.string.isRequired,
-		template: React.PropTypes.func,
-		onChange: React.PropTypes.func,
-		urlParams: React.PropTypes.string
+		valueKey: PropTypes.string,
+		clearOnSelect: PropTypes.bool,
+		template: PropTypes.func,
+		onChange: PropTypes.func,
+		queryParams: PropTypes.object,
+		objectType: PropTypes.func,
+		fields: PropTypes.string,
 	}
 
 	constructor(props) {
@@ -28,6 +32,7 @@ export default class Autocomplete extends Component {
 
 		this.state = {
 			suggestions: [],
+			noSuggestions: false,
 			value: value,
 			stringValue: this.getStringValue(value),
 		}
@@ -51,13 +56,12 @@ export default class Autocomplete extends Component {
 	}
 
 	render() {
-		let inputProps = Object.without(this.props, 'url', 'clearOnSelect', 'valueKey', 'template', 'urlParams')
+		let inputProps = Object.without(this.props, 'url', 'clearOnSelect', 'valueKey', 'template', 'queryParams', 'objectType', 'fields')
 		inputProps.value = this.state.stringValue
 		inputProps.onChange = this.onInputChange
-
-		return (
+		return <div>
 			<Autosuggest
-				suggestions={this.state.suggestions}
+				suggestions={this.state.noSuggestions ? [{}] : this.state.suggestions}
 				onSuggestionsFetchRequested={this.fetchSuggestions}
 				onSuggestionsClearRequested={this.clearSuggestions}
 				onSuggestionSelected={this.onSuggestionSelected}
@@ -67,16 +71,21 @@ export default class Autocomplete extends Component {
 				renderSuggestion={this.renderSuggestion}
 				focusInputOnSuggestionClick={false}
 			/>
-		)
+		</div>
 	}
 
 	@autobind
 	renderSuggestion(suggestion) {
+		if (this.state.noSuggestions) {
+			return <span><i>No suggestions found</i></span>
+		}
+
 		let template = this.props.template
-		if (template)
+		if (template) {
 			return template(suggestion)
-		else
+		} else {
 			return <span>{this.getStringValue(suggestion)}</span>
+		}
 	}
 
 	@autobind
@@ -88,11 +97,8 @@ export default class Autocomplete extends Component {
 	fetchSuggestions(value) {
 		if (this.props.url) {
 			let url = this.props.url + '?text=' + value.value
-			if (this.props.urlParams) {
-				if (this.props.urlParams[0] !== '&') {
-					url += "&"
-				}
-				url += this.props.urlParams
+			if (this.props.queryParams) {
+				url += "&" + utils.createUrlParams(this.props.queryParams);
 			}
 
 			let selectedIds = this.selectedIds
@@ -101,8 +107,26 @@ export default class Autocomplete extends Component {
 				if (selectedIds)
 					data = data.filter(suggestion => suggestion && suggestion.id && selectedIds.indexOf(suggestion.id) === -1)
 
-				this.setState({suggestions: data})
+				let noSuggestions = data.length === 0
+				this.setState({suggestions: data, noSuggestions})
 			})
+		} else {
+			let resourceName = this.props.objectType.resourceName
+			let resource = changeCase.camel(resourceName) + "s";
+			let graphQlQuery = resource + "(f:search, query: $query) { "
+					+ this.props.fields
+					+ "}";
+			let variableDef = "($query: " + resourceName + "SearchQuery)";
+			let queryVars = { text: value.value }
+			if (this.props.queryParams) {
+				Object.forEach(this.props.queryParams, (key,val) => queryVars[key] = val)
+			}
+
+			API.query(graphQlQuery, { query: queryVars}, variableDef)
+				.then(data => {
+					let noSuggestions = data[resource].length === 0
+					this.setState({suggestions: data[resource], noSuggestions})
+				})
 		}
 	}
 
@@ -117,6 +141,9 @@ export default class Autocomplete extends Component {
 		event.preventDefault()
 
 		let stringValue = this.props.clearOnSelect ? '' : suggestionValue
+		if (this.state.noSuggestions && stringValue !== ''){
+			return
+		}
 		this.setState({value: suggestion, stringValue})
 
 		if (this.props.onChange)
@@ -127,7 +154,7 @@ export default class Autocomplete extends Component {
 	onInputChange(event) {
 		if (!event.target.value && !this.props.clearOnSelect) {
 			//If the selection lives in this component, and the user just cleared the input
-			// Then set the selection to empty. 
+			// Then set the selection to empty.
 			this.onSuggestionSelected(event, {suggestion: {}, suggestionValue: ''})
 		} else {
 			this.setState({stringValue: event.target.value})

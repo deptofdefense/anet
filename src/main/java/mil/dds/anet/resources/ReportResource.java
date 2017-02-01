@@ -1,5 +1,6 @@
 package mil.dds.anet.resources;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -22,8 +23,11 @@ import javax.ws.rs.core.Response.Status;
 
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;
+import org.joda.time.DateTime;
 
+import com.codahale.metrics.annotation.Timed;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import io.dropwizard.auth.Auth;
@@ -34,11 +38,11 @@ import mil.dds.anet.beans.ApprovalAction;
 import mil.dds.anet.beans.ApprovalAction.ApprovalType;
 import mil.dds.anet.beans.ApprovalStep;
 import mil.dds.anet.beans.Comment;
-import mil.dds.anet.beans.Group;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.beans.Poam;
+import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
@@ -76,6 +80,7 @@ public class ReportResource implements IGraphQLResource {
 	public Class<Report> getBeanClass() { return Report.class; }
 
 	@GET
+	@Timed
 	@GraphQLFetcher
 	@Path("/")
 	public List<Report> getAll(@Auth Person p, @DefaultValue("0") @QueryParam("pageNum") Integer pageNum, @DefaultValue("100") @QueryParam("pageSize") Integer pageSize) {
@@ -83,6 +88,7 @@ public class ReportResource implements IGraphQLResource {
 	}
 
 	@GET
+	@Timed
 	@Path("/{id}")
 	@GraphQLFetcher
 	public Report getById(@PathParam("id") Integer id) {
@@ -90,6 +96,7 @@ public class ReportResource implements IGraphQLResource {
 	}
 
 	@POST
+	@Timed
 	@Path("/new")
 	public Report createNewReport(@Auth Person author, Report r) {
 		if (r.getState() == null) { r.setState(ReportState.DRAFT); }
@@ -116,6 +123,7 @@ public class ReportResource implements IGraphQLResource {
 	}
 	
 	@POST
+	@Timed
 	@Path("/update")
 	public Response editReport(@Auth Person editor, Report r) {
 		//Verify this person has access to edit this report
@@ -128,11 +136,8 @@ public class ReportResource implements IGraphQLResource {
 		
 		//If there is a change to the primary advisor, change the advisor Org. 
 		Person primaryAdvisor = findPrimaryAttendee(r, Role.ADVISOR);
-		Organization org = existing.loadPrimaryAdvisor().getPosition().getOrganization();
 		if (Utils.idEqual(primaryAdvisor, existing.loadPrimaryAdvisor()) == false || existing.getAdvisorOrg() == null) { 
 			r.setAdvisorOrg(engine.getOrganizationForPerson(primaryAdvisor));
-			AnetAuditLogger.log("advisor org changed from {} to {} due to edit by editor {} (id: {})",
-					org.getName(), r.getAdvisorOrg().getName(), editor.getName(), editor.getId());
 		} else { 
 			r.setAdvisorOrg(existing.getAdvisorOrg());
 		}
@@ -177,12 +182,14 @@ public class ReportResource implements IGraphQLResource {
 		return Response.ok().build();
 	}
 
-	private void assertCanEditReport(Report report, Person editor) { 
+	private void assertCanEditReport(Report report, Person editor) {
+		String permError = "You do not have permission to edit this report. ";
 		switch (report.getState()) {
 		case DRAFT:
+		case REJECTED:
 			//Must be the author
 			if (!report.getAuthor().getId().equals(editor.getId())) {
-				throw new WebApplicationException("Not the Author", Status.FORBIDDEN);
+				throw new WebApplicationException(permError + "Must be the author of this report.", Status.FORBIDDEN);
 			}
 			break;
 		case PENDING_APPROVAL:
@@ -194,15 +201,14 @@ public class ReportResource implements IGraphQLResource {
 			} else {
 				boolean canApprove = engine.canUserApproveStep(editor.getId(), report.getApprovalStep().getId());
 				if (!canApprove) {
-					throw new WebApplicationException("Not the Approver", Status.FORBIDDEN);
+					throw new WebApplicationException(permError + "Must be the author or the current approver", Status.FORBIDDEN);
 				}
 			}
 			break;
-		case RELEASED: {
+		case RELEASED:
 			AnetAuditLogger.log("attempt to edit released report {} by editor {} (id: {}) was forbidden",
 					report.getId(), editor.getName(), editor.getId());
 			throw new WebApplicationException("Cannot edit a released report", Status.FORBIDDEN);
-			}
 		}
 	}
 	
@@ -210,6 +216,7 @@ public class ReportResource implements IGraphQLResource {
 	 * Kicks a report from DRAFT to PENDING_APPROVAL and sets the approval step Id
 	 */
 	@POST
+	@Timed
 	@Path("/{id}/submit")
 	public Report submitReport(@PathParam("id") int id) {
 		Report r = dao.getById(id);
@@ -265,13 +272,15 @@ public class ReportResource implements IGraphQLResource {
 
 	private void sendApprovalNeededEmail(Report r) {
 		ApprovalStep step = r.loadApprovalStep();
-		Group approvalGroup = step.loadApproverGroup();
-		List<Person> approvers = approvalGroup.getMembers();
+		List<Position> approvers = step.loadApprovers();
 		AnetEmail approverEmail = new AnetEmail();
 		approverEmail.setTemplateName("/emails/approvalNeeded.ftl");
 		approverEmail.setSubject("ANET Report needs your approval");
-		approverEmail.setToAddresses(approvers.stream().map(a -> a.getEmailAddress()).collect(Collectors.toList()));
-		approverEmail.setContext(ImmutableMap.of("report", r, "approvalGroup", approvalGroup));
+		approverEmail.setToAddresses(approvers.stream()
+				.filter(a -> a.getPerson() != null)
+				.map(a -> a.loadPerson().getEmailAddress())
+				.collect(Collectors.toList()));
+		approverEmail.setContext(ImmutableMap.of("report", r, "approvalStepName", step.getName()));
 		AnetEmailWorker.sendEmailAsync(approverEmail);
 	}
 
@@ -280,8 +289,9 @@ public class ReportResource implements IGraphQLResource {
 	 * TODO: this should run common approval code that checks if any previous approving users can approve the future steps
 	 */
 	@POST
+	@Timed
 	@Path("/{id}/approve")
-	public Report approveReport(@Auth Person approver, @PathParam("id") int id) {
+	public Report approveReport(@Auth Person approver, @PathParam("id") int id, Comment comment) {
 		Report r = dao.getById(id);
 		if (r == null) {
 			throw new WebApplicationException("Report not found", Status.NOT_FOUND);
@@ -304,7 +314,7 @@ public class ReportResource implements IGraphQLResource {
 		//TODO: this should be in a transaction....
 		ApprovalAction approval = new ApprovalAction();
 		approval.setReport(r);
-		approval.setStep(ApprovalStep.create(step.getId(), null, null, null));
+		approval.setStep(ApprovalStep.createWithId(step.getId()));
 		approval.setPerson(approver);
 		approval.setType(ApprovalType.APPROVE);
 		engine.getApprovalActionDao().insert(approval);
@@ -313,23 +323,41 @@ public class ReportResource implements IGraphQLResource {
 		r.setApprovalStep(ApprovalStep.createWithId(step.getNextStepId()));
 		if (step.getNextStepId() == null) {
 			r.setState(ReportState.RELEASED);
+			sendReportReleasedEmail(r);
 		} else {
 			sendApprovalNeededEmail(r);
 		}
 		dao.update(r);
+		
+		//Add the comment
+		if (comment != null && comment.getText() != null && comment.getText().trim().length() > 0)  {
+			comment.setReportId(r.getId());
+			comment.setAuthor(approver);
+			engine.getCommentDao().insert(comment);
+		}
 		//TODO: close the transaction.
 
 		AnetAuditLogger.log("report {} approved by {} (id: {})", r.getId(), approver.getName(), approver.getId());
 		return r;
 	}
 
+	private void sendReportReleasedEmail(Report r) {
+		AnetEmail email = new AnetEmail();
+		email.setTemplateName("/emails/reportReleased.ftl");
+		email.setSubject("ANET Report Approved");
+		email.setToAddresses(ImmutableList.of(r.loadAuthor().getEmailAddress()));
+		email.setContext(ImmutableMap.of("report", r));
+		AnetEmailWorker.sendEmailAsync(email);
+	}
+	
 	/**
-	 * Rejects a report and moves it one step back in the approval process.
+	 * Rejects a report and moves it back to the author with state REJECTED. 
 	 * @param id the Report ID to reject
 	 * @param reason : A @link Comment object which will be posted to the report with the reason why the report was rejected.
-	 * @return 200 on a successful reject, 401 if you don't have privelages to reject this report.
+	 * @return 200 on a successful reject, 401 if you don't have privileges to reject this report.
 	 */
 	@POST
+	@Timed
 	@Path("/{id}/reject")
 	public Report rejectReport(@Auth Person approver, @PathParam("id") int id, Comment reason) {
 		Report r = dao.getById(id);
@@ -346,20 +374,14 @@ public class ReportResource implements IGraphQLResource {
 		//TODO: This should be in a transaction
 		ApprovalAction approval = new ApprovalAction();
 		approval.setReport(r);
-		approval.setStep(ApprovalStep.create(step.getId(), null, null, null));
+		approval.setStep(ApprovalStep.createWithId(step.getId()));
 		approval.setPerson(approver);
 		approval.setType(ApprovalType.REJECT);
 		engine.getApprovalActionDao().insert(approval);
 
 		//Update the report
-		ApprovalStep prevStep = engine.getApprovalStepDao().getStepByNextStepId(step.getId());
-		if (prevStep == null) {
-			r.setApprovalStep(null);
-			r.setState(ReportState.DRAFT);
-		} else {
-			r.setApprovalStep(prevStep);
-			sendApprovalNeededEmail(r);
-		}
+		r.setApprovalStep(null);
+		r.setState(ReportState.REJECTED);
 		dao.update(r);
 
 		//Add the comment
@@ -368,25 +390,49 @@ public class ReportResource implements IGraphQLResource {
 		engine.getCommentDao().insert(reason);
 
 		//TODO: close the transaction.
-
+		
+		sendReportRejectEmail(r, approver, reason);
 		return r;
 	}
 
+	private void sendReportRejectEmail(Report r, Person rejector, Comment rejectionComment) {
+		AnetEmail email = new AnetEmail();
+		email.setTemplateName("/emails/reportRejection.ftl");
+		email.setSubject("ANET Report Rejected");
+		email.setToAddresses(ImmutableList.of(r.loadAuthor().getEmailAddress()));
+		email.setContext(ImmutableMap.of("report", r, "rejector", rejector, "comment", rejectionComment));
+		AnetEmailWorker.sendEmailAsync(email);
+	}
+		
 	@POST
+	@Timed
 	@Path("/{id}/comments")
 	public Comment postNewComment(@Auth Person author, @PathParam("id") int reportId, Comment comment) {
 		comment.setReportId(reportId);
 		comment.setAuthor(author);
-		return engine.getCommentDao().insert(comment);
+		comment = engine.getCommentDao().insert(comment);
+		sendNewCommentEmail(dao.getById(reportId), comment);
+		return comment;
 	}
 
+	private void sendNewCommentEmail(Report r, Comment comment) {
+		AnetEmail email = new AnetEmail();
+		email.setTemplateName("/emails/newReportComment.ftl");
+		email.setSubject("New Comment on your ANET Report");
+		email.setToAddresses(ImmutableList.of(r.loadAuthor().getEmailAddress()));
+		email.setContext(ImmutableMap.of("report", r, "comment", comment));
+		AnetEmailWorker.sendEmailAsync(email);
+	}
+	
 	@GET
+	@Timed
 	@Path("/{id}/comments")
 	public List<Comment> getCommentsForReport(@PathParam("id") int reportId) {
 		return engine.getCommentDao().getCommentsForReport(Report.createWithId(reportId));
 	}
 
 	@DELETE
+	@Timed
 	@Path("/{id}/comments/{commentId}")
 	public Response deleteComment(@PathParam("commentId") int commentId) {
 		//TODO: user validation on /who/ is allowed to delete a comment.
@@ -394,7 +440,25 @@ public class ReportResource implements IGraphQLResource {
 		return (numRows == 1) ? Response.ok().build() : ResponseUtils.withMsg("Unable to delete comment", Status.NOT_FOUND);
 	}
 
+	@POST
+	@Timed
+	@Path("/{id}/email")
+	public Response emailReport(@Auth Person user, @PathParam("id") int reportId, AnetEmail email) { 
+		Report r = dao.getById(reportId);
+		if (r == null) { return Response.status(Status.NOT_FOUND).build(); }
+		
+		if (email.getContext() == null) { email.setContext(new HashMap<String,Object>()); }
+		
+		email.setTemplateName("/emails/emailReport.ftl");
+		email.setSubject("Sharing a report in ANET");
+		email.getContext().put("report", r);
+		email.getContext().put("sender", user);
+		AnetEmailWorker.sendEmailAsync(email);
+		return Response.ok().build();
+	}
+	
 	@GET
+	@Timed
 	@GraphQLFetcher("pendingMyApproval")
 	@Path("/pendingMyApproval")
 	public List<Report> getReportsPendingMyApproval(@Auth Person approver) {
@@ -402,6 +466,7 @@ public class ReportResource implements IGraphQLResource {
 	}
 
 	@GET
+	@Timed
 	@Path("/search")
 	public List<Report> search(@Context HttpServletRequest request) {
 		try {
@@ -412,10 +477,41 @@ public class ReportResource implements IGraphQLResource {
 	}
 
 	@POST
+	@Timed
 	@GraphQLFetcher
 	@Path("/search")
 	public List<Report> search(@GraphQLParam("query") ReportSearchQuery query) {
 		return dao.search(query);
 	}
+	
+	@GraphQLFetcher("myOrgToday")
+	public List<Report> myOrgReportsToday(@Auth Person user) { 
+		Position pos = user.loadPosition();
+		if (pos == null) { return ImmutableList.of(); } 
+		Organization org = pos.loadOrganization();
+		if (org == null) { return ImmutableList.of(); } 
+		
+		ReportSearchQuery query = new ReportSearchQuery();
+		query.setAuthorOrgId(org.getId());
+		query.setCreatedAtStart(DateTime.now().minusDays(1));
+		
+		return dao.search(query);
+	}
+	
+	@GraphQLFetcher("myReportsToday")
+	public List<Report> myReportsToday(@Auth Person user) { 
+		ReportSearchQuery query = new ReportSearchQuery();
+		query.setAuthorId(user.getId());
+		query.setCreatedAtStart(DateTime.now().minusDays(1));
+		
+		return dao.search(query);
+	}
 
+	@GET
+	@Timed
+	@GraphQLFetcher
+	@Path("/releasedToday")
+	public List<Report> releasedToday() {
+		return dao.getRecentReleased();
+	}
 }

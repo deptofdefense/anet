@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.skife.jdbi.v2.Handle;
 
+import com.google.common.collect.ImmutableList;
+
 import jersey.repackaged.com.google.common.base.Joiner;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.search.OrganizationSearchQuery;
@@ -28,7 +30,7 @@ public class SqliteOrganizationSearcher implements IOrganizationSearcher {
 		
 		String text = query.getText();
 		if (text != null && text.trim().length() > 0) { 
-			whereClauses.add("(name LIKE '%' || :text || '%' )");
+			whereClauses.add("(shortName LIKE '%' || :text || '%' OR longName LIKE '%' || :text || '%' )");
 			sqlArgs.put("text", text);
 		}
 		
@@ -37,12 +39,16 @@ public class SqliteOrganizationSearcher implements IOrganizationSearcher {
 			sqlArgs.put("type", DaoUtils.getEnumId(query.getType()));
 		}
 		
+		if (whereClauses.size() == 0) { return ImmutableList.of(); }
+		
 		sql.append(Joiner.on(" AND ").join(whereClauses));
 		
-		sql.append(")");
+		sql.append(" LIMIT :limit OFFSET :offset)");
 		
 		return dbHandle.createQuery(sql.toString())
 			.bindFromMap(sqlArgs)
+			.bind("offset", query.getPageSize() * query.getPageNum())
+			.bind("limit", query.getPageSize())
 			.map(new OrganizationMapper())
 			.list();
 	}

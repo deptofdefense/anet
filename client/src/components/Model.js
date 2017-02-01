@@ -18,10 +18,10 @@ export default class Model {
 		if (!array)
 			return []
 
-		return array.map(object =>
+		return array.map((object, idx) =>
 			object instanceof this
-				? func(object)
-				: func(new this(object))
+				? func(object, idx)
+				: func(new this(object), idx)
 		)
 	}
 
@@ -42,6 +42,10 @@ export default class Model {
 	static pathForNew() {
 		let resourceName = utils.resourceize(this.resourceName)
 		return ['', resourceName, 'new'].join('/')
+	}
+
+	static pathForEdit(instance) {
+		return this.pathFor(instance) + '/edit'
 	}
 
 	static isEqual(a, b) {

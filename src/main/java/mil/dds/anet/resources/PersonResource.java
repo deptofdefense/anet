@@ -18,6 +18,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.codahale.metrics.annotation.Timed;
+
 import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
@@ -55,6 +57,7 @@ public class PersonResource implements IGraphQLResource {
 	 * @return List of People objects in the system
 	 */
 	@GET
+	@Timed
 	@GraphQLFetcher
 	@Path("/")
 	public List<Person> getAll(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
@@ -65,9 +68,9 @@ public class PersonResource implements IGraphQLResource {
 	 * Returns a single person entry based on ID. 
 	 */
 	@GET
+	@Timed
 	@Path("/{id}")
 	@GraphQLFetcher
-	@Produces(MediaType.APPLICATION_JSON)
 	public Person getById(@PathParam("id") int id) { 
 		Person p = dao.getById(id);
 		if (p == null) { throw new WebApplicationException("No such person", Status.NOT_FOUND); }
@@ -82,6 +85,7 @@ public class PersonResource implements IGraphQLResource {
 	 * @return the same Person object with the ID field filled in. 
 	 */
 	@POST
+	@Timed
 	@Path("/new")
 	@RolesAllowed("SUPER_USER")
 	public Person createNewPerson(Person p) {
@@ -105,19 +109,20 @@ public class PersonResource implements IGraphQLResource {
 	 * @return HTTP/200 on success, HTTP/404 on any error. 
 	 */
 	@POST
+	@Timed
 	@Path("/update")
-	@RolesAllowed("SUPER_USER")
 	public Response updatePerson(@Auth Person user, Person p) {
 		if (canEditPerson(user, p) == false) { 
-			throw new WebApplicationException("You are not permitted to do this", Status.UNAUTHORIZED);
+			throw new WebApplicationException("You do not have permissions to edit this person", Status.UNAUTHORIZED);
 		}
+		
 		int numRows = dao.update(p);
 		
 		if (p.getPosition() != null) {
 			//Maybe update position? 
 			Position existing = AnetObjectEngine.getInstance()
 					.getPositionDao().getCurrentPositionForPerson(Person.createWithId(p.getId()));
-			if (existing == null || existing.getId() != p.getPosition().getId()) { 
+			if (existing == null || existing.getId().equals(p.getPosition().getId()) == false) { 
 				//Update the position for this person. 
 				AnetObjectEngine.getInstance().getPositionDao().setPersonInPosition(p, p.getPosition());
 			} else if (existing != null && p.getPosition().getId() == null) {
@@ -167,6 +172,7 @@ public class PersonResource implements IGraphQLResource {
 	 * @return a list of people objects
 	 */
 	@POST
+	@Timed
 	@GraphQLFetcher
 	@Path("/search")
 	public List<Person> search(@GraphQLParam("query") PersonSearchQuery query) {
@@ -174,6 +180,7 @@ public class PersonResource implements IGraphQLResource {
 	}
 	
 	@GET
+	@Timed
 	@Path("/search")
 	public List<Person> search(@Context HttpServletRequest request) {
 		try { 
@@ -188,12 +195,14 @@ public class PersonResource implements IGraphQLResource {
 	 * @param personId the ID number of the person whose position you want to lookup
 	 */
 	@GET
+	@Timed
 	@Path("/{id}/position")
 	public Position getPositionForPerson(@PathParam("personId") int personId) { 
 		return AnetObjectEngine.getInstance().getPositionDao().getCurrentPositionForPerson(Person.createWithId(personId));
 	}
 	
 	@GET
+	@Timed
 	@GraphQLFetcher
 	@Path("/recent")
 	public List<Person> recents(@Auth Person user) { 
@@ -201,6 +210,7 @@ public class PersonResource implements IGraphQLResource {
 	}
 	
 	@GET
+	@Timed
 	@GraphQLFetcher("me")
 	@Path("/me")
 	public Person getCurrentUser(@Auth Person user) { 

@@ -8,6 +8,8 @@ public class ReportSearchQuery implements ISearchQuery {
 	String text;
 	DateTime engagementDateStart;
 	DateTime engagementDateEnd;
+	DateTime createdAtStart;
+	DateTime createdAtEnd;
 	Integer attendeeId;
 	Integer authorOrgId;
 	boolean includeAuthorOrgChildren;
@@ -15,6 +17,14 @@ public class ReportSearchQuery implements ISearchQuery {
 	boolean includePrincipalOrgChildren;
 	Integer locationId;
 	Integer poamId;
+	Integer pendingApprovalOf;
+	int pageNum;
+	int pageSize;
+	
+	public ReportSearchQuery() { 
+		this.pageNum = 0;
+		this.pageSize = 10;
+	}
 
 	public Integer getAuthorId() {
 		return authorId;
@@ -46,6 +56,22 @@ public class ReportSearchQuery implements ISearchQuery {
 
 	public void setEngagementDateEnd(DateTime engagementDateEnd) {
 		this.engagementDateEnd = engagementDateEnd;
+	}
+
+	public DateTime getCreatedAtStart() {
+		return createdAtStart;
+	}
+
+	public void setCreatedAtStart(DateTime createdAtStart) {
+		this.createdAtStart = createdAtStart;
+	}
+
+	public DateTime getCreatedAtEnd() {
+		return createdAtEnd;
+	}
+
+	public void setCreatedAtEnd(DateTime createdAtEnd) {
+		this.createdAtEnd = createdAtEnd;
 	}
 
 	public Integer getAttendeeId() {
@@ -104,6 +130,32 @@ public class ReportSearchQuery implements ISearchQuery {
 		this.poamId = poamId;
 	}
 
+	public Integer getPendingApprovalOf() {
+		return pendingApprovalOf;
+	}
+
+	public void setPendingApprovalOf(Integer pendingApprovalOf) {
+		this.pendingApprovalOf = pendingApprovalOf;
+	}
+
+	@Override
+	public int getPageNum() {
+		return pageNum;
+	}
+	@Override
+	public void setPageNum(int pageNum) {
+		this.pageNum = pageNum;
+	}
+	@Override
+	public int getPageSize() {
+		return pageSize;
+	}
+	@Override
+	public void setPageSize(int pageSize) {
+		if (pageSize == 0) { return; } // that makes no sense. 
+		this.pageSize = pageSize;
+	}
+	
 	public static ReportSearchQuery withText(String text) {
 		ReportSearchQuery query = new ReportSearchQuery();
 		query.setText(text);

@@ -1,27 +1,28 @@
-import React from 'react'
+import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 import {Grid, Row, Col} from 'react-bootstrap'
 
 import SecurityBanner from 'components/SecurityBanner'
 import Header from 'components/Header'
 import Nav from 'components/Nav'
+import History from 'components/History'
 
 import API from 'api'
 import {Person, Organization} from 'models'
 
 export default class App extends Page {
 	static PagePropTypes = {
-		useNavigation: React.PropTypes.bool,
-		navElement: React.PropTypes.element,
-		fluidContainer: React.PropTypes.bool,
+		useNavigation: PropTypes.bool,
+		navElement: PropTypes.element,
+		fluidContainer: PropTypes.bool,
 	}
 
 	static propTypes = {
-		children: React.PropTypes.element.isRequired,
+		children: PropTypes.element.isRequired,
 	}
 
 	static childContextTypes = {
-		app: React.PropTypes.object,
+		app: PropTypes.object,
 	}
 
 	getChildContext() {
@@ -51,10 +52,10 @@ export default class App extends Page {
 	fetchData() {
 		API.query(/* GraphQL */`
 			person(f:me) {
-				id, name, role
+				id, name, role, emailAddress, rank, status
 				position {
 					id, name, type,
-					organization { id, name }
+					organization { id, shortName }
 				}
 			}
 
@@ -62,18 +63,23 @@ export default class App extends Page {
 				key, value
 			}
 			organizations(f:getTopLevelOrgs, type: ADVISOR_ORG) {
-				id, name
-				parentOrg { id }
+				id, shortName
 			}
 		`).then(data => this.setState(this.processData(data)))
+
 	}
 
 	processData(data) {
 		let currentUser = new Person(data.person)
 		let organizations = Organization.fromArray(data.organizations)
+		organizations.sort((a, b) => a.shortName.localeCompare(b.shortName));
 
 		let settings = this.state.settings
 		data.adminSettings.forEach(setting => settings[setting.key] = setting.value)
+
+		if (currentUser.id && currentUser.status === "NEW_USER") {
+			History.push("/people/" + currentUser.id + "/edit");
+		}
 
 		return {currentUser, settings, organizations}
 	}
@@ -87,7 +93,7 @@ export default class App extends Page {
 
 				<Header />
 
-				<div className={pageProps.fluidContainer ? "container-fluid" : "container"}>
+				<section className={pageProps.fluidContainer ? "container-fluid" : "container"}>
 					{pageProps.useNavigation === false
 						? this.props.children
 						: <Grid>
@@ -101,7 +107,7 @@ export default class App extends Page {
 							</Row>
 						</Grid>
 					}
-				</div>
+				</section>
 			</div>
 		)
 	}

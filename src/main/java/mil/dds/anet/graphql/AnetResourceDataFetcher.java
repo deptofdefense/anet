@@ -10,16 +10,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.DefaultValue;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 
 import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
@@ -55,6 +53,7 @@ public class AnetResourceDataFetcher implements DataFetcher {
 		fetchers = new HashMap<String,Method>();
 		validMethods = new LinkedList<Method>();
 		arguments = new HashMap<String,GraphQLArgument>();
+		mapper.registerModule(new JodaModule());
 		
 		//Find all methods that are annotated as Fetchers
 		for (Method m : resource.getClass().getMethods()) { 
@@ -199,15 +198,15 @@ public class AnetResourceDataFetcher implements DataFetcher {
 			//Verify the types are correct. (ignore primitives) 
 			if ((!param.getType().isPrimitive()) && param.getType().isAssignableFrom(arg.getClass()) == false) {
 				//If the argument passed was a Map, but we need a bean, try to convert it? 
-				if (Map.class.isAssignableFrom(arg.getClass())) { 
+				if (Map.class.isAssignableFrom(arg.getClass())) {
 					try { 
 						arg = mapper.convertValue(arg, param.getType());
-					} catch (IllegalArgumentException e) { 
+					} catch (IllegalArgumentException e) {
 						throw new WebApplicationException("Unable to convert Map into " + param.getType() + ": " + e.getMessage(), e);
 					}
 				} else {
 					System.out.println("c: Arg is " + arg.getClass() + " and param is " + param.getType());
-					throw new WebApplicationException("Type mismatch on arg, wanted " + param.getType() + " got " + arg.getClass());
+					throw new WebApplicationException("Type mismatch on arg, wanted " + param.getType() + " got " + arg.getClass() + " on " + method.getName());
 				}
 			}
 			args.add(arg);

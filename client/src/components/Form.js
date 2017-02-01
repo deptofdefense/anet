@@ -1,6 +1,7 @@
-import React, {Component} from 'react'
+import React, {Component, PropTypes} from 'react'
 import ReactDOM from 'react-dom'
 import {Form as BSForm, Row, Button} from 'react-bootstrap'
+import autobind from 'autobind-decorator'
 
 import {ContentForHeader} from 'components/Header'
 import FormField from 'components/FormField'
@@ -12,15 +13,23 @@ const staticFormStyle = {
 
 export default class Form extends Component {
 	static propTypes = Object.assign({}, BSForm.propTypes, {
-		formFor: React.PropTypes.object,
-		actionText: React.PropTypes.string,
-		onSubmit: React.PropTypes.func,
-		static: React.PropTypes.bool,
+		formFor: PropTypes.object,
+		static: PropTypes.bool,
+		submitText: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
+		submitOnEnter: PropTypes.bool,
+		onSubmit: PropTypes.func,
+		onChange: PropTypes.func,
 	})
 
+	static defaultProps = {
+		static: false,
+		submitText: 'Save',
+		submitOnEnter: false,
+	}
+
 	static childContextTypes = {
-		formFor: React.PropTypes.object,
-		form: React.PropTypes.object,
+		formFor: PropTypes.object,
+		form: PropTypes.object,
 	}
 
 	getChildContext() {
@@ -37,16 +46,22 @@ export default class Form extends Component {
 	}
 
 	render() {
-		let {children, actionText, ...bsProps} = this.props
+		let {children, submitText, submitOnEnter, ...bsProps} = this.props
 		bsProps = Object.without(bsProps, 'formFor', 'static')
 
 		if (this.props.static) {
+			submitText = false
 			bsProps.componentClass = Row
 			bsProps.style = bsProps.style || {}
 			Object.assign(bsProps.style, staticFormStyle)
 		}
 
-		let showSubmit = bsProps.onSubmit && actionText !== false
+		if (!submitOnEnter) {
+			bsProps.onKeyDown = this.preventEnterKey
+		}
+
+		let showSubmit = bsProps.onSubmit && submitText !== false
+		bsProps.onSubmit = this.onSubmit
 
 		return (
 			<BSForm {...bsProps} ref="container">
@@ -55,7 +70,7 @@ export default class Form extends Component {
 				{showSubmit &&
 					<ContentForHeader right>
 						<Button bsStyle="primary" type="submit" onClick={bsProps.onSubmit}>
-							{actionText || "Save"}
+							{submitText}
 						</Button>
 					</ContentForHeader>
 				}
@@ -63,12 +78,27 @@ export default class Form extends Component {
 				{showSubmit &&
 					<fieldset>
 						<Button bsStyle="primary" bsSize="large" type="submit" className="pull-right">
-							{actionText || "Save"}
+							{submitText}
 						</Button>
 					</fieldset>
 				}
 			</BSForm>
 		)
+	}
+
+	preventEnterKey(event) {
+		if (event.key === 'Enter') {
+			event.preventDefault()
+			event.stopPropagation()
+		}
+	}
+
+	@autobind
+	onSubmit(event) {
+		event.stopPropagation()
+		event.preventDefault()
+
+		this.props.onSubmit && this.props.onSubmit(event)
 	}
 }
 

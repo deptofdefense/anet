@@ -2,7 +2,7 @@ person(f:me) {
     id, name, role
     position {
         id, name, type,
-        organization { id, name }
+        organization { id, shortName, longName }
     }
 }
 
@@ -10,6 +10,6 @@ adminSettings(f:getAll) {
     key, value
 }
 organizations(f:getTopLevelOrgs, type: ADVISOR_ORG) {
-    id, name
+    id, shortName, longName
     parentOrg { id }
 }

@@ -1,6 +1,7 @@
 package mil.dds.anet.database;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -90,7 +91,7 @@ public class PersonDao implements IAnetDao<Person> {
 		p.setUpdatedAt(DateTime.now());
 		StringBuilder sql = new StringBuilder("UPDATE people " + 
 				"SET name = :name, status = :status, role = :role, " + 
-				"gender = :gender, country = :country,  " + 
+				"gender = :gender, country = :country,  emailAddress = :emailAddress, " + 
 				"phoneNumber = :phoneNumber, rank = :rank, biography = :biography, " +
 				"pendingVerification = :pendingVerification, updatedAt = :updatedAt, ");
 		if (DaoUtils.isMsSql(dbHandle)) {
@@ -138,7 +139,7 @@ public class PersonDao implements IAnetDao<Person> {
 	}
 
 	public List<Person> findByProperty(String ...strings) {
-		if (strings.length % 2 != 0 ) { throw new RuntimeException("Illegal number of arguments to findByProperty: " + strings.toString()); }
+		if (strings.length % 2 != 0 ) { throw new RuntimeException("Illegal number of arguments to findByProperty: " + Arrays.toString(strings)); }
 		HashSet<String> props = Sets.newHashSet("name","emailAddress","rank","phoneNumber","status", "domainUsername");
 		List<String> conditions = new ArrayList<String>();
 		

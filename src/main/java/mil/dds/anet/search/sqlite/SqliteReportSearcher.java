@@ -9,6 +9,8 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.skife.jdbi.v2.Handle;
 
+import com.google.common.collect.ImmutableList;
+
 import jersey.repackaged.com.google.common.base.Joiner;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.search.ReportSearchQuery;
@@ -36,7 +38,13 @@ public class SqliteReportSearcher implements IReportSearcher {
 		
 		String text = query.getText();
 		if (text != null && text.trim().length() > 0) {
-			whereClauses.add("(text LIKE '%' || :text || '%' OR intent LIKE '%' || :text || '%')");
+			whereClauses.add("(text LIKE '%' || :text || '%' OR "
+					+ "intent LIKE '%' || :text || '%' OR "
+					+ "keyOutcomesSummary LIKE '%' || :text || '%' OR "
+					+ "keyOutcomes LIKE '%' || :text || '%' OR "
+					+ "nextStepsSummary LIKE '%' || :text || '%' OR "
+					+ "nextSteps LIKE '%' || :text || '%'"
+					+ ")");
 			args.put("text", text);
 		}
 		
@@ -49,6 +57,15 @@ public class SqliteReportSearcher implements IReportSearcher {
 		if (query.getEngagementDateEnd() != null) { 
 			whereClauses.add("reports.engagementDate <= DateTime(:endDate)");
 			args.put("endDate", sqlitePattern.print(query.getEngagementDateEnd()));
+		}
+		
+		if (query.getCreatedAtStart() != null) { 
+			whereClauses.add("reports.createdAt >= DateTime(:startCreatedAt)");
+			args.put("startCreatedAt", sqlitePattern.print(query.getCreatedAtStart()));
+		}
+		if (query.getCreatedAtEnd() != null) { 
+			whereClauses.add("reports.createdAt <= DateTime(:endCreatedAt)");
+			args.put("endCreatedAt", sqlitePattern.print(query.getCreatedAtEnd()));
 		}
 		
 		if (query.getAttendeeId() != null) { 
@@ -95,9 +112,18 @@ public class SqliteReportSearcher implements IReportSearcher {
 			args.put("locationId", query.getLocationId());
 		}
 		
+		if (query.getPendingApprovalOf() != null) { 
+			whereClauses.add("reports.approvalStepId IN "
+				+ "(SELECT id from approvers where positionId IN "
+				+ "(SELECT id FROM positions where currentPersonId = :approverId))");
+			args.put("approverId", query.getPendingApprovalOf());
+		}
+		
+		if (whereClauses.size() == 0) { return ImmutableList.of(); }
+		
 		sql.append(" WHERE ");
 		sql.append(Joiner.on(" AND ").join(whereClauses));
-		sql.append(")");
+		sql.append(" LIMIT :limit OFFSET :offset)");
 		
 		if (commonTableExpression != null) { 
 			sql.insert(0, commonTableExpression);
@@ -105,6 +131,8 @@ public class SqliteReportSearcher implements IReportSearcher {
 		
 		return dbHandle.createQuery(sql.toString())
 				.bindFromMap(args)
+				.bind("offset", query.getPageSize() * query.getPageNum())
+				.bind("limit", query.getPageSize())
 				.map(new ReportMapper())
 				.list();
 	}

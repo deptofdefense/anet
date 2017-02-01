@@ -1,46 +1,37 @@
 package mil.dds.anet.beans;
 
+import java.util.List;
 import java.util.Objects;
 
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.graphql.GraphQLFetcher;
 import mil.dds.anet.graphql.GraphQLIgnore;
-import mil.dds.anet.utils.DaoUtils;
 import mil.dds.anet.views.AbstractAnetBean;
 
 public class ApprovalStep extends AbstractAnetBean {
 
-	Group approverGroup;
+	List<Position> approvers;
 	Integer nextStepId;
 	Integer advisorOrganizationId;
-	
-	public static ApprovalStep create(Integer id, Group approverGroup, Integer nextStepId, Integer aoId) { 
-		ApprovalStep as = new ApprovalStep();
-		as.setId(id);
-		as.setApproverGroup(approverGroup);
-		as.setAdvisorOrganizationId(aoId);
-		as.setNextStepId(nextStepId);
-		return as;
-	}
-	
-	@GraphQLFetcher("approverGroup")
-	public Group loadApproverGroup() {
-		if (approverGroup == null || approverGroup.getLoadLevel() == null) { return approverGroup; }
-		if (approverGroup.getLoadLevel().contains(LoadLevel.PROPERTIES) == false) { 
-			this.approverGroup = AnetObjectEngine.getInstance()
-					.getGroupDao().getById(approverGroup.getId());
+	String name;
+
+	@GraphQLFetcher("approvers")
+	public List<Position> loadApprovers() { 
+		if (approvers == null) { 
+			approvers = AnetObjectEngine.getInstance().getApprovalStepDao().getApproversForStep(this);
 		}
-		return approverGroup;
+		return approvers;
 	}
 	
 	@GraphQLIgnore
-	public Group getApproverGroup() { 
-		return approverGroup;
+	public List<Position> getApprovers() { 
+		return approvers;
 	}
 	
-	public void setApproverGroup(Group approverGroup) {
-		this.approverGroup = approverGroup;
+	public void setApprovers(List<Position> approvers) { 
+		this.approvers = approvers;
 	}
+
 	public Integer getNextStepId() {
 		return nextStepId;
 	}
@@ -54,6 +45,14 @@ public class ApprovalStep extends AbstractAnetBean {
 		this.advisorOrganizationId = advisorOrganizationId;
 	}
 	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	@Override
 	public boolean equals(Object o) { 
 		if (o == null || o.getClass() != ApprovalStep.class) { 
@@ -61,19 +60,19 @@ public class ApprovalStep extends AbstractAnetBean {
 		}
 		ApprovalStep as = (ApprovalStep) o;
 		return Objects.equals(id, as.getId()) &&
-			idEqual(approverGroup, as.getApproverGroup()) &&
+			Objects.equals(name,  as.getName()) &&
 			Objects.equals(nextStepId, as.getNextStepId()) &&
 			Objects.equals(advisorOrganizationId, as.getAdvisorOrganizationId());
 	}
 	
 	@Override
 	public int hashCode() { 
-		return Objects.hash(id, approverGroup, nextStepId, advisorOrganizationId);
+		return Objects.hash(id, approvers, name, nextStepId, advisorOrganizationId);
 	}
 	
 	@Override
 	public String toString() { 
-		return String.format("%d - gid: %d, aoid: %d, nsid: %d", id, DaoUtils.getId(approverGroup), advisorOrganizationId, nextStepId);
+		return String.format("%d - %s, aoid: %d, nsid: %d", id, name, advisorOrganizationId, nextStepId);
 	}
 
 	public static ApprovalStep createWithId(Integer id) {

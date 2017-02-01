@@ -13,6 +13,13 @@ public class PersonSearchQuery implements ISearchQuery {
 	String country;
 	Integer locationId;
 	Boolean pendingVerification;
+	int pageNum;
+	int pageSize;
+	
+	public PersonSearchQuery() { 
+		this.pageNum = 0;
+		this.pageSize = 100;
+	}
 
 	public String getText() {
 		return text;
@@ -78,6 +85,24 @@ public class PersonSearchQuery implements ISearchQuery {
 		this.pendingVerification = pendingVerification;
 	}
 
+	@Override
+	public int getPageNum() {
+		return pageNum;
+	}
+	@Override
+	public void setPageNum(int pageNum) {
+		this.pageNum = pageNum;
+	}
+	@Override
+	public int getPageSize() {
+		return pageSize;
+	}
+	@Override
+	public void setPageSize(int pageSize) {
+		if (pageSize == 0) { return; } // that makes no sense. 
+		this.pageSize = pageSize;
+	}
+	
 	public static PersonSearchQuery withText(String text) {
 		PersonSearchQuery query = new PersonSearchQuery();
 		query.setText(text);

@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <databaseChangeLog
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+		xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+		 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <changeSet id="1" author="hpitelka">
-        <createTable tableName="people">
-            <column name="id" type="int" autoIncrement="true">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="name" type="varchar(255)" />
+	<changeSet id="1" author="hpitelka">
+		<createTable tableName="people">
+			<column name="id" type="int" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="name" type="varchar(255)" />
 			<column name="status" type="int" />
 			<column name="emailAddress" type="varchar(255)" />
 			<column name="phoneNumber" type="varchar(100)" />
@@ -20,15 +20,15 @@
 			<column name="createdAt" type="datetime" />
 			<column name="updatedAt" type="datetime" />
 			<column name="role" type="int" >
-                <constraints nullable="false"/>
+				<constraints nullable="false"/>
 			</column>
 			<column name="pendingVerification" type="boolean" defaultValue="false" />
-        </createTable>
+		</createTable>
 
 		<createTable tableName="groups">
-            <column name="id" type="int" autoIncrement="true">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
+			<column name="id" type="int" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
 			<column name="name" type="varchar(512)" />
 			<column name="createdAt" type="datetime" />
 		</createTable>
@@ -82,7 +82,7 @@
 			<column name="createdAt" type="datetime" />
 			<column name="updatedAt" type="datetime" />
 			<column name="type" type="int" >
-                <constraints nullable="false"/>
+				<constraints nullable="false"/>
 			</column>
 			<column name="currentPersonId" type="int" />
 			<column name="locationId" type="int" />
@@ -152,7 +152,7 @@
 			<column name="createdAt" type="datetime" />
 			<column name="updatedAt" type="datetime" />
 		</createTable>
-    </changeSet>
+	</changeSet>
 
 	<changeSet id="2" author="hpitelka">
 		<createTable tableName="approvalSteps">
@@ -376,8 +376,8 @@
 
 	<changeSet id="9" author="hpitelka" >
 		<createTable tableName="adminSettings">
-            <column name="key" type="varchar(255)" />
-            <column name="value" type="text" />
+			<column name="key" type="varchar(255)" />
+			<column name="value" type="text" />
 		</createTable>
 	</changeSet>
 	<changeSet id="10" author="hpitelka" dbms="mssql" >
@@ -386,9 +386,9 @@
 
 	<changeSet id="11" author="hpitelka" >
 		<createTable tableName="pendingEmails">
-            <column name="id" type="int" autoIncrement="true">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
+			<column name="id" type="int" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
 			<column name="jobSpec" type="text" />
 			<column name="createdAt" type="datetime" />
 		</createTable>
@@ -452,5 +452,81 @@
 		<sql dbms="mssql">
 			ALTER FULLTEXT INDEX ON reports ADD (keyOutcomesSummary, keyOutcomes, nextStepsSummary)
 		</sql>
+	</changeSet>
+
+	<changeSet id="16" author="hpitelka" >
+		<addColumn tableName="organizations">
+			<column name="longName" type="text" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="17" author="hpitelka" dbms="mssql" >
+		<renameColumn 
+			columnDataType="varchar(255)" 
+			oldColumnName="name" 
+			newColumnName="shortName" 
+			tableName="organizations" />
+	</changeSet>
+
+	<changeSet id="18" author="hpitelka" dbms="sqlite" >
+		<!-- sqlite doesn't support rename column, so drop and add a new column -->
+		<addColumn tableName="organizations">
+			<column name="shortName" type="varchar(255)" />
+		</addColumn>
+		<dropColumn tableName="organizations" columnName="name" />
+	</changeSet>
+
+	<changeSet id="19" author="hpitelka" >
+		<createTable tableName="savedSearches">
+		   <column name="id" type="int" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="name" type="varchar(512)" />
+			<column name="createdAt" type="datetime" />
+			<column name="ownerId" type="int" />
+			<column name="objectType" type="int" />
+			<column name="query" type="text" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="20" author="hpitelka"  dbms="mssql" >
+		<addForeignKeyConstraint baseColumnNames="ownerId" baseTableName="savedSearches"
+			constraintName="fk_savedSearch_owner" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="people" />
+	</changeSet>
+
+	<changeSet id="21" author="hpitelka" dbms="mssql" runInTransaction="false">
+		<sql dbms="mssql">
+			DROP FULLTEXT INDEX ON organizations;
+			CREATE FULLTEXT INDEX ON organizations(shortName, longName) KEY INDEX PK_ORGANIZATIONS;
+		</sql>
+	</changeSet>
+
+	<changeSet id="22" author="hpitelka" dbms="mssql" >
+		<dropForeignKeyConstraint baseTableName="groupMemberships" constraintName="fk_groupMember_group" />
+		<dropForeignKeyConstraint baseTableName="groupMemberships" constraintName="fk_groupMember_person" />
+		<dropForeignKeyConstraint baseTableName="approvalSteps" constraintName="fk_approvalSteps_group" />
+	</changeSet>
+
+	<changeSet id="23" author="hpitelka" >
+		<dropColumn columnName="approverGroupId" tableName="approvalSteps" />
+		<dropTable tableName="groupMemberships" />
+		<dropTable tableName="groups" />
+		<createTable tableName="approvers" >
+			<column name="approvalStepId" type="int" />
+			<column name="positionId" type="int" />
+		</createTable>
+		<addColumn tableName="approvalSteps" >
+			<column name="name" type="varchar(255)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="24" author="hpitelka" dbms="mssql" >
+		<addForeignKeyConstraint baseColumnNames="approvalStepId" baseTableName="approvers"
+			constraintName="fk_approvers_step" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="approvalSteps" />
+		<addForeignKeyConstraint baseColumnNames="positionId" baseTableName="approvers"
+			constraintName="fk_approvers_position" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="positions" />
 	</changeSet>
 </databaseChangeLog>

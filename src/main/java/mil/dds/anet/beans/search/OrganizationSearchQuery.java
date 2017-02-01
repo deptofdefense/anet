@@ -6,6 +6,13 @@ public class OrganizationSearchQuery implements ISearchQuery {
 
 	String text;
 	OrganizationType type;
+	int pageNum;
+	int pageSize;
+	
+	public OrganizationSearchQuery() { 
+		this.pageNum = 0;
+		this.pageSize = 10;
+	}
 	
 	public String getText() {
 		return text;
@@ -18,6 +25,24 @@ public class OrganizationSearchQuery implements ISearchQuery {
 	}
 	public void setType(OrganizationType type) {
 		this.type = type;
+	}
+	
+	@Override
+	public int getPageNum() {
+		return pageNum;
+	}
+	@Override
+	public void setPageNum(int pageNum) {
+		this.pageNum = pageNum;
+	}
+	@Override
+	public int getPageSize() {
+		return pageSize;
+	}
+	@Override
+	public void setPageSize(int pageSize) {
+		if (pageSize == 0) { return; } // that makes no sense. 
+		this.pageSize = pageSize;
 	}
 	
 	public static OrganizationSearchQuery withText(String text) {

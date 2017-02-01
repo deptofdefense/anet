@@ -14,6 +14,15 @@ export default class Position extends Model {
 	}
 
 	toString() {
-		return this.code || this.name || "Uncoded"
+		return this.code || this.name
+	}
+
+	iconUrl() {
+		if (this.type === "ADVISOR") {
+			return "/assets/img/rs_small.png"
+		} else if (this.type === "PRINCIPAL") {
+			return "/assets/img/afg_small.png"
+		}
+		return ""
 	}
 }

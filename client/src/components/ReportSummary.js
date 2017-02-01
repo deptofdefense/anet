@@ -1,20 +1,19 @@
-import React, {Component} from 'react'
+import React, {Component, PropTypes} from 'react'
 import {Grid, Row, Col} from 'react-bootstrap'
 import {Link} from 'react-router'
 
 import LinkTo from 'components/LinkTo'
-import {Report, Poam, Person, Organization} from 'models'
+import {Report, Person, Organization} from 'models'
 
 import moment from 'moment'
 
 export default class ReportSummary extends Component {
 	static propTypes = {
-		report: React.PropTypes.object.isRequired,
+		report: PropTypes.object.isRequired,
 	}
 
 	render() {
 		let report = new Report(this.props.report)
-		console.log("report summary", report)
 
 		return <Grid fluid>
 			<Row>
@@ -27,7 +26,7 @@ export default class ReportSummary extends Component {
 					}
 				</Col>
 				<Col md={6}>
-					{moment(report.engagementDate).format("L")}
+					{report.engagementDate && moment(report.engagementDate).format("D MMM YYYY")}
 					{report.location &&
 						<span> @&nbsp;
 						<Link to={"/locations/" + report.location.id}>{report.location.name}</Link>
@@ -41,14 +40,10 @@ export default class ReportSummary extends Component {
 			</Row>
 			<Row>
 				<Col md={12}>
-					<ul>{report.poams && Poam.map(report.poams, poam =>
-						<li key={poam.id}>{poam.shortName} - {poam.longName}</li>
-					)}
-					</ul>
+					{report.intent}. &nbsp;
+					{report.keyOutcomesSummary && <span>The <b>Key Outcomes</b> were {report.keyOutcomesSummary}.</span>} &nbsp;
+					{report.nextStepsSummary && <span>The <b>Next Steps</b> are {report.nextStepsSummary}.</span>}
 				</Col>
-			</Row>
-			<Row>
-				<Col md={12}>The <b>Key Outcomes</b> were {report.keyOutcomesSummary}.  The <b>Next Steps</b> are {report.nextStepsSummary}. </Col>
 			</Row>
 			<Row>
 				<Col md={4} mdOffset={8}><LinkTo report={report} >Read Full Report</LinkTo></Col>
@@ -59,6 +54,7 @@ export default class ReportSummary extends Component {
 	renderPerson(person) {
 		person = new Person(person);
 		return <div>
+			<img height={20} width={20} src={person.iconUrl()} alt={person.role} className="person-icon" />
 			<LinkTo person={person} />
 			{person.position && person.position.organization &&
 				<span> -&nbsp;

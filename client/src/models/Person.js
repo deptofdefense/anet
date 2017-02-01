@@ -40,4 +40,14 @@ export default class Person extends Model {
 			this.position.organization.id === org.id
 		)
 	}
+
+	iconUrl() {
+		if (this.role === "ADVISOR") {
+			return "/assets/img/rs_small.png"
+		} else if (this.role === "PRINCIPAL") {
+			return "/assets/img/afg_small.png"
+		}
+		return ""
+	}
+
 }

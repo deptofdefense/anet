@@ -1,9 +1,10 @@
-
---DROP TABLE groupMemberships;
+--DROP TABLE approvers;
 --DROP TABLE approvalActions;
 --DROP TABLE positionRelationships;
 --DROP TABLE reportPoams;
 --DROP TABLE reportPeople;
+--DROP TABLE peoplePositions;
+--DROP TABLE savedSearches;
 --DROP TABLE positions;
 --DROP TABLE poams;
 --DROP TABLE comments;
@@ -12,18 +13,18 @@
 --DROP TABLE approvalSteps;
 --DROP TABLE locations;
 --DROP TABLE organizations;
---DROP TABLE groups;
---DROP TABLE DATABASECHANGELOG;
 --DROP TABLE adminSettings;
 --DROP TABLE pendingEmails;
+--DROP TABLE DATABASECHANGELOG;
 
 TRUNCATE TABLE peoplePositions;
-TRUNCATE TABLE groupMemberships;
+TRUNCATE TABLE approvers;
 TRUNCATE TABLE approvalActions;
 TRUNCATE TABLE positionRelationships;
 TRUNCATE TABLE reportPoams;
 TRUNCATE TABLE reportPeople;
 TRUNCATE TABLE comments;
+TRUNCATE TABLE savedSearches;
 DELETE FROM positions;
 DELETE FROM poams;
 DELETE FROM reports;
@@ -31,7 +32,6 @@ DELETE FROM people;
 DELETE FROM approvalSteps;
 DELETE FROM locations;
 DELETE FROM organizations;
-DELETE FROM groups;
 DELETE FROM adminSettings;
 
 --Advisors
@@ -66,8 +66,8 @@ INSERT INTO people (name, status, role, emailAddress, domainUsername, createdAt,
 --People
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt)
 	VALUES ('Hunter Huntman', 0, 1, 'hunter+hunter@dds.mil', '+1-412-9314', 'CIV', '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt)
-	VALUES ('Andrew Anderson', 0, 1, 'hunter+andrew@dds.mil', '+1-412-7324', 'CIV', '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, createdAt, updatedAt)
+	VALUES ('Andrew Anderson', 0, 1, 'hunter+andrew@dds.mil', '+1-412-7324', 'CIV', '', 'andrew', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, createdAt, updatedAt)
 	VALUES ('Nick Nicholson', 0, 0, 'hunter+nick@dds.mil', '+1-202-7324', 'CIV', '', 'nick', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt)
@@ -135,95 +135,92 @@ INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES
 UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'hunter+arthur@dds.mil') WHERE name = 'ANET Administrator';
 
 
-INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('ANET Administrators', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('EF1', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-	INSERT INTO organizations (name, type, parentOrgId, createdAt, updatedAt) VALUES ('EF1.1', 0, (SELECT id from organizations WHERE name ='EF1'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('EF2', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-	INSERT INTO organizations (name, type, parentOrgId, createdAt, updatedAt) VALUES ('EF2.1', 0, (SELECT id from organizations WHERE name ='EF2'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-	INSERT INTO organizations (name, type, parentOrgId, createdAt, updatedAt) VALUES ('EF2.2', 0, (SELECT id from organizations WHERE name ='EF2'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('EF3', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('EF4', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-	INSERT INTO organizations (name, type, parentOrgId, createdAt, updatedAt) VALUES ('EF 4.1', 0 , (SELECT id FROM organizations WHERE name = 'EF4'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-	INSERT INTO organizations (name, type, parentOrgId, createdAt, updatedAt) VALUES ('EF 4.2', 0 , (SELECT id FROM organizations WHERE name = 'EF4'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-	INSERT INTO organizations (name, type, parentOrgId, createdAt, updatedAt) VALUES ('EF 4.3', 0 , (SELECT id FROM organizations WHERE name = 'EF4'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-	INSERT INTO organizations (name, type, parentOrgId, createdAt, updatedAt) VALUES ('EF 4.4', 0 , (SELECT id FROM organizations WHERE name = 'EF4'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('EF5', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('EF6', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('EF7', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('EF8', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('Gender', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('TAAC-N', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('TAAC-S', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('TAAC-W', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('TAAC-E', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('TAAC-C', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('TAAC Air', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO organizations(shortName, longName, type, createdAt, updatedAt) VALUES ('ANET Administrators','', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO organizations(shortName, longName, type, createdAt, updatedAt) VALUES ('EF1', 'Planning Programming, Budgeting and Execution', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	INSERT INTO organizations(shortName, longName, type, parentOrgId, createdAt, updatedAt) VALUES ('EF1.1', '',0, (SELECT id from organizations WHERE shortName ='EF1'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO organizations(shortName, longName, type, createdAt, updatedAt) VALUES ('EF2', '',0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	INSERT INTO organizations(shortName, longName, type, parentOrgId, createdAt, updatedAt) VALUES ('EF2.1', '', 0, (SELECT id from organizations WHERE shortName ='EF2'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	INSERT INTO organizations(shortName, longName, type, parentOrgId, createdAt, updatedAt) VALUES ('EF2.2', '', 0, (SELECT id from organizations WHERE shortName ='EF2'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO organizations(shortName, longName, type, createdAt, updatedAt) VALUES ('EF3', '', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO organizations(shortName, longName, type, createdAt, updatedAt) VALUES ('EF4', '', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	INSERT INTO organizations(shortName, longName, type, parentOrgId, createdAt, updatedAt) VALUES ('EF 4.1', '', 0 , (SELECT id FROM organizations WHERE shortName = 'EF4'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	INSERT INTO organizations(shortName, longName, type, parentOrgId, createdAt, updatedAt) VALUES ('EF 4.2', '', 0 , (SELECT id FROM organizations WHERE shortName = 'EF4'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	INSERT INTO organizations(shortName, longName, type, parentOrgId, createdAt, updatedAt) VALUES ('EF 4.3', '', 0 , (SELECT id FROM organizations WHERE shortName = 'EF4'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	INSERT INTO organizations(shortName, longName, type, parentOrgId, createdAt, updatedAt) VALUES ('EF 4.4', '', 0 , (SELECT id FROM organizations WHERE shortName = 'EF4'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO organizations(shortName, longName, type, createdAt, updatedAt) VALUES ('EF5', '', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO organizations(shortName, longName, type, createdAt, updatedAt) VALUES ('EF6', '', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO organizations(shortName, longName, type, createdAt, updatedAt) VALUES ('EF7', '', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO organizations(shortName, longName, type, createdAt, updatedAt) VALUES ('EF8', '', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO organizations(shortName, longName, type, createdAt, updatedAt) VALUES ('EF9', 'Gender', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO organizations(shortName, longName, type, createdAt, updatedAt) VALUES ('TAAC-N', '', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO organizations(shortName, longName, type, createdAt, updatedAt) VALUES ('TAAC-S', '', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO organizations(shortName, longName, type, createdAt, updatedAt) VALUES ('TAAC-W', '', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO organizations(shortName, longName, type, createdAt, updatedAt) VALUES ('TAAC-E', '', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO organizations(shortName, longName, type, createdAt, updatedAt) VALUES ('TAAC-C', '', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO organizations(shortName, longName, type, createdAt, updatedAt) VALUES ('TAAC Air', '', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
-UPDATE positions SET organizationId = (SELECT id FROM organizations WHERE name ='EF1.1') WHERE name LIKE 'EF1.1%';
-UPDATE positions SET organizationId = (SELECT id FROM organizations WHERE name ='EF2.1') WHERE name LIKE 'EF2.1%';
-UPDATE positions SET organizationId = (SELECT id FROM organizations WHERE name ='EF2.2') WHERE name LIKE 'EF2.2%';
-UPDATE positions SET organizationId = (SELECT id FROM organizations WHERE name ='EF3') WHERE name LIKE 'EF3%';
-UPDATE positions SET organizationId = (SELECT id FROM organizations WHERE name ='EF4') WHERE name LIKE 'EF4%';
-UPDATE positions SET organizationId = (SELECT id FROM organizations WHERE name='ANET Administrators') where name = 'ANET Administrator';
+UPDATE positions SET organizationId = (SELECT id FROM organizations WHERE shortName ='EF1.1') WHERE name LIKE 'EF1.1%';
+UPDATE positions SET organizationId = (SELECT id FROM organizations WHERE shortName ='EF2.1') WHERE name LIKE 'EF2.1%';
+UPDATE positions SET organizationId = (SELECT id FROM organizations WHERE shortName ='EF2.2') WHERE name LIKE 'EF2.2%';
+UPDATE positions SET organizationId = (SELECT id FROM organizations WHERE shortName ='EF3') WHERE name LIKE 'EF3%';
+UPDATE positions SET organizationId = (SELECT id FROM organizations WHERE shortName ='EF4') WHERE name LIKE 'EF4%';
+UPDATE positions SET organizationId = (SELECT id FROM organizations WHERE shortName='ANET Administrators') where name = 'ANET Administrator';
 
 -- Create the EF1.1 approval process
-INSERT INTO groups (name, createdAt) VALUES ('EF1.1 Approvers', CURRENT_TIMESTAMP);
-INSERT INTO approvalSteps (approverGroupId, advisorOrganizationId) VALUES
-	((SELECT id from groups WHERE name = 'EF1.1 Approvers'), (SELECT id from organizations where name='EF1.1'));
-INSERT INTO groupMemberships (groupId, personId) VALUES
-	((SELECT id from groups WHERE name='EF1.1 Approvers'), (SELECT id from people where emailAddress = 'hunter+bob@dds.mil'));
+INSERT INTO approvalSteps (advisorOrganizationId, name) VALUES
+	((SELECT id from organizations where shortName='EF1.1'), 'EF1.1 Approvers');
+INSERT INTO approvers (approvalStepId, positionId) VALUES
+	((SELECT id from approvalSteps WHERE name='EF1.1 Approvers'), (SELECT id from positions where name = 'EF1.1 SuperUser'));
 
 -- Create the EF 2.2 approval process
-INSERT INTO groups (name, createdAt) VALUES ('EF2.2 Initial Approvers', CURRENT_TIMESTAMP);
-INSERT INTO groupMemberships (groupId, personId) VALUES
-	((SELECT id from groups WHERE name='EF2.2 Initial Approvers'), (SELECT id from people where emailAddress = 'hunter+jacob@dds.mil'));
-INSERT INTO groupMemberships (groupId, personId) VALUES
-	((SELECT id from groups WHERE name='EF2.2 Initial Approvers'), (SELECT id from people where emailAddress = 'hunter+erin@dds.mil'));
-INSERT INTO groups (name, createdAt) VALUES ('EF2.2 Secondary Reviewers', CURRENT_TIMESTAMP);
-INSERT INTO groupMemberships (groupId, personId) VALUES
-	((SELECT id from groups WHERE name='EF2.2 Secondary Reviewers'), (SELECT id from people where emailAddress = 'hunter+rebecca@dds.mil'));
+INSERT INTO approvalSteps (name, advisorOrganizationId) VALUES
+	('EF2.2 Secondary Reviewers', (SELECT id from organizations where shortName='EF2.2'));
+INSERT INTO approvalSteps (name, advisorOrganizationId, nextStepId) VALUES
+	('EF2.2 Initial Approvers', (SELECT id from organizations where shortName='EF2.2'), (SELECT MAX(id) from approvalSteps));
 
-INSERT INTO approvalSteps (approverGroupId, advisorOrganizationId) VALUES
-	((SELECT id from groups WHERE name = 'EF2.2 Secondary Reviewers'), (SELECT id from organizations where name='EF2.2'));
-INSERT INTO approvalSteps (approverGroupId, advisorOrganizationId, nextStepId) VALUES
-	((SELECT id from groups WHERE name = 'EF2.2 Initial Approvers'), (SELECT id from organizations where name='EF2.2'), (SELECT MAX(id) from approvalSteps));
+INSERT INTO approvers (approvalStepId, positionId) VALUES
+	((SELECT id from approvalSteps WHERE name='EF2.2 Initial Approvers'), (SELECT id from positions where name = 'EF2.2 Super User'));
+INSERT INTO approvers (approvalStepId, positionId) VALUES
+	((SELECT id from approvalSteps WHERE name='EF2.2 Initial Approvers'), (SELECT id from positions where name = 'EF2.2 Advisor D'));
+INSERT INTO approvers (approvalStepId, positionId) VALUES
+	((SELECT id from approvalSteps WHERE name='EF2.2 Secondary Reviewers'), (SELECT id from positions where name = 'EF2.2 Final Reviewer'));
 
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt)	VALUES ('EF1', 'Budget and Planning', 'EF', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId)
 	VALUES ('1.1', 'Budgeting in the MoD', 'Sub-EF', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1'));
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId, organizationId)
-	VALUES ('1.1.A', 'Milestone the First in EF1.1', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1.1'), (SELECT id from organizations where name='EF1.1'));
+	VALUES ('1.1.A', 'Milestone the First in EF1.1', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1.1'), (SELECT id from organizations where shortName='EF1.1'));
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId, organizationId)
-	VALUES ('1.1.B', 'Milestone the Second in EF1.1', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1.1'), (SELECT id from organizations where name='EF1.1'));
+	VALUES ('1.1.B', 'Milestone the Second in EF1.1', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1.1'), (SELECT id from organizations where shortName='EF1.1'));
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId, organizationId)
-	VALUES ('1.1.C', 'Milestone the Third in EF1.1', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1.1'), (SELECT id from organizations where name='EF1.1'));
+	VALUES ('1.1.C', 'Milestone the Third in EF1.1', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1.1'), (SELECT id from organizations where shortName='EF1.1'));
 
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId, organizationId)
-	VALUES ('EF1.2', 'Budgeting in the MoI', 'Sub-EF', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1'), (SELECT id from organizations WHERE name='EF1.2'));
+	VALUES ('EF1.2', 'Budgeting in the MoI', 'Sub-EF', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1'), (SELECT id from organizations WHERE shortName='EF1.2'));
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId, organizationId)
-	VALUES ('1.2.A', 'Milestone the First in EF1.2', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1.2'), (SELECT id from organizations where name='EF1.2'));
+	VALUES ('1.2.A', 'Milestone the First in EF1.2', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1.2'), (SELECT id from organizations where shortName='EF1.2'));
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId, organizationId)
-	VALUES ('1.2.B', 'Milestone the Second in EF1.2', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1.2'), (SELECT id from organizations where name='EF1.2'));
+	VALUES ('1.2.B', 'Milestone the Second in EF1.2', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1.2'), (SELECT id from organizations where shortName='EF1.2'));
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId, organizationId)
-	VALUES ('1.2.C', 'Milestone the Third in EF1.2', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1.2'), (SELECT id from organizations where name='EF1.2'));
+	VALUES ('1.2.C', 'Milestone the Third in EF1.2', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1.2'), (SELECT id from organizations where shortName='EF1.2'));
 
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId, organizationId)
-	VALUES ('EF1.3', 'Budgeting in the Police?', 'Sub-EF', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1'), (SELECT id FROM organizations WHERE name='EF1.3'));
+	VALUES ('EF1.3', 'Budgeting in the Police?', 'Sub-EF', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1'), (SELECT id FROM organizations WHERE shortName='EF1.3'));
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId, organizationId)
-	VALUES ('1.3.A', 'Getting a budget in place', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1.3'), (SELECT id from organizations where name='EF1.3'));
+	VALUES ('1.3.A', 'Getting a budget in place', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1.3'), (SELECT id from organizations where shortName='EF1.3'));
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId, organizationId)
-	VALUES ('1.3.B', 'Tracking your expenses', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1.3'), (SELECT id from organizations where name='EF1.3'));
+	VALUES ('1.3.B', 'Tracking your expenses', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1.3'), (SELECT id from organizations where shortName='EF1.3'));
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId, organizationId)
-	VALUES ('1.3.C', 'Knowing when you run out of money', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1.3'), (SELECT id from organizations where name='EF1.3'));
+	VALUES ('1.3.C', 'Knowing when you run out of money', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF1.3'), (SELECT id from organizations where shortName='EF1.3'));
 
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, organizationId)
-	VALUES ('EF2', 'Transparency, Accountability, O (TAO)', 'EF', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from organizations where name='EF2'));
+	VALUES ('EF2', 'Transparency, Accountability, O (TAO)', 'EF', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from organizations where shortName='EF2'));
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId, organizationId)
-	VALUES ('2.A', 'This is the first Milestone in EF2', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF2'), (SELECT id from organizations where name='EF2'));
+	VALUES ('2.A', 'This is the first Milestone in EF2', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF2'), (SELECT id from organizations where shortName='EF2'));
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId, organizationId)
-	VALUES ('2.B', 'This is the second Milestone in EF2', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF2'), (SELECT id from organizations where name='EF2'));
+	VALUES ('2.B', 'This is the second Milestone in EF2', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF2'), (SELECT id from organizations where shortName='EF2'));
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId, organizationId)
-	VALUES ('2.C', 'This is the third Milestone in EF2', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF2'), (SELECT id from organizations where name='EF2'));
+	VALUES ('2.C', 'This is the third Milestone in EF2', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF2'), (SELECT id from organizations where shortName='EF2'));
 
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt) VALUES ('EF3', 'Rule of Law', 'EF', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt) VALUES ('EF4', 'Force Gen (Training)', 'EF', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
@@ -259,25 +256,25 @@ INSERT INTO locations (name, createdAt, updatedAt) VALUES ('MoD Location the Sec
 INSERT INTO locations (name, createdAt, updatedAt) VALUES ('MoI Office Building ABC', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 
-INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('Ministry of Defense', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO organizations (name, type, createdAt, updatedAt) VALUES ('Ministry of Interior', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO organizations (shortName, longName, type, createdAt, updatedAt) VALUES ('MoD', 'Ministry of Defense', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO organizations (shortName, longName, type, createdAt, updatedAt) VALUES ('MoI', 'Ministry of Interior', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 INSERT INTO positions (name, code, type, currentPersonId, organizationId, createdAt, updatedAt)
-	VALUES ('Minister of Defense', 'MOD-FO-00001', 1, NULL, (SELECT id FROM organizations WHERE name ='Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	VALUES ('Minister of Defense', 'MOD-FO-00001', 1, NULL, (SELECT id FROM organizations WHERE longName LIKE 'Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, code, type, currentPersonId, organizationId, createdAt, updatedAt)
-	VALUES ('Chief of Staff - MoD', 'MOD-FO-00002', 1, NULL, (SELECT id FROM organizations WHERE name ='Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	VALUES ('Chief of Staff - MoD', 'MOD-FO-00002', 1, NULL, (SELECT id FROM organizations WHERE longName LIKE 'Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, code, type, currentPersonId, organizationId, createdAt, updatedAt)
-	VALUES ('Executive Assistant to the MoD', 'MOD-FO-00003', 1, NULL, (SELECT id FROM organizations WHERE name ='Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	VALUES ('Executive Assistant to the MoD', 'MOD-FO-00003', 1, NULL, (SELECT id FROM organizations WHERE longName LIKE 'Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, code, type, currentPersonId, organizationId, createdAt, updatedAt)
-	VALUES ('Planning Captain', 'MOD-FO-00004', 1, NULL, (SELECT id FROM organizations WHERE name ='Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	VALUES ('Planning Captain', 'MOD-FO-00004', 1, NULL, (SELECT id FROM organizations WHERE longName LIKE 'Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, code, type, currentPersonId, organizationId, createdAt, updatedAt)
-	VALUES ('Director of Budgeting - MoD', 'MOD-Bud-00001', 1, NULL, (SELECT id FROM organizations WHERE name ='Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	VALUES ('Director of Budgeting - MoD', 'MOD-Bud-00001', 1, NULL, (SELECT id FROM organizations WHERE longName LIKE 'Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, code, type, currentPersonId, organizationId, createdAt, updatedAt)
-	VALUES ('Writer of Expenses - MoD', 'MOD-Bud-00002', 1, NULL, (SELECT id FROM organizations WHERE name ='Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	VALUES ('Writer of Expenses - MoD', 'MOD-Bud-00002', 1, NULL, (SELECT id FROM organizations WHERE longName LIKE 'Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, code, type, currentPersonId, organizationId, createdAt, updatedAt)
-	VALUES ('Cost Adder - MoD', 'MOD-Bud-00003', 1, NULL, (SELECT id FROM organizations WHERE name ='Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	VALUES ('Cost Adder - MoD', 'MOD-Bud-00003', 1, NULL, (SELECT id FROM organizations WHERE longName LIKE 'Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, code, type, currentPersonId, organizationId, createdAt, updatedAt)
-	VALUES ('Chief of Police', 'MOI-Pol-HQ-00001',1, NULL, (SELECT id FROM organizations WHERE name ='Ministry of Interior'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	VALUES ('Chief of Police', 'MOI-Pol-HQ-00001',1, NULL, (SELECT id FROM organizations WHERE longName LIKE 'Ministry of Interior'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Put Steve into a Tashkil and associate with the EF1 Advisor Billet
 INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES
@@ -316,7 +313,7 @@ INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, nextSteps, 
 	'Today I met with this dude to tell him all the great things that he can do to improve his budgeting process. I hope he listened to me',
 	'Meet with the dude again next week',
 	(SELECT id FROM people where emailAddress='hunter+jack@dds.mil'), 2, '2016-05-25', 0,
-	(SELECT id FROM organizations where name = 'EF2.1'), (SELECT id FROM organizations WHERE name='Ministry of Defense'));
+	(SELECT id FROM organizations where shortName = 'EF2.1'), (SELECT id FROM organizations WHERE longName LIKE 'Ministry of Defense'));
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 	(SELECT id FROM people where emailAddress='hunter+steve@dds.mil'), (SELECT max(id) FROM reports), 1);
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
@@ -327,7 +324,7 @@ INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, keyOutcomes
 	'Today we discussed the fiscal details of how spreadsheets break down numbers into rows and columns and then text is used to fill up space on a web page, it was very interesting and other adjectives',
 	'we read over the spreadsheets for the FY17 Budget',
 	'meet with him again :(', (SELECT id FROM people where domainUsername='jack'), 2, '2016-06-01', 0,
-	(SELECT id FROM organizations where name = 'EF2.1'), (SELECT id FROM organizations WHERE name='Ministry of Defense'));
+	(SELECT id FROM organizations where shortName = 'EF2.1'), (SELECT id FROM organizations WHERE longName LIKE 'Ministry of Defense'));
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 	(SELECT id FROM people where emailAddress='hunter+steve@dds.mil'), (SELECT max(id) from reports), 1);
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
@@ -342,7 +339,7 @@ INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, keyOutcomes
 	'This report needs to fill up more space',
 	'putting something in the database to take up space',
 	'to be more creative next time', (SELECT id FROM people where domainUsername='jack'), 2, '2016-06-03', 0,
-	(SELECT id FROM organizations where name = 'EF2.1'), (SELECT id FROM organizations WHERE name='Ministry of Defense'));
+	(SELECT id FROM organizations where shortName = 'EF2.1'), (SELECT id FROM organizations WHERE longName LIKE 'Ministry of Defense'));
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 	(SELECT id FROM people where emailAddress='hunter+steve@dds.mil'), (SELECT max(id) from reports), 1);
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
@@ -354,7 +351,7 @@ INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, keyOutcomes
 	'Met with Nobody in this engagement and discussed no poams, what a waste of time',
 	'None',
 	'Head over to the MoD Headquarters buildling for the next engagement', (SELECT id FROM people where domainUsername='jack'), 2, '2016-06-10', 0,
-	(SELECT id FROM organizations where name = 'EF2.1'), (SELECT id FROM organizations WHERE name='Ministry of Defense'));
+	(SELECT id FROM organizations where shortName = 'EF2.1'), (SELECT id FROM organizations WHERE longName LIKE 'Ministry of Defense'));
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 	(SELECT id FROM people where emailAddress='hunter+steve@dds.mil'), (SELECT max(id) from reports), 1);
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
@@ -365,7 +362,7 @@ INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, nextSteps, 
 	(CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (select id from locations where name='MoD Headquarters Kabul'), 'Meet with Leadership regarding monthly status update',
 	'This engagement was sooooo interesting',
 	'Meet up with Roger next week to look at the numbers on the charts', (SELECT id FROM people where domainUsername='jack'), 2, '2016-06-12', 2,
-	(SELECT id FROM organizations where name = 'EF2.1'), (SELECT id FROM organizations WHERE name='Ministry of Defense'));
+	(SELECT id FROM organizations where shortName = 'EF2.1'), (SELECT id FROM organizations WHERE longName LIKE 'Ministry of Defense'));
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 	(SELECT id FROM people where emailAddress='hunter+steve@dds.mil'), (SELECT max(id) from reports), 1);
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
@@ -379,7 +376,7 @@ INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, keyOutcomes
 	'Went over to the fort to look at the beds and the spreadsheets and the numbers and the whiteboards and the planning and all of the budgets. It was GREAT!',
 	'Seeing the whiteboards firsthand',
 	'head to Cabot Tower and inspect their whiteboards next week', (SELECT id FROM people where domainUsername='jack'), 2, '2016-06-13', 0,
-	(SELECT id FROM organizations where name = 'EF2.1'), (SELECT id FROM organizations WHERE name='Ministry of Defense'));
+	(SELECT id FROM organizations where shortName = 'EF2.1'), (SELECT id FROM organizations WHERE longName LIKE 'Ministry of Defense'));
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 	(SELECT id FROM people where emailAddress='hunter+roger@dds.mil'), (SELECT max(id) from reports), 1);
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
@@ -390,7 +387,7 @@ INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, nextSteps, 
 	(CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (select id from locations where name='Cabot Tower'), 'Inspect Cabot Tower Budgeting Facility',
 	'Looked over the places around Cabot Tower for all of the things that people do when they need to do math.  There were calculators, and slide rules, and paper, and computers',
 	'keep writing fake reports to fill the database!!!', (SELECT id FROM people where domainUsername='jack'), 1, '2016-06-20', 1,
-	(SELECT id FROM organizations where name = 'EF2.1'), (SELECT id FROM organizations WHERE name='Ministry of Defense'));
+	(SELECT id FROM organizations where shortName = 'EF2.1'), (SELECT id FROM organizations WHERE longName LIKE 'Ministry of Defense'));
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 	(SELECT id FROM people where emailAddress='hunter+steve@dds.mil'), (SELECT max(id) from reports), 1);
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
@@ -401,7 +398,7 @@ INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, nextSteps, 
 	(CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from locations where name='General Hospital'), 'Discuss discrepancies in monthly budgets',
 	'Back to the hospital this week to test the recent locations feature of ANET, and also to look at math and numbers and budgets and things',
 	'Meet with the dude again next week',(SELECT id FROM people where emailAddress='hunter+jack@dds.mil'), 1, '2016-06-25', 0,
-	(SELECT id FROM organizations where name = 'EF2.1'), (SELECT id FROM organizations WHERE name='Ministry of Defense'));
+	(SELECT id FROM organizations where shortName = 'EF2.1'), (SELECT id FROM organizations WHERE longName LIKE 'Ministry of Defense'));
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 	(SELECT id FROM people where emailAddress='hunter+steve@dds.mil'), (SELECT max(id) FROM reports), 1);
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
@@ -412,7 +409,7 @@ INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, nextSteps, 
 	(CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from locations where name='St Johns Airport'), 'Inspect Air Operations Capabilities',
 	'We went to the Aiport and looked at the planes, and the hangers, and the other things that airports have. ',
 	'Go over to the Airport next week to look at the helicopters',(SELECT id FROM people where domainUsername='elizabeth'), 2, '2016-05-20', 0,
-	(SELECT id FROM organizations where name = 'EF2.1'), (SELECT id FROM organizations WHERE name='Ministry of Defense'));
+	(SELECT id FROM organizations where shortName = 'EF2.1'), (SELECT id FROM organizations WHERE longName LIKE 'Ministry of Defense'));
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 	(SELECT id FROM people where emailAddress='hunter+roger@dds.mil'), (SELECT max(id) FROM reports), 1);
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
@@ -423,7 +420,7 @@ INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, nextSteps, 
 	(CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from locations where name='St Johns Airport'), 'Inspect Helicopter Capabilities',
 	'Today we looked at the helicopters at the aiport and talked in depth about how they were not in good condition and the AAF needed new equipment.  I expressed my concerns to the pilots and promised to see what we can do.',
 	'Figure out what can be done about the helicopters',(SELECT id FROM people where domainUsername='elizabeth'), 2, '2016-05-22', 0,
-	(SELECT id FROM organizations where name = 'EF2.1'), (SELECT id FROM organizations WHERE name='Ministry of Defense'));
+	(SELECT id FROM organizations where shortName = 'EF2.1'), (SELECT id FROM organizations WHERE longName LIKE 'Ministry of Defense'));
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 	(SELECT id FROM people where emailAddress='hunter+roger@dds.mil'), (SELECT max(id) FROM reports), 1);
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
@@ -431,13 +428,19 @@ INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 INSERT INTO reportPoams (poamId, reportId) VALUES ((SELECT id from poams where shortName = '2.A'), (SELECT max(id) from reports));
 
 
---Create the default Approval Group
-INSERT INTO groups (name, createdAt) VALUES ('Default Approvers', CURRENT_TIMESTAMP);
-INSERT INTO groupMemberships (groupId, personId) VALUES ((SELECT id from groups where name = 'Default Approvers'), (SELECT id from people where emailAddress='hunter+nick@dds.mil'));
-INSERT INTO approvalSteps (approverGroupId, advisorOrganizationId) VALUES ((SELECT id from groups where name = 'Default Approvers'), (select id from organizations where name='ANET Administrators'));
+--Create the default Approval Step
+INSERT INTO approvalSteps (name, advisorOrganizationId) VALUES ('Default Approvers', (select id from organizations where shortName='ANET Administrators'));
+INSERT INTO approvers (approvalStepId, positionId) VALUES ((SELECT id from approvalSteps where name = 'Default Approvers'), (SELECT id from positions where name = 'ANET Administrator'));
+
+-- Set approvalStepId's from organizations with default
+UPDATE reports SET
+approvalStepId = (SELECT id FROM approvalSteps WHERE name = 'Default Approvers')
+WHERE reports.id IN
+(SELECT reports.id FROM reports INNER JOIN (people INNER JOIN (organizations INNER JOIN positions ON positions.organizationId = organizations.id) ON people.id = positions.currentPersonId) ON reports.authorId = people.id WHERE approvalStepId IS NULL AND reports.state = 1);
 
 --Set the Admin Settings
 INSERT INTO adminSettings ([key], value) VALUES ('SECURITY_BANNER_TEXT', 'DEMO USE ONLY');
 INSERT INTO adminSettings ([key], value) VALUES ('SECURITY_BANNER_COLOR', 'green');
-INSERT INTO adminSettings ([key], value) VALUES ('DEFAULT_APPROVAL_ORGANIZATION', (select CAST(id AS varchar) from organizations where name='ANET Administrators'));
-INSERT INTO adminSettings ([key], value) VALUES ('MAP_LAYERS', '[]');
+INSERT INTO adminSettings ([key], value) VALUES ('DEFAULT_APPROVAL_ORGANIZATION', (select CAST(id AS varchar) from organizations where shortName='ANET Administrators'));
+INSERT INTO adminSettings ([key], value) VALUES ('MAP_LAYERS', '[{"name":"OSM","default" : true, "url":"http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", "type":"osm"}]');
+

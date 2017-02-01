@@ -21,7 +21,8 @@ public class Position extends AbstractAnetBean {
 	Organization organization;
 	Person person; //The Current person.
 	List<Position> associatedPositions;
-	private Location location;
+	Location location;
+	List<PersonPositionHistory> previousPeople;
 
 	public static Position createWithId(Integer id) { 
 		Position b = new Position();
@@ -127,6 +128,14 @@ public class Position extends AbstractAnetBean {
 	
 	public void setLocation(Location location) { 
 		this.location = location;
+	}
+	
+	@GraphQLFetcher("previousPeople")
+	public List<PersonPositionHistory> loadPreviousPeople() {
+		if (previousPeople == null) { 
+			this.previousPeople = AnetObjectEngine.getInstance().getPositionDao().getPositionHistory(this);
+		}
+		return previousPeople;
 	}
 	
 	@Override

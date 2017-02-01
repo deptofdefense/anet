@@ -1,27 +1,37 @@
 import React from 'react'
 import Page from 'components/Page'
-import moment from 'moment'
+import autobind from 'autobind-decorator'
 
-import {Radio, Table} from 'react-bootstrap'
+import {Alert, Radio, Table, DropdownButton, MenuItem, Modal, Button} from 'react-bootstrap'
 import {Link} from 'react-router'
 
 import RadioGroup from 'components/RadioGroup'
 import Breadcrumbs from 'components/Breadcrumbs'
 import LinkTo from 'components/LinkTo'
-import ReportSummary from 'components/ReportSummary'
+import ReportCollection from 'components/ReportCollection'
+import Form from 'components/Form'
+import Messages from 'components/Messages'
 
 import API from 'api'
-import {Report, Person, Organization, Position, Poam} from 'models'
+import {Person, Organization, Position, Poam} from 'models'
 
-const FORMAT_EXSUM = 'exsum'
-const FORMAT_TABLE = 'table'
+const QUERY_STRINGS = {
+	reports: {
+		pendingApprovalOf: "reports pending your approval",
+		authorOrgId: "reports recently authored by your organization",
+		authorId: "reports you recently authored",
+	},
+	organizations: "Organizations TODO",
+	people: "People TODO",
+}
 
 export default class Search extends Page {
 	constructor(props) {
 		super(props)
+
 		this.state = {
 			query: props.location.query.q,
-			viewFormat: FORMAT_EXSUM,
+			saveSearch: {show: false},
 			results: {
 				reports: [],
 				people: [],
@@ -29,33 +39,86 @@ export default class Search extends Page {
 				positions: [],
 				location: [],
 				poams: []
-			}
+			},
+			error: null,
+			success: null
 		}
-
-		this.changeViewFormat = this.changeViewFormat.bind(this)
 	}
 
 	fetchData(props) {
+		let reportFields = `id, intent, engagementDate, keyOutcomesSummary, nextStepsSummary,
+			author { id, name }
+			primaryAdvisor { id, name, role, position { organization { id, shortName}}},
+			primaryPrincipal { id, name, role, position { organization { id, shortName}}},
+			advisorOrg { id, shortName},
+			principalOrg { id, shortName},
+			location { id, name, lat, lng},
+			poams {id, shortName, longName}`
+
+		let peopleFields = "id, name, rank, emailAddress, role , position { id, name, organization { id, shortName} }";
+
+		let positionFields = "id , name, type, organization { id, shortName}, person { id, name }"
+		let poamFields = "id, shortName, longName"
+		let locationFields = "id, name, lat, lng"
+		let organizationFields = "id, shortName, longName"
+
 		let query = props.location.query.q
-		this.setState({query})
-		//TODO: escape query in the graphQL query
-		API.query(/*GraphQL */ `
-			searchResults(f:search, q:"${query}") {
-				reports { id, intent, engagementDate, keyOutcomesSummary, nextStepsSummary
-					primaryAdvisor { id, name, position { organization { id, name}}},
-					primaryPrincipal { id, name, position { organization { id, name}}},
-					advisorOrg { id, name},
-					principalOrg { id, name},
-					location { id, name},
-					poams {id, shortName, longName}
-				},
-				people { id, name, rank, emailAddress, role }
-				positions { id }
-				poams { id, shortName, longName}
-				locations { id, name, lat, lng}
-				organizations { id, name }
+		let type = props.location.query.type
+		let advQuery = null
+		if (!query && type) {
+			advQuery = Object.without(props.location.query, "type")
+			type = (type === "people") ? "persons" : type;
+
+			let graphQl = type + '(f:search, query: $query) {'
+			let variableDef = "($query: ";
+			if (type === "reports" ) {
+				graphQl += reportFields
+				variableDef += "ReportSearchQuery)";
+			} else if (type === "persons") {
+				graphQl += peopleFields
+				variableDef += "PersonSearchQuery)";
+			} else if (type === "positions" ) {
+				graphQl += positionFields
+				variableDef += "PositionSearchQuery)";
+			} else if (type === "poams") {
+				graphQl += poamFields
+				variableDef += "PoamSearchQuery)";
+			} else if (type === "locations") {
+				graphQl += locationFields
+				variableDef += "LocationSearchQuery)";
+			} else if (type === "organizations") {
+				graphQl += organizationFields
+				variableDef += "OrganizationSearchQuery)";
 			}
-		`).then(data => this.setState({results: data.searchResults}))
+			graphQl += "}"
+
+			API.query(graphQl, { query: advQuery}, variableDef ).then( data => {
+				if (type === "persons") {
+					data.people = data.persons
+					delete data.persons
+				}
+				this.setState({results: data})
+			}).catch(response =>
+				this.setState({error: response})
+			)
+		} else {
+			this.setState({query})
+			//TODO: escape query in the graphQL query
+			API.query(/* GraphQL */`
+				searchResults(f:search, q:"${query}") {
+					reports { ${reportFields} }
+					people { ${peopleFields} }
+					positions { ${positionFields} }
+					poams { ${poamFields} }
+					locations { id, name, lat, lng }
+					organizations { id, shortName, longName }
+				}
+			`).then(data =>
+				this.setState({results: data.searchResults})
+			).catch(response => {
+				this.setState({error: response})
+			})
+		}
 	}
 
 	static pageProps = {
@@ -75,22 +138,52 @@ export default class Search extends Page {
 	}
 
 	render() {
-		let results = this.state.results;
+		let results = this.state.results
+		let error = this.state.error
+		let success = this.state.success
+
+		let numResults = (results.reports ? results.reports.length : 0) +
+			(results.people ? results.people.length : 0) +
+			(results.positions ? results.positions.length : 0) +
+			(results.locations ? results.locations.length : 0) +
+			(results.organizations ? results.organizations.length : 0)
+
+		let noResults = numResults === 0
+
+		let query = this.props.location.query
+		let queryString = QUERY_STRINGS[query.type] || query.q || "TODO"
+
+		if (typeof queryString === 'object') {
+			queryString = queryString[Object.keys(query)[1]]
+		}
+
 		return (
 			<div>
-				<Breadcrumbs items={[['Searching for "' + this.state.query + '"', '/search']]} />
+				<Breadcrumbs items={[['Searching for ' + queryString, '/search']]} />
+
+				<Messages error={error} success={success} />
+
+				{noResults &&
+					<Alert bsStyle="warning">
+						<b>No Search Results found!</b>
+					</Alert>
+				}
 
 				{results.reports && results.reports.length > 0 &&
-				<fieldset>
-					<legend>
-						Reports
-						<RadioGroup value={this.state.viewFormat} onChange={this.changeViewFormat} className="pull-right">
-							<Radio value={FORMAT_EXSUM}>EXSUM</Radio>
-							<Radio value={FORMAT_TABLE}>Table</Radio>
-						</RadioGroup>
-					</legend>
-					{this.state.viewFormat === FORMAT_TABLE ? this.renderTable() : this.renderExsums()}
-				</fieldset>
+					<div>
+						<div className="pull-left">
+							<h3>Reports</h3>
+						</div>
+						<div className="pull-right">
+							{ this.props.location.query.q &&
+								<DropdownButton bsStyle="primary" title="Actions" id="actions" onSelect={this.actionSelect}>
+									<MenuItem eventKey="saveReportSearch">Save Search</MenuItem>
+								</DropdownButton>
+							}
+						</div>
+						<br />
+						<fieldset><ReportCollection reports={this.state.results.reports} /></fieldset>
+					</div>
 				}
 
 				{results.people && results.people.length > 0 &&
@@ -128,61 +221,31 @@ export default class Search extends Page {
 					</fieldset>
 				}
 
+			{this.state.saveSearch.show && this.renderSaveModal() }
 			</div>
 		)
 	}
 
-	renderTable() {
-		return <Table responsive hover striped>
-			<thead>
-				<tr>
-					<th>Date</th>
-					<th>AO</th>
-					<th>Summary</th>
-				</tr>
-			</thead>
-			<tbody>
-				{Report.map(this.state.results.reports, report =>
-					<tr key={report.id}>
-						<td><LinkTo report={report}>{moment(report.engagementDate).format('L')}</LinkTo></td>
-						<td>TODO</td>
-						<td>{report.intent}</td>
-					</tr>
-				)}
-			</tbody>
-		</Table>
-	}
-
-	renderExsums() {
-		console.log(this.state.results.reports)
-		return <Table responsive>
-			<tbody>
-				{this.state.results.reports.map(report =>
-					<tr key={report.id}>
-						<td><ReportSummary report={report} /></td>
-					</tr>
-				)}
-			</tbody>
-		</Table>
-	}
 
 	renderPeople() {
 		return <Table responsive hover striped>
 			<thead>
 				<tr>
 					<th>Name</th>
-					<th>Role</th>
-					<th>Phone</th>
-					<th>Email</th>
+					<th>Position</th>
+					<th>Org</th>
 				</tr>
 			</thead>
 			<tbody>
 				{Person.map(this.state.results.people, person =>
 					<tr key={person.id}>
-						<td><LinkTo person={person}>{person.rank} {person.name}</LinkTo></td>
-						<td>{person.role}</td>
+						<td>
+							<img src={person.iconUrl()} alt={person.role} height={20} className="person-icon" />
+							<LinkTo person={person}>{person.rank} {person.name}</LinkTo>
+						</td>
 						<td>{person.phoneNumber}</td>
-						<td>{person.emailAddress}</td>
+						<td>{person.position && <LinkTo position={person.position} />}</td>
+						<td>{person.position && person.position.organization && <LinkTo organization={person.position.organization} />}</td>
 					</tr>
 				)}
 			</tbody>
@@ -194,6 +257,7 @@ export default class Search extends Page {
 			<thead>
 				<tr>
 					<th>Name</th>
+					<th>Description</th>
 					<th>Type</th>
 				</tr>
 			</thead>
@@ -201,6 +265,7 @@ export default class Search extends Page {
 				{Organization.map(this.state.results.organizations, org =>
 					<tr key={org.id}>
 						<td><LinkTo organization={org} /></td>
+						<td>{org.longName}</td>
 						<td>{org.type}</td>
 					</tr>
 				)}
@@ -213,14 +278,19 @@ export default class Search extends Page {
 			<thead>
 				<tr>
 					<th>Name</th>
-					<th>Type</th>
+					<th>Org</th>
+					<th>Current Occupant</th>
 				</tr>
 			</thead>
 			<tbody>
 				{Position.map(this.state.results.positions, pos =>
 					<tr key={pos.id}>
-						<td><LinkTo position={pos} >{pos.code} {pos.name}</LinkTo></td>
-						<td>{pos.type}</td>
+						<td>
+							<img src={pos.iconUrl()} alt={pos.type} height={20} className="person-icon" />
+							<LinkTo position={pos} >{pos.code} {pos.name}</LinkTo>
+						</td>
+						<td>{pos.organization && <LinkTo organization={pos.organization} />}</td>
+						<td>{pos.person && <LinkTo person={pos.person} />}</td>
 					</tr>
 				)}
 			</tbody>
@@ -237,7 +307,7 @@ export default class Search extends Page {
 			<tbody>
 				{this.state.results.locations.map(loc =>
 					<tr key={loc.id}>
-						<td><Link to={"/locations/" + loc.id}>{loc.name}</Link></td>
+						<td><LinkTo location={location} /></td>
 					</tr>
 				)}
 			</tbody>
@@ -263,7 +333,64 @@ export default class Search extends Page {
 
 	}
 
-	changeViewFormat(newFormat) {
-		this.setState({viewFormat: newFormat})
+	renderSaveModal() {
+		return <Modal show={this.state.saveSearch.show} onHide={this.closeSaveModal}>
+			<Modal.Header closeButton>
+				<Modal.Title>Save Search</Modal.Title>
+			</Modal.Header>
+
+			<Modal.Body>
+				<Form formFor={this.state.saveSearch} onChange={this.onChangeSaveSearch}
+					onSubmit={this.onSubmitSaveSearch} submitText={false}>
+					<Form.Field id="name" placeholder="Give this saved search a name" />
+					<Button type="submit" bsStyle="primary">Save</Button>
+				</Form>
+			</Modal.Body>
+		</Modal>
+	}
+
+
+	@autobind
+	onChangeSaveSearch() {
+		let search = this.state.saveSearch;
+		this.setState({saveSearch: search})
+	}
+
+	@autobind
+	onSubmitSaveSearch(event) {
+		event.stopPropagation()
+		event.preventDefault()
+
+		let search = Object.without(this.state.saveSearch, "show")
+		search.query = this.props.location.query.q
+
+		API.send('/api/savedSearches/new', search, {disableSubmits: true})
+			.then(response => {
+				if (response.code) throw response.code
+				this.setState({
+					success: "Search successfully saved!",
+					saveSearch: {show: false}
+				})
+				window.scrollTo(0, 0)
+			}).catch(response => {
+				this.setState({
+					error: response,
+					saveSearch: { show: false}
+				})
+				window.scrollTo(0, 0)
+			})
+	}
+
+	@autobind
+	actionSelect(eventKey) {
+		if (eventKey === "saveReportSearch") {
+			//show modal
+			this.setState({saveSearch: {show: true, name: '', objectType: "reports"}});
+		}
+	}
+
+	@autobind
+	closeSaveModal() {
+		this.setState({saveSearch: {show: false}});
 	}
 }
