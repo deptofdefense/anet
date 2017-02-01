@@ -1,5 +1,6 @@
 #ANET2 Documentation
 
+
 ## Maintainer Documentation
 
 ### Overview
@@ -13,7 +14,7 @@ ANET2 is comprised of three major components: the Database, an Application serve
 #### Software, Licenses, Skillsets/Roles
 ANET2 is built primarily using Open Source languages, frameworks, and libraries that are standard throughout the software industry.  The only proprietary software that ANET2 depends on is Microsoft SQLServer.  To successfully develop, build, run, and manage a deployment of ANET2, the following roles and skillsets are recommended: 
 
-1. **DBA**: Somebody needs to take care of your database, this role can easily be shared with other projects and does not need to dedicated to ANET2. Responsiblities include patching and upgrading the Database software, ensuring backups are taken and reliable, and advising on query performance/tuning. 
+1. **DBA**: Somebody needs to take care of your database, this role should be shared with other projects and does not need to dedicated to ANET2. Responsiblities include patching and upgrading the Database software, ensuring backups are taken and reliable, and advising on query performance/tuning. 
 2. **Full-stack Software Engineer**: This person/people will be the primary developer of new features on ANET2 and troubleshoot any bugs/issues that arise. This person should have a strong background in developing user-centric applications in an agile-development lifecycle and can react quickly to changing requirements.  As the lead developer, this individual will work closely with users to understand needs and issues. This person will also work closely with the ANET2 Administrator and the Product Owner to determine the correct solution, then implement, test, and iterate on that solution.  They should have a strong understanding, or willingness to learn, the following concepts/languages: 
 	* SQL
 	* Java
@@ -21,35 +22,28 @@ ANET2 is built primarily using Open Source languages, frameworks, and libraries 
 	* HTTP servers 
 	* Javascript, HTML, CSS
 	* React
-	* Git for version control
+	* Git
 
-3. **System Administrator**: Somebody needs to manage your Windows server, patches, and keep the service running.  This role can easily be shared with other projects and does not need to be dedicated to ANET2.  Responsiblities include patching and upgrade of the Server Operating Systems, providing support to release new versions of the ANET2 platform on a regular basis, and ensuring performance and uptime of the server environment. 
+3. **System Administrator**: Somebody needs to manage your Windows server, patches, and keep the service running.  This role should be shared with other projects and does not need to be dedicated to ANET2.  Responsiblities include patching and upgrade of the Server Operating Systems, providing support to release new versions of the ANET2 platform on a regular basis, and ensuring performance and uptime of the server environment. 
 4. **ANET2 Administrator / Level-1 Support**: This role provides the day-to-day management of the system, working with users on any issues, serving as the initial triage of incoming requests, performing management of top level data structures within the system (Organizations, Poams).  This person should have a basic understanding of, or willingness to learn, Databases, application servers, and websites. This role does not need to be overly technical in nature and should be focused on engaging with and supporting users of the platform. 
 
 
 ## Network Architecture
-<!-- Put a picture of the network architecture here! -->
+![Network Architecture](ANET_Network_Diagram.png)
 
-### Client
-The client can be any users on the appropiate network with a modern web-browser. ANET uses HTTP/HTTPS (ports 80/443) to communicate between the client and server. (IS THERE ANY SPECIFIC BROWSER FEATURE THAT NEEDS TO BE TURNED ON?)
+- **Client**: The client can be any users on the appropiate network with a modern web-browser. ANET uses HTTP/HTTPS (ports 80/443) to communicate between the client and server.
 
-### Application Server
-The ANET2 Application Server can run on any Windows Server operating system.  Recommended system configuration is: 300 GB HDD, 64 GB RAM, and 8x CPUs.  The Application server must be able to communicate with the Database server, the Windows Domain Controller for AD Authentication, and the SMTP server for outbound mail. 
+- **Application Server**: The ANET2 Application Server can run on any Windows Server operating system.  Recommended system configuration is: 300 GB HDD, 64 GB RAM, and 8x CPUs.  The Application server must be able to communicate with the Database server, the Windows Domain Controller for AD Authentication, and the SMTP server for outbound mail. 
 
-### Database
-ANET2 Requires at least a Microsoft SQL Server 2014 Database. 
+- **Database**: ANET2 Requires at least a Microsoft SQL Server 2014 Database. 
 
-### Backup
-Backups should be taken daily from the SQL Database and transferred to a seperate file server for safe keeping.
+- **Backup**: Backups should be taken daily from the SQL Database and transferred to a seperate file server for safe keeping. Database backups can be taken through any means that capture the full state of the database.  The `anet.yml` configuration file and audit logs should be backed up from the Web-Application Server.   
 
-### Authentication
-User Authentication in production is done via Windows Domain Authentication.
+- **Authentication**: User Authentication in production is done via Windows Domain Authentication.
 
-### Map Imagery Server
-To enable the ANET2 maps, you will need a source of Map imagery.  ANET2 supports local cached tiles, WMS servers, or ArcGIS servers with a REST API enabled. 
+- **Map Imagery Server**: To enable the ANET2 maps, you will need a source of Map imagery.  ANET2 supports local cached tiles, WMS servers, or ArcGIS servers with a REST API enabled. 
 
-### Production vs Test Environments
-It is recommended to have a seperate Production and Test environment that mirror each other as closely as possible. However, it is totally acceptable to have less resources for the Test environment.
+- **Production vs Test Environments**: It is recommended to have a seperate Production and Test environment that mirror each other as closely as possible. However, it is totally acceptable to have less resources for the Test environment.
 
 ## Installation instructions
 The following instructions document how to take a build of ANET2 and install it into a clean environment.  Instructions on how to build ANET2 are included in the Developer Documentation below. 
@@ -69,17 +63,18 @@ The following information will be needed in order to complete this installation
 
 ### SQL
 - To initiate the SQL database with the appropiate schema, run the command `bin\anet.bat db migrate anet.yml`. 
-- [WRITE A BUNDLE PROVIDER THAT CREATES THE INITIAL ORG, POSITION, AND USER]
+- Initialize the database by running `bin\anet.bag init anet.yml`.  This script will ask you a series of questions to seed you database with a default administrator account.  
 
 ### NSSM
 - We recommend the use of the NSSM tool to register ANET2 as a service within Windows.
 - To do this [FILL IN THESE STEPS]
 
 ### Startup
-- To start the ANET2 server for quick testing, you can run `bin\anet.bat server anet.yml`.  To start the ANET2 server for production use, use the NSSM tool to start the ANET2 service. The command for this is `nssm.exe start anet`
+- To start the ANET2 server for quick testing, you can run `bin\anet.bat server anet.yml`.  
+- To start the ANET2 server for production use, use the NSSM tool to start the ANET2 service. The command for this is `nssm.exe start anet`
 
 ## Troubleshooting
-The recommended strategy for troubleshooting is to first identify where the error is occuring, either in the javascript in the browser, or an error on the application server.  Start by opening the browser developer console and look at the network calls to look for any calls that are returning errors [ UPDATE THE GRAPHQL ENDPOINT TO THROW A NON-200 IN THE EVENT OF AN ERROR]. If there are any errors on the network calls, look to the server side log files for more information.  If no errors are being returned, look for any errors in the browser console for more information.
+The recommended strategy for troubleshooting is to first identify where the error is occuring, either in the javascript in the browser, or an error on the application server.  Start by opening the browser developer console and look at the network calls to look for any calls that are returning errors.  If there are any errors on the network calls, look to the server side log files for more information.  If no errors are being returned, look for any errors in the browser console for more information.
 
 In the event there are still no errors, it might be necessary to troubleshoot the issue in a development environment that supports debugging breakpoints and variable watches.  More information about how to setup and configure this environment can be found in the Developer Documentation below. 
 
@@ -91,20 +86,84 @@ For any issues related to the web-browser front-end check the browser console (f
 
 # Developer Documetation
 ## Setting up your Developer Environment (Eclipse, gradle, node, Chrome/Firefox)
+This section describes the recommended Developer Environment and how to set it up.  You are welcome to use any other tools you prefer. 
 
-- Download Eclipse
-- Download a JDK v1.8
-- Download node
-- Checkout the source code from github. 
-- run `./gradlew eclipse` (linux/mac) or `./gradlew.bat eclipse` (windows) to download all the java dependencies 
-- in the `client/` directory, run `npm install`  to download all the javascript dependencies. 
+- Download Eclipse ( http://www.eclipse.org/downloads/ ).  Eclipse is a Java IDE.  It can be downloaded as an installer or as a .zip file that does not require installation.  
+- Download a JDK v1.8 ( http://www.oracle.com/technetwork/java/javase/downloads/index.html ).  This can also be either installed, or downloaded as a .zip.  If you do not use the installer, be sure to set the `JAVA_HOME` environment variable to the location of the JDK. 
+- Download node ( https://nodejs.org/en/ )
+- Download git ( https://git-scm.com/ ).  While this is not required, it is highly recommended if you will be doing active development on ANET. 
+- Checkout the source code from github. ( https://github.com/deptofdefense/anet )
+```
+	git clone git@github.com:deptofdefense/anet.git
+```
+- Open a command line in the `anet` directory that was retrieved from github.  Run `./gradlew eclipse` (linux/mac) or `./gradlew.bat eclipse` (windows) to download all the java dependencies.  This can take several minutes depending on your internet connection.
+- Change Directories into the `client/` directory, run `npm install`  to download all the javascript dependencies.  This can take several minutes depending on your internet connection.
 - Open eclipse and import the anet/ directory into eclipse as a new project. Ensure there are no compile errors. If there are, you are probably missing dependencies, try re-running `./gradlew eclipse`. 
-- Update the settings in `anet.yml` for your environment. 
-- To start the frontend server, in the `client/` directory, run `npm run start` (linux/mac) or `node.exe scripts/start.js` (windows).
-- To start the backend server, in eclipse execute the `mil.dds.anet.AnetApplication` class as a Java Application. You'll need to edit the arguments passed to this application and set them to `server anet.yml`.
+- Update the settings in `anet.yml` for your environment.  See the section on ANET Configuration for more details on these configuration options. 
+
+## Java Backend
+
+### Initial Setup
+1. Clone this repository to your computer
+2. `touch localSettings.gradle`. This will be a file for all of your local settings and passwords
+that should not be checked into the GitHub.
+3. You can either use SQLite or Microsoft SQL Server for your database. The former allows you
+to run entirely on your local machine and develop offline. The latter allows you to test on
+the same database and feature set that production will use. We do our best to support both
+but cannot garauntee that the SQLite code will exactly match the SQL Server.
+	- SQLite:
+		- this is currently the default, so you don't need to do anything special
+	- MSSQL:
+		- Run the gradle commands in the rest of this document with the DB_DRIVER env variable, e.g.
+		`export DB_DRIVER=sqlserver` (linux/mac) `set DB_DRIVER=sqlserver` (windows)
+		- Paste the following in your `localSettings.gradle` file (with the correct values):
+
+```
+	run.environment("ANET_DB_USERNAME","username")
+	run.environment("ANET_DB_PASSWORD", "password")
+	run.environment("ANET_DB_SERVER", "db server hostname")
+	run.environment("ANET_DB_NAME","database name")
+```
+
+4. Open anet.yml and make sure the port settings look good for you. If you change the port, also update the "proxy" field in client/package.json.
+5. Run `./gradlew build` to download all dependencies and build the project
+6. Run `./gradlew dbMigrate` to build and migrate the database
+	- The database schema is stored in src/main/resources/migrations.xml
+7. Seed the initial data:
+	- SQLite: `cat insertBaseData.sql | ./mssql2sqlite.sh | sqlite3 development.db`
+	- MSSQL: You'll need to manually connect to your sqlserver instance and run `insertBaseData.sql`
+
+### Developing
+1. Run `./gradlew dbMigrate` whenever you pull new changes to migrate the database.
+	- You may need to occasionally destroy, re-migrate, and re-seed your database if it has fallen too far out of sync with master.
+2. Run `./gradlew run` to run the server.
+3. You should now be able to go to http://localhost:8080/ in your browser. You will get an error about a missing index.ftl file, this is expected and means the backend-server is working. 
+
+- If you're doing backend development, we recommend using the Eclipse development environment:
+	- Run `./gradlew eclipse` to build the Eclipse classpath.
+	- Create a new project in Eclipse from the directory you checked out this repositoy to. Eclipse should automatically pick up the project definition.
+	- The main method is in mil.dds.anet.AnetApplication.
+
+## React Frontend
+
+### Initial Setup
+1. Make sure you have node.js v7.x installed: (http://nodejs.org)
+2. All of the frontend code is in the `client/` directory. `cd client/`
+3. Install the development dependencies: `npm install`
+4. Run the server: `npm start`
+
+NB: You only need node.js and the npm dependencies for developing. When we deploy
+for production, everything is compiled to static files. No Javascript dependencies
+are necessary on the server.
+
+### Developing
+1. Run `npm install` to make sure your dependencies are up to date.
+2. Run `npm start` to start the dev server.
+3. You should now be able to go to http://localhost:3000/ in your browser
+
 
 ## DB (Schema)
-<!-- put in a picture of the Db Schema -->
+![Database Diagram](ANET_Database.png)
 <!-- describe all of the relationships -->
 
 ## Java Application Server
@@ -232,4 +291,21 @@ person(id:123) {
 # Administration Documentation
 ## The Object Model
 ## How To's
+## ANET Configuration 
+ANET is configured primarily through the `anet.yml` file.  This file follows the Dropwizard configuration format ( http://www.dropwizard.io/1.0.6/docs/manual/core.html#configuration ).  Here is a description of the configuration options custom to ANET: 
 
+- **developmentMode**: This flag controls several options on the server that are helpful when developing
+	- Authentication: When development mode is `true`, ANET will use basic Authentication checking only that the username provided is equal to the `domainUsername` column of a valid user in the database.  In the event that there is not a matching user, but the provided password is equal to the username, ANET will simulate the first-time log in of a new user (ie a user who passes windows authentication but has never logged into ANET before). 
+		- ex: To Log in as `Jack Jackson` from the development data set, just type in a username of `jack` when prompted. 
+		- ex: To simulate a new user type in the same name for both the username and password when prompted (ie un: `hunter`, pw: `hunter` will create a new user with Domain Username of `hunter`). 
+	- GraphQL: When development mode is `true`, ANET will re-compute the GraphQL graph on every API call, this allows you to rapidly develop on changes without restarting the server. 
+- **smtp**: This section controls the configuration for how ANET sends emails. 
+	- **hostname**: The Fully Qualified Domain Name of your SMTP Server
+	- **port**: The port to connect to your SMTP server on (default: 25)
+	- **username**: If your SMTP server requires authentication, provide the username here. Otherwise leave blank.  
+	- **password**: Your password to your SMTP server. 
+	- **startTLS**: Set to true if your SMTP server requires or provides TLS (Transport Level Security) encryption.  
+- **emailFromAddr**: This is the email address that emails from ANET will be sent from.   
+- **serverUrl**: The URL for the ANET server, ie: `"https://anet.dds.mil"`.  
+- **database**: The configuration for your database. ANET supports either sqlite for development, or Microsoft SQL Server for production.  Follow the instructions here: http://www.dropwizard.io/1.0.6/docs/manual/jdbi.html for avaiable configuration options for the database connection.
+- **waffleConfig**: ANET uses the open source `waffle` library to perform Windows Authentication ( https://github.com/Waffle/waffle ).   See https://github.com/Waffle/waffle/blob/master/Docs/ServletSingleSignOnSecurityFilter.md for documentation on the available configuration options. 

@@ -44,9 +44,13 @@ public class GraphQLResource {
 	private static Logger log = Log.getLogger(GraphQLResource.class);
 	private GraphQL graphql;
 	private List<IGraphQLResource> resources;
+	private boolean developmentMode;
 	
-	public GraphQLResource(List<IGraphQLResource> resources) { 
+	public GraphQLResource(List<IGraphQLResource> resources, boolean developmentMode) { 
 		this.resources = resources;
+		this.developmentMode = developmentMode;
+		
+		buildGraph();
 	}
 	
 	
@@ -150,7 +154,9 @@ public class GraphQLResource {
 	
 	@POST
 	public Response graphql(@Auth Person user, Map<String,Object> body) {
-		buildGraph(); // TODO: remove outside of dev. 
+		if (developmentMode) { 
+			buildGraph();
+		}
 		String query = (String) body.get("query");
 	    Map<String, Object> variables = (Map<String, Object>) body.get("variables");
 	    if (variables == null) { variables = new HashMap<String,Object>(); }

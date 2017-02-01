@@ -75,6 +75,9 @@ public class AnetApplication extends Application<AnetConfiguration> {
 	            return configuration.getDataSourceFactory();
 	        }
 	    });
+		
+		//Add the init command
+		bootstrap.addCommand(new InitializationCommand());
 
 		//Serve assets on /assets
 		bootstrap.addBundle(new AssetsBundle("/assets", "/assets", "index.html"));
@@ -155,7 +158,8 @@ public class AnetApplication extends Application<AnetConfiguration> {
 			ImmutableList.of(reportResource, personResource, 
 				positionResource, locationResource,
 				orgResource, asResource, poamResource, 
-				adminResource, searchResource, savedSearchResource)));
+				adminResource, searchResource, savedSearchResource), 
+			configuration.isDevelopmentMode()));
 
 	}
 
