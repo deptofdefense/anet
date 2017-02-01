@@ -318,6 +318,7 @@ public class ReportResource implements IGraphQLResource {
 		r.setApprovalStep(ApprovalStep.createWithId(step.getNextStepId()));
 		if (step.getNextStepId() == null) {
 			r.setState(ReportState.RELEASED);
+			sendReportReleasedEmail(r);
 		} else {
 			sendApprovalNeededEmail(r);
 		}
@@ -334,6 +335,15 @@ public class ReportResource implements IGraphQLResource {
 		return r;
 	}
 
+	private void sendReportReleasedEmail(Report r) {
+		AnetEmail email = new AnetEmail();
+		email.setTemplateName("/emails/reportReleased.ftl");
+		email.setSubject("ANET Report Approved");
+		email.setToAddresses(ImmutableList.of(r.loadAuthor().getEmailAddress()));
+		email.setContext(ImmutableMap.of("report", r));
+		AnetEmailWorker.sendEmailAsync(email);
+	}
+	
 	/**
 	 * Rejects a report and moves it back to the author with state REJECTED. 
 	 * @param id the Report ID to reject
@@ -387,8 +397,7 @@ public class ReportResource implements IGraphQLResource {
 		email.setContext(ImmutableMap.of("report", r, "rejector", rejector, "comment", rejectionComment));
 		AnetEmailWorker.sendEmailAsync(email);
 	}
-	
-	
+		
 	@POST
 	@Timed
 	@Path("/{id}/comments")
