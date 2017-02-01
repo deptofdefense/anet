@@ -58,6 +58,10 @@ export default class PositionForm extends Component {
 						</Form.Field>
 					}
 
+					{!position.organization.id  &&
+						<Form.Field id="type" type="static" value=""><i>Select an Organization to view position types</i></Form.Field>
+					}
+
 					<Form.Field id="code" placeholder="Postion ID or Number" />
 					<Form.Field id="name" label="Position Name" placeholder="Name/Description of Position"/>
 
