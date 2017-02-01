@@ -151,3 +151,15 @@ fieldset.collapsable legend div.collapsableToggle {
 	visibility: visible;
 	font-size: 2rem;
 }
+
+.orgDetailsNav li {
+	padding-left: 30px;
+}
+
+.orgDetailsNav li { 
+	border-left: 4px solid rgba(0,0,0,0) 
+}
+
+.orgDetailsNav li.active  { 
+	border-left:4px solid #1772B8;
+}

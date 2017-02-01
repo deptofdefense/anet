@@ -14,6 +14,9 @@ export default class extends Component {
 		let appData = this.context.app.state
 		let currentUser = appData.currentUser
 		let organizations = appData.organizations || []
+		let path = this.context.app.props.location.pathname
+		let inOrg = path.indexOf("/organizations") === 0
+		if (inOrg) { path = "/organizations/" + this.context.app.props.params.id }
 
 		return (
 			<Nav bsStyle="pills" stacked>
@@ -26,13 +29,22 @@ export default class extends Component {
 				</Link>
 				}
 
-				<NavDropdown title="Organizations" id="organizations">
+				<NavDropdown title="EFs / AOs" id="organizations">
 					{Organization.map(organizations, org =>
 						<LinkTo organization={org} componentClass={Link} key={org.id}>
 							<MenuItem>{org.shortName}</MenuItem>
 						</LinkTo>
 					)}
 				</NavDropdown>
+
+				{inOrg &&
+					<div className="orgDetailsNav">
+						<NavLink to={path } ><NavItem>Details</NavItem></NavLink>
+						<NavLink to={path + "/approvals"} ><NavItem>Approvals</NavItem></NavLink>
+						<NavLink to={path + "/reports"} ><NavItem>Reports</NavItem></NavLink>
+						<NavLink to={path + "/laydown"} ><NavItem>Laydown</NavItem></NavLink>
+					</div>
+				}
 
 				<Link to="/rollup">
 					<NavItem>Daily Rollup</NavItem>
@@ -51,5 +63,11 @@ export default class extends Component {
 				}
 			</Nav>
 		)
+	}
+}
+
+class NavLink extends Component {
+	render() {
+		return <Link {...this.props} activeClassName="active"/>
 	}
 }

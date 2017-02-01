@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
-import {Grid, Row, Col, Table, ListGroup, ListGroupItem, DropdownButton, MenuItem} from 'react-bootstrap'
+import {Table, ListGroup, ListGroupItem, DropdownButton, MenuItem} from 'react-bootstrap'
 
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
@@ -8,14 +8,11 @@ import autobind from 'autobind-decorator'
 import History from 'components/History'
 import LinkTo from 'components/LinkTo'
 import Messages , {setMessages} from 'components/Messages'
-import ReportCollection from 'components/ReportCollection'
-import ScrollableFieldset from 'components/ScrollableFieldset'
-import CollapsableFieldset, {CollapsedContent, ExpandedContent} from 'components/CollapsableFieldset'
 
 import API from 'api'
-import {Organization, Position, Poam} from 'models'
+import {Organization, Position} from 'models'
 
-export default class OrganizationShow extends Page {
+export default class OrganizationLaydown extends Page {
 	static contextTypes = {
 		app: PropTypes.object.isRequired,
 	}
@@ -26,8 +23,6 @@ export default class OrganizationShow extends Page {
 			organization: {
 				id: props.params.id,
 				positions: [],
-				poams: [],
-				reports: []
 			},
 		}
 		setMessages(props,this.state)
@@ -38,7 +33,6 @@ export default class OrganizationShow extends Page {
 			organization(id:${props.params.id}) {
 				id, shortName, longName, type
 				parentOrg { id, shortName, longName }
-				poams { id, longName, shortName }
 				positions {
 					id, name, code
 					person { id, name }
@@ -48,18 +42,6 @@ export default class OrganizationShow extends Page {
 					}
 				},
 				childrenOrgs { id, shortName, longName },
-				approvalSteps {
-					id, name, approvers { id, name, person { id, name}}
-				},
-				reports(pageNum:0, pageSize:25) {
-					id, intent, engagementDate, keyOutcomesSummary, nextStepsSummary
-					author { id, name },
-					primaryAdvisor { id, name } ,
-					primaryPrincipal {id, name },
-					advisorOrg { id, shortName, longName }
-					principalOrg { id, shortName, longName }
-					location { id, name, lat, lng }
-				}
 			}
 		`).then(data => this.setState({organization: data.organization}))
 	}
@@ -69,13 +51,6 @@ export default class OrganizationShow extends Page {
 
 		let positionsNeedingAttention = org.positions.filter(position => !position.person )
 		let supportedPositions = org.positions.filter(position => positionsNeedingAttention.indexOf(position) === -1)
-
-		let poamsContent = ''
-		if (org.type === 'ADVISOR_ORG') {
-			poamsContent = <ScrollableFieldset title="PoAMs / Pillars" height={500} >
-				{this.renderPoamsTable(org.poams)}
-			</ScrollableFieldset>
-		}
 
 		let currentUser = this.context.app.state.currentUser;
 		let isSuperUser = (currentUser) ? currentUser.isSuperUserForOrg(org) : false
@@ -126,47 +101,16 @@ export default class OrganizationShow extends Page {
 						</Form.Field>}
 					</fieldset>
 
-					{poamsContent}
+					<h3>Personnel Laydown</h3>
+					<fieldset>
+						<legend>Positions needing attention</legend>
+						{this.renderPositionTable(positionsNeedingAttention)}
+					</fieldset>
 
-					<CollapsableFieldset title="Personnel Laydown">
-						<ExpandedContent>
-							<fieldset>
-								<legend>Positions needing attention</legend>
-								{this.renderPositionTable(positionsNeedingAttention)}
-							</fieldset>
-
-							<fieldset>
-								<legend>Supported laydown</legend>
-								{this.renderPositionTable(supportedPositions)}
-							</fieldset>
-						</ExpandedContent>
-						<CollapsedContent>
-							<Grid>
-								<Row>
-									<Col md={3}>
-										<b>Vacancy or Requires Action</b>
-									</Col>
-									<Col md={4}>
-										{positionsNeedingAttention.length} positions
-									</Col>
-								</Row>
-								<Row>
-									<Col md={3}>
-										<b>Supported Laydown</b>
-									</Col>
-									<Col md={4}>
-										{supportedPositions.length} positions
-									</Col>
-								</Row>
-							</Grid>
-						</CollapsedContent>
-					</CollapsableFieldset>
-
-					{this.renderApprovalProcess()}
-
-					<ScrollableFieldset title="Recent Reports" height={500} >
-						<ReportCollection reports={org.reports} />
-					</ScrollableFieldset>
+					<fieldset>
+						<legend>Supported laydown</legend>
+						{this.renderPositionTable(supportedPositions)}
+					</fieldset>
 				</Form>
 			</div>
 		)
@@ -241,25 +185,6 @@ export default class OrganizationShow extends Page {
 		</tr>
 	}
 
-	renderPoamsTable(poams) {
-		return <Table>
-			<thead>
-				<tr>
-					<th>Name</th>
-					<th>Description</th>
-				</tr>
-			</thead>
-			<tbody>
-				{Poam.map(poams, poam =>
-					<tr key={poam.id}>
-						<td><LinkTo poam={poam} >{poam.shortName}</LinkTo></td>
-						<td>{poam.longName}</td>
-					</tr>
-				)}
-			</tbody>
-		</Table>
-	}
-
 	@autobind
 	actionSelect(eventKey, event) {
 		if (eventKey === "createPos") {
@@ -273,45 +198,5 @@ export default class OrganizationShow extends Page {
 		} else {
 			console.log("Unimplemented Action: " + eventKey);
 		}
-	}
-
-	@autobind
-	renderApprovalProcess() {
-		let org = this.state.organization
-		let approvalSteps = org.approvalSteps
-		return <CollapsableFieldset title="Approval Process">
-			<ExpandedContent>
-				{approvalSteps && approvalSteps.map((step, idx) =>
-					<fieldset key={"step_" + idx}>
-						<legend>Step {idx + 1}: {step.name}</legend>
-						<Table>
-							<thead><tr><th>Name</th><th>Position</th></tr></thead>
-							<tbody>
-								{step.approvers.map(position =>
-									<tr key={position.id}>
-										<td>{position.person && <LinkTo person={position.person} />}</td>
-										<td><LinkTo position={position} /></td>
-									</tr>
-								)}
-							</tbody>
-						</Table>
-					</fieldset>
-				)}
-			</ExpandedContent>
-			<CollapsedContent>
-				<Grid>
-				{approvalSteps && approvalSteps.map((step, idx) =>
-					<Row key={idx}>
-						<Col md={3}>
-							<b>Step #{idx + 1}: {step.name}</b>
-						</Col>
-						<Col md={4}>
-							{step.approvers.length} people
-						</Col>
-					</Row>
-				)}
-				</Grid>
-			</CollapsedContent>
-		</CollapsableFieldset>
 	}
 }
