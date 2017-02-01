@@ -10,6 +10,8 @@ import javax.ws.rs.core.Response.Status;
 import org.skife.jdbi.v2.GeneratedKeys;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.Query;
+import org.skife.jdbi.v2.TransactionCallback;
+import org.skife.jdbi.v2.TransactionStatus;
 import org.skife.jdbi.v2.sqlobject.Transaction;
 
 import mil.dds.anet.beans.ApprovalStep;
@@ -50,24 +52,32 @@ public class ApprovalStepDao implements IAnetDao<ApprovalStep> {
 	
 	@Override
 	public ApprovalStep insert(ApprovalStep as) { 
-		GeneratedKeys<Map<String, Object>> keys = dbHandle.createStatement(
-				"INSERT into approvalSteps (name, nextStepId, advisorOrganizationId) " + 
-				"VALUES (:name, :nextStepId, :advisorOrganizationId)")
-			.bindFromProperties(as)
-			.executeAndReturnGeneratedKeys();
-		
-		as.setId(DaoUtils.getGeneratedId(keys));
-		
-		if (as.getApprovers() != null) { 
-			for (Position approver : as.getApprovers()) { 
-				dbHandle.createStatement("INSERT INTO approvers (positionId, approvalStepId) VALUES (:positionId, :stepId)")
-					.bind("positionId", approver.getId())
-					.bind("stepId", as.getId())
-					.execute();
+		return dbHandle.inTransaction(new TransactionCallback<ApprovalStep>() {
+			public ApprovalStep inTransaction(Handle conn, TransactionStatus status) throws Exception {
+				GeneratedKeys<Map<String, Object>> keys = dbHandle.createStatement(
+						"INSERT into approvalSteps (name, nextStepId, advisorOrganizationId) " + 
+						"VALUES (:name, :nextStepId, :advisorOrganizationId)")
+					.bindFromProperties(as)
+					.executeAndReturnGeneratedKeys();
+				
+				as.setId(DaoUtils.getGeneratedId(keys));
+				
+				if (as.getApprovers() != null) { 
+					for (Position approver : as.getApprovers()) {
+						if (approver.getId() == null) { 
+							throw new WebApplicationException("Invalid Position ID of Null for Approver");
+						}
+						dbHandle.createStatement("INSERT INTO approvers (positionId, approvalStepId) VALUES (:positionId, :stepId)")
+							.bind("positionId", approver.getId())
+							.bind("stepId", as.getId())
+							.execute();
+					}
+				}
+				
+				return as;
 			}
-		}
+		});
 		
-		return as;
 	}
 	
 	public ApprovalStep insertAtEnd(ApprovalStep as) { 

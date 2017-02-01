@@ -11,10 +11,10 @@ report(id:${reportId}) {
             organization {
                 shortName, longName
                 approvalSteps {
-                    id
-                    approverGroup {
-                        id, name
-                        members { id, name, rank }
+                    id, name,
+                    approvers {
+                        id, name,
+                        person { id, name rank }
                     }
                 }
             }
@@ -22,13 +22,13 @@ report(id:${reportId}) {
     }
 
     attendees {
-        id, name, role
+        id, name, role, primary
         position { id, name }
     }
     primaryAdvisor { id }
     primaryPrincipal { id }
 
-    poams { id, shortName, longName, responsibleOrg { id, shortName, longName} }
+    poams { id, shortName, longName, responsibleOrg { id, shortName} }
 
     comments {
         id, text, createdAt, updatedAt
@@ -40,12 +40,12 @@ report(id:${reportId}) {
 
     approvalStatus {
         type, createdAt
-        step { id }
+        step { id , name
+            approvers { id, name, person { id, name } }
+        },
+        person { id, name, rank}
     }
 
-    approvalStep {
-        approverGroup {
-            members { id }
-        }
-    }
+    approvalStep { name, approvers { id } }
+
 }

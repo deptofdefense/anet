@@ -30,6 +30,7 @@ public class ApprovalStepResourceTest extends AbstractResourceTest {
 	@Test
 	public void approvalTest() {
 		Person jack = getJackJackson(); //Get an authenticated user. 
+		Person liz = getElizabethElizawell();
 		Person admin = getArthurDmin();
 		
 		//Create an Advisor Organization
@@ -41,7 +42,7 @@ public class ApprovalStepResourceTest extends AbstractResourceTest {
 		ApprovalStep as1 = new ApprovalStep();
 		as1.setName("Test Approval Step 1");
 		as1.setAdvisorOrganizationId(org.getId());
-		as1.setApprovers(ImmutableList.of(jack.loadPosition()));
+		as1.setApprovers(ImmutableList.of(liz.loadPosition()));
 		as1 = httpQuery("/api/approvalSteps/new", admin).post(Entity.json(as1), ApprovalStep.class);
 		assertThat(as1.getId()).isNotNull();
 		
