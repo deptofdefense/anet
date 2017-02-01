@@ -229,7 +229,7 @@ public class Report extends AbstractAnetBean {
 	public Person loadAuthor() {
 		if (author == null || author.getLoadLevel() == null) { return author; } 
 		if (author.getLoadLevel().contains(LoadLevel.PROPERTIES) == false) { 
-			this.author = getBeanAtLoadLevel(author, LoadLevel.PROPERTIES);
+			this.author = AnetObjectEngine.getInstance().getPersonDao().getById(author.getId());
 		}
 		return author;
 	}
@@ -257,7 +257,7 @@ public class Report extends AbstractAnetBean {
 	public Organization loadAdvisorOrg() { 
 		if (advisorOrg == null || advisorOrg.getLoadLevel() == null) { return advisorOrg; } 
 		if (advisorOrg.getLoadLevel().contains(LoadLevel.PROPERTIES) == false) { 
-			this.advisorOrg = getBeanAtLoadLevel(advisorOrg, LoadLevel.PROPERTIES);
+			this.advisorOrg = AnetObjectEngine.getInstance().getOrganizationDao().getById(advisorOrg.getId());
 		}
 		return advisorOrg;
 	}
@@ -275,7 +275,7 @@ public class Report extends AbstractAnetBean {
 	public Organization loadPrincipalOrg() { 
 		if (principalOrg == null || principalOrg.getLoadLevel() == null) { return principalOrg; } 
 		if (principalOrg.getLoadLevel().contains(LoadLevel.PROPERTIES) == false) { 
-			this.principalOrg = getBeanAtLoadLevel(principalOrg, LoadLevel.PROPERTIES);
+			this.principalOrg = AnetObjectEngine.getInstance().getOrganizationDao().getById(principalOrg.getId());
 		}
 		return principalOrg;
 	}

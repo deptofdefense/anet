@@ -12,8 +12,16 @@ organization(id:${orgId}) {
     },
     childrenOrgs { id, shortName, longName },
     approvalSteps {
-        approverGroup {
-            id, name, members { id, name , position { id, name} }
-        }
+        id, name, approvers { id, name, person { id, name}}
+    },
+    reports(pageNum:0, pageSize:25) {
+        id, intent, engagementDate, keyOutcomesSummary, nextStepsSummary
+        author { id, name },
+        primaryAdvisor { id, name } ,
+        primaryPrincipal {id, name },
+        advisorOrg { id, shortName, longName }
+        principalOrg { id, shortName, longName }
+        location { id, name, lat, lng }
     }
+
 }

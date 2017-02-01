@@ -112,10 +112,10 @@ public class SqliteReportSearcher implements IReportSearcher {
 			args.put("locationId", query.getLocationId());
 		}
 		
-		if (query.getPendingApprovalOf() != null) {
+		if (query.getPendingApprovalOf() != null) { 
 			whereClauses.add("reports.approvalStepId IN "
-				+ "(SELECT id from approvalSteps where approverGroupId IN "
-				+ "(SELECT groupId FROM groupMemberships where personId=:approverId))");
+				+ "(SELECT id from approvers where positionId IN "
+				+ "(SELECT id FROM positions where currentPersonId = :approverId))");
 			args.put("approverId", query.getPendingApprovalOf());
 		}
 		

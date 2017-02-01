@@ -27,10 +27,8 @@ export default class OrganizationEdit extends Page {
 			organization(id:${props.params.id}) {
 				id, shortName, longName, type,
 				parentOrg { id, shortName, longName }
-				approvalSteps { id,
-					approverGroup { id, name,
-						members { id, name}
-					}
+				approvalSteps { id, name
+					approvers { id, name, person { id, name}}
 				},
 				poams { id, shortName, longName}
 			}

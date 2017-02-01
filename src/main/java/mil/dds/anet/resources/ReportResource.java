@@ -38,7 +38,6 @@ import mil.dds.anet.beans.ApprovalAction;
 import mil.dds.anet.beans.ApprovalAction.ApprovalType;
 import mil.dds.anet.beans.ApprovalStep;
 import mil.dds.anet.beans.Comment;
-import mil.dds.anet.beans.Group;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Person.Role;
@@ -268,13 +267,15 @@ public class ReportResource implements IGraphQLResource {
 
 	private void sendApprovalNeededEmail(Report r) {
 		ApprovalStep step = r.loadApprovalStep();
-		Group approvalGroup = step.loadApproverGroup();
-		List<Person> approvers = approvalGroup.getMembers();
+		List<Position> approvers = step.loadApprovers();
 		AnetEmail approverEmail = new AnetEmail();
 		approverEmail.setTemplateName("/emails/approvalNeeded.ftl");
 		approverEmail.setSubject("ANET Report needs your approval");
-		approverEmail.setToAddresses(approvers.stream().map(a -> a.getEmailAddress()).collect(Collectors.toList()));
-		approverEmail.setContext(ImmutableMap.of("report", r, "approvalGroup", approvalGroup));
+		approverEmail.setToAddresses(approvers.stream()
+				.filter(a -> a.getPerson() != null)
+				.map(a -> a.loadPerson().getEmailAddress())
+				.collect(Collectors.toList()));
+		approverEmail.setContext(ImmutableMap.of("report", r, "approvalStepName", step.getName()));
 		AnetEmailWorker.sendEmailAsync(approverEmail);
 	}
 
@@ -308,7 +309,7 @@ public class ReportResource implements IGraphQLResource {
 		//TODO: this should be in a transaction....
 		ApprovalAction approval = new ApprovalAction();
 		approval.setReport(r);
-		approval.setStep(ApprovalStep.create(step.getId(), null, null, null));
+		approval.setStep(ApprovalStep.createWithId(step.getId()));
 		approval.setPerson(approver);
 		approval.setType(ApprovalType.APPROVE);
 		engine.getApprovalActionDao().insert(approval);
@@ -357,7 +358,7 @@ public class ReportResource implements IGraphQLResource {
 		//TODO: This should be in a transaction
 		ApprovalAction approval = new ApprovalAction();
 		approval.setReport(r);
-		approval.setStep(ApprovalStep.create(step.getId(), null, null, null));
+		approval.setStep(ApprovalStep.createWithId(step.getId()));
 		approval.setPerson(approver);
 		approval.setType(ApprovalType.REJECT);
 		engine.getApprovalActionDao().insert(approval);
