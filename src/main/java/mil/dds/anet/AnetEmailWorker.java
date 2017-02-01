@@ -48,6 +48,7 @@ public class AnetEmailWorker implements Runnable {
 	private Properties props;
 	private Authenticator auth;
 	private String fromAddr;
+	private String serverUrl;
 	private Configuration freemarkerConfig;
 	
 	private static AnetEmailWorker instance;
@@ -59,6 +60,7 @@ public class AnetEmailWorker implements Runnable {
 		mapper.registerModule(new JodaModule());
 		this.emailMapper = new AnetEmailMapper();
 		this.fromAddr = config.getEmailFromAddr();
+		this.serverUrl = config.getServerUrl();
 		instance = this;
 		
 		SmtpConfiguration smtpConfig = config.getSmtp();
@@ -136,6 +138,7 @@ public class AnetEmailWorker implements Runnable {
 //			log.error("Unable to send email of subject {}, because there are no valid to email addresses");
 			return;
 		}
+		email.getContext().put("serverUrl", serverUrl);
 		Template temp = freemarkerConfig.getTemplate(email.getTemplateName());
 		StringWriter writer = new StringWriter();
 		temp.process(email.getContext(), writer);

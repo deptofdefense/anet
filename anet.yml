@@ -7,6 +7,7 @@ smtp:
   password: ${ANET_SMTP_PASSWORD}
   startTLS: true
 emailFromAddr: "Anet Testing <hunter+anet@dds.mil>"
+serverUrl: "http://localhost:3000"
 
 database:
   driverClass: ${ANET_DB_DRIVER}
