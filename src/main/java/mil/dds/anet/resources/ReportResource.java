@@ -111,8 +111,9 @@ public class ReportResource implements IGraphQLResource {
 			r.setPrincipalOrg(engine.getOrganizationForPerson(primaryPrincipal));
 		}
 		
-		AnetAuditLogger.log("new report created by author {} (id: {})", r.getAuthor().getName(), r.getAuthor().getId());
-		return dao.insert(r);
+		r = dao.insert(r);
+		AnetAuditLogger.log("Report {} created by author {} ", r, author);
+		return r;
 	}
 
 	private Person findPrimaryAttendee(Report r, Role role) { 
@@ -392,6 +393,7 @@ public class ReportResource implements IGraphQLResource {
 		//TODO: close the transaction.
 		
 		sendReportRejectEmail(r, approver, reason);
+		AnetAuditLogger.log("report {} rejected by {} (id: {})", r.getId(), approver.getName(), approver.getId());
 		return r;
 	}
 
