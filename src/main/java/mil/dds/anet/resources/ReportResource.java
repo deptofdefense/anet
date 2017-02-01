@@ -374,10 +374,21 @@ public class ReportResource implements IGraphQLResource {
 		engine.getCommentDao().insert(reason);
 
 		//TODO: close the transaction.
-
+		
+		sendReportRejectEmail(r, approver, reason);
 		return r;
 	}
 
+	private void sendReportRejectEmail(Report r, Person rejector, Comment rejectionComment) {
+		AnetEmail email = new AnetEmail();
+		email.setTemplateName("/emails/reportRejection.ftl");
+		email.setSubject("ANET Report Rejected");
+		email.setToAddresses(ImmutableList.of(r.loadAuthor().getEmailAddress()));
+		email.setContext(ImmutableMap.of("report", r, "rejector", rejector, "comment", rejectionComment));
+		AnetEmailWorker.sendEmailAsync(email);
+	}
+	
+	
 	@POST
 	@Timed
 	@Path("/{id}/comments")
