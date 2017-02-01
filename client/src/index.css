@@ -3,6 +3,10 @@ body {
 	margin-top: 152px;
 }
 
+.container {
+	max-width: 1024px;
+}
+
 h5 {
 	text-decoration: underline;
 }
@@ -22,7 +26,7 @@ input[type=checkbox][readonly] {
 fieldset {
 	background: #fff;
 	border: 1px solid #e0e0e0;
-	padding: 1.7rem 3rem 1.9rem 3rem;
+	padding: 1.25em;
 	margin: 7rem 0;
 	position: relative;
 }
