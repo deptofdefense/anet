@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {Link} from 'react-router'
+import {Grid, Row, Col} from 'react-bootstrap'
 import {Injectable, Injector} from 'react-injectables'
 
 import SearchBar from 'components/SearchBar.js'
@@ -40,19 +41,25 @@ class Header extends Component {
 
 		return (
 			<header style={backgroundCss} className="header">
-				<div className="container">
-					{leftContent || <Link to="/" className="pull-left">
-						<img src={logo} alt="ANET logo" style={logoCss} />
-					</Link>}
+				<Grid>
+					<Row>
+						<Col xs={3}>
+							{leftContent || <Link to="/">
+								<img src={logo} alt="ANET logo" style={logoCss} />
+							</Link>}
+						</Col>
 
-					<div className="pull-left header-content">
-						{middleContent || <SearchBar />}
-					</div>
+						<Col xs={7}>
+							{middleContent || <SearchBar />}
+						</Col>
 
-					<div className="pull-right">
-						{rightContent || <CreateButton />}
-					</div>
-				</div>
+						<Col xs={2}>
+							<div className="pull-right">
+								{rightContent || <CreateButton />}
+							</div>
+						</Col>
+					</Row>
+				</Grid>
 			</header>
 		)
 	}
