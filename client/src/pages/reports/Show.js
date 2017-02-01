@@ -175,7 +175,13 @@ export default class ReportShow extends Page {
 					<fieldset>
 						<legend>Report #{report.id}</legend>
 
-						<Form.Field id="intent" label="Purpose" />
+						<Form.Field id="intent" label="Summary" >
+							<div>
+								<b>The goal of this meeting is to</b> {report.intent}.
+								<b>The key outcomes are</b> {report.keyOutcomesSummary}.
+								<b>The next steps are</b> {report.nextStepsSummary}
+							</div>
+						</Form.Field>
 						<Form.Field id="engagementDate" label="Date 📆" getter={date => date && moment(date).format("D MMM YYYY")} />
 						<Form.Field id="location" label="Location 📍">
 							{report.location && <LinkTo location={report.location} />}
@@ -250,11 +256,9 @@ export default class ReportShow extends Page {
 						<legend>Meeting discussion</legend>
 
 						<h5>Key outcomes</h5>
-						<span>{report.keyOutcomesSummary}</span>
 						<div dangerouslySetInnerHTML={{__html: report.keyOutcomes}} />
 
 						<h5>Next steps</h5>
-						<span>{report.nextStepsSummary}</span>
 						<div dangerouslySetInnerHTML={{__html: report.nextSteps}} />
 
 						<h5>Report Details</h5>
