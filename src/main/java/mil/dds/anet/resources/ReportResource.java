@@ -384,9 +384,20 @@ public class ReportResource implements IGraphQLResource {
 	public Comment postNewComment(@Auth Person author, @PathParam("id") int reportId, Comment comment) {
 		comment.setReportId(reportId);
 		comment.setAuthor(author);
-		return engine.getCommentDao().insert(comment);
+		comment = engine.getCommentDao().insert(comment);
+		sendNewCommentEmail(dao.getById(reportId), comment);
+		return comment;
 	}
 
+	private void sendNewCommentEmail(Report r, Comment comment) {
+		AnetEmail email = new AnetEmail();
+		email.setTemplateName("/emails/newReportComment.ftl");
+		email.setSubject("New Comment on your ANET Report");
+		email.setToAddresses(ImmutableList.of(r.loadAuthor().getEmailAddress()));
+		email.setContext(ImmutableMap.of("report", r, "comment", comment));
+		AnetEmailWorker.sendEmailAsync(email);
+	}
+	
 	@GET
 	@Timed
 	@Path("/{id}/comments")

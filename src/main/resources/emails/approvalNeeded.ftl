@@ -9,7 +9,7 @@ Hello ${approvalStepName},
 <li><b>Text:</b>: ${report.reportText}</li>
 </ul>
 
-<div>You can check it out <a href="http://localhost:8080/reports/${report.id}" />Here</a>.</div>
+<div>You can check it out <a href="${serverUrl}/reports/${report.id}" />Here</a>.</div>
 
 Thanks!<br>
 The ANET Team
