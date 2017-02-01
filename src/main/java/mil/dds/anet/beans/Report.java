@@ -403,6 +403,6 @@ public class Report extends AbstractAnetBean {
 	
 	@Override
 	public String toString() { 
-		return String.format("[Report id#%d]", id);
+		return String.format("[id:%d, intent:%s]", id, intent);
 	}
 }
