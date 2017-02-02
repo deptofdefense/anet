@@ -8,6 +8,7 @@ import Autocomplete from 'components/Autocomplete'
 import PoamsSelector from 'components/PoamsSelector'
 import History from 'components/History'
 import {Position} from 'models'
+import Messages from 'components/Messages'
 
 import API from 'api'
 import Organization from 'models/Organization'
@@ -16,6 +17,13 @@ export default class OrganizationForm extends Component {
 	static propTypes = {
 		organization: PropTypes.object,
 		edit: PropTypes.bool,
+	}
+
+	constructor(props) {
+		super(props)
+		this.state = {
+			error: null,
+		}
 	}
 
 	render() {
@@ -28,6 +36,7 @@ export default class OrganizationForm extends Component {
 			submitText="Save organization"
 			horizontal>
 
+			<Messages error={this.state.error} />
 			<fieldset>
 				<legend>{edit ? "Editing " + organization.shortName : "Create a new Organization"}</legend>
 
@@ -52,17 +61,14 @@ export default class OrganizationForm extends Component {
 			{organization.type === "ADVISOR_ORG" && <div>
 				<PoamsSelector poams={organization.poams} onChange={this.onChange} />
 
-				<fieldset>
-					<legend>Approval Process</legend>
+				<h3>Approval Process</h3>
+				<Button className="pull-right" onClick={this.addApprovalStep} bsStyle="primary" >
+					Add an Approval Step
+				</Button>
 
-					<Button className="pull-right" onClick={this.addApprovalStep}>
-						Add an Approval Step
-					</Button>
-
-					{approvalSteps && approvalSteps.map((step, index) =>
-						this.renderApprovalStep(step, index)
-					)}
-				</fieldset>
+				{approvalSteps && approvalSteps.map((step, index) =>
+					this.renderApprovalStep(step, index)
+				)}
 			</div>}
 		</Form>
 	}
@@ -72,6 +78,9 @@ export default class OrganizationForm extends Component {
 
 		return <fieldset key={index}>
 			<legend>Step {index + 1}</legend>
+			<Button className="pull-right" onClick={this.removeApprovalStep.bind(this, index)}>
+				X
+			</Button>
 
 			<Form.Field id="name"
 				value={step.name}
@@ -130,7 +139,7 @@ export default class OrganizationForm extends Component {
 		let approvers = step.approvers;
 		let approverIndex = approvers.findIndex(m => m.id === approver.id );
 
-		if (index !== -1) {
+		if (approverIndex !== -1) {
 			approvers.splice(approverIndex, 1);
 			this.onChange();
 		}
@@ -152,6 +161,13 @@ export default class OrganizationForm extends Component {
 		approvalSteps.push({name: "", approvers: []});
 
 		this.onChange()
+	}
+
+	@autobind
+	removeApprovalStep(index) {
+		let steps = this.props.organization.approvalSteps;
+		steps.splice(index, 1)
+		this.onChange();
 	}
 
 	@autobind

@@ -126,27 +126,25 @@ public class OrganizationResource implements IGraphQLResource {
 						oldPoamId -> engine.getPoamDao().setResponsibleOrgForPoam(Poam.createWithId(oldPoamId), null));
 			}
 			if (org.getApprovalSteps() != null) {
+				org.getApprovalSteps().stream().forEach(step -> step.setAdvisorOrganizationId(org.getId()));
 				List<ApprovalStep> existingSteps = existing.loadApprovalSteps();
-				// for each step we were given
-				for (ApprovalStep step : org.getApprovalSteps()) {
-					step.setAdvisorOrganizationId(org.getId());
-					if (step.getId() != null) { 
-						// if it has an ID then it already exists, so check the group to update name or members. 
-						ApprovalStep existingStep = Utils.getById(existingSteps, step.getId());
-						ApprovalStepResource.updateStep(step, existingStep);
-					} else {
-						step = engine.getApprovalStepDao().insert(step);
-					}
-				}
 				
-				//Fix all the orders.
-				//I know this is is inefficient in that it pushes an update to every step
-				//TODO: make this more efficient. 
+				Utils.addRemoveElementsById(existingSteps, org.getApprovalSteps(), 
+						newStep -> engine.getApprovalStepDao().insert(newStep),
+						oldStepId -> engine.getApprovalStepDao().deleteStep(oldStepId));
+				
 				for (int i=0;i<org.getApprovalSteps().size();i++) { 
 					ApprovalStep curr = org.getApprovalSteps().get(i);
 					ApprovalStep next = (i == (org.getApprovalSteps().size() -1)) ? null : org.getApprovalSteps().get(i+1);
 					curr.setNextStepId(DaoUtils.getId(next));
-					engine.getApprovalStepDao().update(curr);
+					ApprovalStep existingStep = Utils.getById(existingSteps, curr.getId());
+					//If this step didn't exist before, we still need to set the nextStepId on it, but don't need to do a deep update. 
+					if (existingStep == null) { 
+						engine.getApprovalStepDao().update(curr);
+					} else {
+						//Check for updates to name, nextStepId and approvers. 
+						ApprovalStepResource.updateStep(curr, existingStep);
+					}
 				}
 			}
 		}

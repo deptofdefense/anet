@@ -153,7 +153,7 @@ public class ApprovalStepDao implements IAnetDao<ApprovalStep> {
 	}
 	
 	public int removeApprover(ApprovalStep step, Position position) { 
-		return dbHandle.createStatement("DELETE FROM approvers WHERE approvalStepId = :stepId AND personId = :positionId)")
+		return dbHandle.createStatement("DELETE FROM approvers WHERE approvalStepId = :stepId AND positionId = :positionId")
 				.bind("stepId", step.getId())
 				.bind("positionId", position.getId())
 				.execute();

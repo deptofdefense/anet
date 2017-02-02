@@ -1,6 +1,7 @@
 package mil.dds.anet.resources;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -80,6 +81,8 @@ public class ApprovalStepResource implements IGraphQLResource{
 		AnetObjectEngine engine = AnetObjectEngine.getInstance();
 		newStep.setId(oldStep.getId()); //Always want to make changes to the existing group
 		if (newStep.getName().equals(oldStep.getName()) == false) { 
+			engine.getApprovalStepDao().update(newStep);
+		} else if (Objects.equals(newStep.getNextStepId(), oldStep.getNextStepId()) == false) { 
 			engine.getApprovalStepDao().update(newStep);
 		}
 	
