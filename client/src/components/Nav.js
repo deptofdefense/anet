@@ -29,7 +29,7 @@ export default class extends Component {
 				</Link>
 				}
 
-				<NavDropdown title="EFs / AOs" id="organizations">
+				<NavDropdown title="EFs / AOs" id="organizations" active={inOrg}>
 					{Organization.map(organizations, org =>
 						<LinkTo organization={org} componentClass={Link} key={org.id}>
 							<MenuItem>{org.shortName}</MenuItem>
@@ -38,12 +38,12 @@ export default class extends Component {
 				</NavDropdown>
 
 				{inOrg &&
-					<div className="orgDetailsNav">
-						<NavLink to={path } ><NavItem>Details</NavItem></NavLink>
-						<NavLink to={path + "/approvals"} ><NavItem>Approvals</NavItem></NavLink>
-						<NavLink to={path + "/reports"} ><NavItem>Reports</NavItem></NavLink>
-						<NavLink to={path + "/laydown"} ><NavItem>Laydown</NavItem></NavLink>
-					</div>
+					<SubNav>
+						<Link to={path}><NavItem>Details</NavItem></Link>
+						<Link to={path + "/approvals"}><NavItem>Approvals</NavItem></Link>
+						<Link to={path + "/reports"}><NavItem>Reports</NavItem></Link>
+						<Link to={path + "/laydown"}><NavItem>Laydown</NavItem></Link>
+					</SubNav>
 				}
 
 				<Link to="/rollup">
@@ -66,8 +66,12 @@ export default class extends Component {
 	}
 }
 
-class NavLink extends Component {
+class SubNav extends Component {
 	render() {
-		return <Link {...this.props} activeClassName="active"/>
+		return <li>
+			<Nav>
+				{this.props.children}
+			</Nav>
+		</li>
 	}
 }
