@@ -24,7 +24,7 @@ export default class PositionForm extends Component {
 		let relationshipPositionType = position.type === "PRINCIPAL" ? "ADVISOR" : "PRINCIPAL"
 
 		//TODO: only allow you to set positon to admin if you are an admin.
-
+		console.log(position)
 		return (
 			<Form
 				formFor={position}
@@ -128,7 +128,7 @@ export default class PositionForm extends Component {
 		let rels = position.associatedPositions
 
 		if (!rels.find(relPos => relPos.id === newRelatedPos.id)) {
-			let newRels = rels.splice()
+			let newRels = rels.slice()
 			newRels.push(new Position(newRelatedPos))
 
 			position.associatedPositions = newRels
