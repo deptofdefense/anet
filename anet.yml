@@ -33,6 +33,11 @@ server:
   applicationConnectors:
     - type: http
       port: 8080
+#    - type: https
+#      port: 8443
+#      keyStorePath: example.keystore
+#      keyStorePassword: example
+#      validateCerts: false
   adminConnectors:
     - type: http
       port: 8081
@@ -45,7 +50,14 @@ logging:
   level: INFO
   loggers:
     "io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper" : TRACE
-    "org.skife.jdbi.v2.DBI" : TRACE
+    "org.skife.jdbi.v2.DBI" :
+      level: TRACE
+      appenders:
+        - type: file
+#          additive: false
+          currentLogFilename: ./logs/dbLog.log
+          archivedLogFilenamePattern: ./logs/dbLog-%d.log.gz
+          archivedFileCount: 2
     "org.sqlite.JDBC" : INFO
     "io.dropwizard.assets.AssetsBundle" : TRACE
     "io.dropwizard.assets.*" : TRACE
