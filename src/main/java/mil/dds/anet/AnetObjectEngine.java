@@ -1,31 +1,22 @@
 package mil.dds.anet;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 
 import mil.dds.anet.beans.ApprovalStep;
-import mil.dds.anet.beans.Comment;
-import mil.dds.anet.beans.Group;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Position;
-import mil.dds.anet.beans.Report;
-import mil.dds.anet.beans.geo.Location;
-import mil.dds.anet.beans.search.SavedSearch;
 import mil.dds.anet.database.AdminDao;
 import mil.dds.anet.database.AdminDao.AdminSettingKeys;
 import mil.dds.anet.database.ApprovalActionDao;
 import mil.dds.anet.database.ApprovalStepDao;
 import mil.dds.anet.database.CommentDao;
-import mil.dds.anet.database.GroupDao;
-import mil.dds.anet.database.IAnetDao;
 import mil.dds.anet.database.LocationDao;
 import mil.dds.anet.database.OrganizationDao;
 import mil.dds.anet.database.PersonDao;
@@ -38,15 +29,11 @@ import mil.dds.anet.search.ISearcher;
 import mil.dds.anet.search.mssql.MssqlSearcher;
 import mil.dds.anet.search.sqlite.SqliteSearcher;
 import mil.dds.anet.utils.DaoUtils;
-import mil.dds.anet.views.AbstractAnetBean;
-import mil.dds.anet.views.AbstractAnetBean.LoadLevel;
 
-//TODO: change this name
 public class AnetObjectEngine {
 
 	TestingDao dao;
 	PersonDao personDao;
-	GroupDao groupDao;
 	PoamDao poamDao;
 	LocationDao locationDao;
 	OrganizationDao orgDao;
@@ -60,7 +47,6 @@ public class AnetObjectEngine {
 
 	ISearcher searcher;
 	
-	private static Map<Class<? extends AbstractAnetBean>, IAnetDao<?>> daoMap;
 	private static AnetObjectEngine instance; 
 	
 	Handle dbHandle;
@@ -69,10 +55,9 @@ public class AnetObjectEngine {
 		dbHandle = jdbi.open();
 		
 		personDao = new PersonDao(dbHandle);
-		groupDao = new GroupDao(dbHandle);
 		poamDao = new PoamDao(dbHandle);
 		locationDao =  new LocationDao(dbHandle);
-		orgDao = new OrganizationDao(dbHandle, groupDao);
+		orgDao = new OrganizationDao(dbHandle);
 		positionDao = new PositionDao(dbHandle);
 		asDao = new ApprovalStepDao(dbHandle);
 		approvalActionDao = new ApprovalActionDao(dbHandle);
@@ -80,20 +65,6 @@ public class AnetObjectEngine {
 		commentDao = new CommentDao(dbHandle);
 		adminDao = new AdminDao(dbHandle);
 		savedSearchDao = new SavedSearchDao(dbHandle);
-		
-		daoMap = new HashMap<Class<? extends AbstractAnetBean>, IAnetDao<?>>();
-		daoMap.put(Person.class, personDao);
-		daoMap.put(Group.class, groupDao);
-		daoMap.put(Location.class, locationDao);
-		daoMap.put(Organization.class, orgDao);
-		daoMap.put(Position.class, positionDao);
-//		daoMap.put(Poam.class, poamDao);
-//		daoMap.put(Tashkil.class, tashkilDao);
-//		daoMap.put(ApprovalStep.class, asDao);
-//		daoMap.put(ApprovalAction.class, approvalActionDao);
-		daoMap.put(Report.class, reportDao);
-		daoMap.put(Comment.class, commentDao);
-		daoMap.put(SavedSearch.class, savedSearchDao);
 		
 		instance = this;
 		
@@ -109,16 +80,8 @@ public class AnetObjectEngine {
 		return personDao;
 	}
 	
-	public GroupDao groupDao() { 
-		return groupDao;
-	}
-	
 	public PoamDao getPoamDao() { 
 		return poamDao;
-	}
-
-	public GroupDao getGroupDao() {
-		return groupDao;
 	}
 
 	public LocationDao getLocationDao() {
@@ -184,25 +147,17 @@ public class AnetObjectEngine {
 		return ordered;
 	}
 	
-	public boolean canUserApproveStep(int userId, int approvalStepId) { 
+	public boolean canUserApproveStep(Integer userId, int approvalStepId) { 
 		ApprovalStep as = asDao.getById(approvalStepId);
-		Group approvers = groupDao.getById(as.getApproverGroup().getId());
-		for (Person member : approvers.getMembers()) { 
-			if (member.getId() == userId) { return true; } 
+		for (Position approverPosition: as.loadApprovers()) {
+			//approverPosition.getPerson() has the currentPersonId already loaded, so this is safe. 
+			if (Objects.equals(userId, DaoUtils.getId(approverPosition.getPerson()))) { return true; } 
 		}
 		return false;
 	}
 
 	public static AnetObjectEngine getInstance() { 
 		return instance;
-	}
-	
-	public static AbstractAnetBean loadBeanTo(AbstractAnetBean bean, LoadLevel ll) {
-		@SuppressWarnings("unchecked")
-		IAnetDao<? extends AbstractAnetBean> dao = (IAnetDao<? extends AbstractAnetBean>) daoMap.get(bean.getClass());
-		if ( dao == null) { throw new UnsupportedOperationException("No dao loaded for " + bean.getClass()); }
-		//TODO: support load levels above PROPERTIES. 
-		return dao.getById(bean.getId());
 	}
 	
 	public String getAdminSetting(AdminSettingKeys key) { 

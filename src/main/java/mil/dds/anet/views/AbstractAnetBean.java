@@ -6,7 +6,6 @@ import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.graphql.GraphQLIgnore;
 import mil.dds.anet.graphql.IGraphQLBean;
 
@@ -59,15 +58,6 @@ public abstract class AbstractAnetBean implements IGraphQLBean {
 
 	public void setUpdatedAt(DateTime updatedAt) {
 		this.updatedAt = updatedAt;
-	}
-	
-	protected <B extends AbstractAnetBean> B getBeanAtLoadLevel(B bean, LoadLevel ll) {
-		if (bean.getLoadLevel().contains(ll)) { 
-			return bean;
-		}
-		@SuppressWarnings("unchecked")
-		B ret = (B) AnetObjectEngine.loadBeanTo(bean, ll);
-		return ret;
 	}
 	
 	/*Determines if two beans are "id" equal. 

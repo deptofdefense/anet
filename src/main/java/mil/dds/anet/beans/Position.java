@@ -7,6 +7,7 @@ import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.graphql.GraphQLFetcher;
 import mil.dds.anet.graphql.GraphQLIgnore;
+import mil.dds.anet.utils.DaoUtils;
 import mil.dds.anet.views.AbstractAnetBean;
 
 public class Position extends AbstractAnetBean {
@@ -156,4 +157,8 @@ public class Position extends AbstractAnetBean {
 		return Objects.hash(id, name, code, type, organization);
 	}
 	
+	@Override
+	public String toString() { 
+		return String.format("[id:%s name:%s orgId:%d]", id, name, DaoUtils.getId(organization));
+	}
 }

@@ -8,4 +8,8 @@ export default class Location extends Model {
 		lat: null,
 		lng: null
 	}
+
+	toString() {
+		return this.name
+	}
 }

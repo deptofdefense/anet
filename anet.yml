@@ -7,6 +7,7 @@ smtp:
   password: ${ANET_SMTP_PASSWORD}
   startTLS: true
 emailFromAddr: "Anet Testing <hunter+anet@dds.mil>"
+serverUrl: "http://localhost:3000"
 
 database:
   driverClass: ${ANET_DB_DRIVER}
@@ -32,6 +33,11 @@ server:
   applicationConnectors:
     - type: http
       port: 8080
+#    - type: https
+#      port: 8443
+#      keyStorePath: example.keystore
+#      keyStorePassword: example
+#      validateCerts: false
   adminConnectors:
     - type: http
       port: 8081
@@ -44,7 +50,14 @@ logging:
   level: INFO
   loggers:
     "io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper" : TRACE
-    "org.skife.jdbi.v2.DBI" : TRACE
+    "org.skife.jdbi.v2.DBI" :
+      level: TRACE
+      appenders:
+        - type: file
+#          additive: false
+          currentLogFilename: ./logs/dbLog.log
+          archivedLogFilenamePattern: ./logs/dbLog-%d.log.gz
+          archivedFileCount: 2
     "org.sqlite.JDBC" : INFO
     "io.dropwizard.assets.AssetsBundle" : TRACE
     "io.dropwizard.assets.*" : TRACE
@@ -57,6 +70,13 @@ logging:
         - type: file
           currentLogFilename: ./logs/testingLogger.log
           archivedLogFilenamePattern: ./logs/testingLogger-%d.log.gz
+          archivedFileCount: 2
+    "mil.dds.anet.utils.AnetAuditLogger" :
+      level: INFO
+      appenders:
+        - type: file
+          currentLogFilename: ./logs/auditLogger.log
+          archivedLogFilenamePattern: ./logs/auditLogger-%d.log.gz
           archivedFileCount: 2
   appenders:
     - type: console

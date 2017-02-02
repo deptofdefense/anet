@@ -93,21 +93,19 @@ export default class App extends Page {
 
 				<Header />
 
-				<section className={pageProps.fluidContainer ? "container-fluid" : "container"}>
+				<Grid componentClass="section" bsClass={pageProps.fluidContainer ? "container-fluid" : "container"}>
 					{pageProps.useNavigation === false
-						? this.props.children
-						: <Grid>
-							<Row>
-								<Col sm={3}>
-									{pageProps.navElement || <Nav />}
-								</Col>
-								<Col sm={9}>
-									{this.props.children}
-								</Col>
-							</Row>
-						</Grid>
+						? <Row><Col xs={12}>{this.props.children}</Col></Row>
+						: <Row>
+							<Col sm={3}>
+								{pageProps.navElement || <Nav />}
+							</Col>
+							<Col sm={9}>
+								{this.props.children}
+							</Col>
+						</Row>
 					}
-				</section>
+				</Grid>
 			</div>
 		)
 	}

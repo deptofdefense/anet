@@ -58,7 +58,7 @@ export default class PositionShow extends Page {
 			(currentUser.isAdmin()) ||
 			//Super users can edit positions within their own organization
 			(position.organization && position.organization.id && currentUser.isSuperUserForOrg(position.organization)))
-
+		console.log(position)
 		return (
 			<div>
 				<Breadcrumbs items={[[position.name || 'Position', Position.pathFor(position)]]} />

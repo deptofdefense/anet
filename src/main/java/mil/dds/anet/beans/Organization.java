@@ -3,11 +3,7 @@ package mil.dds.anet.beans;
 import java.util.List;
 import java.util.Objects;
 
-import javax.ws.rs.DefaultValue;
-
 import org.joda.time.DateTime;
-
-import com.google.common.collect.ImmutableList;
 
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.graphql.GraphQLFetcher;
@@ -168,5 +164,10 @@ public class Organization extends AbstractAnetBean {
 	@Override
 	public int hashCode() { 
 		return Objects.hash(id, shortName, longName, type, createdAt, updatedAt);
+	}
+	
+	@Override
+	public String toString() { 
+		return String.format("[id:%d shortName:%s longName:%s type:%s]", id, shortName, longName, type);
 	}
 }

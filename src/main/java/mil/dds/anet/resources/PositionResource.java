@@ -31,6 +31,7 @@ import mil.dds.anet.database.PositionDao;
 import mil.dds.anet.graphql.GraphQLFetcher;
 import mil.dds.anet.graphql.GraphQLParam;
 import mil.dds.anet.graphql.IGraphQLResource;
+import mil.dds.anet.utils.AnetAuditLogger;
 import mil.dds.anet.utils.AuthUtils;
 import mil.dds.anet.utils.ResponseUtils;
 import mil.dds.anet.utils.Utils;
@@ -104,6 +105,7 @@ public class PositionResource implements IGraphQLResource {
 			}
 		}
 		
+		AnetAuditLogger.log("Position {} created by {}", p, user);
 		return created;
 	}
 	
@@ -129,6 +131,7 @@ public class PositionResource implements IGraphQLResource {
 			}	
 		}
 		
+		AnetAuditLogger.log("Position {} edited by {}", pos, user);
 		return (numRows == 1) ? Response.ok().build() : Response.status(Status.NOT_FOUND).build();
 	}
 	
@@ -149,19 +152,22 @@ public class PositionResource implements IGraphQLResource {
 		AuthUtils.assertSuperUserForOrg(user, pos.getOrganization());
 		
 		dao.setPersonInPosition(p, pos);
+		AnetAuditLogger.log("Person {} put in Position {} by {}", p, pos, user);
 		return Response.ok().build();
 	}
 	
 	@DELETE
 	@Path("/{id}/person")
-	public Response deletePersonFromPosition(@PathParam("id") int id) {
+	public Response deletePersonFromPosition(@Auth Person user, @PathParam("id") int id) {
+		//TODO: Authorization
 		dao.removePersonFromPosition(Position.createWithId(id));
+		AnetAuditLogger.log("Person removed from Position id#{} by {}", id, user);
 		return Response.ok().build();
 	}
 	
 	@GET
 	@Path("/{id}/associated")
-	public List<Position> getAssociatedTashkils(@PathParam("id") int positionId) { 
+	public List<Position> getAssociatedPositions(@PathParam("id") int positionId) { 
 		Position b = Position.createWithId(positionId);
 		
 		return dao.getAssociatedPositions(b);
@@ -169,18 +175,22 @@ public class PositionResource implements IGraphQLResource {
 	
 	@POST
 	@Path("/{id}/associated")
-	public Response associateTashkil(@PathParam("id") int positionId, Position b) { 
+	public Response associatePositions(@PathParam("id") int positionId, Position b, @Auth Person user) {
+		//TODO Authorization
 		Position a = Position.createWithId(positionId);
 		dao.associatePosition(a, b);
+		AnetAuditLogger.log("Positions {} and {} associated by {}", a, b, user);
 		return Response.ok().build();
 	}
 	
 	@DELETE
 	@Path("/{id}/associated/{positionId}")
-	public Response deleteTashkilAssociation(@PathParam("id") int positionId, @PathParam("positionId") int associatedPositionId) { 
+	public Response deletePositionAssociation(@PathParam("id") int positionId, @PathParam("positionId") int associatedPositionId, @Auth Person user) {
+		//TODO: Authorization
 		Position a = Position.createWithId(positionId);
 		Position b = Position.createWithId(associatedPositionId);
 		dao.deletePositionAssociation(a, b);
+		AnetAuditLogger.log("Positions {} and {} disassociated by {}", a, b, user);
 		return Response.ok().build();
 	}
 	

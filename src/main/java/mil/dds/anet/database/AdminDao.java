@@ -23,8 +23,6 @@ public class AdminDao {
 	
 	public AdminDao(Handle db) { 
 		this.dbHandle = db;
-		
-		
 	}
 	
 	private void initCache() { 
@@ -48,11 +46,18 @@ public class AdminDao {
 
 	public int saveSetting(AdminSetting setting) {
 		if (cachedSettings == null) { initCache(); }
+		String sql; 
+		if (cachedSettings.containsKey(setting.getKey())) {
+			sql = "UPDATE adminSettings SET value = :value WHERE [key] = :key";
+		} else { 
+			sql = "INSERT INTO adminSettings ([key], value) VALUES (:key, :value)";
+		}
 		cachedSettings.put(setting.getKey(), setting.getValue());
-		return dbHandle.createStatement("UPDATE adminSettings SET value = :value WHERE [key] = :key")
+		return dbHandle.createStatement(sql)
 			.bind("key", setting.getKey())
 			.bind("value", setting.getValue())
 			.execute();
 	}
+
 	
 }

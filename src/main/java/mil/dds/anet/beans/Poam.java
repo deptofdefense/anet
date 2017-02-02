@@ -135,7 +135,7 @@ public class Poam extends AbstractAnetBean {
 	
 	@Override
 	public String toString() { 
-		return String.format("%d - %s - %s - %s - %d", id, shortName, longName, category, DaoUtils.getId(parentPoam));
+		return String.format("[id:%d shortName:%s category:%s parentPoam:%d]", id, shortName, category, DaoUtils.getId(parentPoam));
 	}
 	
 }

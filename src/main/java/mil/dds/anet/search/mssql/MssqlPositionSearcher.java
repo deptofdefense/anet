@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableList;
 
 import jersey.repackaged.com.google.common.base.Joiner;
 import mil.dds.anet.beans.Position;
+import mil.dds.anet.beans.Position.PositionType;
 import mil.dds.anet.beans.search.PositionSearchQuery;
 import mil.dds.anet.database.PositionDao;
 import mil.dds.anet.database.mappers.PositionMapper;
@@ -45,8 +46,15 @@ public class MssqlPositionSearcher implements IPositionSearcher {
 		}
 		
 		if (query.getType() != null) { 
-			whereClauses.add("positions.type = :type");
-			sqlArgs.put("type", DaoUtils.getEnumId(query.getType()));
+			if (PositionType.ADVISOR.equals(query.getType())) { 
+				whereClauses.add("positions.type IN (:advisor, :superUser, :admin)");
+				sqlArgs.put("advisor", PositionType.ADVISOR.ordinal());
+				sqlArgs.put("superUser", PositionType.SUPER_USER.ordinal());
+				sqlArgs.put("admin", PositionType.ADMINISTRATOR.ordinal());
+			} else { 
+				whereClauses.add("positions.type = :type");
+				sqlArgs.put("type", DaoUtils.getEnumId(query.getType()));
+			}
 		}
 		
 		if (query.getOrganizationId() != null) { 

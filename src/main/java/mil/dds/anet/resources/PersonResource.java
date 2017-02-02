@@ -31,6 +31,7 @@ import mil.dds.anet.database.PersonDao;
 import mil.dds.anet.graphql.GraphQLFetcher;
 import mil.dds.anet.graphql.GraphQLParam;
 import mil.dds.anet.graphql.IGraphQLResource;
+import mil.dds.anet.utils.AnetAuditLogger;
 import mil.dds.anet.utils.ResponseUtils;
 
 @Path("/api/people")
@@ -88,13 +89,14 @@ public class PersonResource implements IGraphQLResource {
 	@Timed
 	@Path("/new")
 	@RolesAllowed("SUPER_USER")
-	public Person createNewPerson(Person p) {
+	public Person createNewPerson(@Auth Person user, Person p) {
 		Person created = dao.insert(p);
 		
 		if (created.getPosition() != null) { 
 			AnetObjectEngine.getInstance().getPositionDao().setPersonInPosition(created, created.getPosition());
 		}
 		
+		AnetAuditLogger.log("Person {} created by {}", p, user);
 		return created;
 	}
 	
@@ -131,7 +133,7 @@ public class PersonResource implements IGraphQLResource {
 			}
 		}
 		
-		
+		AnetAuditLogger.log("Person {} edited by {}", p, user);
 		return (numRows == 1) ? Response.ok().build() : Response.status(Status.NOT_FOUND).build();
 	}
 	

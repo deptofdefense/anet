@@ -20,6 +20,7 @@ public class AnetConfiguration extends Configuration {
 
 	private SmtpConfiguration smtp;
 	private String emailFromAddr;
+	private String serverUrl;
 
 	@NotNull
 	private Map<String,String> waffleConfig = new HashMap<String,String>();
@@ -87,6 +88,14 @@ public class AnetConfiguration extends Configuration {
 		this.emailFromAddr = emailFromAddr;
 	}
 	
+	public String getServerUrl() {
+		return serverUrl;
+	}
+
+	public void setServerUrl(String serverUrl) {
+		this.serverUrl = serverUrl;
+	}
+
 	public static class SmtpConfiguration {
 		private String hostname;
 		private Integer port = 587;

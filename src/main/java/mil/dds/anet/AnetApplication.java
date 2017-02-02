@@ -34,7 +34,6 @@ import mil.dds.anet.config.AnetConfiguration;
 import mil.dds.anet.resources.AdminResource;
 import mil.dds.anet.resources.ApprovalStepResource;
 import mil.dds.anet.resources.GraphQLResource;
-import mil.dds.anet.resources.GroupResource;
 import mil.dds.anet.resources.HomeResource;
 import mil.dds.anet.resources.LocationResource;
 import mil.dds.anet.resources.OrganizationResource;
@@ -76,6 +75,9 @@ public class AnetApplication extends Application<AnetConfiguration> {
 	            return configuration.getDataSourceFactory();
 	        }
 	    });
+		
+		//Add the init command
+		bootstrap.addCommand(new InitializationCommand());
 
 		//Serve assets on /assets
 		bootstrap.addBundle(new AssetsBundle("/assets", "/assets", "index.html"));
@@ -128,7 +130,6 @@ public class AnetApplication extends Application<AnetConfiguration> {
 	    
 		TestingResource test = new TestingResource(engine, configuration);
 		PersonResource personResource = new PersonResource(engine);
-		GroupResource groupResource = new GroupResource(engine);
 		PoamResource poamResource =  new PoamResource(engine);
 		LocationResource locationResource = new LocationResource(engine);
 		OrganizationResource orgResource = new OrganizationResource(engine);
@@ -142,7 +143,6 @@ public class AnetApplication extends Application<AnetConfiguration> {
 
 		environment.jersey().register(test);
 		environment.jersey().register(personResource);
-		environment.jersey().register(groupResource);
 		environment.jersey().register(poamResource);
 		environment.jersey().register(locationResource);
 		environment.jersey().register(orgResource);
@@ -158,7 +158,8 @@ public class AnetApplication extends Application<AnetConfiguration> {
 			ImmutableList.of(reportResource, personResource, 
 				positionResource, locationResource,
 				orgResource, asResource, poamResource, 
-				groupResource, adminResource, searchResource, savedSearchResource)));
+				adminResource, searchResource, savedSearchResource), 
+			configuration.isDevelopmentMode()));
 
 	}
 

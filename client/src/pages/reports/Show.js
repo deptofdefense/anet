@@ -66,10 +66,10 @@ export default class ReportShow extends Page {
 						organization {
 							shortName, longName
 							approvalSteps {
-								id
-								approverGroup {
-									id, name
-									members { id, name, rank }
+								id, name,
+								approvers {
+									id, name,
+									person { id, name rank }
 								}
 							}
 						}
@@ -95,20 +95,13 @@ export default class ReportShow extends Page {
 
 				approvalStatus {
 					type, createdAt
-					step { id ,
-						approverGroup {
-							id, name,
-							members { id, name }
-						}
+					step { id , name
+						approvers { id, name, person { id, name } }
 					},
 					person { id, name, rank}
 				}
 
-				approvalStep {
-					approverGroup {
-						members { id }
-					}
-				}
+				approvalStep { name, approvers { id } }
 			}
 		`).then(data => {
 			this.setState({report: new Report(data.report)})
@@ -119,8 +112,8 @@ export default class ReportShow extends Page {
 		let {report} = this.state
 		let {currentUser} = this.context.app.state
 
-		let canApprove = report.isPending() &&
-			report.approvalStep.approverGroup.members.find(member => member.id === currentUser.id)
+		let canApprove = report.isPending() && currentUser.position &&
+			report.approvalStep.approvers.find(member => member.id === currentUser.position.id)
 
 		//Authors can edit in draft mode, rejected mode, or Pending Mode
 		let canEdit = (report.isDraft() || report.isPending() || report.isRejected()) && (currentUser.id === report.author.id)
@@ -172,7 +165,7 @@ export default class ReportShow extends Page {
 						className="pull-right" onSelect={this.actionSelect}>
 						{canEdit && <MenuItem eventKey="edit" >Edit Report</MenuItem>}
 						{canSubmit && errors.length === 0 && <MenuItem eventKey="submit">Submit</MenuItem>}
-						{canEmail && <MenuItem eventKey="email" className="todo" onClick={this.toggleEmailModal}>Email Report</MenuItem>}
+						{canEmail && <MenuItem eventKey="email" onClick={this.toggleEmailModal}>Email Report</MenuItem>}
 					</DropdownButton>
 				</div>
 
@@ -182,7 +175,13 @@ export default class ReportShow extends Page {
 					<fieldset>
 						<legend>Report #{report.id}</legend>
 
-						<Form.Field id="intent" label="Purpose" />
+						<Form.Field id="intent" label="Summary" >
+							<div>
+								<b>The goal of this meeting is to</b> {report.intent}.
+								<b>The key outcomes are</b> {report.keyOutcomesSummary}.
+								<b>The next steps are</b> {report.nextStepsSummary}
+							</div>
+						</Form.Field>
 						<Form.Field id="engagementDate" label="Date 📆" getter={date => date && moment(date).format("D MMM YYYY")} />
 						<Form.Field id="location" label="Location 📍">
 							{report.location && <LinkTo location={report.location} />}
@@ -407,7 +406,7 @@ export default class ReportShow extends Page {
 		API.send(`/api/reports/${this.state.report.id}/submit`).then(data => {
 			this.updateReport()
 			this.setState({error:null})
-			this.setState({success:"Successfully subbmited report"})
+			this.setState({success:"Successfully submited report"})
 		}, data => {
 			this.handleError(data)
 		})
@@ -506,19 +505,19 @@ export default class ReportShow extends Page {
 
 	@autobind
 	renderApprovalAction(action) {
-		let group = action.step.approverGroup
-		return <div key={action.step.id}>
-			<Button onClick={this.showApproversModal.bind(this, group)}>
-				{group.name}
+		let step = action.step
+		return <div key={step.id}>
+			<Button onClick={this.showApproversModal.bind(this, step)}>
+				{step.name}
 			</Button>
-			<Modal show={group.showModal} onHide={this.closeApproversModal.bind(this, group)}>
+			<Modal show={step.showModal} onHide={this.closeApproversModal.bind(this, step)}>
 				<Modal.Header closeButton>
-					<Modal.Title>Approvers for {group.name}</Modal.Title>
+					<Modal.Title>Approvers for {step.name}</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
 					<ul>
-					{group.members.map(p =>
-						<li key={p.id}>{p.name} - {p.emailAddress}</li>
+					{step.approvers.map(p =>
+						<li key={p.id}>{p.name} - {p.person && p.person.name}</li>
 					)}
 					</ul>
 				</Modal.Body>
@@ -543,14 +542,14 @@ export default class ReportShow extends Page {
 	}
 
 	@autobind
-	showApproversModal(approverGroup) {
-		approverGroup.showModal = true
+	showApproversModal(step) {
+		step.showModal = true
 		this.setState(this.state)
 	}
 
 	@autobind
-	closeApproversModal(approverGroup) {
-		approverGroup.showModal = false
+	closeApproversModal(step) {
+		step.showModal = false
 		this.setState(this.state)
 	}
 
