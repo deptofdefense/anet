@@ -25,6 +25,7 @@ import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
+import mil.dds.anet.beans.lists.AbstractAnetBeanList.PoamList;
 import mil.dds.anet.beans.search.PoamSearchQuery;
 import mil.dds.anet.database.PoamDao;
 import mil.dds.anet.graphql.GraphQLFetcher;
@@ -47,8 +48,7 @@ public class PoamResource implements IGraphQLResource {
 	
 	@Override
 	public Class<Poam> getBeanClass() { return Poam.class; } 
-	@SuppressWarnings("rawtypes")
-	public Class<List> getBeanListClass() { return List.class; } 
+	public Class<PoamList> getBeanListClass() { return PoamList.class; } 
 	
 	@Override
 	public String getDescription() { return "Poams"; } 
@@ -62,13 +62,13 @@ public class PoamResource implements IGraphQLResource {
 	
 	@GET
 	@Path("/{id}/children")
-	public List<Poam> getChildren(@PathParam("id") int id, @QueryParam("cat") String category) {
+	public PoamList getChildren(@PathParam("id") int id, @QueryParam("cat") String category) {
 		List<Poam> p = dao.getPoamAndChildren(id);
 		if (category != null) { 
-			return p.stream().filter(el -> el.getCategory().equalsIgnoreCase(category))
+			p = p.stream().filter(el -> el.getCategory().equalsIgnoreCase(category))
 				.collect(Collectors.toList());
 		}
-		return p;
+		return new PoamList(p);
 	}
 	
 	@POST
@@ -101,14 +101,14 @@ public class PoamResource implements IGraphQLResource {
 	
 	@GET
 	@Path("/byParentId")
-	public List<Poam> getPoamsByParentId(@QueryParam("id") int parentId) { 
-		return dao.getPoamsByParentId(parentId);
+	public PoamList getPoamsByParentId(@QueryParam("id") int parentId) {
+		return new PoamList(dao.getPoamsByParentId(parentId));
 	}
 	
 	@GET
 	@GraphQLFetcher
 	@Path("/tree")
-	public List<Poam> getFullPoamTree() { 
+	public PoamList getFullPoamTree() { 
 		List<Poam> poams = dao.getAll(0, Integer.MAX_VALUE);
 		
 		Map<Integer,Poam> poamById = new HashMap<Integer,Poam>();
@@ -125,19 +125,19 @@ public class PoamResource implements IGraphQLResource {
 				topPoams.add(p);
 			}
 		}
-		return topPoams;		
+		return new PoamList(topPoams);
 	}
 	
 	@POST
 	@GraphQLFetcher
 	@Path("/search")
-	public List<Poam> search(@GraphQLParam("query") PoamSearchQuery query ) {
+	public PoamList search(@GraphQLParam("query") PoamSearchQuery query ) {
 		return dao.search(query);
 	}
 	
 	@GET
 	@Path("/search")
-	public List<Poam> search(@Context HttpServletRequest request) {
+	public PoamList search(@Context HttpServletRequest request) {
 		try { 
 			return search(ResponseUtils.convertParamsToBean(request, PoamSearchQuery.class));
 		} catch (IllegalArgumentException e) { 
@@ -148,8 +148,8 @@ public class PoamResource implements IGraphQLResource {
 	@GET
 	@GraphQLFetcher
 	@Path("/recents")
-	public List<Poam> recents(@Auth Person user) { 
-		return dao.getRecentPoams(user);
+	public PoamList recents(@Auth Person user) { 
+		return new PoamList(dao.getRecentPoams(user));
 	}
 	
 	//TODO: You should never be able to delete a POAM, right?  

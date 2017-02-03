@@ -68,6 +68,10 @@ public class ReportMapper implements ResultSetMapper<Report> {
 			r.setPrincipalOrg(Organization.createWithId(principalOrgId));
 		}
 		
+		if (MapperUtils.containsColumnNamed(rs, "totalCount")) { 
+			ctx.setAttribute("totalCount", rs.getInt("totalCount"));
+		}
+		
 		return r;
 	}
 }

@@ -155,14 +155,12 @@ public class OrganizationResource implements IGraphQLResource {
 		return (numRows == 1) ? Response.ok().build() : Response.status(Status.NOT_FOUND).build();
 	}
 	
-
-	
 	@POST
 	@Timed
 	@GraphQLFetcher
 	@Path("/search")
 	public OrganizationList search(@GraphQLParam("query") OrganizationSearchQuery query ) {
-		return new OrganizationList(query.getPageNum(), query.getPageSize(), dao.search(query));
+		return dao.search(query);
 	}
 	
 	@GET

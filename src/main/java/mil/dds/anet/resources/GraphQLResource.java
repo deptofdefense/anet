@@ -82,14 +82,17 @@ public class GraphQLResource {
 			if (listFetcher.validArguments().size() > 0) {
 				Class<?> listClass = resource.getBeanListClass();
 				GraphQLOutputType listType;
+				String listName;
 				if (List.class.isAssignableFrom(listClass)) { 
+					listName = name + "s";
 					listType = new GraphQLList(objectType);
-				} else { 
-					listType = buildTypeFromBean(name + "s", (Class<? extends IGraphQLBean>) resource.getBeanListClass());
+				} else {
+					listName = GraphQLUtils.lowerCaseFirstLetter(listClass.getSimpleName());
+					listType = buildTypeFromBean(listName, (Class<? extends IGraphQLBean>) resource.getBeanListClass());
 				}
 				GraphQLFieldDefinition listField = GraphQLFieldDefinition.newFieldDefinition()
 					.type(listType)
-					.name(name + "s")
+					.name(listName)
 					.argument(listFetcher.validArguments())
 					.dataFetcher(listFetcher)
 					.build();
@@ -116,7 +119,6 @@ public class GraphQLResource {
 				.build());
 		
 		GraphQLObjectType queryType = queryTypeBuilder.build();
-		
 		GraphQLSchema schmea = GraphQLSchema.newSchema()
 			.query(queryType)
 			.build();

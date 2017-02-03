@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.skife.jdbi.v2.Handle;
-
-import com.google.common.collect.ImmutableList;
+import org.skife.jdbi.v2.Query;
 
 import jersey.repackaged.com.google.common.base.Joiner;
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.lists.AbstractAnetBeanList.PersonList;
 import mil.dds.anet.beans.search.PersonSearchQuery;
 import mil.dds.anet.database.PersonDao;
 import mil.dds.anet.database.mappers.PersonMapper;
@@ -20,9 +20,10 @@ import mil.dds.anet.utils.DaoUtils;
 public class MssqlPersonSearcher implements IPersonSearcher {
 
 	@Override
-	public List<Person> runSearch(PersonSearchQuery query, Handle dbHandle) { 
+	public PersonList runSearch(PersonSearchQuery query, Handle dbHandle) { 
 		StringBuilder sql = new StringBuilder("SELECT " + PersonDao.PERSON_FIELDS 
-				+ " FROM people WHERE people.id IN (SELECT people.id FROM people ");
+				+ ", count(*) over() as totalCount "
+				+ "FROM people ");
 		Map<String,Object> sqlArgs = new HashMap<String,Object>();
 		String commonTableExpression = null;
 		
@@ -32,6 +33,9 @@ public class MssqlPersonSearcher implements IPersonSearcher {
 		
 		sql.append(" WHERE ");
 		List<String> whereClauses = new LinkedList<String>();
+		PersonList result = new PersonList();
+		result.setPageNum(query.getPageNum());
+		result.setPageSize(query.getPageSize());
 		
 		String text = query.getText();
 		if (text != null && text.trim().length() > 0) { 
@@ -79,22 +83,28 @@ public class MssqlPersonSearcher implements IPersonSearcher {
 			sqlArgs.put("locationId", query.getLocationId());
 		}
 		
-		if (whereClauses.size() == 0) { return ImmutableList.of(); }
+		if (whereClauses.size() == 0) { return result; }
 		
 		sql.append(Joiner.on(" AND ").join(whereClauses));
 		
-		sql.append(" ORDER BY people.createdAt DESC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY)");
+		sql.append(" ORDER BY people.createdAt DESC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY");
 		
 		if (commonTableExpression != null) { 
 			sql.insert(0, commonTableExpression);
 		}
 		
-		return dbHandle.createQuery(sql.toString())
+		Query<Person> sqlQuery = dbHandle.createQuery(sql.toString())
 			.bindFromMap(sqlArgs)
 			.bind("offset", query.getPageSize() * query.getPageNum())
 			.bind("limit", query.getPageSize())
-			.map(new PersonMapper())
-			.list();
+			.map(new PersonMapper());
+		result.setList(sqlQuery.list());
+		if (result.getList().size() >  0) { 
+			result.setTotalCount((Integer) sqlQuery.getContext().getAttribute("totalCount"));
+		} else { 
+			result.setTotalCount(0);
+		}
+		return result;
 	}
 
 	

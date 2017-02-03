@@ -104,6 +104,7 @@ export default class Autocomplete extends Component {
 			let selectedIds = this.selectedIds
 
 			API.fetch(url, {showLoader: false}).then(data => {
+				data = data.list;
 				if (selectedIds)
 					data = data.filter(suggestion => suggestion && suggestion.id && selectedIds.indexOf(suggestion.id) === -1)
 
@@ -124,8 +125,8 @@ export default class Autocomplete extends Component {
 
 			API.query(graphQlQuery, { query: queryVars}, variableDef)
 				.then(data => {
-					let noSuggestions = data[resource].length === 0
-					this.setState({suggestions: data[resource], noSuggestions})
+					let noSuggestions = data[resource].list.length === 0
+					this.setState({suggestions: data[resource].list, noSuggestions})
 				})
 		}
 	}

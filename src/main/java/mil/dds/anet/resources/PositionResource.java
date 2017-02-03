@@ -166,7 +166,7 @@ public class PositionResource implements IGraphQLResource {
 
 	@GET
 	@Path("/{id}/associated")
-	public List<Position> getAssociatedPositions(@PathParam("id") int positionId) {
+	public PositionList getAssociatedPositions(@PathParam("id") int positionId) {
 		Position b = Position.createWithId(positionId);
 
 		return new PositionList(dao.getAssociatedPositions(b));
@@ -207,7 +207,7 @@ public class PositionResource implements IGraphQLResource {
 	@GraphQLFetcher
 	@Path("/search")
 	public PositionList search(@GraphQLParam("query") PositionSearchQuery query) {
-		return new PositionList(query.getPageNum(), query.getPageSize(), dao.search(query));
+		return dao.search(query);
 	}
 
 }

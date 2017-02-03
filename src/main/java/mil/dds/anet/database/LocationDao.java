@@ -13,6 +13,7 @@ import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.geo.Location;
+import mil.dds.anet.beans.lists.AbstractAnetBeanList.LocationList;
 import mil.dds.anet.beans.search.LocationSearchQuery;
 import mil.dds.anet.database.mappers.LocationMapper;
 import mil.dds.anet.utils.DaoUtils;
@@ -104,7 +105,7 @@ public class LocationDao implements IAnetDao<Location> {
 				.list();
 	}
 
-	public List<Location> search(LocationSearchQuery query) {
+	public LocationList search(LocationSearchQuery query) {
 		return AnetObjectEngine.getInstance().getSearcher()
 				.getLocationSearcher().runSearch(query, dbHandle);
 	}

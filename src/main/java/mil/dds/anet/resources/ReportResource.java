@@ -27,6 +27,7 @@ import org.joda.time.DateTime;
 
 import com.codahale.metrics.annotation.Timed;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import io.dropwizard.auth.Auth;
@@ -465,7 +466,9 @@ public class ReportResource implements IGraphQLResource {
 	@GraphQLFetcher("pendingMyApproval")
 	@Path("/pendingMyApproval")
 	public ReportList getReportsPendingMyApproval(@Auth Person approver) {
-		return new ReportList(null, null, dao.getReportsForMyApproval(approver));
+		ReportSearchQuery query = new ReportSearchQuery();
+		query.setPendingApprovalOf(approver.getId());
+		return dao.search(query);
 	}
 
 	@GET
@@ -484,7 +487,7 @@ public class ReportResource implements IGraphQLResource {
 	@GraphQLFetcher
 	@Path("/search")
 	public ReportList search(@GraphQLParam("query") ReportSearchQuery query) {
-		return new ReportList(query.getPageNum(), query.getPageSize(), dao.search(query));
+		return dao.search(query);
 	}
 	
 	@GraphQLFetcher("myOrgToday")
@@ -498,7 +501,7 @@ public class ReportResource implements IGraphQLResource {
 		query.setAuthorOrgId(org.getId());
 		query.setCreatedAtStart(DateTime.now().minusDays(1));
 		
-		return new ReportList(dao.search(query));
+		return dao.search(query);
 	}
 	
 	@GraphQLFetcher("myReportsToday")
@@ -507,7 +510,7 @@ public class ReportResource implements IGraphQLResource {
 		query.setAuthorId(user.getId());
 		query.setCreatedAtStart(DateTime.now().minusDays(1));
 		
-		return new ReportList(dao.search(query));
+		return dao.search(query);
 	}
 
 	@GET

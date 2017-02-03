@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.skife.jdbi.v2.Handle;
-
-import com.google.common.collect.ImmutableList;
+import org.skife.jdbi.v2.Query;
 
 import jersey.repackaged.com.google.common.base.Joiner;
 import mil.dds.anet.beans.Poam;
+import mil.dds.anet.beans.lists.AbstractAnetBeanList.PoamList;
 import mil.dds.anet.beans.search.PoamSearchQuery;
 import mil.dds.anet.database.mappers.PoamMapper;
 import mil.dds.anet.search.IPoamSearcher;
@@ -18,12 +18,15 @@ import mil.dds.anet.search.IPoamSearcher;
 public class MssqlPoamSearcher implements IPoamSearcher {
 
 	@Override
-	public List<Poam> runSearch(PoamSearchQuery query, Handle dbHandle) {
-		StringBuilder sql = new StringBuilder("SELECT poams.* FROM poams");
+	public PoamList runSearch(PoamSearchQuery query, Handle dbHandle) {
+		StringBuilder sql = new StringBuilder("SELECT poams.*, COUNT(*) OVER() AS totalCount FROM poams");
 		Map<String,Object> args = new HashMap<String,Object>();
 		
 		sql.append(" WHERE ");
 		List<String> whereClauses = new LinkedList<String>();
+		PoamList result =  new PoamList();
+		result.setPageNum(query.getPageNum());
+		result.setPageSize(query.getPageSize());
 		
 		String text = query.getText();
 		if (text != null && text.trim().length() > 0) { 
@@ -42,17 +45,23 @@ public class MssqlPoamSearcher implements IPoamSearcher {
 			args.put("category", query.getCategory());
 		}
 		
-		if (whereClauses.size() == 0) { return ImmutableList.of(); }
+		if (whereClauses.size() == 0) { return result; }
 		
 		sql.append(Joiner.on(" AND ").join(whereClauses));
 		sql.append(" ORDER BY createdAt DESC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY");
 		
-		return dbHandle.createQuery(sql.toString())
+		Query<Poam> sqlQuery = dbHandle.createQuery(sql.toString())
 			.bindFromMap(args)
 			.bind("offset", query.getPageSize() * query.getPageNum())
 			.bind("limit", query.getPageSize())
-			.map(new PoamMapper())
-			.list();
+			.map(new PoamMapper());
+		result.setList(sqlQuery.list());
+		if (result.getList().size() > 0) { 
+			result.setTotalCount((Integer) sqlQuery.getContext().getAttribute("totalCount"));
+		} else { 
+			result.setTotalCount(0);
+		}
+		return result;
 	}
 	
 }

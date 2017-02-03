@@ -5,7 +5,7 @@ import History from 'components/History'
 export default class SearchBar extends Component {
 	constructor(props) {
 		super(props)
-		this.state = {query: History.getCurrentLocation().query.q || ""}
+		this.state = {query: History.getCurrentLocation().query.text || ""}
 
 		this.onChange = this.onChange.bind(this)
 		this.onSubmit = this.onSubmit.bind(this)
@@ -29,7 +29,7 @@ export default class SearchBar extends Component {
 	}
 
 	onSubmit(event) {
-		History.push('/search?q=' + this.state.query)
+		History.push('/search?text=' + this.state.query)
 		event.preventDefault()
 		event.stopPropagation()
 	}

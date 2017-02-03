@@ -32,6 +32,11 @@ public class PoamMapper implements ResultSetMapper<Poam> {
 		
 		p.setCreatedAt(new DateTime(r.getTimestamp("createdAt")));
 		p.setUpdatedAt(new DateTime(r.getTimestamp("updatedAt")));
+		
+		if (MapperUtils.containsColumnNamed(r, "totalCount")) { 
+			ctx.setAttribute("totalCount", r.getInt("totalCount"));
+		}
+		
 		return p;
 	}
 

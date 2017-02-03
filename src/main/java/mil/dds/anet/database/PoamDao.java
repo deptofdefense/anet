@@ -13,6 +13,7 @@ import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
+import mil.dds.anet.beans.lists.AbstractAnetBeanList.PoamList;
 import mil.dds.anet.beans.search.PoamSearchQuery;
 import mil.dds.anet.database.mappers.PoamMapper;
 import mil.dds.anet.utils.DaoUtils;
@@ -127,7 +128,7 @@ public class PoamDao implements IAnetDao<Poam> {
 			.list();
 	}
 
-	public List<Poam> search(PoamSearchQuery query) { 
+	public PoamList search(PoamSearchQuery query) { 
 		return AnetObjectEngine.getInstance().getSearcher()
 				.getPoamSearcher().runSearch(query, dbHandle);
 	}

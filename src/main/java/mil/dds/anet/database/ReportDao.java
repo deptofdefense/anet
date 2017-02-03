@@ -12,14 +12,15 @@ import org.skife.jdbi.v2.Query;
 
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.ApprovalAction.ApprovalType;
-import mil.dds.anet.beans.Organization.OrganizationType;
 import mil.dds.anet.beans.Organization;
+import mil.dds.anet.beans.Organization.OrganizationType;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
+import mil.dds.anet.beans.lists.AbstractAnetBeanList.ReportList;
 import mil.dds.anet.beans.search.ReportSearchQuery;
 import mil.dds.anet.database.mappers.PoamMapper;
 import mil.dds.anet.database.mappers.ReportMapper;
@@ -244,7 +245,7 @@ public class ReportDao implements IAnetDao<Report> {
 				.list();
 	}
 
-	public List<Report> search(ReportSearchQuery query) {
+	public ReportList search(ReportSearchQuery query) {
 		return AnetObjectEngine.getInstance().getSearcher().getReportSearcher()
 			.runSearch(query, dbHandle);
 	}

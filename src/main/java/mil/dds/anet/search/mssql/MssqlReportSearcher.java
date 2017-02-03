@@ -6,11 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.skife.jdbi.v2.Handle;
-
-import com.google.common.collect.ImmutableList;
+import org.skife.jdbi.v2.Query;
+import org.skife.jdbi.v2.StatementContext;
 
 import jersey.repackaged.com.google.common.base.Joiner;
 import mil.dds.anet.beans.Report;
+import mil.dds.anet.beans.lists.AbstractAnetBeanList.ReportList;
 import mil.dds.anet.beans.search.ReportSearchQuery;
 import mil.dds.anet.database.PersonDao;
 import mil.dds.anet.database.ReportDao;
@@ -19,15 +20,20 @@ import mil.dds.anet.search.IReportSearcher;
 
 public class MssqlReportSearcher implements IReportSearcher {
 	
-	public List<Report> runSearch(ReportSearchQuery query, Handle dbHandle) { 
+	public ReportList runSearch(ReportSearchQuery query, Handle dbHandle) { 
 		StringBuffer sql = new StringBuffer();
 		sql.append("SELECT " + ReportDao.REPORT_FIELDS + "," + PersonDao.PERSON_FIELDS);
-		sql.append(" FROM reports, people WHERE reports.authorId = people.id ");
-		sql.append("AND reports.id IN ( SELECT reports.id FROM reports ");
+		sql.append(", count(*) OVER() AS totalCount "
+				+ "FROM reports, people WHERE reports.authorId = people.id "
+				+ "AND ");
 		
 		String commonTableExpression = null;
 		Map<String,Object> args = new HashMap<String,Object>();
 		List<String> whereClauses = new LinkedList<String>();
+		
+		ReportList results = new ReportList();
+		results.setPageNum(query.getPageNum());
+		results.setPageSize(query.getPageSize());
 		
 		if (query.getAuthorId() != null) { 
 			whereClauses.add("reports.authorId = :authorId");
@@ -110,22 +116,31 @@ public class MssqlReportSearcher implements IReportSearcher {
 			args.put("approverId", query.getPendingApprovalOf());
 		}
 		
-		if (whereClauses.size() == 0) { return ImmutableList.of(); }
+		if (whereClauses.size() == 0) { return results; }
 		
-		sql.append(" WHERE ");
 		sql.append(Joiner.on(" AND ").join(whereClauses));
-		sql.append(" ORDER BY reports.createdAt DESC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY)");
+		sql.append(" ORDER BY reports.createdAt DESC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY");
 		
 		if (commonTableExpression != null) { 
 			sql.insert(0, commonTableExpression);
 		}
 		
-		return dbHandle.createQuery(sql.toString())
+		Query<Report> map = dbHandle.createQuery(sql.toString())
 				.bindFromMap(args)
 				.bind("offset", query.getPageSize() * query.getPageNum())
 				.bind("limit", query.getPageSize())
-				.map(new ReportMapper())
-				.list();
+				.map(new ReportMapper());
+		StatementContext context = map.getContext();
+		
+		results.setList(map.list());
+		if (results.getList().size() == 0) { 
+			results.setTotalCount(0);
+		} else {
+			//This value gets set by the ReportMapper on each row. 
+			results.setTotalCount((Integer) context.getAttribute("totalCount"));
+		}
+		return results;
+		
 	}
 	
 }

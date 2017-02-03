@@ -37,21 +37,21 @@ export default class ReportForm extends Component {
 
 	componentDidMount() {
 		API.query(/* GraphQL */`
-			locations(f:recents) {
-				id, name
+			locationList(f:recents) {
+				list { id, name }
 			}
-			persons(f:recents) {
-				id, name, rank, role, position { id, name, organization {id, shortName}}
+			personList(f:recents) {
+				list { id, name, rank, role, position { id, name, organization {id, shortName}} }
 			}
-			poams(f:recents) {
-				id, shortName, longName
+			poamList(f:recents) {
+				list { id, shortName, longName }
 			}
 		`).then(data => {
 			let newState = {
 				recents: {
-					locations: data.locations,
-					persons: data.persons,
-					poams: data.poams,
+					locations: data.locationList.list,
+					persons: data.personList.list,
+					poams: data.poamList.list,
 				},
 			}
 			this.setState(newState)

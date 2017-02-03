@@ -62,8 +62,8 @@ export default class App extends Page {
 			adminSettings(f:getAll) {
 				key, value
 			}
-			organizations(f:getTopLevelOrgs, type: ADVISOR_ORG) {
-				id, shortName
+			organizationList(f:getTopLevelOrgs, type: ADVISOR_ORG) {
+				list { id, shortName }
 			}
 		`).then(data => this.setState(this.processData(data)))
 
@@ -71,7 +71,8 @@ export default class App extends Page {
 
 	processData(data) {
 		let currentUser = new Person(data.person)
-		let organizations = Organization.fromArray(data.organizations)
+		let organizations = (data.organizationList && data.organizationList.list) || []
+		organizations = Organization.fromArray(organizations)
 		organizations.sort((a, b) => a.shortName.localeCompare(b.shortName));
 
 		let settings = this.state.settings

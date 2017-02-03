@@ -178,7 +178,7 @@ public class PersonResource implements IGraphQLResource {
 	@GraphQLFetcher
 	@Path("/search")
 	public PersonList search(@GraphQLParam("query") PersonSearchQuery query) {
-		return new PersonList(query.getPageNum(), query.getPageSize(), dao.search(query));
+		return dao.search(query);
 	}
 	
 	@GET

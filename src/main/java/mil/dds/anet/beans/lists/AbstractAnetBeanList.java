@@ -4,8 +4,10 @@ import java.util.List;
 
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Report;
+import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.graphql.IGraphQLBean;
 
 public abstract class AbstractAnetBeanList<T extends IGraphQLBean> implements IGraphQLBean {
@@ -13,11 +15,13 @@ public abstract class AbstractAnetBeanList<T extends IGraphQLBean> implements IG
 	List<T> list;
 	Integer pageNum;
 	Integer pageSize;
+	Integer totalCount;
 	
 	public AbstractAnetBeanList() { /*Serialization Constructor */ } 
 	
 	public AbstractAnetBeanList(List<T> list) { 
 		this(null, null, list);
+		this.totalCount = list.size();
 	}
 	
 	public AbstractAnetBeanList(Integer pageNum, Integer pageSize, List<T> list) { 
@@ -44,11 +48,16 @@ public abstract class AbstractAnetBeanList<T extends IGraphQLBean> implements IG
 	public void setPageSize(Integer pageSize) {
 		this.pageSize = pageSize;
 	}
+	public Integer getTotalCount() {
+		return totalCount;
+	}
+	public void setTotalCount(Integer totalCount) {
+		this.totalCount = totalCount;
+	}
 	
 	/* Because of Java Type Erasure we actually have to have the 
 	 * getList() method live on every implementation of the List
 	 */
-
 	public static class ReportList extends AbstractAnetBeanList<Report> {
 		public ReportList() { /*Serialization Constructor */ } 
 		public ReportList(Integer pageNum, Integer pageSize, List<Report> list) {
@@ -92,5 +101,28 @@ public abstract class AbstractAnetBeanList<T extends IGraphQLBean> implements IG
 		}
 		public List<Position> getList() { return list; } 
 	};
+	
+	public static class PoamList extends AbstractAnetBeanList<Poam> {
+		public PoamList() { /*Serialization Constructor */ } 
+		public PoamList(Integer pageNum, Integer pageSize, List<Poam> list) {
+			super(pageNum, pageSize, list);
+		}
+		public PoamList(List<Poam> list) { 
+			super(list);
+		}
+		public List<Poam> getList() { return list; } 
+	};
+	
+	public static class LocationList extends AbstractAnetBeanList<Location> {
+		public LocationList() { /*Serialization Constructor */ } 
+		public LocationList(Integer pageNum, Integer pageSize, List<Location> list) {
+			super(pageNum, pageSize, list);
+		}
+		public LocationList(List<Location> list) { 
+			super(list);
+		}
+		public List<Location> getList() { return list; } 
+	};
+	
 	
 }

@@ -11,6 +11,7 @@ import org.skife.jdbi.v2.Query;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Organization.OrganizationType;
+import mil.dds.anet.beans.lists.AbstractAnetBeanList.OrganizationList;
 import mil.dds.anet.beans.search.OrganizationSearchQuery;
 import mil.dds.anet.database.mappers.OrganizationMapper;
 import mil.dds.anet.utils.DaoUtils;
@@ -116,7 +117,7 @@ public class OrganizationDao implements IAnetDao<Organization> {
 			.execute();
 	}
 
-	public List<Organization> search(OrganizationSearchQuery query) {
+	public OrganizationList search(OrganizationSearchQuery query) {
 		return AnetObjectEngine.getInstance().getSearcher().getOrganizationSearcher()
 				.runSearch(query, dbHandle);
 	} 
