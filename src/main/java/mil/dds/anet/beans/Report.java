@@ -35,10 +35,8 @@ public class Report extends AbstractAnetBean {
 	
 	List<ReportPerson> attendees;
 	List<Poam> poams;
-	
-	String keyOutcomesSummary;
+
 	String keyOutcomes;
-	String nextStepsSummary;
 	String nextSteps;
 	String reportText;
 	
@@ -185,28 +183,12 @@ public class Report extends AbstractAnetBean {
 		return poams;
 	}
 
-	public String getKeyOutcomesSummary() {
-		return keyOutcomesSummary;
-	}
-
-	public void setKeyOutcomesSummary(String keyOutcomesSummary) {
-		this.keyOutcomesSummary = keyOutcomesSummary;
-	}
-
 	public String getKeyOutcomes() {
 		return keyOutcomes;
 	}
 
 	public void setKeyOutcomes(String keyOutcomes) {
 		this.keyOutcomes = keyOutcomes;
-	}
-
-	public String getNextStepsSummary() {
-		return nextStepsSummary;
-	}
-
-	public void setNextStepsSummary(String nextStepsSummary) {
-		this.nextStepsSummary = nextStepsSummary;
 	}
 
 	public String getReportText() {

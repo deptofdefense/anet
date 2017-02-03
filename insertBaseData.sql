@@ -16,6 +16,7 @@
 --DROP TABLE adminSettings;
 --DROP TABLE pendingEmails;
 --DROP TABLE DATABASECHANGELOG;
+--DROP TABLE DATABASECHANGELOGLOCK;
 
 TRUNCATE TABLE peoplePositions;
 TRUNCATE TABLE approvers;
@@ -319,7 +320,7 @@ INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 	(SELECT id FROM people where emailAddress='hunter+jack@dds.mil'), (SELECT max(id) FROM reports), 1);
 
-INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, keyOutcomesSummary, nextStepsSummary, authorId, state, engagementDate, atmosphere, advisorOrganizationId, principalOrganizationId) VALUES
+INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, keyOutcomes, nextSteps, authorId, state, engagementDate, atmosphere, advisorOrganizationId, principalOrganizationId) VALUES
 	(CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (select id from locations where name='General Hospital'), 'Run through FY2016 Numbers on tool usage',
 	'Today we discussed the fiscal details of how spreadsheets break down numbers into rows and columns and then text is used to fill up space on a web page, it was very interesting and other adjectives',
 	'we read over the spreadsheets for the FY17 Budget',
@@ -334,7 +335,7 @@ INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 INSERT INTO reportPoams (poamId, reportId) VALUES ((SELECT id from poams where shortName = '1.1.A'), (SELECT max(id) from reports));
 INSERT INTO reportPoams (poamId, reportId) VALUES ((SELECT id from poams where shortName = '1.1.B'), (SELECT max(id) from reports));
 
-INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, keyOutcomesSummary, nextStepsSummary, authorId, state, engagementDate, atmosphere, advisorOrganizationId, principalOrganizationId) VALUES
+INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, keyOutcomes, nextSteps, authorId, state, engagementDate, atmosphere, advisorOrganizationId, principalOrganizationId) VALUES
 	(CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (select id from locations where name='Kabul Hospital'), 'Looked at Hospital usage of Drugs',
 	'This report needs to fill up more space',
 	'putting something in the database to take up space',
@@ -346,7 +347,7 @@ INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 	(SELECT id FROM people where emailAddress='hunter+jack@dds.mil'), (SELECT max(id) FROM reports), 1);
 INSERT INTO reportPoams (poamId, reportId) VALUES ((SELECT id from poams where shortName = '1.1.C'), (SELECT max(id) from reports));
 
-INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, keyOutcomesSummary, nextStepsSummary, authorId, state, engagementDate, atmosphere, advisorOrganizationId, principalOrganizationId) VALUES
+INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, keyOutcomes, nextSteps, authorId, state, engagementDate, atmosphere, advisorOrganizationId, principalOrganizationId) VALUES
 	(CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (select id from locations where name='Kabul Hospital'), 'discuss enagement of Doctors with Patients',
 	'Met with Nobody in this engagement and discussed no poams, what a waste of time',
 	'None',
@@ -371,7 +372,7 @@ INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 	(SELECT id FROM people where emailAddress='hunter+jack@dds.mil'), (SELECT max(id) FROM reports), 1);
 INSERT INTO reportPoams (poamId, reportId) VALUES ((SELECT id from poams where shortName = '1.1.B'), (SELECT max(id) from reports));
 
-INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, keyOutcomesSummary, nextStepsSummary, authorId, state, engagementDate, atmosphere, advisorOrganizationId, principalOrganizationId) VALUES
+INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, keyOutcomes, nextSteps, authorId, state, engagementDate, atmosphere, advisorOrganizationId, principalOrganizationId) VALUES
 	(CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (select id from locations where name='Fort Amherst'), 'Inspect Ft Amherst Medical Budgeting Facility?',
 	'Went over to the fort to look at the beds and the spreadsheets and the numbers and the whiteboards and the planning and all of the budgets. It was GREAT!',
 	'Seeing the whiteboards firsthand',

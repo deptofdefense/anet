@@ -37,7 +37,7 @@ export default class OrganizationReports extends Page {
 				parentOrg { id, shortName, longName }
 				childrenOrgs { id, shortName, longName },
 				reports(pageNum:0, pageSize:25) {
-					id, intent, engagementDate, keyOutcomesSummary, nextStepsSummary
+					id, intent, engagementDate, keyOutcomes, nextSteps
 					author { id, name },
 					primaryAdvisor { id, name } ,
 					primaryPrincipal {id, name },

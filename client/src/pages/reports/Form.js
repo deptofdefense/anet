@@ -18,10 +18,7 @@ export default class ReportForm extends Component {
 	static propTypes = {
 		report: PropTypes.instanceOf(Report).isRequired,
 		edit: PropTypes.bool,
-	}
-
-	static contextTypes = {
-		app: PropTypes.object,
+		defaultAttendee: PropTypes.instanceOf(Person),
 	}
 
 	constructor(props) {
@@ -34,9 +31,7 @@ export default class ReportForm extends Component {
 				poams: [],
 			},
 
-			showKeyOutcomesText: false,
-			showNextStepsText: false,
-			showReportText: false
+			showReportText: false,
 		}
 	}
 
@@ -63,13 +58,20 @@ export default class ReportForm extends Component {
 		})
 	}
 
+	componentDidUpdate() {
+		let {report, defaultAttendee} = this.props
+		if (defaultAttendee.id && !report.attendees.length) {
+			this.addAttendee(defaultAttendee)
+		}
+	}
+
 	render() {
 		let {report} = this.props
 		let {recents} = this.state
 
 		return <Form formFor={report} horizontal onChange={this.onChange} onSubmit={this.onSubmit} submitText="Save report">
 			<fieldset>
-				<legend>Engagement Details<small>Required</small></legend>
+				<legend>Engagement Details <small>Required</small></legend>
 
 				<Form.Field id="intent" label="The goal of this meeting is to" placeholder="What happened?" data-focus>
 					<Form.Field.ExtraCol>{250 - report.intent.length} characters remaining</Form.Field.ExtraCol>
@@ -162,37 +164,18 @@ export default class ReportForm extends Component {
 
 			<fieldset>
 				<legend>Meeting Discussion <small>Required</small></legend>
-				<Form.Field id="keyOutcomesSummary" label="The Key Outcomes are">
-					<Form.Field.ExtraCol>{250 - report.keyOutcomesSummary.length} characters remaining</Form.Field.ExtraCol>
+
+
+				<Form.Field id="keyOutcomes">
+					<Form.Field.ExtraCol><small>{250 - report.keyOutcomes.length}</small></Form.Field.ExtraCol>
 				</Form.Field>
-				<Button bsStyle="link" onClick={this.toggleKeyOutcomesText}>
-					{this.state.showKeyOutcomesText ? "Hide" : "Add" } details to Key Outcomes
-				</Button>
 
-				<Collapse in={this.state.showKeyOutcomesText}>
-					<div>
-						<Form.Field id="keyOutcomes" label="" horizontal={false}>
-							<TextEditor label="Key outcomes" />
-						</Form.Field>
-					</div>
-				</Collapse>
-
-				<Form.Field id="nextStepsSummary" label="The Next Steps are" >
-					<Form.Field.ExtraCol>{250 - report.nextStepsSummary.length} characters remaining</Form.Field.ExtraCol>
+				<Form.Field id="nextSteps">
+					<Form.Field.ExtraCol><small>{250 - report.nextSteps.length}</small></Form.Field.ExtraCol>
 				</Form.Field>
-				<Button bsStyle="link" onClick={this.toggleNextStepsText}>
-					{this.state.showNextStepsText ? "Hide" : "Add" } details to Next Steps
-				</Button>
-				<Collapse in={this.state.showNextStepsText}>
-					<div>
-						<Form.Field id="nextSteps" label="" horizontal={false} style={{marginTop: '5rem'}}>
-							<TextEditor label="Next steps" />
-						</Form.Field>
-					</div>
-				</Collapse>
 
-				<Button bsStyle="link" onClick={this.toggleReportText} >
-					{this.state.showReportText ? "Hide" : "Add" } detailed comments
+				<Button className="center-block toggle-section-button" onClick={this.toggleReportText}>
+					{this.state.showReportText ? "Hide" : "Add"} detailed comments
 				</Button>
 
 				<Collapse in={this.state.showReportText}>
@@ -202,19 +185,8 @@ export default class ReportForm extends Component {
 						</Form.Field>
 					</div>
 				</Collapse>
-
 			</fieldset>
 		</Form>
-	}
-
-	@autobind
-	toggleKeyOutcomesText() {
-		this.setState({showKeyOutcomesText: !this.state.showKeyOutcomesText})
-	}
-
-	@autobind
-	toggleNextStepsText() {
-		this.setState({showNextStepsText: !this.state.showNextStepsText})
 	}
 
 	@autobind

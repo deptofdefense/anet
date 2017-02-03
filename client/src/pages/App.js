@@ -78,7 +78,7 @@ export default class App extends Page {
 		data.adminSettings.forEach(setting => settings[setting.key] = setting.value)
 
 		if (currentUser.id && currentUser.status === "NEW_USER") {
-			History.push("/people/" + currentUser.id + "/edit");
+			History.push(Person.pathForEdit(currentUser))
 		}
 
 		return {currentUser, settings, organizations}
