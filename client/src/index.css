@@ -88,6 +88,10 @@ fieldset.collapsable legend div.collapsableToggle {
 	height: 38px;
 }
 
+.header button {
+	font-weight: bold;
+}
+
 .header .row > div * {
 	margin: 0;
 }
