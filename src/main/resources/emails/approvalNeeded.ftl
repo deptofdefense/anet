@@ -1,15 +1,13 @@
 <html>
 <body>
-Hello ${approvalGroup.name}, 
+Hello ${approvalStepName}, 
 
-<div>A report in ANET is ready for your approval!:</div>
+<div>${report.author.name}'s report, <i>${report.intent}</i>, is ready for your review. To review the report, <a href="${serverUrl}/reports/${report.id}" />click here</a>.</div>
 <ul>
-<li><b>Author</b>: ${report.author.name}</li>
-<li><b>Summary</b>: ${report.intent}</li>
+<li><b>The Key Outcomes were</b>: ${report.keyOutcomesSummary}</li>
+<li><b>The Next Steps are:</b>: ${report.nextStepsSummary}</li>
 <li><b>Text:</b>: ${report.reportText}</li>
 </ul>
-
-<div>You can check it out <a href="http://localhost:8080/reports/${report.id}" />Here</a>.</div>
 
 Thanks!<br>
 The ANET Team

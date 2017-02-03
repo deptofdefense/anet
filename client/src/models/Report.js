@@ -14,10 +14,8 @@ export default class Report extends Model {
 		poams: [],
 		comments: [],
 		reportText: '',
-		nextStepsSummary: '',
 		nextSteps: '',
-		keyOutcomesSummary: '',
-		keyOutcomes: ''
+		keyOutcomes: '',
 	}
 
 	isDraft() {
@@ -57,10 +55,10 @@ export default class Report extends Model {
 			errors.push("You must provide the primary Advisor for the Engagement")
 		}
 
-		if (!this.nextStepsSummary) {
+		if (!this.nextSteps) {
 			errors.push("You must provide a brief summary of the Next Steps")
 		}
-		if (!this.keyOutcomesSummary) {
+		if (!this.keyOutcomes) {
 			errors.push("You must provide a brief summary of the Key Outcomes")
 		}
 		return errors;

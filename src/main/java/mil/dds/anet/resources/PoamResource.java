@@ -30,6 +30,7 @@ import mil.dds.anet.database.PoamDao;
 import mil.dds.anet.graphql.GraphQLFetcher;
 import mil.dds.anet.graphql.GraphQLParam;
 import mil.dds.anet.graphql.IGraphQLResource;
+import mil.dds.anet.utils.AnetAuditLogger;
 import mil.dds.anet.utils.AuthUtils;
 import mil.dds.anet.utils.ResponseUtils;
 
@@ -73,8 +74,10 @@ public class PoamResource implements IGraphQLResource {
 	@POST
 	@Path("/new")
 	@RolesAllowed("ADMINISTRATOR")
-	public Poam createNewPoam(Poam p) { 
-		return dao.insert(p);
+	public Poam createNewPoam(@Auth Person user, Poam p) {
+		p = dao.insert(p);
+		AnetAuditLogger.log("Poam {} created by {}", p, user);
+		return p;
 	}
 	
 	/* Updates shortName, longName, category, and parentPoamId */
@@ -92,6 +95,7 @@ public class PoamResource implements IGraphQLResource {
 		if (numRows == 0) { 
 			throw new WebApplicationException("Couldn't process update", Status.NOT_FOUND);
 		}
+		AnetAuditLogger.log("Poam {} updatedby {}", p, user);
 		return Response.ok().build();
 	}
 	

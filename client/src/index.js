@@ -26,7 +26,10 @@ import PoamShow from './pages/poams/Show'
 import PoamNew from './pages/poams/New'
 import PoamEdit from './pages/poams/Edit'
 
-import OrganizationShow from './pages/organizations/Show'
+import OrganizationDetails from './pages/organizations/Details'
+import OrganizationApprovals from './pages/organizations/Approvals'
+import OrganizationLaydown from './pages/organizations/Laydown'
+import OrganizationReports from './pages/organizations/Reports'
 import OrganizationNew from './pages/organizations/New'
 import OrganizationEdit from './pages/organizations/Edit'
 
@@ -66,7 +69,10 @@ ReactDOM.render((
 				<Route path="organizations">
 					<Route path="new" component={OrganizationNew} />
 					<Route path=":id/edit" component={OrganizationEdit} />
-					<Route path=":id" component={OrganizationShow} />
+					<Route path=":id" component={OrganizationDetails} />
+					<Route path=":id/reports" component={OrganizationReports} />
+					<Route path=":id/laydown" component={OrganizationLaydown} />
+					<Route path=":id/approvals" component={OrganizationApprovals} />
 				</Route>
 
 				<Route path="locations">

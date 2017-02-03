@@ -40,9 +40,7 @@ public class SqliteReportSearcher implements IReportSearcher {
 		if (text != null && text.trim().length() > 0) {
 			whereClauses.add("(text LIKE '%' || :text || '%' OR "
 					+ "intent LIKE '%' || :text || '%' OR "
-					+ "keyOutcomesSummary LIKE '%' || :text || '%' OR "
 					+ "keyOutcomes LIKE '%' || :text || '%' OR "
-					+ "nextStepsSummary LIKE '%' || :text || '%' OR "
 					+ "nextSteps LIKE '%' || :text || '%'"
 					+ ")");
 			args.put("text", text);
@@ -112,10 +110,10 @@ public class SqliteReportSearcher implements IReportSearcher {
 			args.put("locationId", query.getLocationId());
 		}
 		
-		if (query.getPendingApprovalOf() != null) {
+		if (query.getPendingApprovalOf() != null) { 
 			whereClauses.add("reports.approvalStepId IN "
-				+ "(SELECT id from approvalSteps where approverGroupId IN "
-				+ "(SELECT groupId FROM groupMemberships where personId=:approverId))");
+				+ "(SELECT approvalStepId from approvers where positionId IN "
+				+ "(SELECT id FROM positions where currentPersonId = :approverId))");
 			args.put("approverId", query.getPendingApprovalOf());
 		}
 		

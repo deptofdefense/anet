@@ -3,6 +3,10 @@ body {
 	margin-top: 152px;
 }
 
+.container {
+	max-width: 1024px;
+}
+
 h5 {
 	text-decoration: underline;
 }
@@ -22,7 +26,7 @@ input[type=checkbox][readonly] {
 fieldset {
 	background: #fff;
 	border: 1px solid #e0e0e0;
-	padding: 1.7rem 3rem 1.9rem 3rem;
+	padding: 1.25em;
 	margin: 7rem 0;
 	position: relative;
 }
@@ -111,32 +115,32 @@ fieldset.collapsable legend div.collapsableToggle {
 	background-color: red;
 }
 
-.homeTileRow {
+.home-tile-row {
 	padding: 0 0 0 0
 }
 
-.homeTile {
+.home-tile {
 	text-align: center;
 	color:#5c5c5c;
 	padding-top:20px;
 	padding-bottom:20px;
 }
-.homeTile a {
+.home-tile a {
 	color:#5c5c5c;
 	text-decoration: none;
 }
-.homeTile h1 {
+.home-tile h1 {
 	font-weight: 900;
 }
-.homeTile:hover {
+.home-tile:hover {
 	background-color: #dae3ee;
 }
 
-.personIcon {
+.person-icon {
 	margin-right:4px;
 }
 
-.primaryAttendee .checkbox {
+.primary-attendee .checkbox {
 	padding: 0;
 	margin: 0;
 	text-align: center;
@@ -150,4 +154,16 @@ fieldset.collapsable legend div.collapsableToggle {
 	content: "Loading...";
 	visibility: visible;
 	font-size: 2rem;
+}
+
+.nav .nav > li {
+	border-left: 4px solid rgba(0,0,0,0);
+}
+
+.nav .nav > li a {
+	padding: 4px 0 4px 38px;
+}
+
+.nav .nav > li.active  {
+	border-left:4px solid #1772B8;
 }

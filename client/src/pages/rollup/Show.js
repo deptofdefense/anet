@@ -1,6 +1,7 @@
 import React from 'react'
 import Page from 'components/Page'
 import autobind from 'autobind-decorator'
+import moment from 'moment'
 
 import {DropdownButton, MenuItem} from 'react-bootstrap'
 import Breadcrumbs from 'components/Breadcrumbs'
@@ -12,8 +13,7 @@ import ReportSummary from 'components/ReportSummary'
 import API from 'api'
 import {Report} from 'models'
 
-import moment from 'moment'
-import * as d3 from 'd3'
+var d3 = null/* required later */
 
 const graphCss = {
 	width: '100%',
@@ -52,11 +52,23 @@ export default class RollupShow extends Page {
 		}
 	}
 
+	componentDidMount() {
+		super.componentDidMount()
+
+		if (d3)
+			return
+
+		require.ensure([], () => {
+			d3 = require('d3')
+			this.forceUpdate()
+		})
+	}
+
 	fetchData(props) {
 		// TODO: this is a hack to make sure we get some data, I am not using the
 		API.query(/* GraphQL */`
 			reports(f:releasedToday) {
-				id, state, intent, engagementDate, intent, keyOutcomesSummary, nextStepsSummary
+				id, state, intent, engagementDate, intent, keyOutcomes, nextSteps
 				author { id, name }
 				location { id, name, lat, lng}
 				poams { id, longName }
@@ -79,14 +91,9 @@ export default class RollupShow extends Page {
 		})
 	}
 
-	componentDidMount() {
-		super.componentDidMount()
-		this.componentDidUpdate()
-	}
-
 	componentDidUpdate() {
 		let {reports} = this.state
-		if (!reports)
+		if (!reports || !d3)
 			return
 
 		// Sets up the data

@@ -1,6 +1,7 @@
 package mil.dds.anet.resources;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -11,7 +12,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -21,10 +21,12 @@ import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.ApprovalStep;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.Position;
 import mil.dds.anet.database.ApprovalStepDao;
 import mil.dds.anet.graphql.GraphQLFetcher;
 import mil.dds.anet.graphql.IGraphQLResource;
 import mil.dds.anet.utils.AuthUtils;
+import mil.dds.anet.utils.Utils;
 
 @Path("/api/approvalSteps")
 @Produces(MediaType.APPLICATION_JSON)
@@ -67,20 +69,30 @@ public class ApprovalStepResource implements IGraphQLResource{
 	@POST
 	@Path("/update")
 	@RolesAllowed("SUPER_USER")
-	public int updateSteps(@Auth Person user, List<ApprovalStep> as) {
-		//Ensure that all approvalSteps have the same organizationId. 
-		int orgId = as.get(0).getAdvisorOrganizationId();
-		for (ApprovalStep step : as) { 
-			if (step.getAdvisorOrganizationId() != orgId) { 
-				throw new WebApplicationException("Approval Steps must all belong to the same organization", Status.BAD_REQUEST);
-			}
-		}
-		
+	public Response updateSteps(@Auth Person user, ApprovalStep as) {
+		ApprovalStep existingStep = dao.getById(as.getId());
+		int orgId = existingStep.getAdvisorOrganizationId();
 		AuthUtils.assertSuperUserForOrg(user, Organization.createWithId(orgId));
-		for (ApprovalStep step : as) { 
-			dao.update(step);
+		
+		updateStep(as, existingStep);
+		return Response.ok().build();
+	}
+	
+	//Helper method that diffs the name/members of an approvalStep 
+	public static void updateStep(ApprovalStep newStep, ApprovalStep oldStep) {
+		AnetObjectEngine engine = AnetObjectEngine.getInstance();
+		newStep.setId(oldStep.getId()); //Always want to make changes to the existing group
+		if (newStep.getName().equals(oldStep.getName()) == false) { 
+			engine.getApprovalStepDao().update(newStep);
+		} else if (Objects.equals(newStep.getNextStepId(), oldStep.getNextStepId()) == false) { 
+			engine.getApprovalStepDao().update(newStep);
 		}
-		return as.size();
+	
+		if (newStep.getApprovers() != null) { 
+			Utils.addRemoveElementsById(oldStep.loadApprovers(), newStep.getApprovers(), 
+				newPosition -> engine.getApprovalStepDao().addApprover(newStep, newPosition), 
+				oldPositionId -> engine.getApprovalStepDao().removeApprover(newStep, Position.createWithId(oldPositionId)));
+		}
 	}
 	
 	@DELETE

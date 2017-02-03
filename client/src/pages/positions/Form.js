@@ -24,7 +24,7 @@ export default class PositionForm extends Component {
 		let relationshipPositionType = position.type === "PRINCIPAL" ? "ADVISOR" : "PRINCIPAL"
 
 		//TODO: only allow you to set positon to admin if you are an admin.
-
+		console.log(position)
 		return (
 			<Form
 				formFor={position}
@@ -56,6 +56,10 @@ export default class PositionForm extends Component {
 							<option value="SUPER_USER">Super User</option>
 							<option value="ADMINISTRATOR">Administrator</option>
 						</Form.Field>
+					}
+
+					{!position.organization.id  &&
+						<Form.Field id="type" type="static" value=""><i>Select an Organization to view position types</i></Form.Field>
 					}
 
 					<Form.Field id="code" placeholder="Postion ID or Number" />
@@ -106,7 +110,6 @@ export default class PositionForm extends Component {
 							</tbody>
 						</Table>
 					</Form.Field>
-					<div className="todo">Should be able to search by person name too, but only people in positions.... and then pull up their position... </div>
 				</fieldset>
 
 				<fieldset>
@@ -125,7 +128,7 @@ export default class PositionForm extends Component {
 		let rels = position.associatedPositions
 
 		if (!rels.find(relPos => relPos.id === newRelatedPos.id)) {
-			let newRels = rels.splice()
+			let newRels = rels.slice()
 			newRels.push(new Position(newRelatedPos))
 
 			position.associatedPositions = newRels

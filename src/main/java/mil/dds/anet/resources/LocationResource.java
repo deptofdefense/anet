@@ -2,6 +2,7 @@ package mil.dds.anet.resources;
 
 import java.util.List;
 
+import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -25,6 +26,7 @@ import mil.dds.anet.database.LocationDao;
 import mil.dds.anet.graphql.GraphQLFetcher;
 import mil.dds.anet.graphql.GraphQLParam;
 import mil.dds.anet.graphql.IGraphQLResource;
+import mil.dds.anet.utils.AnetAuditLogger;
 import mil.dds.anet.utils.ResponseUtils;
 
 @Path("/api/locations")
@@ -71,18 +73,23 @@ public class LocationResource implements IGraphQLResource {
 	
 	@POST
 	@Path("/new")
-	public Location createNewLocation(Location l) {
+	@RolesAllowed("SUPER_USER")
+	public Location createNewLocation(@Auth Person user, Location l) {
 		if (l.getName() == null || l.getName().trim().length() == 0) { 
 			throw new WebApplicationException("Location name must not be empty", Status.BAD_REQUEST);
 		}
-		return dao.insert(l);
+		l = dao.insert(l);
+		AnetAuditLogger.log("Location {} created by {}", l, user);
+		return l;
 		
 	}
 	
 	@POST
 	@Path("/update")
-	public Response updateLocation(Location l) {
+	@RolesAllowed("SUPER_USER")
+	public Response updateLocation(@Auth Person user, Location l) {
 		int numRows = dao.update(l);
+		AnetAuditLogger.log("Location {} updated by {}", l, user);
 		return (numRows == 1) ? Response.ok().build() : Response.status(Status.NOT_FOUND).build();
 	}
 

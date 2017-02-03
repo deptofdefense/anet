@@ -46,7 +46,7 @@ export default class Search extends Page {
 	}
 
 	fetchData(props) {
-		let reportFields = `id, intent, engagementDate, keyOutcomesSummary, nextStepsSummary,
+		let reportFields = `id, intent, engagementDate, keyOutcomes, nextSteps,
 			author { id, name }
 			primaryAdvisor { id, name, role, position { organization { id, shortName}}},
 			primaryPrincipal { id, name, role, position { organization { id, shortName}}},
@@ -240,7 +240,7 @@ export default class Search extends Page {
 				{Person.map(this.state.results.people, person =>
 					<tr key={person.id}>
 						<td>
-							<img src={person.iconUrl()} alt={person.role} height={20} className="personIcon" />
+							<img src={person.iconUrl()} alt={person.role} height={20} className="person-icon" />
 							<LinkTo person={person}>{person.rank} {person.name}</LinkTo>
 						</td>
 						<td>{person.phoneNumber}</td>
@@ -286,7 +286,7 @@ export default class Search extends Page {
 				{Position.map(this.state.results.positions, pos =>
 					<tr key={pos.id}>
 						<td>
-							<img src={pos.iconUrl()} alt={pos.type} height={20} className="personIcon" />
+							<img src={pos.iconUrl()} alt={pos.type} height={20} className="person-icon" />
 							<LinkTo position={pos} >{pos.code} {pos.name}</LinkTo>
 						</td>
 						<td>{pos.organization && <LinkTo organization={pos.organization} />}</td>
@@ -307,7 +307,7 @@ export default class Search extends Page {
 			<tbody>
 				{this.state.results.locations.map(loc =>
 					<tr key={loc.id}>
-						<td><LinkTo location={location} /></td>
+						<td><LinkTo location={loc} /></td>
 					</tr>
 				)}
 			</tbody>

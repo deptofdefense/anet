@@ -1,9 +1,10 @@
-
---DROP TABLE groupMemberships;
+--DROP TABLE approvers;
 --DROP TABLE approvalActions;
 --DROP TABLE positionRelationships;
 --DROP TABLE reportPoams;
 --DROP TABLE reportPeople;
+--DROP TABLE peoplePositions;
+--DROP TABLE savedSearches;
 --DROP TABLE positions;
 --DROP TABLE poams;
 --DROP TABLE comments;
@@ -12,13 +13,13 @@
 --DROP TABLE approvalSteps;
 --DROP TABLE locations;
 --DROP TABLE organizations;
---DROP TABLE groups;
---DROP TABLE DATABASECHANGELOG;
 --DROP TABLE adminSettings;
 --DROP TABLE pendingEmails;
+--DROP TABLE DATABASECHANGELOG;
+--DROP TABLE DATABASECHANGELOGLOCK;
 
 TRUNCATE TABLE peoplePositions;
-TRUNCATE TABLE groupMemberships;
+TRUNCATE TABLE approvers;
 TRUNCATE TABLE approvalActions;
 TRUNCATE TABLE positionRelationships;
 TRUNCATE TABLE reportPoams;
@@ -32,7 +33,6 @@ DELETE FROM people;
 DELETE FROM approvalSteps;
 DELETE FROM locations;
 DELETE FROM organizations;
-DELETE FROM groups;
 DELETE FROM adminSettings;
 
 --Advisors
@@ -168,26 +168,23 @@ UPDATE positions SET organizationId = (SELECT id FROM organizations WHERE shortN
 UPDATE positions SET organizationId = (SELECT id FROM organizations WHERE shortName='ANET Administrators') where name = 'ANET Administrator';
 
 -- Create the EF1.1 approval process
-INSERT INTO groups (name, createdAt) VALUES ('EF1.1 Approvers', CURRENT_TIMESTAMP);
-INSERT INTO approvalSteps (approverGroupId, advisorOrganizationId) VALUES
-	((SELECT id from groups WHERE name = 'EF1.1 Approvers'), (SELECT id from organizations where shortName='EF1.1'));
-INSERT INTO groupMemberships (groupId, personId) VALUES
-	((SELECT id from groups WHERE name='EF1.1 Approvers'), (SELECT id from people where emailAddress = 'hunter+bob@dds.mil'));
+INSERT INTO approvalSteps (advisorOrganizationId, name) VALUES
+	((SELECT id from organizations where shortName='EF1.1'), 'EF1.1 Approvers');
+INSERT INTO approvers (approvalStepId, positionId) VALUES
+	((SELECT id from approvalSteps WHERE name='EF1.1 Approvers'), (SELECT id from positions where name = 'EF1.1 SuperUser'));
 
 -- Create the EF 2.2 approval process
-INSERT INTO groups (name, createdAt) VALUES ('EF2.2 Initial Approvers', CURRENT_TIMESTAMP);
-INSERT INTO groupMemberships (groupId, personId) VALUES
-	((SELECT id from groups WHERE name='EF2.2 Initial Approvers'), (SELECT id from people where emailAddress = 'hunter+jacob@dds.mil'));
-INSERT INTO groupMemberships (groupId, personId) VALUES
-	((SELECT id from groups WHERE name='EF2.2 Initial Approvers'), (SELECT id from people where emailAddress = 'hunter+erin@dds.mil'));
-INSERT INTO groups (name, createdAt) VALUES ('EF2.2 Secondary Reviewers', CURRENT_TIMESTAMP);
-INSERT INTO groupMemberships (groupId, personId) VALUES
-	((SELECT id from groups WHERE name='EF2.2 Secondary Reviewers'), (SELECT id from people where emailAddress = 'hunter+rebecca@dds.mil'));
+INSERT INTO approvalSteps (name, advisorOrganizationId) VALUES
+	('EF2.2 Secondary Reviewers', (SELECT id from organizations where shortName='EF2.2'));
+INSERT INTO approvalSteps (name, advisorOrganizationId, nextStepId) VALUES
+	('EF2.2 Initial Approvers', (SELECT id from organizations where shortName='EF2.2'), (SELECT MAX(id) from approvalSteps));
 
-INSERT INTO approvalSteps (approverGroupId, advisorOrganizationId) VALUES
-	((SELECT id from groups WHERE name = 'EF2.2 Secondary Reviewers'), (SELECT id from organizations where shortName='EF2.2'));
-INSERT INTO approvalSteps (approverGroupId, advisorOrganizationId, nextStepId) VALUES
-	((SELECT id from groups WHERE name = 'EF2.2 Initial Approvers'), (SELECT id from organizations where shortName='EF2.2'), (SELECT MAX(id) from approvalSteps));
+INSERT INTO approvers (approvalStepId, positionId) VALUES
+	((SELECT id from approvalSteps WHERE name='EF2.2 Initial Approvers'), (SELECT id from positions where name = 'EF2.2 Super User'));
+INSERT INTO approvers (approvalStepId, positionId) VALUES
+	((SELECT id from approvalSteps WHERE name='EF2.2 Initial Approvers'), (SELECT id from positions where name = 'EF2.2 Advisor D'));
+INSERT INTO approvers (approvalStepId, positionId) VALUES
+	((SELECT id from approvalSteps WHERE name='EF2.2 Secondary Reviewers'), (SELECT id from positions where name = 'EF2.2 Final Reviewer'));
 
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt)	VALUES ('EF1', 'Budget and Planning', 'EF', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId)
@@ -323,7 +320,7 @@ INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 	(SELECT id FROM people where emailAddress='hunter+jack@dds.mil'), (SELECT max(id) FROM reports), 1);
 
-INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, keyOutcomesSummary, nextStepsSummary, authorId, state, engagementDate, atmosphere, advisorOrganizationId, principalOrganizationId) VALUES
+INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, keyOutcomes, nextSteps, authorId, state, engagementDate, atmosphere, advisorOrganizationId, principalOrganizationId) VALUES
 	(CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (select id from locations where name='General Hospital'), 'Run through FY2016 Numbers on tool usage',
 	'Today we discussed the fiscal details of how spreadsheets break down numbers into rows and columns and then text is used to fill up space on a web page, it was very interesting and other adjectives',
 	'we read over the spreadsheets for the FY17 Budget',
@@ -338,7 +335,7 @@ INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 INSERT INTO reportPoams (poamId, reportId) VALUES ((SELECT id from poams where shortName = '1.1.A'), (SELECT max(id) from reports));
 INSERT INTO reportPoams (poamId, reportId) VALUES ((SELECT id from poams where shortName = '1.1.B'), (SELECT max(id) from reports));
 
-INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, keyOutcomesSummary, nextStepsSummary, authorId, state, engagementDate, atmosphere, advisorOrganizationId, principalOrganizationId) VALUES
+INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, keyOutcomes, nextSteps, authorId, state, engagementDate, atmosphere, advisorOrganizationId, principalOrganizationId) VALUES
 	(CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (select id from locations where name='Kabul Hospital'), 'Looked at Hospital usage of Drugs',
 	'This report needs to fill up more space',
 	'putting something in the database to take up space',
@@ -350,7 +347,7 @@ INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 	(SELECT id FROM people where emailAddress='hunter+jack@dds.mil'), (SELECT max(id) FROM reports), 1);
 INSERT INTO reportPoams (poamId, reportId) VALUES ((SELECT id from poams where shortName = '1.1.C'), (SELECT max(id) from reports));
 
-INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, keyOutcomesSummary, nextStepsSummary, authorId, state, engagementDate, atmosphere, advisorOrganizationId, principalOrganizationId) VALUES
+INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, keyOutcomes, nextSteps, authorId, state, engagementDate, atmosphere, advisorOrganizationId, principalOrganizationId) VALUES
 	(CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (select id from locations where name='Kabul Hospital'), 'discuss enagement of Doctors with Patients',
 	'Met with Nobody in this engagement and discussed no poams, what a waste of time',
 	'None',
@@ -375,7 +372,7 @@ INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 	(SELECT id FROM people where emailAddress='hunter+jack@dds.mil'), (SELECT max(id) FROM reports), 1);
 INSERT INTO reportPoams (poamId, reportId) VALUES ((SELECT id from poams where shortName = '1.1.B'), (SELECT max(id) from reports));
 
-INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, keyOutcomesSummary, nextStepsSummary, authorId, state, engagementDate, atmosphere, advisorOrganizationId, principalOrganizationId) VALUES
+INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, keyOutcomes, nextSteps, authorId, state, engagementDate, atmosphere, advisorOrganizationId, principalOrganizationId) VALUES
 	(CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (select id from locations where name='Fort Amherst'), 'Inspect Ft Amherst Medical Budgeting Facility?',
 	'Went over to the fort to look at the beds and the spreadsheets and the numbers and the whiteboards and the planning and all of the budgets. It was GREAT!',
 	'Seeing the whiteboards firsthand',
@@ -432,14 +429,13 @@ INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 INSERT INTO reportPoams (poamId, reportId) VALUES ((SELECT id from poams where shortName = '2.A'), (SELECT max(id) from reports));
 
 
---Create the default Approval Group
-INSERT INTO groups (name, createdAt) VALUES ('Default Approvers', CURRENT_TIMESTAMP);
-INSERT INTO groupMemberships (groupId, personId) VALUES ((SELECT id from groups where name = 'Default Approvers'), (SELECT id from people where emailAddress='hunter+nick@dds.mil'));
-INSERT INTO approvalSteps (approverGroupId, advisorOrganizationId) VALUES ((SELECT id from groups where name = 'Default Approvers'), (select id from organizations where shortName='ANET Administrators'));
+--Create the default Approval Step
+INSERT INTO approvalSteps (name, advisorOrganizationId) VALUES ('Default Approvers', (select id from organizations where shortName='ANET Administrators'));
+INSERT INTO approvers (approvalStepId, positionId) VALUES ((SELECT id from approvalSteps where name = 'Default Approvers'), (SELECT id from positions where name = 'ANET Administrator'));
 
 -- Set approvalStepId's from organizations with default
 UPDATE reports SET
-approvalStepId = (SELECT MAX(approvalSteps.id) FROM approvalSteps INNER JOIN groups ON approvalSteps.approverGroupId = groups.id WHERE groups.name = 'Default Approvers')
+approvalStepId = (SELECT id FROM approvalSteps WHERE name = 'Default Approvers')
 WHERE reports.id IN
 (SELECT reports.id FROM reports INNER JOIN (people INNER JOIN (organizations INNER JOIN positions ON positions.organizationId = organizations.id) ON people.id = positions.currentPersonId) ON reports.authorId = people.id WHERE approvalStepId IS NULL AND reports.state = 1);
 

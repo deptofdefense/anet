@@ -501,4 +501,41 @@
 			CREATE FULLTEXT INDEX ON organizations(shortName, longName) KEY INDEX PK_ORGANIZATIONS;
 		</sql>
 	</changeSet>
+
+	<changeSet id="22" author="hpitelka" dbms="mssql" >
+		<dropForeignKeyConstraint baseTableName="groupMemberships" constraintName="fk_groupMember_group" />
+		<dropForeignKeyConstraint baseTableName="groupMemberships" constraintName="fk_groupMember_person" />
+		<dropForeignKeyConstraint baseTableName="approvalSteps" constraintName="fk_approvalSteps_group" />
+	</changeSet>
+
+	<changeSet id="23" author="hpitelka" >
+		<dropColumn columnName="approverGroupId" tableName="approvalSteps" />
+		<dropTable tableName="groupMemberships" />
+		<dropTable tableName="groups" />
+		<createTable tableName="approvers" >
+			<column name="approvalStepId" type="int" />
+			<column name="positionId" type="int" />
+		</createTable>
+		<addColumn tableName="approvalSteps" >
+			<column name="name" type="varchar(255)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="24" author="hpitelka" dbms="mssql" >
+		<addForeignKeyConstraint baseColumnNames="approvalStepId" baseTableName="approvers"
+			constraintName="fk_approvers_step" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="approvalSteps" />
+		<addForeignKeyConstraint baseColumnNames="positionId" baseTableName="approvers"
+			constraintName="fk_approvers_position" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="positions" />
+	</changeSet>
+
+	<changeSet id="25" author="hpitelka"  >
+		<sql dbms="mssql">
+			ALTER FULLTEXT INDEX ON reports DROP (keyOutcomesSummary, nextStepsSummary)
+		</sql>
+		<dropColumn tableName="reports" columnName="keyOutcomesSummary" />
+		<dropColumn tableName="reports" columnName="nextStepsSummary" />
+	</changeSet>
+
 </databaseChangeLog>

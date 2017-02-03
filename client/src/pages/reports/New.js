@@ -1,12 +1,11 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
-import autobind from 'autobind-decorator'
 
 import ReportForm from './Form'
 import {ContentForHeader} from 'components/Header'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Messages from 'components/Messages'
-import {Report, Person} from 'models'
+import {Report} from 'models'
 
 export default class ReportNew extends Page {
 	static pageProps = {
@@ -22,13 +21,12 @@ export default class ReportNew extends Page {
 
 		this.state = {
 			report: new Report(),
-			hasAddedAuthor: false
 		}
-		this.addMyself();
 	}
 
-
 	render() {
+		let currentUser = this.context.app.state.currentUser
+
 		return (
 			<div>
 				<ContentForHeader>
@@ -38,26 +36,8 @@ export default class ReportNew extends Page {
 				<Breadcrumbs items={[['Submit a report', Report.pathForNew()]]} />
 				<Messages error={this.state.error} />
 
-				<ReportForm report={this.state.report} />
+				<ReportForm report={this.state.report} defaultAttendee={currentUser} />
 			</div>
 		)
 	}
-
-	@autobind
-	addMyself() {
-		let {currentUser} = this.context.app.state
-		if (currentUser && currentUser.id && (!this.state.hasAddedAuthor)) {
-			let report = this.state.report;
-			report.poams = []
-			let attendee = new Person(currentUser)
-			attendee.primary = true
-			let attendees = report.attendees.slice()
-			attendees.push(attendee)
-			report.attendees = attendees;
-			this.state.report = report
-			this.state.hasAddedAuthor = true
-		}
-	}
-
-
 }

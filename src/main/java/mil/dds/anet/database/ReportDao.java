@@ -31,8 +31,8 @@ public class ReportDao implements IAnetDao<Report> {
 	private static String[] fields = { "id", "state", "createdAt", "updatedAt", "engagementDate",
 			"locationId", "approvalStepId", "intent", "exsum", "atmosphere",
 			"advisorOrganizationId", "principalOrganizationId",
-			"atmosphereDetails", "text", "keyOutcomesSummary", "keyOutcomes",
-			"nextStepsSummary", "nextSteps", "authorId"};
+			"atmosphereDetails", "text", "keyOutcomes",
+			"nextSteps", "authorId"};
 	private static String tableName = "reports";
 	public static String REPORT_FIELDS = DaoUtils.buildFieldAliases(tableName, fields);
 
@@ -69,13 +69,13 @@ public class ReportDao implements IAnetDao<Report> {
 		//MSSQL requires explicit CAST when a datetime2 might be NULL.
 		StringBuilder sql = new StringBuilder("INSERT INTO reports "
 				+ "(state, createdAt, updatedAt, locationId, intent, exsum, "
-				+ "text, keyOutcomesSummary, keyOutcomes, nextStepsSummary, "
-				+ "nextSteps, authorId, engagementDate, atmosphere, "
+				+ "text, keyOutcomes, nextSteps, authorId, "
+				+ "engagementDate, atmosphere, "
 				+ "atmosphereDetails, advisorOrganizationId, "
 				+ "principalOrganizationId) VALUES "
 				+ "(:state, :createdAt, :updatedAt, :locationId, :intent, "
-				+ ":exsum, :reportText, :keyOutcomesSummary, :keyOutcomes, "
-				+ ":nextStepsSummary, :nextSteps, :authorId, ");
+				+ ":exsum, :reportText, :keyOutcomes, "
+				+ ":nextSteps, :authorId, ");
 		if (DaoUtils.isMsSql(dbHandle)) {
 			sql.append("CAST(:engagementDate AS datetime2), ");
 		} else {
@@ -137,8 +137,7 @@ public class ReportDao implements IAnetDao<Report> {
 		StringBuilder sql = new StringBuilder("UPDATE reports SET " +
 				"state = :state, updatedAt = :updatedAt, locationId = :locationId, " +
 				"intent = :intent, exsum = :exsum, text = :reportText, "
-				+ "keyOutcomesSummary = :keyOutcomesSummary, keyOutcomes = :keyOutcomes, "
-				+ "nextStepsSummary = :nextStepsSummary, nextSteps = :nextSteps, " +
+				+ "keyOutcomes = :keyOutcomes, nextSteps = :nextSteps, " +
 				"approvalStepId = :approvalStepId, ");
 		if (DaoUtils.isMsSql(dbHandle)) {
 			sql.append("engagementDate = CAST(:engagementDate AS datetime2), ");
@@ -202,10 +201,10 @@ public class ReportDao implements IAnetDao<Report> {
 	/* Returns reports that the given person can currently approve */
 	public List<Report> getReportsForMyApproval(Person p) {
 		return dbHandle.createQuery("SELECT " + REPORT_FIELDS + ", " + PersonDao.PERSON_FIELDS
-				+ "FROM reports, groupMemberships, approvalSteps, people "
-				+ "WHERE groupMemberships.personId = :personId "
-				+ "AND groupMemberships.groupId = approvalSteps.approverGroupId "
-				+ "AND approvalSteps.id = reports.approvalStepId "
+				+ "FROM reports, approvers, positions, people "
+				+ "WHERE positions.currentPersonId = :personId "
+				+ "AND approvers.positionId = positions.id "
+				+ "AND approvers.approvalStepId = reports.approvalStepId "
 				+ "AND reports.authorId = people.id")
 			.bind("personId", p.getId())
 			.map(new ReportMapper())

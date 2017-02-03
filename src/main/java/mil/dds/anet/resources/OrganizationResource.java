@@ -23,7 +23,6 @@ import com.codahale.metrics.annotation.Timed;
 import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.ApprovalStep;
-import mil.dds.anet.beans.Group;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Organization.OrganizationType;
 import mil.dds.anet.beans.Person;
@@ -34,6 +33,7 @@ import mil.dds.anet.database.OrganizationDao;
 import mil.dds.anet.graphql.GraphQLFetcher;
 import mil.dds.anet.graphql.GraphQLParam;
 import mil.dds.anet.graphql.IGraphQLResource;
+import mil.dds.anet.utils.AnetAuditLogger;
 import mil.dds.anet.utils.AuthUtils;
 import mil.dds.anet.utils.DaoUtils;
 import mil.dds.anet.utils.ResponseUtils;
@@ -93,12 +93,11 @@ public class OrganizationResource implements IGraphQLResource {
 			//Create the approval steps 
 			for (ApprovalStep step : org.getApprovalSteps()) { 
 				step.setAdvisorOrganizationId(created.getId());
-				Group createdGroup = engine.getGroupDao().insert(step.getApproverGroup());
-				step.setApproverGroup(createdGroup);
 				engine.getApprovalStepDao().insertAtEnd(step);
 			}
 		}
 		
+		AnetAuditLogger.log("Organization {} created by {}", org, user);
 		return created; 
 	}
 	
@@ -129,46 +128,34 @@ public class OrganizationResource implements IGraphQLResource {
 						oldPoamId -> engine.getPoamDao().setResponsibleOrgForPoam(Poam.createWithId(oldPoamId), null));
 			}
 			if (org.getApprovalSteps() != null) {
+				org.getApprovalSteps().stream().forEach(step -> step.setAdvisorOrganizationId(org.getId()));
 				List<ApprovalStep> existingSteps = existing.loadApprovalSteps();
-				// for each step we were given
-				for (ApprovalStep step : org.getApprovalSteps()) {
-					step.setAdvisorOrganizationId(org.getId());
-					if (step.getId() != null) { 
-						// if it has an ID then it already exists, so check the group to update name or members. 
-						ApprovalStep existingStep = Utils.getById(existingSteps, step.getId());
-						updateGroup(step.getApproverGroup(), existingStep.loadApproverGroup());
-					} else {
-						step.setApproverGroup(engine.getGroupDao().insert(step.getApproverGroup()));
-						step = engine.getApprovalStepDao().insert(step);
-					}
-				}
 				
-				//Fix all the orders.
-				//I know this is is inefficient in that it pushes an update to every step
-				//TODO: make this more efficient. 
+				Utils.addRemoveElementsById(existingSteps, org.getApprovalSteps(), 
+						newStep -> engine.getApprovalStepDao().insert(newStep),
+						oldStepId -> engine.getApprovalStepDao().deleteStep(oldStepId));
+				
 				for (int i=0;i<org.getApprovalSteps().size();i++) { 
 					ApprovalStep curr = org.getApprovalSteps().get(i);
 					ApprovalStep next = (i == (org.getApprovalSteps().size() -1)) ? null : org.getApprovalSteps().get(i+1);
 					curr.setNextStepId(DaoUtils.getId(next));
-					engine.getApprovalStepDao().update(curr);
+					ApprovalStep existingStep = Utils.getById(existingSteps, curr.getId());
+					//If this step didn't exist before, we still need to set the nextStepId on it, but don't need to do a deep update. 
+					if (existingStep == null) { 
+						engine.getApprovalStepDao().update(curr);
+					} else {
+						//Check for updates to name, nextStepId and approvers. 
+						ApprovalStepResource.updateStep(curr, existingStep);
+					}
 				}
 			}
 		}
 		
+		AnetAuditLogger.log("Organization {} edited by {}", org, user);
 		return (numRows == 1) ? Response.ok().build() : Response.status(Status.NOT_FOUND).build();
 	}
 	
-	//Helper method that diffs the name/members of a group and updates them. 
-	private void updateGroup(Group newGroup, Group oldGroup) {
-		newGroup.setId(oldGroup.getId()); //Always want to make changes to the existing group
-		if (newGroup.getName().equals(oldGroup.getName()) == false) { 
-			engine.getGroupDao().update(newGroup);
-		}
-	
-		Utils.addRemoveElementsById(oldGroup.getMembers(), newGroup.getMembers(), 
-				newPerson -> engine.getGroupDao().addPersonToGroup(newGroup, newPerson), 
-				oldPersonId -> engine.getGroupDao().removePersonFromGroup(newGroup, Person.createWithId(oldPersonId)));
-	}
+
 	
 	@POST
 	@Timed

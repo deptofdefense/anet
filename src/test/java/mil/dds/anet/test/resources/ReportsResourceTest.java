@@ -21,7 +21,6 @@ import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.ApprovalAction;
 import mil.dds.anet.beans.ApprovalStep;
 import mil.dds.anet.beans.Comment;
-import mil.dds.anet.beans.Group;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Person.Role;
@@ -68,6 +67,8 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		Organization advisorOrg = httpQuery("/api/organizations/new", admin)
 				.post(Entity.json(OrganizationTest.getTestAO()), Organization.class);
 
+
+		
 		//Create leadership people in the AO who can approve this report
 		Person approver1 = new Person();
 		approver1.setDomainUsername("testApprover1");
@@ -83,7 +84,25 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		approver2.setRole(Person.Role.ADVISOR);
 		approver2.setStatus(Person.Status.ACTIVE);
 		approver2 = findOrPutPersonInDb(approver2);
-
+		
+		Position approver1Pos = new Position();
+		approver1Pos.setName("Test Approver 1 Position");
+		approver1Pos.setOrganization(advisorOrg);
+		approver1Pos.setType(PositionType.SUPER_USER);
+		approver1Pos = httpQuery("/api/positions/new", admin)
+				.post(Entity.json(approver1Pos), Position.class);
+		Response resp = httpQuery("/api/positions/" + approver1Pos.getId() + "/person", admin).post(Entity.json(approver1));
+		assertThat(resp.getStatus()).isEqualTo(200);
+		
+		Position approver2Pos = new Position();
+		approver2Pos.setName("Test Approver 2 Position");
+		approver2Pos.setOrganization(advisorOrg);
+		approver2Pos.setType(PositionType.SUPER_USER);
+		approver2Pos = httpQuery("/api/positions/new", admin)
+				.post(Entity.json(approver1Pos), Position.class);
+		resp = httpQuery("/api/positions/" + approver2Pos.getId() + "/person", admin).post(Entity.json(approver2));
+		assertThat(resp.getStatus()).isEqualTo(200);
+		
 		//Create a billet for the author
 		Position authorBillet = new Position();
 		authorBillet.setName("A report writer");
@@ -93,29 +112,26 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		assertThat(authorBillet.getId()).isNotNull();
 
 		//Set this author in this billet
-		Response resp = httpQuery(String.format("/api/positions/%d/person", authorBillet.getId()), admin).post(Entity.json(author));
+		resp = httpQuery(String.format("/api/positions/%d/person", authorBillet.getId()), admin).post(Entity.json(author));
 		assertThat(resp.getStatus()).isEqualTo(200);
 
 		//Create Approval workflow for Advising Organization
-		Group approvingGroup = httpQuery("/api/groups/new", author)
-				.post(Entity.json(Group.create("Test Group of initial approvers")), Group.class);
-		resp = httpQuery(String.format("/api/groups/%d/addMember?personId=%d", approvingGroup.getId(), approver1.getId()), admin)
-				.get();
-		assertThat(resp.getStatus()).isEqualTo(200);
-
-		ApprovalStep approval = httpQuery("/api/approvalSteps/new", admin)
-				.post(Entity.json(ApprovalStep.create(null, approvingGroup, null, advisorOrg.getId())), ApprovalStep.class);
-
-		//Create Releasing approval step for AO.
-		Group releasingGroup = httpQuery("/api/groups/new", admin)
-				.post(Entity.json(Group.create("Test Group of releasers")), Group.class);
-		resp = httpQuery(String.format("/api/groups/%d/addMember?personId=%d", releasingGroup.getId(), approver2.getId()), admin)
-				.get();
-		assertThat(resp.getStatus()).isEqualTo(200);
+		ApprovalStep approval = new ApprovalStep();
+		approval.setName("Test Group for Approving");
+		approval.setAdvisorOrganizationId(advisorOrg.getId());
+		approval.setApprovers(ImmutableList.of(approver1Pos));
+		
+		approval = httpQuery("/api/approvalSteps/new", admin)
+				.post(Entity.json(approval), ApprovalStep.class);
+		assertThat(approval.getId()).isNotNull();
 
 		//Adding a new approval step to an AO automatically puts it at the end of the approval process.
-		ApprovalStep releaseApproval = httpQuery("/api/approvalSteps/new", admin)
-				.post(Entity.json(ApprovalStep.create(null, releasingGroup, null, advisorOrg.getId())), ApprovalStep.class);
+		ApprovalStep releaseApproval = new ApprovalStep();
+		releaseApproval.setName("Test Group of Releasers");
+		releaseApproval.setAdvisorOrganizationId(advisorOrg.getId());
+		releaseApproval.setApprovers(ImmutableList.of(approver2Pos));
+		releaseApproval = httpQuery("/api/approvalSteps/new", admin)
+				.post(Entity.json(releaseApproval), ApprovalStep.class);
 		assertThat(releaseApproval.getId()).isNotNull();
 
 		//Pull the approval workflow for this AO
@@ -147,10 +163,8 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		r.setAtmosphereDetails("Eerybody was super nice!");
 		r.setIntent("A testing report to test that reporting reports");
 		r.setReportText("Report Text goes here, asdfjk");
-		r.setNextStepsSummary("Summary of the next steps");
 		r.setNextSteps("This is the next steps on a report");
-		r.setKeyOutcomesSummary("Summary of Key Outcomes");
-		r.setKeyOutcomes("These are the key outcomes of this engagement in a longer form");
+		r.setKeyOutcomes("These are the key outcomes of this engagement");
 		r.setAdvisorOrg(advisorOrg);
 		r.setPrincipalOrg(principalOrg);
 		Report created = httpQuery("/api/reports/new", author)
@@ -172,7 +186,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 
 		//verify the principals on this report
 		assertThat(returned.loadAttendees()).contains(principal);
-		returned.setAttendees(null); //Annoyning, but required to make future .equals checks pass, because we just caused a lazy load.
+		returned.setAttendees(null); //Annoying, but required to make future .equals checks pass, because we just caused a lazy load.
 
 		//verify the poams on this report
 		assertThat(returned.loadPoams()).contains(action);
@@ -185,6 +199,12 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		expected.equals(returned);
 		assertThat(pending).contains(returned);
 
+		//Run a search for this users pending approvals
+		ReportSearchQuery searchQuery = new ReportSearchQuery();
+		searchQuery.setPendingApprovalOf(approver1.getId());
+		pending = httpQuery("/api/reports/search", approver1).post(Entity.json(searchQuery), new GenericType<List<Report>>() {});
+		assertThat(pending.size()).isGreaterThan(0);
+		
 		//Check on Report status for who needs to approve
 		List<ApprovalAction> approvalStatus = returned.loadApprovalStatus();
 		assertThat(approvalStatus.size()).isEqualTo(2);
@@ -293,8 +313,8 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		r.setAtmosphere(Atmosphere.NEUTRAL);
 		r.setAttendees(attendees);
 		r.setReportText("I just got here in town and am writing a report for the first time, but have no reporting structure set up");
-		r.setKeyOutcomesSummary("Summary for the key outcomes");
-		r.setNextStepsSummary("Summary for the next steps");
+		r.setKeyOutcomes("Summary for the key outcomes");
+		r.setNextSteps("Summary for the next steps");
 		r.setEngagementDate(DateTime.now());
 		r = httpQuery("/api/reports/new", jack).post(Entity.json(r), Report.class);
 		assertThat(r.getId()).isNotNull();
@@ -384,8 +404,8 @@ public class ReportsResourceTest extends AbstractResourceTest {
         r.setAtmosphere(Atmosphere.POSITIVE);
         r.setAtmosphereDetails("it was a cold, cold day");
         r.setEngagementDate(DateTime.now());
-        r.setKeyOutcomesSummary("There were some key out comes summarized");
-        r.setNextStepsSummary("These are the next steps summarized");
+        r.setKeyOutcomes("There were some key out comes summarized");
+        r.setNextSteps("These are the next steps summarized");
         r.setReportText("This report was generated by ReportsResourceTest#reportEditTest");
         r.setAttendees(ImmutableList.of(PersonTest.personToPrimaryReportPerson(roger)));
         r.setPoams(ImmutableList.of(poamSearchResults.get(0)));

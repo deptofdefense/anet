@@ -37,7 +37,6 @@ import mil.dds.anet.beans.ApprovalAction;
 import mil.dds.anet.beans.ApprovalAction.ApprovalType;
 import mil.dds.anet.beans.ApprovalStep;
 import mil.dds.anet.beans.Comment;
-import mil.dds.anet.beans.Group;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Person.Role;
@@ -53,6 +52,7 @@ import mil.dds.anet.database.ReportDao;
 import mil.dds.anet.graphql.GraphQLFetcher;
 import mil.dds.anet.graphql.GraphQLParam;
 import mil.dds.anet.graphql.IGraphQLResource;
+import mil.dds.anet.utils.AnetAuditLogger;
 import mil.dds.anet.utils.ResponseUtils;
 import mil.dds.anet.utils.Utils;
 
@@ -112,7 +112,9 @@ public class ReportResource implements IGraphQLResource {
 			r.setPrincipalOrg(engine.getOrganizationForPerson(primaryPrincipal));
 		}
 		
-		return dao.insert(r);
+		r = dao.insert(r);
+		AnetAuditLogger.log("Report {} created by author {} ", r, author);
+		return r;
 	}
 
 	private Person findPrimaryAttendee(Report r, Role role) { 
@@ -206,7 +208,9 @@ public class ReportResource implements IGraphQLResource {
 			}
 			break;
 		case RELEASED:
-			throw new WebApplicationException(permError + "Cannot edit a released report", Status.FORBIDDEN);
+			AnetAuditLogger.log("attempt to edit released report {} by editor {} (id: {}) was forbidden",
+					report.getId(), editor.getName(), editor.getId());
+			throw new WebApplicationException("Cannot edit a released report", Status.FORBIDDEN);
 		}
 	}
 	
@@ -264,18 +268,21 @@ public class ReportResource implements IGraphQLResource {
 			throw new WebApplicationException("No records updated", Status.BAD_REQUEST);
 		}
 
+		AnetAuditLogger.log("report {} submitted by author {} (id: {})", r.getId(), r.getAuthor().getName(), r.getAuthor().getId());
 		return r;
 	}
 
 	private void sendApprovalNeededEmail(Report r) {
 		ApprovalStep step = r.loadApprovalStep();
-		Group approvalGroup = step.loadApproverGroup();
-		List<Person> approvers = approvalGroup.getMembers();
+		List<Position> approvers = step.loadApprovers();
 		AnetEmail approverEmail = new AnetEmail();
 		approverEmail.setTemplateName("/emails/approvalNeeded.ftl");
 		approverEmail.setSubject("ANET Report needs your approval");
-		approverEmail.setToAddresses(approvers.stream().map(a -> a.getEmailAddress()).collect(Collectors.toList()));
-		approverEmail.setContext(ImmutableMap.of("report", r, "approvalGroup", approvalGroup));
+		approverEmail.setToAddresses(approvers.stream()
+				.filter(a -> a.getPerson() != null)
+				.map(a -> a.loadPerson().getEmailAddress())
+				.collect(Collectors.toList()));
+		approverEmail.setContext(ImmutableMap.of("report", r, "approvalStepName", step.getName()));
 		AnetEmailWorker.sendEmailAsync(approverEmail);
 	}
 
@@ -309,7 +316,7 @@ public class ReportResource implements IGraphQLResource {
 		//TODO: this should be in a transaction....
 		ApprovalAction approval = new ApprovalAction();
 		approval.setReport(r);
-		approval.setStep(ApprovalStep.create(step.getId(), null, null, null));
+		approval.setStep(ApprovalStep.createWithId(step.getId()));
 		approval.setPerson(approver);
 		approval.setType(ApprovalType.APPROVE);
 		engine.getApprovalActionDao().insert(approval);
@@ -318,22 +325,33 @@ public class ReportResource implements IGraphQLResource {
 		r.setApprovalStep(ApprovalStep.createWithId(step.getNextStepId()));
 		if (step.getNextStepId() == null) {
 			r.setState(ReportState.RELEASED);
+			sendReportReleasedEmail(r);
 		} else {
 			sendApprovalNeededEmail(r);
 		}
 		dao.update(r);
 		
 		//Add the comment
-		if (comment != null && comment.getText().trim().length() > 0)  {
+		if (comment != null && comment.getText() != null && comment.getText().trim().length() > 0)  {
 			comment.setReportId(r.getId());
 			comment.setAuthor(approver);
 			engine.getCommentDao().insert(comment);
 		}
 		//TODO: close the transaction.
 
+		AnetAuditLogger.log("report {} approved by {} (id: {})", r.getId(), approver.getName(), approver.getId());
 		return r;
 	}
 
+	private void sendReportReleasedEmail(Report r) {
+		AnetEmail email = new AnetEmail();
+		email.setTemplateName("/emails/reportReleased.ftl");
+		email.setSubject("ANET Report Approved");
+		email.setToAddresses(ImmutableList.of(r.loadAuthor().getEmailAddress()));
+		email.setContext(ImmutableMap.of("report", r));
+		AnetEmailWorker.sendEmailAsync(email);
+	}
+	
 	/**
 	 * Rejects a report and moves it back to the author with state REJECTED. 
 	 * @param id the Report ID to reject
@@ -358,7 +376,7 @@ public class ReportResource implements IGraphQLResource {
 		//TODO: This should be in a transaction
 		ApprovalAction approval = new ApprovalAction();
 		approval.setReport(r);
-		approval.setStep(ApprovalStep.create(step.getId(), null, null, null));
+		approval.setStep(ApprovalStep.createWithId(step.getId()));
 		approval.setPerson(approver);
 		approval.setType(ApprovalType.REJECT);
 		engine.getApprovalActionDao().insert(approval);
@@ -374,19 +392,41 @@ public class ReportResource implements IGraphQLResource {
 		engine.getCommentDao().insert(reason);
 
 		//TODO: close the transaction.
-
+		
+		sendReportRejectEmail(r, approver, reason);
+		AnetAuditLogger.log("report {} rejected by {} (id: {})", r.getId(), approver.getName(), approver.getId());
 		return r;
 	}
 
+	private void sendReportRejectEmail(Report r, Person rejector, Comment rejectionComment) {
+		AnetEmail email = new AnetEmail();
+		email.setTemplateName("/emails/reportRejection.ftl");
+		email.setSubject("ANET Report Rejected");
+		email.setToAddresses(ImmutableList.of(r.loadAuthor().getEmailAddress()));
+		email.setContext(ImmutableMap.of("report", r, "rejector", rejector, "comment", rejectionComment));
+		AnetEmailWorker.sendEmailAsync(email);
+	}
+		
 	@POST
 	@Timed
 	@Path("/{id}/comments")
 	public Comment postNewComment(@Auth Person author, @PathParam("id") int reportId, Comment comment) {
 		comment.setReportId(reportId);
 		comment.setAuthor(author);
-		return engine.getCommentDao().insert(comment);
+		comment = engine.getCommentDao().insert(comment);
+		sendNewCommentEmail(dao.getById(reportId), comment);
+		return comment;
 	}
 
+	private void sendNewCommentEmail(Report r, Comment comment) {
+		AnetEmail email = new AnetEmail();
+		email.setTemplateName("/emails/newReportComment.ftl");
+		email.setSubject("New Comment on your ANET Report");
+		email.setToAddresses(ImmutableList.of(r.loadAuthor().getEmailAddress()));
+		email.setContext(ImmutableMap.of("report", r, "comment", comment));
+		AnetEmailWorker.sendEmailAsync(email);
+	}
+	
 	@GET
 	@Timed
 	@Path("/{id}/comments")

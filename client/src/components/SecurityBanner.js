@@ -33,8 +33,6 @@ export default class SecurityBanner extends Component {
 				{settings[SETTING_KEY_TEXT]}
 				{' '}||{' '}
 				{currentUser.name}
-				{' '}||{' '}
-				{this.props.location.pathname}
 			</div>
 		)
 	}

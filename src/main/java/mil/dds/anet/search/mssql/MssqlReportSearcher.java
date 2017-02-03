@@ -37,7 +37,7 @@ public class MssqlReportSearcher implements IReportSearcher {
 		String text = query.getText();
 		if (text != null && text.trim().length() > 0) {
 			text = "\"" + text + "*\"";
-			whereClauses.add("CONTAINS ((text, intent, keyOutcomesSummary, keyOutcomes, nextStepsSummary, nextSteps), :text)");
+			whereClauses.add("CONTAINS ((text, intent, keyOutcomes, nextSteps), :text)");
 			args.put("text", text);
 		}
 		
@@ -105,8 +105,8 @@ public class MssqlReportSearcher implements IReportSearcher {
 		
 		if (query.getPendingApprovalOf() != null) { 
 			whereClauses.add("reports.approvalStepId IN "
-				+ "(SELECT id from approvalSteps where approverGroupId IN "
-				+ "(SELECT groupId FROM groupMemberships where personId=:approverId))");
+				+ "(SELECT approvalStepId from approvers where positionId IN "
+				+ "(SELECT id FROM positions where currentPersonId = :approverId))");
 			args.put("approverId", query.getPendingApprovalOf());
 		}
 		
