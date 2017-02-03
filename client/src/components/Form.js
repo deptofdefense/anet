@@ -76,11 +76,11 @@ export default class Form extends Component {
 				}
 
 				{showSubmit &&
-					<fieldset>
-						<Button bsStyle="primary" bsSize="large" type="submit" className="pull-right">
+					<div className="form-bottom-submit">
+						<Button bsStyle="primary" bsSize="large" type="submit">
 							{submitText}
 						</Button>
-					</fieldset>
+					</div>
 				}
 			</BSForm>
 		)
