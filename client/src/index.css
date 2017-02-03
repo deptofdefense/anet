@@ -84,14 +84,16 @@ fieldset.collapsable legend div.collapsableToggle {
 	display: none;
 }
 
-.header-content {
-	margin-left: 10%;
-	width: 55%;
+.header img, .header input, .header button {
+	height: 38px;
 }
 
-.header-content > * {
+.header button {
+	font-weight: bold;
+}
+
+.header .row > div * {
 	margin: 0;
-	padding: 0;
 }
 
 .nprogress-custom-parent .bar {
@@ -116,24 +118,29 @@ fieldset.collapsable legend div.collapsableToggle {
 }
 
 .home-tile-row {
-	padding: 0 0 0 0
+	padding: 0;
 }
 
-.home-tile {
-	text-align: center;
-	color:#5c5c5c;
-	padding-top:20px;
-	padding-bottom:20px;
+.home-tile-row .row {
+	display: table;
 }
-.home-tile a {
-	color:#5c5c5c;
+
+a.home-tile {
+	display: table-cell;
+	float: none;
+	vertical-align: top;
+	text-align: center;
+	padding-top: 20px;
+	padding-bottom: 20px;
+	color: #5c5c5c;
 	text-decoration: none;
 }
 .home-tile h1 {
 	font-weight: 900;
 }
+
 .home-tile:hover {
-	background-color: #dae3ee;
+	background: #dae3ee;
 }
 
 .person-icon {

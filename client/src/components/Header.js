@@ -20,10 +20,6 @@ const backgroundCss = {
 	zIndex: 100
 }
 
-const logoCss = {
-	width: '164px',
-}
-
 class Header extends Component {
 	render() {
 		let leftContent, middleContent, rightContent
@@ -45,7 +41,7 @@ class Header extends Component {
 					<Row>
 						<Col xs={3}>
 							{leftContent || <Link to="/">
-								<img src={logo} alt="ANET logo" style={logoCss} />
+								<img src={logo} alt="ANET logo" />
 							</Link>}
 						</Col>
 
