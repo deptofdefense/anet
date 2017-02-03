@@ -84,14 +84,12 @@ fieldset.collapsable legend div.collapsableToggle {
 	display: none;
 }
 
-.header-content {
-	margin-left: 10%;
-	width: 55%;
+.header img, .header input, .header button {
+	height: 38px;
 }
 
-.header-content > * {
+.header .row > div * {
 	margin: 0;
-	padding: 0;
 }
 
 .nprogress-custom-parent .bar {
