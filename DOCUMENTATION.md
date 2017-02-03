@@ -7,7 +7,7 @@
 ANET2 is comprised of three major components: the Database, an Application server, and the User Interface.
 
 - **DB**: ANET2 uses a Microsoft SQLServer database to store all data, keep backups, provide consistency of relationships, and perform advanced search.  ANET2 requires SQLServer 2014 or higher.  More details on the Schema of the Database is available in the Developer Documentation. 
-- **Application Server**: ANET2's primary server functions, business logic, and authorization is performed in a Web Application server written in Java.  This server receives requests from users, determines if they are authorized and valid, and then performs the necessary fetching or manipulation of data in the Database.  The application server runs over HTTP/HTTPS (port 80/443) and communicates with clients using standard JSON data formats.  More detail about the APIs exposed from the application server is avaiable in the Developer Documentation. The application server requires Java version 1.8 to run. 
+- **Application Server**: ANET2's primary server functions, business logic, and authorization is performed in a Web Application server written in Java on the Dropwizard Web-Application Framework.  This server receives requests from users, determines if they are authorized and valid, and then performs the necessary fetching or manipulation of data in the Database.  The application server runs over HTTP/HTTPS (port 80/443) and communicates with clients using standard JSON data formats.  More detail about the APIs exposed from the application server is avaiable in the Developer Documentation. The application server requires Java version 1.8 to run. 
 
 - **User Interface**: ANET2's user interface is a website that users will access using any modern web browser (Recommended: Google Chrome version XXX or greater, Required: IE version 11 or greater, Firefox version XXX or greater).  There is no client software or special browser plugins that need to be installed to access and use the ANET2 platform.
 
@@ -33,7 +33,7 @@ ANET2 is built primarily using Open Source languages, frameworks, and libraries 
 
 - **Client**: The client can be any users on the appropiate network with a modern web-browser. ANET uses HTTP/HTTPS (ports 80/443) to communicate between the client and server.
 
-- **Application Server**: The ANET2 Application Server can run on any Windows Server operating system.  Recommended system configuration is: 300 GB HDD, 64 GB RAM, and 8x CPUs.  The Application server must be able to communicate with the Database server, the Windows Domain Controller for AD Authentication, and the SMTP server for outbound mail. 
+- **Application Server**: The ANET2 Application Server can run on any Windows Server operating system.  Recommended system configuration is: 300 GB HDD, 64 GB RAM, and 8x CPU cores.  The Application server must be able to communicate with the Database server, the Windows Domain Controller for AD Authentication, and the SMTP server for outbound mail. 
 
 - **Database**: ANET2 Requires at least a Microsoft SQL Server 2014 Database. 
 
@@ -46,32 +46,7 @@ ANET2 is built primarily using Open Source languages, frameworks, and libraries 
 - **Production vs Test Environments**: It is recommended to have a seperate Production and Test environment that mirror each other as closely as possible. However, it is totally acceptable to have less resources for the Test environment.
 
 ## Installation instructions
-The following instructions document how to take a build of ANET2 and install it into a clean environment.  Instructions on how to build ANET2 are included in the Developer Documentation below. 
-
-The following information will be needed in order to complete this installation
-- Directory on the Application server to install ANET2 to. 
-- Username/password and Database Name for the SQL database. 
-- SMTP Server information (including Username/Password if required)
-- Admin privelages to register a new Windows Service
-- Information on External Map imagery sources, or local cached imagery tiles. 
-
-### Application Server
-- Unzip anet.zip into the installation directory
-- Ensure JAVA\_HOME is set
-- Update/create anet.yml with the right config params. 
-- If you are using a local imagery cache, update the CLASSPATH in the anet.bat file to include the path to the imagery [THIS SHOULD BE CHANGED TO SUCK LESS]
-
-### SQL
-- To initiate the SQL database with the appropiate schema, run the command `bin\anet.bat db migrate anet.yml`. 
-- Initialize the database by running `bin\anet.bag init anet.yml`.  This script will ask you a series of questions to seed you database with a default administrator account.
-
-### NSSM
-- We recommend the use of the NSSM tool to register ANET2 as a service within Windows.
-- To do this [FILL IN THESE STEPS]
-
-### Startup
-- To start the ANET2 server for quick testing, you can run `bin\anet.bat server anet.yml`.
-- To start the ANET2 server for production use, use the NSSM tool to start the ANET2 service. The command for this is `nssm.exe start anet`
+See INSTALL.md
 
 ## Troubleshooting
 The recommended strategy for troubleshooting is to first identify where the error is occuring, either in the javascript in the browser, or an error on the application server.  Start by opening the browser developer console and look at the network calls to look for any calls that are returning errors.  If there are any errors on the network calls, look to the server side log files for more information.  If no errors are being returned, look for any errors in the browser console for more information.
@@ -90,7 +65,6 @@ Documentation for Developers is kept in README.md in the github repository.
 # DB (Schema)
 ![Database Diagram](ANET_Database.png)
 <!-- describe all of the relationships -->
-
 
 ### Advanced Search
 ## React

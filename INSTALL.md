@@ -33,6 +33,8 @@ This will create a file in `build/distributions/anet.zip` which contains all the
 - Java JRE (1.8 required)
 - Fully Qualified Domain Name of your server. 
 
+- [ADD DETAILS FOR NSSM] 
+
 ## Installation Steps
 Pick a directory on your server to install ANET to. In that directory: 
 1. Unzip anet.zip
