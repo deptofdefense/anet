@@ -37,6 +37,7 @@ This will create a file in `build/distributions/anet.zip` which contains all the
 
 ## Installation Steps
 Pick a directory on your server to install ANET to. In that directory: 
+
 1. Unzip anet.zip
 2. Add an anet.yml file with appropiate settings.  Descriptions of each of the settings in anet.yml can be found in the README.md file in the ANET repository. 
 3. Install Database Scheam: Run `bin/anet.bat db migrate anet.yml`
