@@ -61,32 +61,27 @@ export default class Home extends Page {
 					<legend>My ANET Snapshot</legend>
 					<Grid fluid>
 						<Row>
-							<Col md={3} className="home-tile">
-								<Link to={"/search?type=reports&pendingApprovalOf=" + currentUser.id}>
-									<h1>{pendingMe && pendingMe.length}</h1>
-									Pending my approval
+							<Link to={"/search?type=reports&pendingApprovalOf=" + currentUser.id} className="col-md-3 home-tile">
+								<h1>{pendingMe && pendingMe.length}</h1>
+								Pending my approval
+							</Link>
+
+							{org &&
+								<Link to={"/search?type=reports&authorOrgId=" + org.id} className="col-md-3 home-tile">
+									<h1>{myOrgToday && myOrgToday.length}</h1>
+									{org.shortName}'{org.shortName[org.shortName.length - 1].toLowerCase() !== 's' && 's'} recent reports
 								</Link>
-							</Col>
-							<Col md={3} className="home-tile">
-								{org &&
-									<Link to={"/search?type=reports&authorOrgId=" + org.id}>
-										<h1>{myOrgToday && myOrgToday.length}</h1>
-										{org.shortName}'{org.shortName[org.shortName.length - 1].toLowerCase() !== 's' && 's'} recent reports
-									</Link>
-								}
-							</Col>
-							<Col md={3} className="home-tile">
-								<Link to={"/search?type=reports&authorId=" + currentUser.id}>
-									<h1>{myReportsToday && myReportsToday.length}</h1>
-									My reports in last 24 hrs
-								</Link>
-							</Col>
-							<Col md={3} className="home-tile">
-								<Link to={"/search?type=reports&pageSize=100&engagementDateStart=" + moment().add(1, 'days').hour(0).valueOf()}>
-									<h1>{upcomingEngagements && upcomingEngagements.length}</h1>
-									Upcoming engagements
-								</Link>
-							</Col>
+							}
+
+							<Link to={"/search?type=reports&authorId=" + currentUser.id} className="col-md-3 home-tile">
+								<h1>{myReportsToday && myReportsToday.length}</h1>
+								My reports in last 24 hrs
+							</Link>
+
+							<Link to={"/search?type=reports&pageSize=100&engagementDateStart=" + moment().add(1, 'days').hour(0).valueOf()} className="col-md-3 home-tile">
+								<h1>{upcomingEngagements && upcomingEngagements.length}</h1>
+								Upcoming engagements
+							</Link>
 						</Row>
 					</Grid>
 				</fieldset>
