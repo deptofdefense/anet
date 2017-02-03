@@ -529,4 +529,13 @@
 			constraintName="fk_approvers_position" onDelete="NO ACTION" onUpdate="NO ACTION"
 			referencedColumnNames="id" referencedTableName="positions" />
 	</changeSet>
+
+	<changeSet id="25" author="hpitelka"  >
+		<sql dbms="mssql">
+			ALTER FULLTEXT INDEX ON reports DROP (keyOutcomesSummary, nextStepsSummary)
+		</sql>
+		<dropColumn tableName="reports" columnName="keyOutcomesSummary" />
+		<dropColumn tableName="reports" columnName="nextStepsSummary" />
+	</changeSet>
+
 </databaseChangeLog>

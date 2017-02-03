@@ -50,9 +50,7 @@ public class ReportMapper implements ResultSetMapper<Report> {
 		r.setAtmosphereDetails(rs.getString("reports_atmosphereDetails"));
 		
 		r.setReportText(rs.getString("reports_text"));
-		r.setKeyOutcomesSummary(rs.getString("reports_keyOutcomesSummary"));
 		r.setKeyOutcomes(rs.getString("reports_keyOutcomes"));
-		r.setNextStepsSummary(rs.getString("reports_nextStepsSummary"));
 		r.setNextSteps(rs.getString("reports_nextSteps"));
 		
 		Person author = Person.createWithId((MapperUtils.getInteger(rs, "reports_authorId")));

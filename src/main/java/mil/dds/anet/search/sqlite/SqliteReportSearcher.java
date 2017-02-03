@@ -40,9 +40,7 @@ public class SqliteReportSearcher implements IReportSearcher {
 		if (text != null && text.trim().length() > 0) {
 			whereClauses.add("(text LIKE '%' || :text || '%' OR "
 					+ "intent LIKE '%' || :text || '%' OR "
-					+ "keyOutcomesSummary LIKE '%' || :text || '%' OR "
 					+ "keyOutcomes LIKE '%' || :text || '%' OR "
-					+ "nextStepsSummary LIKE '%' || :text || '%' OR "
 					+ "nextSteps LIKE '%' || :text || '%'"
 					+ ")");
 			args.put("text", text);

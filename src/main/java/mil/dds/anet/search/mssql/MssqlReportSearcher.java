@@ -37,7 +37,7 @@ public class MssqlReportSearcher implements IReportSearcher {
 		String text = query.getText();
 		if (text != null && text.trim().length() > 0) {
 			text = "\"" + text + "*\"";
-			whereClauses.add("CONTAINS ((text, intent, keyOutcomesSummary, keyOutcomes, nextStepsSummary, nextSteps), :text)");
+			whereClauses.add("CONTAINS ((text, intent, keyOutcomes, nextSteps), :text)");
 			args.put("text", text);
 		}
 		

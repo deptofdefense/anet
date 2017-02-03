@@ -178,8 +178,8 @@ export default class ReportShow extends Page {
 						<Form.Field id="intent" label="Summary" >
 							<div>
 								<b>The goal of this meeting is to</b> {report.intent}.
-								<b>The key outcomes are</b> {report.keyOutcomesSummary}.
-								<b>The next steps are</b> {report.nextStepsSummary}
+								<b>The key outcomes are</b> {report.keyOutcomes}.
+								<b>The next steps are</b> {report.nextSteps}
 							</div>
 						</Form.Field>
 						<Form.Field id="engagementDate" label="Date 📆" getter={date => date && moment(date).format("D MMM YYYY")} />
@@ -254,16 +254,7 @@ export default class ReportShow extends Page {
 
 					<fieldset>
 						<legend>Meeting discussion</legend>
-
-						<h5>Key outcomes</h5>
-						<div>{report.keyOutcomes}</div>
-
-						<h5>Next steps</h5>
-						<div>{report.nextSteps}</div>
-
-						<h5>Report Details</h5>
 						<div dangerouslySetInnerHTML={{__html: report.reportText}} />
-
 					</fieldset>
 
 					{report.isPending() &&
@@ -453,7 +444,7 @@ export default class ReportShow extends Page {
 		API.send(`/api/reports/${this.state.report.id}/approve`, comment).then(data => {
 			this.updateReport()
 			this.setState({error:null})
-			this.setState({success:"Successfully subbmited report"})
+			this.setState({success:"Successfully approved report"})
 		}, data => {
 			this.setState({success:null})
 			this.handleError(data)
