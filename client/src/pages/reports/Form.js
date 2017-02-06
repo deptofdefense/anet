@@ -265,6 +265,9 @@ export default class ReportForm extends Component {
 		delete report.primaryPrincipal
 		delete report.primaryAdvisor
 		delete report.cancelled
+		report.attendees = report.attendees.map(a =>
+			Object.without(a, 'position')
+		)
 
 		let url = `/api/reports/${edit ? 'update' : 'new'}`
 		API.send(url, report, {disableSubmits: true})

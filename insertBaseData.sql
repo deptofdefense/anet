@@ -43,7 +43,7 @@ INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biograp
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, country, gender, createdAt, updatedAt)
 	VALUES ('Erin Erinson', 0, 0, 'hunter+erin@dds.mil', '+9-23-2323-2323', 'Civ', 'Erin is an Advisor in EF2.2 who can release her own reports', 'erin', 'Australia', 'FEMALE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, country, gender, createdAt, updatedAt)
-	VALUES ('Reina Reinton', 0, 1, 'hunter+reina@dds.mil', '+23-23-11222', 'CIV', 'Reina is an Advisor in EF2.2', 'reina', 'Italy', 'FEMALE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	VALUES ('Reina Reinton', 0, 0, 'hunter+reina@dds.mil', '+23-23-11222', 'CIV', 'Reina is an Advisor in EF2.2', 'reina', 'Italy', 'FEMALE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 -- Principals
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, country, gender, createdAt, updatedAt)
 	VALUES ('Steve Steveson', 0, 1, 'hunter+steve@dds.mil', '+011-232-12324', 'LtCol', 'this is a sample person who could be a Principal!', 'Afghanistan', 'MALE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
