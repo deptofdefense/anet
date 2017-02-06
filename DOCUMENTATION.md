@@ -92,4 +92,6 @@ ANET is configured primarily through the `anet.yml` file.  This file follows the
 - **emailFromAddr**: This is the email address that emails from ANET will be sent from.
 - **serverUrl**: The URL for the ANET server, ie: `"https://anet.dds.mil"`.
 - **database**: The configuration for your database. ANET supports either sqlite for development, or Microsoft SQL Server for production.  Follow the instructions here: http://www.dropwizard.io/1.0.6/docs/manual/jdbi.html for avaiable configuration options for the database connection.
-- **waffleConfig**: ANET uses the open source `waffle` library to perform Windows Authentication ( https://github.com/Waffle/waffle ).   See https://github.com/Waffle/waffle/blob/master/Docs/ServletSingleSignOnSecurityFilter.md for documentation on the available configuration options. 
+- **waffleConfig**: ANET uses the open source `waffle` library to perform Windows Authentication ( https://github.com/Waffle/waffle ).   See https://github.com/Waffle/waffle/blob/master/Docs/ServletSingleSignOnSecurityFilter.md for documentation on the available configuration options.
+
+# User Permissions

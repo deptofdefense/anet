@@ -6,6 +6,9 @@ public class OrganizationSearchQuery implements ISearchQuery {
 
 	String text;
 	OrganizationType type;
+	Integer parentOrgId;
+	boolean parentOrgRecursively;
+	
 	int pageNum;
 	int pageSize;
 	
@@ -27,6 +30,22 @@ public class OrganizationSearchQuery implements ISearchQuery {
 		this.type = type;
 	}
 	
+	public Integer getParentOrgId() {
+		return parentOrgId;
+	}
+
+	public void setParentOrgId(Integer parentOrgId) {
+		this.parentOrgId = parentOrgId;
+	}
+
+	public boolean isParentOrgRecursively() {
+		return parentOrgRecursively;
+	}
+
+	public void setParentOrgRecursively(boolean parentOrgRecursively) {
+		this.parentOrgRecursively = parentOrgRecursively;
+	}
+
 	@Override
 	public int getPageNum() {
 		return pageNum;

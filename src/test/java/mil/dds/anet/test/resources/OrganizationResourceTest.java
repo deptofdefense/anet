@@ -3,11 +3,8 @@ package mil.dds.anet.test.resources;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 
 import org.junit.Test;
@@ -15,9 +12,10 @@ import org.junit.Test;
 import io.dropwizard.client.JerseyClientBuilder;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Organization.OrganizationType;
-import mil.dds.anet.beans.search.OrganizationSearchQuery;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Position;
+import mil.dds.anet.beans.lists.AbstractAnetBeanList.OrganizationList;
+import mil.dds.anet.beans.search.OrganizationSearchQuery;
 import mil.dds.anet.test.beans.OrganizationTest;
 import mil.dds.anet.test.beans.PositionTest;
 
@@ -77,9 +75,11 @@ public class OrganizationResourceTest extends AbstractResourceTest {
 				.post(Entity.json(child), Organization.class);
 		assertThat(child.getId()).isNotNull();
 
-		List<Organization> children = httpQuery(String.format("/api/organizations/%d/children", created.getId()), admin)
-			.get(new GenericType<List<Organization>>() {});
-		assertThat(children).hasSize(1).contains(child);
+		OrganizationSearchQuery query = new OrganizationSearchQuery();
+		query.setParentOrgId(created.getId());
+		OrganizationList children = httpQuery(String.format("/api/organizations/search", created.getId()), admin)
+			.post(Entity.json(query), OrganizationList.class);
+		assertThat(children.getList()).hasSize(1).contains(child);
 	}
 	
 	@Test
@@ -89,16 +89,16 @@ public class OrganizationResourceTest extends AbstractResourceTest {
 		//Search by name
 		OrganizationSearchQuery query = new OrganizationSearchQuery();
 		query.setText("Ministry");
-		List<Organization> results = httpQuery("/api/organizations/search", jack).post(Entity.json(query), new GenericType<List<Organization>>() {});
+		List<Organization> results = httpQuery("/api/organizations/search", jack).post(Entity.json(query), OrganizationList.class).getList();
 		assertThat(results).isNotEmpty();
 		
 		//Search by name and type
 		query.setType(OrganizationType.ADVISOR_ORG);
-		results = httpQuery("/api/organizations/search", jack).post(Entity.json(query), new GenericType<List<Organization>>() {});
+		results = httpQuery("/api/organizations/search", jack).post(Entity.json(query), OrganizationList.class).getList();
 		assertThat(results).isEmpty(); //Should be empty!
 		
 		query.setType(OrganizationType.PRINCIPAL_ORG);
-		results = httpQuery("/api/organizations/search", jack).post(Entity.json(query), new GenericType<List<Organization>>() {});
+		results = httpQuery("/api/organizations/search", jack).post(Entity.json(query), OrganizationList.class).getList();
 		assertThat(results).isNotEmpty();
 	}
 }

@@ -55,7 +55,7 @@ export default class App extends Page {
 				id, name, role, emailAddress, rank, status
 				position {
 					id, name, type,
-					organization { id, shortName }
+					organization { id, shortName , allDescendants { id }}
 				}
 			}
 

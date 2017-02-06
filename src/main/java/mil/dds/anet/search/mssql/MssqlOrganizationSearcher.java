@@ -25,6 +25,7 @@ public class MssqlOrganizationSearcher implements IOrganizationSearcher {
 				+ ", count(*) OVER() AS totalCount "
 				+ "FROM organizations WHERE organizations.id IN (SELECT organizations.id FROM organizations ");
 		Map<String,Object> sqlArgs = new HashMap<String,Object>();
+		String commonTableExpression = null;
 		
 		sql.append(" WHERE ");
 		List<String> whereClauses = new LinkedList<String>();
@@ -44,6 +45,20 @@ public class MssqlOrganizationSearcher implements IOrganizationSearcher {
 			sqlArgs.put("type", DaoUtils.getEnumId(query.getType()));
 		}
 		
+		if (query.getParentOrgId() != null) { 
+			if (query.isParentOrgRecursively()) { 
+				commonTableExpression = "WITH parent_orgs(id) AS ( "
+						+ "SELECT id FROM organizations WHERE id = :parentOrgId "
+					+ "UNION ALL "
+						+ "SELECT o.id from parent_orgs po, organizations o WHERE o.parentOrgId = po.id "
+					+ ") ";
+				whereClauses.add("organizations.parentOrgId IN (SELECT id from parent_orgs)");
+			} else { 
+				whereClauses.add("organizations.parentOrgId = :parentOrgId");
+			}
+			sqlArgs.put("parentOrgId", query.getParentOrgId());
+		}
+		
 		if (whereClauses.size() == 0) { 
 			return result;
 		}
@@ -51,6 +66,10 @@ public class MssqlOrganizationSearcher implements IOrganizationSearcher {
 		sql.append(Joiner.on(" AND ").join(whereClauses));
 		
 		sql.append(" ORDER BY createdAt DESC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY)");
+		
+		if (commonTableExpression != null) { 
+			sql.insert(0, commonTableExpression);
+		}
 		
 		Query<Organization> sqlQuery = dbHandle.createQuery(sql.toString())
 			.bindFromMap(sqlArgs)

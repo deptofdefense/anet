@@ -41,6 +41,20 @@ public class SqliteOrganizationSearcher implements IOrganizationSearcher {
 			sqlArgs.put("type", DaoUtils.getEnumId(query.getType()));
 		}
 		
+		if (query.getParentOrgId() != null) { 
+			if (query.isParentOrgRecursively()) { 
+				whereClauses.add("organizations.parentOrgId IN ("
+					+ "WITH RECURSIVE parent_orgs(id) AS ( "
+						+ "SELECT id FROM organizations WHERE id = :parentOrgId "
+					+ "UNION ALL "
+						+ "SELECT o.id from parent_orgs po, organizations o WHERE o.parentOrgId = po.id "
+					+ ") SELECT id from parent_orgs)");
+			} else { 
+				whereClauses.add("organizations.parentOrgId = :parentOrgId");
+			}
+			sqlArgs.put("parentOrgId", query.getParentOrgId());
+		}
+		
 		if (whereClauses.size() == 0) { return result; }
 		
 		sql.append(Joiner.on(" AND ").join(whereClauses));

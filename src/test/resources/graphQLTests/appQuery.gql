@@ -9,7 +9,9 @@ person(f:me) {
 adminSettings(f:getAll) {
     key, value
 }
-organizations(f:getTopLevelOrgs, type: ADVISOR_ORG) {
-    id, shortName, longName
-    parentOrg { id }
+organizationList(f:getTopLevelOrgs, type: ADVISOR_ORG) {
+	list { 
+	    id, shortName, longName
+	    parentOrg { id }
+	}
 }

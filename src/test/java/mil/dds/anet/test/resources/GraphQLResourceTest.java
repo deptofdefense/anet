@@ -55,6 +55,7 @@ public class GraphQLResourceTest extends AbstractResourceTest{
 					}
 					query.put("query", "query { " + raw + "}");
 					query.put("variables", ImmutableMap.of());
+					System.out.println(f.getName());
 					
 					Map<String,Object> resp = httpQuery("/graphql", arthur).post(Entity.json(query), new GenericType<Map<String,Object>>() {});
 					assertThat(resp).isNotNull();

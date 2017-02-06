@@ -14,6 +14,8 @@ import io.dropwizard.client.JerseyClientBuilder;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
+import mil.dds.anet.beans.lists.AbstractAnetBeanList.OrganizationList;
+import mil.dds.anet.beans.lists.AbstractAnetBeanList.PoamList;
 import mil.dds.anet.beans.search.PoamSearchQuery;
 
 public class PoamResourceTest extends AbstractResourceTest {
@@ -54,11 +56,11 @@ public class PoamResourceTest extends AbstractResourceTest {
 		returned = httpQuery("/api/poams/" + b.getId(), admin).get(Poam.class);
 		assertThat(returned).isEqualTo(b);		
 		
-		List<Poam> children = httpQuery("/api/poams/" + a.getId() + "/children", jack).get(new GenericType<List<Poam>>() {});
+		List<Poam> children = httpQuery("/api/poams/" + a.getId() + "/children", jack).get(PoamList.class).getList();
 		assertThat(children).contains(b, c, d);
 		assertThat(children).doesNotContain(e);
 		
-		List<Poam> tree = httpQuery("/api/poams/tree", jack).get(new GenericType<List<Poam>>() {});
+		List<Poam> tree = httpQuery("/api/poams/tree", jack).get(PoamList.class).getList();
 		assertThat(tree).contains(a, e);
 		assertThat(tree).doesNotContain(b);
 		for (Poam p : tree) { 
@@ -75,7 +77,7 @@ public class PoamResourceTest extends AbstractResourceTest {
 		assertThat(returned.getLongName()).isEqualTo(a.getLongName());
 
 		//Assign the POAMs to the AO
-		List<Organization> orgs = httpQuery("/api/organizations/search?text=EF8", jack).get(new GenericType<List<Organization>>() {});
+		List<Organization> orgs = httpQuery("/api/organizations/search?text=EF8", jack).get(OrganizationList.class).getList();
 		Organization ef8 = orgs.stream().filter(o -> o.getShortName().equals("EF8")).findFirst().get();
 		assertThat(ef8).isNotNull();
 		
@@ -86,7 +88,7 @@ public class PoamResourceTest extends AbstractResourceTest {
 		assertThat(returned.getResponsibleOrg().getId()).isEqualTo(ef8.getId());
 		
 		//Fetch the poams off the organization
-		List<Poam> poams = httpQuery("/api/organizations/" + ef8.getId() + "/poams", jack).get(new GenericType<List<Poam>>() {});
+		List<Poam> poams = httpQuery("/api/organizations/" + ef8.getId() + "/poams", jack).get(PoamList.class).getList();
 		assertThat(poams).contains(a);
 		
 		//Search for the poam: 
@@ -101,7 +103,7 @@ public class PoamResourceTest extends AbstractResourceTest {
 		
 		PoamSearchQuery query = new PoamSearchQuery();
 		query.setText("Budget");
-		List<Poam> searchResults = httpQuery("/api/poams/search", jack).post(Entity.json(query), new GenericType<List<Poam>>() {});
+		List<Poam> searchResults = httpQuery("/api/poams/search", jack).post(Entity.json(query), PoamList.class).getList();
 		assertThat(searchResults).isNotEmpty();
 		assertThat(searchResults.stream()
 				.filter(p -> p.getLongName().toLowerCase().contains("budget"))
@@ -109,13 +111,13 @@ public class PoamResourceTest extends AbstractResourceTest {
 			.isEqualTo(searchResults.size());
 		
 		//Search for a poam by the organization
-		List<Organization> orgs = httpQuery("/api/organizations/search?text=EF2", jack).get(new GenericType<List<Organization>>() {});
-		Organization ef2 = orgs.stream().filter(o -> o.getShortName().equals("EF2")).findFirst().get();
+		OrganizationList orgs = httpQuery("/api/organizations/search?text=EF2", jack).get(OrganizationList.class);
+		Organization ef2 = orgs.getList().stream().filter(o -> o.getShortName().equals("EF2")).findFirst().get();
 		assertThat(ef2).isNotNull();
 		
 		query.setText(null);
 		query.setResponsibleOrgId(ef2.getId());
-		searchResults = httpQuery("/api/poams/search", jack).post(Entity.json(query), new GenericType<List<Poam>>() {});
+		searchResults = httpQuery("/api/poams/search", jack).post(Entity.json(query), PoamList.class).getList();
 		assertThat(searchResults).isNotEmpty();
 		assertThat(searchResults.stream()
 				.filter(p -> p.getResponsibleOrg().getId().equals(ef2.getId()))
@@ -126,7 +128,7 @@ public class PoamResourceTest extends AbstractResourceTest {
 		query.setResponsibleOrgId(null);
 		query.setText("expenses");
 		query.setCategory("Milestone");
-		searchResults = httpQuery("/api/poams/search", jack).post(Entity.json(query), new GenericType<List<Poam>>() {});
+		searchResults = httpQuery("/api/poams/search", jack).post(Entity.json(query), PoamList.class).getList();
 		assertThat(searchResults).isNotEmpty();
 	}
 }

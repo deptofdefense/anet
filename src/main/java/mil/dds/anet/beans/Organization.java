@@ -6,6 +6,7 @@ import java.util.Objects;
 import org.joda.time.DateTime;
 
 import mil.dds.anet.AnetObjectEngine;
+import mil.dds.anet.beans.search.OrganizationSearchQuery;
 import mil.dds.anet.graphql.GraphQLFetcher;
 import mil.dds.anet.graphql.GraphQLIgnore;
 import mil.dds.anet.graphql.GraphQLParam;
@@ -20,10 +21,12 @@ public class Organization extends AbstractAnetBean {
 	Organization parentOrg;
 	OrganizationType type;
 	
-	List<Position> positions; /*Positions in this AO, lazy loaded*/
-	List<ApprovalStep> approvalSteps; /*Approval process for this AO, lazy loaded */
-	List<Organization> childrenOrgs; /* Lazy loaded */
-	List<Poam> poams; /* Lazy Loaded */
+	/* The following are all Lazy Loaded */
+	List<Position> positions; /*Positions in this Org*/
+	List<ApprovalStep> approvalSteps; /*Approval process for this Org */
+	List<Organization> childrenOrgs; /* Immediate children */
+	List<Organization> descendants; /* All descendants (children of children..)*/
+	List<Poam> poams; 
 	
 	public String getShortName() {
 		return shortName;
@@ -108,9 +111,25 @@ public class Organization extends AbstractAnetBean {
 	@GraphQLFetcher("childrenOrgs")
 	public List<Organization> loadChildrenOrgs() { 
 		if (childrenOrgs == null) { 
-			childrenOrgs = AnetObjectEngine.getInstance().getOrganizationDao().getByParentOrgId(id);
+			OrganizationSearchQuery query = new OrganizationSearchQuery();
+			query.setPageSize(Integer.MAX_VALUE);
+			query.setParentOrgId(id);
+			query.setParentOrgRecursively(false);
+			childrenOrgs = AnetObjectEngine.getInstance().getOrganizationDao().search(query).getList();
 		}
 		return childrenOrgs;
+	}
+	
+	@GraphQLFetcher("allDescendantOrgs")
+	public List<Organization> loadAllDescendants() { 
+		if (descendants == null) { 
+			OrganizationSearchQuery query = new OrganizationSearchQuery();
+			query.setPageSize(Integer.MAX_VALUE);
+			query.setParentOrgId(id);
+			query.setParentOrgRecursively(true);
+			descendants = AnetObjectEngine.getInstance().getOrganizationDao().search(query).getList();
+		}
+		return descendants;
 	}
 	
 	@GraphQLFetcher("poams")
