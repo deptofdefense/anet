@@ -177,7 +177,6 @@ export default class PositionForm extends Component {
 	@autobind
 	onSubmit(event) {
 		let {position, edit} = this.props
-		let {organization} = position
 
 		if (position.type !== "PRINCIPAL") {
 			position.type = position.permissions || "ADVISOR"

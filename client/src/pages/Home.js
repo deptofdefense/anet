@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
-import {Grid, Row, Col, FormControl, FormGroup, ControlLabel} from 'react-bootstrap'
+import {Grid, Row, FormControl, FormGroup, ControlLabel} from 'react-bootstrap'
 import SavedSearchTable from 'components/SavedSearchTable'
 import {Link} from 'react-router'
 import moment from 'moment'

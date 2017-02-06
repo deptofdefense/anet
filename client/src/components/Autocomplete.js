@@ -5,7 +5,6 @@ import autobind from 'autobind-decorator'
 
 import API from 'api'
 import utils from 'utils'
-import * as changeCase from 'change-case'
 
 import './Autocomplete.css'
 
