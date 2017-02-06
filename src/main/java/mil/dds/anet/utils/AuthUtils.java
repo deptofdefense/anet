@@ -1,9 +1,13 @@
 package mil.dds.anet.utils;
 
+import java.util.Optional;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
 
+import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Organization;
+import mil.dds.anet.beans.Organization.OrganizationType;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Position.PositionType;
@@ -20,18 +24,25 @@ public class AuthUtils {
 		throw new WebApplicationException(UNAUTH_MESSAGE, Status.UNAUTHORIZED);
 	}
 	
-	public static boolean isSuperUserForOrg(Person user, Organization org) { 
+	public static boolean isSuperUserForOrg(final Person user, final Organization org) { 
 		Position position = user.loadPosition();
-		if (position != null && 
-				position.getType() == PositionType.SUPER_USER &&
-				position.getOrganization() != null && 
-				position.getOrganization().getId().equals(org.getId())) { 
-			return true;
-		} else if (position != null && 
-				position.getType() == PositionType.ADMINISTRATOR) { 
-			return true;
-		}
-		return false;
+		if (position == null) { return false; } 
+		if (position.getType() == PositionType.ADMINISTRATOR) { return true; }
+		if (position.getType() != PositionType.SUPER_USER) { return false; } 
+
+		Organization loadedOrg = AnetObjectEngine.getInstance().getOrganizationDao().getById(org.getId());
+		if (loadedOrg.getType() == OrganizationType.PRINCIPAL_ORG) { return true; }
+		
+		if (position.getOrganization() == null) { return false; }
+		if (org.getId().equals(position.getOrganization().getId())) { return true; }
+		
+		//As a last check, load the descendant orgs. 
+		Optional<Organization> orgMatch =  position.loadOrganization()
+				.loadAllDescendants()
+				.stream()
+				.filter(o -> o.getId().equals(org.getId()))
+				.findFirst();
+		return orgMatch.isPresent();
 	}
 	
 	public static void assertSuperUserForOrg(Person user, Organization org) {

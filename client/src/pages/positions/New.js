@@ -17,12 +17,14 @@ export default class PositionNew extends Page {
 		super(props)
 
 		this.state = {
-			position:  new Position(),
+			position:  new Position( {type: "ADVISOR"}),
 		}
 	}
 
 	fetchData(props) {
 		if (props.location.query.organizationId) {
+			//If an organizationId was given in query parameters,
+			// then look that org up and pre-populate the field.
 			API.query(/* GraphQL */`
 				organization(id:${props.location.query.organizationId}) {
 					id, shortName, longName, type

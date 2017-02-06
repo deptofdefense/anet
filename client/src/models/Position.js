@@ -2,6 +2,7 @@ import Model from 'components/Model'
 
 export default class Position extends Model {
 	static resourceName = "Position"
+	static listName = "positionList"
 
 	static schema = {
 		name: '',

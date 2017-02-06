@@ -6,8 +6,13 @@ public class OrganizationSearchQuery implements ISearchQuery {
 
 	String text;
 	OrganizationType type;
+	
+	//Search for organizations with a specific parent Org. 
 	Integer parentOrgId;
-	boolean parentOrgRecursively;
+	//Include descedants recursively from the specified parent. 
+	//If true will include all orgs in the tree of the parentOrg
+	// Including the parent Org. 
+	Boolean parentOrgRecursively;
 	
 	int pageNum;
 	int pageSize;
@@ -38,11 +43,11 @@ public class OrganizationSearchQuery implements ISearchQuery {
 		this.parentOrgId = parentOrgId;
 	}
 
-	public boolean isParentOrgRecursively() {
+	public Boolean getParentOrgRecursively() {
 		return parentOrgRecursively;
 	}
 
-	public void setParentOrgRecursively(boolean parentOrgRecursively) {
+	public void setParentOrgRecursively(Boolean parentOrgRecursively) {
 		this.parentOrgRecursively = parentOrgRecursively;
 	}
 

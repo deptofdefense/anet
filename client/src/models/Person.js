@@ -2,6 +2,7 @@ import Model from 'components/Model'
 
 export default class Person extends Model {
 	static resourceName = "Person"
+	static listName = "personList"
 
 	static schema = {
 		name: '',
@@ -31,14 +32,24 @@ export default class Person extends Model {
 		)
 	}
 
+	//Checks if this user is a valid super user for a particular organization
+	//Must be either
+	// - An Administrator
+	// - A super user and this org is a PRINCIPAL_ORG
+	// - A super user for this organization
+	// - A super user for this orgs parents.
 	isSuperUserForOrg(org) {
 		if (!org) { return false }
 		if (this.position && this.position.type === "ADMINISTRATOR") { return true; }
+		if (this.position && this.position.type !== "SUPER_USER") { return false; }
+		if (org.type === "PRINCIPAL_ORG") { return true; }
 
-		return this.position && this.position.organization && (
-			this.position.type === 'SUPER_USER' &&
-			this.position.organization.id === org.id
-		)
+		if (!this.position || !this.position.organization) { return false; }
+		let orgs = this.position.organization.allDescendantOrgs || []
+		orgs.push(this.position.organization)
+		let orgIds = orgs.map(o => o.id)
+
+		return orgIds.includes(org.id)
 	}
 
 	iconUrl() {

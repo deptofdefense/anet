@@ -42,13 +42,13 @@ public class SqliteOrganizationSearcher implements IOrganizationSearcher {
 		}
 		
 		if (query.getParentOrgId() != null) { 
-			if (query.isParentOrgRecursively()) { 
-				whereClauses.add("organizations.parentOrgId IN ("
+			if (query.getParentOrgRecursively() != null && query.getParentOrgRecursively()) { 
+				whereClauses.add("(organizations.parentOrgId IN ("
 					+ "WITH RECURSIVE parent_orgs(id) AS ( "
 						+ "SELECT id FROM organizations WHERE id = :parentOrgId "
 					+ "UNION ALL "
 						+ "SELECT o.id from parent_orgs po, organizations o WHERE o.parentOrgId = po.id "
-					+ ") SELECT id from parent_orgs)");
+					+ ") SELECT id from parent_orgs) OR organization.id = :parentOrgId)");
 			} else { 
 				whereClauses.add("organizations.parentOrgId = :parentOrgId");
 			}

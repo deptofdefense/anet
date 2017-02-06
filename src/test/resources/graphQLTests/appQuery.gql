@@ -2,7 +2,7 @@ person(f:me) {
     id, name, role
     position {
         id, name, type,
-        organization { id, shortName, longName }
+		organization { id, shortName, longName, allDescendantOrgs { id }}
     }
 }
 
@@ -12,6 +12,7 @@ adminSettings(f:getAll) {
 organizationList(f:getTopLevelOrgs, type: ADVISOR_ORG) {
 	list { 
 	    id, shortName, longName
-	    parentOrg { id }
+	    parentOrg { id } 
+
 	}
 }

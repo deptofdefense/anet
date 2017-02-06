@@ -8,7 +8,7 @@ import Autocomplete from 'components/Autocomplete'
 import History from 'components/History'
 
 import API from 'api'
-import {Position} from 'models'
+import {Position, Organization} from 'models'
 
 export default class PositionForm extends Component {
 	static propTypes = {
@@ -17,14 +17,31 @@ export default class PositionForm extends Component {
 		error: PropTypes.object,
 		success: PropTypes.object,
 	}
+	static contextTypes = {
+		app: PropTypes.object
+	}
 
 	render() {
 		let {position, error, success} = this.props
 
 		let relationshipPositionType = position.type === "PRINCIPAL" ? "ADVISOR" : "PRINCIPAL"
+		let currentUser = this.context.app.state.currentUser
 
-		//TODO: only allow you to set positon to admin if you are an admin.
-		console.log(position)
+		let orgSearchQuery = {}
+		if (position.type === "ADVISOR") {
+			orgSearchQuery.type = "ADVISOR_ORG"
+			if (currentUser && currentUser.position && currentUser.position.type === "SUPER_USER") {
+				orgSearchQuery.parentOrgId = currentUser.position.organization.id
+				orgSearchQuery.parentOrgRecursively = true
+			}
+		} else if (position.type === "PRINCIPAL") {
+			orgSearchQuery.type = "PRINCIPAL_ORG"
+		}
+
+		if (!position.permissions) {
+			position.permissions = position.type
+		}
+
 		return (
 			<Form
 				formFor={position}
@@ -39,28 +56,21 @@ export default class PositionForm extends Component {
 				<fieldset>
 					<legend>Create a new Position</legend>
 
-					<Form.Field id="organization" value={position.organization}>
-						<Autocomplete valueKey="shortName"
-							placeholder="Select the organization for this position"
-							url="/api/organizations/search"
-						/>
+					<Form.Field id="type" componentClass="select" disabled={this.props.edit} >
+						<option value="ADVISOR">Advisor (CE Billet)</option>
+						<option value="PRINCIPAL">Principal (Tashkil)</option>
 					</Form.Field>
 
-					{position.organization && position.organization.type === "PRINCIPAL_ORG" &&
-						<Form.Field id="type" type="static" value="PRINCIPAL">Afghan Principal</Form.Field>
-					}
-
-					{position.organization && position.organization.type === "ADVISOR_ORG" &&
-						<Form.Field id="type" componentClass="select">
-							<option value="ADVISOR">Advisor</option>
-							<option value="SUPER_USER">Super User</option>
-							<option value="ADMINISTRATOR">Administrator</option>
-						</Form.Field>
-					}
-
-					{!position.organization.id  &&
-						<Form.Field id="type" type="static" value=""><i>Select an Organization to view position types</i></Form.Field>
-					}
+					<Form.Field id="organization" >
+						<Autocomplete
+							placeholder="Select the organization for this position"
+							objectType={Organization}
+							fields="id, longName, shortName"
+							template={org => <span>{org.shortName} - {org.longName}</span>}
+							queryParams={orgSearchQuery}
+							valueKey="shortName"
+						/>
+					</Form.Field>
 
 					<Form.Field id="code" placeholder="Postion ID or Number" />
 					<Form.Field id="name" label="Position Name" placeholder="Name/Description of Position"/>
@@ -72,6 +82,17 @@ export default class PositionForm extends Component {
 							queryParams={position.type ? {role: position.type} : {}}
 						/>
 					</Form.Field>
+
+					{position.type !== "PRINCIPAL" &&
+						<Form.Field id="permissions" componentClass="select">
+							<option value="ADVISOR">Advisor</option>
+							<option value="SUPER_USER">Super User</option>
+							{currentUser && currentUser.isAdmin() &&
+								<option value="ADMINISTRATOR">Administrator</option>
+							}
+						</Form.Field>
+					}
+
 				</fieldset>
 
 				<fieldset>
@@ -158,16 +179,10 @@ export default class PositionForm extends Component {
 		let {position, edit} = this.props
 		let {organization} = position
 
-		if (organization) {
-			if (organization.type === "ADVISOR_ORG") {
-				if (!position.type || position.type === "PRINCIPAL")
-					position.type = "ADVISOR"
-			} else if(organization.type === "PRINCIPAL_ORG") {
-				position.type = "PRINCIPAL"
-			}
-
-			position.organization = {id: organization.id}
+		if (position.type !== "PRINCIPAL") {
+			position.type = position.permissions || "ADVISOR"
 		}
+		delete position.permissions
 
 		let url = `/api/positions/${edit ? 'update' : 'new'}`
 		API.send(url, position, {disableSubmits: true})

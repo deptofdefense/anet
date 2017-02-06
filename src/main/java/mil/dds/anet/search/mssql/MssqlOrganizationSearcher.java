@@ -46,13 +46,14 @@ public class MssqlOrganizationSearcher implements IOrganizationSearcher {
 		}
 		
 		if (query.getParentOrgId() != null) { 
-			if (query.isParentOrgRecursively()) { 
+			if (query.getParentOrgRecursively() != null && query.getParentOrgRecursively()) { 
 				commonTableExpression = "WITH parent_orgs(id) AS ( "
 						+ "SELECT id FROM organizations WHERE id = :parentOrgId "
 					+ "UNION ALL "
 						+ "SELECT o.id from parent_orgs po, organizations o WHERE o.parentOrgId = po.id "
 					+ ") ";
-				whereClauses.add("organizations.parentOrgId IN (SELECT id from parent_orgs)");
+				whereClauses.add("( organizations.parentOrgId IN (SELECT id from parent_orgs) "
+					+ "OR organizations.id = :parentOrgId)");
 			} else { 
 				whereClauses.add("organizations.parentOrgId = :parentOrgId");
 			}

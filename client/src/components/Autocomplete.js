@@ -113,9 +113,9 @@ export default class Autocomplete extends Component {
 			})
 		} else {
 			let resourceName = this.props.objectType.resourceName
-			let resource = changeCase.camel(resourceName) + "s";
-			let graphQlQuery = resource + "(f:search, query: $query) { "
-					+ this.props.fields
+			let listName = this.props.objectType.listName
+			let graphQlQuery = listName + "(f:search, query: $query) { "
+					+ "list { " + this.props.fields + "}"
 					+ "}";
 			let variableDef = "($query: " + resourceName + "SearchQuery)";
 			let queryVars = { text: value.value }
@@ -125,8 +125,8 @@ export default class Autocomplete extends Component {
 
 			API.query(graphQlQuery, { query: queryVars}, variableDef)
 				.then(data => {
-					let noSuggestions = data[resource].list.length === 0
-					this.setState({suggestions: data[resource].list, noSuggestions})
+					let noSuggestions = data[listName].list.length === 0
+					this.setState({suggestions: data[listName].list, noSuggestions})
 				})
 		}
 	}

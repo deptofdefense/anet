@@ -60,6 +60,8 @@ INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biograp
 	VALUES ('Jacob Jacobson', 0, 0, 'hunter+jacob@dds.mil', '+2-456-7324', 'Civ', 'Jacob is a Super User in EF2.2', 'jacob', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, createdAt, updatedAt)
 	VALUES ('Rebecca Beccabon', 0, 0, 'hunter+rebecca@dds.mil', '+2-456-7324', 'CTR', 'Rebecca is a Super User in EF2.2', 'rebecca', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, createdAt, updatedAt)
+	VALUES ('Andrew Anderson', 0, 1, 'hunter+andrew@dds.mil', '+1-412-7324', 'CIV', 'Andrew is the EF1 Manager', 'andrew', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 -- Administrator
 INSERT INTO people (name, status, role, emailAddress, domainUsername, createdAt, updatedAt)
 	VALUES ('Arthur Dmin', '0', '0', 'hunter+arthur@dds.mil', 'arthur', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
@@ -68,13 +70,12 @@ INSERT INTO people (name, status, role, emailAddress, domainUsername, createdAt,
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt)
 	VALUES ('Hunter Huntman', 0, 1, 'hunter+hunter@dds.mil', '+1-412-9314', 'CIV', '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, createdAt, updatedAt)
-	VALUES ('Andrew Anderson', 0, 1, 'hunter+andrew@dds.mil', '+1-412-7324', 'CIV', '', 'andrew', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, createdAt, updatedAt)
 	VALUES ('Nick Nicholson', 0, 0, 'hunter+nick@dds.mil', '+1-202-7324', 'CIV', '', 'nick', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt)
 	VALUES ('Shardul Sharton', 0, 1, 'hunter+shardul@dds.mil', '+99-9999-9999', 'CIV', '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('ANET Administrator', 3, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF1 Manager', 2, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF1.1 Advisor A', 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF1.1 SuperUser', 2, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF2.1 Advisor B', 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
@@ -86,6 +87,11 @@ INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES
 INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF4.1 Advisor E', 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF9 Advisor <empty>', 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
+
+-- Put Andrew in the EF1 Manager Billet
+INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES
+	((SELECT id from positions where name = 'EF1 Manager'), (SELECT id from people where emailAddress = 'hunter+andrew@dds.mil'), CURRENT_TIMESTAMP);
+UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'hunter+andrew@dds.mil') WHERE name = 'EF1 Manager';
 
 -- Put Bob into the Super User Billet in EF1
 INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES
@@ -160,6 +166,7 @@ INSERT INTO organizations(shortName, longName, type, createdAt, updatedAt) VALUE
 INSERT INTO organizations(shortName, longName, type, createdAt, updatedAt) VALUES ('TAAC-C', '', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO organizations(shortName, longName, type, createdAt, updatedAt) VALUES ('TAAC Air', '', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
+UPDATE positions SET organizationId = (SELECT id FROM organizations WHERE shortName ='EF1') WHERE name LIKE 'EF1 %';
 UPDATE positions SET organizationId = (SELECT id FROM organizations WHERE shortName ='EF1.1') WHERE name LIKE 'EF1.1%';
 UPDATE positions SET organizationId = (SELECT id FROM organizations WHERE shortName ='EF2.1') WHERE name LIKE 'EF2.1%';
 UPDATE positions SET organizationId = (SELECT id FROM organizations WHERE shortName ='EF2.2') WHERE name LIKE 'EF2.2%';
