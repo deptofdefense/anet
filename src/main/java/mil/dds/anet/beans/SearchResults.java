@@ -1,54 +1,56 @@
 package mil.dds.anet.beans;
 
-import java.util.List;
-
-import mil.dds.anet.beans.geo.Location;
+import mil.dds.anet.beans.lists.AbstractAnetBeanList.LocationList;
+import mil.dds.anet.beans.lists.AbstractAnetBeanList.OrganizationList;
+import mil.dds.anet.beans.lists.AbstractAnetBeanList.PersonList;
+import mil.dds.anet.beans.lists.AbstractAnetBeanList.PoamList;
+import mil.dds.anet.beans.lists.AbstractAnetBeanList.PositionList;
+import mil.dds.anet.beans.lists.AbstractAnetBeanList.ReportList;
 import mil.dds.anet.graphql.IGraphQLBean;
 
 public class SearchResults implements IGraphQLBean {
 
-	List<Person> people;
-	List<Report> reports;
-	List<Position> positions;
-	List<Poam> poams; 
-	List<Location> locations;
-	List<Organization> organizations;
+	PersonList people;
+	ReportList reports;
+	PositionList positions;
+	PoamList poams; 
+	LocationList locations;
+	OrganizationList organizations;
 	
-	
-	public List<Person> getPeople() {
+	public PersonList getPeople() {
 		return people;
 	}
-	public void setPeople(List<Person> people) {
+	public void setPeople(PersonList people) {
 		this.people = people;
 	}
-	public List<Report> getReports() {
+	public ReportList getReports() {
 		return reports;
 	}
-	public void setReports(List<Report> reports) {
+	public void setReports(ReportList reports) {
 		this.reports = reports;
 	}
-	public List<Position> getPositions() {
+	public PositionList getPositions() {
 		return positions;
 	}
-	public void setPositions(List<Position> positions) {
+	public void setPositions(PositionList positions) {
 		this.positions = positions;
 	}
-	public List<Poam> getPoams() {
+	public PoamList getPoams() {
 		return poams;
 	}
-	public void setPoams(List<Poam> poams) {
+	public void setPoams(PoamList poams) {
 		this.poams = poams;
 	}
-	public List<Location> getLocations() {
+	public LocationList getLocations() {
 		return locations;
 	}
-	public void setLocations(List<Location> locations) {
+	public void setLocations(LocationList locations) {
 		this.locations = locations;
 	}
-	public List<Organization> getOrganizations() {
+	public OrganizationList getOrganizations() {
 		return organizations;
 	}
-	public void setOrganizations(List<Organization> organizations) {
+	public void setOrganizations(OrganizationList organizations) {
 		this.organizations = organizations;
 	}
 }

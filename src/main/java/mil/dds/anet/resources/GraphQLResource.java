@@ -23,6 +23,7 @@ import graphql.GraphQL;
 import graphql.schema.GraphQLFieldDefinition;
 import graphql.schema.GraphQLList;
 import graphql.schema.GraphQLObjectType;
+import graphql.schema.GraphQLOutputType;
 import graphql.schema.GraphQLSchema;
 import io.dropwizard.auth.Auth;
 import mil.dds.anet.beans.ApprovalAction;
@@ -78,10 +79,20 @@ public class GraphQLResource {
 			
 			
 			AnetResourceDataFetcher listFetcher = new AnetResourceDataFetcher(resource, true);
-			if (listFetcher.validArguments().size() > 0) { 
+			if (listFetcher.validArguments().size() > 0) {
+				Class<?> listClass = resource.getBeanListClass();
+				GraphQLOutputType listType;
+				String listName;
+				if (List.class.isAssignableFrom(listClass)) { 
+					listName = name + "s";
+					listType = new GraphQLList(objectType);
+				} else {
+					listName = GraphQLUtils.lowerCaseFirstLetter(listClass.getSimpleName());
+					listType = buildTypeFromBean(listName, (Class<? extends IGraphQLBean>) resource.getBeanListClass());
+				}
 				GraphQLFieldDefinition listField = GraphQLFieldDefinition.newFieldDefinition()
-					.type(new GraphQLList(objectType))
-					.name(name + "s")
+					.type(listType)
+					.name(listName)
 					.argument(listFetcher.validArguments())
 					.dataFetcher(listFetcher)
 					.build();
@@ -108,7 +119,6 @@ public class GraphQLResource {
 				.build());
 		
 		GraphQLObjectType queryType = queryTypeBuilder.build();
-		
 		GraphQLSchema schmea = GraphQLSchema.newSchema()
 			.query(queryType)
 			.build();

@@ -50,4 +50,6 @@ public class SavedSearchResource implements IGraphQLResource  {
 	public Class<? extends IGraphQLBean> getBeanClass() {
 		return SavedSearch.class;
 	}
+	@SuppressWarnings("rawtypes")
+	public Class<List> getBeanListClass() { return List.class; } 
 }

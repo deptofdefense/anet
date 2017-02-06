@@ -22,6 +22,11 @@ public class LocationMapper implements ResultSetMapper<Location> {
 		l.setCreatedAt(new DateTime(r.getTimestamp("createdAt")));
 		l.setUpdatedAt(new DateTime(r.getTimestamp("updatedAt")));
 		l.setLoadLevel(LoadLevel.PROPERTIES);
+		
+		if (MapperUtils.containsColumnNamed(r, "totalCount")) { 
+			ctx.setAttribute("totalCount", r.getInt("totalCount"));
+		}
+		
 		return l;
 	}
 

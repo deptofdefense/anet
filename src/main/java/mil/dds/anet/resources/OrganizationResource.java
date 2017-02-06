@@ -27,6 +27,7 @@ import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Organization.OrganizationType;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
+import mil.dds.anet.beans.lists.AbstractAnetBeanList.OrganizationList;
 import mil.dds.anet.beans.search.OrganizationSearchQuery;
 import mil.dds.anet.database.OrganizationDao;
 import mil.dds.anet.graphql.GraphQLFetcher;
@@ -53,6 +54,7 @@ public class OrganizationResource implements IGraphQLResource {
 	
 	@Override
 	public Class<Organization> getBeanClass() { return Organization.class; }
+	public Class<OrganizationList> getBeanListClass() { return OrganizationList.class; } 
 	
 	@Override
 	public String getDescription() { return "Organizations"; } 
@@ -61,16 +63,16 @@ public class OrganizationResource implements IGraphQLResource {
 	@Timed
 	@GraphQLFetcher
 	@Path("/")
-	public List<Organization> getAllOrgs(@DefaultValue("0") @QueryParam("pageNum") Integer pageNum, @DefaultValue("100") @QueryParam("pageSize") Integer pageSize) {
-		return dao.getAll(pageNum, pageSize);
+	public OrganizationList getAll(@DefaultValue("0") @QueryParam("pageNum") Integer pageNum, @DefaultValue("100") @QueryParam("pageSize") Integer pageSize) {
+		return new OrganizationList(pageNum, pageSize, dao.getAll(pageNum, pageSize));
 	} 
 
 	@GET
 	@Timed
 	@GraphQLFetcher
 	@Path("/topLevel")
-	public List<Organization> getTopLevelOrgs(@QueryParam("type") OrganizationType type) { 
-		return dao.getTopLevelOrgs(type);
+	public OrganizationList getTopLevelOrgs(@QueryParam("type") OrganizationType type) { 
+		return new OrganizationList(dao.getTopLevelOrgs(type));
 	}
 	
 	@POST
@@ -153,20 +155,18 @@ public class OrganizationResource implements IGraphQLResource {
 		return (numRows == 1) ? Response.ok().build() : Response.status(Status.NOT_FOUND).build();
 	}
 	
-
-	
 	@POST
 	@Timed
 	@GraphQLFetcher
 	@Path("/search")
-	public List<Organization> search(@GraphQLParam("query") OrganizationSearchQuery query ) {
+	public OrganizationList search(@GraphQLParam("query") OrganizationSearchQuery query ) {
 		return dao.search(query);
 	}
 	
 	@GET
 	@Timed
 	@Path("/search")
-	public List<Organization> search(@Context HttpServletRequest request) {
+	public OrganizationList search(@Context HttpServletRequest request) {
 		try { 
 			return search(ResponseUtils.convertParamsToBean(request, OrganizationSearchQuery.class));
 		} catch (IllegalArgumentException e) { 
@@ -177,8 +177,8 @@ public class OrganizationResource implements IGraphQLResource {
 	@GET
 	@Timed
 	@Path("/{id}/children")
-	public List<Organization> getChildren(@PathParam("id") Integer id) { 
-		return dao.getByParentOrgId(id, null);
+	public OrganizationList getChildren(@PathParam("id") Integer id) { 
+		return new OrganizationList(dao.getByParentOrgId(id, null));
 	}
 	
 	@GET

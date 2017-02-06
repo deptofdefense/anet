@@ -9,10 +9,9 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.skife.jdbi.v2.Handle;
 
-import com.google.common.collect.ImmutableList;
-
 import jersey.repackaged.com.google.common.base.Joiner;
 import mil.dds.anet.beans.Report;
+import mil.dds.anet.beans.lists.AbstractAnetBeanList.ReportList;
 import mil.dds.anet.beans.search.ReportSearchQuery;
 import mil.dds.anet.database.PersonDao;
 import mil.dds.anet.database.ReportDao;
@@ -21,7 +20,7 @@ import mil.dds.anet.search.IReportSearcher;
 
 public class SqliteReportSearcher implements IReportSearcher {
 
-	public List<Report> runSearch(ReportSearchQuery query, Handle dbHandle) { 
+	public ReportList runSearch(ReportSearchQuery query, Handle dbHandle) { 
 		StringBuffer sql = new StringBuffer();
 		sql.append("SELECT " + ReportDao.REPORT_FIELDS + "," + PersonDao.PERSON_FIELDS);
 		sql.append(" FROM reports, people WHERE reports.authorId = people.id ");
@@ -117,7 +116,7 @@ public class SqliteReportSearcher implements IReportSearcher {
 			args.put("approverId", query.getPendingApprovalOf());
 		}
 		
-		if (whereClauses.size() == 0) { return ImmutableList.of(); }
+		if (whereClauses.size() == 0) { return new ReportList(); }
 		
 		sql.append(" WHERE ");
 		sql.append(Joiner.on(" AND ").join(whereClauses));
@@ -127,12 +126,17 @@ public class SqliteReportSearcher implements IReportSearcher {
 			sql.insert(0, commonTableExpression);
 		}
 		
-		return dbHandle.createQuery(sql.toString())
+		List<Report> list =  dbHandle.createQuery(sql.toString())
 				.bindFromMap(args)
 				.bind("offset", query.getPageSize() * query.getPageNum())
 				.bind("limit", query.getPageSize())
 				.map(new ReportMapper())
 				.list();
+		ReportList rList = new ReportList();
+		rList.setList(list);
+		rList.setPageSize(query.getPageSize());
+		rList.setPageNum(query.getPageNum());
+		return rList;
 	}
 	
 	

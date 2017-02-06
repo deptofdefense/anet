@@ -17,13 +17,16 @@ import mil.dds.anet.views.AbstractAnetBean.LoadLevel;
 public class PersonMapper implements ResultSetMapper<Person> {
 
 	@Override
-	public Person map(int index, ResultSet r, StatementContext ctx) throws SQLException {
-		Person p = fillInFields(new Person(), r);
+	public Person map(int index, ResultSet rs, StatementContext ctx) throws SQLException {
+		Person p = fillInFields(new Person(), rs);
 		
-		if (MapperUtils.containsColumnNamed(r, "positions_id")) { 
-			p.setPosition(PositionMapper.fillInFields(new Position(), r));
+		if (MapperUtils.containsColumnNamed(rs, "positions_id")) { 
+			p.setPosition(PositionMapper.fillInFields(new Position(), rs));
 		}
 		
+		if (MapperUtils.containsColumnNamed(rs, "totalCount")) { 
+			ctx.setAttribute("totalCount", rs.getInt("totalCount"));
+		}
 		return p;
 	}
 	

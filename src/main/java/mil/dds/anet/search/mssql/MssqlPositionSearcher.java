@@ -6,12 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.skife.jdbi.v2.Handle;
-
-import com.google.common.collect.ImmutableList;
+import org.skife.jdbi.v2.Query;
 
 import jersey.repackaged.com.google.common.base.Joiner;
 import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Position.PositionType;
+import mil.dds.anet.beans.lists.AbstractAnetBeanList.PositionList;
 import mil.dds.anet.beans.search.PositionSearchQuery;
 import mil.dds.anet.database.PositionDao;
 import mil.dds.anet.database.mappers.PositionMapper;
@@ -21,7 +21,7 @@ import mil.dds.anet.utils.DaoUtils;
 public class MssqlPositionSearcher implements IPositionSearcher {
 	
 	@Override
-	public List<Position> runSearch(PositionSearchQuery query, Handle dbHandle) {
+	public PositionList runSearch(PositionSearchQuery query, Handle dbHandle) {
 		StringBuilder sql = new StringBuilder("SELECT " + PositionDao.POSITIONS_FIELDS 
 				+ " FROM positions WHERE positions.id IN (SELECT positions.id FROM positions ");
 		Map<String,Object> sqlArgs = new HashMap<String,Object>();
@@ -33,6 +33,9 @@ public class MssqlPositionSearcher implements IPositionSearcher {
 		
 		sql.append(" WHERE ");
 		List<String> whereClauses = new LinkedList<String>();
+		PositionList result = new PositionList();
+		result.setPageNum(query.getPageNum());
+		result.setPageSize(query.getPageSize());
 		
 		String text = query.getText();
 		if (text != null && text.trim().length() > 0) {
@@ -84,7 +87,7 @@ public class MssqlPositionSearcher implements IPositionSearcher {
 			sqlArgs.put("locationId", query.getLocationId());
 		}
 		
-		if (whereClauses.size() == 0) { return ImmutableList.of(); }
+		if (whereClauses.size() == 0) { return result; }
 		
 		sql.append(Joiner.on(" AND ").join(whereClauses));
 		
@@ -94,12 +97,18 @@ public class MssqlPositionSearcher implements IPositionSearcher {
 			sql.insert(0, commonTableExpression);
 		}
 		
-		return dbHandle.createQuery(sql.toString())
+		Query<Position> sqlQuery= dbHandle.createQuery(sql.toString())
 			.bindFromMap(sqlArgs)
 			.bind("offset", query.getPageSize() * query.getPageNum())
 			.bind("limit", query.getPageSize())
-			.map(new PositionMapper())
-			.list();
+			.map(new PositionMapper());
+		result.setList(sqlQuery.list());
+		if (result.getList().size() >  0) { 
+			result.setTotalCount((Integer) sqlQuery.getContext().getAttribute("totalCount"));
+		} else { 
+			result.setTotalCount(0);
+		}
+		return result;
 	}
 	
 }

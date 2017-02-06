@@ -67,27 +67,29 @@ export default class RollupShow extends Page {
 	fetchData(props) {
 		// TODO: this is a hack to make sure we get some data, I am not using the
 		API.query(/* GraphQL */`
-			reports(f:releasedToday) {
-				id, state, intent, engagementDate, intent, keyOutcomes, nextSteps
-				author { id, name }
-				location { id, name, lat, lng}
-				poams { id, longName }
-				comments { id }
-				primaryAdvisor {
-					id, name, rank
-					position { organization { id, shortName, longName }}
-				}
-				primaryPrincipal {
-					id, name, rank
-					position { organization { id, shortName, longName }}
-				}
-				advisorOrg {
-					id, shortName
-					parentOrg { id, shortName }
+			reportList(f:releasedToday) {
+				pageNum, pageSize, totalCount, list {
+					id, state, intent, engagementDate, intent, keyOutcomes, nextSteps
+					author { id, name }
+					location { id, name, lat, lng}
+					poams { id, longName }
+					comments { id }
+					primaryAdvisor {
+						id, name, rank
+						position { organization { id, shortName, longName }}
+					}
+					primaryPrincipal {
+						id, name, rank
+						position { organization { id, shortName, longName }}
+					}
+					advisorOrg {
+						id, shortName
+						parentOrg { id, shortName }
+					}
 				}
 			}
 		`).then(data => {
-			this.setState({reports: Report.fromArray(data.reports)})
+			this.setState({reports: Report.fromArray(data.reportList.list)})
 		})
 	}
 

@@ -46,6 +46,7 @@ import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
+import mil.dds.anet.beans.lists.AbstractAnetBeanList.ReportList;
 import mil.dds.anet.beans.search.ReportSearchQuery;
 import mil.dds.anet.database.AdminDao.AdminSettingKeys;
 import mil.dds.anet.database.ReportDao;
@@ -78,13 +79,14 @@ public class ReportResource implements IGraphQLResource {
 
 	@Override
 	public Class<Report> getBeanClass() { return Report.class; }
+	public Class<ReportList> getBeanListClass() { return ReportList.class; } 
 
 	@GET
 	@Timed
 	@GraphQLFetcher
 	@Path("/")
-	public List<Report> getAll(@Auth Person p, @DefaultValue("0") @QueryParam("pageNum") Integer pageNum, @DefaultValue("100") @QueryParam("pageSize") Integer pageSize) {
-		return dao.getAll(pageNum, pageSize);
+	public ReportList getAll(@Auth Person p, @DefaultValue("0") @QueryParam("pageNum") Integer pageNum, @DefaultValue("100") @QueryParam("pageSize") Integer pageSize) {
+		return new ReportList(pageNum, pageSize, dao.getAll(pageNum, pageSize));
 	}
 
 	@GET
@@ -463,14 +465,16 @@ public class ReportResource implements IGraphQLResource {
 	@Timed
 	@GraphQLFetcher("pendingMyApproval")
 	@Path("/pendingMyApproval")
-	public List<Report> getReportsPendingMyApproval(@Auth Person approver) {
-		return dao.getReportsForMyApproval(approver);
+	public ReportList getReportsPendingMyApproval(@Auth Person approver) {
+		ReportSearchQuery query = new ReportSearchQuery();
+		query.setPendingApprovalOf(approver.getId());
+		return dao.search(query);
 	}
 
 	@GET
 	@Timed
 	@Path("/search")
-	public List<Report> search(@Context HttpServletRequest request) {
+	public ReportList search(@Context HttpServletRequest request) {
 		try {
 			return search(ResponseUtils.convertParamsToBean(request, ReportSearchQuery.class));
 		} catch (IllegalArgumentException e) {
@@ -482,16 +486,16 @@ public class ReportResource implements IGraphQLResource {
 	@Timed
 	@GraphQLFetcher
 	@Path("/search")
-	public List<Report> search(@GraphQLParam("query") ReportSearchQuery query) {
+	public ReportList search(@GraphQLParam("query") ReportSearchQuery query) {
 		return dao.search(query);
 	}
 	
 	@GraphQLFetcher("myOrgToday")
-	public List<Report> myOrgReportsToday(@Auth Person user) { 
+	public ReportList myOrgReportsToday(@Auth Person user) { 
 		Position pos = user.loadPosition();
-		if (pos == null) { return ImmutableList.of(); } 
+		if (pos == null) { return new ReportList(); } 
 		Organization org = pos.loadOrganization();
-		if (org == null) { return ImmutableList.of(); } 
+		if (org == null) { return new ReportList(); } 
 		
 		ReportSearchQuery query = new ReportSearchQuery();
 		query.setAuthorOrgId(org.getId());
@@ -501,7 +505,7 @@ public class ReportResource implements IGraphQLResource {
 	}
 	
 	@GraphQLFetcher("myReportsToday")
-	public List<Report> myReportsToday(@Auth Person user) { 
+	public ReportList myReportsToday(@Auth Person user) { 
 		ReportSearchQuery query = new ReportSearchQuery();
 		query.setAuthorId(user.getId());
 		query.setCreatedAtStart(DateTime.now().minusDays(1));
@@ -513,7 +517,7 @@ public class ReportResource implements IGraphQLResource {
 	@Timed
 	@GraphQLFetcher
 	@Path("/releasedToday")
-	public List<Report> releasedToday() {
-		return dao.getRecentReleased();
+	public ReportList releasedToday() {
+		return new ReportList(dao.getRecentReleased());
 	}
 }

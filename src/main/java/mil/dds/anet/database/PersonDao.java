@@ -17,6 +17,7 @@ import com.google.common.collect.Sets;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.lists.AbstractAnetBeanList.PersonList;
 import mil.dds.anet.beans.search.PersonSearchQuery;
 import mil.dds.anet.database.mappers.OrganizationMapper;
 import mil.dds.anet.database.mappers.PersonMapper;
@@ -108,10 +109,9 @@ public class PersonDao implements IAnetDao<Person> {
 			.execute();
 	}
 	
-	public List<Person> search(PersonSearchQuery query) {
+	public PersonList search(PersonSearchQuery query) {
 		return AnetObjectEngine.getInstance().getSearcher()
 				.getPersonSearcher().runSearch(query, dbHandle);
-		
 	}
 	
 	public Organization getOrganizationForPerson(int personId) {

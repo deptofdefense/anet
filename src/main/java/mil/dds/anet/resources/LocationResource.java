@@ -1,7 +1,5 @@
 package mil.dds.anet.resources;
 
-import java.util.List;
-
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
@@ -21,6 +19,7 @@ import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.geo.Location;
+import mil.dds.anet.beans.lists.AbstractAnetBeanList.LocationList;
 import mil.dds.anet.beans.search.LocationSearchQuery;
 import mil.dds.anet.database.LocationDao;
 import mil.dds.anet.graphql.GraphQLFetcher;
@@ -42,8 +41,8 @@ public class LocationResource implements IGraphQLResource {
 	@GET
 	@GraphQLFetcher
 	@Path("/")
-	public List<Location> getAll(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
-		return dao.getAll(pageNum, pageSize);
+	public LocationList getAll(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
+		return new LocationList(dao.getAll(pageNum, pageSize));
 	}
 	
 	@GET
@@ -57,13 +56,13 @@ public class LocationResource implements IGraphQLResource {
 	@POST
 	@GraphQLFetcher
 	@Path("/search")
-	public List<Location> search(@GraphQLParam("query") LocationSearchQuery query ) {
+	public LocationList search(@GraphQLParam("query") LocationSearchQuery query ) {
 		return dao.search(query);
 	}
 	
 	@GET
 	@Path("/search")
-	public List<Location> search(@Context HttpServletRequest request) {
+	public LocationList search(@Context HttpServletRequest request) {
 		try { 
 			return search(ResponseUtils.convertParamsToBean(request, LocationSearchQuery.class));
 		} catch (IllegalArgumentException e) { 
@@ -96,8 +95,8 @@ public class LocationResource implements IGraphQLResource {
 	@GET
 	@GraphQLFetcher
 	@Path("/recents")
-	public List<Location> recents(@Auth Person user) { 
-		return dao.getRecentLocations(user);
+	public LocationList recents(@Auth Person user) { 
+		return new LocationList(dao.getRecentLocations(user));
 	}
 	
 	@Override
@@ -105,5 +104,6 @@ public class LocationResource implements IGraphQLResource {
 
 	@Override
 	public Class<Location> getBeanClass() { return Location.class;}
+	public Class<LocationList> getBeanListClass() { return LocationList.class; } 
 	
 }

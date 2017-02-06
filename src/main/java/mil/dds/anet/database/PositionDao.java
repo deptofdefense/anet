@@ -15,6 +15,7 @@ import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.PersonPositionHistory;
 import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Position.PositionType;
+import mil.dds.anet.beans.lists.AbstractAnetBeanList.PositionList;
 import mil.dds.anet.beans.search.PositionSearchQuery;
 import mil.dds.anet.database.mappers.PersonMapper;
 import mil.dds.anet.database.mappers.PositionMapper;
@@ -305,7 +306,7 @@ public class PositionDao implements IAnetDao<Position> {
 			.list();
 	}
 	
-	public List<Position> search(PositionSearchQuery query) { 
+	public PositionList search(PositionSearchQuery query) { 
 		return AnetObjectEngine.getInstance().getSearcher()
 				.getPositionSearcher().runSearch(query, dbHandle);
 	}

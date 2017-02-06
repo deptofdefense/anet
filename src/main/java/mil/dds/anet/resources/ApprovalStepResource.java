@@ -42,7 +42,9 @@ public class ApprovalStepResource implements IGraphQLResource{
 	}
 	
 	@Override
-	public Class<ApprovalStep> getBeanClass() { return ApprovalStep.class; } 
+	public Class<ApprovalStep> getBeanClass() { return ApprovalStep.class; }
+	@SuppressWarnings("rawtypes")
+	public Class<List> getBeanListClass() { return List.class; } 
 	
 	@Override
 	public String getDescription() { return "Approval Steps"; } 

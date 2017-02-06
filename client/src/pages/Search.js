@@ -25,6 +25,46 @@ const QUERY_STRINGS = {
 	people: "People TODO",
 }
 
+const SEARCH_CONFIG = {
+	"reports" : {
+		listName : "reports: reportList",
+		variableType: "ReportSearchQuery",
+		fields : `id, intent, engagementDate, keyOutcomes, nextSteps,
+			author { id, name }
+			primaryAdvisor { id, name, role, position { organization { id, shortName}}},
+			primaryPrincipal { id, name, role, position { organization { id, shortName}}},
+			advisorOrg { id, shortName},
+			principalOrg { id, shortName},
+			location { id, name, lat, lng},
+			poams {id, shortName, longName}`
+	},
+	"persons" : {
+		listName : "people: peopleList",
+		variableType: "PersonSearchQuery",
+		fields: "id, name, rank, emailAddress, role , position { id, name, organization { id, shortName} }"
+	},
+	"positions" : {
+		listName: "positions: positionList",
+		variableType: "PositionSearchQuery",
+		fields: "id , name, type, organization { id, shortName}, person { id, name }"
+	},
+	"poams" : {
+		listName: "poams: poamList",
+		variableType: "PoamSearchQuery",
+		fields: "id, shortName, longName"
+	},
+	"locations" : {
+		listName: "locations: locationList",
+		variableType: "LocationSearchQuery",
+		fields : "id, name, lat, lng"
+	},
+	"organizations" : {
+		listName: "organizations: organizationList",
+		variableType: "OrganizationSearchQuery",
+		fields: "id, shortName, longName"
+	}
+};
+
 export default class Search extends Page {
 	constructor(props) {
 		super(props)
@@ -33,85 +73,52 @@ export default class Search extends Page {
 			query: props.location.query.q,
 			saveSearch: {show: false},
 			results: {
-				reports: [],
-				people: [],
-				organizations: [],
-				positions: [],
-				location: [],
-				poams: []
+				reports: null,
+				people: null,
+				organizations: null,
+				positions: null,
+				location: null,
+				poams: null
 			},
 			error: null,
 			success: null
 		}
 	}
 
+
 	fetchData(props) {
-		let reportFields = `id, intent, engagementDate, keyOutcomes, nextSteps,
-			author { id, name }
-			primaryAdvisor { id, name, role, position { organization { id, shortName}}},
-			primaryPrincipal { id, name, role, position { organization { id, shortName}}},
-			advisorOrg { id, shortName},
-			principalOrg { id, shortName},
-			location { id, name, lat, lng},
-			poams {id, shortName, longName}`
-
-		let peopleFields = "id, name, rank, emailAddress, role , position { id, name, organization { id, shortName} }";
-
-		let positionFields = "id , name, type, organization { id, shortName}, person { id, name }"
-		let poamFields = "id, shortName, longName"
-		let locationFields = "id, name, lat, lng"
-		let organizationFields = "id, shortName, longName"
-
-		let query = props.location.query.q
 		let type = props.location.query.type
-		let advQuery = null
-		if (!query && type) {
-			advQuery = Object.without(props.location.query, "type")
-			type = (type === "people") ? "persons" : type;
+		let text = props.location.query.text
 
-			let graphQl = type + '(f:search, query: $query) {'
-			let variableDef = "($query: ";
-			if (type === "reports" ) {
-				graphQl += reportFields
-				variableDef += "ReportSearchQuery)";
-			} else if (type === "persons") {
-				graphQl += peopleFields
-				variableDef += "PersonSearchQuery)";
-			} else if (type === "positions" ) {
-				graphQl += positionFields
-				variableDef += "PositionSearchQuery)";
-			} else if (type === "poams") {
-				graphQl += poamFields
-				variableDef += "PoamSearchQuery)";
-			} else if (type === "locations") {
-				graphQl += locationFields
-				variableDef += "LocationSearchQuery)";
-			} else if (type === "organizations") {
-				graphQl += organizationFields
-				variableDef += "OrganizationSearchQuery)";
-			}
-			graphQl += "}"
+		//Any query with a field other than 'text' and 'type' is an advanced query.
+		let advQuery = Object.without(props.location.query, "type", "text")
+		let isAdvQuery = Object.keys(advQuery).length;
+		advQuery.text = text;
 
-			API.query(graphQl, { query: advQuery}, variableDef ).then( data => {
-				if (type === "persons") {
-					data.people = data.persons
-					delete data.persons
-				}
+		if (isAdvQuery) {
+			let config = SEARCH_CONFIG[type];
+			API.query(/* GraphQL */
+					`${config.listName} (f:search, query:$query) {
+							pageNum, pageSize, totalCount, list { ${config.fields} }
+					}`,
+					{ query: advQuery},
+					`($query: ${config.variableType} )`
+				).then( data => {
 				this.setState({results: data})
 			}).catch(response =>
 				this.setState({error: response})
 			)
 		} else {
-			this.setState({query})
+			this.setState({text})
 			//TODO: escape query in the graphQL query
 			API.query(/* GraphQL */`
-				searchResults(f:search, q:"${query}") {
-					reports { ${reportFields} }
-					people { ${peopleFields} }
-					positions { ${positionFields} }
-					poams { ${poamFields} }
-					locations { id, name, lat, lng }
-					organizations { id, shortName, longName }
+				searchResults(f:search, q:"${text}") {
+					reports { totalCount, list { ${SEARCH_CONFIG.reports.fields}} }
+					people { totalCount, list { ${SEARCH_CONFIG.persons.fields}} }
+					positions { totalCount, list { ${SEARCH_CONFIG.positions.fields} }}
+					poams { totalCount, list { ${SEARCH_CONFIG.poams.fields} }}
+					locations { totalCount, list { ${SEARCH_CONFIG.locations.fields} }}
+					organizations { totalCount, list { ${SEARCH_CONFIG.organizations.fields} }}
 				}
 			`).then(data =>
 				this.setState({results: data.searchResults})
@@ -142,11 +149,11 @@ export default class Search extends Page {
 		let error = this.state.error
 		let success = this.state.success
 
-		let numResults = (results.reports ? results.reports.length : 0) +
-			(results.people ? results.people.length : 0) +
-			(results.positions ? results.positions.length : 0) +
-			(results.locations ? results.locations.length : 0) +
-			(results.organizations ? results.organizations.length : 0)
+		let numResults = (results.reports ? results.reports.totalCount : 0) +
+			(results.people ? results.people.totalCount : 0) +
+			(results.positions ? results.positions.totalCount : 0) +
+			(results.locations ? results.locations.totalCount : 0) +
+			(results.organizations ? results.organizations.totalCount : 0)
 
 		let noResults = numResults === 0
 
@@ -169,7 +176,7 @@ export default class Search extends Page {
 					</Alert>
 				}
 
-				{results.reports && results.reports.length > 0 &&
+				{results.reports && results.reports.totalCount > 0 &&
 					<div>
 						<div className="pull-left">
 							<h3>Reports</h3>
@@ -182,39 +189,39 @@ export default class Search extends Page {
 							}
 						</div>
 						<br />
-						<fieldset><ReportCollection reports={this.state.results.reports} /></fieldset>
+						<fieldset><ReportCollection reports={this.state.results.reports.list} /></fieldset>
 					</div>
 				}
 
-				{results.people && results.people.length > 0 &&
+				{results.people && results.people.totalCount > 0 &&
 					<fieldset>
 						<legend>People</legend>
 						{this.renderPeople()}
 					</fieldset>
 				}
 
-				{results.organizations && results.organizations.length > 0 &&
+				{results.organizations && results.organizations.totalCount > 0 &&
 					<fieldset>
 						<legend>Organizations</legend>
 						{this.renderOrgs()}
 					</fieldset>
 				}
 
-				{results.positions && results.positions.length > 0 &&
+				{results.positions && results.positions.totalCount > 0 &&
 					<fieldset>
 						<legend>Positions</legend>
 						{this.renderPositions()}
 					</fieldset>
 				}
 
-				{results.locations && results.locations.length > 0 &&
+				{results.locations && results.locations.totalCount > 0 &&
 					<fieldset>
 						<legend>Locations</legend>
 						{this.renderLocations()}
 					</fieldset>
 				}
 
-				{results.poams && results.poams.length > 0 &&
+				{results.poams && results.poams.totalCount > 0 &&
 					<fieldset>
 						<legend>Poams</legend>
 						{this.renderPoams()}
@@ -237,7 +244,7 @@ export default class Search extends Page {
 				</tr>
 			</thead>
 			<tbody>
-				{Person.map(this.state.results.people, person =>
+				{Person.map(this.state.results.people.list, person =>
 					<tr key={person.id}>
 						<td>
 							<img src={person.iconUrl()} alt={person.role} height={20} className="person-icon" />
@@ -262,7 +269,7 @@ export default class Search extends Page {
 				</tr>
 			</thead>
 			<tbody>
-				{Organization.map(this.state.results.organizations, org =>
+				{Organization.map(this.state.results.organizations.list, org =>
 					<tr key={org.id}>
 						<td><LinkTo organization={org} /></td>
 						<td>{org.longName}</td>
@@ -283,7 +290,7 @@ export default class Search extends Page {
 				</tr>
 			</thead>
 			<tbody>
-				{Position.map(this.state.results.positions, pos =>
+				{Position.map(this.state.results.positions.list, pos =>
 					<tr key={pos.id}>
 						<td>
 							<img src={pos.iconUrl()} alt={pos.type} height={20} className="person-icon" />
@@ -305,7 +312,7 @@ export default class Search extends Page {
 				</tr>
 			</thead>
 			<tbody>
-				{this.state.results.locations.map(loc =>
+				{this.state.results.locations.list.map(loc =>
 					<tr key={loc.id}>
 						<td><LinkTo location={loc} /></td>
 					</tr>
@@ -323,7 +330,7 @@ export default class Search extends Page {
 				</tr>
 			</thead>
 			<tbody>
-				{Poam.map(this.state.results.poams, poam =>
+				{Poam.map(this.state.results.poams.list, poam =>
 					<tr key={poam.id}>
 						<td><LinkTo poam={poam} >{poam.shortName} {poam.longName}</LinkTo></td>
 					</tr>

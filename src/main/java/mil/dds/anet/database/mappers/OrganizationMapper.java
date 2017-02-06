@@ -29,6 +29,11 @@ public class OrganizationMapper implements ResultSetMapper<Organization> {
 		org.setCreatedAt(new DateTime(r.getTimestamp("organizations_createdAt")));
 		org.setUpdatedAt(new DateTime(r.getTimestamp("organizations_updatedAt")));
 		org.setLoadLevel(LoadLevel.PROPERTIES);
+		
+		if (MapperUtils.containsColumnNamed(r, "totalCount")) { 
+			ctx.setAttribute("totalCount", r.getInt("totalCount"));
+		}
+		
 		return org;
 	}
 

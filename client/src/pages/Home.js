@@ -29,11 +29,11 @@ export default class Home extends Page {
 	fetchData() {
 		let futureQuery = { engagementDateStart: moment().add(1, 'days').hour(0).valueOf() }
 		API.query(/*GraphQL */`
-			pendingMe: reports(f:pendingMyApproval) { id },
-			myOrg: reports(f:myOrgToday) { id },
-			myReports: reports(f:myReportsToday) {id },
+			pendingMe: reportList(f:pendingMyApproval) { totalCount },
+			myOrg: reportList(f:myOrgToday) { totalCount },
+			myReports: reportList(f:myReportsToday) { totalCount},
 			savedSearches: savedSearchs(f:mine) {id, name}
-			upcomingEngagements: reports(f:search, query: $futureQuery) { id }
+			upcomingEngagements: reportList(f:search, query: $futureQuery) { totalCount }
 		`, {futureQuery}, "($futureQuery: ReportSearchQuery)")
 		.then(data => {
 			let selectedSearchId = data.savedSearches && data.savedSearches.length > 0 ? data.savedSearches[0].id : null;
@@ -62,24 +62,24 @@ export default class Home extends Page {
 					<Grid fluid>
 						<Row>
 							<Link to={"/search?type=reports&pendingApprovalOf=" + currentUser.id} className="col-md-3 home-tile">
-								<h1>{pendingMe && pendingMe.length}</h1>
+								<h1>{pendingMe && pendingMe.totalCount}</h1>
 								Pending my approval
 							</Link>
 
 							{org &&
 								<Link to={"/search?type=reports&authorOrgId=" + org.id} className="col-md-3 home-tile">
-									<h1>{myOrgToday && myOrgToday.length}</h1>
+									<h1>{myOrgToday && myOrgToday.totalCount}</h1>
 									{org.shortName}'{org.shortName[org.shortName.length - 1].toLowerCase() !== 's' && 's'} recent reports
 								</Link>
 							}
 
 							<Link to={"/search?type=reports&authorId=" + currentUser.id} className="col-md-3 home-tile">
-								<h1>{myReportsToday && myReportsToday.length}</h1>
+								<h1>{myReportsToday && myReportsToday.totalCount}</h1>
 								My reports in last 24 hrs
 							</Link>
 
 							<Link to={"/search?type=reports&pageSize=100&engagementDateStart=" + moment().add(1, 'days').hour(0).valueOf()} className="col-md-3 home-tile">
-								<h1>{upcomingEngagements && upcomingEngagements.length}</h1>
+								<h1>{upcomingEngagements && upcomingEngagements.totalCount}</h1>
 								Upcoming engagements
 							</Link>
 						</Row>
