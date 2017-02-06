@@ -146,11 +146,17 @@ export default class FormField extends Component {
 		let newValue = this.getDefaultValue(newProps, newContext)
 		let oldValue = this.state.value
 
-		if (newValue !== oldValue)
+		if (newValue !== oldValue) {
 			return true
+		}
 
-		if (Array.isArray(newValue))
+		if (Array.isArray(newValue)) {
 			return !deepEqual(newValue, oldValue)
+		}
+
+		if (!deepEqual(this.props, newProps)) {
+			return true
+		}
 
 		return false
 	}
