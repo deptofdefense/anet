@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
-import {Alert, Table, Button, Col, DropdownButton, MenuItem, Modal, Checkbox} from 'react-bootstrap'
+import {Alert, Table, Button, Grid, Row, Col, DropdownButton, MenuItem, Modal, Checkbox} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 import moment from 'moment'
 
@@ -25,14 +25,6 @@ const atmosphereIcons = {
 	'POSITIVE': "👍",
 	'NEUTRAL': "😐",
 	'NEGATIVE': "👎",
-}
-
-const commentFormCss = {
-	marginTop: '50px',
-}
-
-const approvalButtonCss = {
-	marginLeft: '15px',
 }
 
 export default class ReportShow extends Page {
@@ -114,7 +106,6 @@ export default class ReportShow extends Page {
 
 		let canApprove = report.isPending() && currentUser.position &&
 			report.approvalStep.approvers.find(member => member.id === currentUser.position.id)
-
 		//Authors can edit in draft mode, rejected mode, or Pending Mode
 		let canEdit = (report.isDraft() || report.isPending() || report.isRejected()) && (currentUser.id === report.author.id)
 		//Approvers can edit.
@@ -201,6 +192,8 @@ export default class ReportShow extends Page {
 						</Form.Field>
 					</fieldset>
 
+					{canApprove && this.renderApprovalForm() }
+
 					<fieldset>
 						<legend>Meeting attendees</legend>
 
@@ -257,31 +250,7 @@ export default class ReportShow extends Page {
 						<div dangerouslySetInnerHTML={{__html: report.reportText}} />
 					</fieldset>
 
-					{report.isPending() &&
-						<fieldset>
-							<a name="approvals" />
-							<legend>Approvals</legend>
-							{report.approvalStatus.map(action =>
-								this.renderApprovalAction(action)
-							)}
-							{canApprove &&
-								<Form.Field id="author" label=""
-										style={commentFormCss}
-										componentClass="textarea"
-										placeholder="Type a comment here"
-										getter={this.getApprovalComment}
-										onChange={this.onChangeComment} >
-								</Form.Field>
-							}
-							{canApprove &&
-								<div style={commentFormCss}>
-									<Button bsStyle="danger" style={approvalButtonCss} onClick={this.rejectReport}>Reject with comment</Button>
-									<Button bsStyle="warning" style={approvalButtonCss} onClick={this.actionSelect.bind(this, "edit")} >Edit report</Button>
-									<Button bsStyle="primary" style={approvalButtonCss} onClick={this.approveReport}>Approve</Button>
-								</div>
-							}
-						</fieldset>
-					}
+					{report.isPending() && this.renderApprovals() }
 
 					{canSubmit &&
 						<fieldset>
@@ -323,7 +292,7 @@ export default class ReportShow extends Page {
 
 						{!report.comments.length && "There are no comments yet."}
 
-						<Form formFor={this.state.newComment} horizontal style={commentFormCss} onSubmit={this.submitComment} onChange={this.onChange} submitText={false}>
+						<Form formFor={this.state.newComment} horizontal onSubmit={this.submitComment} onChange={this.onChange} submitText={false}>
 							<Form.Field id="text" placeholder="Type a comment here" label="">
 								<Form.Field.ExtraCol>
 									<Button bsStyle="primary" type="submit">Save comment</Button>
@@ -334,6 +303,54 @@ export default class ReportShow extends Page {
 				</Form>
 			</div>
 		)
+	}
+
+	@autobind
+	renderApprovalForm() {
+		return <fieldset>
+			<legend>Report Approval</legend>
+			<Grid fluid className="reportApprovalGrid" >
+				<Row>
+					<Col md={12} className="reportApprovalHeader" ><b>You can approve, reject, or edit this report</b></Col>
+				</Row>
+				<Row>
+					<Col md={3}><b>Leave Comment</b></Col>
+					<Col md={9}>
+						<Form.Field id="author" label=""
+							componentClass="textarea"
+							placeholder="Type a comment here"
+							getter={this.getApprovalComment}
+							horizontal={false}
+							onChange={this.onChangeComment}
+							className="reportApprovalComment" >
+						</Form.Field>
+					</Col>
+				</Row>
+				<Row>
+					<Col md={4} className="reportApprovalButton">
+						<Button bsStyle="danger" onClick={this.rejectReport}>Reject with comment</Button>
+					</Col>
+					<Col md={4} className="reportApprovalButton" >
+						<Button bsStyle="warning" onClick={this.actionSelect.bind(this, "edit")} >Edit report</Button>
+					</Col>
+					<Col md={4} className="reportApprovalButton" >
+						<Button bsStyle="primary" onClick={this.approveReport}>Approve</Button>
+					</Col>
+				</Row>
+			</Grid>
+		</fieldset>
+	}
+
+	@autobind
+	renderApprovals(canApprove) {
+		let report = this.state.report;
+		return <fieldset>
+			<a name="approvals" />
+			<legend>Approvals</legend>
+			{report.approvalStatus.map(action =>
+				this.renderApprovalAction(action)
+			)}
+		</fieldset>
 	}
 
 	@autobind
