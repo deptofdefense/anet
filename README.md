@@ -38,6 +38,7 @@ the same database and feature set that production will use. We do our best to su
 but cannot garauntee that the SQLite code will exactly match the SQL Server.
 	- SQLite:
 		- this is currently the default, so you don't need to do anything special
+		- To re-force gradle to use sqlite you can set the `DB_DRIVER` environment variable to `sqlite` (ie `export DB_DRIVER=sqlite`)
 	- MSSQL:
 		- Run the gradle commands in the rest of this document with the DB_DRIVER env variable, e.g.
 		`DB_DRIVER=sqlserver ./gradlew run`
