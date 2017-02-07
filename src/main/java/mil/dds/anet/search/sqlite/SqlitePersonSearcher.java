@@ -92,6 +92,7 @@ public class SqlitePersonSearcher implements IPersonSearcher {
 			.map(new PersonMapper())
 			.list();
 		result.setList(list);
+		result.setTotalCount(list.size()); // Sqlite cannot do true total counts, so this is a crutch. 
 		return result;
 	}
 

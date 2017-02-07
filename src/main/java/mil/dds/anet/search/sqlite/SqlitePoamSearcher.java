@@ -53,6 +53,7 @@ public class SqlitePoamSearcher implements IPoamSearcher {
 			.bind("limit", query.getPageSize())
 			.map(new PoamMapper())
 			.list());
+		result.setTotalCount(result.getList().size()); // Sqlite cannot do true total counts, so this is a crutch.
 		return result;
 	}
 	

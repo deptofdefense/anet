@@ -94,7 +94,7 @@ public class SqlitePositionSearcher implements IPositionSearcher {
 			.bind("limit", query.getPageSize())
 			.map(new PositionMapper())
 			.list());
-		
+		result.setTotalCount(result.getList().size()); // Sqlite cannot do true total counts, so this is a crutch.
 		return result;
 	}
 }

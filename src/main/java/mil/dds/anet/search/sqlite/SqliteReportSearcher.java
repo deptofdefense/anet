@@ -142,6 +142,7 @@ public class SqliteReportSearcher implements IReportSearcher {
 		rList.setList(list);
 		rList.setPageSize(query.getPageSize());
 		rList.setPageNum(query.getPageNum());
+		rList.setTotalCount(list.size()); // Sqlite cannot do true total counts, so this is a crutch. 
 		return rList;
 	}
 	

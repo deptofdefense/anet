@@ -24,6 +24,7 @@ public class SqliteLocationSearcher implements ILocationSearcher {
 			.bind("limit", query.getPageSize())
 			.map(new LocationMapper())
 			.list());
+		result.setTotalCount(result.getList().size()); // Sqlite cannot do true total counts, so this is a crutch. 
 		return result;
 	}
 
