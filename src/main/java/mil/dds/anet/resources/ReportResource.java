@@ -2,6 +2,7 @@ package mil.dds.anet.resources;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -23,7 +24,6 @@ import javax.ws.rs.core.Response.Status;
 
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;
-import org.joda.time.DateTime;
 
 import com.codahale.metrics.annotation.Timed;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -461,6 +461,25 @@ public class ReportResource implements IGraphQLResource {
 		return Response.ok().build();
 	}
 
+	/*
+	 * Delete a draft report. Only the author can delete a report, and only a report in DRAFT state. 
+	 */
+	@DELETE
+	@Timed
+	@Path("/{id}/delete")
+	public Response deleteReport(@Auth Person user, @PathParam("id") int reportId) { 
+		Report report = dao.getById(reportId);
+		if (Objects.equals(report.getAuthor().getId(), user.getId()) == false) { 
+			throw new WebApplicationException("Only the author may delete a report", Status.FORBIDDEN);
+		}
+		if (report.getState() != ReportState.DRAFT) { 
+			throw new WebApplicationException("You can only delete a report in DRAFT state", Status.FORBIDDEN);
+		}
+		
+		dao.deleteReport(report);
+		return Response.ok().build();
+	}
+	
 	@GET
 	@Timed
 	@Path("/search")

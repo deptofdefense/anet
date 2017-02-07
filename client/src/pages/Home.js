@@ -4,6 +4,7 @@ import {Grid, Row, FormControl, FormGroup, ControlLabel} from 'react-bootstrap'
 import SavedSearchTable from 'components/SavedSearchTable'
 import {Link} from 'react-router'
 import moment from 'moment'
+import Messages from 'components/Messages'
 
 import Breadcrumbs from 'components/Breadcrumbs'
 import API from 'api'
@@ -22,7 +23,7 @@ export default class Home extends Page {
 			myReportsToday: null,
 			upcomingEngagements: null,
 			savedSearches: [],
-			selectedSearchId: null
+			selectedSearchId: null,
 		}
 	}
 
@@ -73,6 +74,7 @@ export default class Home extends Page {
 		return (
 			<div>
 				<Breadcrumbs />
+				<Messages error={this.state.error} success={this.state.success} />
 
 				<fieldset className="home-tile-row">
 					<legend>My ANET Snapshot</legend>

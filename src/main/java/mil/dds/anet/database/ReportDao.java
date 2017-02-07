@@ -9,6 +9,8 @@ import org.joda.time.format.DateTimeFormatter;
 import org.skife.jdbi.v2.GeneratedKeys;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.Query;
+import org.skife.jdbi.v2.TransactionCallback;
+import org.skife.jdbi.v2.TransactionStatus;
 
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.ApprovalAction.ApprovalType;
@@ -365,6 +367,30 @@ public class ReportDao implements IAnetDao<Report> {
 			.bind("limit", pageSize)
 			.map(new ReportMapper())
 			.list();
+	}
+
+	public void deleteReport(final Report report) {
+		dbHandle.inTransaction(new TransactionCallback<Void>() {
+			public Void inTransaction(Handle conn, TransactionStatus status) throws Exception {
+				//Delete poams
+				dbHandle.execute("DELETE FROM reportPoams where reportId = ?", report.getId());
+				
+				//Delete attendees
+				dbHandle.execute("DELETE FROM reportPeople where reportId = ?", report.getId());
+				
+				//Delete comments
+				dbHandle.execute("DELETE FROM comments where reportId = ?", report.getId());
+				
+				//Delete approvalActions
+				dbHandle.execute("DELETE FROM approvalActions where reportId = ?", report.getId());
+				
+				//Delete report
+				dbHandle.execute("DELETE FROM reports where id = ?", report.getId());
+				
+				return null;
+			}
+		});
+		
 	}
 
 

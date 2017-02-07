@@ -117,6 +117,9 @@ export default class ReportShow extends Page {
 		//Anbody can email a report as long as it's not in draft.
 		let canEmail = !report.isDraft();
 
+		//Only the author can delete a report, and only in DRAFT.
+		let canDelete = report.isDraft() && (currentUser.id === report.author.id)
+
 		let errors = report.isDraft() && report.validateForSubmit();
 
 		return (
@@ -157,6 +160,9 @@ export default class ReportShow extends Page {
 						{canEdit && <MenuItem eventKey="edit" >Edit Report</MenuItem>}
 						{canSubmit && errors.length === 0 && <MenuItem eventKey="submit">Submit</MenuItem>}
 						{canEmail && <MenuItem eventKey="email" onClick={this.toggleEmailModal}>Email Report</MenuItem>}
+
+						{canDelete && <MenuItem divider /> }
+						{canDelete && <MenuItem eventKey="delete" >Delete Report</MenuItem> }
 					</DropdownButton>
 				</div>
 
@@ -506,6 +512,10 @@ export default class ReportShow extends Page {
 		} else if (eventKey === "submit" ) {
 			this.submitDraft()
 		} else if (eventKey === "email" ) {
+		} else if (eventKey === "delete") {
+			if (confirm("Are you sure you want to delete this report?")) {
+				this.deleteReport()
+			}
 		} else {
 			console.log("Unimplemented Action: " + eventKey);
 		}
@@ -559,6 +569,16 @@ export default class ReportShow extends Page {
 	closeApproversModal(step) {
 		step.showModal = false
 		this.setState(this.state)
+	}
+
+	@autobind
+	deleteReport() {
+		API.send(`/api/reports/${this.state.report.id}/delete`, {}, {method: 'DELETE'}).then(data => {
+			History.push("/", {success: "Report deleted"});
+		}, data => {
+			this.setState({success:null})
+			this.handleError(data)
+		})
 	}
 
 

@@ -21,7 +21,7 @@ public class AuthUtils {
 				user.getPosition().getType() == PositionType.ADMINISTRATOR) { 
 			return;
 		}
-		throw new WebApplicationException(UNAUTH_MESSAGE, Status.UNAUTHORIZED);
+		throw new WebApplicationException(UNAUTH_MESSAGE, Status.FORBIDDEN);
 	}
 	
 	public static boolean isSuperUserForOrg(final Person user, final Organization org) { 
@@ -47,7 +47,7 @@ public class AuthUtils {
 	
 	public static void assertSuperUserForOrg(Person user, Organization org) {
 		if (isSuperUserForOrg(user, org)) { return; } 
-		throw new WebApplicationException(UNAUTH_MESSAGE, Status.UNAUTHORIZED);
+		throw new WebApplicationException(UNAUTH_MESSAGE, Status.FORBIDDEN);
 	}
 
 	public static void assertSuperUser(Person user) {
@@ -57,7 +57,7 @@ public class AuthUtils {
 			position.getType() == PositionType.ADMINISTRATOR)) { 
 			return;
 		}
-		throw new WebApplicationException(UNAUTH_MESSAGE, Status.UNAUTHORIZED);
+		throw new WebApplicationException(UNAUTH_MESSAGE, Status.FORBIDDEN);
 	}
 
 	public static boolean isAdmin(Person user) {

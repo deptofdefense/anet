@@ -70,8 +70,6 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		//Create an Advising Organization for the report writer
 		Organization advisorOrg = httpQuery("/api/organizations/new", admin)
 				.post(Entity.json(OrganizationTest.getTestAO()), Organization.class);
-
-
 		
 		//Create leadership people in the AO who can approve this report
 		Person approver1 = new Person();
@@ -565,5 +563,43 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		//Search by Principal Organization
 
 		//Search by Principal Parent Organization
+	}
+	
+	@Test
+	public void reportDeleteTest() { 
+		Person jack = getJackJackson();
+		Person liz = getElizabethElizawell();
+		Person admin = getArthurDmin();
+		Person roger = getRogerRogwell();
+
+		List<ReportPerson> attendees = ImmutableList.of(
+			PersonTest.personToPrimaryReportPerson(roger), 
+			PersonTest.personToReportPerson(jack),
+			PersonTest.personToPrimaryReportPerson(liz));
+
+		//Write a report as that person
+		Report r = new Report();
+		r.setAuthor(liz);
+		r.setIntent("This is a report that should be deleted");
+		r.setAtmosphere(Atmosphere.NEUTRAL);
+		r.setAttendees(attendees);
+		r.setReportText("I'm writing a report that I intend to delete very soon.");
+		r.setKeyOutcomes("Summary for the key outcomes");
+		r.setNextSteps("Summary for the next steps");
+		r.setEngagementDate(DateTime.now());
+		r = httpQuery("/api/reports/new", liz).post(Entity.json(r), Report.class);
+		assertThat(r.getId()).isNotNull();
+		
+		//Try to delete  by the admin, this should fail. 
+		Response resp = httpQuery("/api/reports/" + r.getId() + "/delete", admin).delete();
+		assertThat(resp.getStatus()).isEqualTo(Status.FORBIDDEN.getStatusCode());
+		
+		//Now have the author delete this report. 
+		resp = httpQuery("/api/reports/" + r.getId() + "/delete", liz).delete();
+		assertThat(resp.getStatus()).isEqualTo(200);
+		
+		//Assert the report is gone. 
+		Report returned  = httpQuery("/api/reports/" + r.getId(),liz).get(Report.class);
+		assertThat(returned).isNull();
 	}
 }
