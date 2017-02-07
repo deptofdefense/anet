@@ -79,7 +79,9 @@ export default class ReportForm extends Component {
 
 				<Form.Field id="engagementDate">
 					<DatePicker showTodayButton placeholder="When did it happen?" dateFormat="DD/MM/YYYY">
-						<InputGroup.Addon>📆</InputGroup.Addon>
+						<InputGroup.Addon>
+							<img src="/assets/img/calendar.png" height="20px" role="presentation"/>
+						</InputGroup.Addon>
 					</DatePicker>
 				</Form.Field>
 
@@ -100,9 +102,9 @@ export default class ReportForm extends Component {
 				{!report.cancelled &&
 					<Form.Field id="atmosphere">
 						<RadioGroup bsSize="large">
-							<Radio value="POSITIVE">👍</Radio>
-							<Radio value="NEUTRAL">😐</Radio>
-							<Radio value="NEGATIVE">👎</Radio>
+							<Radio value="POSITIVE"><img src="/assets/img/thumbs_up.png" height="25px" alt="positive" /></Radio>
+							<Radio value="NEUTRAL"><img src="/assets/img/neutral.png" height="25px" alt="neutral" /></Radio>
+							<Radio value="NEGATIVE"><img src="/assets/img/thumbs_down.png" height="25px" alt="negative" /></Radio>
 						</RadioGroup>
 					</Form.Field>
 				}

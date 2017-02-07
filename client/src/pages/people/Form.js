@@ -113,7 +113,7 @@ export default class PersonForm extends Component {
 
 				<Form.Field id="endOfTourDate">
 					<DatePicker placeholder="End of Tour Date" dateFormat="DD/MM/YYYY">
-						<InputGroup.Addon>📆</InputGroup.Addon>
+						<InputGroup.Addon><img src="/assets/img/calendar.png" height="20px" role="presentation" /></InputGroup.Addon>
 					</DatePicker>
 				</Form.Field>
 
