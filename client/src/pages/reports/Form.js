@@ -85,6 +85,12 @@ export default class ReportForm extends Component {
 
 				<Form.Field id="location" addon="📍">
 					<Autocomplete valueKey="name" placeholder="Start typing to search for the location where this happened..." url="/api/locations/search" />
+					<Form.Field.ExtraCol className="shortcut-list">
+						{recents.locations && recents.locations.length > 0 &&
+							<Button bsStyle="link"  onClick={this.setLocation.bind(this,recents.locations[0])} >Add {recents.locations[0].name}</Button>
+						}
+					</Form.Field.ExtraCol>
+
 				</Form.Field>
 
 				{false && <Form.Field id="cancelled" label="">
@@ -192,6 +198,12 @@ export default class ReportForm extends Component {
 	@autobind
 	toggleReportText() {
 		this.setState({showReportText: !this.state.showReportText})
+	}
+
+	@autobind
+	setLocation(location) {
+		this.props.report.location = location;
+		this.onChange();
 	}
 
 	@autobind
