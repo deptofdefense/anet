@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://anet-dev.dds.mil:8080/" />
+<title>report-submit</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">report-submit</td></tr>
+</thead><tbody>
+<tr>
+	<td>open</td>
+	<td>http://arthur:pw@anet-dev.dds.mil:8080</td>
+	<td></td>
+</tr>
+<tr>
+	<td>open</td>
+	<td>/reports/new</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=intent</td>
+	<td>Test out ANET</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=engagementDate</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='date-picker-popover-0']/div[2]/table/tbody/tr/td[4]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=location</td>
+	<td></td>
+</tr>
+<tr>
+	<td>sendKeys</td>
+	<td>id=location</td>
+	<td>hos</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>id=react-autowhatever-1--item-0</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=react-autowhatever-1--item-0</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='root']/div/section/div/div/div/form/fieldset/div[4]/div/div/button</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=attendees</td>
+	<td></td>
+</tr>
+<tr>
+	<td>sendKeys</td>
+	<td>id=attendees</td>
+	<td>st</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>id=react-autowhatever-1--item-0</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=react-autowhatever-1--item-0</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=poams</td>
+	<td></td>
+</tr>
+<tr>
+	<td>sendKeys</td>
+	<td>id=poams</td>
+	<td>budg</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>id=react-autowhatever-1--item-0</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=react-autowhatever-1--item-0</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='root']/div/section/div/div/div/form/fieldset[3]/div/div/table/tbody/tr/td/span</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=poams</td>
+	<td></td>
+</tr>
+<tr>
+	<td>sendKeys</td>
+	<td>id=poams</td>
+	<td>mil</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=#react-autowhatever-1--item-2 &gt; span</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=#react-autowhatever-1--item-2 &gt; span</td>
+	<td></td>
+</tr>
+<tr>
+	<td>open</td>
+	<td>http://erin:pw@anet-dev.dds.mil:8080/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='root']/div/section/div/div[2]/div/fieldset/div/div/div/a/h1</td>
+	<td></td>
+</tr>
+
+</tbody></table>
+</body>
+</html>
