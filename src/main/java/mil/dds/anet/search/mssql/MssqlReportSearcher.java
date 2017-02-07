@@ -17,6 +17,7 @@ import mil.dds.anet.database.PersonDao;
 import mil.dds.anet.database.ReportDao;
 import mil.dds.anet.database.mappers.ReportMapper;
 import mil.dds.anet.search.IReportSearcher;
+import mil.dds.anet.utils.DaoUtils;
 
 public class MssqlReportSearcher implements IReportSearcher {
 	
@@ -114,6 +115,11 @@ public class MssqlReportSearcher implements IReportSearcher {
 				+ "(SELECT approvalStepId from approvers where positionId IN "
 				+ "(SELECT id FROM positions where currentPersonId = :approverId))");
 			args.put("approverId", query.getPendingApprovalOf());
+		}
+		
+		if (query.getState() != null) { 
+			whereClauses.add("reports.state = :state");
+			args.put("state", DaoUtils.getEnumId(query.getState()));
 		}
 		
 		if (whereClauses.size() == 0) { return results; }

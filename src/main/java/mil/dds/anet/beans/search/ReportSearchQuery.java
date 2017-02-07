@@ -2,6 +2,8 @@ package mil.dds.anet.beans.search;
 
 import org.joda.time.DateTime;
 
+import mil.dds.anet.beans.Report.ReportState;
+
 public class ReportSearchQuery implements ISearchQuery {
 
 	Integer authorId;
@@ -18,6 +20,8 @@ public class ReportSearchQuery implements ISearchQuery {
 	Integer locationId;
 	Integer poamId;
 	Integer pendingApprovalOf;
+	ReportState state;
+	
 	int pageNum;
 	int pageSize;
 	
@@ -136,6 +140,14 @@ public class ReportSearchQuery implements ISearchQuery {
 
 	public void setPendingApprovalOf(Integer pendingApprovalOf) {
 		this.pendingApprovalOf = pendingApprovalOf;
+	}
+
+	public ReportState getState() {
+		return state;
+	}
+
+	public void setState(ReportState state) {
+		this.state = state;
 	}
 
 	@Override

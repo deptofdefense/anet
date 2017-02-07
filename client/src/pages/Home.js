@@ -27,14 +27,30 @@ export default class Home extends Page {
 	}
 
 	fetchData() {
-		let futureQuery = { engagementDateStart: moment().add(1, 'days').hour(0).valueOf() }
+		let currentUser = this.context.app.state.currentUser;
+		let yesterday = moment().subtract(1, 'days').valueOf();
+
+		let futureQuery = {
+			engagementDateStart: moment().add(1, 'days').hour(0).valueOf()
+		}
+		let orgQuery = (currentUser.position && currentUser.position.organization && {
+			authorOrgId: currentUser.position.organization.id,
+			createdAtStart: yesterday
+		}) || {};
+		let pendingQuery = currentUser.isSuperUser() ?
+			{pendingApprovalOf : currentUser.id}
+			:
+			{authorId : currentUser.id, state : "PENDING_APPROVAL"}
+		let myReports = { authorId: currentUser.id, createdAtStart: moment().subtract(1, 'days').valueOf() }
 		API.query(/*GraphQL */`
-			pendingMe: reportList(f:pendingMyApproval) { totalCount },
-			myOrg: reportList(f:myOrgToday) { totalCount },
-			myReports: reportList(f:myReportsToday) { totalCount},
+			pendingMe: reportList(f:search, query:$pendingQuery) { totalCount },
+			myOrg: reportList(f:search, query:$orgQuery) { totalCount },
+			myReports: reportList(f:search, query:$myReports) { totalCount},
 			savedSearches: savedSearchs(f:mine) {id, name}
 			upcomingEngagements: reportList(f:search, query: $futureQuery) { totalCount }
-		`, {futureQuery}, "($futureQuery: ReportSearchQuery)")
+		`, {futureQuery, pendingQuery, orgQuery, myReports},
+			"($futureQuery: ReportSearchQuery, $pendingQuery: ReportSearchQuery,  "
+			+ "$orgQuery: ReportSearchQuery, $myReports: ReportSearchQuery)")
 		.then(data => {
 			let selectedSearchId = data.savedSearches && data.savedSearches.length > 0 ? data.savedSearches[0].id : null;
 			this.setState({
@@ -52,6 +68,7 @@ export default class Home extends Page {
 		let {pendingMe, myOrgToday, myReportsToday, upcomingEngagements} = this.state
 		let currentUser = this.context.app.state.currentUser;
 		let org = currentUser && currentUser.position && currentUser.position.organization
+		let yesterday = moment().subtract(1, 'days').valueOf()
 
 		return (
 			<div>
@@ -63,17 +80,17 @@ export default class Home extends Page {
 						<Row>
 							<Link to={"/search?type=reports&pendingApprovalOf=" + currentUser.id} className="col-md-3 home-tile">
 								<h1>{pendingMe && pendingMe.totalCount}</h1>
-								Pending my approval
+								{currentUser.isSuperUser() ? "Pending My Approval" : "My Reports Pending Approval" }
 							</Link>
 
 							{org &&
-								<Link to={"/search?type=reports&authorOrgId=" + org.id} className="col-md-3 home-tile">
+								<Link to={"/search?type=reports&authorOrgId=" + org.id + "&createdAtStart=" + yesterday} className="col-md-3 home-tile">
 									<h1>{myOrgToday && myOrgToday.totalCount}</h1>
 									{org.shortName}'{org.shortName[org.shortName.length - 1].toLowerCase() !== 's' && 's'} recent reports
 								</Link>
 							}
 
-							<Link to={"/search?type=reports&authorId=" + currentUser.id} className="col-md-3 home-tile">
+							<Link to={"/search?type=reports&authorId=" + currentUser.id + "&createdAtStart=" + yesterday} className="col-md-3 home-tile">
 								<h1>{myReportsToday && myReportsToday.totalCount}</h1>
 								My reports in last 24 hrs
 							</Link>

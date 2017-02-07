@@ -460,16 +460,6 @@ public class ReportResource implements IGraphQLResource {
 		AnetEmailWorker.sendEmailAsync(email);
 		return Response.ok().build();
 	}
-	
-	@GET
-	@Timed
-	@GraphQLFetcher("pendingMyApproval")
-	@Path("/pendingMyApproval")
-	public ReportList getReportsPendingMyApproval(@Auth Person approver) {
-		ReportSearchQuery query = new ReportSearchQuery();
-		query.setPendingApprovalOf(approver.getId());
-		return dao.search(query);
-	}
 
 	@GET
 	@Timed
@@ -487,29 +477,6 @@ public class ReportResource implements IGraphQLResource {
 	@GraphQLFetcher
 	@Path("/search")
 	public ReportList search(@GraphQLParam("query") ReportSearchQuery query) {
-		return dao.search(query);
-	}
-	
-	@GraphQLFetcher("myOrgToday")
-	public ReportList myOrgReportsToday(@Auth Person user) { 
-		Position pos = user.loadPosition();
-		if (pos == null) { return new ReportList(); } 
-		Organization org = pos.loadOrganization();
-		if (org == null) { return new ReportList(); } 
-		
-		ReportSearchQuery query = new ReportSearchQuery();
-		query.setAuthorOrgId(org.getId());
-		query.setCreatedAtStart(DateTime.now().minusDays(1));
-		
-		return dao.search(query);
-	}
-	
-	@GraphQLFetcher("myReportsToday")
-	public ReportList myReportsToday(@Auth Person user) { 
-		ReportSearchQuery query = new ReportSearchQuery();
-		query.setAuthorId(user.getId());
-		query.setCreatedAtStart(DateTime.now().minusDays(1));
-		
 		return dao.search(query);
 	}
 

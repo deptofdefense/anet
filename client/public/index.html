@@ -49,6 +49,7 @@
 				id: "${currentUser.id}",
 				name: "${currentUser.name!}",
 				role:"<#if (currentUser.position)?? >${currentUser.position.type!'ADVISOR'}<#else>ADVISOR</#if>",
+				rank: "${currentUser.rank!}",
 			},
 			adminSettings: [
 				{key: "SECURITY_BANNER_TEXT", value: "${securityBannerText!\"Set SECURITY_BANNER_TEXT adminSetting\"}"},
