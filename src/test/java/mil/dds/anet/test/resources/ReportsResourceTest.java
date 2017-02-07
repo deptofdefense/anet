@@ -197,7 +197,9 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		returned.setPoams(null);
 
 		//Verify this shows up on the approvers list of pending documents
-		ReportList pending = httpQuery("/api/reports/pendingMyApproval", approver1).get(ReportList.class);
+		ReportSearchQuery pendingQuery = new ReportSearchQuery();
+        pendingQuery.setPendingApprovalOf(approver1.getId());
+		ReportList pending = httpQuery("/api/reports/search", approver1).post(Entity.json(pendingQuery), ReportList.class);
 		int id = returned.getId();
 		Report expected = pending.getList().stream().filter(re -> re.getId().equals(id)).findFirst().get();
 		expected.equals(returned);
@@ -438,7 +440,9 @@ public class ReportsResourceTest extends AbstractResourceTest {
         assertThat(returned3.getState()).isEqualTo(ReportState.PENDING_APPROVAL);
 
         //Bob gets the approval (EF1 Approvers)
-        ReportList pendingBobsApproval = httpQuery("/api/reports/pendingMyApproval", bob).get(ReportList.class);
+        ReportSearchQuery pendingQuery = new ReportSearchQuery();
+        pendingQuery.setPendingApprovalOf(bob.getId());
+        ReportList pendingBobsApproval = httpQuery("/api/reports/search", bob).post(Entity.json(pendingQuery), ReportList.class);
         assertThat(pendingBobsApproval.getList().stream().anyMatch(rpt -> rpt.getId().equals(returned3.getId()))).isTrue();
 
         //Bob edits the report (change reportText, remove Person, add a Poam)

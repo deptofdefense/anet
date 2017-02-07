@@ -48,7 +48,7 @@ public class SqliteOrganizationSearcher implements IOrganizationSearcher {
 						+ "SELECT id FROM organizations WHERE id = :parentOrgId "
 					+ "UNION ALL "
 						+ "SELECT o.id from parent_orgs po, organizations o WHERE o.parentOrgId = po.id "
-					+ ") SELECT id from parent_orgs) OR organization.id = :parentOrgId)");
+					+ ") SELECT id from parent_orgs) OR organizations.id = :parentOrgId)");
 			} else { 
 				whereClauses.add("organizations.parentOrgId = :parentOrgId");
 			}
