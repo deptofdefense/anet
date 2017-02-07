@@ -60,7 +60,7 @@ export default class ReportForm extends Component {
 
 	componentDidUpdate() {
 		let {report, defaultAttendee} = this.props
-		if (defaultAttendee.id && !report.attendees.length) {
+		if (defaultAttendee && defaultAttendee.id && !report.attendees.length) {
 			this.addAttendee(defaultAttendee)
 		}
 	}
@@ -159,12 +159,14 @@ export default class ReportForm extends Component {
 						</tbody>
 					</Table>
 
-					<Form.Field.ExtraCol className="shortcut-list">
-						<h5>Shortcuts</h5>
-						{Person.map(recents.persons, person =>
-							<Button key={person.id} bsStyle="link" onClick={this.addAttendee.bind(this, person)}>Add {person.name}</Button>
-						)}
+					{recents.persons.length > 0 &&
+						<Form.Field.ExtraCol className="shortcut-list">
+							<h5>Shortcuts</h5>
+							{Person.map(recents.persons, person =>
+								<Button key={person.id} bsStyle="link" onClick={this.addAttendee.bind(this, person)}>Add {person.name}</Button>
+							)}
 					</Form.Field.ExtraCol>
+					}
 				</Form.Field>
 			</fieldset>
 

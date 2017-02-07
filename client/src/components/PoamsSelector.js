@@ -54,7 +54,7 @@ export default class PoamsSelector extends Component {
 					.
 				</p>}
 
-				{ shortcuts && this.renderShortcuts() }
+				{ shortcuts && shortcuts.length > 0 && this.renderShortcuts() }
 			</Form.Field>
 		</fieldset>
 	}
