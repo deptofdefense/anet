@@ -17,6 +17,7 @@ export default class Form extends Component {
 		static: PropTypes.bool,
 		submitText: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
 		submitOnEnter: PropTypes.bool,
+		submitDisabled: PropTypes.bool,
 		onSubmit: PropTypes.func,
 		onChange: PropTypes.func,
 	})
@@ -46,7 +47,7 @@ export default class Form extends Component {
 	}
 
 	render() {
-		let {children, submitText, submitOnEnter, ...bsProps} = this.props
+		let {children, submitText, submitOnEnter, submitDisabled, ...bsProps} = this.props
 		bsProps = Object.without(bsProps, 'formFor', 'static')
 
 		if (this.props.static) {
@@ -69,7 +70,7 @@ export default class Form extends Component {
 
 				{showSubmit &&
 					<ContentForHeader right>
-						<Button bsStyle="primary" type="submit" onClick={bsProps.onSubmit}>
+						<Button bsStyle="primary" type="submit" onClick={bsProps.onSubmit} disabled={submitDisabled}>
 							{submitText}
 						</Button>
 					</ContentForHeader>
@@ -77,7 +78,7 @@ export default class Form extends Component {
 
 				{showSubmit &&
 					<div className="form-bottom-submit">
-						<Button bsStyle="primary" bsSize="large" type="submit">
+						<Button bsStyle="primary" bsSize="large" type="submit" disabled={submitDisabled} >
 							{submitText}
 						</Button>
 					</div>

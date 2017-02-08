@@ -70,7 +70,9 @@ export default class ReportForm extends Component {
 		let {report} = this.props
 		let {recents, errors} = this.state
 
-		return <Form formFor={report} horizontal onChange={this.onChange} onSubmit={this.onSubmit} submitText="Save report">
+		let hasErrors = Object.keys(errors).length > 0;
+
+		return <Form formFor={report} horizontal onChange={this.onChange} onSubmit={this.onSubmit} submitText="Save report" submitDisabled={hasErrors} >
 			<fieldset>
 				<legend>Engagement Details <small>Required</small></legend>
 
@@ -184,7 +186,6 @@ export default class ReportForm extends Component {
 			<fieldset>
 				<legend>Meeting Discussion <small>Required</small></legend>
 
-
 				<Form.Field id="keyOutcomes">
 					<Form.Field.ExtraCol><small>{250 - report.keyOutcomes.length}</small></Form.Field.ExtraCol>
 				</Form.Field>
@@ -246,14 +247,22 @@ export default class ReportForm extends Component {
 	@autobind
 	attendeeError(isError, message) {
 		let errors = this.state.errors;
-		errors.attendees = isError ? "error" : null
+		if (isError) {
+			errors.attendees = "error"
+		} else {
+			delete errors.attendees
+		}
 		this.setState({errors});
 	}
 
 	@autobind
 	onPoamError(isError, message) {
 		let errors = this.state.errors;
-		errors.poams = isError ? "error" : null
+		if (isError) {
+			errors.poams = "error"
+		} else {
+			delete errors.poams
+		}
 		this.setState({errors});
 	}
 
@@ -305,7 +314,7 @@ export default class ReportForm extends Component {
 		if (report.location && (typeof report.location !== "object")) {
 			errors.location = "error"
 		} else {
-			errors.location = null;
+			delete errors.location
 		}
 
 		return errors;
