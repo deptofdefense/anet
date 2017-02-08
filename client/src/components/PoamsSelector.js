@@ -37,17 +37,17 @@ export default class PoamsSelector extends Component {
 				<Table hover striped>
 					<thead>
 						<tr>
-							<th></th>
 							<th>Name</th>
+							<th></th>
 						</tr>
 					</thead>
 					<tbody>
 						{poams.map(poam =>
 							<tr key={poam.id}>
+								<td>{poam.shortName} - {poam.longName}</td>
 								<td onClick={this.removePoam.bind(this, poam)}>
 									<span style={{cursor: 'pointer'}}><img src={REMOVE_ICON} height={14} alt="Remove attendee" /></span>
 								</td>
-								<td>{poam.shortName} - {poam.longName}</td>
 							</tr>
 						)}
 					</tbody>

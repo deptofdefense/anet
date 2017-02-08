@@ -139,20 +139,16 @@ export default class ReportForm extends Component {
 					<Table hover striped>
 						<thead>
 							<tr>
-								<th></th>
 								<th style={{textAlign: 'center'}}>Primary</th>
 								<th>Name</th>
 								<th>Position</th>
 								<th>Org</th>
+								<th></th>
 							</tr>
 						</thead>
 						<tbody>
 							{Person.map(report.attendees, person =>
 								<tr key={person.id}>
-									<td onClick={this.removeAttendee.bind(this, person)}>
-										<span style={{cursor: 'pointer'}}><img src={REMOVE_ICON} height={14} alt="Remove attendee" /></span>
-									</td>
-
 									<td className="primary-attendee">
 										<Checkbox checked={person.primary} onChange={this.setPrimaryAttendee.bind(this, person)} />
 									</td>
@@ -163,6 +159,11 @@ export default class ReportForm extends Component {
 									</td>
 									<td><LinkTo position={person.position} /></td>
 									<td>{person.position && person.position.organization && person.position.organization.shortName}</td>
+
+									<td onClick={this.removeAttendee.bind(this, person)}>
+										<span style={{cursor: 'pointer'}}><img src={REMOVE_ICON} height={14} alt="Remove attendee" /></span>
+									</td>
+
 								</tr>
 							)}
 						</tbody>
