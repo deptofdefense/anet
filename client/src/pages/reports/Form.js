@@ -80,15 +80,11 @@ export default class ReportForm extends Component {
 					<Form.Field.ExtraCol>{250 - report.intent.length} characters remaining</Form.Field.ExtraCol>
 				</Form.Field>
 
-				<Form.Field id="engagementDate">
-					<DatePicker showTodayButton placeholder="When did it happen?" dateFormat="DD/MM/YYYY">
-						<InputGroup.Addon>
-							<img src="/assets/img/calendar.png" height="20px" role="presentation"/>
-						</InputGroup.Addon>
-					</DatePicker>
+				<Form.Field id="engagementDate" addon="/assets/img/calendar.png">
+					<DatePicker showTodayButton placeholder="When did it happen?" dateFormat="DD/MM/YYYY" />
 				</Form.Field>
 
-				<Form.Field id="location" addon="📍"validationState={errors.location} >
+				<Form.Field id="location" addon="📍" validationState={errors.location}>
 					<Autocomplete valueKey="name" placeholder="Start typing to search for the location where this happened..." url="/api/locations/search" />
 					{errors.location && <HelpBlock><b>Location not found in database</b></HelpBlock>}
 

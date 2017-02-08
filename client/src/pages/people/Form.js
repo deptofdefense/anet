@@ -111,13 +111,11 @@ export default class PersonForm extends Component {
 					<option>Ukraine</option>
 				</Form.Field>
 
-				<Form.Field id="endOfTourDate">
-					<DatePicker placeholder="End of Tour Date" dateFormat="DD/MM/YYYY">
-						<InputGroup.Addon><img src="/assets/img/calendar.png" height="20px" role="presentation" /></InputGroup.Addon>
-					</DatePicker>
+				<Form.Field id="endOfTourDate" addon="/assets/img/calendar.png">
+					<DatePicker placeholder="End of Tour Date" dateFormat="DD/MM/YYYY" />
 				</Form.Field>
 
-				<Form.Field id="biography" >
+				<Form.Field id="biography">
 					<TextEditor label="" value={person.biography} />
 				</Form.Field>
 			</fieldset>
