@@ -88,7 +88,7 @@ fieldset.collapsable legend div.collapsableToggle {
 	display: none;
 }
 
-.header img, .header input, .header button {
+.header .logo img, .header input, .header button {
 	height: 38px;
 }
 
@@ -148,7 +148,7 @@ a.home-tile {
 }
 
 .person-icon {
-	margin-right:4px;
+	margin-right: 4px;
 }
 
 .primary-attendee .checkbox {

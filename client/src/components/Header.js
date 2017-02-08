@@ -40,7 +40,7 @@ class Header extends Component {
 				<Grid>
 					<Row>
 						<Col xs={3}>
-							{leftContent || <Link to="/">
+							{leftContent || <Link to="/" className="logo">
 								<img src={logo} alt="ANET logo" />
 							</Link>}
 						</Col>

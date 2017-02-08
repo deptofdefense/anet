@@ -1,5 +1,8 @@
 import Model from 'components/Model'
 
+import RS_ICON from 'resources/rs_small.png'
+import AFG_ICON from 'resources/afg_small.png'
+
 export default class Position extends Model {
 	static resourceName = "Position"
 	static listName = "positionList"
@@ -20,10 +23,11 @@ export default class Position extends Model {
 
 	iconUrl() {
 		if (this.type === "ADVISOR") {
-			return "/assets/img/rs_small.png"
+			return RS_ICON
 		} else if (this.type === "PRINCIPAL") {
-			return "/assets/img/afg_small.png"
+			return AFG_ICON
 		}
-		return ""
+
+		return ''
 	}
 }
