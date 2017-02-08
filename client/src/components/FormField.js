@@ -54,6 +54,7 @@ export default class FormField extends Component {
 		value: PropTypes.oneOfType([
 			PropTypes.string,
 			PropTypes.object,
+			PropTypes.bool,
 		]),
 
 		onChange: PropTypes.func,

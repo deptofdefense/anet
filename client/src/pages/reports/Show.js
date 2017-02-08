@@ -3,6 +3,7 @@ import Page from 'components/Page'
 import {Alert, Table, Button, Grid, Row, Col, DropdownButton, MenuItem, Modal, Checkbox} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 import moment from 'moment'
+import utils from 'utils'
 
 import {Report, Person, Poam, Comment} from 'models'
 import Breadcrumbs from 'components/Breadcrumbs'
@@ -47,7 +48,7 @@ export default class ReportShow extends Page {
 		API.query(/* GraphQL */`
 			report(id:${props.params.id}) {
 				id, intent, engagementDate, atmosphere, atmosphereDetails
-				keyOutcomes, reportText, nextSteps
+				keyOutcomes, reportText, nextSteps, cancelledReason
 
 				state
 
@@ -122,6 +123,8 @@ export default class ReportShow extends Page {
 
 		let errors = report.isDraft() && report.validateForSubmit();
 
+		let isCancelled = (report.cancelledReason) ? true : false;
+
 		return (
 			<div>
 				<Breadcrumbs items={[['Reports', '/reports'], [report.intent || 'Report #' + report.id, Report.pathFor(report)]]} />
@@ -174,8 +177,9 @@ export default class ReportShow extends Page {
 
 						<Form.Field id="intent" label="Summary" >
 							<div>
-								<b>The goal of this meeting is to</b> {report.intent}.
-								<b>The key outcomes are</b> {report.keyOutcomes}.
+								<b>The goal of this meeting is to</b> {report.intent}. &nbsp;
+								{report.keyOutcomes &&
+									<span><b>The key outcomes are</b> {report.keyOutcomes}.&nbsp;</span>}
 								<b>The next steps are</b> {report.nextSteps}
 							</div>
 						</Form.Field>
@@ -183,10 +187,17 @@ export default class ReportShow extends Page {
 						<Form.Field id="location" label="Location 📍">
 							{report.location && <LinkTo location={report.location} />}
 						</Form.Field>
-						<Form.Field id="atmosphere" label="Atmospherics">
-							<span style={atmosphereIconCss}>{atmosphereIcons[report.atmosphere]}</span>
-							{report.atmosphereDetails}
-						</Form.Field>
+						{!isCancelled &&
+							<Form.Field id="atmosphere" label="Atmospherics">
+								<span style={atmosphereIconCss}>{atmosphereIcons[report.atmosphere]}</span>
+								{report.atmosphereDetails}
+							</Form.Field>
+						}
+						{isCancelled &&
+							<Form.Field id="cancelledReason" label="Cancelled Reason" >
+								{utils.sentenceCase(report.cancelledReason)}
+							</Form.Field>
+						}
 						<Form.Field id="author" label="Report author">
 							<LinkTo person={report.author} />
 						</Form.Field>

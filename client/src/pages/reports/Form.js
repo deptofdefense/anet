@@ -32,6 +32,7 @@ export default class ReportForm extends Component {
 			},
 
 			showReportText: false,
+			isCancelled: (props.report.cancelledReason ? true : false),
 			errors: {}
 		}
 	}
@@ -59,6 +60,13 @@ export default class ReportForm extends Component {
 		})
 	}
 
+	componentWillReceiveProps(nextProps) {
+		let report = nextProps.report;
+		if (report.cancelledReason) {
+			this.setState({isCancelled: true})
+		}
+	}
+
 	componentDidUpdate() {
 		let {report, defaultAttendee} = this.props
 		if (defaultAttendee && defaultAttendee.id && !report.attendees.length) {
@@ -68,7 +76,7 @@ export default class ReportForm extends Component {
 
 	render() {
 		let {report} = this.props
-		let {recents, errors} = this.state
+		let {recents, errors, isCancelled} = this.state
 
 		let hasErrors = Object.keys(errors).length > 0;
 
@@ -99,22 +107,32 @@ export default class ReportForm extends Component {
 					</Form.Field.ExtraCol>
 				</Form.Field>
 
-				{false && <Form.Field id="cancelled" label="">
-					<Checkbox>Engagement was cancelled?</Checkbox>
-				</Form.Field>}
+				<Form.Field id="isCancelled" value={isCancelled} label="">
+					<Checkbox inline onChange={this.toggleCancelled} checked={isCancelled} >
+						This engagement was cancelled
+					</Checkbox>
+				</Form.Field>
 
-				{!report.cancelled &&
+				{!isCancelled &&
 					<Form.Field id="atmosphere">
 						<RadioGroup bsSize="large">
 							<Radio value="POSITIVE"><img src="/assets/img/thumbs_up.png" height="25px" alt="positive" /></Radio>
 							<Radio value="NEUTRAL"><img src="/assets/img/neutral.png" height="25px" alt="neutral" /></Radio>
 							<Radio value="NEGATIVE"><img src="/assets/img/thumbs_down.png" height="25px" alt="negative" /></Radio>
 						</RadioGroup>
+
 					</Form.Field>
 				}
 
-				{!report.cancelled && report.atmosphere && report.atmosphere !== 'POSITIVE' &&
+				{!isCancelled && report.atmosphere && report.atmosphere !== 'POSITIVE' &&
 					<Form.Field id="atmosphereDetails" placeholder={"Why was this engagement " + report.atmosphere} />
+				}
+
+				{isCancelled &&
+					<Form.Field id="cancelledReason" componentClass="select" >
+						<option value="CANCELLED_BY_ADVISOR">Cancelled by Advisor</option>
+						<option value="CANCELLED_BY_PRINCIPAL">Cancelled by Principal</option>
+					</Form.Field>
 				}
 			</fieldset>
 
@@ -176,22 +194,26 @@ export default class ReportForm extends Component {
 				</Form.Field>
 			</fieldset>
 
-			<PoamsSelector poams={report.poams}
-				shortcuts={recents.poams}
-				onChange={this.onChange}
-				onErrorChange={this.onPoamError}
-				validationState={errors.poams}
-				optional={true} />
+			{!isCancelled &&
+				<PoamsSelector poams={report.poams}
+					shortcuts={recents.poams}
+					onChange={this.onChange}
+					onErrorChange={this.onPoamError}
+					validationState={errors.poams}
+					optional={true} />
+				}
 
 			<fieldset>
 				<legend>Meeting Discussion <small>Required</small></legend>
 
-				<Form.Field id="keyOutcomes">
-					<Form.Field.ExtraCol><small>{250 - report.keyOutcomes.length}</small></Form.Field.ExtraCol>
-				</Form.Field>
+				{!isCancelled &&
+					<Form.Field id="keyOutcomes">
+						<Form.Field.ExtraCol><small>{250 - report.keyOutcomes.length} Characters Remaining</small></Form.Field.ExtraCol>
+					</Form.Field>
+				}
 
 				<Form.Field id="nextSteps">
-					<Form.Field.ExtraCol><small>{250 - report.nextSteps.length}</small></Form.Field.ExtraCol>
+					<Form.Field.ExtraCol><small>{250 - report.nextSteps.length} Characters Remaining</small></Form.Field.ExtraCol>
 				</Form.Field>
 
 				<Button className="center-block toggle-section-button" onClick={this.toggleReportText}>
@@ -212,6 +234,14 @@ export default class ReportForm extends Component {
 	@autobind
 	toggleReportText() {
 		this.setState({showReportText: !this.state.showReportText})
+	}
+
+	@autobind
+	toggleCancelled() {
+		//Toggle the isCancelled state. And set a default reason if necessary
+		let cancelled = !this.state.isCancelled;
+		this.props.report.cancelledReason = (cancelled) ? "CANCELLED_BY_ADVISOR" : null
+		this.setState({isCancelled: cancelled})
 	}
 
 	@autobind
@@ -323,16 +353,20 @@ export default class ReportForm extends Component {
 	@autobind
 	onSubmit(event) {
 		let {report, edit} = this.props
+		let isCancelled = this.state.isCancelled
 
 		if(report.primaryAdvisor) { report.attendees.find(a => a.id === report.primaryAdvisor.id).isPrimary = true }
 		if(report.primaryPrincipal) { report.attendees.find(a => a.id === report.primaryPrincipal.id).isPrimary = true }
 
 		delete report.primaryPrincipal
 		delete report.primaryAdvisor
-		delete report.cancelled
 		report.attendees = report.attendees.map(a =>
 			Object.without(a, 'position')
 		)
+
+		if (!isCancelled) {
+			delete report.cancelledReason
+		}
 
 		let url = `/api/reports/${edit ? 'update' : 'new'}`
 		API.send(url, report, {disableSubmits: true})

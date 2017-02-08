@@ -194,3 +194,8 @@ a.home-tile {
 .reportApprovalButton { 
 	text-align: center;
 }
+
+.reportCancelledCheckbox { 
+	margin-left: 40px;
+	padding-top: 7px;
+}

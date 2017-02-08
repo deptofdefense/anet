@@ -1,6 +1,7 @@
 import React, {Component, PropTypes} from 'react'
 import {Grid, Row, Col} from 'react-bootstrap'
 import {Link} from 'react-router'
+import utils from 'utils'
 
 import LinkTo from 'components/LinkTo'
 import {Report, Person, Organization} from 'models'
@@ -38,6 +39,13 @@ export default class ReportSummary extends Component {
 				<Col md={6}>{report.primaryAdvisor && this.renderPerson(report.primaryAdvisor)}</Col>
 				<Col md={6}>{report.primaryPrincipal && this.renderPerson(report.primaryPrincipal)}</Col>
 			</Row>
+			{report.cancelledReason &&
+				<Row>
+					<Col md={12}>
+						Cancelled for: <b>{utils.sentenceCase(report.cancelledReason)}</b>
+					</Col>
+				</Row>
+			}
 			<Row>
 				<Col md={12}>
 					{report.intent}. &nbsp;

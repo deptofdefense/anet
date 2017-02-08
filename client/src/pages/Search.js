@@ -29,7 +29,7 @@ const SEARCH_CONFIG = {
 	"reports" : {
 		listName : "reports: reportList",
 		variableType: "ReportSearchQuery",
-		fields : `id, intent, engagementDate, keyOutcomes, nextSteps,
+		fields : `id, intent, engagementDate, keyOutcomes, nextSteps, cancelledReason,
 			author { id, name }
 			primaryAdvisor { id, name, role, position { organization { id, shortName}}},
 			primaryPrincipal { id, name, role, position { organization { id, shortName}}},
