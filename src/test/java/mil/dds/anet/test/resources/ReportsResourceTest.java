@@ -21,6 +21,7 @@ import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.ApprovalAction;
 import mil.dds.anet.beans.ApprovalStep;
 import mil.dds.anet.beans.Comment;
+import mil.dds.anet.beans.Location;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Person.Role;
@@ -32,7 +33,6 @@ import mil.dds.anet.beans.Report.Atmosphere;
 import mil.dds.anet.beans.Report.ReportCancelledReason;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
-import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.LocationList;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.OrganizationList;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.PoamList;
@@ -57,8 +57,8 @@ public class ReportsResourceTest extends AbstractResourceTest {
 	@Test
 	public void createReport() {
 		//Create a report writer
-		Person author = getJackJackson();
-		Person admin = getArthurDmin();
+		final Person author = getJackJackson();
+		final Person admin = getArthurDmin();
 
 		//Create a principal for the report
 		ReportPerson principal = PersonTest.personToReportPerson(getSteveSteveson());
@@ -69,9 +69,9 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		assertThat(principalOrg).isNotNull();
 
 		//Create an Advising Organization for the report writer
-		Organization advisorOrg = httpQuery("/api/organizations/new", admin)
+		final Organization advisorOrg = httpQuery("/api/organizations/new", admin)
 				.post(Entity.json(OrganizationTest.getTestAO()), Organization.class);
-		
+
 		//Create leadership people in the AO who can approve this report
 		Person approver1 = new Person();
 		approver1.setDomainUsername("testApprover1");
@@ -87,7 +87,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		approver2.setRole(Person.Role.ADVISOR);
 		approver2.setStatus(Person.Status.ACTIVE);
 		approver2 = findOrPutPersonInDb(approver2);
-		
+
 		Position approver1Pos = new Position();
 		approver1Pos.setName("Test Approver 1 Position");
 		approver1Pos.setOrganization(advisorOrg);
@@ -96,7 +96,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 				.post(Entity.json(approver1Pos), Position.class);
 		Response resp = httpQuery("/api/positions/" + approver1Pos.getId() + "/person", admin).post(Entity.json(approver1));
 		assertThat(resp.getStatus()).isEqualTo(200);
-		
+
 		Position approver2Pos = new Position();
 		approver2Pos.setName("Test Approver 2 Position");
 		approver2Pos.setOrganization(advisorOrg);
@@ -105,7 +105,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 				.post(Entity.json(approver1Pos), Position.class);
 		resp = httpQuery("/api/positions/" + approver2Pos.getId() + "/person", admin).post(Entity.json(approver2));
 		assertThat(resp.getStatus()).isEqualTo(200);
-		
+
 		//Create a billet for the author
 		Position authorBillet = new Position();
 		authorBillet.setName("A report writer");
@@ -123,7 +123,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		approval.setName("Test Group for Approving");
 		approval.setAdvisorOrganizationId(advisorOrg.getId());
 		approval.setApprovers(ImmutableList.of(approver1Pos));
-		
+
 		approval = httpQuery("/api/approvalSteps/new", admin)
 				.post(Entity.json(approval), ApprovalStep.class);
 		assertThat(approval.getId()).isNotNull();
@@ -181,7 +181,8 @@ public class ReportsResourceTest extends AbstractResourceTest {
 
 		Report returned = httpQuery(String.format("/api/reports/%d", created.getId()), author).get(Report.class);
 		assertThat(returned.getState()).isEqualTo(ReportState.PENDING_APPROVAL);
-		System.out.println("Expecting report " + returned.getId() + " in step " + approval.getId() + " because of org" + advisorOrg.getId() + " on author " + author.getId());
+		System.out.println(String.format("Expecting report %d in step %d because of org %d on author %d",
+				returned.getId(), approval.getId(), advisorOrg.getId(), author.getId()));
 		assertThat(returned.getApprovalStep().getId()).isEqualTo(approval.getId());
 
 		//verify the location on this report
@@ -197,7 +198,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 
 		//Verify this shows up on the approvers list of pending documents
 		ReportSearchQuery pendingQuery = new ReportSearchQuery();
-        pendingQuery.setPendingApprovalOf(approver1.getId());
+		pendingQuery.setPendingApprovalOf(approver1.getId());
 		ReportList pending = httpQuery("/api/reports/search", approver1).post(Entity.json(pendingQuery), ReportList.class);
 		int id = returned.getId();
 		Report expected = pending.getList().stream().filter(re -> re.getId().equals(id)).findFirst().get();
@@ -209,7 +210,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		searchQuery.setPendingApprovalOf(approver1.getId());
 		pending = httpQuery("/api/reports/search", approver1).post(Entity.json(searchQuery), ReportList.class);
 		assertThat(pending.getList().size()).isGreaterThan(0);
-		
+
 		//Check on Report status for who needs to approve
 		List<ApprovalAction> approvalStatus = returned.loadApprovalStatus();
 		assertThat(approvalStatus.size()).isEqualTo(2);
@@ -269,20 +270,20 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		assertThat(approvalAction.loadStep()).isEqualTo(steps.get(1));
 
 		//Post a comment on the report because it's awesome
-		Comment cOne = httpQuery(String.format("/api/reports/%d/comments", created.getId()), author)
+		Comment commentOne = httpQuery(String.format("/api/reports/%d/comments", created.getId()), author)
 				.post(Entity.json(CommentTest.fromText("This is a test comment one")), Comment.class);
-		assertThat(cOne.getId()).isNotNull();
-		assertThat(cOne.getReportId()).isEqualTo(created.getId());
-		assertThat(cOne.getAuthor().getId()).isEqualTo(author.getId());
+		assertThat(commentOne.getId()).isNotNull();
+		assertThat(commentOne.getReportId()).isEqualTo(created.getId());
+		assertThat(commentOne.getAuthor().getId()).isEqualTo(author.getId());
 
-		Comment cTwo = httpQuery(String.format("/api/reports/%d/comments", created.getId()), approver1)
+		Comment commentTwo = httpQuery(String.format("/api/reports/%d/comments", created.getId()), approver1)
 				.post(Entity.json(CommentTest.fromText("This is a test comment two")), Comment.class);
-		assertThat(cTwo.getId()).isNotNull();
+		assertThat(commentTwo.getId()).isNotNull();
 
 		List<Comment> commentsReturned = httpQuery(String.format("/api/reports/%d/comments", created.getId()), approver1)
 			.get(new GenericType<List<Comment>>() {});
 		assertThat(commentsReturned).hasSize(3); //the rejection comment will be there as well.
-		assertThat(commentsReturned).containsSequence(cOne, cTwo); //Assert order of comments!
+		assertThat(commentsReturned).containsSequence(commentOne, commentTwo); //Assert order of comments!
 
 		//Search for this report by Author
 		//Search for this report by Advisor
@@ -295,9 +296,9 @@ public class ReportsResourceTest extends AbstractResourceTest {
 
 	@Test
 	public void testDefaultApprovalFlow() {
-		Person jack = getJackJackson();
-		Person admin = getArthurDmin();
-		Person roger = getRogerRogwell();
+		final Person jack = getJackJackson();
+		final Person admin = getArthurDmin();
+		final Person roger = getRogerRogwell();
 
 		//Create a Person who isn't in a Billet
 		Person author = new Person();
@@ -387,84 +388,86 @@ public class ReportsResourceTest extends AbstractResourceTest {
 
 	@Test
 	public void reportEditTest() {
-        //Elizabeth writes a report about meeting with Roger
-        Person elizabeth = getElizabethElizawell();
-        Person roger = getRogerRogwell();
-        Person nick = getNickNicholson();
-        Person bob = getBobBobtown();
+		//Elizabeth writes a report about meeting with Roger
+		final Person elizabeth = getElizabethElizawell();
+		final Person roger = getRogerRogwell();
+		final Person nick = getNickNicholson();
+		final Person bob = getBobBobtown();
 
-        //Fetch some objects from the DB that we'll use later.
-        List<Location> locSearchResults = httpQuery("/api/locations/search?text=Police", elizabeth)
-                .get(LocationList.class).getList();
-        assertThat(locSearchResults.size()).isGreaterThan(0);
-        Location loc = locSearchResults.get(0);
+		//Fetch some objects from the DB that we'll use later.
+		List<Location> locSearchResults = httpQuery("/api/locations/search?text=Police", elizabeth)
+				.get(LocationList.class).getList();
+		assertThat(locSearchResults.size()).isGreaterThan(0);
+		final Location loc = locSearchResults.get(0);
 
-        PoamList poamSearchResults = httpQuery("/api/poams/search?text=Budgeting", elizabeth)
-        		.get(PoamList.class);
-        assertThat(poamSearchResults.getTotalCount()).isGreaterThan(2);
+		PoamList poamSearchResults = httpQuery("/api/poams/search?text=Budgeting", elizabeth)
+				.get(PoamList.class);
+		assertThat(poamSearchResults.getTotalCount()).isGreaterThan(2);
 
-        Report r = new Report();
-        r.setIntent("A Test Report to test editing reports");
-        r.setAuthor(elizabeth);
-        r.setAtmosphere(Atmosphere.POSITIVE);
-        r.setAtmosphereDetails("it was a cold, cold day");
-        r.setEngagementDate(DateTime.now());
-        r.setKeyOutcomes("There were some key out comes summarized");
-        r.setNextSteps("These are the next steps summarized");
-        r.setReportText("This report was generated by ReportsResourceTest#reportEditTest");
-        r.setAttendees(ImmutableList.of(PersonTest.personToPrimaryReportPerson(roger)));
-        r.setPoams(ImmutableList.of(poamSearchResults.getList().get(0)));
-        Report returned = httpQuery("/api/reports/new", elizabeth).post(Entity.json(r), Report.class);
-        assertThat(returned.getId()).isNotNull();
+		Report r = new Report();
+		r.setIntent("A Test Report to test editing reports");
+		r.setAuthor(elizabeth);
+		r.setAtmosphere(Atmosphere.POSITIVE);
+		r.setAtmosphereDetails("it was a cold, cold day");
+		r.setEngagementDate(DateTime.now());
+		r.setKeyOutcomes("There were some key out comes summarized");
+		r.setNextSteps("These are the next steps summarized");
+		r.setReportText("This report was generated by ReportsResourceTest#reportEditTest");
+		r.setAttendees(ImmutableList.of(PersonTest.personToPrimaryReportPerson(roger)));
+		r.setPoams(ImmutableList.of(poamSearchResults.getList().get(0)));
+		Report returned = httpQuery("/api/reports/new", elizabeth).post(Entity.json(r), Report.class);
+		assertThat(returned.getId()).isNotNull();
 
-        //Elizabeth edits the report (update locationId, addPerson, remove a Poam)
-        returned.setLocation(loc);
-        returned.setAttendees(ImmutableList.of(PersonTest.personToPrimaryReportPerson(roger), PersonTest.personToReportPerson(nick), PersonTest.personToPrimaryReportPerson(elizabeth)));
-        returned.setPoams(ImmutableList.of());
-        Response resp = httpQuery("/api/reports/update", elizabeth).post(Entity.json(returned));
-        assertThat(resp.getStatus()).isEqualTo(200);
+		//Elizabeth edits the report (update locationId, addPerson, remove a Poam)
+		returned.setLocation(loc);
+		returned.setAttendees(ImmutableList.of(PersonTest.personToPrimaryReportPerson(roger), 
+				PersonTest.personToReportPerson(nick), 
+				PersonTest.personToPrimaryReportPerson(elizabeth)));
+		returned.setPoams(ImmutableList.of());
+		Response resp = httpQuery("/api/reports/update", elizabeth).post(Entity.json(returned));
+		assertThat(resp.getStatus()).isEqualTo(200);
 
-        //Verify the report changed
-        Report returned2 = httpQuery("/api/reports/" + returned.getId(), elizabeth).get(Report.class);
-        assertThat(returned2.getIntent()).isEqualTo(r.getIntent());
-        assertThat(returned2.getLocation().getId()).isEqualTo(loc.getId());
-        assertThat(returned2.loadPoams()).isEmpty(); //yes this does a DB load :(
-        assertThat(returned2.loadAttendees()).hasSize(3);
-        assertThat(returned2.loadAttendees().contains(roger));
+		//Verify the report changed
+		Report returned2 = httpQuery("/api/reports/" + returned.getId(), elizabeth).get(Report.class);
+		assertThat(returned2.getIntent()).isEqualTo(r.getIntent());
+		assertThat(returned2.getLocation().getId()).isEqualTo(loc.getId());
+		assertThat(returned2.loadPoams()).isEmpty(); //yes this does a DB load :(
+		assertThat(returned2.loadAttendees()).hasSize(3);
+		assertThat(returned2.loadAttendees().contains(roger));
 
-        //Elizabeth submits the report
-        resp = httpQuery("/api/reports/" + returned.getId() + "/submit", elizabeth).post(Entity.json(null));
-        assertThat(resp.getStatus()).isEqualTo(200);
-        Report returned3 = httpQuery("/api/reports/" + returned.getId(), elizabeth).get(Report.class);
-        assertThat(returned3.getState()).isEqualTo(ReportState.PENDING_APPROVAL);
+		//Elizabeth submits the report
+		resp = httpQuery("/api/reports/" + returned.getId() + "/submit", elizabeth).post(Entity.json(null));
+		assertThat(resp.getStatus()).isEqualTo(200);
+		Report returned3 = httpQuery("/api/reports/" + returned.getId(), elizabeth).get(Report.class);
+		assertThat(returned3.getState()).isEqualTo(ReportState.PENDING_APPROVAL);
 
-        //Bob gets the approval (EF1 Approvers)
-        ReportSearchQuery pendingQuery = new ReportSearchQuery();
-        pendingQuery.setPendingApprovalOf(bob.getId());
-        ReportList pendingBobsApproval = httpQuery("/api/reports/search", bob).post(Entity.json(pendingQuery), ReportList.class);
-        assertThat(pendingBobsApproval.getList().stream().anyMatch(rpt -> rpt.getId().equals(returned3.getId()))).isTrue();
+		//Bob gets the approval (EF1 Approvers)
+		ReportSearchQuery pendingQuery = new ReportSearchQuery();
+		pendingQuery.setPendingApprovalOf(bob.getId());
+		ReportList pendingBobsApproval = httpQuery("/api/reports/search", bob).post(Entity.json(pendingQuery), ReportList.class);
+		assertThat(pendingBobsApproval.getList().stream().anyMatch(rpt -> rpt.getId().equals(returned3.getId()))).isTrue();
 
-        //Bob edits the report (change reportText, remove Person, add a Poam)
-        returned3.setReportText(r.getReportText() + ", edited by Bob!!");
-        returned3.setAttendees(ImmutableList.of(PersonTest.personToPrimaryReportPerson(nick), PersonTest.personToPrimaryReportPerson(elizabeth)));
-        returned3.setPoams(ImmutableList.of(poamSearchResults.getList().get(1), poamSearchResults.getList().get(2)));
-        resp = httpQuery("/api/reports/update", bob).post(Entity.json(returned3));
-        assertThat(resp.getStatus()).isEqualTo(200);
-        
-        Report returned4 = httpQuery("/api/reports/" + returned.getId(), elizabeth).get(Report.class);
-        assertThat(returned4.getReportText()).endsWith("Bob!!");
-        assertThat(returned4.loadAttendees()).hasSize(2);
-        assertThat(returned4.loadAttendees()).contains(PersonTest.personToPrimaryReportPerson(nick));
-        assertThat(returned4.loadPoams()).hasSize(2);
+		//Bob edits the report (change reportText, remove Person, add a Poam)
+		returned3.setReportText(r.getReportText() + ", edited by Bob!!");
+		returned3.setAttendees(ImmutableList.of(PersonTest.personToPrimaryReportPerson(nick), PersonTest.personToPrimaryReportPerson(elizabeth)));
+		returned3.setPoams(ImmutableList.of(poamSearchResults.getList().get(1), poamSearchResults.getList().get(2)));
+		resp = httpQuery("/api/reports/update", bob).post(Entity.json(returned3));
+		assertThat(resp.getStatus()).isEqualTo(200);
 
-        resp = httpQuery("/api/reports/" + returned.getId() + "/approve", bob).post(null);
-        assertThat(resp.getStatus()).isEqualTo(200);
+		Report returned4 = httpQuery("/api/reports/" + returned.getId(), elizabeth).get(Report.class);
+		assertThat(returned4.getReportText()).endsWith("Bob!!");
+		assertThat(returned4.loadAttendees()).hasSize(2);
+		assertThat(returned4.loadAttendees()).contains(PersonTest.personToPrimaryReportPerson(nick));
+		assertThat(returned4.loadPoams()).hasSize(2);
+
+		resp = httpQuery("/api/reports/" + returned.getId() + "/approve", bob).post(null);
+		assertThat(resp.getStatus()).isEqualTo(200);
 	}
 
 	@Test
 	public void searchTest() {
-		Person jack =  getJackJackson();
-		Person steve = getSteveSteveson();
+		final Person jack =  getJackJackson();
+		final Person steve = getSteveSteveson();
 		ReportSearchQuery query = new ReportSearchQuery();
 
 		//Search based on report Text body
@@ -485,7 +488,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		assertThat(searchResults.getList().stream()
 				.filter(r -> (r.getAuthor().getId().equals(jack.getId()))).count())
 			.isEqualTo(searchResults.getList().size());
-		int numResults = searchResults.getList().size();
+		final int numResults = searchResults.getList().size();
 
 		//Search by Author with Date Filtering
 		query.setEngagementDateStart(new DateTime(2016,6,1,0,0));
@@ -565,16 +568,16 @@ public class ReportsResourceTest extends AbstractResourceTest {
 
 		//Search by Principal Parent Organization
 	}
-	
+
 	@Test
-	public void reportDeleteTest() { 
-		Person jack = getJackJackson();
-		Person liz = getElizabethElizawell();
-		Person admin = getArthurDmin();
-		Person roger = getRogerRogwell();
+	public void reportDeleteTest() {
+		final Person jack = getJackJackson();
+		final Person liz = getElizabethElizawell();
+		final Person admin = getArthurDmin();
+		final Person roger = getRogerRogwell();
 
 		List<ReportPerson> attendees = ImmutableList.of(
-			PersonTest.personToPrimaryReportPerson(roger), 
+			PersonTest.personToPrimaryReportPerson(roger),
 			PersonTest.personToReportPerson(jack),
 			PersonTest.personToPrimaryReportPerson(liz));
 
@@ -590,58 +593,55 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		r.setEngagementDate(DateTime.now());
 		r = httpQuery("/api/reports/new", liz).post(Entity.json(r), Report.class);
 		assertThat(r.getId()).isNotNull();
-		
-		//Try to delete  by the admin, this should fail. 
+
+		//Try to delete  by the admin, this should fail.
 		Response resp = httpQuery("/api/reports/" + r.getId() + "/delete", admin).delete();
 		assertThat(resp.getStatus()).isEqualTo(Status.FORBIDDEN.getStatusCode());
-		
-		//Now have the author delete this report. 
+
+		//Now have the author delete this report.
 		resp = httpQuery("/api/reports/" + r.getId() + "/delete", liz).delete();
 		assertThat(resp.getStatus()).isEqualTo(200);
-		
-		//Assert the report is gone. 
+
+		//Assert the report is gone.
 		Report returned  = httpQuery("/api/reports/" + r.getId(),liz).get(Report.class);
 		assertThat(returned).isNull();
 	}
-	
+
 	@Test
-	public void reportCancelTest() { 
-		Person liz = getElizabethElizawell(); //Report Author
-		Person steve = getSteveSteveson(); //Principal 
-		Person bob = getBobBobtown(); // Report Approver
-		
-		//Liz was supposed to meet with Steve, but he cancelled.  
-		
+	public void reportCancelTest() {
+		final Person liz = getElizabethElizawell(); //Report Author
+		final Person steve = getSteveSteveson(); //Principal
+		final Person bob = getBobBobtown(); // Report Approver
+
+		//Liz was supposed to meet with Steve, but he cancelled.
+
 		Report r = new Report();
 		r.setIntent("Meet with Steve about a thing we never got to talk about");
 		r.setEngagementDate(DateTime.now());
 		r.setAttendees(ImmutableList.of(PersonTest.personToPrimaryReportPerson(liz), PersonTest.personToPrimaryReportPerson(steve)));
 		r.setCancelledReason(ReportCancelledReason.CANCELLED_BY_PRINCIPAL);
-		
+
 		Report saved = httpQuery("/api/reports/new", liz).post(Entity.json(r), Report.class);
 		assertThat(saved.getId()).isNotNull();
-		
+
 		Response resp = httpQuery("/api/reports/" + saved.getId() + "/submit", liz).post(null);
 		assertThat(resp.getStatus()).isEqualTo(200);
-        Report returned = httpQuery("/api/reports/" + saved.getId(), liz).get(Report.class);
-        assertThat(returned.getState()).isEqualTo(ReportState.PENDING_APPROVAL);
-        assertThat(returned.getCancelledReason()).isEqualTo(ReportCancelledReason.CANCELLED_BY_PRINCIPAL);
+		Report returned = httpQuery("/api/reports/" + saved.getId(), liz).get(Report.class);
+		assertThat(returned.getState()).isEqualTo(ReportState.PENDING_APPROVAL);
+		assertThat(returned.getCancelledReason()).isEqualTo(ReportCancelledReason.CANCELLED_BY_PRINCIPAL);
 
-        //Bob gets the approval (EF1 Approvers)
-        ReportSearchQuery pendingQuery = new ReportSearchQuery();
-        pendingQuery.setPendingApprovalOf(bob.getId());
-        ReportList pendingBobsApproval = httpQuery("/api/reports/search", bob).post(Entity.json(pendingQuery), ReportList.class);
-        assertThat(pendingBobsApproval.getList().stream().anyMatch(rpt -> rpt.getId().equals(returned.getId()))).isTrue();
+		//Bob gets the approval (EF1 Approvers)
+		ReportSearchQuery pendingQuery = new ReportSearchQuery();
+		pendingQuery.setPendingApprovalOf(bob.getId());
+		ReportList pendingBobsApproval = httpQuery("/api/reports/search", bob).post(Entity.json(pendingQuery), ReportList.class);
+		assertThat(pendingBobsApproval.getList().stream().anyMatch(rpt -> rpt.getId().equals(returned.getId()))).isTrue();
 
-        //Bob should approve this report. 
-        resp = httpQuery("/api/reports/" + saved.getId() + "/approve", bob).post(null);
-        assertThat(resp.getStatus()).isEqualTo(200);
-        
-        //Ensure it went to cancelled status. 
-        Report returned2 = httpQuery("/api/reports/" + saved.getId(), liz).get(Report.class);
-        assertThat(returned2.getState()).isEqualTo(ReportState.CANCELLED);
-        
-		
-		
+		//Bob should approve this report.
+		resp = httpQuery("/api/reports/" + saved.getId() + "/approve", bob).post(null);
+		assertThat(resp.getStatus()).isEqualTo(200);
+
+		//Ensure it went to cancelled status.
+		Report returned2 = httpQuery("/api/reports/" + saved.getId(), liz).get(Report.class);
+		assertThat(returned2.getState()).isEqualTo(ReportState.CANCELLED);
 	}
 }

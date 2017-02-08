@@ -9,17 +9,17 @@ import org.joda.time.chrono.ISOChronology;
 import org.junit.Test;
 
 import mil.dds.anet.beans.Comment;
+import mil.dds.anet.beans.Location;
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.Atmosphere;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
-import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.views.AbstractAnetBean.LoadLevel;
 
 public class ReportTest extends BeanTester<Report> {
 
-	public static Report getTestReport() { 
+	public static Report getTestReport() {
 		Report r = new Report();
 		r.setCreatedAt(new DateTime(1453753380000L, ISOChronology.getInstanceUTC()));
 		r.setUpdatedAt(new DateTime(1453753380000L, ISOChronology.getInstanceUTC()));
@@ -45,15 +45,21 @@ public class ReportTest extends BeanTester<Report> {
 		principals.add(principal);
 		r.setAttendees(principals);
 		
-		r.setReportText("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
+		r.setReportText("Lorem ipsum dolor sit amet, consectetur adipiscing elit, "
+				+ "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. "
+				+ "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris "
+				+ "nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in "
+				+ "reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla "
+				+ "pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa "
+				+ "qui officia deserunt mollit anim id est laborum.");
 		r.setNextSteps("Go for a boat ride with Steve tomorrow");
 		
-		LinkedList<Comment> comments = new LinkedList<Comment>();
 		Comment c = new Comment();
 		c.setCreatedAt(new DateTime(1453815803000L, ISOChronology.getInstanceUTC()));
 		c.setAuthor(PersonTest.getJackJacksonStub());
 		c.setText("I really like this report, it's awesome!!!");
 		c.setReportId(null);
+		LinkedList<Comment> comments = new LinkedList<Comment>();
 		comments.add(c);
 		r.setComments(comments);
 		
@@ -63,13 +69,13 @@ public class ReportTest extends BeanTester<Report> {
 	
 	
 	@Test
-	public void serializesToJSON() throws Exception {
-		serializesToJSON(getTestReport(), "testJson/reports/test.json");
+	public void serializesToJson() throws Exception {
+		serializesToJson(getTestReport(), "testJson/reports/test.json");
 	}
 	
 	@Test
-    public void deserializesFromJSON() throws Exception {
-		deserializesFromJSON(getTestReport(), "testJson/reports/test.json");
+	public void deserializesFromJson() throws Exception {
+		deserializesFromJson(getTestReport(), "testJson/reports/test.json");
     }
 	
 	@Test

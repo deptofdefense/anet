@@ -43,13 +43,20 @@ public class AdminResource implements IGraphQLResource {
 	}
 
 	@Override
-	public String getDescription() { return "Admin Resources";}
+	public String getDescription() {
+		return "Admin Resources";
+	}
+	
 	@Override
-	public Class<? extends AbstractAnetBean> getBeanClass() { return AdminSetting.class; }
+	public Class<? extends AbstractAnetBean> getBeanClass() {
+		return AdminSetting.class;
+	}
 	
 	@Override
 	@SuppressWarnings("rawtypes")
-	public Class<List> getBeanListClass() { return List.class; } 
+	public Class<List> getBeanListClass() {
+		return List.class;
+	}
 	
 	
 }

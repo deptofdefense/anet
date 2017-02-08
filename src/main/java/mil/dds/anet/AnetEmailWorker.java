@@ -65,7 +65,7 @@ public class AnetEmailWorker implements Runnable {
 		
 		SmtpConfiguration smtpConfig = config.getSmtp();
 		props = new Properties();
-		props.put("mail.smtp.starttls.enable", smtpConfig.getStartTLS().toString());
+		props.put("mail.smtp.starttls.enable", smtpConfig.getStartTls().toString());
 		props.put("mail.smtp.host", smtpConfig.getHostname());
 		props.put("mail.smtp.port", smtpConfig.getPort().toString());
 		auth = null;
@@ -84,9 +84,6 @@ public class AnetEmailWorker implements Runnable {
 		freemarkerConfig.loadBuiltInEncodingMap();
 		freemarkerConfig.setDefaultEncoding(StandardCharsets.UTF_8.name());
 		freemarkerConfig.setClassForTemplateLoading(this.getClass(), "/");
-//        for (Map.Entry<String, String> entry : baseConfig.entrySet()) {
-//            configuration.setSetting(entry.getKey(), entry.getValue());
-//        }
 	}
 	
 	@Override
@@ -124,6 +121,9 @@ public class AnetEmailWorker implements Runnable {
 		}
 	}
 
+	/*
+	 * Puts the thread to sleep for 30 seconds. 
+	 */
 	public synchronized void fallAsleep() { 
 		try {
 			this.wait(300 * 1000L);
@@ -135,7 +135,7 @@ public class AnetEmailWorker implements Runnable {
 		email.getToAddresses().removeIf(s -> Objects.equals(s, null));
 		if (email.getToAddresses().size() == 0) { 
 			//This email will never get sent... just kill it off
-//			log.error("Unable to send email of subject {}, because there are no valid to email addresses");
+			//log.error("Unable to send email of subject {}, because there are no valid to email addresses");
 			return;
 		}
 		email.getContext().put("serverUrl", serverUrl);
@@ -168,8 +168,8 @@ public class AnetEmailWorker implements Runnable {
 				.bind("jobSpec", jobSpec)
 				.bind("createdAt", new DateTime())
 				.execute();
-		} catch (JsonProcessingException e) { 
-			throw new WebApplicationException(e);
+		} catch (JsonProcessingException jsonError) { 
+			throw new WebApplicationException(jsonError);
 		}
 		
 		//poke the worker thread so it wakes up. 
@@ -187,36 +187,47 @@ public class AnetEmailWorker implements Runnable {
 		public Integer getId() {
 			return id;
 		}
+		
 		public void setId(Integer id) {
 			this.id = id;
 		}
+		
 		public String getTemplateName() {
 			return templateName;
 		}
+		
 		public void setTemplateName(String templateName) {
 			this.templateName = templateName;
 		}
+		
 		public String getSubject() {
 			return subject;
 		}
+		
 		public void setSubject(String subject) {
 			this.subject = subject;
 		}
+		
 		public Map<String, Object> getContext() {
 			return context;
 		}
+		
 		public void setContext(Map<String, Object> context) {
 			this.context = context;
 		}
+		
 		public List<String> getToAddresses() {
 			return toAddresses;
 		}
+		
 		public void setToAddresses(List<String> toAddresses) {
 			this.toAddresses = toAddresses;
 		}
+		
 		public DateTime getCreatedAt() {
 			return createdAt;
 		}
+		
 		public void setCreatedAt(DateTime createdAt) {
 			this.createdAt = createdAt;
 		}
@@ -231,13 +242,13 @@ public class AnetEmailWorker implements Runnable {
 		}
 		
 		@Override
-		public AnetEmail map(int index, ResultSet r, StatementContext ctx) throws SQLException {
-			String jobSpec = r.getString("jobSpec");
+		public AnetEmail map(int index, ResultSet rs, StatementContext ctx) throws SQLException {
+			String jobSpec = rs.getString("jobSpec");
 			try { 
 				AnetEmail email = mapper.readValue(jobSpec, AnetEmail.class);
 				
-				email.setId(r.getInt("id"));
-				email.setCreatedAt(new DateTime(r.getTimestamp("createdAt")));
+				email.setId(rs.getInt("id"));
+				email.setCreatedAt(new DateTime(rs.getTimestamp("createdAt")));
 				return email;
 			} catch (Exception e) { 
 				e.printStackTrace();

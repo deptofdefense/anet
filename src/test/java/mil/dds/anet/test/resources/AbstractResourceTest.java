@@ -26,22 +26,29 @@ import mil.dds.anet.test.beans.PersonTest;
 public abstract class AbstractResourceTest {
 
 	@ClassRule
-    public static final DropwizardAppRule<AnetConfiguration> RULE =
-            new DropwizardAppRule<AnetConfiguration>(AnetApplication.class, "anet.yml");
+	public static final DropwizardAppRule<AnetConfiguration> RULE =
+		new DropwizardAppRule<AnetConfiguration>(AnetApplication.class, "anet.yml");
 	
 	public static Client client;
 	public static JerseyClientConfiguration config = new JerseyClientConfiguration();
+	
 	static { 
 		config.setTimeout(Duration.seconds(30L));
 		config.setConnectionTimeout(Duration.seconds(10));
 	}
 	
+	/* 
+	 * Constructs a httpQuery to the localhost server for the specified path. 
+	 */
 	public Builder httpQuery(String path) { 
-		if (path.startsWith("/") == false ) { path = "/" + path; } 
+		if (path.startsWith("/") == false) { path = "/" + path; } 
 		return client.target(String.format("http://localhost:%d%s", RULE.getLocalPort(), path))
 			.request();
 	}
 	
+	/*
+	 * Helper method to build httpQuery with authentication and Accept headers. 
+	 */
 	public Builder httpQuery(String path, Person authUser, MediaType acceptType) { 
 		String authString = Base64.getEncoder().encodeToString(
 				(authUser.getDomainUsername() + ":").getBytes());
@@ -54,12 +61,14 @@ public abstract class AbstractResourceTest {
 		return httpQuery(path, authUser, MediaType.APPLICATION_JSON_TYPE);
 	}
 	
+	/*
+	 * Finds the specified person in the database. 
+	 * If missing, creates them. 
+	 */
 	public Person findOrPutPersonInDb(Person stub) {
 		if (stub.getDomainUsername() != null) { 
-			try { 
-				Person user = httpQuery("/api/people/me", stub).get(Person.class);
-				if (user != null) { return user; }
-			} catch (Exception e) { };
+			Person user = httpQuery("/api/people/me", stub).get(Person.class);
+			if (user != null) { return user; }
 		} else { 
 			PersonSearchQuery query = new PersonSearchQuery();
 			query.setText(stub.getName());
@@ -102,6 +111,9 @@ public abstract class AbstractResourceTest {
 		return findOrPutPersonInDb(PersonTest.getArthurDmin());
 	}
 	
+	/**
+	 * Reads the entire Entity off the HTTP Response. 
+	 */
 	public String getResponseBody(Response resp) {
 		try { 
 			InputStream is = (InputStream) resp.getEntity();

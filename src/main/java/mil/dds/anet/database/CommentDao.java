@@ -44,8 +44,8 @@ public class CommentDao implements IAnetDao<Comment> {
 	public Comment insert(Comment c) {
 		c.setCreatedAt(DateTime.now());
 		c.setUpdatedAt(DateTime.now());
-		GeneratedKeys<Map<String,Object>> keys = dbHandle.createStatement("INSERT INTO comments (reportId, authorId, createdAt, updatedAt, text)" + 
-				"VALUES (:reportId, :authorId, :createdAt, :updatedAt, :text)")
+		GeneratedKeys<Map<String,Object>> keys = dbHandle.createStatement("INSERT INTO comments (reportId, authorId, createdAt, updatedAt, text)"
+				+ "VALUES (:reportId, :authorId, :createdAt, :updatedAt, :text)")
 			.bindFromProperties(c)
 			.bind("authorId", DaoUtils.getId(c.getAuthor()))
 			.executeAndReturnGeneratedKeys();

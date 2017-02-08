@@ -16,13 +16,13 @@ public class PositionTest extends BeanTester<Position> {
 	}
 	
 	@Test
-	public void serializesToJSON() throws Exception {
-		serializesToJSON(getTestPosition(), "testJson/positions/testPosition.json");
+	public void serializesToJson() throws Exception {
+		serializesToJson(getTestPosition(), "testJson/positions/testPosition.json");
 	}
 	
 	@Test
-    public void deserializesFromJSON() throws Exception {
-		deserializesFromJSON(getTestPosition(), "testJson/positions/testPosition.json");
+	public void deserializesFromJson() throws Exception {
+		deserializesFromJson(getTestPosition(), "testJson/positions/testPosition.json");
     }
 	
 }

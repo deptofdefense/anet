@@ -32,6 +32,7 @@ public class DaoUtils {
 	
 	/*This never changes during execution, so statically cache it. */
 	public static Boolean isMsSql = null;
+	
 	public static boolean isMsSql(Handle dbHandle) {
 		if (isMsSql == null) { 
 			try { 

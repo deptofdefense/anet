@@ -37,7 +37,7 @@ import com4j.typelibs.ado20._Recordset;
  * by Christophe Dupriez, DESTIN inc. SSEB. Contributed in 2010/12 to Waffle Project along its OpenSource licence.
  */
 public class ActiveDirectoryQuery { 
-	protected Logger _log = LoggerFactory.getLogger(ActiveDirectoryQuery.class);
+	protected Logger log = LoggerFactory.getLogger(ActiveDirectoryQuery.class);
 	
 	private String defaultNamingContext = null;
 
@@ -69,7 +69,7 @@ public class ActiveDirectoryQuery {
 		
 		if (adFields.isEmpty()) {
 			adFields = defaultFields;
-			StringTokenizer st = new StringTokenizer (adFields,",");
+			StringTokenizer st = new StringTokenizer(adFields,",");
 			while (st.hasMoreTokens()) {
 				String token = st.nextToken();
 				AD2attribute.put(token, token);
@@ -79,7 +79,7 @@ public class ActiveDirectoryQuery {
 			queryField = defaultQueryField;
 			queryField2 = defaultQueryField2;
 		}
-		_log.info("LDAP root="+defaultNamingContext+", query="+queryField+", query2="+queryField2+", AD fields="+adFields);
+		log.info("LDAP root=" + defaultNamingContext + ", query=" + queryField + ", query2=" + queryField2 + ", AD fields=" + adFields);
 	}
 
 	public synchronized void destroy() {
@@ -87,13 +87,13 @@ public class ActiveDirectoryQuery {
 		knownUsersData = null;
 		knownUsersCreated = null;
 		adFields = null;
-		_log.info("destroyed");
+		log.info("destroyed");
 	}
 
-	synchronized private Map<String,String> gatherUserData (String name) {
+	private synchronized Map<String,String> gatherUserData (String name) {
 		Date nameCreated = knownUsersCreated.get(name);
 		Date now = new Date();
-		if (nameCreated != null && nameCreated.getTime() > (now.getTime() - maxAge) ) {
+		if (nameCreated != null && nameCreated.getTime() > (now.getTime() - maxAge)) {
 			return knownUsersData.get(name);
 		}
 		
@@ -110,36 +110,36 @@ public class ActiveDirectoryQuery {
 		_Command cmd = ClassFactory.createCommand();
 		cmd.activeConnection(con);
 
-		String command = "<LDAP://"+defaultNamingContext+">;("+queryField+"="+name+");"+adFields+";subTree";
-		_log.debug("Command="+command);
+		String command = "<LDAP://" + defaultNamingContext + ">;(" + queryField + "=" + name + ");" + adFields + ";subTree";
+		log.debug("Command=" + command);
 		cmd.commandText(command);
 		_Recordset rs = cmd.execute(null, Variant.getMissing(), -1/*default*/);
-		if(rs.eof()) { // User not found!
-			command = "<LDAP://"+defaultNamingContext+">;("+queryField2+"="+name+");"+adFields+";subTree";
-			_log.debug("Command="+command);
+		if (rs.eof()) { // User not found!
+			command = "<LDAP://" + defaultNamingContext + ">;(" + queryField2 + "=" + name + ");" + adFields + ";subTree";
+			log.debug("Command=" + command);
 			cmd.commandText(command);
 			rs = cmd.execute(null, Variant.getMissing(), -1/*default*/);
 		}
-		if(rs.eof()) { // User not found!
-			_log.error(name+" not found.");
+		if (rs.eof()) { // User not found!
+			log.error(name + " not found.");
 		} else {
 			Fields userData = rs.fields();
 			if (userData != null) {
 				Iterator<Com4jObject> itCom = userData.iterator();
-				int i=0;
+				int i = 0;
 				userDataAttributes = new HashMap<String,String>();
 				while (itCom.hasNext()) {
 					Field comObj = (Field)itCom.next();
 					String attribute = AD2attribute.get(comObj.name());
 					if (attribute != null && !attribute.isEmpty()) {
-						_log.debug(i++ +") " +attribute+":"+comObj.name()+"="+comObj.value().toString());
+						log.debug(i++ + ") " + attribute + ":" + comObj.name() + "=" + comObj.value().toString());
 						userDataAttributes.put(attribute, comObj.value().toString());
 					}
 				}
 				knownUsersData.put(name, userDataAttributes);
 				knownUsersCreated.put(name, now);
 			} else {
-				_log.error("User "+name+" AD information is empty?");
+				log.error("User " + name + " AD information is empty?");
 			}
 		}
 		rs.close();

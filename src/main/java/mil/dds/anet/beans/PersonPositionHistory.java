@@ -1,7 +1,5 @@
 package mil.dds.anet.beans;
 
-import java.util.Optional;
-
 import org.joda.time.DateTime;
 
 import mil.dds.anet.AnetObjectEngine;
@@ -25,6 +23,7 @@ public class PersonPositionHistory implements IGraphQLBean {
 	public Person getPerson() {
 		return person;
 	}
+	
 	public void setPerson(Person person) {
 		this.person = person;
 	}
@@ -41,6 +40,7 @@ public class PersonPositionHistory implements IGraphQLBean {
 	public Position getPosition() {
 		return position;
 	}
+	
 	public void setPosition(Position position) {
 		this.position = position;
 	}
@@ -56,12 +56,15 @@ public class PersonPositionHistory implements IGraphQLBean {
 	public DateTime getStartTime() {
 		return startTime;
 	}
+	
 	public void setStartTime(DateTime startTime) {
 		this.startTime = startTime;
 	}
+	
 	public DateTime getEndTime() {
 		return endTime;
 	}
+	
 	public void setEndTime(DateTime endTime) {
 		this.endTime = endTime;
 	}

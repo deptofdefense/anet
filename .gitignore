@@ -20,6 +20,7 @@ local.properties
 .classpath
 .project
 .settings
+.checkstyle
 
 # Ignore Intellij project files and idea directory
 .idea/

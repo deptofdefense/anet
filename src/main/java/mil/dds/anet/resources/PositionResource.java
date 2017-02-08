@@ -48,11 +48,18 @@ public class PositionResource implements IGraphQLResource {
 	}
 
 	@Override
-	public String getDescription() { return "Positions"; }
+	public String getDescription() {
+		return "Positions";
+	}
 
 	@Override
-	public Class<Position> getBeanClass() { return Position.class; }
-	public Class<PositionList> getBeanListClass() { return PositionList.class; }
+	public Class<Position> getBeanClass() {
+		return Position.class;
+	}
+	
+	public Class<PositionList> getBeanListClass() {
+		return PositionList.class;
+	}
 
 	@GET
 	@GraphQLFetcher
@@ -75,7 +82,7 @@ public class PositionResource implements IGraphQLResource {
 	 * Optionally can provide:
 	 * - position.associatedPositions:  a list of Associated Positions and those relationships will be created at this point.
 	 * - position.person : If a person ID is provided in the Person object, that person will be put in this position.
-	 * @param position
+	 * @param position the position to create
 	 * @return the same Position object with the ID field filled in.
 	 */
 	@POST

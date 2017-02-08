@@ -31,7 +31,7 @@ import mil.dds.anet.utils.Utils;
 @Path("/api/approvalSteps")
 @Produces(MediaType.APPLICATION_JSON)
 @PermitAll
-public class ApprovalStepResource implements IGraphQLResource{
+public class ApprovalStepResource implements IGraphQLResource {
 
 	AnetObjectEngine engine;
 	ApprovalStepDao dao;
@@ -42,12 +42,19 @@ public class ApprovalStepResource implements IGraphQLResource{
 	}
 	
 	@Override
-	public Class<ApprovalStep> getBeanClass() { return ApprovalStep.class; }
+	public Class<ApprovalStep> getBeanClass() {
+		return ApprovalStep.class;
+	}
+	
 	@SuppressWarnings("rawtypes")
-	public Class<List> getBeanListClass() { return List.class; } 
+	public Class<List> getBeanListClass() {
+		return List.class;
+	}
 	
 	@Override
-	public String getDescription() { return "Approval Steps"; } 
+	public String getDescription() {
+		return "Approval Steps";
+	}
 	
 	@GET
 	@GraphQLFetcher

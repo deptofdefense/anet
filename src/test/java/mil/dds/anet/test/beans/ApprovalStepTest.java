@@ -20,13 +20,13 @@ public class ApprovalStepTest extends BeanTester<ApprovalStep> {
 	}
 	
 	@Test
-	public void serializesToJSON() throws Exception {
-		serializesToJSON(getTestApprovalStep(), "testJson/approvalSteps/testStep.json");
+	public void serializesToJson() throws Exception {
+		serializesToJson(getTestApprovalStep(), "testJson/approvalSteps/testStep.json");
 	}
 	
 	@Test
-    public void deserializesFromJSON() throws Exception {
-		deserializesFromJSON(getTestApprovalStep(), "testJson/approvalSteps/testStep.json");
+	public void deserializesFromJson() throws Exception {
+		deserializesFromJson(getTestApprovalStep(), "testJson/approvalSteps/testStep.json");
     }
 	
 }

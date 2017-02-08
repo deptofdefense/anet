@@ -69,10 +69,10 @@ public class AnetApplication extends Application<AnetConfiguration> {
 
 		//Add the db migration commands
 		bootstrap.addBundle(new MigrationsBundle<AnetConfiguration>() {
-	        @Override
-	        public DataSourceFactory getDataSourceFactory(AnetConfiguration configuration) {
-	        	System.out.println(configuration.getDataSourceFactory().getUrl());
-	            return configuration.getDataSourceFactory();
+			@Override
+			public DataSourceFactory getDataSourceFactory(AnetConfiguration configuration) {
+				System.out.println(configuration.getDataSourceFactory().getUrl());
+				return configuration.getDataSourceFactory();
 	        }
 	    });
 		
@@ -119,14 +119,14 @@ public class AnetApplication extends Application<AnetConfiguration> {
 			environment.jersey().register(new AuthDynamicFeature(new AnetAuthenticationFilter(engine)));
 		}
 		
-	    //If you want to use @Auth to inject a custom Principal type into your resource
-	    environment.jersey().register(new AuthValueFactoryProvider.Binder<>(Person.class));
-	    //If you want to use @RolesAllowed to do authorization.
-	    environment.jersey().register(RolesAllowedDynamicFeature.class);
-	    environment.jersey().register(new WebExceptionMapper());
+		//If you want to use @Auth to inject a custom Principal type into your resource
+		environment.jersey().register(new AuthValueFactoryProvider.Binder<>(Person.class));
+		//If you want to use @RolesAllowed to do authorization.
+		environment.jersey().register(RolesAllowedDynamicFeature.class);
+		environment.jersey().register(new WebExceptionMapper());
 
-	    Thread emailThread = new Thread(new AnetEmailWorker(jdbi.open(), configuration));
-	    emailThread.start();
+		Thread emailThread = new Thread(new AnetEmailWorker(jdbi.open(), configuration));
+		emailThread.start();
 	    
 		TestingResource test = new TestingResource(engine, configuration);
 		PersonResource personResource = new PersonResource(engine);

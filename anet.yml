@@ -5,7 +5,7 @@ smtp:
   port: 25
   username: ${ANET_SMTP_USERNAME}
   password: ${ANET_SMTP_PASSWORD}
-  startTLS: true
+  startTls: true
 emailFromAddr: "Anet Testing <hunter+anet@dds.mil>"
 serverUrl: "http://localhost:3000"
 

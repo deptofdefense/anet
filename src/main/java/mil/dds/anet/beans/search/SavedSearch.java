@@ -17,24 +17,31 @@ public class SavedSearch extends AbstractAnetBean {
 	public String getName() {
 		return name;
 	}
+	
 	public void setName(String name) {
 		this.name = name;
 	}
+	
 	public Person getOwner() {
 		return owner;
 	}
+	
 	public void setOwner(Person owner) {
 		this.owner = owner;
 	}
+	
 	public SearchObjectType getObjectType() {
 		return objectType;
 	}
+	
 	public void setObjectType(SearchObjectType objectType) {
 		this.objectType = objectType;
 	}
+	
 	public String getQuery() {
 		return query;
 	}
+	
 	public void setQuery(String query) {
 		this.query = query;
 	}
@@ -45,11 +52,11 @@ public class SavedSearch extends AbstractAnetBean {
 			return false; 
 		}
 		SavedSearch other = (SavedSearch) o;
-		return Objects.equal(getId(), other.getId()) && 
-				Objects.equal(name, other.getName()) && 
-				Objects.equal(owner, other.getOwner()) && 
-				Objects.equal(objectType, other.getObjectType()) &&
-				Objects.equal(query, other.getQuery());
+		return Objects.equal(getId(), other.getId())
+				&& Objects.equal(name, other.getName())
+				&& Objects.equal(owner, other.getOwner())
+				&& Objects.equal(objectType, other.getObjectType())
+				&& Objects.equal(query, other.getQuery());
 	}
 	
 	@Override

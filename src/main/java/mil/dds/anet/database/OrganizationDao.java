@@ -62,8 +62,8 @@ public class OrganizationDao implements IAnetDao<Organization> {
 	}
 	
 	public List<Organization> getTopLevelOrgs(OrganizationType type) { 
-		return dbHandle.createQuery("SELECT " + ORGANIZATION_FIELDS + 
-				" FROM organizations "
+		return dbHandle.createQuery("SELECT " + ORGANIZATION_FIELDS
+				+ " FROM organizations "
 				+ "WHERE parentOrgId IS NULL "
 				+ "AND type = :type")
 			.bind("type", DaoUtils.getEnumId(type))
@@ -76,8 +76,8 @@ public class OrganizationDao implements IAnetDao<Organization> {
 		org.setUpdatedAt(org.getCreatedAt());
 		
 		GeneratedKeys<Map<String,Object>> keys = dbHandle.createStatement(
-				"INSERT INTO organizations (shortName, longName, type, createdAt, updatedAt, parentOrgId) " + 
-				"VALUES (:shortName, :longName, :type, :createdAt, :updatedAt, :parentOrgId)")
+				"INSERT INTO organizations (shortName, longName, type, createdAt, updatedAt, parentOrgId) "
+				+ "VALUES (:shortName, :longName, :type, :createdAt, :updatedAt, :parentOrgId)")
 			.bindFromProperties(org)
 			.bind("type", DaoUtils.getEnumId(org.getType()))
 			.bind("parentOrgId", DaoUtils.getId(org.getParentOrg()))

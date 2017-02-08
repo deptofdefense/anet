@@ -41,13 +41,13 @@ public class PersonTest extends BeanTester<Person> {
 	}
 	
 	@Test
-	public void serializesToJSON() throws Exception {
-		serializesToJSON(getJackJacksonStub(), "testJson/people/jack.json");
+	public void serializesToJson() throws Exception {
+		serializesToJson(getJackJacksonStub(), "testJson/people/jack.json");
 	}
 	
 	@Test
-    public void deserializesFromJSON() throws Exception {
-		deserializesFromJSON(getJackJacksonStub(), "testJson/people/jack.json");
+	public void deserializesFromJson() throws Exception {
+		deserializesFromJson(getJackJacksonStub(), "testJson/people/jack.json");
     }
 
 	public static Person getRogerRogwell() {

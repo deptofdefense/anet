@@ -1,15 +1,14 @@
 package mil.dds.anet.config;
 
-import java.util.Map;
 import java.util.Collections;
 import java.util.HashMap;
-
-import com.google.common.collect.ImmutableMap;
+import java.util.Map;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.ImmutableMap;
 
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
@@ -26,20 +25,20 @@ public class AnetConfiguration extends Configuration {
 	private Map<String,String> waffleConfig = new HashMap<String,String>();
 
 	@Valid
-    @NotNull
-    private DataSourceFactory database = new DataSourceFactory();
+	@NotNull
+	private DataSourceFactory database = new DataSourceFactory();
 
 	@NotNull
 	private Map<String, Map<String, String>> views = Collections.emptyMap();
 
-    @JsonProperty("database")
-    public void setDataSourceFactory(DataSourceFactory factory) {
-        this.database = factory;
+	@JsonProperty("database")
+	public void setDataSourceFactory(DataSourceFactory factory) {
+		this.database = factory;
     }
 
-    @JsonProperty("database")
-    public DataSourceFactory getDataSourceFactory() {
-        return database;
+	@JsonProperty("database")
+	public DataSourceFactory getDataSourceFactory() {
+		return database;
     }
 
 	public boolean isDevelopmentMode() {
@@ -101,36 +100,46 @@ public class AnetConfiguration extends Configuration {
 		private Integer port = 587;
 		private String username;
 		private String password;
-		private Boolean startTLS = true;
+		private Boolean startTls = true;
+		
 		public String getHostname() {
 			return hostname;
 		}
+		
 		public void setHostname(String hostname) {
 			this.hostname = hostname;
 		}
+		
 		public Integer getPort() {
 			return port;
 		}
+		
 		public void setPort(Integer port) {
 			this.port = port;
 		}
+		
 		public String getUsername() {
 			return username;
 		}
+		
 		public void setUsername(String username) {
 			this.username = username;
 		}
+		
 		public String getPassword() {
 			return password;
 		}
+		
 		public void setPassword(String password) {
 			this.password = password;
 		}
-		public Boolean getStartTLS() {
-			return startTLS;
+		
+		public Boolean getStartTls() {
+			return startTls;
 		}
-		public void setStartTLS(Boolean startTLS) {
-			this.startTLS = startTLS;
+		
+		public void setStartTls(Boolean startTls) {
+			this.startTls = startTls;
 		}
 	}
 

@@ -1,4 +1,4 @@
-package mil.dds.anet.beans.geo;
+package mil.dds.anet.beans;
 
 import java.util.Objects;
 
@@ -13,18 +13,23 @@ public class Location extends AbstractAnetBean {
 	public String getName() {
 		return name;
 	}
+	
 	public void setName(String name) {
 		this.name = name;
 	}
+	
 	public Double getLat() {
 		return lat;
 	}
+	
 	public void setLat(Double lat) {
 		this.lat = lat;
 	}
+	
 	public Double getLng() {
 		return lng;
 	}
+	
 	public void setLng(Double lng) {
 		this.lng = lng;
 	}
@@ -35,11 +40,11 @@ public class Location extends AbstractAnetBean {
 			return false;
 		}
 		Location l = (Location) o;
-		return Objects.equals(l.getId(), id) &&
-				Objects.equals(l.getName(), name) &&
-				Objects.equals(l.getLat(), lat) &&
-				Objects.equals(l.getLng(), lng) &&
-				Objects.equals(l.getCreatedAt(), createdAt);
+		return Objects.equals(l.getId(), id)
+				&& Objects.equals(l.getName(), name)
+				&& Objects.equals(l.getLat(), lat)
+				&& Objects.equals(l.getLng(), lng)
+				&& Objects.equals(l.getCreatedAt(), createdAt);
 	}
 	
 	@Override
@@ -52,7 +57,7 @@ public class Location extends AbstractAnetBean {
 		return String.format("(%d) - %s [%f, %f]", id, name, lat, lng); 
 	}
 	
-	public static Location create(String name, Double lat, Double lng) { 
+	public static Location create(String name, Double lat, Double lng) {
 		Location l = new Location();
 		l.setName(name);
 		l.setLat(lat);

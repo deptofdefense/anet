@@ -30,8 +30,8 @@ public class OrganizationResourceTest extends AbstractResourceTest {
 	@Test
 	public void createAO() {
 		Organization ao = OrganizationTest.getTestAO();
-		Person admin = getArthurDmin(); //get an authenticated user
-		Person jack = getJackJackson();
+		final Person admin = getArthurDmin(); //get an authenticated user
+		final Person jack = getJackJackson();
 
 		//Create a new AO
 		Organization created = httpQuery("/api/organizations/new", admin)

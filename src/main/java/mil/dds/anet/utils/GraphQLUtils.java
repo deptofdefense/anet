@@ -38,6 +38,9 @@ public class GraphQLUtils {
 		return buildField(name, GraphQLUtils.getGraphQLTypeForJavaType(type));		
 	}
 
+	/**
+	 * Constructs a GraphQLField with a given name and type. 
+	 */
 	public static GraphQLFieldDefinition buildField(String name, GraphQLType type) { 
 		return GraphQLFieldDefinition.newFieldDefinition()
 			.type((GraphQLOutputType) type)
@@ -49,6 +52,10 @@ public class GraphQLUtils {
 		return buildFieldWithArgs(name, GraphQLUtils.getGraphQLTypeForJavaType(type), beanClazz);		
 	}
 	
+	/**
+	 * Builds a GraphQL Field on a field that takes arguments in order to fetch it. 
+	 * ie: Any @GraphQLFetcher annotated method that takes an argument. 
+	 */
 	public static GraphQLFieldDefinition buildFieldWithArgs(String fieldName, GraphQLType type, Class<?> beanClazz) {
 		PropertyDataFetcherWithArgs dataFetcher = new PropertyDataFetcherWithArgs(fieldName, beanClazz);
 		return GraphQLFieldDefinition.newFieldDefinition()
@@ -59,8 +66,11 @@ public class GraphQLUtils {
 			.build();
 	}
 	
+	/**
+	 * Converts a Java Type into a GraphQL Type. 
+	 */
 	public static GraphQLType getGraphQLTypeForJavaType(Type type) { 
-		GraphQLType gType;
+		GraphQLType gqlType;
 		Class<?> clazz = null;
 		if (type instanceof Class) { 
 			clazz = ((Class<?>)type);
@@ -68,33 +78,33 @@ public class GraphQLUtils {
 			clazz = (Class<?>) (((ParameterizedType)type).getRawType());
 		}
 		if (String.class.equals(clazz)) { 
-			gType = Scalars.GraphQLString;
-		}else if (Integer.class.equals(clazz) || "int".equals(type.getTypeName())) { 
-			gType = Scalars.GraphQLInt;
+			gqlType = Scalars.GraphQLString;
+		} else if (Integer.class.equals(clazz) || "int".equals(type.getTypeName())) {
+			gqlType = Scalars.GraphQLInt;
 		} else if (Boolean.class.equals(clazz) || "boolean".equals(type.getTypeName())) { 
-			gType = Scalars.GraphQLBoolean;
+			gqlType = Scalars.GraphQLBoolean;
 		} else if (Double.class.equals(clazz)) { 
-			gType = Scalars.GraphQLFloat;
+			gqlType = Scalars.GraphQLFloat;
 		} else if (clazz != null && clazz.isEnum()) {
 			@SuppressWarnings("unchecked")
 			Class<? extends Enum<?>> enumType = (Class<? extends Enum<?>>) type;
-			gType = gEnumBuilder(enumType);
+			gqlType = gqlEnumBuilder(enumType);
 		} else if (clazz != null && IGraphQLBean.class.isAssignableFrom(clazz)) { 
-			gType = new GraphQLTypeReference(lowerCaseFirstLetter(clazz.getSimpleName()));
+			gqlType = new GraphQLTypeReference(lowerCaseFirstLetter(clazz.getSimpleName()));
 		} else if (clazz != null && List.class.isAssignableFrom(clazz)) {
 			Type innerType = ((ParameterizedType)type).getActualTypeArguments()[0];
-			gType = new GraphQLList(getGraphQLTypeForJavaType(innerType));
+			gqlType = new GraphQLList(getGraphQLTypeForJavaType(innerType));
 		} else if (DateTime.class.equals(clazz)) {
-			gType = new GraphQLDateTimeType();
+			gqlType = new GraphQLDateTimeType();
 		} else if (clazz != null && ISearchQuery.class.isAssignableFrom(clazz)) {
-			gType = getGraphQLTypeForSearch(clazz);
+			gqlType = getGraphQLTypeForSearch(clazz);
 		} else {
 			throw new RuntimeException("Type: " + type + " is not supported in GraphQL!");
 		}
-		return gType;
+		return gqlType;
 	}
 	
-	public static GraphQLEnumType gEnumBuilder(Class<? extends Enum<?>> enumClazz) { 
+	public static GraphQLEnumType gqlEnumBuilder(Class<? extends Enum<?>> enumClazz) { 
 		Enum<?>[] constants = enumClazz.getEnumConstants();
 		GraphQLEnumType.Builder builder = GraphQLEnumType.newEnum().name(enumClazz.getSimpleName());
 		for (Enum<?> s : constants) { 
@@ -131,27 +141,27 @@ public class GraphQLUtils {
 	 * Used to pick the best method out of a list given the arguments we were passed via GraphQL
 	 */
 	public static Method findMethod(DataFetchingEnvironment environment, List<Method> methods) { 
-    	Method bestMethod = null;
-    	int maxScore = -1;
-    	for (Method m : methods) {
-    		int score = getMethodScore(m, environment);
-    		if (score > maxScore) { 
-    			maxScore = score;
-    			bestMethod = m;
+		Method bestMethod = null;
+		int maxScore = -1;
+		for (Method m : methods) {
+			int score = getMethodScore(m, environment);
+			if (score > maxScore) { 
+				maxScore = score;
+				bestMethod = m;
     		}
     	}
-    	return bestMethod;
+		return bestMethod;
     }
     
-    /* Returns a 'score' for the method that is either
+	/* Returns a 'score' for the method that is either
      * - -1 if this method cannot be used because we are missing required arguments
      * - the number of arguments if we have all of the required args. 
      */
-    private static int getMethodScore(Method m, DataFetchingEnvironment environment) { 
-    	int score = 0;
-    	for (Parameter p : m.getParameters()) { 
-    		String paramName = getParamName(p);
-    		if (paramName != null && environment.getArgument(paramName) != null) { 
+	private static int getMethodScore(Method m, DataFetchingEnvironment environment) { 
+		int score = 0;
+		for (Parameter p : m.getParameters()) { 
+			String paramName = getParamName(p);
+			if (paramName != null && environment.getArgument(paramName) != null) { 
 				score++;
     		} else if (p.isAnnotationPresent(Auth.class)) { 
     			//no biggie. 
@@ -160,10 +170,10 @@ public class GraphQLUtils {
 				return -1;
 			}
     	}
-    	return score;
+		return score;
     }
     
-    public static String getParamName(Parameter param) {
+	public static String getParamName(Parameter param) {
 		if (param.isAnnotationPresent(PathParam.class)) {
 			return param.getAnnotation(PathParam.class).value();
 		} else if (param.isAnnotationPresent(QueryParam.class)) { 

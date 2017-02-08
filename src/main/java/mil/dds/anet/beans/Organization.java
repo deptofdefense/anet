@@ -31,6 +31,7 @@ public class Organization extends AbstractAnetBean {
 	public String getShortName() {
 		return shortName;
 	}
+	
 	public void setShortName(String shortName) {
 		this.shortName = shortName;
 	}
@@ -65,18 +66,23 @@ public class Organization extends AbstractAnetBean {
 	public OrganizationType getType() {
 		return type;
 	}
+	
 	public void setType(OrganizationType type) {
 		this.type = type;
 	}
+	
 	public DateTime getCreatedAt() {
 		return createdAt;
 	}
+	
 	public void setCreatedAt(DateTime createdAt) {
 		this.createdAt = createdAt;
 	}
+	
 	public DateTime getUpdatedAt() {
 		return updatedAt;
 	}
+	
 	public void setUpdatedAt(DateTime updatedAt) {
 		this.updatedAt = updatedAt;
 	}
@@ -174,10 +180,10 @@ public class Organization extends AbstractAnetBean {
 			return false;
 		}
 		Organization other = (Organization) o;
-		return Objects.equals(other.getId(), id) &&
-				Objects.equals(other.getShortName(), shortName) &&
-				Objects.equals(other.getLongName(), longName) && 
-				Objects.equals(other.getType(), type);
+		return Objects.equals(other.getId(), id) 
+				&& Objects.equals(other.getShortName(), shortName) 
+				&& Objects.equals(other.getLongName(), longName) 
+				&& Objects.equals(other.getType(), type);
 	}
 	
 	@Override

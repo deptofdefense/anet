@@ -42,12 +42,12 @@ public class Comment extends AbstractAnetBean {
 			return false;
 		}
 		Comment c = (Comment) o;
-		return Objects.equals(c.getId(), id) &&
-				idEqual(c.getAuthor(), author) &&
-				Objects.equals(c.getText(), text) &&
-				Objects.equals(c.getReportId(), reportId) &&
-				Objects.equals(c.getUpdatedAt(), updatedAt) &&
-				Objects.equals(c.getCreatedAt(), createdAt);
+		return Objects.equals(c.getId(), id) 
+				&& idEqual(c.getAuthor(), author) 
+				&& Objects.equals(c.getText(), text) 
+				&& Objects.equals(c.getReportId(), reportId) 
+				&& Objects.equals(c.getUpdatedAt(), updatedAt) 
+				&& Objects.equals(c.getCreatedAt(), createdAt);
 	}
 	
 	@Override

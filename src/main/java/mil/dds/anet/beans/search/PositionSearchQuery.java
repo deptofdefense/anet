@@ -23,42 +23,55 @@ public class PositionSearchQuery implements ISearchQuery {
 	public String getText() {
 		return text;
 	}
+	
 	public void setText(String text) {
 		this.text = text;
 	}
+	
 	public Boolean getMatchPersonName() {
 		return matchPersonName;
 	}
+	
 	public void setMatchPersonName(Boolean matchPersonName) {
 		this.matchPersonName = matchPersonName;
 	}
+	
 	public Integer getOrganizationId() {
 		return organizationId;
 	}
+	
 	public void setOrganizationId(Integer orgId) {
 		this.organizationId = orgId;
 	}
+	
 	public Boolean getIncludeChildrenOrgs() {
 		return includeChildrenOrgs;
 	}
+	
 	public void setIncludeChildrenOrgs(Boolean includeChildrenOrgs) {
 		this.includeChildrenOrgs = includeChildrenOrgs;
 	}
+	
 	public PositionType getType() {
 		return type;
 	}
+	
 	public void setType(PositionType type) {
 		this.type = type;
 	}
+	
 	public Boolean getIsFilled() {
 		return isFilled;
 	}
+	
 	public void setIsFilled(Boolean isFilled) {
 		this.isFilled = isFilled;
 	}
+	
 	public Integer getLocationId() {
 		return locationId;
 	}
+	
 	public void setLocationId(Integer locationId) {
 		this.locationId = locationId;
 	}
@@ -67,14 +80,17 @@ public class PositionSearchQuery implements ISearchQuery {
 	public int getPageNum() {
 		return pageNum;
 	}
+	
 	@Override
 	public void setPageNum(int pageNum) {
 		this.pageNum = pageNum;
 	}
+	
 	@Override
 	public int getPageSize() {
 		return pageSize;
 	}
+	
 	@Override
 	public void setPageSize(int pageSize) {
 		if (pageSize == 0) { return; } // that makes no sense. 

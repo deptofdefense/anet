@@ -59,14 +59,14 @@ public class PositionResourceTest extends AbstractResourceTest {
 		Person curr = httpQuery(String.format("/api/positions/%d/person",returned.getId()), admin).get(Person.class);
 		assertThat(curr.getId()).isEqualTo(jack.getId());
 		
-		DateTime jacksTime = DateTime.now();
+		final DateTime jacksTime = DateTime.now();
 		try {
 			Thread.sleep(500);//just slow me down a bit...
 		} catch (InterruptedException e) {}  
 		
 		//change the person in this position
 		Person steve = getSteveSteveson();
-		Position stevesCurrentPosition = steve.loadPosition();
+		final Position stevesCurrentPosition = steve.loadPosition();
 		resp = httpQuery(String.format("/api/positions/%d/person", returned.getId()), admin).post(Entity.json(steve));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
@@ -110,24 +110,24 @@ public class PositionResourceTest extends AbstractResourceTest {
 		
 		Person principal = getRogerRogwell();
 		assertThat(principal.getId()).isNotNull();
-		Position t = httpQuery("/api/positions/new", admin).post(Entity.json(prinPos), Position.class);
-		assertThat(t.getId()).isNotNull();
+		Position tashkil = httpQuery("/api/positions/new", admin).post(Entity.json(prinPos), Position.class);
+		assertThat(tashkil.getId()).isNotNull();
 		
 		//put the principal in a tashkil
-		resp = httpQuery(String.format("/api/positions/%d/person", t.getId()), admin).post(Entity.json(principal));
+		resp = httpQuery(String.format("/api/positions/%d/person", tashkil.getId()), admin).post(Entity.json(principal));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
 		//assign the tashkil to the position
-		resp = httpQuery(String.format("/api/positions/%d/associated", created.getId()), admin).post(Entity.json(t));
+		resp = httpQuery(String.format("/api/positions/%d/associated", created.getId()), admin).post(Entity.json(tashkil));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
 		//verify that we can pull the tashkil from the position
 		PositionList retT = httpQuery(String.format("/api/positions/%d/associated", created.getId()), jack).get(PositionList.class);
 		assertThat(retT.getList().size()).isEqualTo(1);
-		assertThat(retT.getList()).contains(t);
+		assertThat(retT.getList()).contains(tashkil);
 		
 		//delete the tashkil from this position
-		resp = httpQuery(String.format("/api/positions/%d/associated/%d", created.getId(), t.getId()), admin).delete();
+		resp = httpQuery(String.format("/api/positions/%d/associated/%d", created.getId(), tashkil.getId()), admin).delete();
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
 		//verify that it's now gone. 
@@ -137,20 +137,20 @@ public class PositionResourceTest extends AbstractResourceTest {
 	
 	@Test
 	public void tashkilTest() {
-		Person jack = getJackJackson();
-		Person admin = getArthurDmin();
+		final Person jack = getJackJackson();
+		final Person admin = getArthurDmin();
 		
 		//Create Position
-		Position t = PositionTest.getTestPosition();
+		Position test = PositionTest.getTestPosition();
 		OrganizationList orgs = httpQuery("/api/organizations/search?text=Ministry&type=PRINCIPAL_ORG", admin)
 			.get(OrganizationList.class);
 		assertThat(orgs.getList().size()).isGreaterThan(0);
 		
-		t.setOrganization(orgs.getList().get(0));
+		test.setOrganization(orgs.getList().get(0));
 		
-		Position created = httpQuery("/api/positions/new", admin).post(Entity.json(t), Position.class);
-		assertThat(created.getName()).isEqualTo(t.getName());
-		assertThat(created.getCode()).isEqualTo(t.getCode());
+		Position created = httpQuery("/api/positions/new", admin).post(Entity.json(test), Position.class);
+		assertThat(created.getName()).isEqualTo(test.getName());
+		assertThat(created.getCode()).isEqualTo(test.getCode());
 		assertThat(created.getId()).isNotNull();
 		
 		//Change Name/Code

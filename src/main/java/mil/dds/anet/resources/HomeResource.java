@@ -14,7 +14,7 @@ import mil.dds.anet.views.IndexView;
 
 @Path("")
 @PermitAll
-public class HomeResource{
+public class HomeResource {
 
 	AnetObjectEngine engine;
 	

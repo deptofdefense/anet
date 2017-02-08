@@ -12,7 +12,6 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person.Role;
-import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.database.AdminDao.AdminSettingKeys;
 import mil.dds.anet.graphql.GraphQLFetcher;
 import mil.dds.anet.graphql.GraphQLIgnore;
@@ -336,7 +335,7 @@ public class Report extends AbstractAnetBean {
 			//If there is an Action for this step, grab the last one (date wise)
 			Optional<ApprovalAction> existing = actions.stream().filter(a -> 
 					a.getStep().getId().equals(step.getId())
-				).max(new Comparator<ApprovalAction>(){
+				).max(new Comparator<ApprovalAction>() {
 					public int compare(ApprovalAction a, ApprovalAction b) {
 						return a.getCreatedAt().compareTo(b.getCreatedAt());
 					}
@@ -360,23 +359,23 @@ public class Report extends AbstractAnetBean {
 			return false;
 		}
 		Report r = (Report) other;
-		return Objects.equals(r.getId(), id) &&
-				Objects.equals(r.getState(), state) &&
-				idEqual(r.getApprovalStep(), approvalStep) &&
-				Objects.equals(r.getCreatedAt(), createdAt) &&
-				Objects.equals(r.getUpdatedAt(), updatedAt) &&
-				Objects.equals(r.getEngagementDate(), engagementDate) &&
-				idEqual(r.getLocation(), location) &&
-				Objects.equals(r.getIntent(), intent) &&
-				Objects.equals(r.getExsum(), exsum) &&
-				Objects.equals(r.getAtmosphere(), atmosphere) &&
-				Objects.equals(r.getAtmosphereDetails(), atmosphereDetails) &&
-				Objects.equals(r.getAttendees(), attendees) &&
-				Objects.equals(r.getPoams(), poams) &&
-				Objects.equals(r.getReportText(), reportText) &&
-				Objects.equals(r.getNextSteps(), nextSteps) &&
-				idEqual(r.getAuthor(), author) &&
-				Objects.equals(r.getComments(), comments);
+		return Objects.equals(r.getId(), id)
+				&& Objects.equals(r.getState(), state)
+				&& idEqual(r.getApprovalStep(), approvalStep)
+				&& Objects.equals(r.getCreatedAt(), createdAt)
+				&& Objects.equals(r.getUpdatedAt(), updatedAt)
+				&& Objects.equals(r.getEngagementDate(), engagementDate)
+				&& idEqual(r.getLocation(), location)
+				&& Objects.equals(r.getIntent(), intent)
+				&& Objects.equals(r.getExsum(), exsum)
+				&& Objects.equals(r.getAtmosphere(), atmosphere)
+				&& Objects.equals(r.getAtmosphereDetails(), atmosphereDetails)
+				&& Objects.equals(r.getAttendees(), attendees)
+				&& Objects.equals(r.getPoams(), poams)
+				&& Objects.equals(r.getReportText(), reportText)
+				&& Objects.equals(r.getNextSteps(), nextSteps)
+				&& idEqual(r.getAuthor(), author)
+				&& Objects.equals(r.getComments(), comments);
 	}
 	
 	@Override

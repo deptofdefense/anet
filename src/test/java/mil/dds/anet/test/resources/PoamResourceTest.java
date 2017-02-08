@@ -28,11 +28,11 @@ public class PoamResourceTest extends AbstractResourceTest {
 	
 	@Test
 	public void poamTest() { 
-		Person jack = getJackJackson();
-		Person admin = getArthurDmin();
+		final Person jack = getJackJackson();
+		final Person admin = getArthurDmin();
 
 		Poam a = httpQuery("/api/poams/new", admin)
-			.post(Entity.json(Poam.create("TestF1", "Do a thing with a person", "Test-EF" )), Poam.class);
+			.post(Entity.json(Poam.create("TestF1", "Do a thing with a person", "Test-EF")), Poam.class);
 		assertThat(a.getId()).isNotNull();
 				
 		Poam b = httpQuery("/api/poams/new", admin)
@@ -92,10 +92,7 @@ public class PoamResourceTest extends AbstractResourceTest {
 		assertThat(poams).contains(a);
 		
 		//Search for the poam: 
-		
-		
 	}
-	
 	
 	@Test
 	public void searchTest() { 

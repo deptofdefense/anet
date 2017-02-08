@@ -75,17 +75,27 @@ public class ReportResource implements IGraphQLResource {
 	}
 
 	@Override
-	public String getDescription() { return "Reports"; }
+	public String getDescription() {
+		return "Reports"; 
+	}
 
 	@Override
-	public Class<Report> getBeanClass() { return Report.class; }
-	public Class<ReportList> getBeanListClass() { return ReportList.class; } 
+	public Class<Report> getBeanClass() {
+		return Report.class; 
+	}
+	
+	@Override
+	public Class<ReportList> getBeanListClass() {
+		return ReportList.class; 
+	} 
 
 	@GET
 	@Timed
 	@GraphQLFetcher
 	@Path("/")
-	public ReportList getAll(@Auth Person p, @DefaultValue("0") @QueryParam("pageNum") Integer pageNum, @DefaultValue("100") @QueryParam("pageSize") Integer pageSize) {
+	public ReportList getAll(@Auth Person p, 
+			@DefaultValue("0") @QueryParam("pageNum") Integer pageNum, 
+			@DefaultValue("100") @QueryParam("pageSize") Integer pageSize) {
 		return new ReportList(pageNum, pageSize, dao.getAll(pageNum, pageSize));
 	}
 
@@ -174,10 +184,14 @@ public class ReportResource implements IGraphQLResource {
 
 		//Update Poams:
 		List<Poam> existingPoams = dao.getPoamsForReport(r);
-		List<Integer> existingPoamIds = existingPoams.stream().map( p -> p.getId()).collect(Collectors.toList());
+		List<Integer> existingPoamIds = existingPoams.stream().map(p -> p.getId()).collect(Collectors.toList());
 		for (Poam p : r.getPoams()) {
 			int idx = existingPoamIds.indexOf(p.getId());
-			if (idx == -1) { dao.addPoamToReport(p, r); } else {  existingPoamIds.remove(idx); }
+			if (idx == -1) { 
+				dao.addPoamToReport(p, r); 
+			} else {
+				existingPoamIds.remove(idx); 
+			}
 		}
 		for (Integer id : existingPoamIds) {
 			dao.removePoamFromReport(Poam.createWithId(id), r);
@@ -209,6 +223,7 @@ public class ReportResource implements IGraphQLResource {
 			}
 			break;
 		case RELEASED:
+		case CANCELLED:
 			AnetAuditLogger.log("attempt to edit released report {} by editor {} (id: {}) was forbidden",
 					report.getId(), editor.getName(), editor.getId());
 			throw new WebApplicationException("Cannot edit a released report", Status.FORBIDDEN);
@@ -245,7 +260,7 @@ public class ReportResource implements IGraphQLResource {
 		}
 
 		Organization org = engine.getOrganizationForPerson(r.getAuthor());
-		if (org == null ) {
+		if (org == null) {
 			// Author missing Org, use the Default Approval Workflow
 			org = Organization.createWithId(
 				Integer.parseInt(engine.getAdminSetting(AdminSettingKeys.DEFAULT_APPROVAL_ORGANIZATION)));

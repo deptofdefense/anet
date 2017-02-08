@@ -22,18 +22,23 @@ public class Poam extends AbstractAnetBean {
 	public String getShortName() {
 		return shortName;
 	}
+	
 	public void setShortName(String shortName) {
 		this.shortName = shortName;
 	}
+	
 	public String getLongName() {
 		return longName;
 	}
+	
 	public void setLongName(String longName) {
 		this.longName = longName;
 	}
+	
 	public String getCategory() {
 		return category;
 	}
+	
 	public void setCategory(String category) {
 		this.category = category;
 	}
@@ -58,7 +63,7 @@ public class Poam extends AbstractAnetBean {
 	}
 	
 	@GraphQLFetcher("childrenPoams")
-	public List<Poam> loadChildrenPoams(){ 
+	public List<Poam> loadChildrenPoams() { 
 		if (childrenPoams == null) { 
 			childrenPoams = AnetObjectEngine.getInstance()
 					.getPoamDao().getPoamsByParentId(this.getId());
@@ -121,11 +126,11 @@ public class Poam extends AbstractAnetBean {
 			return false;
 		}
 		Poam other = (Poam) o;
-		return Objects.equals(other.getId(), id) &&
-				Objects.equals(other.getShortName(), shortName) &&
-				Objects.equals(other.getLongName(), longName) &&
-				Objects.equals(other.getCategory(), category) &&
-				idEqual(other.getParentPoam(), parentPoam);
+		return Objects.equals(other.getId(), id) 
+				&& Objects.equals(other.getShortName(), shortName) 
+				&& Objects.equals(other.getLongName(), longName) 
+				&& Objects.equals(other.getCategory(), category) 
+				&& idEqual(other.getParentPoam(), parentPoam);
 	}
 	
 	@Override

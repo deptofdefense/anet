@@ -12,7 +12,6 @@ import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.Query;
 import org.skife.jdbi.v2.TransactionCallback;
 import org.skife.jdbi.v2.TransactionStatus;
-import org.skife.jdbi.v2.sqlobject.Transaction;
 
 import mil.dds.anet.beans.ApprovalStep;
 import mil.dds.anet.beans.Position;
@@ -25,7 +24,7 @@ public class ApprovalStepDao implements IAnetDao<ApprovalStep> {
 
 	Handle dbHandle;
 	
-	public ApprovalStepDao(Handle h) { 
+	public ApprovalStepDao(Handle h) {
 		this.dbHandle = h;
 	}
 	
@@ -33,7 +32,7 @@ public class ApprovalStepDao implements IAnetDao<ApprovalStep> {
 		throw new UnsupportedOperationException();
 	}
 	
-	public Collection<ApprovalStep> getByAdvisorOrganizationId(int aoId) { 
+	public Collection<ApprovalStep> getByAdvisorOrganizationId(int aoId) {
 		Query<ApprovalStep> query = dbHandle.createQuery("SELECT * from approvalSteps WHERE advisorOrganizationId = :aoId")
 				.bind("aoId", aoId)
 				.map(new ApprovalStepMapper());
@@ -55,8 +54,8 @@ public class ApprovalStepDao implements IAnetDao<ApprovalStep> {
 		return dbHandle.inTransaction(new TransactionCallback<ApprovalStep>() {
 			public ApprovalStep inTransaction(Handle conn, TransactionStatus status) throws Exception {
 				GeneratedKeys<Map<String, Object>> keys = dbHandle.createStatement(
-						"INSERT into approvalSteps (name, nextStepId, advisorOrganizationId) " + 
-						"VALUES (:name, :nextStepId, :advisorOrganizationId)")
+						"INSERT into approvalSteps (name, nextStepId, advisorOrganizationId) "
+						+ "VALUES (:name, :nextStepId, :advisorOrganizationId)")
 					.bindFromProperties(as)
 					.executeAndReturnGeneratedKeys();
 				
@@ -80,27 +79,37 @@ public class ApprovalStepDao implements IAnetDao<ApprovalStep> {
 		
 	}
 	
-	public ApprovalStep insertAtEnd(ApprovalStep as) { 
+	/**
+	 * Inserts this approval step at the end of the organizations Approval Chain.
+	 */
+	public ApprovalStep insertAtEnd(ApprovalStep as) {
 		as = insert(as);
 		
 		//Add this Step to the current org list. 
-		dbHandle.createStatement("UPDATE approvalSteps SET nextStepId = :id " + 
-				"WHERE advisorOrganizationId = :advisorOrganizationId "
+		dbHandle.createStatement("UPDATE approvalSteps SET nextStepId = :id " 
+				+ "WHERE advisorOrganizationId = :advisorOrganizationId "
 				+ "AND nextStepId IS NULL AND id != :id")
 			.bindFromProperties(as)
 			.execute();
 		return as;
 	}
 	
-	public int update(ApprovalStep as) { 
-		return dbHandle.createStatement("UPDATE approvalSteps SET name = :name, " +
-				"nextStepId = :nextStepId, advisorOrganizationId = :advisorOrganizationId " + 
-				"WHERE id = :id")
+	/**
+	 * Updates the name, nextStepId, and advisorOrgId on this Approval Step
+	 * DOES NOT update the list of members for this step. 
+	 */
+	public int update(ApprovalStep as) {
+		return dbHandle.createStatement("UPDATE approvalSteps SET name = :name, "
+				+ "nextStepId = :nextStepId, advisorOrganizationId = :advisorOrganizationId "
+				+ "WHERE id = :id")
 			.bindFromProperties(as)
 			.execute();
 	}
 
-	@Transaction
+	/**
+	 * Delete the Approval Step with the given ID. 
+	 * Will patch up the Approval Process list after the removal. 
+	 */
 	public boolean deleteStep(int id) {
 		//ensure there is nothing currently on this step
 		List<Map<String, Object>> rs = dbHandle.select("SELECT count(*) AS ct FROM reports WHERE approvalStepId = ?", id);
@@ -113,9 +122,9 @@ public class ApprovalStepDao implements IAnetDao<ApprovalStep> {
 		dbHandle.begin();
 		
 		//fix up the linked list. 
-		dbHandle.createStatement("UPDATE approvalSteps " +
-				"SET nextStepId = (SELECT nextStepId from approvalSteps where id = :stepToDeleteId) " +
-				"WHERE nextStepId = :stepToDeleteId")
+		dbHandle.createStatement("UPDATE approvalSteps "
+				+ "SET nextStepId = (SELECT nextStepId from approvalSteps where id = :stepToDeleteId) "
+				+ "WHERE nextStepId = :stepToDeleteId") 	
 			.bind("stepToDeleteId", id)
 			.execute();
 		
@@ -127,6 +136,9 @@ public class ApprovalStepDao implements IAnetDao<ApprovalStep> {
 		return true;
 	}
 
+	/**
+	 * Returns the previous step for a given stepId.  
+	 */
 	public ApprovalStep getStepByNextStepId(Integer id) {
 		List<ApprovalStep> list = dbHandle.createQuery("SELECT * FROM approvalSteps WHERE nextStepId = :id")
 			.bind("id",id)
@@ -136,7 +148,10 @@ public class ApprovalStepDao implements IAnetDao<ApprovalStep> {
 		return list.get(0);
 	}
 	
-	public List<Position> getApproversForStep(ApprovalStep as) { 
+	/**
+	 * Returns the list of positions that can approve for a given step. 
+	 */
+	public List<Position> getApproversForStep(ApprovalStep as) {
 		return dbHandle.createQuery("SELECT " + PositionDao.POSITIONS_FIELDS + " FROM positions "
 				+ "WHERE id IN "
 				+ "(SELECT positionId from approvers where approvalStepId = :approvalStepId)")
@@ -145,14 +160,14 @@ public class ApprovalStepDao implements IAnetDao<ApprovalStep> {
 			.list();
 	}
 
-	public int addApprover(ApprovalStep step, Position position) { 
+	public int addApprover(ApprovalStep step, Position position) {
 		return dbHandle.createStatement("INSERT INTO approvers (approvalStepId, positionId) VALUES (:stepId, :positionId)")
 				.bind("stepId", step.getId())
 				.bind("positionId", position.getId())
 				.execute();
 	}
 	
-	public int removeApprover(ApprovalStep step, Position position) { 
+	public int removeApprover(ApprovalStep step, Position position) {
 		return dbHandle.createStatement("DELETE FROM approvers WHERE approvalStepId = :stepId AND positionId = :positionId")
 				.bind("stepId", step.getId())
 				.bind("positionId", position.getId())

@@ -15,7 +15,7 @@ import mil.dds.anet.views.AbstractAnetBean;
 
 public class ApprovalAction extends AbstractAnetBean {
 
-	public enum ApprovalType {APPROVE, REJECT}
+	public enum ApprovalType { APPROVE, REJECT }
 	
 	ApprovalStep step;
 	Person person;
@@ -66,21 +66,27 @@ public class ApprovalAction extends AbstractAnetBean {
 		}
 		return person;
 	}
+	
 	public Report getReport() {
 		return report;
 	}
+	
 	public void setReport(Report report) {
 		this.report = report;
 	}
+	
 	public DateTime getCreatedAt() {
 		return createdAt;
 	}
+	
 	public void setCreatedAt(DateTime createdAt) {
 		this.createdAt = createdAt;
 	}
+	
 	public ApprovalType getType() {
 		return type;
 	}
+	
 	public void setType(ApprovalType type) {
 		this.type = type;
 	}
@@ -91,11 +97,11 @@ public class ApprovalAction extends AbstractAnetBean {
 			return false;
 		}
 		ApprovalAction other = (ApprovalAction) o;
-		return Objects.equals(step, other.getStep()) &&
-				AbstractAnetBean.idEqual(person, other.getPerson()) &&
-				Objects.equals(report, other.getReport()) &&
-				Objects.equals(createdAt, other.getCreatedAt()) &&
-				Objects.equals(type, other.getType());
+		return Objects.equals(step, other.getStep()) 
+				&& AbstractAnetBean.idEqual(person, other.getPerson()) 
+				&& Objects.equals(report, other.getReport()) 
+				&& Objects.equals(createdAt, other.getCreatedAt()) 
+				&& Objects.equals(type, other.getType());
 	}
 	
 	@Override

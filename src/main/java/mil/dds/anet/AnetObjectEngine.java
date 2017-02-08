@@ -124,18 +124,18 @@ public class AnetObjectEngine {
 		return searcher;
 	}
 
-	public Organization getOrganizationForPerson(Person p) { 
-		if (p == null) { return null; } 
-		return personDao.getOrganizationForPerson(p.getId());
+	public Organization getOrganizationForPerson(Person person) { 
+		if (person == null) { return null; } 
+		return personDao.getOrganizationForPerson(person.getId());
 	}
 	
-	public List<ApprovalStep> getApprovalStepsForOrg(Organization ao) { 
+	public List<ApprovalStep> getApprovalStepsForOrg(Organization ao) {
 		Collection<ApprovalStep> unordered = asDao.getByAdvisorOrganizationId(ao.getId());
 		
 		int numSteps = unordered.size();
 		LinkedList<ApprovalStep> ordered = new LinkedList<ApprovalStep>();
 		Integer nextStep = null;
-		for (int i=0;i<numSteps;i++) { 
+		for (int i = 0;i < numSteps;i++) { 
 			for (ApprovalStep as : unordered) { 
 				if (Objects.equals(as.getNextStepId(), nextStep)) { 
 					ordered.addFirst(as);

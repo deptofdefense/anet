@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Objects;
 
 import mil.dds.anet.AnetObjectEngine;
-import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.graphql.GraphQLFetcher;
 import mil.dds.anet.graphql.GraphQLIgnore;
 import mil.dds.anet.utils.DaoUtils;
@@ -25,7 +24,7 @@ public class Position extends AbstractAnetBean {
 	Location location;
 	List<PersonPositionHistory> previousPeople;
 
-	public static Position createWithId(Integer id) { 
+	public static Position createWithId(Integer id) {
 		Position b = new Position();
 		b.setId(id);
 		return b;
@@ -34,6 +33,7 @@ public class Position extends AbstractAnetBean {
 	public String getName() {
 		return name;
 	}
+	
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -56,7 +56,7 @@ public class Position extends AbstractAnetBean {
 
 	@GraphQLFetcher("organization")
 	public Organization loadOrganization() {
-		if (organization == null || organization.getLoadLevel() == null ) { 
+		if (organization == null || organization.getLoadLevel() == null) { 
 			return organization; // just a bean, not a db object! 
 		}
 		if (organization.getLoadLevel().contains(LoadLevel.PROPERTIES) == false) {
@@ -145,11 +145,11 @@ public class Position extends AbstractAnetBean {
 			return false; 
 		}
 		Position other = (Position) o;
-		return Objects.equals(id, other.getId()) &&
-			Objects.equals(name, other.getName()) &&
-			Objects.equals(code,  other.getCode()) && 
-			Objects.equals(type, other.getType()) && 
-			idEqual(organization, other.getOrganization());
+		return Objects.equals(id, other.getId()) 
+			&& Objects.equals(name, other.getName()) 
+			&& Objects.equals(code,  other.getCode()) 
+			&& Objects.equals(type, other.getType()) 
+			&& idEqual(organization, other.getOrganization());
 	}
 	
 	@Override

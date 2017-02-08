@@ -13,7 +13,7 @@ import mil.dds.anet.graphql.GraphQLIgnore;
 import mil.dds.anet.graphql.GraphQLParam;
 import mil.dds.anet.views.AbstractAnetBean;
 
-public class Person extends AbstractAnetBean implements Principal{
+public class Person extends AbstractAnetBean implements Principal {
 
 	public static enum Status { ACTIVE, INACTIVE, NEW_USER }
 	public static enum Role { ADVISOR, PRINCIPAL }
@@ -42,15 +42,19 @@ public class Person extends AbstractAnetBean implements Principal{
 	public String getName() {
 		return name;
 	}
+	
 	public void setName(String name) {
 		this.name = name;
 	}
+	
 	public Status getStatus() {
 		return status;
 	}
+	
 	public void setStatus(Status status) {
 		this.status = status;
 	}
+	
 	public Role getRole() {
 		return role;
 	}
@@ -70,15 +74,19 @@ public class Person extends AbstractAnetBean implements Principal{
 	public String getEmailAddress() {
 		return emailAddress;
 	}
+	
 	public void setEmailAddress(String emailAddress) {
 		this.emailAddress = emailAddress;
 	}
+	
 	public String getPhoneNumber() {
 		return phoneNumber;
 	}
+	
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
+	
 	public String getGender() {
 		return gender;
 	}
@@ -106,12 +114,15 @@ public class Person extends AbstractAnetBean implements Principal{
 	public String getRank() {
 		return rank;
 	}
+	
 	public void setRank(String rank) {
 		this.rank = rank;
 	}
+	
 	public String getBiography() {
 		return biography;
 	}
+	
 	public void setBiography(String biography) {
 		this.biography = biography;
 	}
@@ -138,9 +149,9 @@ public class Person extends AbstractAnetBean implements Principal{
 		return (position == null) ? null : position.orElse(null);
 	}
 	
-	public void setPosition(Position p) { 
-		if (p != null) { 
-			this.position = Optional.of(p);
+	public void setPosition(Position position) { 
+		if (position != null) { 
+			this.position = Optional.of(position);
 		}
 	}
 	
@@ -157,20 +168,20 @@ public class Person extends AbstractAnetBean implements Principal{
 	@Override
 	public boolean equals(Object o) { 
 		if (o == null || getClass() != o.getClass()) {
-            return false;
+			return false;
         }
 		Person other = (Person) o;
-		boolean b = Objects.equals(id, other.getId()) &&
-			Objects.equals(other.getName(), name) &&
-			Objects.equals(other.getStatus(), status) && 
-			Objects.equals(other.getRole(), role) && 
-			Objects.equals(other.getEmailAddress(), emailAddress) && 
-			Objects.equals(other.getPhoneNumber(), phoneNumber) && 
-			Objects.equals(other.getRank(), rank) && 
-			Objects.equals(other.getBiography(), biography) &&
-			Objects.equals(other.getPendingVerification(), pendingVerification) &&
-			Objects.equals(other.getCreatedAt(), createdAt) &&
-			Objects.equals(other.getUpdatedAt(), updatedAt);
+		boolean b = Objects.equals(id, other.getId()) 
+			&& Objects.equals(other.getName(), name) 
+			&& Objects.equals(other.getStatus(), status) 
+			&& Objects.equals(other.getRole(), role) 
+			&& Objects.equals(other.getEmailAddress(), emailAddress) 
+			&& Objects.equals(other.getPhoneNumber(), phoneNumber) 
+			&& Objects.equals(other.getRank(), rank) 
+			&& Objects.equals(other.getBiography(), biography) 
+			&& Objects.equals(other.getPendingVerification(), pendingVerification) 
+			&& Objects.equals(other.getCreatedAt(), createdAt) 
+			&& Objects.equals(other.getUpdatedAt(), updatedAt);
 		return b;
  	}
 	

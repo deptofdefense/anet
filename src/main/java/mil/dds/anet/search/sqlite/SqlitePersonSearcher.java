@@ -69,7 +69,7 @@ public class SqlitePersonSearcher implements IPersonSearcher {
 						+ "SELECT o.id from parent_orgs po, organizations o WHERE o.parentOrgId = po.id "
 					+ ") SELECT id from parent_orgs)");
 			} else { 
-				sql.append(" positions.organizationId = :orgId " );
+				sql.append(" positions.organizationId = :orgId ");
 			}
 			sqlArgs.put("orgId", query.getOrgId());
 		}

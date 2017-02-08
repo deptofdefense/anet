@@ -31,7 +31,8 @@ public class Utils {
 	 * For each element that is in newElements but is not in oldElements it will call addFunc
 	 * For each element that is in oldElements but is not in newElements, it will call removeFunc
 	 */
-	public static <T extends AbstractAnetBean> void addRemoveElementsById(List<T> oldElements, List<T> newElements, Consumer<T> addFunc, Consumer<Integer> removeFunc ) { 
+	public static <T extends AbstractAnetBean> void addRemoveElementsById(List<T> oldElements, List<T> newElements,
+			Consumer<T> addFunc, Consumer<Integer> removeFunc) { 
 		List<Integer> existingIds = oldElements.stream().map(p -> p.getId()).collect(Collectors.toList());			
 		for (T newEl : newElements) { 
 			if (existingIds.remove(newEl.getId()) == false) { 

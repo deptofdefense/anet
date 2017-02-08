@@ -20,8 +20,6 @@ import com.google.common.collect.ImmutableMap;
 import io.dropwizard.client.JerseyClientBuilder;
 import mil.dds.anet.beans.Person;
 
-
-
 public class GraphQLResourceTest extends AbstractResourceTest{
 
 	public GraphQLResourceTest() { 
@@ -57,9 +55,12 @@ public class GraphQLResourceTest extends AbstractResourceTest{
 					query.put("variables", ImmutableMap.of());
 					System.out.println(f.getName());
 					
-					Map<String,Object> resp = httpQuery("/graphql", arthur).post(Entity.json(query), new GenericType<Map<String,Object>>() {});
+					Map<String,Object> resp = httpQuery("/graphql", arthur)
+							.post(Entity.json(query), new GenericType<Map<String,Object>>() {});
 					assertThat(resp).isNotNull();
-					assertThat(resp.containsKey("errors")).as("Has Errors on " + f.getName() + ": " + resp.get("errors"), resp.values()).isFalse();
+					assertThat(resp.containsKey("errors"))
+						.as("Has Errors on %s : %s, %s",f.getName(),resp.get("errors"), resp.values().toString())
+						.isFalse();
 					assertThat(resp.containsKey("data")).as("Missing Data on " + f.getName(), resp).isTrue();
 					
 				} catch (IOException e) { 

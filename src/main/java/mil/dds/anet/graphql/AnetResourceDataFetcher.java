@@ -78,11 +78,11 @@ public class AnetResourceDataFetcher implements DataFetcher {
 						argNames.add(argName);
 						
 						Type t = param.getType();
-						GraphQLArgument gArg = GraphQLArgument.newArgument()
+						GraphQLArgument gqlArg = GraphQLArgument.newArgument()
 							.name(argName)
 							.type((GraphQLInputType) GraphQLUtils.getGraphQLTypeForJavaType(t))
 							.build();
-						arguments.put(argName, gArg);
+						arguments.put(argName, gqlArg);
 					} else { 
 						System.err.println("Unbound arg " + param.toString() + " on method" + m.getName());
 					}
@@ -118,7 +118,7 @@ public class AnetResourceDataFetcher implements DataFetcher {
 		validArgs.addAll(arguments.values());
 		//Only accept the f argument if we can actually do anything with it. 
 		if (fetchers.size() > 0) {
-			String enumName = resource.getBeanClass().getSimpleName() + (isListFetcher ? "s" :"") + "_functions";
+			String enumName = resource.getBeanClass().getSimpleName() + (isListFetcher ? "s" : "") + "_functions";
 			GraphQLEnumType.Builder functionNamesEnum = GraphQLEnumType.newEnum()
 				.name(enumName);
 			for (String functionName : fetchers.keySet()) { 
@@ -202,7 +202,8 @@ public class AnetResourceDataFetcher implements DataFetcher {
 					}
 				} else {
 					System.out.println("c: Arg is " + arg.getClass() + " and param is " + param.getType());
-					throw new WebApplicationException("Type mismatch on arg, wanted " + param.getType() + " got " + arg.getClass() + " on " + method.getName());
+					throw new WebApplicationException(String.format("Type mismatch on arg, wanted %s got %s on %s", 
+							param.getType(), arg.getClass(), method.getName()));
 				}
 			}
 			args.add(arg);

@@ -89,14 +89,17 @@ public class PersonSearchQuery implements ISearchQuery {
 	public int getPageNum() {
 		return pageNum;
 	}
+	
 	@Override
 	public void setPageNum(int pageNum) {
 		this.pageNum = pageNum;
 	}
+	
 	@Override
 	public int getPageSize() {
 		return pageSize;
 	}
+	
 	@Override
 	public void setPageSize(int pageSize) {
 		if (pageSize == 0) { return; } // that makes no sense. 

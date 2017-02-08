@@ -12,13 +12,13 @@ import javax.ws.rs.core.Response;
 import org.junit.Test;
 
 import io.dropwizard.client.JerseyClientBuilder;
+import mil.dds.anet.beans.Location;
 import mil.dds.anet.beans.Person;
-import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.LocationList;
 
 public class LocationResourceTest extends AbstractResourceTest {
 
-	public LocationResourceTest() { 
+	public LocationResourceTest() {
 		if (client == null) { 
 			client = new JerseyClientBuilder(RULE.getEnvironment()).using(config).build("test client");
 		}
@@ -43,7 +43,7 @@ public class LocationResourceTest extends AbstractResourceTest {
 				URLEncoder.encode("Police", "UTF-8")))
 				.get(LocationList.class).getList();
 		assertThat(results.size()).isGreaterThan(0);
-//		assertThat(results).contains(created);
+		//assertThat(results).contains(created);
 		
 		//TODO: fuzzy searching
 		

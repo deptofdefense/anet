@@ -20,36 +20,47 @@ public class SearchResults implements IGraphQLBean {
 	public PersonList getPeople() {
 		return people;
 	}
+	
 	public void setPeople(PersonList people) {
 		this.people = people;
 	}
+	
 	public ReportList getReports() {
 		return reports;
 	}
+	
 	public void setReports(ReportList reports) {
 		this.reports = reports;
 	}
+	
 	public PositionList getPositions() {
 		return positions;
 	}
+	
 	public void setPositions(PositionList positions) {
 		this.positions = positions;
 	}
+	
 	public PoamList getPoams() {
 		return poams;
 	}
+	
 	public void setPoams(PoamList poams) {
 		this.poams = poams;
 	}
+	
 	public LocationList getLocations() {
 		return locations;
 	}
+	
 	public void setLocations(LocationList locations) {
 		this.locations = locations;
 	}
+	
 	public OrganizationList getOrganizations() {
 		return organizations;
 	}
+	
 	public void setOrganizations(OrganizationList organizations) {
 		this.organizations = organizations;
 	}

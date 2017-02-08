@@ -17,8 +17,8 @@ public class AuthUtils {
 	public static String UNAUTH_MESSAGE = "You do not have permissions to do this";
 	
 	public static void assertAdministrator(Person user) { 
-		if (user.loadPosition() != null &&
-				user.getPosition().getType() == PositionType.ADMINISTRATOR) { 
+		if (user.loadPosition() != null
+				&& user.getPosition().getType() == PositionType.ADMINISTRATOR) { 
 			return;
 		}
 		throw new WebApplicationException(UNAUTH_MESSAGE, Status.FORBIDDEN);
@@ -52,9 +52,9 @@ public class AuthUtils {
 
 	public static void assertSuperUser(Person user) {
 		Position position = user.loadPosition();
-		if (position != null && 
-			(position.getType() == PositionType.SUPER_USER ||
-			position.getType() == PositionType.ADMINISTRATOR)) { 
+		if (position != null
+			&& (position.getType() == PositionType.SUPER_USER
+			|| position.getType() == PositionType.ADMINISTRATOR)) { 
 			return;
 		}
 		throw new WebApplicationException(UNAUTH_MESSAGE, Status.FORBIDDEN);

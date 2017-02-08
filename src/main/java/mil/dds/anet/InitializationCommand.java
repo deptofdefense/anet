@@ -39,11 +39,11 @@ public class InitializationCommand extends ConfiguredCommand<AnetConfiguration> 
 	protected void run(Bootstrap<AnetConfiguration> bootstrap, Namespace namespace, AnetConfiguration configuration) throws Exception {
 		final DBIFactory factory = new DBIFactory();
 		final Environment environment = new Environment(bootstrap.getApplication().getName(),
-                bootstrap.getObjectMapper(),
-                bootstrap.getValidatorFactory().getValidator(),
-                bootstrap.getMetricRegistry(),
-                bootstrap.getClassLoader(),
-                bootstrap.getHealthCheckRegistry());
+				bootstrap.getObjectMapper(),
+				bootstrap.getValidatorFactory().getValidator(),
+				bootstrap.getMetricRegistry(),
+				bootstrap.getClassLoader(),
+				bootstrap.getHealthCheckRegistry());
 		final DBI jdbi = factory.build(environment, configuration.getDataSourceFactory(), "mssql");
 		final AnetObjectEngine engine = new AnetObjectEngine(jdbi);
 		

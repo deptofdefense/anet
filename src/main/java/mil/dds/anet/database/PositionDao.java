@@ -53,8 +53,8 @@ public class PositionDao implements IAnetDao<Position> {
 		p.setCreatedAt(DateTime.now());
 		p.setUpdatedAt(p.getCreatedAt());
 		GeneratedKeys<Map<String,Object>> keys = dbHandle.createStatement(
-				"INSERT INTO positions (name, code, type, organizationId, currentPersonId, locationId, createdAt, updatedAt) " +
-				"VALUES (:name, :code, :type, :organizationId, :currentPersonId, :locationId, :createdAt, :updatedAt)")
+				"INSERT INTO positions (name, code, type, organizationId, currentPersonId, locationId, createdAt, updatedAt) " 
+				+ "VALUES (:name, :code, :type, :organizationId, :currentPersonId, :locationId, :createdAt, :updatedAt)")
 			.bindFromProperties(p)
 			.bind("type", DaoUtils.getEnumId(p.getType()))
 			.bind("organizationId", DaoUtils.getId(p.getOrganization()))
@@ -125,8 +125,8 @@ public class PositionDao implements IAnetDao<Position> {
 			.bind("personId", person.getId())
 			.bind("positionId", position.getId())
 			.execute();
-		dbHandle.createStatement("INSERT INTO peoplePositions (positionId, personId, createdAt) " +
-				"VALUES (:positionId, :personId, :createdAt)")
+		dbHandle.createStatement("INSERT INTO peoplePositions (positionId, personId, createdAt) " 
+				+ "VALUES (:positionId, :personId, :createdAt)")
 			.bind("positionId", position.getId())
 			.bind("personId", person.getId())
 			.bind("createdAt", now)
@@ -143,23 +143,23 @@ public class PositionDao implements IAnetDao<Position> {
 			
 		String sql;
 		if (DaoUtils.isMsSql(dbHandle)) { 
-			sql = "INSERT INTO peoplePositions (positionId, personId, createdAt) " + 
-					"VALUES(null, " +
-					"(SELECT TOP(1)personId FROM peoplePositions WHERE positionId = :positionId ORDER BY createdAt DESC), " +
-				":createdAt)";
+			sql = "INSERT INTO peoplePositions (positionId, personId, createdAt) "
+				+ "VALUES(null, " 
+					+ "(SELECT TOP(1)personId FROM peoplePositions WHERE positionId = :positionId ORDER BY createdAt DESC), "
+				+ ":createdAt)";
 		} else { 
-			sql = "INSERT INTO peoplePositions (positionId, personId, createdAt) " + 
-					"VALUES(null, " +
-					"(SELECT personId FROM peoplePositions WHERE positionId = :positionId ORDER BY createdAt DESC LIMIT 1), " +
-				":createdAt)";
+			sql = "INSERT INTO peoplePositions (positionId, personId, createdAt) "
+				+ "VALUES(null, " 
+					+ "(SELECT personId FROM peoplePositions WHERE positionId = :positionId ORDER BY createdAt DESC LIMIT 1), " 
+				+ ":createdAt)";
 		}
 		dbHandle.createStatement(sql)
 			.bind("positionId", position.getId())
 			.bind("createdAt", now)
 			.execute();
 	
-		dbHandle.createStatement("INSERT INTO peoplePositions (positionId, personId, createdAt) " + 
-				"VALUES (:positionId, null, :createdAt)")
+		dbHandle.createStatement("INSERT INTO peoplePositions (positionId, personId, createdAt) "
+				+ "VALUES (:positionId, null, :createdAt)")
 			.bind("positionId", position.getId())
 			.bind("createdAt", now)
 			.execute();
@@ -178,24 +178,24 @@ public class PositionDao implements IAnetDao<Position> {
 	public Person getPersonInPosition(Position b, DateTime dtg) { 
 		String sql;
 		if (DaoUtils.isMsSql(dbHandle)) {
-			sql = "SELECT TOP(1) " + PersonDao.PERSON_FIELDS + " FROM peoplePositions " +
-					" LEFT JOIN people ON people.id = peoplePositions.personId " +
-					"WHERE peoplePositions.positionId = :positionId " +
-					"AND peoplePositions.createdAt < :dtg " + 
-					"ORDER BY peoplePositions.createdAt DESC";
+			sql = "SELECT TOP(1) " + PersonDao.PERSON_FIELDS + " FROM peoplePositions "
+				+ " LEFT JOIN people ON people.id = peoplePositions.personId "
+				+ "WHERE peoplePositions.positionId = :positionId "
+				+ "AND peoplePositions.createdAt < :dtg "
+				+ "ORDER BY peoplePositions.createdAt DESC";
 		} else {
-			sql = "SELECT " + PersonDao.PERSON_FIELDS + " FROM peoplePositions " +
-				" LEFT JOIN people ON people.id = peoplePositions.personId " +
-				"WHERE peoplePositions.positionId = :positionId " +
-				"AND peoplePositions.createdAt < :dtg " + 
-				"ORDER BY peoplePositions.createdAt DESC LIMIT 1";
+			sql = "SELECT " + PersonDao.PERSON_FIELDS + " FROM peoplePositions "
+				+ " LEFT JOIN people ON people.id = peoplePositions.personId "
+				+ "WHERE peoplePositions.positionId = :positionId "
+				+ "AND peoplePositions.createdAt < :dtg "
+				+ "ORDER BY peoplePositions.createdAt DESC LIMIT 1";
 		}
 		Query<Person> query = dbHandle.createQuery(sql)
 			.bind("positionId", b.getId())
 			.bind("dtg", dtg)
 			.map(new PersonMapper());
 		List<Person> results = query.list();
-		if (results.size() == 0 ) { return null; }
+		if (results.size() == 0) { return null; }
 		return results.get(0);
 	}
 
@@ -248,8 +248,8 @@ public class PositionDao implements IAnetDao<Position> {
 		DateTime now = DateTime.now();
 		Integer idOne = Math.min(a.getId(), b.getId());
 		Integer idTwo = Math.max(a.getId(), b.getId());
-		dbHandle.createStatement("INSERT INTO positionRelationships (positionId_a, positionId_b, createdAt, updatedAt, deleted) " + 
-				"VALUES (:positionId_a, :positionId_b, :createdAt, :updatedAt, :deleted)")
+		dbHandle.createStatement("INSERT INTO positionRelationships (positionId_a, positionId_b, createdAt, updatedAt, deleted) "
+				+ "VALUES (:positionId_a, :positionId_b, :createdAt, :updatedAt, :deleted)")
 			.bind("positionId_a", idOne)
 			.bind("positionId_b", idTwo)
 			.bind("createdAt", now)
@@ -261,8 +261,8 @@ public class PositionDao implements IAnetDao<Position> {
 	public int deletePositionAssociation(Position a, Position b) {
 		Integer idOne = Math.min(a.getId(), b.getId());
 		Integer idTwo = Math.max(a.getId(), b.getId());
-		return dbHandle.createStatement("UPDATE positionRelationships SET deleted = :deleted, updatedAt = :updatedAt " + 
-				"WHERE positionId_a = :positionId_a AND positionId_b = :positionId_b")
+		return dbHandle.createStatement("UPDATE positionRelationships SET deleted = :deleted, updatedAt = :updatedAt "
+				+ "WHERE positionId_a = :positionId_a AND positionId_b = :positionId_b")
 			.bind("deleted", true)
 			.bind("positionId_a", idOne)
 			.bind("positionId_b", idTwo)

@@ -17,7 +17,7 @@ public class MapperUtils {
 		}
 	}
 	
-	public static <T extends Enum<T>> T getEnumIdx(ResultSet rs, String columnName, Class<T> clazz ) throws SQLException {
+	public static <T extends Enum<T>> T getEnumIdx(ResultSet rs, String columnName, Class<T> clazz) throws SQLException {
 		Object res = rs.getObject(columnName);
 		if (res == null) { return null; } 
 		int idx = rs.getInt(columnName);
@@ -34,7 +34,7 @@ public class MapperUtils {
 	
 	public static boolean containsColumnNamed(ResultSet rs, String colName) throws SQLException {
 		ResultSetMetaData metaData = rs.getMetaData();
-		for (int i=1;i<=metaData.getColumnCount(); i++ ) { 
+		for (int i = 1;i <= metaData.getColumnCount(); i++) {
 			if (colName.equals(metaData.getColumnName(i))) { 
 				return true;
 			}

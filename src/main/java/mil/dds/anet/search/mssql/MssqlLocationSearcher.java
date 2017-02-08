@@ -3,7 +3,7 @@ package mil.dds.anet.search.mssql;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.Query;
 
-import mil.dds.anet.beans.geo.Location;
+import mil.dds.anet.beans.Location;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.LocationList;
 import mil.dds.anet.beans.search.LocationSearchQuery;
 import mil.dds.anet.database.mappers.LocationMapper;

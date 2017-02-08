@@ -21,23 +21,23 @@ import mil.dds.anet.test.resources.SavedSearchResourceTest;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-  PersonTest.class,
-  PoamTest.class,
-  ReportTest.class,
-  OrganizationTest.class,
-  PositionTest.class,
-  ApprovalStepTest.class,
-  ReportTest.class,
-  PersonResourceTest.class,
-  PoamResourceTest.class,
-  LocationResourceTest.class,
-  OrganizationResourceTest.class,
-  PositionResourceTest.class,
-  ApprovalStepResourceTest.class,
-  ReportsResourceTest.class,
-  RandomTests.class,
-  GraphQLResourceTest.class,
-  SavedSearchResourceTest.class
+	PersonTest.class,
+	PoamTest.class,
+	ReportTest.class,
+	OrganizationTest.class,
+	PositionTest.class,
+	ApprovalStepTest.class,
+	ReportTest.class,
+	PersonResourceTest.class,
+	PoamResourceTest.class,
+	LocationResourceTest.class,
+	OrganizationResourceTest.class,
+	PositionResourceTest.class,
+	ApprovalStepResourceTest.class,
+	ReportsResourceTest.class,
+	RandomTests.class,
+	GraphQLResourceTest.class,
+	SavedSearchResourceTest.class
 })
 
 public class AnetTestSuite {

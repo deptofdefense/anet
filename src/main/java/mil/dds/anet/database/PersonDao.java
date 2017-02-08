@@ -62,14 +62,14 @@ public class PersonDao implements IAnetDao<Person> {
 		return rs.get(0);
 	}
 	
-	public Person insert(Person p){
+	public Person insert(Person p) {
 		p.setCreatedAt(DateTime.now());
 		p.setUpdatedAt(DateTime.now());
 		StringBuilder sql = new StringBuilder();
-		sql.append("INSERT INTO people " +
-				"(name, status, role, emailAddress, phoneNumber, rank, pendingVerification, "
-				+ "gender, country, endOfTourDate, biography, domainUsername, createdAt, updatedAt) " +
-				"VALUES (:name, :status, :role, :emailAddress, :phoneNumber, :rank, :pendingVerification, "
+		sql.append("INSERT INTO people " 
+				+ "(name, status, role, emailAddress, phoneNumber, rank, pendingVerification, "
+				+ "gender, country, endOfTourDate, biography, domainUsername, createdAt, updatedAt) " 
+				+ "VALUES (:name, :status, :role, :emailAddress, :phoneNumber, :rank, :pendingVerification, "
 				+ ":gender, :country, ");
 		if (DaoUtils.isMsSql(dbHandle)) {
 			//MsSql requires an explicit CAST when datetime2 might be NULL. 
@@ -88,13 +88,13 @@ public class PersonDao implements IAnetDao<Person> {
 		return p;
 	}
 	
-	public int update(Person p){
+	public int update(Person p) {
 		p.setUpdatedAt(DateTime.now());
-		StringBuilder sql = new StringBuilder("UPDATE people " + 
-				"SET name = :name, status = :status, role = :role, " + 
-				"gender = :gender, country = :country,  emailAddress = :emailAddress, " + 
-				"phoneNumber = :phoneNumber, rank = :rank, biography = :biography, " +
-				"pendingVerification = :pendingVerification, updatedAt = :updatedAt, ");
+		StringBuilder sql = new StringBuilder("UPDATE people "
+				+ "SET name = :name, status = :status, role = :role, "
+				+ "gender = :gender, country = :country,  emailAddress = :emailAddress, "
+				+ "phoneNumber = :phoneNumber, rank = :rank, biography = :biography, "
+				+ "pendingVerification = :pendingVerification, updatedAt = :updatedAt, ");
 		if (DaoUtils.isMsSql(dbHandle)) {
 			//MsSql requires an explicit CAST when datetime2 might be NULL. 
 			sql.append("endOfTourDate = CAST(:endOfTourDate AS datetime2) ");
@@ -117,17 +117,17 @@ public class PersonDao implements IAnetDao<Person> {
 	public Organization getOrganizationForPerson(int personId) {
 		String sql;
 		if (DaoUtils.isMsSql(dbHandle)) { 
-			sql = "SELECT TOP(1) " + OrganizationDao.ORGANIZATION_FIELDS +
-					"FROM organizations, positions, peoplePositions WHERE " + 
-					"peoplePositions.personId = :personId AND peoplePositions.positionId = positions.id " + 
-					"AND positions.organizationId = organizations.id " + 
-					"ORDER BY peoplePositions.createdAt DESC";
+			sql = "SELECT TOP(1) " + OrganizationDao.ORGANIZATION_FIELDS 
+					+ "FROM organizations, positions, peoplePositions WHERE "
+					+ "peoplePositions.personId = :personId AND peoplePositions.positionId = positions.id "
+					+ "AND positions.organizationId = organizations.id "
+					+ "ORDER BY peoplePositions.createdAt DESC";
 		} else { 
-			sql = "SELECT " + OrganizationDao.ORGANIZATION_FIELDS +
-					"FROM organizations, positions, peoplePositions WHERE " + 
-					"peoplePositions.personId = :personId AND peoplePositions.positionId = positions.id " + 
-					"AND positions.organizationId = organizations.id " + 
-					"ORDER BY peoplePositions.createdAt DESC LIMIT 1";
+			sql = "SELECT " + OrganizationDao.ORGANIZATION_FIELDS
+					+ "FROM organizations, positions, peoplePositions WHERE "
+					+ "peoplePositions.personId = :personId AND peoplePositions.positionId = positions.id "
+					+ "AND positions.organizationId = organizations.id " 
+					+ "ORDER BY peoplePositions.createdAt DESC LIMIT 1";
 		}
 		
 		Query<Organization> query = dbHandle.createQuery(sql)
@@ -139,11 +139,13 @@ public class PersonDao implements IAnetDao<Person> {
 	}
 
 	public List<Person> findByProperty(String ...strings) {
-		if (strings.length % 2 != 0 ) { throw new RuntimeException("Illegal number of arguments to findByProperty: " + Arrays.toString(strings)); }
+		if (strings.length % 2 != 0) {
+			throw new RuntimeException("Illegal number of arguments to findByProperty: " + Arrays.toString(strings));
+		}
 		HashSet<String> props = Sets.newHashSet("name","emailAddress","rank","phoneNumber","status", "domainUsername");
 		List<String> conditions = new ArrayList<String>();
 		
-		for (int i=0;i<strings.length;i+=2) { 
+		for (int i = 0;i < strings.length;i += 2) {
 			if (props.contains(strings[i])) { 
 				conditions.add(String.format("%s.%s = ?", tableName, strings[i]));
 			}
@@ -152,8 +154,8 @@ public class PersonDao implements IAnetDao<Person> {
 				+ "FROM people LEFT JOIN positions ON people.id = positions.currentPersonId "
 				+ "WHERE " + Joiner.on(" AND ").join(conditions);
 		Query<Map<String, Object>> query = dbHandle.createQuery(queryString);
-		for (int i=0;i<strings.length;i+=2) { 
-			query.bind((i/2), strings[i+1]);
+		for (int i = 0;i < strings.length;i += 2) {
+			query.bind((i / 2), strings[i + 1]);
 		}
 		return query.map(new PersonMapper()).list();
 	}

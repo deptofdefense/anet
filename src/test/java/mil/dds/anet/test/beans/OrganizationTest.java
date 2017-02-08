@@ -16,13 +16,13 @@ public class OrganizationTest extends BeanTester<Organization> {
 	}
 	
 	@Test
-	public void serializesToJSON() throws Exception {
-		serializesToJSON(getTestAO(), "testJson/organizations/test.json");
+	public void serializesToJson() throws Exception {
+		serializesToJson(getTestAO(), "testJson/organizations/test.json");
 	}
 	
 	@Test
-    public void deserializesFromJSON() throws Exception {
-		deserializesFromJSON(getTestAO(), "testJson/organizations/test.json");
+	public void deserializesFromJson() throws Exception {
+		deserializesFromJson(getTestAO(), "testJson/organizations/test.json");
     }
 	
 }

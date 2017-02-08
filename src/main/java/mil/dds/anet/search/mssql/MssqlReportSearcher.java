@@ -67,8 +67,8 @@ public class MssqlReportSearcher implements IReportSearcher {
 		}
 		
 		if (query.getAttendeeId() != null) { 
-			 whereClauses.add("reports.id IN (SELECT reportId from reportPeople where personId = :attendeeId)");
-			 args.put("attendeeId", query.getAttendeeId());
+			whereClauses.add("reports.id IN (SELECT reportId from reportPeople where personId = :attendeeId)");
+			args.put("attendeeId", query.getAttendeeId());
 		}
 		
 		if (query.getPoamId() != null) { 
@@ -81,7 +81,8 @@ public class MssqlReportSearcher implements IReportSearcher {
 			// need to coordinate with the team on if the later happens and if it's worth either
 			// a) storing the advisorOrg and principalOrg on the report table
 			// b) running an indexing job that stores this somewhere else and takes the time to do the past math. 
-			//    (is it even possible? ie: does a position get removed from an orgaization and then the fact that it was connected then lost forever?)
+			//    (is it even possible? ie: does a position get removed from an organization
+			//     and then the fact that it was connected then lost forever?)
 			if (query.isIncludeAuthorOrgChildren()) { 
 				commonTableExpression = "WITH parent_orgs(id) AS ( "
 						+ "SELECT id FROM organizations WHERE id = :authorOrgId "

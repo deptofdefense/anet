@@ -53,10 +53,10 @@ public class AnetAuthenticationFilter implements ContainerRequestFilter, Authori
 			
 			final Person user = person;
 			ctx.setSecurityContext(new SecurityContext() {
-				public Principal getUserPrincipal() { return user;}
-				public boolean isUserInRole(String role) { return authorize(user, role);}
-				public boolean isSecure() { return secContext.isSecure();}
-				public String getAuthenticationScheme() { return secContext.getAuthenticationScheme();}
+				public Principal getUserPrincipal() { return user; }
+				public boolean isUserInRole(String role) { return authorize(user, role); }
+				public boolean isSecure() { return secContext.isSecure(); }
+				public String getAuthenticationScheme() { return secContext.getAuthenticationScheme(); }
 			});
 		} else { 
 			throw new WebApplicationException("Unauthorized", Status.UNAUTHORIZED);
@@ -68,6 +68,11 @@ public class AnetAuthenticationFilter implements ContainerRequestFilter, Authori
 		return checkAuthorization(principal, role);
 	}
 	
+	/**
+	 * Determines if a given person has a particular role. 
+	 * For SUPER_USER Privileges, this does not validate that the user has
+	 * those privileges for a particular organization. That needs to be done later. 
+	 */
 	public static boolean checkAuthorization(Person principal, String role) { 
 		Position position = principal.loadPosition();
 		if (position == null) {

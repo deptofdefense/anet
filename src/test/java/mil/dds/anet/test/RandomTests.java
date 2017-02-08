@@ -1,11 +1,11 @@
 package mil.dds.anet.test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.Test;
 
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.utils.DaoUtils;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 //TODO: Probably rename this. 
 public class RandomTests {

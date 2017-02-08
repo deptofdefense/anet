@@ -45,6 +45,7 @@ public class ReportDao implements IAnetDao<Report> {
 		this.dbHandle = db;
 	}
 
+	@Override
 	public List<Report> getAll(int pageNum, int pageSize) {
 		String sql;
 		if (DaoUtils.isMsSql(dbHandle)) {
@@ -65,6 +66,7 @@ public class ReportDao implements IAnetDao<Report> {
 		return query.list();
 	}
 
+	@Override
 	public Report insert(Report r) {
 		r.setCreatedAt(DateTime.now());
 		r.setUpdatedAt(r.getCreatedAt());
@@ -101,8 +103,8 @@ public class ReportDao implements IAnetDao<Report> {
 		if (r.getAttendees() != null) {
 			for (ReportPerson p : r.getAttendees()) {
 				//TODO: batch this
-				dbHandle.createStatement("INSERT INTO reportPeople " +
-						"(personId, reportId, isPrimary) VALUES (:personId, :reportId, :isPrimary)")
+				dbHandle.createStatement("INSERT INTO reportPeople "
+						+ "(personId, reportId, isPrimary) VALUES (:personId, :reportId, :isPrimary)")
 					.bind("personId", p.getId())
 					.bind("reportId", r.getId())
 					.bind("isPrimary", p.isPrimary())
@@ -112,8 +114,8 @@ public class ReportDao implements IAnetDao<Report> {
 		if (r.getPoams() != null) {
 			for (Poam p : r.getPoams()) {
 				//TODO: batch this.
-				dbHandle.createStatement("INSERT INTO reportPoams " +
-						"(reportId, poamId) VALUES (:reportId, :poamId)")
+				dbHandle.createStatement("INSERT INTO reportPoams " 
+						+ "(reportId, poamId) VALUES (:reportId, :poamId)")
 					.bind("reportId", r.getId())
 					.bind("poamId", p.getId())
 					.execute();
@@ -122,6 +124,7 @@ public class ReportDao implements IAnetDao<Report> {
 		return r;
 	}
 
+	@Override
 	public Report getById(int id) {
 		Query<Report> query = dbHandle.createQuery("SELECT " + REPORT_FIELDS + ", " + PersonDao.PERSON_FIELDS
 				+ "FROM reports, people "
@@ -135,14 +138,15 @@ public class ReportDao implements IAnetDao<Report> {
 		return r;
 	}
 
+	@Override
 	public int update(Report r) {
 		r.setUpdatedAt(DateTime.now());
 
-		StringBuilder sql = new StringBuilder("UPDATE reports SET " +
-				"state = :state, updatedAt = :updatedAt, locationId = :locationId, " +
-				"intent = :intent, exsum = :exsum, text = :reportText, "
-				+ "keyOutcomes = :keyOutcomes, nextSteps = :nextSteps, " +
-				"approvalStepId = :approvalStepId, ");
+		StringBuilder sql = new StringBuilder("UPDATE reports SET "
+				+ "state = :state, updatedAt = :updatedAt, locationId = :locationId, "
+				+ "intent = :intent, exsum = :exsum, text = :reportText, "
+				+ "keyOutcomes = :keyOutcomes, nextSteps = :nextSteps, "
+				+ "approvalStepId = :approvalStepId, ");
 		if (DaoUtils.isMsSql(dbHandle)) {
 			sql.append("engagementDate = CAST(:engagementDate AS datetime2), ");
 		} else {
@@ -167,8 +171,8 @@ public class ReportDao implements IAnetDao<Report> {
 	}
 
 	public int addAttendeeToReport(ReportPerson rp, Report r) {
-		return dbHandle.createStatement("INSERT INTO reportPeople " +
-				"(personId, reportId, isPrimary) VALUES (:personId, :reportId, :isPrimary)")
+		return dbHandle.createStatement("INSERT INTO reportPeople "
+				+ "(personId, reportId, isPrimary) VALUES (:personId, :reportId, :isPrimary)")
 			.bind("personId", rp.getId())
 			.bind("reportId", r.getId())
 			.bind("isPrimary", rp.isPrimary())
@@ -373,6 +377,10 @@ public class ReportDao implements IAnetDao<Report> {
 			.list();
 	}
 
+	/*
+	 * Deletes a given report from the database. 
+	 * Ensures consistency by removing all references to a report before deleting a report. 
+	 */
 	public void deleteReport(final Report report) {
 		dbHandle.inTransaction(new TransactionCallback<Void>() {
 			public Void inTransaction(Handle conn, TransactionStatus status) throws Exception {

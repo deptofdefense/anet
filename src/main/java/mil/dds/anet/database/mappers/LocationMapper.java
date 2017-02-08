@@ -7,24 +7,24 @@ import org.joda.time.DateTime;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
-import mil.dds.anet.beans.geo.Location;
+import mil.dds.anet.beans.Location;
 import mil.dds.anet.views.AbstractAnetBean.LoadLevel;
 
 public class LocationMapper implements ResultSetMapper<Location> {
 
 	@Override
-	public Location map(int index, ResultSet r, StatementContext ctx) throws SQLException {
+	public Location map(int index, ResultSet rs, StatementContext ctx) throws SQLException {
 		Location l = new Location();
-		l.setId(r.getInt("id"));
-		l.setName(r.getString("name"));
-		l.setLat(r.getDouble("lat"));
-		l.setLng(r.getDouble("lng"));
-		l.setCreatedAt(new DateTime(r.getTimestamp("createdAt")));
-		l.setUpdatedAt(new DateTime(r.getTimestamp("updatedAt")));
+		l.setId(rs.getInt("id"));
+		l.setName(rs.getString("name"));
+		l.setLat(rs.getDouble("lat"));
+		l.setLng(rs.getDouble("lng"));
+		l.setCreatedAt(new DateTime(rs.getTimestamp("createdAt")));
+		l.setUpdatedAt(new DateTime(rs.getTimestamp("updatedAt")));
 		l.setLoadLevel(LoadLevel.PROPERTIES);
 		
-		if (MapperUtils.containsColumnNamed(r, "totalCount")) { 
-			ctx.setAttribute("totalCount", r.getInt("totalCount"));
+		if (MapperUtils.containsColumnNamed(rs, "totalCount")) { 
+			ctx.setAttribute("totalCount", rs.getInt("totalCount"));
 		}
 		
 		return l;

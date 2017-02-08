@@ -45,11 +45,19 @@ public class PersonResource implements IGraphQLResource {
 	}
 	
 	@Override
-	public Class<Person> getBeanClass() { return Person.class; } 
-	public Class<PersonList> getBeanListClass() { return PersonList.class; } 
+	public Class<Person> getBeanClass() {
+		return Person.class; 
+	} 
 	
 	@Override
-	public String getDescription() { return "People"; } 
+	public Class<PersonList> getBeanListClass() {
+		return PersonList.class;
+	}
+	
+	@Override
+	public String getDescription() {
+		return "People"; 
+	}
 	
 	/**
 	 * Returns all people objects in the ANET system. Does no filtering on role/status/etc. 
@@ -82,7 +90,8 @@ public class PersonResource implements IGraphQLResource {
 	/**
 	 * Creates a new {@link Person} object as supplied in http entity. 
 	 * Optional: 
-	 * - position: If you provide a Position ID number in the Position object, this person will be associated with that position (Potentially removing anybody currently in the position)
+	 * - position: If you provide a Position ID number in the Position object, 
+	 *     this person will be associated with that position (Potentially removing anybody currently in the position)
 	 * @return the same Person object with the ID field filled in. 
 	 */
 	@POST
@@ -101,9 +110,12 @@ public class PersonResource implements IGraphQLResource {
 	}
 	
 	/**
-	 * Will update a person record with the {@link Person} entity provided in the http entity. All fields will be updated, so you must pass the complete Person object.
+	 * Will update a person record with the {@link Person} entity provided in the http entity. 
+	 * All fields will be updated, so you must pass the complete Person object.
 	 * Optional:
-	 *  - position: If you provide a position on the Person, then this person will be updated to be in that position (unless they already are in that position).  If position is an empty object, the person will be REMOVED from their position.  
+	 *  - position: If you provide a position on the Person, then this person will be updated to 
+	 *      be in that position (unless they already are in that position).  If position is an empty 
+	 *      object, the person will be REMOVED from their position.  
 	 * Must be 
 	 *   1) The person editing yourself
 	 *   2) A super user for the person's organization
@@ -149,23 +161,14 @@ public class PersonResource implements IGraphQLResource {
 			if (subject.getRole().equals(Role.PRINCIPAL)) { return true; }
 			//Ensure that the editor is the Super User for the subject's organization.
 			Position subjectPos = subject.loadPosition();
-			if (subjectPos != null && subjectPos.getOrganization() != null &&
-					editorPos.getOrganization() != null && 
-					subjectPos.getOrganization().getId().equals(editorPos.getOrganization().getId())) { 
+			if (subjectPos != null && subjectPos.getOrganization() != null
+					&& editorPos.getOrganization() != null
+					&& subjectPos.getOrganization().getId().equals(editorPos.getOrganization().getId())) { 
 				return true;
 			}
 		}
 		return false;
 	}
-
-//	@DELETE
-//	@Path("/{id}")
-//	public Response deletePerson(@PathParam("id") int id) {
-//		//TODO: should this operation be allowed?
-		//TODO: no, this should soft delete! 
-//		dao.deletePersonById(id);
-//		return Response.ok().build();
-//	}
 	
 	/**
 	 * Searches people in the ANET database TODO: should be fuzzy searching

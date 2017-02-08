@@ -54,17 +54,25 @@ public class OrganizationResource implements IGraphQLResource {
 	}
 	
 	@Override
-	public Class<Organization> getBeanClass() { return Organization.class; }
-	public Class<OrganizationList> getBeanListClass() { return OrganizationList.class; } 
+	public Class<Organization> getBeanClass() {
+		return Organization.class; 
+	}
+	
+	public Class<OrganizationList> getBeanListClass() {
+		return OrganizationList.class; 
+	}
 	
 	@Override
-	public String getDescription() { return "Organizations"; } 
+	public String getDescription() {
+		return "Organizations";
+	}
 	
 	@GET
 	@Timed
 	@GraphQLFetcher
 	@Path("/")
-	public OrganizationList getAll(@DefaultValue("0") @QueryParam("pageNum") Integer pageNum, @DefaultValue("100") @QueryParam("pageSize") Integer pageSize) {
+	public OrganizationList getAll(@DefaultValue("0") @QueryParam("pageNum") Integer pageNum, 
+			@DefaultValue("100") @QueryParam("pageSize") Integer pageSize) {
 		return new OrganizationList(pageNum, pageSize, dao.getAll(pageNum, pageSize));
 	} 
 
@@ -136,9 +144,9 @@ public class OrganizationResource implements IGraphQLResource {
 						newStep -> engine.getApprovalStepDao().insert(newStep),
 						oldStepId -> engine.getApprovalStepDao().deleteStep(oldStepId));
 				
-				for (int i=0;i<org.getApprovalSteps().size();i++) { 
+				for (int i = 0;i < org.getApprovalSteps().size();i++) { 
 					ApprovalStep curr = org.getApprovalSteps().get(i);
-					ApprovalStep next = (i == (org.getApprovalSteps().size() -1)) ? null : org.getApprovalSteps().get(i+1);
+					ApprovalStep next = (i == (org.getApprovalSteps().size() - 1)) ? null : org.getApprovalSteps().get(i + 1);
 					curr.setNextStepId(DaoUtils.getId(next));
 					ApprovalStep existingStep = Utils.getById(existingSteps, curr.getId());
 					//If this step didn't exist before, we still need to set the nextStepId on it, but don't need to do a deep update. 
@@ -160,7 +168,7 @@ public class OrganizationResource implements IGraphQLResource {
 	@Timed
 	@GraphQLFetcher
 	@Path("/search")
-	public OrganizationList search(@GraphQLParam("query") OrganizationSearchQuery query ) {
+	public OrganizationList search(@GraphQLParam("query") OrganizationSearchQuery query) {
 		return dao.search(query);
 	}
 	

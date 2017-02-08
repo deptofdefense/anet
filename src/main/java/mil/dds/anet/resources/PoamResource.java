@@ -47,11 +47,18 @@ public class PoamResource implements IGraphQLResource {
 	}
 	
 	@Override
-	public Class<Poam> getBeanClass() { return Poam.class; } 
-	public Class<PoamList> getBeanListClass() { return PoamList.class; } 
+	public Class<Poam> getBeanClass() {
+		return Poam.class;
+	}
+	
+	public Class<PoamList> getBeanListClass() {
+		return PoamList.class;
+	}
 	
 	@Override
-	public String getDescription() { return "Poams"; } 
+	public String getDescription() {
+		return "Poams";
+	}
 	
 	@GET
 	@GraphQLFetcher
@@ -131,7 +138,7 @@ public class PoamResource implements IGraphQLResource {
 	@POST
 	@GraphQLFetcher
 	@Path("/search")
-	public PoamList search(@GraphQLParam("query") PoamSearchQuery query ) {
+	public PoamList search(@GraphQLParam("query") PoamSearchQuery query) {
 		return dao.search(query);
 	}
 	

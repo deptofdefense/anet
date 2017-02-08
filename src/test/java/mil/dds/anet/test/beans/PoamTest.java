@@ -18,13 +18,13 @@ public class PoamTest extends BeanTester<Poam> {
 	}
 	
 	@Test
-	public void serializesToJSON() throws Exception {
-		serializesToJSON(getTestPoam(), "testJson/poam/testPoam.json");
+	public void serializesToJson() throws Exception {
+		serializesToJson(getTestPoam(), "testJson/poam/testPoam.json");
 	}
 	
 	@Test
-    public void deserializesFromJSON() throws Exception {
-		deserializesFromJSON(getTestPoam(), "testJson/poam/testPoam.json");
+	public void deserializesFromJson() throws Exception {
+		deserializesFromJson(getTestPoam(), "testJson/poam/testPoam.json");
     }
 
 	@Test

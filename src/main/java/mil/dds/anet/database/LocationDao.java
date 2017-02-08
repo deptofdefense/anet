@@ -11,8 +11,8 @@ import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
 import mil.dds.anet.AnetObjectEngine;
+import mil.dds.anet.beans.Location;
 import mil.dds.anet.beans.Person;
-import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.LocationList;
 import mil.dds.anet.beans.search.LocationSearchQuery;
 import mil.dds.anet.database.mappers.LocationMapper;
@@ -53,12 +53,12 @@ public class LocationDao implements IAnetDao<Location> {
 	}
 	
 	@Override
-	public Location insert(Location l) { 
+	public Location insert(Location l) {
 		l.setCreatedAt(DateTime.now());
 		l.setUpdatedAt(DateTime.now());
 		GeneratedKeys<Map<String,Object>> keys = dbHandle.createStatement(
-				"INSERT INTO locations (name, lat, lng, createdAt, updatedAt) " + 
-				"VALUES (:name, :lat, :lng, :createdAt, :updatedAt)")
+				"INSERT INTO locations (name, lat, lng, createdAt, updatedAt) " 
+					+ "VALUES (:name, :lat, :lng, :createdAt, :updatedAt)")
 			.bind("name", l.getName())
 			.bind("lat", l.getLat())
 			.bind("lng", l.getLng())
@@ -76,7 +76,7 @@ public class LocationDao implements IAnetDao<Location> {
 				.bind("name", l.getName())
 				.bind("lat", l.getLat())
 				.bind("lng", l.getLng())
-				.bind("updatedAt", DateTime.now()	)
+				.bind("updatedAt", DateTime.now())
 				.execute();
 	}
 	

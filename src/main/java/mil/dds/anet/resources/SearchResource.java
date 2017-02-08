@@ -86,12 +86,17 @@ public class SearchResource implements IGraphQLResource  {
 	}
 	
 	@Override
-	public String getDescription() { return "Search"; } 
+	public String getDescription() {
+		return "Search";
+	}
 
 	@Override
 	public Class<? extends IGraphQLBean> getBeanClass() {
 		return SearchResults.class;
 	}
-	public Class<?> getBeanListClass() { return null; } 
+	
+	public Class<?> getBeanListClass() {
+		return null;
+	}
 	
 }

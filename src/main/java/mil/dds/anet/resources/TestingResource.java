@@ -88,7 +88,7 @@ public class TestingResource {
 	public void email(@QueryParam("from") String from, @QueryParam("to") String to) { 
 		SmtpConfiguration smtp = config.getSmtp();
 		Properties props = new Properties();
-		props.put("mail.smtp.starttls.enable", smtp.getStartTLS().toString());
+		props.put("mail.smtp.starttls.enable", smtp.getStartTls().toString());
 		props.put("mail.smtp.host", smtp.getHostname());
 		props.put("mail.smtp.port", smtp.getPort().toString());
 		Authenticator auth = null;

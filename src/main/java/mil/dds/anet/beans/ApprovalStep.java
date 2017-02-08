@@ -35,12 +35,15 @@ public class ApprovalStep extends AbstractAnetBean {
 	public Integer getNextStepId() {
 		return nextStepId;
 	}
+	
 	public void setNextStepId(Integer nextStepId) {
 		this.nextStepId = nextStepId;
 	}
+	
 	public Integer getAdvisorOrganizationId() {
 		return advisorOrganizationId;
 	}
+	
 	public void setAdvisorOrganizationId(Integer advisorOrganizationId) {
 		this.advisorOrganizationId = advisorOrganizationId;
 	}
@@ -59,10 +62,10 @@ public class ApprovalStep extends AbstractAnetBean {
 			return false;
 		}
 		ApprovalStep as = (ApprovalStep) o;
-		return Objects.equals(id, as.getId()) &&
-			Objects.equals(name,  as.getName()) &&
-			Objects.equals(nextStepId, as.getNextStepId()) &&
-			Objects.equals(advisorOrganizationId, as.getAdvisorOrganizationId());
+		return Objects.equals(id, as.getId()) 
+			&& Objects.equals(name,  as.getName()) 
+			&& Objects.equals(nextStepId, as.getNextStepId()) 
+			&& Objects.equals(advisorOrganizationId, as.getAdvisorOrganizationId());
 	}
 	
 	@Override

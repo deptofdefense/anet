@@ -28,7 +28,7 @@ public class AdminDao {
 	private void initCache() { 
 		cachedSettings = new HashMap<String,String>();
 		List<AdminSetting> settings = getAllSettings();
-		for (AdminSetting s : settings){ 
+		for (AdminSetting s : settings) {
 			cachedSettings.put(s.getKey(), s.getValue());
 		}
 	}
@@ -44,6 +44,9 @@ public class AdminDao {
 				.list();
 	}
 
+	/**
+	 * Saves an adminSetting to the database, inserting if it does not exist yet. 
+	 */
 	public int saveSetting(AdminSetting setting) {
 		if (cachedSettings == null) { initCache(); }
 		String sql; 

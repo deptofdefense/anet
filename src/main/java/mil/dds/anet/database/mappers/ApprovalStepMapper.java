@@ -9,7 +9,7 @@ import org.skife.jdbi.v2.tweak.ResultSetMapper;
 import mil.dds.anet.beans.ApprovalStep;
 import mil.dds.anet.views.AbstractAnetBean.LoadLevel;
 
-public class ApprovalStepMapper implements ResultSetMapper<ApprovalStep>{
+public class ApprovalStepMapper implements ResultSetMapper<ApprovalStep> {
 
 	@Override
 	public ApprovalStep map(int index, ResultSet r, StatementContext ctx) throws SQLException {

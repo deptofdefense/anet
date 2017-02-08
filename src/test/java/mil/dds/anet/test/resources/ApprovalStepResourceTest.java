@@ -29,8 +29,8 @@ public class ApprovalStepResourceTest extends AbstractResourceTest {
 	
 	@Test
 	public void approvalTest() {
-		Person jack = getJackJackson(); //Get an authenticated user. 
-		Person liz = getElizabethElizawell();
+		final Person jack = getJackJackson(); //Get an authenticated user. 
+		final Person liz = getElizabethElizawell();
 		Person admin = getArthurDmin();
 		
 		//Create an Advisor Organization

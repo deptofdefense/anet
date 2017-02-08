@@ -9,13 +9,13 @@ import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
 import mil.dds.anet.beans.ApprovalStep;
+import mil.dds.anet.beans.Location;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.Atmosphere;
 import mil.dds.anet.beans.Report.ReportCancelledReason;
 import mil.dds.anet.beans.Report.ReportState;
-import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.views.AbstractAnetBean.LoadLevel;
 
 public class ReportMapper implements ResultSetMapper<Report> {

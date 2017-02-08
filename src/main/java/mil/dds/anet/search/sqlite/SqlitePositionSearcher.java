@@ -37,7 +37,9 @@ public class SqlitePositionSearcher implements IPositionSearcher {
 		String text = query.getText();
 		if (text != null && text.trim().length() > 0) {
 			if (query.getMatchPersonName() != null && query.getMatchPersonName()) { 
-				whereClauses.add("((positions.name LIKE '%' || :text || '%' OR positions.code LIKE '%' || :text || '%') OR (people.name LIKE '%' || :text || '%'))");
+				whereClauses.add("((positions.name LIKE '%' || :text || '%' "
+						+ "OR positions.code LIKE '%' || :text || '%') "
+						+ "OR (people.name LIKE '%' || :text || '%'))");
 			} else { 
 				whereClauses.add("(name LIKE '%' || :text || '%' OR code LIKE '%' || :text || '%')");
 			}

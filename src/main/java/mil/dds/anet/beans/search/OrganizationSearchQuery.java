@@ -25,12 +25,15 @@ public class OrganizationSearchQuery implements ISearchQuery {
 	public String getText() {
 		return text;
 	}
+	
 	public void setText(String text) {
 		this.text = text;
 	}
+	
 	public OrganizationType getType() {
 		return type;
 	}
+	
 	public void setType(OrganizationType type) {
 		this.type = type;
 	}
@@ -55,14 +58,17 @@ public class OrganizationSearchQuery implements ISearchQuery {
 	public int getPageNum() {
 		return pageNum;
 	}
+	
 	@Override
 	public void setPageNum(int pageNum) {
 		this.pageNum = pageNum;
 	}
+	
 	@Override
 	public int getPageSize() {
 		return pageSize;
 	}
+	
 	@Override
 	public void setPageSize(int pageSize) {
 		if (pageSize == 0) { return; } // that makes no sense. 

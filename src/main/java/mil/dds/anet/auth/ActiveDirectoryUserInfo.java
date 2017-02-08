@@ -21,7 +21,7 @@ import com4j.typelibs.ado20._Recordset;
 
 public class ActiveDirectoryUserInfo {
 
-	protected Log _log = LogFactory.getLog(ActiveDirectoryUserInfo.class);
+	protected Log log = LogFactory.getLog(ActiveDirectoryUserInfo.class);
 
 	static String defaultNamingContext = null;
 
@@ -40,17 +40,17 @@ public class ActiveDirectoryUserInfo {
 		if (defaultNamingContext == null) {
 			IADs rootDSE = COM4J.getObject(IADs.class, "LDAP://RootDSE", null);
 			defaultNamingContext = (String)rootDSE.get("defaultNamingContext");
-	    	_log.error("defaultNamingContext="+defaultNamingContext);
+			log.error("defaultNamingContext=" + defaultNamingContext);
 		}
 	}
 
-	synchronized public static ActiveDirectoryUserInfo getInstance(String username) {
+	public static synchronized ActiveDirectoryUserInfo getInstance(String username) {
 		ActiveDirectoryUserInfo found = knownUsers.get(username);
-		if (found != null) return found;
+		if (found != null) { return found; }
 		return getInstanceNoCache(username);
 	}
 
-	synchronized public static ActiveDirectoryUserInfo getInstanceNoCache(String username) {
+	public static synchronized ActiveDirectoryUserInfo getInstanceNoCache(String username) {
 		ActiveDirectoryUserInfo found = new ActiveDirectoryUserInfo(username);
 		if (found.dn == null) {
 			return null;
@@ -59,7 +59,7 @@ public class ActiveDirectoryUserInfo {
 		return found;
 	}
 
-	private ActiveDirectoryUserInfo (String username) {
+	private ActiveDirectoryUserInfo(String username) {
 		initNamingContext();
 		if (defaultNamingContext == null) {
 			return;
@@ -80,63 +80,62 @@ public class ActiveDirectoryUserInfo {
 		int pSlash = username.indexOf('\\');
 		if (pSlash > 0) {
 			searchField = "sAMAccountName";
-			username = username.substring(pSlash+1);
+			username = username.substring(pSlash + 1);
 		}
-		_log.error("Command="+"<LDAP://"+defaultNamingContext+">;("+searchField+"="+username+");"+usefulFields+";subTree");
-		cmd.commandText("<LDAP://"+defaultNamingContext+">;("+searchField+"="+username+");"+usefulFields+";subTree");
+		log.error("Command=" + "<LDAP://" + defaultNamingContext + ">;(" + searchField + "=" + username + ");" + usefulFields + ";subTree");
+		cmd.commandText("<LDAP://" + defaultNamingContext + ">;(" + searchField + "=" + username + ");" + usefulFields + ";subTree");
 		_Recordset rs = cmd.execute(null, Variant.getMissing(), -1/*default*/);
-		if(rs.eof()) { // User not found!
-			_log.error(username+" not found.");
-		}
-		else {
+		if (rs.eof()) {
+			// User not found!
+			log.error(username + " not found.");
+		} else {
 			Fields userData = rs.fields();
 			if (userData != null) {
 				/* Iterator<Com4jObject> itCom = userData.iterator();
 				int i=0;
 				while (itCom.hasNext()) {
 					Field comObj = (Field)itCom.next();
-					_log.error(i++ +":"+comObj.name()+"="+comObj.value().toString());
+					log.error(i++ +":"+comObj.name()+"="+comObj.value().toString());
 				} */
 				Object o;
 				try {
 					o = userData.item("distinguishedName").value();
-					if (o != null) dn = o.toString();
-				} catch (ComException ecom ) {
-					_log.error("distinguishedName not returned:"+ecom.getMessage());
+					if (o != null) { dn = o.toString(); }
+				} catch (ComException ecom) {
+					log.error("distinguishedName not returned:" + ecom.getMessage());
 				}
 				try {
 					o = userData.item("userPrincipalName").value();
-					if (o != null) upn = o.toString();
-				} catch (ComException ecom ) {
-					_log.error("userPrincipalName not returned:"+ecom.getMessage());
+					if (o != null) { upn = o.toString(); }
+				} catch (ComException ecom) {
+					log.error("userPrincipalName not returned:" + ecom.getMessage());
 				}
 				try {
 					o = userData.item("sAMAccountName").value();
-					if (o != null) fqn = o.toString();
-				} catch (ComException ecom ) {
-					_log.error("sAMAccountName not returned:"+ecom.getMessage());
+					if (o != null) { fqn = o.toString(); }
+				} catch (ComException ecom) {
+					log.error("sAMAccountName not returned:" + ecom.getMessage());
 				}
 				try {
 					o = userData.item("sn").value();
-					if (o != null) sn = o.toString();
-				} catch (ComException ecom ) {
-					_log.error("sn not returned:"+ecom.getMessage());
+					if (o != null) { sn = o.toString(); }
+				} catch (ComException ecom) {
+					log.error("sn not returned:" + ecom.getMessage());
 				}
 				try {
 					o = userData.item("givenName").value();
-					if (o != null) givenName = o.toString();
-				} catch (ComException ecom ) {
-					_log.error("givenName not returned:"+ecom.getMessage());
+					if (o != null) { givenName = o.toString(); }
+				} catch (ComException ecom) {
+					log.error("givenName not returned:" + ecom.getMessage());
 				}
 				try {
 					o = userData.item("telephoneNumber").value();
-					if (o != null) telephoneNumber = o.toString();
-				} catch (ComException ecom ) {
-					_log.error("telephoneNumber not returned:"+ecom.getMessage());
+					if (o != null) { telephoneNumber = o.toString(); }
+				} catch (ComException ecom) {
+					log.error("telephoneNumber not returned:" + ecom.getMessage());
 				}
-			}
-			else {
-				_log.error("User "+username+" information is empty?");
+			} else {
+				log.error("User " + username + " information is empty?");
 			}
 		}
 		rs.close();

@@ -97,7 +97,7 @@ public class MssqlPositionSearcher implements IPositionSearcher {
 			sql.insert(0, commonTableExpression);
 		}
 		
-		Query<Position> sqlQuery= dbHandle.createQuery(sql.toString())
+		Query<Position> sqlQuery = dbHandle.createQuery(sql.toString())
 			.bindFromMap(sqlArgs)
 			.bind("offset", query.getPageSize() * query.getPageNum())
 			.bind("limit", query.getPageSize())

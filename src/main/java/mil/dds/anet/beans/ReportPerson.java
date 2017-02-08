@@ -22,8 +22,8 @@ public class ReportPerson extends Person {
 			return false;
 		}
 		ReportPerson rp = (ReportPerson) o;
-		return super.equals(o) && 
-				primary == rp.isPrimary();
+		return super.equals(o) 
+			&& primary == rp.isPrimary();
 	}
 	
 	@Override

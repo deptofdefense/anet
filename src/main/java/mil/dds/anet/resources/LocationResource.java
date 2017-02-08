@@ -17,8 +17,8 @@ import javax.ws.rs.core.Response.Status;
 
 import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
+import mil.dds.anet.beans.Location;
 import mil.dds.anet.beans.Person;
-import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.LocationList;
 import mil.dds.anet.beans.search.LocationSearchQuery;
 import mil.dds.anet.database.LocationDao;
@@ -56,7 +56,7 @@ public class LocationResource implements IGraphQLResource {
 	@POST
 	@GraphQLFetcher
 	@Path("/search")
-	public LocationList search(@GraphQLParam("query") LocationSearchQuery query ) {
+	public LocationList search(@GraphQLParam("query") LocationSearchQuery query) {
 		return dao.search(query);
 	}
 	
@@ -100,10 +100,18 @@ public class LocationResource implements IGraphQLResource {
 	}
 	
 	@Override
-	public String getDescription() { return "Locations"; }
+	public String getDescription() {
+		return "Locations"; 
+	}
 
 	@Override
-	public Class<Location> getBeanClass() { return Location.class;}
-	public Class<LocationList> getBeanListClass() { return LocationList.class; } 
+	public Class<Location> getBeanClass() {
+		return Location.class;
+	}
+	
+	@Override
+	public Class<LocationList> getBeanListClass() {
+		return LocationList.class;
+	}
 	
 }

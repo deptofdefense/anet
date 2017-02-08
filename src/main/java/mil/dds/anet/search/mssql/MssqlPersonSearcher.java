@@ -73,7 +73,7 @@ public class MssqlPersonSearcher implements IPersonSearcher {
 					+ ") ";
 				whereClauses.add(" positions.organizationId IN (SELECT id from parent_orgs)");
 			} else { 
-				whereClauses.add(" positions.organizationId = :orgId " );
+				whereClauses.add(" positions.organizationId = :orgId ");
 			}
 			sqlArgs.put("orgId", query.getOrgId());
 		}

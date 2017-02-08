@@ -35,6 +35,7 @@ public class SavedSearchDao implements IAnetDao<SavedSearch> {
 			.map(new SavedSearchMapper())
 			.list();
 	}
+	
 	@Override
 	public SavedSearch getById(int id) { 
 		return dbHandle.createQuery("SELECT * from savedSearches where id = :id")

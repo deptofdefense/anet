@@ -52,7 +52,7 @@ public class PoamDao implements IAnetDao<Poam> {
 	}
 	
 	@Override
-	public Poam insert(Poam p){
+	public Poam insert(Poam p) {
 		p.setCreatedAt(DateTime.now());
 		p.setUpdatedAt(DateTime.now());
 		GeneratedKeys<Map<String, Object>> keys = dbHandle.createStatement("INSERT INTO poams "
@@ -69,10 +69,10 @@ public class PoamDao implements IAnetDao<Poam> {
 	@Override
 	public int update(Poam p) { 
 		p.setUpdatedAt(DateTime.now());
-		return dbHandle.createStatement("UPDATE poams set longName = :longName, shortName = :shortName, " + 
-				"category = :category, parentPoamId = :parentPoamId, updatedAt = :updatedAt, " + 
-				"organizationId = :organizationId " + 
-				"WHERE id = :id")
+		return dbHandle.createStatement("UPDATE poams set longName = :longName, shortName = :shortName, "
+				+ "category = :category, parentPoamId = :parentPoamId, updatedAt = :updatedAt, "
+				+ "organizationId = :organizationId " 
+				+ "WHERE id = :id")
 			.bindFromProperties(p)
 			.bind("parentPoamId", DaoUtils.getId(p.getParentPoam()))
 			.bind("organizationId", DaoUtils.getId(p.getResponsibleOrg()))
@@ -110,12 +110,12 @@ public class PoamDao implements IAnetDao<Poam> {
 		} else { 
 			sql.append("WITH RECURSIVE");
 		}
-		sql.append(" parent_poams(id, shortName, longName, category, parentPoamId, organizationId, createdAt, updatedAt) AS (" + 
-				"SELECT id, shortName, longName, category, parentPoamId, organizationId, createdAt, updatedAt FROM poams WHERE id = :poamId " + 
-			"UNION ALL " + 
-				"SELECT p.id, p.shortName, p.longName, p.category, p.parentPoamId, p.organizationId, p.createdAt, p.updatedAt "
-				+ "from parent_poams pp, poams p WHERE p.parentPoamId = pp.id " +
-			") SELECT * from parent_poams;");
+		sql.append(" parent_poams(id, shortName, longName, category, parentPoamId, organizationId, createdAt, updatedAt) AS ("
+				+ "SELECT id, shortName, longName, category, parentPoamId, organizationId, createdAt, updatedAt FROM poams WHERE id = :poamId "
+			+ "UNION ALL "
+				+ "SELECT p.id, p.shortName, p.longName, p.category, p.parentPoamId, p.organizationId, p.createdAt, p.updatedAt "
+				+ "from parent_poams pp, poams p WHERE p.parentPoamId = pp.id "
+			+ ") SELECT * from parent_poams;");
 		return dbHandle.createQuery(sql.toString())
 			.bind("poamId", poamId)
 			.map(new PoamMapper())

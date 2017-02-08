@@ -13,6 +13,7 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'application'
+apply plugin: 'checkstyle'
 
 apply from: 'localSettings.gradle'
 
@@ -85,4 +86,9 @@ task dbDrop(dependsOn: 'compileJava', type: JavaExec) {
 	environment(run.environment)
 	main = 'mil.dds.anet.AnetApplication'
 	args = ["db","drop-all","--confirm-delete-everything","anet.yml"]
+}
+
+checkstyle {
+	configFile = rootProject.file('gradle/checkstyle.xml')
+	toolVersion = '7.5'
 }
