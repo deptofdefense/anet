@@ -1,5 +1,4 @@
 import React, {Component, PropTypes} from 'react'
-import {InputGroup} from 'react-bootstrap'
 import DatePicker from 'react-bootstrap-date-picker'
 import autobind from 'autobind-decorator'
 
@@ -11,6 +10,8 @@ import History from 'components/History'
 
 import API from 'api'
 import {Person} from 'models'
+
+import CALENDAR_ICON from 'resources/calendar.png'
 
 export default class PersonForm extends Component {
 	static propTypes = {
@@ -111,13 +112,11 @@ export default class PersonForm extends Component {
 					<option>Ukraine</option>
 				</Form.Field>
 
-				<Form.Field id="endOfTourDate">
-					<DatePicker placeholder="End of Tour Date" dateFormat="DD/MM/YYYY">
-						<InputGroup.Addon><img src="/assets/img/calendar.png" height="20px" role="presentation" /></InputGroup.Addon>
-					</DatePicker>
+				<Form.Field id="endOfTourDate" addon={CALENDAR_ICON}>
+					<DatePicker placeholder="End of Tour Date" dateFormat="DD/MM/YYYY" />
 				</Form.Field>
 
-				<Form.Field id="biography" >
+				<Form.Field id="biography">
 					<TextEditor label="" value={person.biography} />
 				</Form.Field>
 			</fieldset>

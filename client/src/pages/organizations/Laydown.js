@@ -188,13 +188,13 @@ export default class OrganizationLaydown extends Page {
 	@autobind
 	actionSelect(eventKey, event) {
 		if (eventKey === "createPos") {
-			History.push("/positions/new?organizationId=" + this.state.organization.id)
+			History.push({pathname: 'positions/new', query: {organizationId: this.state.organization.id}})
 		} else if (eventKey === "createSub") {
-			History.push("/organizations/new?parentOrgId=" + this.state.organization.id)
+			History.push({pathname: 'organizations/new', query: {parentOrgId: this.state.organization.id}})
 		} else if (eventKey === "edit") {
-			History.push("/organizations/" + this.state.organization.id + "/edit")
+			History.push(Organization.pathForEdit(this.organization))
 		} else if (eventKey === "createPoam") {
-			History.push("/poams/new?responsibleOrg=" + this.state.organization.id)
+			History.push({pathname: 'poams/new', query: {responsibleOrg: this.state.organization.id}})
 		} else {
 			console.log("Unimplemented Action: " + eventKey);
 		}

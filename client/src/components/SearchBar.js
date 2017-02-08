@@ -2,6 +2,8 @@ import React, {Component} from 'react'
 import {Form, Button, InputGroup, FormControl} from 'react-bootstrap'
 import History from 'components/History'
 
+import SEARCH_ICON from 'resources/search-alt.png'
+
 export default class SearchBar extends Component {
 	constructor(props) {
 		super(props)
@@ -17,7 +19,7 @@ export default class SearchBar extends Component {
 				<InputGroup>
 					<FormControl value={this.state.query} placeholder="Search for people, reports, positions, or locations" onChange={this.onChange}/>
 					<InputGroup.Button>
-						<Button onClick={this.onSubmit} >🔍</Button>
+						<Button onClick={this.onSubmit} ><img src={SEARCH_ICON} height={16} alt="Search" /></Button>
 					</InputGroup.Button>
 				</InputGroup>
 			</Form>
@@ -29,7 +31,7 @@ export default class SearchBar extends Component {
 	}
 
 	onSubmit(event) {
-		History.push('/search?text=' + this.state.query)
+		History.push({pathname: 'search', query: {text: this.state.query}})
 		event.preventDefault()
 		event.stopPropagation()
 	}

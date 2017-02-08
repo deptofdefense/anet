@@ -82,7 +82,7 @@ export default class LocationNew extends React.Component {
 
 		API.send("/api/locations/new", this.state.location, {disableSubmits: true})
 			.then(location => {
-				History.push({pathName:Location.pathFor(location),state:{success:"Saved Location"}})
+				History.push(Location.pathFor(location), {success: "Saved Location"})
 			}).catch(error => {
 				this.setState({error: error})
 				window.scrollTo(0, 0)

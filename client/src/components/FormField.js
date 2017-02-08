@@ -125,9 +125,14 @@ export default class FormField extends Component {
 
 		// if there's an addon we need to use an InputGroup
 		if (addon) {
+			// allows passing a url for an image
+			if (addon.indexOf('.') !== -1) {
+				addon = <img src={addon} height={20} role="presentation" />
+			}
+
 			children = <InputGroup>
 				{children}
-				<InputGroup.Addon>{addon}</InputGroup.Addon>
+				<InputGroup.Addon onClick={this.focus}>{addon}</InputGroup.Addon>
 			</InputGroup>
 		}
 
@@ -189,6 +194,14 @@ export default class FormField extends Component {
 		if (form && form.props.onChange) {
 			form.props.onChange(event)
 			event && event.stopPropagation && event.stopPropagation()
+		}
+	}
+
+	@autobind
+	focus() {
+		let element = document.getElementById(this.props.id)
+		if (element && element.focus) {
+			element.focus()
 		}
 	}
 }

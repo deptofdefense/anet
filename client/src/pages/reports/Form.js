@@ -1,5 +1,5 @@
 import React, {Component, PropTypes} from 'react'
-import {InputGroup, Radio, Checkbox, Table, Button, Collapse, HelpBlock} from 'react-bootstrap'
+import {Radio, Checkbox, Table, Button, Collapse, HelpBlock} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
 import Form from 'components/Form'
@@ -13,6 +13,13 @@ import History from 'components/History'
 
 import API from 'api'
 import {Report, Person} from 'models'
+
+import CALENDAR_ICON from "resources/calendar.png"
+import LOCATION_ICON from "resources/locations.png"
+import POSITIVE_ICON from "resources/thumbs_up.png"
+import NEUTRAL_ICON from "resources/neutral.png"
+import NEGATIVE_ICON from "resources/thumbs_down.png"
+import REMOVE_ICON from "resources/close.png"
 
 export default class ReportForm extends Component {
 	static propTypes = {
@@ -88,15 +95,11 @@ export default class ReportForm extends Component {
 					<Form.Field.ExtraCol>{250 - report.intent.length} characters remaining</Form.Field.ExtraCol>
 				</Form.Field>
 
-				<Form.Field id="engagementDate">
-					<DatePicker showTodayButton placeholder="When did it happen?" dateFormat="DD/MM/YYYY">
-						<InputGroup.Addon>
-							<img src="/assets/img/calendar.png" height="20px" role="presentation"/>
-						</InputGroup.Addon>
-					</DatePicker>
+				<Form.Field id="engagementDate" addon={CALENDAR_ICON}>
+					<DatePicker showTodayButton placeholder="When did it happen?" dateFormat="DD/MM/YYYY" />
 				</Form.Field>
 
-				<Form.Field id="location" addon="📍"validationState={errors.location} >
+				<Form.Field id="location" addon={LOCATION_ICON} validationState={errors.location}>
 					<Autocomplete valueKey="name" placeholder="Start typing to search for the location where this happened..." url="/api/locations/search" />
 					{errors.location && <HelpBlock><b>Location not found in database</b></HelpBlock>}
 
@@ -116,16 +119,16 @@ export default class ReportForm extends Component {
 				{!isCancelled &&
 					<Form.Field id="atmosphere">
 						<RadioGroup bsSize="large">
-							<Radio value="POSITIVE"><img src="/assets/img/thumbs_up.png" height="25px" alt="positive" /></Radio>
-							<Radio value="NEUTRAL"><img src="/assets/img/neutral.png" height="25px" alt="neutral" /></Radio>
-							<Radio value="NEGATIVE"><img src="/assets/img/thumbs_down.png" height="25px" alt="negative" /></Radio>
+							<Radio value="POSITIVE"><img src={POSITIVE_ICON} height={25} alt="positive" /></Radio>
+							<Radio value="NEUTRAL"><img src={NEUTRAL_ICON} height={25} alt="neutral" /></Radio>
+							<Radio value="NEGATIVE"><img src={NEGATIVE_ICON} height={25} alt="negative" /></Radio>
 						</RadioGroup>
 
 					</Form.Field>
 				}
 
 				{!isCancelled && report.atmosphere && report.atmosphere !== 'POSITIVE' &&
-					<Form.Field id="atmosphereDetails" placeholder={"Why was this engagement " + report.atmosphere} />
+					<Form.Field id="atmosphereDetails" placeholder={`Why was this engagement ${report.atmosphere}?`} />
 				}
 
 				{isCancelled &&
@@ -139,7 +142,7 @@ export default class ReportForm extends Component {
 			<fieldset>
 				<legend>Meeting Attendance <small>Required</small></legend>
 
-				<Form.Field id="attendees" validationState={errors.attendees} >
+				<Form.Field id="attendees" validationState={errors.attendees}>
 					<Autocomplete objectType={Person}
 						onChange={this.addAttendee}
 						onErrorChange={this.attendeeError}
@@ -154,30 +157,31 @@ export default class ReportForm extends Component {
 					<Table hover striped>
 						<thead>
 							<tr>
-								<th></th>
 								<th style={{textAlign: 'center'}}>Primary</th>
 								<th>Name</th>
 								<th>Position</th>
 								<th>Org</th>
+								<th></th>
 							</tr>
 						</thead>
 						<tbody>
 							{Person.map(report.attendees, person =>
 								<tr key={person.id}>
-									<td onClick={this.removeAttendee.bind(this, person)}>
-										<span style={{cursor: 'pointer'}}>⛔️</span>
-									</td>
-
 									<td className="primary-attendee">
 										<Checkbox checked={person.primary} onChange={this.setPrimaryAttendee.bind(this, person)} />
 									</td>
 
 									<td>
-										<img src={person.iconUrl()} alt={person.role} height={20} width={20} className="person-icon" />
+										<img src={person.iconUrl()} alt={person.role} height={20} className="person-icon" />
 										{person.name} {person.rank && person.rank.toUpperCase()}
 									</td>
 									<td><LinkTo position={person.position} /></td>
 									<td>{person.position && person.position.organization && person.position.organization.shortName}</td>
+
+									<td onClick={this.removeAttendee.bind(this, person)}>
+										<span style={{cursor: 'pointer'}}><img src={REMOVE_ICON} height={14} alt="Remove attendee" /></span>
+									</td>
+
 								</tr>
 							)}
 						</tbody>
