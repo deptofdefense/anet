@@ -325,7 +325,8 @@ public class ReportResource implements IGraphQLResource {
 		//Update the report
 		r.setApprovalStep(ApprovalStep.createWithId(step.getNextStepId()));
 		if (step.getNextStepId() == null) {
-			r.setState(ReportState.RELEASED);
+			//Done with approvals, move to released (or cancelled) state! 
+			r.setState((r.getCancelledReason() != null) ? ReportState.CANCELLED : ReportState.RELEASED);
 			sendReportReleasedEmail(r);
 		} else {
 			sendApprovalNeededEmail(r);

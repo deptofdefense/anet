@@ -20,8 +20,9 @@ import mil.dds.anet.views.AbstractAnetBean;
 
 public class Report extends AbstractAnetBean {
 
-	public enum ReportState { DRAFT, PENDING_APPROVAL, RELEASED, REJECTED }
+	public enum ReportState { DRAFT, PENDING_APPROVAL, RELEASED, REJECTED, CANCELLED }
 	public enum Atmosphere { POSITIVE, NEUTRAL, NEGATIVE }
+	public enum ReportCancelledReason { CANCELLED_BY_ADVISOR, CANCELLED_BY_PRINCIPAL }
 
 	ApprovalStep approvalStep;
 	ReportState state;
@@ -32,6 +33,7 @@ public class Report extends AbstractAnetBean {
 	String exsum; //can be null to autogenerate
 	Atmosphere atmosphere;
 	String atmosphereDetails;
+	ReportCancelledReason cancelledReason;
 	
 	List<ReportPerson> attendees;
 	List<Poam> poams;
@@ -127,6 +129,14 @@ public class Report extends AbstractAnetBean {
 
 	public void setAtmosphereDetails(String atmosphereDetails) {
 		this.atmosphereDetails = atmosphereDetails;
+	}
+
+	public ReportCancelledReason getCancelledReason() {
+		return cancelledReason;
+	}
+
+	public void setCancelledReason(ReportCancelledReason cancelledReason) {
+		this.cancelledReason = cancelledReason;
 	}
 
 	public void setIntent(String intent) {

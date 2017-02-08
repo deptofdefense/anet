@@ -538,4 +538,10 @@
 		<dropColumn tableName="reports" columnName="nextStepsSummary" />
 	</changeSet>
 
+	<changeSet id="26" author="hpitelka" >
+		<addColumn tableName="reports" >
+			<column name="cancelledReason" type="int" />
+		</addColumn>
+	</changeSet>
+
 </databaseChangeLog>

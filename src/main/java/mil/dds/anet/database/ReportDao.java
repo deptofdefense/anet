@@ -32,7 +32,7 @@ import mil.dds.anet.utils.DaoUtils;
 public class ReportDao implements IAnetDao<Report> {
 
 	private static String[] fields = { "id", "state", "createdAt", "updatedAt", "engagementDate",
-			"locationId", "approvalStepId", "intent", "exsum", "atmosphere",
+			"locationId", "approvalStepId", "intent", "exsum", "atmosphere", "cancelledReason",
 			"advisorOrganizationId", "principalOrganizationId",
 			"atmosphereDetails", "text", "keyOutcomes",
 			"nextSteps", "authorId"};
@@ -73,7 +73,7 @@ public class ReportDao implements IAnetDao<Report> {
 		StringBuilder sql = new StringBuilder("INSERT INTO reports "
 				+ "(state, createdAt, updatedAt, locationId, intent, exsum, "
 				+ "text, keyOutcomes, nextSteps, authorId, "
-				+ "engagementDate, atmosphere, "
+				+ "engagementDate, atmosphere, cancelledReason, "
 				+ "atmosphereDetails, advisorOrganizationId, "
 				+ "principalOrganizationId) VALUES "
 				+ "(:state, :createdAt, :updatedAt, :locationId, :intent, "
@@ -84,12 +84,13 @@ public class ReportDao implements IAnetDao<Report> {
 		} else {
 			sql.append(":engagementDate, ");
 		}
-		sql.append(":atmosphere, :atmosphereDetails, :advisorOrgId, :principalOrgId)");
+		sql.append(":atmosphere, :cancelledReason, :atmosphereDetails, :advisorOrgId, :principalOrgId)");
 
 		GeneratedKeys<Map<String, Object>> keys = dbHandle.createStatement(sql.toString())
 			.bindFromProperties(r)
 			.bind("state", DaoUtils.getEnumId(r.getState()))
 			.bind("atmosphere", DaoUtils.getEnumId(r.getAtmosphere()))
+			.bind("cancelledReason", DaoUtils.getEnumId(r.getCancelledReason()))
 			.bind("locationId", DaoUtils.getId(r.getLocation()))
 			.bind("authorId", DaoUtils.getId(r.getAuthor()))
 			.bind("advisorOrgId", DaoUtils.getId(r.getAdvisorOrg()))
@@ -148,6 +149,7 @@ public class ReportDao implements IAnetDao<Report> {
 			sql.append("engagementDate = :engagementDate, ");
 		}
 		sql.append("atmosphere = :atmosphere, atmosphereDetails = :atmosphereDetails, "
+				+ "cancelledReason = :cancelledReason, " 
 				+ "principalOrganizationId = :principalOrgId, advisorOrganizationId = :advisorOrgId "
 				+ "WHERE id = :id");
 
@@ -158,6 +160,7 @@ public class ReportDao implements IAnetDao<Report> {
 			.bind("authorId", DaoUtils.getId(r.getAuthor()))
 			.bind("approvalStepId", DaoUtils.getId(r.getApprovalStep()))
 			.bind("atmosphere", DaoUtils.getEnumId(r.getAtmosphere()))
+			.bind("cancelledReason", DaoUtils.getEnumId(r.getCancelledReason()))
 			.bind("advisorOrgId", DaoUtils.getId(r.getAdvisorOrg()))
 			.bind("principalOrgId", DaoUtils.getId(r.getPrincipalOrg()))
 			.execute();
@@ -327,7 +330,7 @@ public class ReportDao implements IAnetDao<Report> {
 			+ "JOIN approvalActions ON approvalActions.reportId = reports.id "
 			+ "JOIN people ON reports.authorId = people.id "
 			+ "WHERE approvalActions.type = :approvalType "
-			+ "AND reports.state = :reportState ";
+			+ "AND reports.state IN (:releasedState, :cancelledState) ";
 		if (DaoUtils.isMsSql(dbHandle)) {
 			sql +=  "AND approvalActions.createdAt > :startTime "
 				+ "AND reports.engagementDate > :twoWeeksAgo ";
@@ -337,7 +340,8 @@ public class ReportDao implements IAnetDao<Report> {
 		}
 		return dbHandle.createQuery(sql)
 			.bind("approvalType", DaoUtils.getEnumId(ApprovalType.APPROVE))
-			.bind("reportState", DaoUtils.getEnumId(ReportState.RELEASED))
+			.bind("releasedState", DaoUtils.getEnumId(ReportState.RELEASED))
+			.bind("cancelledState", DaoUtils.getEnumId(ReportState.CANCELLED))
 			.bind("startTime", DateTime.now().minusDays(1))
 			.bind("twoWeeksAgo", DateTime.now().minusDays(14))
 			.bind("startTimeSqlite", sqlitePattern.print(DateTime.now().minusDays(1)))

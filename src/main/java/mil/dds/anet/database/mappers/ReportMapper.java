@@ -13,6 +13,7 @@ import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.Atmosphere;
+import mil.dds.anet.beans.Report.ReportCancelledReason;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.geo.Location;
 import mil.dds.anet.views.AbstractAnetBean.LoadLevel;
@@ -48,6 +49,7 @@ public class ReportMapper implements ResultSetMapper<Report> {
 		r.setExsum(rs.getString("reports_exsum"));
 		r.setAtmosphere(MapperUtils.getEnumIdx(rs, "reports_atmosphere", Atmosphere.class));
 		r.setAtmosphereDetails(rs.getString("reports_atmosphereDetails"));
+		r.setCancelledReason(MapperUtils.getEnumIdx(rs, "reports_cancelledReason", ReportCancelledReason.class));
 		
 		r.setReportText(rs.getString("reports_text"));
 		r.setKeyOutcomes(rs.getString("reports_keyOutcomes"));

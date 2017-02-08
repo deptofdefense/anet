@@ -29,6 +29,7 @@ import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Position.PositionType;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.Atmosphere;
+import mil.dds.anet.beans.Report.ReportCancelledReason;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
 import mil.dds.anet.beans.geo.Location;
@@ -601,5 +602,46 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		//Assert the report is gone. 
 		Report returned  = httpQuery("/api/reports/" + r.getId(),liz).get(Report.class);
 		assertThat(returned).isNull();
+	}
+	
+	@Test
+	public void reportCancelTest() { 
+		Person liz = getElizabethElizawell(); //Report Author
+		Person steve = getSteveSteveson(); //Principal 
+		Person bob = getBobBobtown(); // Report Approver
+		
+		//Liz was supposed to meet with Steve, but he cancelled.  
+		
+		Report r = new Report();
+		r.setIntent("Meet with Steve about a thing we never got to talk about");
+		r.setEngagementDate(DateTime.now());
+		r.setAttendees(ImmutableList.of(PersonTest.personToPrimaryReportPerson(liz), PersonTest.personToPrimaryReportPerson(steve)));
+		r.setCancelledReason(ReportCancelledReason.CANCELLED_BY_PRINCIPAL);
+		
+		Report saved = httpQuery("/api/reports/new", liz).post(Entity.json(r), Report.class);
+		assertThat(saved.getId()).isNotNull();
+		
+		Response resp = httpQuery("/api/reports/" + saved.getId() + "/submit", liz).post(null);
+		assertThat(resp.getStatus()).isEqualTo(200);
+        Report returned = httpQuery("/api/reports/" + saved.getId(), liz).get(Report.class);
+        assertThat(returned.getState()).isEqualTo(ReportState.PENDING_APPROVAL);
+        assertThat(returned.getCancelledReason()).isEqualTo(ReportCancelledReason.CANCELLED_BY_PRINCIPAL);
+
+        //Bob gets the approval (EF1 Approvers)
+        ReportSearchQuery pendingQuery = new ReportSearchQuery();
+        pendingQuery.setPendingApprovalOf(bob.getId());
+        ReportList pendingBobsApproval = httpQuery("/api/reports/search", bob).post(Entity.json(pendingQuery), ReportList.class);
+        assertThat(pendingBobsApproval.getList().stream().anyMatch(rpt -> rpt.getId().equals(returned.getId()))).isTrue();
+
+        //Bob should approve this report. 
+        resp = httpQuery("/api/reports/" + saved.getId() + "/approve", bob).post(null);
+        assertThat(resp.getStatus()).isEqualTo(200);
+        
+        //Ensure it went to cancelled status. 
+        Report returned2 = httpQuery("/api/reports/" + saved.getId(), liz).get(Report.class);
+        assertThat(returned2.getState()).isEqualTo(ReportState.CANCELLED);
+        
+		
+		
 	}
 }
