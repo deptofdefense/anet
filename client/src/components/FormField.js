@@ -195,6 +195,14 @@ export default class FormField extends Component {
 			event && event.stopPropagation && event.stopPropagation()
 		}
 	}
+
+	@autobind
+	focus() {
+		let element = document.getElementById(this.props.id)
+		if (element && element.focus) {
+			element.focus()
+		}
+	}
 }
 
 FormField.ExtraCol = FormFieldExtraCol
