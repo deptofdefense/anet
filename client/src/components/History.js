@@ -18,3 +18,8 @@ browserHistory.replace = function(path, state, triggerHandlers) {
 		originalReplace(path, state)
 	}
 }
+
+let originalPush = browserHistory.push
+browserHistory.push = function(pathname, state) {
+	originalPush({pathname, state})
+}
