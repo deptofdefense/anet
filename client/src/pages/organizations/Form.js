@@ -34,7 +34,7 @@ export default class OrganizationForm extends Component {
 			onChange={this.onChange}
 			onSubmit={this.onSubmit}
 			submitText="Save organization"
-			horizontal>
+				   horizontal>
 
 			<Messages error={this.state.error} />
 			<fieldset>
@@ -61,14 +61,17 @@ export default class OrganizationForm extends Component {
 			{organization.type === "ADVISOR_ORG" && <div>
 				<PoamsSelector poams={organization.poams} onChange={this.onChange} />
 
-				<h3>Approval Process</h3>
-				<Button className="pull-right" onClick={this.addApprovalStep} bsStyle="primary" >
-					Add an Approval Step
-				</Button>
+				<fieldset>
+					<legend>Approval Process</legend>
 
-				{approvalSteps && approvalSteps.map((step, index) =>
-					this.renderApprovalStep(step, index)
-				)}
+					<Button className="pull-right" onClick={this.addApprovalStep} bsStyle="primary" >
+						Add an Approval Step
+					</Button>
+
+					{approvalSteps && approvalSteps.map((step, index) =>
+						this.renderApprovalStep(step, index)
+					)}
+				</fieldset>
 			</div>}
 		</Form>
 	}
