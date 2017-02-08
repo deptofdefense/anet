@@ -116,7 +116,7 @@ export default class ReportForm extends Component {
 				}
 
 				{!report.cancelled && report.atmosphere && report.atmosphere !== 'POSITIVE' &&
-					<Form.Field id="atmosphereDetails" placeholder={"Why was this engagement " + report.atmosphere} />
+					<Form.Field id="atmosphereDetails" placeholder={`Why was this engagement ${report.atmosphere}?`} />
 				}
 			</fieldset>
 
