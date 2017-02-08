@@ -19,6 +19,7 @@ import LOCATION_ICON from "resources/locations.png"
 import POSITIVE_ICON from "resources/thumbs_up.png"
 import NEUTRAL_ICON from "resources/neutral.png"
 import NEGATIVE_ICON from "resources/thumbs_down.png"
+import REMOVE_ICON from "resources/close.png"
 
 export default class ReportForm extends Component {
 	static propTypes = {
@@ -149,7 +150,7 @@ export default class ReportForm extends Component {
 							{Person.map(report.attendees, person =>
 								<tr key={person.id}>
 									<td onClick={this.removeAttendee.bind(this, person)}>
-										<span style={{cursor: 'pointer'}}>⛔️</span>
+										<span style={{cursor: 'pointer'}}><img src={REMOVE_ICON} height={14} alt="Remove attendee" /></span>
 									</td>
 
 									<td className="primary-attendee">
