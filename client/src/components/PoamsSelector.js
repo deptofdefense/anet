@@ -3,23 +3,25 @@ import autobind from 'autobind-decorator'
 
 import Autocomplete from 'components/Autocomplete'
 import Form from 'components/Form'
-import {Table, Button} from 'react-bootstrap'
+import {Table, Button, HelpBlock} from 'react-bootstrap'
 
 export default class PoamsSelector extends Component {
 	static propTypes = {
 		poams: PropTypes.array.isRequired,
 		onChange: PropTypes.func.isRequired,
+		onErrorChange: PropTypes.func,
+		validationState: PropTypes.string,
 		shortcuts: PropTypes.array,
 		optional: PropTypes.bool,
 	}
 
 	render() {
-		let {poams, shortcuts} = this.props;
+		let {poams, shortcuts, validationState} = this.props;
 
 		return <fieldset>
 			<legend>Plans of Action and Milestones / Pillars</legend>
 
-			<Form.Field id="poams" label="PoAMs">
+			<Form.Field id="poams" label="PoAMs" validationState={validationState} >
 				<Autocomplete
 					url="/api/poams/search"
 					placeholder="Start typing to search for PoAMs..."
@@ -27,8 +29,9 @@ export default class PoamsSelector extends Component {
 						<span>{[poam.shortName, poam.longName].join(' - ')}</span>
 					}
 					onChange={this.addPoam}
+					onErrorChange={this.props.onErrorChange}
 					clearOnSelect={true} />
-
+				{validationState && <HelpBlock>PoAM not found in Database</HelpBlock>}
 				<Table hover striped>
 					<thead>
 						<tr>
@@ -71,6 +74,10 @@ export default class PoamsSelector extends Component {
 
 	@autobind
 	addPoam(newPoam) {
+		if (!newPoam || !newPoam.id) {
+			return
+		}
+
 		let poams = this.props.poams
 
 		if (!poams.find(poam => poam.id === newPoam.id)) {

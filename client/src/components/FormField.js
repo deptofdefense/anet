@@ -71,6 +71,7 @@ export default class FormField extends Component {
 
 		childProps = Object.without(childProps, 'getter', 'horizontal')
 
+		let validationState = this.props.validationState
 		let horizontal = this.context.form && this.context.form.props.horizontal
 		if (typeof this.props.horizontal !== 'undefined') {
 			horizontal = this.props.horizontal
@@ -130,7 +131,7 @@ export default class FormField extends Component {
 		}
 
 		return (
-			<FormGroup controlId={id} className={className}>
+			<FormGroup controlId={id} className={className} validationState={validationState}>
 				{horizontal
 					? <Col sm={2} componentClass={ControlLabel}>{label}</Col>
 					: <ControlLabel>{label}</ControlLabel> }

@@ -1,5 +1,5 @@
 import React, {Component, PropTypes} from 'react'
-import {InputGroup, Radio, Checkbox, Table, Button, Collapse} from 'react-bootstrap'
+import {InputGroup, Radio, Checkbox, Table, Button, Collapse, HelpBlock} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
 import Form from 'components/Form'
@@ -32,6 +32,7 @@ export default class ReportForm extends Component {
 			},
 
 			showReportText: false,
+			errors: {}
 		}
 	}
 
@@ -67,7 +68,7 @@ export default class ReportForm extends Component {
 
 	render() {
 		let {report} = this.props
-		let {recents} = this.state
+		let {recents, errors} = this.state
 
 		return <Form formFor={report} horizontal onChange={this.onChange} onSubmit={this.onSubmit} submitText="Save report">
 			<fieldset>
@@ -85,14 +86,15 @@ export default class ReportForm extends Component {
 					</DatePicker>
 				</Form.Field>
 
-				<Form.Field id="location" addon="📍">
+				<Form.Field id="location" addon="📍"validationState={errors.location} >
 					<Autocomplete valueKey="name" placeholder="Start typing to search for the location where this happened..." url="/api/locations/search" />
+					{errors.location && <HelpBlock><b>Location not found in database</b></HelpBlock>}
+
 					<Form.Field.ExtraCol className="shortcut-list">
 						{recents.locations && recents.locations.length > 0 &&
 							<Button bsStyle="link"  onClick={this.setLocation.bind(this,recents.locations[0])} >Add {recents.locations[0].name}</Button>
 						}
 					</Form.Field.ExtraCol>
-
 				</Form.Field>
 
 				{false && <Form.Field id="cancelled" label="">
@@ -117,8 +119,10 @@ export default class ReportForm extends Component {
 			<fieldset>
 				<legend>Meeting Attendance <small>Required</small></legend>
 
-				<Form.Field id="attendees">
-					<Autocomplete objectType={Person} onChange={this.addAttendee}
+				<Form.Field id="attendees" validationState={errors.attendees} >
+					<Autocomplete objectType={Person}
+						onChange={this.addAttendee}
+						onErrorChange={this.attendeeError}
 						clearOnSelect={true}
 						fields={"id, name, role, position { id, name, organization { id, shortName}} "}
 						template={person =>
@@ -126,7 +130,7 @@ export default class ReportForm extends Component {
 						}
 						placeholder="Start typing to search for people who attended the meeting..."
 						valueKey="name" />
-
+					{errors.attendees && <HelpBlock>Help text with validation state.</HelpBlock> }
 					<Table hover striped>
 						<thead>
 							<tr>
@@ -170,7 +174,12 @@ export default class ReportForm extends Component {
 				</Form.Field>
 			</fieldset>
 
-			<PoamsSelector poams={report.poams} shortcuts={recents.poams} onChange={this.onChange} optional={true} />
+			<PoamsSelector poams={report.poams}
+				shortcuts={recents.poams}
+				onChange={this.onChange}
+				onErrorChange={this.onPoamError}
+				validationState={errors.poams}
+				optional={true} />
 
 			<fieldset>
 				<legend>Meeting Discussion <small>Required</small></legend>
@@ -212,23 +221,40 @@ export default class ReportForm extends Component {
 
 	@autobind
 	addAttendee(newAttendee) {
-		if (!newAttendee || !newAttendee.id)
+		if (!newAttendee || !newAttendee.id) {
 			return
+		}
 
 		let report = this.props.report
 		let attendees = report.attendees
 
-		if (attendees.find(attendee => attendee.id === newAttendee.id))
+		if (attendees.find(attendee => attendee.id === newAttendee.id)) {
 			return
+		}
 
 		let person = new Person(newAttendee)
 		person.primary = false
 
-		if (!attendees.find(attendee => attendee.role === person.role && attendee.primary))
+		if (!attendees.find(attendee => attendee.role === person.role && attendee.primary)) {
 			person.primary = true
+		}
 
 		attendees.push(person)
 		this.onChange()
+	}
+
+	@autobind
+	attendeeError(isError, message) {
+		let errors = this.state.errors;
+		errors.attendees = isError ? "error" : null
+		this.setState({errors});
+	}
+
+	@autobind
+	onPoamError(isError, message) {
+		let errors = this.state.errors;
+		errors.poams = isError ? "error" : null
+		this.setState({errors});
 	}
 
 	@autobind
@@ -268,7 +294,21 @@ export default class ReportForm extends Component {
 
 	@autobind
 	onChange() {
+		this.setState({errors : this.validateReport()})
 		this.forceUpdate()
+	}
+
+	@autobind
+	validateReport() {
+		let report = this.props.report
+		let errors = this.state.errors;
+		if (report.location && (typeof report.location !== "object")) {
+			errors.location = "error"
+		} else {
+			errors.location = null;
+		}
+
+		return errors;
 	}
 
 	@autobind

@@ -15,12 +15,30 @@ export default class Autocomplete extends Component {
 			PropTypes.array,
 			PropTypes.string,
 		]),
+
+		//The property of the selected object to display.
 		valueKey: PropTypes.string,
+
+		//If this Autocomplete should clear the text area after a valid selection.
 		clearOnSelect: PropTypes.bool,
+
+		//Optional: A function to render each item in the list of suggestions.
 		template: PropTypes.func,
+
+		//Function to call when a selection is made.
 		onChange: PropTypes.func,
+
+		//Optional: Function to call when the error state changes.
+		// Specifically if the user leaves invalid text in the component.
+		onErrorChange: PropTypes.func,
+
+		//Optional: Parameters to pass to search function.
 		queryParams: PropTypes.object,
+
+		//Optional: ANET Object Type (Person, Report, etc) to search for.
 		objectType: PropTypes.func,
+
+		//GraphQL string of fields to return from search.
 		fields: PropTypes.string,
 	}
 
@@ -41,13 +59,14 @@ export default class Autocomplete extends Component {
 		let value = props.value
 		if (Array.isArray(value)) {
 			this.selectedIds = value.map(object => object.id)
-			value = {}
+			return {}
 		}
 
 		//Ensure that we update the stringValue if we get an updated value
 		let state = this.state
 		if (state) {
-			state.stringValue = this.getStringValue(value)
+			let newValue = this.getStringValue(value)
+			state.stringValue = newValue
 			this.setState(state)
 		}
 
@@ -55,9 +74,10 @@ export default class Autocomplete extends Component {
 	}
 
 	render() {
-		let inputProps = Object.without(this.props, 'url', 'clearOnSelect', 'valueKey', 'template', 'queryParams', 'objectType', 'fields')
+		let inputProps = Object.without(this.props, 'url', 'clearOnSelect', 'valueKey', 'template', 'queryParams', 'objectType', 'fields', 'onErrorChange')
 		inputProps.value = this.state.stringValue
 		inputProps.onChange = this.onInputChange
+		inputProps.onBlur = this.onInputBlur
 		return <div>
 			<Autosuggest
 				suggestions={this.state.noSuggestions ? [{}] : this.state.suggestions}
@@ -66,7 +86,7 @@ export default class Autocomplete extends Component {
 				onSuggestionSelected={this.onSuggestionSelected}
 				getSuggestionValue={this.getStringValue}
 				inputProps={inputProps}
-				renderInputComponent={inputProps => <FormControl {...inputProps} />}
+				renderInputComponent={this.renderInputComponent}
 				renderSuggestion={this.renderSuggestion}
 				focusInputOnSuggestionClick={false}
 			/>
@@ -88,8 +108,16 @@ export default class Autocomplete extends Component {
 	}
 
 	@autobind
+	renderInputComponent(inputProps) {
+		return <FormControl {...inputProps} />
+	}
+
+	@autobind
 	getStringValue(suggestion) {
-		return suggestion[this.props.valueKey] || ""
+		if (typeof suggestion === "object" ) {
+			return suggestion[this.props.valueKey] || ""
+		}
+		return suggestion
 	}
 
 	@autobind
@@ -141,24 +169,55 @@ export default class Autocomplete extends Component {
 		event.preventDefault()
 
 		let stringValue = this.props.clearOnSelect ? '' : suggestionValue
-		if (this.state.noSuggestions && stringValue !== ''){
-			return
-		}
+//		if (this.state.noSuggestions && stringValue !== ''){
+//			return
+//		}
+		this.currentSelected = suggestion
 		this.setState({value: suggestion, stringValue})
 
-		if (this.props.onChange)
+		if (this.props.onChange) {
 			this.props.onChange(suggestion)
+		}
+
+		if (this.props.onErrorChange) {
+			//Clear any error state.
+			this.props.onErrorChange(false)
+		}
 	}
 
 	@autobind
 	onInputChange(event) {
-		if (!event.target.value && !this.props.clearOnSelect) {
-			//If the selection lives in this component, and the user just cleared the input
-			// Then set the selection to empty.
-			this.onSuggestionSelected(event, {suggestion: {}, suggestionValue: ''})
-		} else {
-			this.setState({stringValue: event.target.value})
+		if (!event.target.value) {
+			if (!this.props.clearOnSelect) {
+				//If the selection lives in this component, and the user just cleared the input
+				// Then set the selection to empty.
+				this.onSuggestionSelected(event, {suggestion: {}, suggestionValue: ''})
+			}
+			if (this.props.onErrorChange) {
+				this.props.onErrorChange(false); //clear any errors.
+			}
 		}
+
+		//The user is typing!
+		this.currentSelected = null;
+		this.setState({stringValue: event.target.value})
 		event.stopPropagation()
+	}
+
+	@autobind
+	onInputBlur(event) {
+		if (this.currentSelected) { return; }
+		//If the user clicks off this Autocomplete with a value left in the Input Box
+		//Send that up to the parent.  The user probably thinks they just 'set' this value
+		// so we should oblige!
+		let val = this.state.stringValue;
+		if (val) {
+			this.setState({value: val, stringValue: val})
+			if (this.props.onErrorChange) {
+				this.props.onErrorChange(true, val);
+			} else if (this.props.onChange) {
+				this.props.onChange(val);
+			}
+		}
 	}
 }
