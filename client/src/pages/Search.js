@@ -223,7 +223,7 @@ export default class Search extends Page {
 
 				{results.poams && results.poams.totalCount > 0 &&
 					<fieldset>
-						<legend>Poams</legend>
+						<legend>PoAMs</legend>
 						{this.renderPoams()}
 					</fieldset>
 				}
