@@ -222,7 +222,7 @@ export default class Search extends Page {
 					</fieldset>
 				}
 
-				{this.state.saveSearch.show && this.renderSaveModal() }
+				{this.renderSaveModal()}
 			</div>
 		)
 	}
@@ -362,7 +362,7 @@ export default class Search extends Page {
 		event.preventDefault()
 
 		let search = Object.without(this.state.saveSearch, "show")
-		search.query = this.props.location.query.q
+		search.query = this.props.location.query.text
 
 		API.send('/api/savedSearches/new', search, {disableSubmits: true})
 			.then(response => {
@@ -375,7 +375,7 @@ export default class Search extends Page {
 			}).catch(response => {
 				this.setState({
 					error: response,
-					saveSearch: { show: false}
+					saveSearch: {show: false}
 				})
 				window.scrollTo(0, 0)
 			})
@@ -388,6 +388,6 @@ export default class Search extends Page {
 
 	@autobind
 	closeSaveModal() {
-		this.setState({saveSearch: {show: false}});
+		this.setState({saveSearch: {show: false}})
 	}
 }
