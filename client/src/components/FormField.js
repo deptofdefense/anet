@@ -65,6 +65,7 @@ export default class FormField extends Component {
 			id,
 			className,
 			label,
+			icon,
 			addon,
 			children,
 			...childProps
@@ -123,6 +124,10 @@ export default class FormField extends Component {
 			children = <FormControl {...childProps} value={defaultValue} onChange={this.props.onChange || this.onChange} />
 		}
 
+		if (icon) {
+			icon = <img src={icon} height={24} role="presentation" />
+		}
+
 		// if there's an addon we need to use an InputGroup
 		if (addon) {
 			// allows passing a url for an image
@@ -139,8 +144,8 @@ export default class FormField extends Component {
 		return (
 			<FormGroup controlId={id} className={className} validationState={validationState}>
 				{horizontal
-					? <Col sm={2} componentClass={ControlLabel}>{label}</Col>
-					: <ControlLabel>{label}</ControlLabel> }
+					? <Col sm={2} componentClass={ControlLabel}>{label} {icon}</Col>
+					: <ControlLabel>{label} {icon}</ControlLabel> }
 				{horizontal
 					? <Col sm={7}>{children}</Col>
 					: children }
