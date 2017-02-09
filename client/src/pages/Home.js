@@ -82,7 +82,7 @@ export default class Home extends Page {
 						<Row>
 							<Link to={"/search?type=reports&pendingApprovalOf=" + currentUser.id} className="col-md-3 home-tile">
 								<h1>{pendingMe && pendingMe.totalCount}</h1>
-								{currentUser.isSuperUser() ? "Pending My Approval" : "My Reports Pending Approval" }
+								{currentUser.isSuperUser() ? "Pending my approval" : "My reports pending approval" }
 							</Link>
 
 							{org &&
