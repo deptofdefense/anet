@@ -7,9 +7,10 @@ framework that runs on a JVM and utilizes Microsoft SQL Server for
 its database.
 
 This README is divided into three pieces:
+
 1. Getting your Development Environment Setup
 1. Working on the backend
-2. Working on the frontend
+1. Working on the frontend
 
 ## Setting up your Developer Environment (Eclipse, gradle, node, Chrome/Firefox)
 This section describes the recommended Developer Environment and how to set it up.  You are welcome to use any other tools you prefer. 
