@@ -20,7 +20,7 @@ import com.google.common.collect.ImmutableMap;
 import io.dropwizard.client.JerseyClientBuilder;
 import mil.dds.anet.beans.Person;
 
-public class GraphQLResourceTest extends AbstractResourceTest{
+public class GraphQLResourceTest extends AbstractResourceTest {
 
 	public GraphQLResourceTest() { 
 		if (client == null) { 

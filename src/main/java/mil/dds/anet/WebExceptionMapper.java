@@ -1,13 +1,13 @@
 package mil.dds.anet;
 
-import java.util.HashMap;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 
 import org.eclipse.jetty.http.HttpStatus;
+
+import com.google.common.collect.ImmutableMap;
 
 public class WebExceptionMapper implements ExceptionMapper<WebApplicationException> {
 	@Override
@@ -23,10 +23,7 @@ public class WebExceptionMapper implements ExceptionMapper<WebApplicationExcepti
 		// Create a JSON response with the provided hashmap
 		return Response.status(status)
 			.type(MediaType.APPLICATION_JSON_TYPE)
-			.entity(new HashMap<String, String>() { {
-				put("error", msg);
-			}
-			})
+			.entity(ImmutableMap.of("error", msg))
 			.build();
     }
 }

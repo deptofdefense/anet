@@ -65,12 +65,12 @@
 		<module name="OneStatementPerLine"/>
 		<module name="MultipleVariableDeclarations"/>
 		<module name="ArrayTypeStyle"/>
-		<module name="MissingSwitchDefault"/>
 		<module name="FallThrough"/>
 		<module name="UpperEll"/>
 		<module name="ModifierOrder"/>
 		<module name="EmptyLineSeparator">
 			<property name="allowNoEmptyLineBetweenFields" value="true"/>
+			<property name="tokens" value="PACKAGE_DEF, IMPORT, CLASS_DEF, INTERFACE_DEF, STATIC_INIT, INSTANCE_INIT, METHOD_DEF, CTOR_DEF, VARIABLE_DEF" />
 		</module>
 		<module name="SeparatorWrap">
 			<property name="id" value="SeparatorWrapDot"/>
@@ -200,7 +200,7 @@
 			<property name="ignoreInlineTags" value="false"/>
 		</module>
 		<module name="EmptyCatchBlock">
-			<property name="exceptionVariableName" value="expected"/>
+			<property name="exceptionVariableName" value="expected|ignore"/>
 		</module>
 		<module name="CommentsIndentation"/>
 	</module>

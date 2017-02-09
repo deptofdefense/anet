@@ -38,8 +38,8 @@ public class ActiveDirectoryUserInfo {
 
 	synchronized void initNamingContext() {
 		if (defaultNamingContext == null) {
-			IADs rootDSE = COM4J.getObject(IADs.class, "LDAP://RootDSE", null);
-			defaultNamingContext = (String)rootDSE.get("defaultNamingContext");
+			IADs rootDse = COM4J.getObject(IADs.class, "LDAP://RootDSE", null);
+			defaultNamingContext = (String)rootDse.get("defaultNamingContext");
 			log.error("defaultNamingContext=" + defaultNamingContext);
 		}
 	}
@@ -77,10 +77,10 @@ public class ActiveDirectoryUserInfo {
 		cmd.activeConnection(con);
 
 		String searchField = "userPrincipalName";
-		int pSlash = username.indexOf('\\');
-		if (pSlash > 0) {
+		int principalSlash = username.indexOf('\\');
+		if (principalSlash > 0) {
 			searchField = "sAMAccountName";
-			username = username.substring(pSlash + 1);
+			username = username.substring(principalSlash + 1);
 		}
 		log.error("Command=" + "<LDAP://" + defaultNamingContext + ">;(" + searchField + "=" + username + ");" + usefulFields + ";subTree");
 		cmd.commandText("<LDAP://" + defaultNamingContext + ">;(" + searchField + "=" + username + ");" + usefulFields + ";subTree");

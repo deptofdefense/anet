@@ -62,7 +62,9 @@ public class PositionResourceTest extends AbstractResourceTest {
 		final DateTime jacksTime = DateTime.now();
 		try {
 			Thread.sleep(500);//just slow me down a bit...
-		} catch (InterruptedException e) {}  
+		} catch (InterruptedException ignore) {
+			/* ignore */
+		}  
 		
 		//change the person in this position
 		Person steve = getSteveSteveson();

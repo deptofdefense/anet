@@ -127,7 +127,9 @@ public class AnetEmailWorker implements Runnable {
 	public synchronized void fallAsleep() { 
 		try {
 			this.wait(300 * 1000L);
-		} catch (InterruptedException e) {};
+		} catch (InterruptedException ignore) {
+			/*ignore */
+		}
 	}
 	
 	private void sendEmail(AnetEmail email) throws MessagingException, IOException, TemplateException {

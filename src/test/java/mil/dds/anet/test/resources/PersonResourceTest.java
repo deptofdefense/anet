@@ -59,25 +59,6 @@ public class PersonResourceTest extends AbstractResourceTest {
 		assertThat(retPerson.getName()).isEqualTo(newPerson.getName());
 	}
 
-//	@Test
-//	public void testDeletePerson() {
-//		Person jack = client.target(
-//				 String.format("http://localhost:%d/people/new", RULE.getLocalPort()))
-//				.request()
-//				.post(Entity.json(PersonTest.getJackJackson()), Person.class);
-//
-//		Response response = client.target(String.format("http://localhost:%d/people/%d", RULE.getLocalPort(), jack.getId()))
-//			.request()
-//			.delete();
-//
-//		assertThat(response.getStatus()).isEqualTo(200);
-//
-//		response = client.target(String.format("http://localhost:%d/people/%d", RULE.getLocalPort(), jack.getId()))
-//			.request().get();
-//		assertThat(response.getStatus()).isEqualTo(404);
-//
-//	}
-
 	@Test
 	public void searchPerson() {
 		Person jack = getJackJackson();
@@ -102,7 +83,7 @@ public class PersonResourceTest extends AbstractResourceTest {
 		org = orgs.getList().stream().filter(o -> o.getShortName().equalsIgnoreCase("EF1")).findFirst().get();
 		query.setOrgId(org.getId());
 		//First don't include child orgs and then increase the scope and verify results increase.
-		PersonList parentOnlyResults = httpQuery("/api/people/search", jack).post(Entity.json(query), PersonList.class);
+		final PersonList parentOnlyResults = httpQuery("/api/people/search", jack).post(Entity.json(query), PersonList.class);
 
 		query.setIncludeChildOrgs(true);
 		searchResults = httpQuery("/api/people/search", jack).post(Entity.json(query), PersonList.class);

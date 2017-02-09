@@ -53,10 +53,21 @@ public class AnetAuthenticationFilter implements ContainerRequestFilter, Authori
 			
 			final Person user = person;
 			ctx.setSecurityContext(new SecurityContext() {
-				public Principal getUserPrincipal() { return user; }
-				public boolean isUserInRole(String role) { return authorize(user, role); }
-				public boolean isSecure() { return secContext.isSecure(); }
-				public String getAuthenticationScheme() { return secContext.getAuthenticationScheme(); }
+				public Principal getUserPrincipal() {
+					return user;
+				}
+				
+				public boolean isUserInRole(String role) {
+					return authorize(user, role);
+				}
+				
+				public boolean isSecure() {
+					return secContext.isSecure();
+				}
+				
+				public String getAuthenticationScheme() {
+					return secContext.getAuthenticationScheme();
+				}
 			});
 		} else { 
 			throw new WebApplicationException("Unauthorized", Status.UNAUTHORIZED);

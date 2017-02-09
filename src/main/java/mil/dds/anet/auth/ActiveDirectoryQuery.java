@@ -49,7 +49,7 @@ public class ActiveDirectoryQuery {
 
 	private final String defaultFields = "distinguishedName,userPrincipalName,sAMAccountName,sn,givenName,telephoneNumber";
 	private String adFields;
-	private HashMap<String,String> AD2attribute;
+	private HashMap<String,String> adAttribute;
 
 	private HashMap<String, HashMap<String,String>> knownUsersData;
 	private HashMap<String, Date> knownUsersCreated;
@@ -57,13 +57,13 @@ public class ActiveDirectoryQuery {
 	private long maxAge = 30 * 60 * 1000; // Default age for cached AD information entries is 30 minutes
 
 	public ActiveDirectoryQuery() { 
-		IADs rootDSE = COM4J.getObject(IADs.class, "LDAP://RootDSE", null);
-		defaultNamingContext = (String)rootDSE.get("defaultNamingContext");
+		IADs rootDse = COM4J.getObject(IADs.class, "LDAP://RootDSE", null);
+		defaultNamingContext = (String)rootDse.get("defaultNamingContext");
 		knownUsersData = new HashMap<String, HashMap<String,String>>();
 		knownUsersCreated = new HashMap<String, Date>();
 		
 		adFields = defaultFields;
-		AD2attribute = new HashMap<String,String>();
+		adAttribute = new HashMap<String,String>();
 		queryField = defaultQueryField;
 		queryField2 = defaultQueryField2;
 		
@@ -72,7 +72,7 @@ public class ActiveDirectoryQuery {
 			StringTokenizer st = new StringTokenizer(adFields,",");
 			while (st.hasMoreTokens()) {
 				String token = st.nextToken();
-				AD2attribute.put(token, token);
+				adAttribute.put(token, token);
 			}
 		}
 		if (queryField.isEmpty()) {
@@ -90,7 +90,7 @@ public class ActiveDirectoryQuery {
 		log.info("destroyed");
 	}
 
-	private synchronized Map<String,String> gatherUserData (String name) {
+	private synchronized Map<String,String> gatherUserData(String name) {
 		Date nameCreated = knownUsersCreated.get(name);
 		Date now = new Date();
 		if (nameCreated != null && nameCreated.getTime() > (now.getTime() - maxAge)) {
@@ -130,7 +130,7 @@ public class ActiveDirectoryQuery {
 				userDataAttributes = new HashMap<String,String>();
 				while (itCom.hasNext()) {
 					Field comObj = (Field)itCom.next();
-					String attribute = AD2attribute.get(comObj.name());
+					String attribute = adAttribute.get(comObj.name());
 					if (attribute != null && !attribute.isEmpty()) {
 						log.debug(i++ + ") " + attribute + ":" + comObj.name() + "=" + comObj.value().toString());
 						userDataAttributes.put(attribute, comObj.value().toString());
