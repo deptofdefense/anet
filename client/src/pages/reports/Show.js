@@ -15,17 +15,22 @@ import Autocomplete from 'components/Autocomplete'
 
 import API from 'api'
 
+import CALENDAR_ICON from 'resources/calendar.png'
+import LOCATION_ICON from 'resources/locations.png'
+import POSITIVE_ICON from 'resources/thumbs_up.png'
+import NEUTRAL_ICON from 'resources/neutral.png'
+import NEGATIVE_ICON from 'resources/thumbs_down.png'
+
 const atmosphereIconCss = {
-	fontSize: '2rem',
-	display: 'inline-block',
-	marginTop: '-4px',
+	height: '48px',
+	marginTop: '-14px',
 	marginRight: '1rem',
 }
 
 const atmosphereIcons = {
-	'POSITIVE': "👍",
-	'NEUTRAL': "😐",
-	'NEGATIVE': "👎",
+	'POSITIVE': POSITIVE_ICON,
+	'NEUTRAL': NEUTRAL_ICON,
+	'NEGATIVE': NEGATIVE_ICON,
 }
 
 export default class ReportShow extends Page {
@@ -183,13 +188,16 @@ export default class ReportShow extends Page {
 								<b>The next steps are</b> {report.nextSteps}
 							</div>
 						</Form.Field>
-						<Form.Field id="engagementDate" label="Date 📆" getter={date => date && moment(date).format("D MMM YYYY")} />
-						<Form.Field id="location" label="Location 📍">
+
+						<Form.Field id="engagementDate" label="Date" icon={CALENDAR_ICON} getter={date => date && moment(date).format("D MMM YYYY")} />
+
+						<Form.Field id="location" label="Location" icon={LOCATION_ICON}>
 							{report.location && <LinkTo location={report.location} />}
 						</Form.Field>
+
 						{!isCancelled &&
 							<Form.Field id="atmosphere" label="Atmospherics">
-								<span style={atmosphereIconCss}>{atmosphereIcons[report.atmosphere]}</span>
+								<img style={atmosphereIconCss} src={atmosphereIcons[report.atmosphere]} alt={report.atmosphere} />
 								{report.atmosphereDetails}
 							</Form.Field>
 						}

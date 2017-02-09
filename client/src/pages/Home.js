@@ -80,24 +80,24 @@ export default class Home extends Page {
 					<legend>My ANET Snapshot</legend>
 					<Grid fluid>
 						<Row>
-							<Link to={"/search?type=reports&pendingApprovalOf=" + currentUser.id} className="col-md-3 home-tile">
+							<Link to={{pathname: 'search', query: {type: 'reports', pendingApprovalOf: currentUser.id}}} className="col-md-3 home-tile">
 								<h1>{pendingMe && pendingMe.totalCount}</h1>
-								{currentUser.isSuperUser() ? "Pending My Approval" : "My Reports Pending Approval" }
+								{currentUser.isSuperUser() ? "Pending my approval" : "My reports pending approval" }
 							</Link>
 
 							{org &&
-								<Link to={"/search?type=reports&authorOrgId=" + org.id + "&createdAtStart=" + yesterday} className="col-md-3 home-tile">
+								<Link to={{pathname: 'search', query: {type: 'reports', authorOrgId: org.id}} + "&createdAtStart=" + yesterday} className="col-md-3 home-tile">
 									<h1>{myOrgToday && myOrgToday.totalCount}</h1>
 									{org.shortName}'{org.shortName[org.shortName.length - 1].toLowerCase() !== 's' && 's'} recent reports
 								</Link>
 							}
 
-							<Link to={"/search?type=reports&authorId=" + currentUser.id + "&createdAtStart=" + yesterday} className="col-md-3 home-tile">
+							<Link to={{pathname: 'search', query: {type: 'reports', authorId: currentUser.id}} + "&createdAtStart=" + yesterday} className="col-md-3 home-tile">
 								<h1>{myReportsToday && myReportsToday.totalCount}</h1>
 								My reports in last 24 hrs
 							</Link>
 
-							<Link to={"/search?type=reports&pageSize=100&engagementDateStart=" + moment().add(1, 'days').hour(0).valueOf()} className="col-md-3 home-tile">
+							<Link to={{pathname: 'search', query: {type: 'reports', pageSize: 100, engagementDateStart: moment().add(1, 'days').hour(0).valueOf()}}} className="col-md-3 home-tile">
 								<h1>{upcomingEngagements && upcomingEngagements.totalCount}</h1>
 								Upcoming engagements
 							</Link>
@@ -106,9 +106,9 @@ export default class Home extends Page {
 				</fieldset>
 
 				<fieldset>
-					<legend>Subscribed Searches</legend>
+					<legend>Saved searches</legend>
 					<FormGroup controlId="savedSearchSelect">
-						<ControlLabel>Select a Saved Search</ControlLabel>
+						<ControlLabel>Select a saved search</ControlLabel>
 						<FormControl componentClass="select" onChange={this.onSaveSearchSelect}>
 							{this.state.savedSearches && this.state.savedSearches.map( savedSearch =>
 								<option value={savedSearch.id} key={savedSearch.id}>{savedSearch.name}</option>

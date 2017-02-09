@@ -2,7 +2,7 @@ import React from 'react'
 import Page from 'components/Page'
 import autobind from 'autobind-decorator'
 
-import {Alert, Radio, Table, DropdownButton, MenuItem, Modal, Button} from 'react-bootstrap'
+import {Alert, Radio, Table, Modal, Button} from 'react-bootstrap'
 import {Link} from 'react-router'
 
 import RadioGroup from 'components/RadioGroup'
@@ -172,25 +172,19 @@ export default class Search extends Page {
 
 				{noResults &&
 					<Alert bsStyle="warning">
-						<b>No Search Results found!</b>
+						<b>No search results found!</b>
 					</Alert>
 				}
 
+				<div className="pull-right">
+					{this.props.location.query.text && <Button onClick={this.showSaveModal}>Save search</Button>}
+				</div>
+
 				{results.reports && results.reports.totalCount > 0 &&
-					<div>
-						<div className="pull-left">
-							<h3>Reports</h3>
-						</div>
-						<div className="pull-right">
-							{ this.props.location.query.q &&
-								<DropdownButton bsStyle="primary" title="Actions" id="actions" onSelect={this.actionSelect}>
-									<MenuItem eventKey="saveReportSearch">Save Search</MenuItem>
-								</DropdownButton>
-							}
-						</div>
-						<br />
-						<fieldset><ReportCollection reports={this.state.results.reports.list} /></fieldset>
-					</div>
+					<fieldset>
+						<legend>Reports</legend>
+						<ReportCollection reports={this.state.results.reports.list} />
+					</fieldset>
 				}
 
 				{results.people && results.people.totalCount > 0 &&
@@ -228,11 +222,10 @@ export default class Search extends Page {
 					</fieldset>
 				}
 
-			{this.state.saveSearch.show && this.renderSaveModal() }
+				{this.renderSaveModal()}
 			</div>
 		)
 	}
-
 
 	renderPeople() {
 		return <Table responsive hover striped>
@@ -343,7 +336,7 @@ export default class Search extends Page {
 	renderSaveModal() {
 		return <Modal show={this.state.saveSearch.show} onHide={this.closeSaveModal}>
 			<Modal.Header closeButton>
-				<Modal.Title>Save Search</Modal.Title>
+				<Modal.Title>Save search</Modal.Title>
 			</Modal.Header>
 
 			<Modal.Body>
@@ -369,7 +362,7 @@ export default class Search extends Page {
 		event.preventDefault()
 
 		let search = Object.without(this.state.saveSearch, "show")
-		search.query = this.props.location.query.q
+		search.query = this.props.location.query.text
 
 		API.send('/api/savedSearches/new', search, {disableSubmits: true})
 			.then(response => {
@@ -382,22 +375,19 @@ export default class Search extends Page {
 			}).catch(response => {
 				this.setState({
 					error: response,
-					saveSearch: { show: false}
+					saveSearch: {show: false}
 				})
 				window.scrollTo(0, 0)
 			})
 	}
 
 	@autobind
-	actionSelect(eventKey) {
-		if (eventKey === "saveReportSearch") {
-			//show modal
-			this.setState({saveSearch: {show: true, name: '', objectType: "reports"}});
-		}
+	showSaveModal() {
+		this.setState({saveSearch: {show: true, name: ''}})
 	}
 
 	@autobind
 	closeSaveModal() {
-		this.setState({saveSearch: {show: false}});
+		this.setState({saveSearch: {show: false}})
 	}
 }
