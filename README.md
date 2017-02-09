@@ -209,11 +209,10 @@ person(id:123) {
 * Note: While GraphQL does technically support writing data to the server through mutations, we do not have any of that implemented.  You must still use the REST API to write any data to ANET. 
 
 ## How the frontend works
-
 React structures the application into components instead of technologies. This means that everything that gets rendered on the
-page has its own file based on its functionality instead of regular html, css, and js files. For example, the new report form
+page has its own file based on its functionality instead of regular HTML, CSS, and JS files. For example, the new report form
 lives in `client/src/pages/reports/New.js` and contains everything needed to render that form (all the CSS, HTML, and JS). It
-composes a number of other components, for example the Form and FormField components which live in `client/src/components/Form.js`
+comprises a number of other components, for example the `Form` and `FormField` components which live in `client/src/components/Form.js`
 and `client/src/components/FormField.js`, which likewise contains everything needed to render a form field to the screen. This
 makes it very easy to figure out where any given element on screen comes from; it's either in `client/src/pages` or
 `client/src/components`. Pages are just compositions of components written in HTML syntax, and components can also compose
@@ -231,7 +230,6 @@ other components for reusability.
 6. Re launch the frontend server with `./npm run start`
 
 ## How to set up Selenium Builds to automatically test workflows
-
 Selenium makes a plug-in for Firefox that lets you record the actions you take on a webpage so that it can rerun them for your later. We use Selenium builds to walk through a series of workflows to see if everything worked as expected, or if something failed. This helps us quickly identify if changes have broken something that we need to fix. Are you super excited to set this up and get testing?! Me too. Here's what you do:
 
 1. Make sure you have Mozilla Firefox installed on your computer
@@ -259,6 +257,17 @@ Selenium makes a plug-in for Firefox that lets you record the actions you take o
 
 ##Map Layers
 
-Set the `MAP_LAYERS` admin Setting to a json object that looks like this: `[{"type": "wms", "url" : "http://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r.cgi", "layer": "nexrad-n0r-900913", "name" : "nexrad"}]`
+Set the `MAP_LAYERS` admin Setting to a JSON object that looks like this: 
+
+```json
+[
+	{
+		"type": "wms", 
+		"url" : "http://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r.cgi",
+		"layer": "nexrad-n0r-900913",
+		"name" : "nexrad"
+	}
+]
+````
 
 
