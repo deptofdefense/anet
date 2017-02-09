@@ -172,7 +172,7 @@ export default class Search extends Page {
 
 				{noResults &&
 					<Alert bsStyle="warning">
-						<b>No Search Results found!</b>
+						<b>No search results found!</b>
 					</Alert>
 				}
 
@@ -184,7 +184,7 @@ export default class Search extends Page {
 						<div className="pull-right">
 							{ this.props.location.query.text &&
 								<DropdownButton bsStyle="primary" title="Actions" id="actions" onSelect={this.actionSelect}>
-									<MenuItem eventKey="saveReportSearch">Save Search</MenuItem>
+									<MenuItem eventKey="saveReportSearch">Save search</MenuItem>
 								</DropdownButton>
 							}
 						</div>
@@ -232,7 +232,6 @@ export default class Search extends Page {
 			</div>
 		)
 	}
-
 
 	renderPeople() {
 		return <Table responsive hover striped>
@@ -343,7 +342,7 @@ export default class Search extends Page {
 	renderSaveModal() {
 		return <Modal show={this.state.saveSearch.show} onHide={this.closeSaveModal}>
 			<Modal.Header closeButton>
-				<Modal.Title>Save Search</Modal.Title>
+				<Modal.Title>Save search</Modal.Title>
 			</Modal.Header>
 
 			<Modal.Body>

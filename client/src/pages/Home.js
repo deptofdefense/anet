@@ -106,9 +106,9 @@ export default class Home extends Page {
 				</fieldset>
 
 				<fieldset>
-					<legend>Subscribed Searches</legend>
+					<legend>Saved searches</legend>
 					<FormGroup controlId="savedSearchSelect">
-						<ControlLabel>Select a Saved Search</ControlLabel>
+						<ControlLabel>Select a saved search</ControlLabel>
 						<FormControl componentClass="select" onChange={this.onSaveSearchSelect}>
 							{this.state.savedSearches && this.state.savedSearches.map( savedSearch =>
 								<option value={savedSearch.id} key={savedSearch.id}>{savedSearch.name}</option>
