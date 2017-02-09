@@ -2,7 +2,7 @@ import React from 'react'
 import Page from 'components/Page'
 import autobind from 'autobind-decorator'
 
-import {Alert, Radio, Table, DropdownButton, MenuItem, Modal, Button} from 'react-bootstrap'
+import {Alert, Radio, Table, Modal, Button} from 'react-bootstrap'
 import {Link} from 'react-router'
 
 import RadioGroup from 'components/RadioGroup'
@@ -176,21 +176,15 @@ export default class Search extends Page {
 					</Alert>
 				}
 
+				<div className="pull-right">
+					{this.props.location.query.text && <Button onClick={this.showSaveModal}>Save search</Button>}
+				</div>
+
 				{results.reports && results.reports.totalCount > 0 &&
-					<div>
-						<div className="pull-left">
-							<h3>Reports</h3>
-						</div>
-						<div className="pull-right">
-							{ this.props.location.query.text &&
-								<DropdownButton bsStyle="primary" title="Actions" id="actions" onSelect={this.actionSelect}>
-									<MenuItem eventKey="saveReportSearch">Save search</MenuItem>
-								</DropdownButton>
-							}
-						</div>
-						<br />
-						<fieldset><ReportCollection reports={this.state.results.reports.list} /></fieldset>
-					</div>
+					<fieldset>
+						<legend>Reports</legend>
+						<ReportCollection reports={this.state.results.reports.list} />
+					</fieldset>
 				}
 
 				{results.people && results.people.totalCount > 0 &&
@@ -388,11 +382,8 @@ export default class Search extends Page {
 	}
 
 	@autobind
-	actionSelect(eventKey) {
-		if (eventKey === "saveReportSearch") {
-			//show modal
-			this.setState({saveSearch: {show: true, name: '', objectType: "reports"}});
-		}
+	showSaveModal() {
+		this.setState({saveSearch: {show: true, name: ''}})
 	}
 
 	@autobind
