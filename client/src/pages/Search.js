@@ -182,7 +182,7 @@ export default class Search extends Page {
 							<h3>Reports</h3>
 						</div>
 						<div className="pull-right">
-							{ this.props.location.query.q &&
+							{ this.props.location.query.text &&
 								<DropdownButton bsStyle="primary" title="Actions" id="actions" onSelect={this.actionSelect}>
 									<MenuItem eventKey="saveReportSearch">Save Search</MenuItem>
 								</DropdownButton>
@@ -228,7 +228,7 @@ export default class Search extends Page {
 					</fieldset>
 				}
 
-			{this.state.saveSearch.show && this.renderSaveModal() }
+				{this.state.saveSearch.show && this.renderSaveModal() }
 			</div>
 		)
 	}
