@@ -1,5 +1,6 @@
 package mil.dds.anet.resources;
 
+import javax.annotation.security.PermitAll;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -23,6 +24,7 @@ import mil.dds.anet.graphql.IGraphQLResource;
 
 @Path("/api/search")
 @Produces(MediaType.APPLICATION_JSON)
+@PermitAll
 public class SearchResource implements IGraphQLResource  {
 
 	AnetObjectEngine engine;

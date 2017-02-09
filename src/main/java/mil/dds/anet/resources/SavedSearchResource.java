@@ -2,6 +2,7 @@ package mil.dds.anet.resources;
 
 import java.util.List;
 
+import javax.annotation.security.PermitAll;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -19,6 +20,7 @@ import mil.dds.anet.graphql.IGraphQLResource;
 
 @Path("/api/savedSearches")
 @Produces(MediaType.APPLICATION_JSON)
+@PermitAll
 public class SavedSearchResource implements IGraphQLResource  {
 
 	SavedSearchDao dao;

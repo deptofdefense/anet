@@ -118,6 +118,12 @@ public class OrganizationResource implements IGraphQLResource {
 		return dao.getById(id);
 	}
 	
+	/**
+	 * Primary endpoint to update all aspects of an Organization
+	 * - Organization shortName and longName
+	 * - Poams
+	 * - Approvers
+	 */
 	@POST
 	@Timed
 	@Path("/update")
@@ -129,6 +135,7 @@ public class OrganizationResource implements IGraphQLResource {
 		int numRows = dao.update(org);
 		
 		if (org.getPoams() != null || org.getApprovalSteps() != null) {
+			//Load the existing org, so we can check for differences. 
 			Organization existing = dao.getById(org.getId());
 			
 			if (org.getPoams() != null) {
@@ -136,6 +143,7 @@ public class OrganizationResource implements IGraphQLResource {
 						newPoam -> engine.getPoamDao().setResponsibleOrgForPoam(newPoam, existing), 
 						oldPoamId -> engine.getPoamDao().setResponsibleOrgForPoam(Poam.createWithId(oldPoamId), null));
 			}
+			
 			if (org.getApprovalSteps() != null) {
 				org.getApprovalSteps().stream().forEach(step -> step.setAdvisorOrganizationId(org.getId()));
 				List<ApprovalStep> existingSteps = existing.loadApprovalSteps();
@@ -176,9 +184,9 @@ public class OrganizationResource implements IGraphQLResource {
 	@Timed
 	@Path("/search")
 	public OrganizationList search(@Context HttpServletRequest request) {
-		try { 
+		try {
 			return search(ResponseUtils.convertParamsToBean(request, OrganizationSearchQuery.class));
-		} catch (IllegalArgumentException e) { 
+		} catch (IllegalArgumentException e) {
 			throw new WebApplicationException(e.getMessage(), e.getCause(), Status.BAD_REQUEST);
 		}
 	}

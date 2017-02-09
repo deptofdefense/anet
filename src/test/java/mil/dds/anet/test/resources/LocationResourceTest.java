@@ -40,7 +40,7 @@ public class LocationResourceTest extends AbstractResourceTest {
 		// is done in asynchronously and is not guaranteed to be done
 		// so we search for a record in the base data set. 
 		List<Location> results = httpQuery(String.format("/api/locations/search?text=%s", 
-				URLEncoder.encode("Police", "UTF-8")))
+				URLEncoder.encode("Police", "UTF-8")),arthur)
 				.get(LocationList.class).getList();
 		assertThat(results.size()).isGreaterThan(0);
 		//assertThat(results).contains(created);
@@ -52,7 +52,7 @@ public class LocationResourceTest extends AbstractResourceTest {
 		Response resp = httpQuery("/api/locations/update", arthur).post(Entity.json(created));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
-		Location returned = httpQuery(String.format("/api/locations/%d", created.getId())).get(Location.class);
+		Location returned = httpQuery(String.format("/api/locations/%d", created.getId()), arthur).get(Location.class);
 		assertThat(returned.getName()).isEqualTo(created.getName());
 	}
 	

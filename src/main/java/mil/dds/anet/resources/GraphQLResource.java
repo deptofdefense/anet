@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.annotation.security.PermitAll;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -17,6 +18,8 @@ import javax.ws.rs.core.Response.Status;
 
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;
+
+import com.codahale.metrics.annotation.Timed;
 
 import graphql.ExecutionResult;
 import graphql.GraphQL;
@@ -31,6 +34,7 @@ import mil.dds.anet.beans.Comment;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.PersonPositionHistory;
 import mil.dds.anet.beans.ReportPerson;
+import mil.dds.anet.beans.lists.AbstractAnetBeanList;
 import mil.dds.anet.graphql.AnetResourceDataFetcher;
 import mil.dds.anet.graphql.GraphQLFetcher;
 import mil.dds.anet.graphql.GraphQLIgnore;
@@ -40,6 +44,7 @@ import mil.dds.anet.utils.GraphQLUtils;
 
 @Path("/graphql")
 @Produces(MediaType.APPLICATION_JSON)
+@PermitAll
 public class GraphQLResource {
 
 	private static Logger log = Log.getLogger(GraphQLResource.class);
@@ -54,7 +59,13 @@ public class GraphQLResource {
 		buildGraph();
 	}
 
-
+	/**
+	 * Constructs the GraphQL "Graph" of ANET. 
+	 * 1) Scans all Resources to find methods it can use as graph entry points.  
+	 *     These should all be annotated with @GraphQLFetcher
+	 * 2) For each of the types that the Resource can return, scans those to find methods annotated with 
+	 *     GraphQLFetcher
+	 */
 	private void buildGraph() {
 		GraphQLObjectType.Builder queryTypeBuilder = GraphQLObjectType.newObject()
 			.name("query")
@@ -78,6 +89,7 @@ public class GraphQLResource {
 			queryTypeBuilder.field(fieldBuilder.build());
 
 
+			//Build a field for returning lists from this resource. 
 			AnetResourceDataFetcher listFetcher = new AnetResourceDataFetcher(resource, true);
 			if (listFetcher.validArguments().size() > 0) {
 				Class<?> listClass = resource.getBeanListClass();
@@ -86,9 +98,11 @@ public class GraphQLResource {
 				if (List.class.isAssignableFrom(listClass)) {
 					listName = name + "s";
 					listType = new GraphQLList(objectType);
-				} else {
+				} else if (AbstractAnetBeanList.class.isAssignableFrom(listClass)) {
 					listName = GraphQLUtils.lowerCaseFirstLetter(listClass.getSimpleName());
-					listType = buildTypeFromBean(listName, (Class<? extends IGraphQLBean>) resource.getBeanListClass());
+					listType = buildTypeFromBean(listName, (Class<AbstractAnetBeanList>) listClass);
+				} else { 
+					throw new IllegalArgumentException("List Class from resource " + name + " is not a List or AbstractAnetBeanList");
 				}
 				GraphQLFieldDefinition listField = GraphQLFieldDefinition.newFieldDefinition()
 					.type(listType)
@@ -125,6 +139,10 @@ public class GraphQLResource {
 		graphql = new GraphQL(schmea);
 	}
 
+	/**
+	 * Constructs the GraphQL Type from a bean (ie Report, Person, Position...)
+	 * Scans all 'getter' methods, and those annotated with @GraphQLFetcher
+	 */
 	private GraphQLObjectType buildTypeFromBean(String name, Class<? extends IGraphQLBean> beanClazz) {
 		GraphQLObjectType.Builder builder = GraphQLObjectType.newObject()
 			.name(name);
@@ -163,12 +181,16 @@ public class GraphQLResource {
 		return builder.build();
 	}
 
+	
 	@POST
+	@Timed
 	public Response graphql(@Auth Person user, Map<String,Object> body) {
 		if (developmentMode) {
 			buildGraph();
 		}
 		String query = (String) body.get("query");
+		
+		@SuppressWarnings("unchecked")
 		Map<String, Object> variables = (Map<String, Object>) body.get("variables");
 		if (variables == null) { variables = new HashMap<String,Object>(); }
 

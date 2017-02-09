@@ -2,6 +2,7 @@ package mil.dds.anet.resources;
 
 import java.util.List;
 
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -16,6 +17,7 @@ import mil.dds.anet.graphql.IGraphQLResource;
 import mil.dds.anet.views.AbstractAnetBean;
 
 @Path("/api/admin")
+@PermitAll
 public class AdminResource implements IGraphQLResource {
 
 	private AdminDao dao;

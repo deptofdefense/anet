@@ -22,7 +22,7 @@ public class AnetDevAuthenticator implements Authenticator<BasicCredentials, Per
 
 	@Override
 	public Optional<Person> authenticate(BasicCredentials credentials) throws AuthenticationException {
-		List<Person> p = dao.findByProperty("domainUsername", credentials.getUsername());
+		List<Person> p = dao.findByDomainUsername(credentials.getUsername());
 		if (p.size() > 0) { 
 			return Optional.of(p.get(0));
         }

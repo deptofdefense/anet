@@ -171,9 +171,8 @@ public class PersonResource implements IGraphQLResource {
 	}
 	
 	/**
-	 * Searches people in the ANET database TODO: should be fuzzy searching
+	 * Searches people in the ANET database 
 	 * @param query the search term
-	 * @param role either PRINCIPAL, or ADVISOR will search people with that role. 
 	 * @return a list of people objects
 	 */
 	@POST
@@ -206,6 +205,9 @@ public class PersonResource implements IGraphQLResource {
 		return AnetObjectEngine.getInstance().getPositionDao().getCurrentPositionForPerson(Person.createWithId(personId));
 	}
 	
+	/** 
+	 * Returns the most recent people that this user listed as attendees in reports. 
+	 */
 	@GET
 	@Timed
 	@GraphQLFetcher
@@ -214,6 +216,9 @@ public class PersonResource implements IGraphQLResource {
 		return new PersonList(dao.getRecentPeople(user));
 	}
 	
+	/**
+	 * Convenience method for API testing. 
+	 */
 	@GET
 	@Timed
 	@GraphQLFetcher("me")

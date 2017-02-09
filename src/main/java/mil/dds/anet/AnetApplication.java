@@ -43,7 +43,6 @@ import mil.dds.anet.resources.PositionResource;
 import mil.dds.anet.resources.ReportResource;
 import mil.dds.anet.resources.SavedSearchResource;
 import mil.dds.anet.resources.SearchResource;
-import mil.dds.anet.resources.TestingResource;
 import mil.dds.anet.views.ViewResponseFilter;
 import waffle.servlet.NegotiateSecurityFilter;
 
@@ -128,7 +127,6 @@ public class AnetApplication extends Application<AnetConfiguration> {
 		Thread emailThread = new Thread(new AnetEmailWorker(jdbi.open(), configuration));
 		emailThread.start();
 	    
-		TestingResource test = new TestingResource(engine, configuration);
 		PersonResource personResource = new PersonResource(engine);
 		PoamResource poamResource =  new PoamResource(engine);
 		LocationResource locationResource = new LocationResource(engine);
@@ -141,7 +139,6 @@ public class AnetApplication extends Application<AnetConfiguration> {
 		SearchResource searchResource = new SearchResource(engine);
 		SavedSearchResource savedSearchResource = new SavedSearchResource(engine);
 
-		environment.jersey().register(test);
 		environment.jersey().register(personResource);
 		environment.jersey().register(poamResource);
 		environment.jersey().register(locationResource);

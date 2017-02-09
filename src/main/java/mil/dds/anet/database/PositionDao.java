@@ -323,14 +323,16 @@ public class PositionDao implements IAnetDao<Position> {
 		List<PersonPositionHistory> history = new LinkedList<PersonPositionHistory>();
 		if (results.size() == 0) { return history; }
 		PersonPositionHistory curr = new PersonPositionHistory();
+		curr.setPosition(position);
 		for (Map<String,Object> row : results) { 
 			Integer personId = (Integer) row.get("personId");
 			DateTime createdAt = new DateTime(row.get("positions_createdAt"));
 
-			if (DaoUtils.getId(curr.getPerson()) != null) { 
+			if (DaoUtils.getId(curr.getPerson()) != null) {
 				curr.setEndTime(createdAt);
 				history.add(curr);
 				curr = new PersonPositionHistory();
+				curr.setPosition(position);
 				if (personId != null) { 
 					curr.setPerson(Person.createWithId(personId));
 					curr.setStartTime(createdAt);

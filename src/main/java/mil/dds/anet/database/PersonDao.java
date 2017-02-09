@@ -138,26 +138,13 @@ public class PersonDao implements IAnetDao<Person> {
 		return rs.get(0);
 	}
 
-	public List<Person> findByProperty(String ...strings) {
-		if (strings.length % 2 != 0) {
-			throw new RuntimeException("Illegal number of arguments to findByProperty: " + Arrays.toString(strings));
-		}
-		HashSet<String> props = Sets.newHashSet("name","emailAddress","rank","phoneNumber","status", "domainUsername");
-		List<String> conditions = new ArrayList<String>();
-		
-		for (int i = 0;i < strings.length;i += 2) {
-			if (props.contains(strings[i])) { 
-				conditions.add(String.format("%s.%s = ?", tableName, strings[i]));
-			}
-		}
-		String queryString = "SELECT " + PERSON_FIELDS + "," + PositionDao.POSITIONS_FIELDS 
+	public List<Person> findByDomainUsername(String domainUsername) {
+		return dbHandle.createQuery("SELECT " + PERSON_FIELDS + "," + PositionDao.POSITIONS_FIELDS 
 				+ "FROM people LEFT JOIN positions ON people.id = positions.currentPersonId "
-				+ "WHERE " + Joiner.on(" AND ").join(conditions);
-		Query<Map<String, Object>> query = dbHandle.createQuery(queryString);
-		for (int i = 0;i < strings.length;i += 2) {
-			query.bind((i / 2), strings[i + 1]);
-		}
-		return query.map(new PersonMapper()).list();
+				+ "WHERE people.domainUsername = :domainUsername")
+			.bind("domainUsername", domainUsername)
+			.map(new PersonMapper())
+			.list();
 	}
 
 	public List<Person> getRecentPeople(Person author) {

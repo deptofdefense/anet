@@ -1,5 +1,6 @@
 package mil.dds.anet.resources;
 
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
@@ -30,6 +31,7 @@ import mil.dds.anet.utils.ResponseUtils;
 
 @Path("/api/locations")
 @Produces(MediaType.APPLICATION_JSON)
+@PermitAll
 public class LocationResource implements IGraphQLResource {
 
 	private LocationDao dao;
@@ -63,11 +65,7 @@ public class LocationResource implements IGraphQLResource {
 	@GET
 	@Path("/search")
 	public LocationList search(@Context HttpServletRequest request) {
-		try { 
-			return search(ResponseUtils.convertParamsToBean(request, LocationSearchQuery.class));
-		} catch (IllegalArgumentException e) { 
-			throw new WebApplicationException(e.getMessage(), e.getCause(), Status.BAD_REQUEST);
-		}
+		return search(ResponseUtils.convertParamsToBean(request, LocationSearchQuery.class));
 	}
 	
 	@POST

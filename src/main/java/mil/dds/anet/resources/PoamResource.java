@@ -158,9 +158,4 @@ public class PoamResource implements IGraphQLResource {
 	public PoamList recents(@Auth Person user) { 
 		return new PoamList(dao.getRecentPoams(user));
 	}
-	
-	//TODO: You should never be able to delete a POAM, right?  
-	
-	
-	
 }

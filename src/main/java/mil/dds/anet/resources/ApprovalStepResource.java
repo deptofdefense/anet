@@ -41,21 +41,6 @@ public class ApprovalStepResource implements IGraphQLResource {
 		this.dao = engine.getApprovalStepDao();
 	}
 	
-	@Override
-	public Class<ApprovalStep> getBeanClass() {
-		return ApprovalStep.class;
-	}
-	
-	@SuppressWarnings("rawtypes")
-	public Class<List> getBeanListClass() {
-		return List.class;
-	}
-	
-	@Override
-	public String getDescription() {
-		return "Approval Steps";
-	}
-	
 	@GET
 	@GraphQLFetcher
 	@Path("/byOrganization")
@@ -104,9 +89,29 @@ public class ApprovalStepResource implements IGraphQLResource {
 	
 	@DELETE
 	@Path("/{id}")
-	//TODO: Permissions
-	public Response deleteStep(@PathParam("id") int id) {
+	@RolesAllowed("SUPER_USER")
+	public Response deleteStep(@Auth Person user, @PathParam("id") int id) {
+		ApprovalStep step = dao.getById(id);
+		AuthUtils.assertSuperUserForOrg(user, Organization.createWithId(step.getAdvisorOrganizationId()));
+		
 		boolean success = dao.deleteStep(id);
 		return (success) ? Response.ok().build() : Response.status(Status.NOT_ACCEPTABLE).build();
+	}
+	
+	
+	@Override
+	public Class<ApprovalStep> getBeanClass() {
+		return ApprovalStep.class;
+	}
+	
+	@Override
+	@SuppressWarnings("rawtypes")
+	public Class<List> getBeanListClass() {
+		return List.class;
+	}
+	
+	@Override
+	public String getDescription() {
+		return "Approval Steps";
 	}
 }

@@ -39,7 +39,9 @@ public class PositionResourceTest extends AbstractResourceTest {
 		assertThat(jack.getId()).isNotNull();
 		
 		//Create Position
-		Position test = PositionTest.getTestPosition();
+		Position test = new Position();
+		test.setName("A Test Position created by PositionResourceTest");
+		test.setType(PositionType.ADVISOR);
 		
 		//Assign to an AO
 		Organization ao = httpQuery("/api/organizations/new", admin)

@@ -37,7 +37,7 @@ public class AnetAuthenticationFilter implements ContainerRequestFilter, Authori
 		Principal p = secContext.getUserPrincipal();
 		if (p != null) { 
 			String domainUsername = p.getName();
-			List<Person> matches = engine.getPersonDao().findByProperty("domainUsername", domainUsername);
+			List<Person> matches = engine.getPersonDao().findByDomainUsername(domainUsername);
 			Person person;
 			if (matches.size() == 0) { 
 				//First time this user has ever logged in. 

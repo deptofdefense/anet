@@ -23,6 +23,7 @@ import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Position;
+import mil.dds.anet.beans.Position.PositionType;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.PositionList;
 import mil.dds.anet.beans.search.PositionSearchQuery;
 import mil.dds.anet.database.PositionDao;
@@ -64,7 +65,8 @@ public class PositionResource implements IGraphQLResource {
 	@GET
 	@GraphQLFetcher
 	@Path("/")
-	public PositionList getAll(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
+	public PositionList getAll(@DefaultValue("0") @QueryParam("pageNum") int pageNum, 
+			@DefaultValue("100") @QueryParam("pageSize") int pageSize) {
 		return new PositionList(pageNum, pageSize, dao.getAll(pageNum, pageSize));
 	}
 
@@ -154,7 +156,7 @@ public class PositionResource implements IGraphQLResource {
 	@Path("/{id}/person")
 	@RolesAllowed("SUPER_USER")
 	public Response putPersonInPosition(@Auth Person user, @PathParam("id") int positionId, Person p) {
-		Position pos = engine.getPositionDao().getById(positionId);
+		Position pos = dao.getById(positionId);
 		AuthUtils.assertSuperUserForOrg(user, pos.getOrganization());
 
 		dao.setPersonInPosition(p, pos);
@@ -164,10 +166,13 @@ public class PositionResource implements IGraphQLResource {
 
 	@DELETE
 	@Path("/{id}/person")
-	public Response deletePersonFromPosition(@Auth Person user, @PathParam("id") int id) {
-		//TODO: Authorization
-		dao.removePersonFromPosition(Position.createWithId(id));
-		AnetAuditLogger.log("Person removed from Position id#{} by {}", id, user);
+	@RolesAllowed("SUPER_USER")
+	public Response deletePersonFromPosition(@Auth Person user, @PathParam("id") int positionId) {
+		Position pos = dao.getById(positionId);
+		AuthUtils.assertSuperUserForOrg(user, pos.getOrganization());
+
+		dao.removePersonFromPosition(pos);
+		AnetAuditLogger.log("Person removed from Position id#{} by {}", positionId, user);
 		return Response.ok().build();
 	}
 
@@ -181,20 +186,40 @@ public class PositionResource implements IGraphQLResource {
 
 	@POST
 	@Path("/{id}/associated")
+	@RolesAllowed("SUPER_USER")
 	public Response associatePositions(@PathParam("id") int positionId, Position b, @Auth Person user) {
-		//TODO Authorization
-		Position a = Position.createWithId(positionId);
+		Position a = dao.getById(positionId);
+		b = dao.getById(b.getId());
+		
+		Position principalPos = (a.getType() == PositionType.PRINCIPAL) ? a : b;
+		Position advisorPos = (a.getType() == PositionType.PRINCIPAL) ? b : a;
+		if (principalPos.getType() != PositionType.PRINCIPAL) { 
+			throw new WebApplicationException("You can only associate positions between PRINCIPAL and [ADVISOR | SUPER_USER | ADMINISTRATOR]", 
+					Status.BAD_REQUEST);
+		}
+		if (advisorPos.getType() == PositionType.PRINCIPAL) { 
+			throw new WebApplicationException("You can only associate positions between PRINCIPAL and [ADVISOR | SUPER_USER | ADMINISTRATOR]",
+					Status.BAD_REQUEST);
+		}
+		
+		AuthUtils.assertSuperUserForOrg(user, advisorPos.getOrganization());
+		
 		dao.associatePosition(a, b);
+		
 		AnetAuditLogger.log("Positions {} and {} associated by {}", a, b, user);
 		return Response.ok().build();
 	}
 
 	@DELETE
 	@Path("/{id}/associated/{positionId}")
+	@RolesAllowed("SUPER_USER")
 	public Response deletePositionAssociation(@PathParam("id") int positionId, @PathParam("positionId") int associatedPositionId, @Auth Person user) {
-		//TODO: Authorization
-		Position a = Position.createWithId(positionId);
-		Position b = Position.createWithId(associatedPositionId);
+		Position a = dao.getById(positionId);
+		Position b = dao.getById(associatedPositionId);
+
+		Position advisorPos = (a.getType() == PositionType.PRINCIPAL) ? b : a;
+		AuthUtils.assertSuperUserForOrg(user, advisorPos.getOrganization());
+		
 		dao.deletePositionAssociation(a, b);
 		AnetAuditLogger.log("Positions {} and {} disassociated by {}", a, b, user);
 		return Response.ok().build();

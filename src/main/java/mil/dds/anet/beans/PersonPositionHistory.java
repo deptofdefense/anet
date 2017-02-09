@@ -47,8 +47,9 @@ public class PersonPositionHistory implements IGraphQLBean {
 	
 	@GraphQLFetcher("position")
 	public Position loadPosition() {
-		if (position == null) {
-			position = AnetObjectEngine.getInstance().getPositionDao().getById(position.getId());
+		if (position == null || position.getLoadLevel() == null) { return position; } 
+		if (position.getLoadLevel().contains(LoadLevel.PROPERTIES) == false) { 
+			this.position = AnetObjectEngine.getInstance().getPositionDao().getById(position.getId());
 		}
 		return position;
 	}

@@ -208,34 +208,6 @@ public class ReportDao implements IAnetDao<Report> {
 				.execute();
 	}
 
-	/* Returns reports that the given person can currently approve */
-	public List<Report> getReportsForMyApproval(Person p) {
-		return dbHandle.createQuery("SELECT " + REPORT_FIELDS + ", " + PersonDao.PERSON_FIELDS
-				+ "FROM reports, approvers, positions, people "
-				+ "WHERE positions.currentPersonId = :personId "
-				+ "AND approvers.positionId = positions.id "
-				+ "AND approvers.approvalStepId = reports.approvalStepId "
-				+ "AND reports.authorId = people.id")
-			.bind("personId", p.getId())
-			.map(new ReportMapper())
-			.list();
-	}
-
-	public List<Report> getMyReportsPendingApproval(Person p) {
-		return dbHandle.createQuery("SELECT " + REPORT_FIELDS + ", " + PersonDao.PERSON_FIELDS
-				+ "FROM reports, people "
-				+ "WHERE reports.authorId = :authorId "
-				+ "AND reports.state IN (:pending, :draft, :rejected) "
-				+ "AND reports.authorId = people.id "
-				+ "ORDER BY reports.createdAt DESC")
-			.bind("authorId", p.getId())
-			.bind("pending", ReportState.PENDING_APPROVAL.ordinal())
-			.bind("draft", ReportState.DRAFT.ordinal())
-			.bind("rejected", ReportState.REJECTED.ordinal())
-			.map(new ReportMapper())
-			.list();
-	}
-
 	public List<ReportPerson> getAttendeesForReport(int reportId) {
 		return dbHandle.createQuery("SELECT " + PersonDao.PERSON_FIELDS + ", reportPeople.isPrimary FROM reportPeople "
 				+ "LEFT JOIN people ON reportPeople.personId = people.id "
@@ -257,32 +229,6 @@ public class ReportDao implements IAnetDao<Report> {
 	public ReportList search(ReportSearchQuery query) {
 		return AnetObjectEngine.getInstance().getSearcher().getReportSearcher()
 			.runSearch(query, dbHandle);
-	}
-
-	public List<Report> getReportsByAuthorPosition(Position position) {
-		return dbHandle.createQuery("SELECT " + REPORT_FIELDS + ", " + PersonDao.PERSON_FIELDS
-				+ "FROM peoplePositions "
-				+ "INNER JOIN reports ON peoplePositions.personId = reports.authorId "
-				+ "LEFT JOIN people on reports.authorId = people.id "
-				+ "WHERE peoplePositions.positionId = :positionId "
-				+ "AND peoplePositions.personId IS NOT NULL "
-				+ "ORDER BY reports.engagementDate DESC")
-			.bind("positionId", position.getId())
-			.map(new ReportMapper())
-			.list();
-	}
-
-	public Object getReportsAboutThisPosition(Position position) {
-		return dbHandle.createQuery("SELECT " + REPORT_FIELDS + ", " + PersonDao.PERSON_FIELDS
-				+ "FROM reports, peoplePositions, reportPeople, people "
-				+ "WHERE peoplePositions.positionId = :positionId "
-				+ "AND reportPeople.personId = peoplePositions.personId "
-				+ "AND reports.id = reportPeople.reportId "
-				+ "AND reports.authorId = people.id "
-				+ "ORDER BY reports.engagementDate DESC")
-			.bind("positionId", position.getId())
-			.map(new ReportMapper())
-			.list();
 	}
 
 	public List<Report> getReportsByAuthor(Person p, int pageNum, int pageSize) {
