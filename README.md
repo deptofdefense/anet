@@ -44,11 +44,14 @@ Download the following:
 	1. Run `npm install`  to download all the javascript dependencies.  This can take several minutes depending on your internet connection. If the command hangs, it may be because your network blocks ssh. Try the command again on a different network.
 1. Open Eclipse
 	1. Eclipse will ask you for a `workspace` directory. You can choose any empty directory.
-	1. Import the `anet/` directory into eclipse as a new project.
-	1. Ensure there are no compile errors. If there are, you are probably missing dependencies. Try re-running `./gradlew eclipse`. 
-	1. The main method is in `mil.dds.anet.AnetApplication`.
+	1. Import the `anet/` directory into eclipse as an existing project.
+	1. Run the project as a Java Application.  Open the Run Configuration and make sure:
+	       1. The main method is `mil.dds.anet.AnetApplication`
+	       1. Arguments includes `server anet.yml`
+	       1. Environment variables include anything set in build.gradle or localSettings.gradle.  If you are using sqlite as your database, this will include: `ANET_DB_DRIVER=org.sqlite.JDBC`, `ANET_DB_URL=jdbc:sqlite:development.db`, `ANET_DB_DATE_STRING_FORMAT=yyyy-MM-dd hh:mm:ss.SSS Z"`, `ANET_DB_DATE_CLASS=text`
+	1. Ensure there are no compile errors. If there are, you are probably missing dependencies or forgot to add gradle settings in Eclipse. Try re-running `./gradlew eclipse`. 
 1. Update the settings in `anet.yml` for your environment.  See the [ANET Configuration documentation](https://github.com/deptofdefense/anet/blob/master/DOCUMENTATION.md#anet-configuration) for more details on these configuration options. You are most likely to change:
-        1. `emailFromAddr` - use your own email address for testing.
+  1. `emailFromAddr` - use your own email address for testing.
 
 ### Java Backend
 

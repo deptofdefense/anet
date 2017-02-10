@@ -1,6 +1,5 @@
 import React, {Component, PropTypes} from 'react'
-import {Grid, Row, Col} from 'react-bootstrap'
-import {Link} from 'react-router'
+import {Button, Grid, Row, Col} from 'react-bootstrap'
 import utils from 'utils'
 
 import LinkTo from 'components/LinkTo'
@@ -16,12 +15,13 @@ export default class ReportSummary extends Component {
 	render() {
 		let report = new Report(this.props.report)
 
-		return <Grid fluid>
+		return <Grid fluid className="report-summary">
 			<Row>
 				<Col md={6}>
 					{report.advisorOrg &&
 						<LinkTo organization={new Organization(report.advisorOrg)} />
-					} ->&nbsp;
+					}
+					{report.principalOrg && "-> "}
 					{report.principalOrg &&
 						<LinkTo organization={new Organization(report.principalOrg)} />
 					}
@@ -30,7 +30,7 @@ export default class ReportSummary extends Component {
 					{report.engagementDate && moment(report.engagementDate).format("D MMM YYYY")}
 					{report.location &&
 						<span> @&nbsp;
-							<Link to={"/locations/" + report.location.id}>{report.location.name}</Link>
+							<LinkTo location={report.location} />
 						</span>
 					}
 				</Col>
@@ -47,15 +47,13 @@ export default class ReportSummary extends Component {
 				</Row>
 			}
 			<Row>
-				<Col md={12}>
-					{report.intent}. &nbsp;
-					{report.keyOutcomes && <span>The <b>Key Outcomes</b> were {report.keyOutcomes}.</span>} &nbsp;
-					{report.nextSteps && <span>The <b>Next Steps</b> are {report.nextSteps}.</span>}
+				<Col md={8}>
+					<h5>{report.intent}</h5>
+					{report.keyOutcomes && <p><strong>Key outcomes:</strong> {report.keyOutcomes}</p>}
+					{report.nextSteps && <p><strong>Next steps:</strong> {report.nextSteps}</p>}
 				</Col>
 			</Row>
-			<Row>
-				<Col md={4} mdOffset={8}><LinkTo report={report} >Read Full Report</LinkTo></Col>
-			</Row>
+			<Button className="read-full"><LinkTo report={report} >Read Full Report</LinkTo></Button>
 		</Grid>
 	}
 

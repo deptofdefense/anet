@@ -165,12 +165,12 @@ export default class ReportShow extends Page {
 				<div className="pull-right">
 					<DropdownButton bsStyle="primary" title="Actions" id="actions"
 						className="pull-right" onSelect={this.actionSelect}>
-						{canEdit && <MenuItem eventKey="edit" >Edit Report</MenuItem>}
+						{canEdit && <MenuItem eventKey="edit">Edit report</MenuItem>}
 						{canSubmit && errors.length === 0 && <MenuItem eventKey="submit">Submit</MenuItem>}
-						{canEmail && <MenuItem eventKey="email" onClick={this.toggleEmailModal}>Email Report</MenuItem>}
+						{canEmail && <MenuItem eventKey="email" onClick={this.toggleEmailModal}>Email report</MenuItem>}
 
-						{canDelete && <MenuItem divider /> }
-						{canDelete && <MenuItem eventKey="delete" >Delete Report</MenuItem> }
+						{canDelete && <MenuItem divider />}
+						{canDelete && <MenuItem eventKey="delete" >Delete report</MenuItem> }
 					</DropdownButton>
 				</div>
 
@@ -348,8 +348,8 @@ export default class ReportShow extends Page {
 			/>
 
 			<Button bsStyle="danger" onClick={this.rejectReport}>Reject with comment</Button>
-			<Button onClick={this.actionSelect.bind(this, "edit")} >Edit report</Button>
 			<div className="right-button">
+				<Button onClick={this.actionSelect.bind(this, "edit")}>Edit report</Button>
 				<Button bsStyle="primary" onClick={this.approveReport}><strong>Approve</strong></Button>
 			</div>
 		</fieldset>
