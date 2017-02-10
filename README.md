@@ -94,22 +94,30 @@ but cannot guarantee that the SQLite code will exactly match the SQL Server.
 		INFO  [2017-02-10 16:44:59,902] org.eclipse.jetty.server.Server: Started @4098ms
 		> Building 75% > :run
 		```
-1. You should now be able to go to [http://localhost:8080/](http://localhost:8080/) in your browser. You will get an error about a missing `index.ftl` file; this is expected and means the backend server is working. The error looks like:
-	```
-	ERROR [2017-02-10 16:49:33,967] javax.ws.rs.ext.MessageBodyWriter: Template Error
-	! freemarker.template.TemplateNotFoundException: Template not found for name "/views/index.ftl".
-	```
+1. Go to [http://localhost:8080/](http://localhost:8080/) in your browser.
+	- When prompted for credentials:
+		- **Username:** `erin`
+		- **Password:** Leave it blank
+	- You will get an error about a missing `index.ftl` file; this is expected and means the backend server is working. The error looks like:
+		```
+		ERROR [2017-02-10 16:49:33,967] javax.ws.rs.ext.MessageBodyWriter: Template Error
+		! freemarker.template.TemplateNotFoundException: Template not found for name "/views/index.ftl".
+		```
 
-	The web page will look like: 
-	![template error screenshot](https://cloud.githubusercontent.com/assets/829827/22835654/76cef650-ef87-11e6-92e1-ad8a5d64832b.png)
+		The web page will look like: 
+		![template error screenshot](https://cloud.githubusercontent.com/assets/829827/22835654/76cef650-ef87-11e6-92e1-ad8a5d64832b.png)
+1. If you want to see the app running, continue to the [React Frontend](#react-frontend) instructions.
 
 ## React Frontend
 ### Initial Setup
 1. Make sure you have node.js v7.x installed: ( http://nodejs.org )
-2. `cd client/`
+1. `cd client/`
     - All of the frontend code is in the `client/` directory. 
-3. Install the development dependencies: `npm install`
-4. Run the server: `npm start`
+1. Install the development dependencies: `npm install`
+1. Run the server: `npm start`
+	- When prompted for credentials:
+		- **Username:** `erin`
+		- **Password:** Leave it blank
 
 NB: You only need node.js and the npm dependencies for developing. When we deploy
 for production, everything is compiled to static files. No javascript dependencies
