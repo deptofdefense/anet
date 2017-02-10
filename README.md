@@ -80,6 +80,20 @@ but cannot guarantee that the SQLite code will exactly match the SQL Server.
 1. Run `./gradlew build` to download all dependencies and build the project.
 	- Some tests will fail if you are using SQLite, because it has a bad implementation of some timezone stuff. You'll need to use MSSQL to see all the tests passing.
 
+#### The Base Data Set
+Provided with the ANET source code is the file `insertBaseData.sql`.  This file contains a series of raw SQL commands that insert some sample data into the database that is both required in order to pass all the unit tests, and also helpful for quickly developing and testing new features.  The Base Data Set includes a set of fake users, organizations, locations, and reports.  Here are some of the accounts that you can use to log in and test with: 
+
+| User | username | organization | position | role |
+|------|----------|--------------|----------|------|
+| Erin Erinson | erin | EF2.2 | EF2.2 Advisor D | Advisor who can also approve their own reports
+| Rebecca Beccabon | rebecca | EF2.2 | EF2.2 Final Reviewer | Super User
+| Arthur Dmin | arthur | ANET Admins | ANET Administrator | Administrator
+| Jack Jackson | jack | EF2.1 | EF2.1 Advisor B | Advisor
+| Henry Henderson | henry | EF2.1 | EF2.1 SuperUser | Super User
+| Steve Steveson | | MoD | Cost Adder | Principal
+
+To log in as one of the base data users, when prompted for a username and password, just enter their name as the username and leave the password blank. 
+
 #### Developing
 1. Run `./gradlew dbMigrate` whenever you pull new changes to migrate the database.
 	- You may need to occasionally destroy, re-migrate, and re-seed your database if it has fallen too far out of sync with master. TODO: How do you destroy the database?
@@ -104,8 +118,8 @@ but cannot guarantee that the SQLite code will exactly match the SQL Server.
 		! freemarker.template.TemplateNotFoundException: Template not found for name "/views/index.ftl".
 		```
 
-		The web page will look like: 
-		![template error screenshot](https://cloud.githubusercontent.com/assets/829827/22835654/76cef650-ef87-11e6-92e1-ad8a5d64832b.png)
+		The web page will say ***Template Error***
+
 1. If you want to see the app running, continue to the [React Frontend](#react-frontend) instructions.
 
 ### React Frontend

@@ -22,6 +22,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>focus</td>
+	<td>id=intent</td>
+	<td></td>
+</tr>
+<tr>
 	<td>sendKeys</td>
 	<td>id=intent</td>
 	<td>Test out ANET</td>
