@@ -6,6 +6,8 @@ backend via XMLHttpRequest (ajax). The backend is a Java application based the D
 framework that runs on a JVM and utilizes Microsoft SQL Server for
 its database.
 
+See [DOCUMENTATION.md](./DOCUMENTATION.md) and [INSTALL.md](./INSTALL.md) for additional information.
+
 This README is divided into three pieces:
 
 1. [Getting your Development Environment Set Up](#setting-up-your-developer-environment-eclipse-gradle-node-chromefirefox)
@@ -92,10 +94,16 @@ but cannot guarantee that the SQLite code will exactly match the SQL Server.
 		INFO  [2017-02-10 16:44:59,902] org.eclipse.jetty.server.Server: Started @4098ms
 		> Building 75% > :run
 		```
-1. You should now be able to go to [http://localhost:8080/](http://localhost:8080/) in your browser. You will get an error about a missing `index.ftl` file; this is expected and means the backend server is working. 	
+1. You should now be able to go to [http://localhost:8080/](http://localhost:8080/) in your browser. You will get an error about a missing `index.ftl` file; this is expected and means the backend server is working. The error looks like:
+	```
+	ERROR [2017-02-10 16:49:33,967] javax.ws.rs.ext.MessageBodyWriter: Template Error
+	! freemarker.template.TemplateNotFoundException: Template not found for name "/views/index.ftl".
+	```
+
+	The web page will look like: 
+	![template error screenshot](https://cloud.githubusercontent.com/assets/829827/22835654/76cef650-ef87-11e6-92e1-ad8a5d64832b.png)
 
 ## React Frontend
-
 ### Initial Setup
 1. Make sure you have node.js v7.x installed: ( http://nodejs.org )
 2. `cd client/`
