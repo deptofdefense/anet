@@ -5,7 +5,8 @@ import Autocomplete from 'components/Autocomplete'
 import Form from 'components/Form'
 import {Table, Button, HelpBlock} from 'react-bootstrap'
 
-import REMOVE_ICON from "resources/close.png"
+import REMOVE_ICON from "resources/delete.png"
+import WARNING_ICON from "resources/warning.png"
 
 export default class PoamsSelector extends Component {
 	static propTypes = {
@@ -33,7 +34,10 @@ export default class PoamsSelector extends Component {
 					onChange={this.addPoam}
 					onErrorChange={this.props.onErrorChange}
 					clearOnSelect={true} />
-				{validationState && <HelpBlock>PoAM not found in Database</HelpBlock>}
+				{validationState && <HelpBlock>
+					<img src={WARNING_ICON} role="presentation" height="20px" />
+					PoAM not found in Database
+				</HelpBlock>}
 				<Table hover striped>
 					<thead>
 						<tr>

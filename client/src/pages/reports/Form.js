@@ -19,7 +19,8 @@ import LOCATION_ICON from "resources/locations.png"
 import POSITIVE_ICON from "resources/thumbs_up.png"
 import NEUTRAL_ICON from "resources/neutral.png"
 import NEGATIVE_ICON from "resources/thumbs_down.png"
-import REMOVE_ICON from "resources/close.png"
+import REMOVE_ICON from "resources/delete.png"
+import WARNING_ICON from "resources/warning.png"
 
 export default class ReportForm extends Component {
 	static propTypes = {
@@ -101,7 +102,10 @@ export default class ReportForm extends Component {
 
 				<Form.Field id="location" addon={LOCATION_ICON} validationState={errors.location}>
 					<Autocomplete valueKey="name" placeholder="Start typing to search for the location where this happened..." url="/api/locations/search" />
-					{errors.location && <HelpBlock><b>Location not found in database</b></HelpBlock>}
+					{errors.location && <HelpBlock><b>
+						<img src={WARNING_ICON} role="presentation" height="20px" />
+						Location not found in database
+					</b></HelpBlock>}
 
 					<Form.Field.ExtraCol className="shortcut-list">
 						{recents.locations && recents.locations.length > 0 &&
@@ -153,7 +157,10 @@ export default class ReportForm extends Component {
 						}
 						placeholder="Start typing to search for people who attended the meeting..."
 						valueKey="name" />
-					{errors.attendees && <HelpBlock>Help text with validation state.</HelpBlock> }
+					{errors.attendees && <HelpBlock>
+						<img src={WARNING_ICON} role="presentation" height="20px" />
+						Person not found in ANET Database.
+					</HelpBlock> }
 					<Table hover striped>
 						<thead>
 							<tr>
