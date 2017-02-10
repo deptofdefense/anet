@@ -12,6 +12,8 @@ public class ReportSearchQuery implements ISearchQuery {
 	DateTime engagementDateEnd;
 	DateTime createdAtStart;
 	DateTime createdAtEnd;
+	DateTime releasedAtStart;
+	DateTime releasedAtEnd;
 	Integer attendeeId;
 	Integer authorOrgId;
 	boolean includeAuthorOrgChildren;
@@ -76,6 +78,22 @@ public class ReportSearchQuery implements ISearchQuery {
 
 	public void setCreatedAtEnd(DateTime createdAtEnd) {
 		this.createdAtEnd = createdAtEnd;
+	}
+
+	public DateTime getReleasedAtStart() {
+		return releasedAtStart;
+	}
+
+	public void setReleasedAtStart(DateTime releasedAtStart) {
+		this.releasedAtStart = releasedAtStart;
+	}
+
+	public DateTime getReleasedAtEnd() {
+		return releasedAtEnd;
+	}
+
+	public void setReleasedAtEnd(DateTime releasedAtEnd) {
+		this.releasedAtEnd = releasedAtEnd;
 	}
 
 	public Integer getAttendeeId() {

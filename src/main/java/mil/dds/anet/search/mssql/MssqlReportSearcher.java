@@ -66,6 +66,15 @@ public class MssqlReportSearcher implements IReportSearcher {
 			args.put("endCreatedAt", query.getCreatedAtEnd());
 		}
 		
+		if (query.getReleasedAtStart() != null) { 
+			whereClauses.add("reports.releasedAt >= :releasedAtStart");
+			args.put("releasedAtStart", query.getReleasedAtStart());
+		}
+		if (query.getReleasedAtEnd() != null) { 
+			whereClauses.add("reports.releasedAt <= :releasedAtEnd");
+			args.put("releasedAtEnd", query.getReleasedAtEnd());
+		}
+		
 		if (query.getAttendeeId() != null) { 
 			whereClauses.add("reports.id IN (SELECT reportId from reportPeople where personId = :attendeeId)");
 			args.put("attendeeId", query.getAttendeeId());

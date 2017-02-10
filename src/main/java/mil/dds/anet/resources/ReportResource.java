@@ -24,6 +24,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;
+import org.joda.time.DateTime;
 
 import com.codahale.metrics.annotation.Timed;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -342,6 +343,7 @@ public class ReportResource implements IGraphQLResource {
 		if (step.getNextStepId() == null) {
 			//Done with approvals, move to released (or cancelled) state! 
 			r.setState((r.getCancelledReason() != null) ? ReportState.CANCELLED : ReportState.RELEASED);
+			r.setReleasedAt(DateTime.now());
 			sendReportReleasedEmail(r);
 		} else {
 			sendApprovalNeededEmail(r);
@@ -520,6 +522,9 @@ public class ReportResource implements IGraphQLResource {
 	@GraphQLFetcher
 	@Path("/releasedToday")
 	public ReportList releasedToday() {
-		return new ReportList(dao.getRecentReleased());
+		ReportSearchQuery query = new ReportSearchQuery();
+		query.setReleasedAtStart(new DateTime().minusDays(1));
+		query.setEngagementDateStart(new DateTime().minusDays(14));
+		return dao.search(query);
 	}
 }

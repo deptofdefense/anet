@@ -34,6 +34,11 @@ public class ReportMapper implements ResultSetMapper<Report> {
 			r.setEngagementDate(new DateTime(engagementDate));
 		}
 		
+		Timestamp releasedAt = rs.getTimestamp("reports_releasedAt");
+		if (engagementDate != null) { 
+			r.setReleasedAt(new DateTime(releasedAt));
+		}
+		
 		Integer locationId = MapperUtils.getInteger(rs, "reports_locationId");
 		if (locationId != null) { 
 			Location l = Location.createWithId(locationId);

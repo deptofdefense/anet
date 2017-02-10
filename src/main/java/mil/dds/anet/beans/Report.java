@@ -25,6 +25,7 @@ public class Report extends AbstractAnetBean {
 
 	ApprovalStep approvalStep;
 	ReportState state;
+	DateTime releasedAt;
 	
 	DateTime engagementDate;
 	Location location;
@@ -73,6 +74,14 @@ public class Report extends AbstractAnetBean {
 
 	public void setState(ReportState state) {
 		this.state = state;
+	}
+
+	public DateTime getReleasedAt() {
+		return releasedAt;
+	}
+
+	public void setReleasedAt(DateTime releasedAt) {
+		this.releasedAt = releasedAt;
 	}
 
 	public DateTime getEngagementDate() {

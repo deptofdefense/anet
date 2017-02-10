@@ -13,14 +13,11 @@ import org.skife.jdbi.v2.TransactionCallback;
 import org.skife.jdbi.v2.TransactionStatus;
 
 import mil.dds.anet.AnetObjectEngine;
-import mil.dds.anet.beans.ApprovalAction.ApprovalType;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Organization.OrganizationType;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
-import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Report;
-import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.ReportList;
 import mil.dds.anet.beans.search.ReportSearchQuery;
@@ -33,7 +30,7 @@ public class ReportDao implements IAnetDao<Report> {
 
 	private static String[] fields = { "id", "state", "createdAt", "updatedAt", "engagementDate",
 			"locationId", "approvalStepId", "intent", "exsum", "atmosphere", "cancelledReason",
-			"advisorOrganizationId", "principalOrganizationId",
+			"advisorOrganizationId", "principalOrganizationId", "releasedAt",
 			"atmosphereDetails", "text", "keyOutcomes",
 			"nextSteps", "authorId"};
 	private static String tableName = "reports";
@@ -75,16 +72,16 @@ public class ReportDao implements IAnetDao<Report> {
 		StringBuilder sql = new StringBuilder("INSERT INTO reports "
 				+ "(state, createdAt, updatedAt, locationId, intent, exsum, "
 				+ "text, keyOutcomes, nextSteps, authorId, "
-				+ "engagementDate, atmosphere, cancelledReason, "
+				+ "engagementDate, releasedAt, atmosphere, cancelledReason, "
 				+ "atmosphereDetails, advisorOrganizationId, "
 				+ "principalOrganizationId) VALUES "
 				+ "(:state, :createdAt, :updatedAt, :locationId, :intent, "
 				+ ":exsum, :reportText, :keyOutcomes, "
 				+ ":nextSteps, :authorId, ");
 		if (DaoUtils.isMsSql(dbHandle)) {
-			sql.append("CAST(:engagementDate AS datetime2), ");
+			sql.append("CAST(:engagementDate AS datetime2), CAST(:releasedAt AS datetime2), ");
 		} else {
-			sql.append(":engagementDate, ");
+			sql.append(":engagementDate, :releasedAt, ");
 		}
 		sql.append(":atmosphere, :cancelledReason, :atmosphereDetails, :advisorOrgId, :principalOrgId)");
 
@@ -148,9 +145,9 @@ public class ReportDao implements IAnetDao<Report> {
 				+ "keyOutcomes = :keyOutcomes, nextSteps = :nextSteps, "
 				+ "approvalStepId = :approvalStepId, ");
 		if (DaoUtils.isMsSql(dbHandle)) {
-			sql.append("engagementDate = CAST(:engagementDate AS datetime2), ");
+			sql.append("engagementDate = CAST(:engagementDate AS datetime2), releasedAt = CAST(:releasedAt AS datetime2), ");
 		} else {
-			sql.append("engagementDate = :engagementDate, ");
+			sql.append("engagementDate = :engagementDate, releasedAt = :releasedAt, ");
 		}
 		sql.append("atmosphere = :atmosphere, atmosphereDetails = :atmosphereDetails, "
 				+ "cancelledReason = :cancelledReason, " 
@@ -267,35 +264,6 @@ public class ReportDao implements IAnetDao<Report> {
 			.bind("personId", p.getId())
 			.bind("limit", pageSize)
 			.bind("offset", pageNum * pageSize)
-			.map(new ReportMapper())
-			.list();
-	}
-
-	DateTimeFormatter sqlitePattern = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-
-
-	public List<Report> getRecentReleased() {
-		String sql = "SELECT " + REPORT_FIELDS + ", " + PersonDao.PERSON_FIELDS
-			+ "FROM reports "
-			+ "JOIN approvalActions ON approvalActions.reportId = reports.id "
-			+ "JOIN people ON reports.authorId = people.id "
-			+ "WHERE approvalActions.type = :approvalType "
-			+ "AND reports.state IN (:releasedState, :cancelledState) ";
-		if (DaoUtils.isMsSql(dbHandle)) {
-			sql +=  "AND approvalActions.createdAt > :startTime "
-				+ "AND reports.engagementDate > :twoWeeksAgo ";
-		} else {
-			sql +=  "AND approvalActions.createdAt > :startTimeSqlite "
-					+ "AND reports.engagementDate > :twoWeeksAgoSqlite ";
-		}
-		return dbHandle.createQuery(sql)
-			.bind("approvalType", DaoUtils.getEnumId(ApprovalType.APPROVE))
-			.bind("releasedState", DaoUtils.getEnumId(ReportState.RELEASED))
-			.bind("cancelledState", DaoUtils.getEnumId(ReportState.CANCELLED))
-			.bind("startTime", DateTime.now().minusDays(1))
-			.bind("twoWeeksAgo", DateTime.now().minusDays(14))
-			.bind("startTimeSqlite", sqlitePattern.print(DateTime.now().minusDays(1)))
-			.bind("twoWeeksAgoSqlite", sqlitePattern.print(DateTime.now().minusDays(14)))
 			.map(new ReportMapper())
 			.list();
 	}

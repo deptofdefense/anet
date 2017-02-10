@@ -1,23 +1,31 @@
+##############################################################
+#### ANET Server Configuration 
+##############################################################
+
+# Flag to run the server in development mode
+# - Will use Basic authentication (rather than Windows Domain Auth)
+# - Will reload the GraphQL Graph on every request. 
 developmentMode: true
 
+# Settings for the SMTP server to send email 
 smtp:
   hostname: ${ANET_SMTP_SERVER}
   port: 25
   username: ${ANET_SMTP_USERNAME}
   password: ${ANET_SMTP_PASSWORD}
   startTls: true
+
+# The email address that all automated emails should come from. 
+# ex: "ANET <anet@example.com>"
 emailFromAddr: "Anet Testing <hunter+anet@dds.mil>"
+
+# The URL that should be used for links in emails
+# ex:  "http://anet.yourdomain"
+# Should not include an ending slash! 
 serverUrl: "http://localhost:3000"
 
-database:
-  driverClass: ${ANET_DB_DRIVER}
-  user: ${ANET_DB_USERNAME}
-  password: ${ANET_DB_PASSWORD}
-  url: ${ANET_DB_URL}
-  properties:
-   date_string_format: ${ANET_DB_DATE_STRING_FORMAT}
-   date_class: ${ANET_DB_DATE_CLASS}
-
+# Configuration for Waffle. This is the system that ANET uses to perform windows authentication
+# See https://github.com/Waffle/waffle
 waffleConfig:
   principalFormat: fqn
   roleFormat: both
@@ -28,7 +36,25 @@ waffleConfig:
   #"waffle.servlet.spi.NegotiateSecurityFilterProvider/protocols": Negotiate NTLM
   "waffle.servlet.spi.BasicSecurityFilterProvider/realm": ANET
 
+########################################################
+### The below is the default Dropwizard Configuration
+### See http://www.dropwizard.io/1.0.6/docs/manual/configuration.html#man-configuration
+### For all of the possible configuration options. 
+#########################################################
+# Configuration for the database Server
+# See http://www.dropwizard.io/1.0.6/docs/manual/jdbi.html#configuration
+database:
+  driverClass: ${ANET_DB_DRIVER}
+  user: ${ANET_DB_USERNAME}
+  password: ${ANET_DB_PASSWORD}
+  url: ${ANET_DB_URL}
+  properties:
+   date_string_format: ${ANET_DB_DATE_STRING_FORMAT}
+   date_class: ${ANET_DB_DATE_CLASS}
 
+
+# Configuration for the web servers HTTP connectors. 
+# See http://www.dropwizard.io/1.0.6/docs/manual/core.html#configuration
 server:
   applicationConnectors:
     - type: http
@@ -38,10 +64,12 @@ server:
 #      keyStorePath: example.keystore
 #      keyStorePassword: example
 #      validateCerts: false
+# The AdminConnector is used for administrative functions of Dropwizard and should not be exposed to users. 
   adminConnectors:
     - type: http
       port: 8081
 
+# Configuration for the Freemarker templating library
 views:
   .ftl:
     number_format: computer

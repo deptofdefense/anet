@@ -285,6 +285,13 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		assertThat(commentsReturned).hasSize(3); //the rejection comment will be there as well.
 		assertThat(commentsReturned).containsSequence(commentOne, commentTwo); //Assert order of comments!
 
+		//Verify this report shows up in the daily rollup
+		ReportSearchQuery query = new ReportSearchQuery();
+		query.setReleasedAtStart(DateTime.now().minusDays(1));
+		ReportList rollup = httpQuery("/api/reports/search", admin).post(Entity.json(query), ReportList.class);
+		assertThat(rollup.getTotalCount()).isGreaterThan(0);
+		assertThat(rollup.getList()).contains(returned);
+		
 		//Search for this report by Author
 		//Search for this report by Advisor
 		//Search for this report by Location

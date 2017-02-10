@@ -544,4 +544,12 @@
 		</addColumn>
 	</changeSet>
 
+	<changeSet id="27" author="hpitelka" >
+		<addColumn tableName="reports">
+			<column name="releasedAt" type="datetime" />
+		</addColumn>
+		<sql dbms="mssql">
+			ALTER TABLE reports ALTER COLUMN releasedAt datetime2;
+		</sql>
+	</changeSet>
 </databaseChangeLog>
