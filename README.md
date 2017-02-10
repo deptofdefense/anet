@@ -6,6 +6,8 @@ backend via XMLHttpRequest (ajax). The backend is a Java application based the D
 framework that runs on a JVM and utilizes Microsoft SQL Server for
 its database.
 
+See [DOCUMENTATION.md](./DOCUMENTATION.md) and [INSTALL.md](./INSTALL.md) for additional information.
+
 This README is divided into three pieces:
 
 1. [Getting your Development Environment Set Up](#setting-up-your-developer-environment-eclipse-gradle-node-chromefirefox)
@@ -15,84 +17,112 @@ This README is divided into three pieces:
 ## Setting up your Developer Environment (Eclipse, gradle, node, Chrome/Firefox)
 This section describes the recommended Developer Environment and how to set it up.  You are welcome to use any other tools you prefer. 
 
-- Download [Eclipse](http://www.eclipse.org/downloads/).  Eclipse is a Java IDE.  It can be downloaded as an installer or as a .zip file that does not require installation.  
+### Download Software
+Download the following:
+
+- [Eclipse](http://www.eclipse.org/downloads/).  Eclipse is a Java IDE.  It can be downloaded as an installer or as a .zip file that does not require installation.  
 	- When the installer asks which version you'd like to install, choose "Eclipse IDE for Java Developers".
-- Download a [JDK v1.8](http://www.oracle.com/technetwork/java/javase/downloads/index.html).  This can also be either installed, or downloaded as a .zip.  If you do not use the installer, be sure to set the `JAVA_HOME` environment variable to the location of the JDK. 
-- Download [node.js 7.x](https://nodejs.org/en/)
-- Download [git](https://git-scm.com/).  While this is not required, it is highly recommended if you will be doing active development on ANET. 
-- Checkout the [source code](https://github.com/deptofdefense/anet) from github. 
-```
+- [JDK v1.8](http://www.oracle.com/technetwork/java/javase/downloads/index.html).  This can also be either installed, or downloaded as a .zip.  If you do not use the installer, be sure to set the `JAVA_HOME` environment variable to the location of the JDK. 
+- [node.js 7.x](https://nodejs.org/en/).
+- [git](https://git-scm.com/).  While this is not required, it is highly recommended if you will be doing active development on ANET. 
+
+### Get source code
+- Checkout the [source code](https://github.com/deptofdefense/anet) from github.
+	```
 	git clone git@github.com:deptofdefense/anet.git
-```
-- Open a command line in the `anet` directory that was retrieved from github.  
-  - Run `./gradlew eclipse` (linux/mac) or `./gradlew.bat eclipse` (windows) to download all the java dependencies.  This can take several minutes depending on your internet connection.
-- Change Directories into the `client/` directory
-  - Run `npm install`  to download all the javascript dependencies.  This can take several minutes depending on your internet connection.
-- Open eclipse
-  - Import the `anet/` directory into eclipse as a new project.
-  - Ensure there are no compile errors. If there are, you are probably missing dependencies. Try re-running `./gradlew eclipse`. 
-- Update the settings in `anet.yml` for your environment.  See the section on ANET Configuration for more details on these configuration options. 
+	```
 
-## Java Backend
+#### Possible Problems
+- **You cannot access [the source code repo](https://github.com/deptofdefense/anet).** Solution: Get someone who does have admin access to add you as a collaborator.
+- **The git clone command takes a long time, then fails.** Solution: Some networks block ssh. Try connecting to a different network.
 
-### Initial Setup
-1. `touch localSettings.gradle`. This will be a file for all of your local settings and passwords
-that should not be checked into the GitHub.
-2. You can either use SQLite or Microsoft SQL Server for your database. The former allows you
+### Set Up Workspace
+1. Open a command line in the `anet` directory that was retrieved from github.  
+	1. Create a new empty file at `localSettings.gradle`. (`touch localSettings.gradle` on linux/mac).  This will be a file for all of your local settings and passwords that should not be checked into the GitHub.
+	1. Run `./gradlew eclipse` (linux/mac) or `./gradlew.bat eclipse` (windows) to download all the java dependencies.  This can take several minutes depending on your internet connection.
+1. Change Directories into the `client/` directory
+	1. Run `npm install`  to download all the javascript dependencies.  This can take several minutes depending on your internet connection. If the command hangs, it may be because your network blocks ssh. Try the command again on a different network.
+1. Open Eclipse
+	1. Eclipse will ask you for a `workspace` directory. You can choose any empty directory.
+	1. Import the `anet/` directory into eclipse as a new project.
+	1. Ensure there are no compile errors. If there are, you are probably missing dependencies. Try re-running `./gradlew eclipse`. 
+	1. The main method is in `mil.dds.anet.AnetApplication`.
+1. Update the settings in `anet.yml` for your environment.  See the section on ANET Configuration for more details on these configuration options. 
+
+### Java Backend
+
+#### Initial Setup
+1. You can either use SQLite or Microsoft SQL Server for your database. The former allows you
 to run entirely on your local machine and develop offline. The latter allows you to test on
 the same database and feature set that production will use. We do our best to support both
 but cannot guarantee that the SQLite code will exactly match the SQL Server.
-	- SQLite:
-		- this is currently the default, so you don't need to do anything special
+	- SQLite
+		- This is currently the default, so you don't need to do anything special
 		- To re-force gradle to use SQLite you can set the `DB_DRIVER` environment variable to `sqlite` (e.g. `export DB_DRIVER=sqlite`)
-	- MSSQL:
+	- MSSQL
 		- Run the gradle commands in the rest of this document with the DB_DRIVER env variable (e.g.
 		`DB_DRIVER=sqlserver ./gradlew run`)
 		- Paste the following in your `localSettings.gradle` file (with the correct values):
 
-```gradle
-	run.environment("ANET_DB_USERNAME","username")
-	run.environment("ANET_DB_PASSWORD", "password")
-	run.environment("ANET_DB_SERVER", "db server hostname")
-	run.environment("ANET_DB_NAME","database name")
-```
+			```java
+			run.environment("ANET_DB_USERNAME","username")
+			run.environment("ANET_DB_PASSWORD", "password")
+			run.environment("ANET_DB_SERVER", "db server hostname")
+			run.environment("ANET_DB_NAME","database name")
+			```
 
-3. Open anet.yml and make sure the port settings look good for you. If you change the port, also update the "proxy" field in `client/package.json`.
-4. Run `./gradlew build` to download all dependencies and build the project.
-5. Run `./gradlew dbMigrate` to build and migrate the database.
+1. Open `anet.yml` and make sure the port settings look good for you. If you change the port, also update the "proxy" field in `client/package.json`.
+1. Run `./gradlew dbMigrate` to build and migrate the database.
 	- The database schema is stored in `src/main/resources/migrations.xml`.
-6. Seed the initial data:
+1. Seed the initial data:
 	- SQLite: `cat insertBaseData.sql | ./mssql2sqlite.sh | sqlite3 development.db`
 	- MSSQL: You'll need to manually connect to your sqlserver instance and run `insertBaseData.sql`
+1. Run `./gradlew build` to download all dependencies and build the project.
+	- Some tests will fail if you are using SQLite, because it has a bad implementation of some timezone stuff. You'll need to use MSSQL to see all the tests passing.
 
-### Developing
+#### Developing
 1. Run `./gradlew dbMigrate` whenever you pull new changes to migrate the database.
-	- You may need to occasionally destroy, re-migrate, and re-seed your database if it has fallen too far out of sync with master.
-2. Run `./gradlew run` to run the server.
-3. You should now be able to go to [http://localhost:8080/](http://localhost:8080/) in your browser. You will get an error about a missing index.ftl file; this is expected and means the backend server is working. 
+	- You may need to occasionally destroy, re-migrate, and re-seed your database if it has fallen too far out of sync with master. TODO: How do you destroy the database?
+1. Run `./gradlew run` to run the server.
+	- You can ignore exceptions like the following, because the SMTP server is not necessary for local development:
+		```
+		ERROR [2017-02-10 16:39:38,044] mil.dds.anet.AnetEmailWorker: Sending email to [hunter+liz@dds.mil] re: ANET Report Approved
+		javax.mail.MessagingException: Unknown SMTP host: ${ANET_SMTP_SERVER};
+		```
+	- The following output indicates that the server is ready:
+		```
+		INFO  [2017-02-10 16:44:59,902] org.eclipse.jetty.server.Server: Started @4098ms
+		> Building 75% > :run
+		```
+1. Go to [http://localhost:8080/](http://localhost:8080/) in your browser.
+	- When prompted for credentials:
+		- **Username:** `erin`
+		- **Password:** Leave it blank
+	- You will get an error about a missing `index.ftl` file; this is expected and means the backend server is working. The error looks like:
+		```
+		ERROR [2017-02-10 16:49:33,967] javax.ws.rs.ext.MessageBodyWriter: Template Error
+		! freemarker.template.TemplateNotFoundException: Template not found for name "/views/index.ftl".
+		```
 
-- If you're doing backend development, we recommend using the Eclipse development environment:
-	- Run `./gradlew eclipse` to build the Eclipse classpath.
-	- Create a new project in Eclipse from the directory you checked out this repositoy to. Eclipse should automatically pick up the project definition.
-	- The main method is in `mil.dds.anet.AnetApplication`.
+		The web page will look like: 
+		![template error screenshot](https://cloud.githubusercontent.com/assets/829827/22835654/76cef650-ef87-11e6-92e1-ad8a5d64832b.png)
+1. If you want to see the app running, continue to the [React Frontend](#react-frontend) instructions.
 
-## React Frontend
-
-### Initial Setup
+### React Frontend
+#### Initial Setup
 1. Make sure you have node.js v7.x installed: ( http://nodejs.org )
-2. `cd client/`
+1. `cd client/`
     - All of the frontend code is in the `client/` directory. 
-3. Install the development dependencies: `npm install`
-4. Run the server: `npm start`
+1. Install the development dependencies: `npm install`
+1. Run the server: `npm start`
+1. Go to [http://localhost:3000/](http://localhost:3000/) in your browser.
+	- When prompted for credentials:
+		- **Username:** `erin`
+		- **Password:** Leave it blank
 
 NB: You only need node.js and the npm dependencies for developing. When we deploy
 for production, everything is compiled to static files. No javascript dependencies
 are necessary on the server.
-
-### Developing
-1. Run `npm install` to make sure your dependencies are up to date.
-2. Run `npm start` to start the dev server.
-3. Go to [http://localhost:3000/](http://localhost:3000/) in your browser.
 
 ## Java Application Server
 This section will describe how the ANET2 Application Server works and the various components.  Two major frameworks that we use are:
@@ -256,7 +286,7 @@ Selenium makes a plug-in for Firefox that lets you record the actions you take o
 6. update the bean tests to include having this property and update the src/test/resources/testJson to include the property. 
 5. Update the resource unit tests to try setting, fetching, and updating the property. 
 
-##Map Layers
+### Map Layers
 
 Set the `MAP_LAYERS` admin Setting to a JSON object that looks like this: 
 

@@ -35,4 +35,6 @@ build/
 bin/
 localSettings.gradle
 
+.metadata/
+
 .DS_Store
