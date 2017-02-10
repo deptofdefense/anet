@@ -1,4 +1,5 @@
-import React, {Component} from 'react'
+import React, {Component, PropTypes} from 'react'
+import {Table, Button, Pagination} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
 import ReportSummary from 'components/ReportSummary'
@@ -6,7 +7,6 @@ import ReportTable from 'components/ReportTable'
 import ButtonToggleGroup from 'components/ButtonToggleGroup'
 import Leaflet from 'components/Leaflet'
 
-import {Table, Button} from 'react-bootstrap'
 
 const FORMAT_SUMMARY = 'summary'
 const FORMAT_TABLE = 'table'
@@ -14,7 +14,9 @@ const FORMAT_MAP = 'map'
 
 export default class ReportCollection extends Component {
 	static propTypes = {
-		reports: React.PropTypes.array.isRequired
+		reports: PropTypes.array.isRequired,
+		pageSize: PropTypes.number,
+		pageNum: PropTypes.number,
 	}
 
 	constructor(props) {
@@ -27,20 +29,40 @@ export default class ReportCollection extends Component {
 
 
 	render() {
-		if (this.props.reports.length === 0) {
+		let {reports, pageSize, pageNum} = this.props
+		pageSize = 1
+		pageNum = 1
+
+		if (!reports.length) {
 			return <div>No Reports Found</div>
 		}
+
+		const numPages = Math.ceil(reports.length / pageSize)
+
 		return <div>
-			<div style={{height:"50px"}} >
+			<div style={{height:'50px'}}>
 				<ButtonToggleGroup value={this.state.viewFormat} onChange={this.changeViewFormat} className="pull-right">
 					<Button value={FORMAT_SUMMARY}>Summary</Button>
 					<Button value={FORMAT_TABLE}>Table</Button>
 					<Button value={FORMAT_MAP}>Map</Button>
 				</ButtonToggleGroup>
 			</div>
-			{this.state.viewFormat === FORMAT_TABLE && this.renderTable() }
-			{this.state.viewFormat === FORMAT_SUMMARY && this.renderSummary() }
-			{this.state.viewFormat === FORMAT_MAP && this.renderMap() }
+
+			{this.state.viewFormat === FORMAT_TABLE && this.renderTable()}
+			{this.state.viewFormat === FORMAT_SUMMARY && this.renderSummary()}
+			{this.state.viewFormat === FORMAT_MAP && this.renderMap()}
+
+			{numPages > 1 &&
+				<Pagination
+					prev={pageNum > 1}
+					next={pageNum < numPages}
+					items={numPages}
+					ellipsis={numPages > 10}
+					maxButtons={10}
+					activePage={pageNum}
+					onSelect={this.goToPage}
+				/>
+			}
 		</div>
 	}
 
@@ -75,6 +97,7 @@ export default class ReportCollection extends Component {
 		this.setState({viewFormat: value})
 	}
 
+	goToPage(pageNum) {
+
+	}
 }
-
-
