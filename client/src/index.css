@@ -209,3 +209,22 @@ a.home-tile {
 .report-approval button {
 	margin-left: 24px;
 }
+
+.report-collection header {
+	margin-bottom: 18px;
+}
+
+.report-collection .pagination {
+	margin: 0;
+}
+
+.report-summary {
+	margin-top: 18px;
+	padding-top: 18px;
+	border-top: 1px solid #ccc;
+}
+
+.report-summary .read-full {
+	float: right;
+	margin-top: -38px;
+}

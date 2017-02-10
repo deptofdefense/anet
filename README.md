@@ -20,9 +20,9 @@ This section describes the recommended Developer Environment and how to set it u
 ### Download Software
 Download the following:
 
+- [JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/index.html).  This can also be either installed, or downloaded as a .zip.  If you do not use the installer, be sure to set the `JAVA_HOME` environment variable to the location of the JDK. 
 - [Eclipse](http://www.eclipse.org/downloads/).  Eclipse is a Java IDE.  It can be downloaded as an installer or as a .zip file that does not require installation.  
 	- When the installer asks which version you'd like to install, choose "Eclipse IDE for Java Developers".
-- [JDK v1.8](http://www.oracle.com/technetwork/java/javase/downloads/index.html).  This can also be either installed, or downloaded as a .zip.  If you do not use the installer, be sure to set the `JAVA_HOME` environment variable to the location of the JDK. 
 - [node.js 7.x](https://nodejs.org/en/).
 - [git](https://git-scm.com/).  While this is not required, it is highly recommended if you will be doing active development on ANET. 
 
@@ -44,10 +44,14 @@ Download the following:
 	1. Run `npm install`  to download all the javascript dependencies.  This can take several minutes depending on your internet connection. If the command hangs, it may be because your network blocks ssh. Try the command again on a different network.
 1. Open Eclipse
 	1. Eclipse will ask you for a `workspace` directory. You can choose any empty directory.
-	1. Import the `anet/` directory into eclipse as a new project.
-	1. Ensure there are no compile errors. If there are, you are probably missing dependencies. Try re-running `./gradlew eclipse`. 
-	1. The main method is in `mil.dds.anet.AnetApplication`.
-1. Update the settings in `anet.yml` for your environment.  See the section on ANET Configuration for more details on these configuration options. 
+	1. Import the `anet/` directory into eclipse as an existing project.
+	1. Run the project as a Java Application.  Open the Run Configuration and make sure:
+	       1. The main method is `mil.dds.anet.AnetApplication`
+	       1. Arguments includes `server anet.yml`
+	       1. Environment variables include anything set in build.gradle or localSettings.gradle.  If you are using sqlite as your database, this will include: `ANET_DB_DRIVER=org.sqlite.JDBC`, `ANET_DB_URL=jdbc:sqlite:development.db`, `ANET_DB_DATE_STRING_FORMAT=yyyy-MM-dd hh:mm:ss.SSS Z"`, `ANET_DB_DATE_CLASS=text`
+	1. Ensure there are no compile errors. If there are, you are probably missing dependencies or forgot to add gradle settings in Eclipse. Try re-running `./gradlew eclipse`. 
+1. Update the settings in `anet.yml` for your environment.  See the [ANET Configuration documentation](https://github.com/deptofdefense/anet/blob/master/DOCUMENTATION.md#anet-configuration) for more details on these configuration options. You are most likely to change:
+  1. `emailFromAddr` - use your own email address for testing.
 
 ### Java Backend
 
@@ -70,8 +74,6 @@ but cannot guarantee that the SQLite code will exactly match the SQL Server.
 			run.environment("ANET_DB_SERVER", "db server hostname")
 			run.environment("ANET_DB_NAME","database name")
 			```
-
-1. Open `anet.yml` and make sure the port settings look good for you. If you change the port, also update the "proxy" field in `client/package.json`.
 1. Run `./gradlew dbMigrate` to build and migrate the database.
 	- The database schema is stored in `src/main/resources/migrations.xml`.
 1. Seed the initial data:
