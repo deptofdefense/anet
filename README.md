@@ -26,9 +26,9 @@ Download the following:
 
 ### Get source code
 - Checkout the [source code](https://github.com/deptofdefense/anet) from github.
-```
+	```
 	git clone git@github.com:deptofdefense/anet.git
-```
+	```
 
 #### Possible Problems
 - **You cannot access [the source code repo](https://github.com/deptofdefense/anet).** Solution: Get someone who does have admin access to add you as a collaborator.
@@ -44,6 +44,7 @@ Download the following:
 	1. Eclipse will ask you for a `workspace` directory. You can choose any empty directory.
 	1. Import the `anet/` directory into eclipse as a new project.
 	1. Ensure there are no compile errors. If there are, you are probably missing dependencies. Try re-running `./gradlew eclipse`. 
+	1. The main method is in `mil.dds.anet.AnetApplication`.
 1. Update the settings in `anet.yml` for your environment.  See the section on ANET Configuration for more details on these configuration options. 
 
 ## Java Backend
@@ -61,12 +62,12 @@ but cannot guarantee that the SQLite code will exactly match the SQL Server.
 		`DB_DRIVER=sqlserver ./gradlew run`)
 		- Paste the following in your `localSettings.gradle` file (with the correct values):
 
-```java
-	run.environment("ANET_DB_USERNAME","username")
-	run.environment("ANET_DB_PASSWORD", "password")
-	run.environment("ANET_DB_SERVER", "db server hostname")
-	run.environment("ANET_DB_NAME","database name")
-```
+			```java
+			run.environment("ANET_DB_USERNAME","username")
+			run.environment("ANET_DB_PASSWORD", "password")
+			run.environment("ANET_DB_SERVER", "db server hostname")
+			run.environment("ANET_DB_NAME","database name")
+			```
 
 1. Open `anet.yml` and make sure the port settings look good for you. If you change the port, also update the "proxy" field in `client/package.json`.
 1. Run `./gradlew dbMigrate` to build and migrate the database.
@@ -75,17 +76,23 @@ but cannot guarantee that the SQLite code will exactly match the SQL Server.
 	- SQLite: `cat insertBaseData.sql | ./mssql2sqlite.sh | sqlite3 development.db`
 	- MSSQL: You'll need to manually connect to your sqlserver instance and run `insertBaseData.sql`
 1. Run `./gradlew build` to download all dependencies and build the project.
+	- Some tests will fail if you are using SQLite, because it has a bad implementation of some timezone stuff. You'll need to use MSSQL to see all the tests passing.
 
 ### Developing
 1. Run `./gradlew dbMigrate` whenever you pull new changes to migrate the database.
-	- You may need to occasionally destroy, re-migrate, and re-seed your database if it has fallen too far out of sync with master.
-2. Run `./gradlew run` to run the server.
-3. You should now be able to go to [http://localhost:8080/](http://localhost:8080/) in your browser. You will get an error about a missing index.ftl file; this is expected and means the backend server is working. 
-
-- If you're doing backend development, we recommend using the Eclipse development environment:
-	- Run `./gradlew eclipse` to build the Eclipse classpath.
-	- Create a new project in Eclipse from the directory you checked out this repositoy to. Eclipse should automatically pick up the project definition.
-	- The main method is in `mil.dds.anet.AnetApplication`.
+	- You may need to occasionally destroy, re-migrate, and re-seed your database if it has fallen too far out of sync with master. TODO: How do you destroy the database?
+1. Run `./gradlew run` to run the server.
+	- You can ignore exceptions like the following, because the SMTP server is not necessary for local development:
+		```
+		ERROR [2017-02-10 16:39:38,044] mil.dds.anet.AnetEmailWorker: Sending email to [hunter+liz@dds.mil] re: ANET Report Approved
+		javax.mail.MessagingException: Unknown SMTP host: ${ANET_SMTP_SERVER};
+		```
+	- The following output indicates that the server is ready:
+		```
+		INFO  [2017-02-10 16:44:59,902] org.eclipse.jetty.server.Server: Started @4098ms
+		> Building 75% > :run
+		```
+1. You should now be able to go to [http://localhost:8080/](http://localhost:8080/) in your browser. You will get an error about a missing `index.ftl` file; this is expected and means the backend server is working. 	
 
 ## React Frontend
 
