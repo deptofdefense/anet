@@ -49,9 +49,9 @@ Download the following:
 	1. The main method is in `mil.dds.anet.AnetApplication`.
 1. Update the settings in `anet.yml` for your environment.  See the section on ANET Configuration for more details on these configuration options. 
 
-## Java Backend
+### Java Backend
 
-### Initial Setup
+#### Initial Setup
 1. You can either use SQLite or Microsoft SQL Server for your database. The former allows you
 to run entirely on your local machine and develop offline. The latter allows you to test on
 the same database and feature set that production will use. We do our best to support both
@@ -80,7 +80,7 @@ but cannot guarantee that the SQLite code will exactly match the SQL Server.
 1. Run `./gradlew build` to download all dependencies and build the project.
 	- Some tests will fail if you are using SQLite, because it has a bad implementation of some timezone stuff. You'll need to use MSSQL to see all the tests passing.
 
-### Developing
+#### Developing
 1. Run `./gradlew dbMigrate` whenever you pull new changes to migrate the database.
 	- You may need to occasionally destroy, re-migrate, and re-seed your database if it has fallen too far out of sync with master. TODO: How do you destroy the database?
 1. Run `./gradlew run` to run the server.
@@ -108,13 +108,14 @@ but cannot guarantee that the SQLite code will exactly match the SQL Server.
 		![template error screenshot](https://cloud.githubusercontent.com/assets/829827/22835654/76cef650-ef87-11e6-92e1-ad8a5d64832b.png)
 1. If you want to see the app running, continue to the [React Frontend](#react-frontend) instructions.
 
-## React Frontend
-### Initial Setup
+### React Frontend
+#### Initial Setup
 1. Make sure you have node.js v7.x installed: ( http://nodejs.org )
 1. `cd client/`
     - All of the frontend code is in the `client/` directory. 
 1. Install the development dependencies: `npm install`
 1. Run the server: `npm start`
+1. Go to [http://localhost:3000/](http://localhost:3000/) in your browser.
 	- When prompted for credentials:
 		- **Username:** `erin`
 		- **Password:** Leave it blank
@@ -122,11 +123,6 @@ but cannot guarantee that the SQLite code will exactly match the SQL Server.
 NB: You only need node.js and the npm dependencies for developing. When we deploy
 for production, everything is compiled to static files. No javascript dependencies
 are necessary on the server.
-
-### Developing
-1. Run `npm install` to make sure your dependencies are up to date.
-2. Run `npm start` to start the dev server.
-3. Go to [http://localhost:3000/](http://localhost:3000/) in your browser.
 
 ## Java Application Server
 This section will describe how the ANET2 Application Server works and the various components.  Two major frameworks that we use are:
