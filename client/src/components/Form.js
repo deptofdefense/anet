@@ -70,7 +70,7 @@ export default class Form extends Component {
 
 				{showSubmit &&
 					<ContentForHeader right>
-						<Button bsStyle="primary" type="submit" onClick={bsProps.onSubmit} disabled={submitDisabled}>
+						<Button bsStyle="primary" type="submit" onClick={bsProps.onSubmit} disabled={submitDisabled} id="formHeaderSubmit" >
 							{submitText}
 						</Button>
 					</ContentForHeader>
@@ -78,7 +78,7 @@ export default class Form extends Component {
 
 				{showSubmit &&
 					<div className="form-bottom-submit">
-						<Button bsStyle="primary" bsSize="large" type="submit" disabled={submitDisabled} >
+						<Button bsStyle="primary" bsSize="large" type="submit" disabled={submitDisabled} id="formBottomSubmit">
 							{submitText}
 						</Button>
 					</div>

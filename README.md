@@ -7,24 +7,30 @@ framework that runs on a JVM and utilizes Microsoft SQL Server for
 its database.
 
 This README is divided into three pieces:
-1. Getting your Development Environment Setup
-1. Working on the backend
-2. Working on the frontend
+
+1. [Getting your Development Environment Set Up](#setting-up-your-developer-environment-eclipse-gradle-node-chromefirefox)
+1. [Working on the backend](#java-backend)
+1. [Working on the frontend](#react-frontend)
 
 ## Setting up your Developer Environment (Eclipse, gradle, node, Chrome/Firefox)
 This section describes the recommended Developer Environment and how to set it up.  You are welcome to use any other tools you prefer. 
 
-- Download Eclipse ( http://www.eclipse.org/downloads/ ).  Eclipse is a Java IDE.  It can be downloaded as an installer or as a .zip file that does not require installation.  
-- Download a JDK v1.8 ( http://www.oracle.com/technetwork/java/javase/downloads/index.html ).  This can also be either installed, or downloaded as a .zip.  If you do not use the installer, be sure to set the `JAVA_HOME` environment variable to the location of the JDK. 
-- Download node ( https://nodejs.org/en/ )
-- Download git ( https://git-scm.com/ ).  While this is not required, it is highly recommended if you will be doing active development on ANET. 
-- Checkout the source code from github. ( https://github.com/deptofdefense/anet )
+- Download [Eclipse](http://www.eclipse.org/downloads/).  Eclipse is a Java IDE.  It can be downloaded as an installer or as a .zip file that does not require installation.  
+	- When the installer asks which version you'd like to install, choose "Eclipse IDE for Java Developers".
+- Download a [JDK v1.8](http://www.oracle.com/technetwork/java/javase/downloads/index.html).  This can also be either installed, or downloaded as a .zip.  If you do not use the installer, be sure to set the `JAVA_HOME` environment variable to the location of the JDK. 
+- Download [node.js 7.x](https://nodejs.org/en/)
+- Download [git](https://git-scm.com/).  While this is not required, it is highly recommended if you will be doing active development on ANET. 
+- Checkout the [source code](https://github.com/deptofdefense/anet) from github. 
 ```
 	git clone git@github.com:deptofdefense/anet.git
 ```
-- Open a command line in the `anet` directory that was retrieved from github.  Run `./gradlew eclipse` (linux/mac) or `./gradlew.bat eclipse` (windows) to download all the java dependencies.  This can take several minutes depending on your internet connection.
-- Change Directories into the `client/` directory, run `npm install`  to download all the javascript dependencies.  This can take several minutes depending on your internet connection.
-- Open eclipse and import the anet/ directory into eclipse as a new project. Ensure there are no compile errors. If there are, you are probably missing dependencies, try re-running `./gradlew eclipse`. 
+- Open a command line in the `anet` directory that was retrieved from github.  
+  - Run `./gradlew eclipse` (linux/mac) or `./gradlew.bat eclipse` (windows) to download all the java dependencies.  This can take several minutes depending on your internet connection.
+- Change Directories into the `client/` directory
+  - Run `npm install`  to download all the javascript dependencies.  This can take several minutes depending on your internet connection.
+- Open eclipse
+  - Import the `anet/` directory into eclipse as a new project.
+  - Ensure there are no compile errors. If there are, you are probably missing dependencies. Try re-running `./gradlew eclipse`. 
 - Update the settings in `anet.yml` for your environment.  See the section on ANET Configuration for more details on these configuration options. 
 
 ## Java Backend
@@ -35,26 +41,26 @@ that should not be checked into the GitHub.
 2. You can either use SQLite or Microsoft SQL Server for your database. The former allows you
 to run entirely on your local machine and develop offline. The latter allows you to test on
 the same database and feature set that production will use. We do our best to support both
-but cannot garauntee that the SQLite code will exactly match the SQL Server.
+but cannot guarantee that the SQLite code will exactly match the SQL Server.
 	- SQLite:
 		- this is currently the default, so you don't need to do anything special
-		- To re-force gradle to use sqlite you can set the `DB_DRIVER` environment variable to `sqlite` (ie `export DB_DRIVER=sqlite`)
+		- To re-force gradle to use SQLite you can set the `DB_DRIVER` environment variable to `sqlite` (e.g. `export DB_DRIVER=sqlite`)
 	- MSSQL:
-		- Run the gradle commands in the rest of this document with the DB_DRIVER env variable, e.g.
-		`DB_DRIVER=sqlserver ./gradlew run`
+		- Run the gradle commands in the rest of this document with the DB_DRIVER env variable (e.g.
+		`DB_DRIVER=sqlserver ./gradlew run`)
 		- Paste the following in your `localSettings.gradle` file (with the correct values):
 
-```
+```gradle
 	run.environment("ANET_DB_USERNAME","username")
 	run.environment("ANET_DB_PASSWORD", "password")
 	run.environment("ANET_DB_SERVER", "db server hostname")
 	run.environment("ANET_DB_NAME","database name")
 ```
 
-3. Open anet.yml and make sure the port settings look good for you. If you change the port, also update the "proxy" field in client/package.json.
-4. Run `./gradlew build` to download all dependencies and build the project
-5. Run `./gradlew dbMigrate` to build and migrate the database
-	- The database schema is stored in src/main/resources/migrations.xml
+3. Open anet.yml and make sure the port settings look good for you. If you change the port, also update the "proxy" field in `client/package.json`.
+4. Run `./gradlew build` to download all dependencies and build the project.
+5. Run `./gradlew dbMigrate` to build and migrate the database.
+	- The database schema is stored in `src/main/resources/migrations.xml`.
 6. Seed the initial data:
 	- SQLite: `cat insertBaseData.sql | ./mssql2sqlite.sh | sqlite3 development.db`
 	- MSSQL: You'll need to manually connect to your sqlserver instance and run `insertBaseData.sql`
@@ -63,37 +69,38 @@ but cannot garauntee that the SQLite code will exactly match the SQL Server.
 1. Run `./gradlew dbMigrate` whenever you pull new changes to migrate the database.
 	- You may need to occasionally destroy, re-migrate, and re-seed your database if it has fallen too far out of sync with master.
 2. Run `./gradlew run` to run the server.
-3. You should now be able to go to http://localhost:8080/ in your browser. You will get an error about a missing index.ftl file, this is expected and means the backend-server is working. 
+3. You should now be able to go to [http://localhost:8080/](http://localhost:8080/) in your browser. You will get an error about a missing index.ftl file; this is expected and means the backend server is working. 
 
 - If you're doing backend development, we recommend using the Eclipse development environment:
 	- Run `./gradlew eclipse` to build the Eclipse classpath.
 	- Create a new project in Eclipse from the directory you checked out this repositoy to. Eclipse should automatically pick up the project definition.
-	- The main method is in mil.dds.anet.AnetApplication.
+	- The main method is in `mil.dds.anet.AnetApplication`.
 
 ## React Frontend
 
 ### Initial Setup
-1. Make sure you have node.js v7.x installed: (http://nodejs.org)
-2. All of the frontend code is in the `client/` directory. `cd client/`
+1. Make sure you have node.js v7.x installed: ( http://nodejs.org )
+2. `cd client/`
+    - All of the frontend code is in the `client/` directory. 
 3. Install the development dependencies: `npm install`
 4. Run the server: `npm start`
 
 NB: You only need node.js and the npm dependencies for developing. When we deploy
-for production, everything is compiled to static files. No Javascript dependencies
+for production, everything is compiled to static files. No javascript dependencies
 are necessary on the server.
 
 ### Developing
 1. Run `npm install` to make sure your dependencies are up to date.
 2. Run `npm start` to start the dev server.
-3. You should now be able to go to http://localhost:3000/ in your browser
+3. Go to [http://localhost:3000/](http://localhost:3000/) in your browser.
 
 ## Java Application Server
 This section will describe how the ANET2 Application Server works and the various components.  Two major frameworks that we use are:
 
-- **Dropwizard** is a framework for developing java-based web applications. ( http://www.dropwizard.io/1.0.5/docs/ ).  It is a collection of other industry standard, open source, libraries to handle things like JSON parsing, HTTP multi-threading, Authentication, Authorization, Database access, etc.  We highly recommend you read the getting started guide and briefly scan the user manual.
-- **GraphQL** (http://graphql.org/) is a query language developed by Facebook to allow API consumers to explore a 'Graph' without requiring the server to have implemented every possible API call ahead of time.  The client developer can ask for what data they want, and the GraphQL layer will figure out what data it needs to fetch and then fetch specifcally that data.
+- [**Dropwizard**](http://www.dropwizard.io/1.0.5/docs/) is a framework for developing java-based web applications.  It is a collection of other industry standard, open source, libraries to handle things like JSON parsing, HTTP multi-threading, Authentication, Authorization, Database access, etc.  We highly recommend you read the getting started guide and briefly scan the user manual.
+- [**GraphQL**](http://graphql.org/) is a query language developed by Facebook to allow API consumers to explore a 'Graph' without requiring the server to have implemented every possible API call ahead of time.  The client developer can ask for what data they want, and the GraphQL layer will figure out what data it needs to fetch and then fetch specifcally that data.
 
-Throughout the next several sections, we were refer to the *core ANET object types*, these are 
+Throughout the next several sections, we were refer to the *core ANET object types*. These are: 
 
 - People
 - Positions
@@ -102,13 +109,13 @@ Throughout the next several sections, we were refer to the *core ANET object typ
 - Poams
 - Locations
 
-The Java Application Server is comprised of 5 major pieces
+The Java Application Server is composed of 5 major pieces:
 
-- **Beans**: These are Java objects that are serializable and represent the major types in ANET (Person, Position, Organization, Report, Poam, etc).  They are comprised of private fields typically representing the columns in the database, getter's and setter's for those fields, and load\*() methods for the various relationships between object types (ie, on the Person bean, there is a loadPosition() method). 
-- **DAOs** (Data Access Objects):  These objects are the relationship between the beans and the SQL database.  They contain all of the actual SQL statements to do the `INSERT`, `SELECT`, and `UPDATE` calls on a given object.  There is one DAO per Bean (ie PersonDao, PositionDao, OrganizationDao, etc), and that DAO returns objects (or Lists of Objects) of that particular type.  So if you are looking for a Database Query that returns Reports, look in ReportDao. 
+- **Beans**: Serializable Java objects that represent the major types in ANET (Person, Position, Organization, Report, Poam, etc).  They are comprised of private fields typically representing the columns in the database, getters and setters for those fields, and `load*()` methods for the various relationships between object types (e.g. on the Person bean, there is a `loadPosition()` method). 
+- **DAOs** (Data Access Objects):  These objects are the relationship between the beans and the SQL database.  They contain all of the actual SQL statements to do the `INSERT`, `SELECT`, and `UPDATE` calls on a given object.  There is one DAO per Bean (e.g. `PersonDao`, `PositionDao`, `OrganizationDao`, etc), and that DAO returns objects (or Lists of Objects) of that particular type.  So if you are looking for a Database Query that returns Reports, look in `ReportDao`. 
 - **Mappers**:  These are classes that store the logic on how to take a `ResultSet` from a SQL query and turn it into a Bean.  They should be fairly straightforward and basic.  There is one per Bean type. 
-- **Resources**: These are classes that store all of the REST endpoints for a given object type.  These methods are expected to take in an HTTP call from a user, and provide the correct response.  In general if you are trying to get an object of a particular type, you should be calling that Resource (ie ReportResource returns Reports, PersonResource returns People). These methods can also be called by the GraphQL API if they are appropiately annotated.
-- **SearchQuery**:  These classes are JavaBeans that represent the advanced searches that can be run on a particular core object type.  There are then implementations for each object type's SearchQuery to actually perform the search.  More on this later. 
+- **Resources**: These are classes that store all of the REST endpoints for a given object type.  These methods are expected to take in an HTTP call from a user, and provide the correct response.  In general, if you are trying to get an object of a particular type, you should be calling that Resource (e.g. `ReportResource` returns Reports, `PersonResource` returns People). These methods can also be called by the GraphQL API if they are appropiately annotated.
+- **SearchQuery**:  These classes are JavaBeans that represent the advanced searches that can be run on a particular core object type.  There are then implementations for each object type's `SearchQuery` to actually perform the search.  More on this later. 
 
 Here's a quick rundown of where to find each of these pieces: 
 
@@ -124,7 +131,7 @@ Here's a quick rundown of where to find each of these pieces:
 ## How the backend works
 This is an attempt to describe the complete start to finish of how a request makes its way through the ANET stack.
 
-1. When you boot up ANET, it will execute the mil.dds.anet.AnetApplication class.  All HTTP resources are initialized via the run() method here.
+1. When you boot up ANET, it will execute the `mil.dds.anet.AnetApplication class`.  All HTTP resources are initialized via the `run()` method here.
 2. Each resource is annotated with a `@Path` annotation that will tell you the URL path that the class will serve.
 3. On boot, the server will spit out all of the HTTP paths that it knows about in the form:
 ```
@@ -137,18 +144,19 @@ This is an attempt to describe the complete start to finish of how a request mak
 
 4. This tells you the URL, and then the class that will serve that URL.
 5. Parameters into those methods are autowired in based on the HTTP request
-	- `@PathParam` will pull a named parameter out of the @Path annotation on the method (ie /api/people/{id} )
-	- `@QueryParam` will pull a named parameter out of the URL query string (ie ?foo=bar)
+	- `@PathParam` will pull a named parameter out of the `@Path` annotation on the method (e.g. `/api/people/{id}`)
+	- `@QueryParam` will pull a named parameter out of the URL query string (e.g. `?foo=bar`)
 	- Objects without annotations will be deserialized by Jackson from the HTTP entity
 	- `@Auth` will pull the current logged in user
 		- If Authentication is required, the Auth filter in `mil.dds.anet.AnetAuthenticator` will determine your user principal.
 	- `@Produces` annotations describe which content type the method can produce. This is almost always going to be `application/json`.
-	- `@GET`, `@POST` , and similar annotations describe which HTTP methods this method will respond to.
+	- `@GET`, `@POST`, and similar annotations describe which HTTP methods this method will respond to.
 6. Within each Resource class, there is a `dao` (Database Access Object).  Each DAO contains all of the SQL logic for communicating with the database.
 7. Each of the core ANET object types is represented by a bean that contains all of the properties and methods that that object can do. These are all in the `mil.dds.anet.beans` package.
 	- These objects are deserialized from JSON when they are passed in the HTTP request body as part of a POST
 	- These objects can be serialized back into JSON if they are returned by a method that is annotated with `@Produces(MediaType.APPLICATION_JSON)`
-```
+
+```java
 @GET
 @Path("/{id}")
 @Produces(MediaType.APPLICATION_JSON)
@@ -158,11 +166,11 @@ public Report getReportById(@PathParam("id") int id) {
 ```
 
 ## How the GraphQL API Works
-GraphQL is the mechanism by which most data is fetched to be displayed in the web-frontend.  In ANET, we implemented GraphQL using the graphql-java (https://github.com/graphql-java/graphql-java) implementation on top of our REST interface.  By using GraphQL we call the exact same functions that the REST API does, but we are able to be much more descriptive about what data we want back, and therefore reduce the number of round-trips between the client and the server.  Here is a brief run-through of how a graphql query gets executed:
+GraphQL is the mechanism by which most data is fetched to be displayed in the web-frontend.  In ANET, we implemented GraphQL using the [graphql-java](https://github.com/graphql-java/graphql-java) implementation on top of our REST interface.  By using GraphQL we call the exact same functions that the REST API does, but we are able to be much more descriptive about what data we want back, and therefore reduce the number of round-trips between the client and the server.  Here is a brief run-through of how a graphql query gets executed:
 
 1. All GraphQL queries go to the `GraphQLResource#graphql()` method.  This resource is initalized by being passed all of the other REST Resources within ANET.
 2. The GraphQLResource will scan through all of the other REST Resources and look for methods that are annotated with the `@GraphQLFetcher` annotation. This annotation tells GraphQL that it can use this method as a "entry point" into the ANET Graph. 
-    - "The Anet Graph" is the term we'll use to describe all of the data within ANET and the relationships between the different object types.  ie: A Person with id 123 has a Position which belongs to an Organization... and so on.
+    - "The Anet Graph" is the term we'll use to describe all of the data within ANET and the relationships between the different object types. e.g.: A Person with id 123 has a Position which belongs to an Organization... and so on.
 	- You can always pass the `f:` argument (f is for Function) to call a Resource method, this will use either the value passed to the `@GraphQLFetcher`, or the name of the method if no value is passed.
 3. Once you have an object that was returned from a Resource (these are the Beans), you can call any of the 'get' methods on that object to fetch fields.  To put this all together, the query `person(id:123) { id, name}` will look for a method on PersonResource that takes a parameter of name `id`, and then when it gets the `Person` object back, it will call the `getId()` and `getName()` methods on that Person object to fetch those fields.
 4. Each of the primary objects within ANET (The Beans, or Person, Position, Organization, Report, Poam), knows about its relationships to other objects.  Similar to the above example, if you query graphql with `person(id:123) { postion {name }}` it will find the person with id 123, and then call the `getPosition()` method on the Person object to fetch that relationship.
@@ -170,7 +178,6 @@ GraphQL is the mechanism by which most data is fetched to be displayed in the we
 5. For any method where arguments are required, the GraphQLResource scans all of the methods in Resources and Bean classes to look for what arguments are required and then will look for those arguments passed via the GraphQL query.
     - In a REST Resource, we use the existing `@PathParam` and `@QueryParam` annotations to pull the name of the parameters.
     - In the Bean classes, we use `@GraphQLParam` to annotate the name of the parameters.
-
 
 Here's a sample GraphQL query and how ANET processes it: 
 ```
@@ -188,7 +195,7 @@ person(id:123) {
 }
 ````
 
-1. Because you POST'd this to /graphql, Dropwizard will take the JSON and deserialize it into a Map<String,Object> and pass it to the graphql method. 
+1. Because you POST'd this to `/graphql`, Dropwizard will take the JSON and deserialize it into a `Map<String, Object>` and pass it to the GraphQL method. 
 2. The `graphql-java` library will parse the structure and validate the input. 
 3. The `person` keyword will tell GraphQL that you want to access the `person` object type at the root level. This goes to the `PersonResource`. 
 4. The `AnetResourceDataFetcher` is the class that will get asked to load the person object. It looks at all of the methods on `PersonResource` that are annotated with `@GraphQLFetcher` and figures out which one has the right arguments to call. In this case it will be `getById(int id)`.  That method is called and it will do a database load and return the person. 
@@ -200,14 +207,13 @@ person(id:123) {
 	- You can use `@GraphQLIgnore` to tell GraphQL to not expose a getter method. 
 
 * Note: GraphQL does _not_ use Jackson to serialize anything into JSON, it individually fetches the exact fields the client requests and transforms those into JSON using its own type system. 
-* Note: While GraphQL does technically support writing data to the server through mutations, we do not have any of that implemented.  You must still use the REST api to write any data to ANET. 
+* Note: While GraphQL does technically support writing data to the server through mutations, we do not have any of that implemented.  You must still use the REST API to write any data to ANET. 
 
 ## How the frontend works
-
 React structures the application into components instead of technologies. This means that everything that gets rendered on the
-page has its own file based on its functionality instead of regular html, css, and js files. For example, the new report form
+page has its own file based on its functionality instead of regular HTML, CSS, and JS files. For example, the new report form
 lives in `client/src/pages/reports/New.js` and contains everything needed to render that form (all the CSS, HTML, and JS). It
-composes a number of other components, for example the Form and FormField components which live in `client/src/components/Form.js`
+comprises a number of other components, for example the `Form` and `FormField` components which live in `client/src/components/Form.js`
 and `client/src/components/FormField.js`, which likewise contains everything needed to render a form field to the screen. This
 makes it very easy to figure out where any given element on screen comes from; it's either in `client/src/pages` or
 `client/src/components`. Pages are just compositions of components written in HTML syntax, and components can also compose
@@ -225,7 +231,6 @@ other components for reusability.
 6. Re launch the frontend server with `./npm run start`
 
 ## How to set up Selenium Builds to automatically test workflows
-
 Selenium makes a plug-in for Firefox that lets you record the actions you take on a webpage so that it can rerun them for your later. We use Selenium builds to walk through a series of workflows to see if everything worked as expected, or if something failed. This helps us quickly identify if changes have broken something that we need to fix. Are you super excited to set this up and get testing?! Me too. Here's what you do:
 
 1. Make sure you have Mozilla Firefox installed on your computer
@@ -253,6 +258,17 @@ Selenium makes a plug-in for Firefox that lets you record the actions you take o
 
 ##Map Layers
 
-Set the `MAP_LAYERS` admin Setting to a json object that looks like this: `[{"type": "wms", "url" : "http://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r.cgi", "layer": "nexrad-n0r-900913", "name" : "nexrad"}]`
+Set the `MAP_LAYERS` admin Setting to a JSON object that looks like this: 
+
+```json
+[
+	{
+		"type": "wms", 
+		"url" : "http://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r.cgi",
+		"layer": "nexrad-n0r-900913",
+		"name" : "nexrad"
+	}
+]
+````
 
 

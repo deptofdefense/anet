@@ -46,10 +46,10 @@ export default class PoamsSelector extends Component {
 						</tr>
 					</thead>
 					<tbody>
-						{poams.map(poam =>
+						{poams.map((poam, idx) =>
 							<tr key={poam.id}>
 								<td>{poam.shortName} - {poam.longName}</td>
-								<td onClick={this.removePoam.bind(this, poam)}>
+								<td onClick={this.removePoam.bind(this, poam)} id={"poamDelete_" + idx}>
 									<span style={{cursor: 'pointer'}}><img src={REMOVE_ICON} height={14} alt="Remove attendee" /></span>
 								</td>
 							</tr>

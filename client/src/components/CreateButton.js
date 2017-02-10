@@ -42,7 +42,7 @@ export default class CreateButton extends Component {
 		} else if (modelClasses.length) {
 			let modelClass = modelClasses[0]
 			return (
-				<Button bsStyle="primary" onClick={this.onSelect.bind(this, modelClass)}>
+				<Button bsStyle="primary" onClick={this.onSelect.bind(this, modelClass)} id="createButton" >
 					New {modelClass.resourceName}
 				</Button>
 			)

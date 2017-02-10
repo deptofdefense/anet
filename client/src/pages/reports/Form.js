@@ -123,9 +123,9 @@ export default class ReportForm extends Component {
 				{!isCancelled &&
 					<Form.Field id="atmosphere">
 						<RadioGroup bsSize="large">
-							<Radio value="POSITIVE"><img src={POSITIVE_ICON} height={25} alt="positive" /></Radio>
-							<Radio value="NEUTRAL"><img src={NEUTRAL_ICON} height={25} alt="neutral" /></Radio>
-							<Radio value="NEGATIVE"><img src={NEGATIVE_ICON} height={25} alt="negative" /></Radio>
+							<Radio value="POSITIVE" id="positiveAtmos" ><img src={POSITIVE_ICON} height={25} alt="positive" /></Radio>
+							<Radio value="NEUTRAL" id="neutralAtmos" ><img src={NEUTRAL_ICON} height={25} alt="neutral" /></Radio>
+							<Radio value="NEGATIVE" id="negativeAtmos" ><img src={NEGATIVE_ICON} height={25} alt="negative" /></Radio>
 						</RadioGroup>
 
 					</Form.Field>
@@ -172,10 +172,10 @@ export default class ReportForm extends Component {
 							</tr>
 						</thead>
 						<tbody>
-							{Person.map(report.attendees, person =>
+							{Person.map(report.attendees, (person, idx) =>
 								<tr key={person.id}>
 									<td className="primary-attendee">
-										<Checkbox checked={person.primary} onChange={this.setPrimaryAttendee.bind(this, person)} />
+										<Checkbox checked={person.primary} onChange={this.setPrimaryAttendee.bind(this, person)} id={"attendeePrimary_" + idx}/>
 									</td>
 
 									<td>
@@ -185,7 +185,7 @@ export default class ReportForm extends Component {
 									<td><LinkTo position={person.position} /></td>
 									<td>{person.position && person.position.organization && person.position.organization.shortName}</td>
 
-									<td onClick={this.removeAttendee.bind(this, person)}>
+									<td onClick={this.removeAttendee.bind(this, person)} id={"attendeeDelete_" + idx} >
 										<span style={{cursor: 'pointer'}}><img src={REMOVE_ICON} height={14} alt="Remove attendee" /></span>
 									</td>
 
@@ -227,14 +227,14 @@ export default class ReportForm extends Component {
 					<Form.Field.ExtraCol><small>{250 - report.nextSteps.length} Characters Remaining</small></Form.Field.ExtraCol>
 				</Form.Field>
 
-				<Button className="center-block toggle-section-button" onClick={this.toggleReportText}>
+				<Button className="center-block toggle-section-button" onClick={this.toggleReportText} id="toggleReportDetails" >
 					{this.state.showReportText ? "Hide" : "Add"} detailed comments
 				</Button>
 
 				<Collapse in={this.state.showReportText}>
 					<div>
 						<Form.Field id="reportText" label="" horizontal={false}>
-							<TextEditor label="Report Details" />
+							<TextEditor label="Report Details" id="reportTextEditor" />
 						</Form.Field>
 					</div>
 				</Collapse>
