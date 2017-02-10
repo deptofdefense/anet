@@ -15,11 +15,11 @@ This README is divided into three pieces:
 ## Setting up your Developer Environment (Eclipse, gradle, node, Chrome/Firefox)
 This section describes the recommended Developer Environment and how to set it up.  You are welcome to use any other tools you prefer. 
 
-- Download Eclipse ( http://www.eclipse.org/downloads/ ).  Eclipse is a Java IDE.  It can be downloaded as an installer or as a .zip file that does not require installation.  
-- Download a JDK v1.8 ( http://www.oracle.com/technetwork/java/javase/downloads/index.html ).  This can also be either installed, or downloaded as a .zip.  If you do not use the installer, be sure to set the `JAVA_HOME` environment variable to the location of the JDK. 
-- Download node.js 7.x ( https://nodejs.org/en/ )
-- Download git ( https://git-scm.com/ ).  While this is not required, it is highly recommended if you will be doing active development on ANET. 
-- Checkout the source code from github. ( https://github.com/deptofdefense/anet )
+- Download [Eclipse](http://www.eclipse.org/downloads/).  Eclipse is a Java IDE.  It can be downloaded as an installer or as a .zip file that does not require installation.  
+- Download a [JDK v1.8](http://www.oracle.com/technetwork/java/javase/downloads/index.html).  This can also be either installed, or downloaded as a .zip.  If you do not use the installer, be sure to set the `JAVA_HOME` environment variable to the location of the JDK. 
+- Download [node.js 7.x](https://nodejs.org/en/)
+- Download [git](https://git-scm.com/).  While this is not required, it is highly recommended if you will be doing active development on ANET. 
+- Checkout the [source code](https://github.com/deptofdefense/anet) from github. 
 ```
 	git clone git@github.com:deptofdefense/anet.git
 ```
