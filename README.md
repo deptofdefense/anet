@@ -47,7 +47,7 @@ Download the following:
 	1. Import the `anet/` directory into eclipse as a new project.
 	1. Ensure there are no compile errors. If there are, you are probably missing dependencies. Try re-running `./gradlew eclipse`. 
 	1. The main method is in `mil.dds.anet.AnetApplication`.
-1. Update the settings in `anet.yml` for your environment.  See the section on ANET Configuration for more details on these configuration options. 
+1. Update the settings in `anet.yml` for your environment.  See the section on ANET Configuration in [documentation.md](https://github.com/deptofdefense/anet/blob/master/DOCUMENTATION.md#anet-configuration) for more details on these configuration options. 
 
 ### Java Backend
 
