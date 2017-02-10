@@ -61,7 +61,7 @@ but cannot guarantee that the SQLite code will exactly match the SQL Server.
 		`DB_DRIVER=sqlserver ./gradlew run`)
 		- Paste the following in your `localSettings.gradle` file (with the correct values):
 
-```gradle
+```java
 	run.environment("ANET_DB_USERNAME","username")
 	run.environment("ANET_DB_PASSWORD", "password")
 	run.environment("ANET_DB_SERVER", "db server hostname")
