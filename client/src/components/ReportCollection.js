@@ -1,12 +1,11 @@
 import React, {Component, PropTypes} from 'react'
-import {Table, Button, Pagination} from 'react-bootstrap'
+import {Button, Pagination} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
 import ReportSummary from 'components/ReportSummary'
 import ReportTable from 'components/ReportTable'
 import ButtonToggleGroup from 'components/ButtonToggleGroup'
 import Leaflet from 'components/Leaflet'
-
 
 const FORMAT_SUMMARY = 'summary'
 const FORMAT_TABLE = 'table'
@@ -39,30 +38,31 @@ export default class ReportCollection extends Component {
 
 		const numPages = Math.ceil(reports.length / pageSize)
 
-		return <div>
-			<div style={{height:'50px'}}>
-				<ButtonToggleGroup value={this.state.viewFormat} onChange={this.changeViewFormat} className="pull-right">
+		return <div className="report-collection">
+			<header>
+				<ButtonToggleGroup value={this.state.viewFormat} onChange={this.changeViewFormat}>
 					<Button value={FORMAT_SUMMARY}>Summary</Button>
 					<Button value={FORMAT_TABLE}>Table</Button>
 					<Button value={FORMAT_MAP}>Map</Button>
 				</ButtonToggleGroup>
-			</div>
+
+				{numPages > 1 &&
+					<Pagination
+						className="pull-right"
+						prev={pageNum > 1}
+						next={pageNum < numPages}
+						items={numPages}
+						ellipsis={numPages > 10}
+						maxButtons={10}
+						activePage={pageNum}
+						onSelect={this.goToPage}
+					/>
+				}
+			</header>
 
 			{this.state.viewFormat === FORMAT_TABLE && this.renderTable()}
 			{this.state.viewFormat === FORMAT_SUMMARY && this.renderSummary()}
 			{this.state.viewFormat === FORMAT_MAP && this.renderMap()}
-
-			{numPages > 1 &&
-				<Pagination
-					prev={pageNum > 1}
-					next={pageNum < numPages}
-					items={numPages}
-					ellipsis={numPages > 10}
-					maxButtons={10}
-					activePage={pageNum}
-					onSelect={this.goToPage}
-				/>
-			}
 		</div>
 	}
 
@@ -71,15 +71,11 @@ export default class ReportCollection extends Component {
 	}
 
 	renderSummary() {
-		return <Table responsive>
-			<tbody>
-				{this.props.reports.map(report =>
-					<tr key={report.id}>
-						<td><ReportSummary report={report} /></td>
-					</tr>
-				)}
-			</tbody>
-		</Table>
+		return <div>
+			{this.props.reports.map(report =>
+				<ReportSummary report={report} key={report.id} />
+			)}
+		</div>
 	}
 
 	renderMap() {
