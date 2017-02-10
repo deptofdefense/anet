@@ -10,7 +10,7 @@ This document covers the steps required to build the ANET platform from source a
 	- 1x Microsoft SQL Server (2014 or greater) Database Server. 
 - **Software**: Software requirements: 
 	- Java JRE 1.8 installed on the Application Server
-	- Administration Privelages to run processes on restricted ports (80/443)
+	- Administration Privileges to run processes on restricted ports (80/443)
 	- Optional: A valid SSL certificate for the domain name of the application server. 
 	- Microsoft SQL Server 2014 or greater. 
 	- Users are required to have a modern web browser (Mozilla Firefox, Google Chrome, or IE version 11 or greater)
@@ -62,7 +62,7 @@ Pick a directory on your server to install ANET to. In that directory:
 
 1. Unzip anet.zip
 2. Add an anet.yml file with appropiate settings.  Descriptions of each of the settings in anet.yml can be found in the README.md file in the ANET repository. 
-3. Install Database Scheam: Run `bin/anet.bat db migrate anet.yml`
+3. Install Database Schema: Run `bin/anet.bat db migrate anet.yml`
 4. Seed the Database: Run `bin/anet.bat init anet.yml`.
 5. Launch the ANET Server: `bin/anet.bat server anet.yml`
 
