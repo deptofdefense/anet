@@ -177,7 +177,8 @@ export default class RollupShow extends Page {
 				{canEdit &&
 					<div className="pull-right">
 						<DropdownButton bsStyle="primary" title="Actions" id="actions" className="pull-right" onSelect={this.actionSelect}>
-							<MenuItem eventKey="edit" >Edit</MenuItem>
+							<MenuItem eventKey="email">Email rollup</MenuItem>
+							<MenuItem eventKey="print">Print</MenuItem>
 						</DropdownButton>
 					</div>
 				}
@@ -206,10 +207,6 @@ export default class RollupShow extends Page {
 
 	@autobind
 	actionSelect(eventKey, event) {
-		if (eventKey === "edit") {
-			History.push(`/report/${this.state.report.id}/edit`);
-		} else {
-			console.log("Unimplemented Action: " + eventKey);
-		}
+		console.log("Unimplemented Action: " + eventKey);
 	}
 }
