@@ -5,7 +5,6 @@ import moment from 'moment'
 
 import {DropdownButton, MenuItem} from 'react-bootstrap'
 import Breadcrumbs from 'components/Breadcrumbs'
-import History from 'components/History'
 import ReportCollection from 'components/ReportCollection'
 import ReportSummary from 'components/ReportSummary'
 
@@ -163,7 +162,7 @@ export default class RollupShow extends Page {
 	}
 
 	render() {
-		let reports = this.state.reports.list
+		// let reports = this.state.reports.list
 		let reportOTD = null //reports[0]
 
 		// Admins can edit poams, or super users if this poam is assigned to their org.
