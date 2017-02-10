@@ -9,7 +9,6 @@ import History from 'components/History'
 import LinkTo from 'components/LinkTo'
 import Messages , {setMessages} from 'components/Messages'
 import ReportCollection from 'components/ReportCollection'
-import ScrollableFieldset from 'components/ScrollableFieldset'
 
 import API from 'api'
 import {Organization} from 'models'
@@ -101,9 +100,10 @@ export default class OrganizationReports extends Page {
 						</Form.Field>}
 					</fieldset>
 
-					<ScrollableFieldset title="Recent Reports" height={500} >
+					<fieldset>
+						<legend>Recent reports</legend>
 						<ReportCollection reports={org.reports} />
-					</ScrollableFieldset>
+					</fieldset>
 				</Form>
 			</div>
 		)
