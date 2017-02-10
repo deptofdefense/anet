@@ -98,8 +98,8 @@ export default class Search extends Page {
 		if (isAdvQuery) {
 			// FIXME currently you have to pass page params in the query object
 			// instead of the query variables
-			advQuery.pageSize = 1
-			advQuery.pageNum = 1
+			advQuery.pageSize = 10
+			advQuery.pageNum = 0
 
 			let config = SEARCH_CONFIG[type]
 			API.query(/* GraphQL */`
