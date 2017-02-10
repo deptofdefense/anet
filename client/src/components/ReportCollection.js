@@ -13,9 +13,13 @@ const FORMAT_MAP = 'map'
 
 export default class ReportCollection extends Component {
 	static propTypes = {
-		reports: PropTypes.array.isRequired,
-		pageSize: PropTypes.number,
-		pageNum: PropTypes.number,
+		reports: PropTypes.array,
+		paginatedReports: PropTypes.shape({
+			totalCount: PropTypes.number,
+			pageNum: PropTypes.number,
+			pageSize: PropTypes.number,
+			list: PropTypes.array.isRequired,
+		}),
 	}
 
 	constructor(props) {
@@ -28,15 +32,18 @@ export default class ReportCollection extends Component {
 
 
 	render() {
-		let {reports, pageSize, pageNum} = this.props
-		pageSize = 1
-		pageNum = 1
+		let {pageSize, pageNum, totalCount, numPages} = this.props.paginatedReports
+		let reports = this.props.paginatedReports.list
+
+		if (this.props.paginatedReports) {
+			numPages = Math.ceil(totalCount / pageSize)
+		} else {
+			reports = this.props.reports
+		}
 
 		if (!reports.length) {
 			return <div>No Reports Found</div>
 		}
-
-		const numPages = Math.ceil(reports.length / pageSize)
 
 		return <div className="report-collection">
 			<header>
@@ -60,27 +67,27 @@ export default class ReportCollection extends Component {
 				}
 			</header>
 
-			{this.state.viewFormat === FORMAT_TABLE && this.renderTable()}
-			{this.state.viewFormat === FORMAT_SUMMARY && this.renderSummary()}
-			{this.state.viewFormat === FORMAT_MAP && this.renderMap()}
+			{this.state.viewFormat === FORMAT_TABLE && this.renderTable(reports)}
+			{this.state.viewFormat === FORMAT_SUMMARY && this.renderSummary(reports)}
+			{this.state.viewFormat === FORMAT_MAP && this.renderMap(reports)}
 		</div>
 	}
 
-	renderTable() {
-		return <ReportTable showAuthors={true} reports={this.props.reports} />
+	renderTable(reports) {
+		return <ReportTable showAuthors={true} reports={reports} />
 	}
 
-	renderSummary() {
+	renderSummary(reports) {
 		return <div>
-			{this.props.reports.map(report =>
+			{reports.map(report =>
 				<ReportSummary report={report} key={report.id} />
 			)}
 		</div>
 	}
 
-	renderMap() {
+	renderMap(reports) {
 		let markers = []
-		this.props.reports.forEach(report => {
+		reports.forEach(report => {
 			if (report.location && report.location.lat) {
 				markers.push({id: report.id, lat: report.location.lat, lng: report.location.lng , name: report.intent })
 			}

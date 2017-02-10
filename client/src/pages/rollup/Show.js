@@ -47,7 +47,7 @@ export default class RollupShow extends Page {
 		super(props)
 		this.state = {
 			date: {},
-			reports: [],
+			reports: {list: []},
 		}
 	}
 
@@ -88,12 +88,18 @@ export default class RollupShow extends Page {
 				}
 			}
 		`).then(data => {
-			this.setState({reports: Report.fromArray(data.reportList.list)})
+			data.reportList.list = Report.fromArray(data.reportList.list)
+			if (data.reportList.pageSize == null) {
+				data.reportList.pageSize = 1
+				data.reportList.pageNum = 1
+				data.reportList.totalCount = data.reportList.list.length
+			}
+			this.setState({reports: data.reportList})
 		})
 	}
 
 	componentDidUpdate() {
-		let {reports} = this.state
+		let reports = this.state.reports.list
 		if (!reports || !d3)
 			return
 
@@ -157,8 +163,8 @@ export default class RollupShow extends Page {
 	}
 
 	render() {
-		let {reports} = this.state
-		let reportOTD = null; //reports[0]
+		let reports = this.state.reports.list
+		let reportOTD = null //reports[0]
 
 		// Admins can edit poams, or super users if this poam is assigned to their org.
 		let currentUser = this.context.app.state.currentUser
@@ -192,7 +198,7 @@ export default class RollupShow extends Page {
 				<fieldset>
 					<legend>Reports - {this.dateLongStr}</legend>
 
-					<ReportCollection reports={reports} />
+					<ReportCollection paginatedReports={this.state.reports} />
 				</fieldset>
 			</div>
 		)
