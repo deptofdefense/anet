@@ -19,6 +19,7 @@ export default class ReportCollection extends Component {
 			pageNum: PropTypes.number,
 			pageSize: PropTypes.number,
 			list: PropTypes.array.isRequired,
+			goToPage: PropTypes.function,
 		}),
 	}
 
@@ -64,7 +65,7 @@ export default class ReportCollection extends Component {
 						ellipsis={numPages > 10}
 						maxButtons={10}
 						activePage={pageNum}
-						onSelect={this.goToPage}
+						onSelect={this.props.goToPage}
 					/>
 				}
 			</header>
@@ -100,9 +101,5 @@ export default class ReportCollection extends Component {
 	@autobind
 	changeViewFormat(value) {
 		this.setState({viewFormat: value})
-	}
-
-	goToPage(pageNum) {
-
 	}
 }

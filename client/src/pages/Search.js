@@ -72,6 +72,7 @@ export default class Search extends Page {
 		this.state = {
 			query: props.location.query.text,
 			saveSearch: {show: false},
+			reportsPageNum: 0,
 			results: {
 				reports: null,
 				people: null,
@@ -99,7 +100,7 @@ export default class Search extends Page {
 			// FIXME currently you have to pass page params in the query object
 			// instead of the query variables
 			advQuery.pageSize = 10
-			advQuery.pageNum = 0
+			advQuery.pageNum = this.state.reportsPageNum
 
 			let config = SEARCH_CONFIG[type]
 			API.query(/* GraphQL */`
@@ -188,7 +189,7 @@ export default class Search extends Page {
 				{results.reports && results.reports.totalCount > 0 &&
 					<fieldset>
 						<legend>Reports</legend>
-						<ReportCollection paginatedReports={results.reports} />
+						<ReportCollection paginatedReports={results.reports} goToPage={this.goToReportsPage} />
 					</fieldset>
 				}
 
@@ -394,5 +395,11 @@ export default class Search extends Page {
 	@autobind
 	closeSaveModal() {
 		this.setState({saveSearch: {show: false}})
+	}
+
+	@autobind
+	goToReportsPage(reportsPageNum) {
+		this.setState({reportsPageNum})
+		this.fetchData(this.props)
 	}
 }
