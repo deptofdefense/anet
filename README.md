@@ -20,9 +20,9 @@ This section describes the recommended Developer Environment and how to set it u
 ### Download Software
 Download the following:
 
+- [JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/index.html).  This can also be either installed, or downloaded as a .zip.  If you do not use the installer, be sure to set the `JAVA_HOME` environment variable to the location of the JDK. 
 - [Eclipse](http://www.eclipse.org/downloads/).  Eclipse is a Java IDE.  It can be downloaded as an installer or as a .zip file that does not require installation.  
 	- When the installer asks which version you'd like to install, choose "Eclipse IDE for Java Developers".
-- [JDK v1.8](http://www.oracle.com/technetwork/java/javase/downloads/index.html).  This can also be either installed, or downloaded as a .zip.  If you do not use the installer, be sure to set the `JAVA_HOME` environment variable to the location of the JDK. 
 - [node.js 7.x](https://nodejs.org/en/).
 - [git](https://git-scm.com/).  While this is not required, it is highly recommended if you will be doing active development on ANET. 
 
