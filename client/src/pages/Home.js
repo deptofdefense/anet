@@ -86,13 +86,13 @@ export default class Home extends Page {
 							</Link>
 
 							{org &&
-								<Link to={{pathname: 'search', query: {type: 'reports', authorOrgId: org.id}} + "&createdAtStart=" + yesterday} className="col-md-3 home-tile">
+								<Link to={{pathname: 'search', query: {type: 'reports', authorOrgId: org.id, createdAtStart: yesterday}}} className="col-md-3 home-tile">
 									<h1>{myOrgToday && myOrgToday.totalCount}</h1>
 									{org.shortName}'{org.shortName[org.shortName.length - 1].toLowerCase() !== 's' && 's'} recent reports
 								</Link>
-							}
+								}
 
-							<Link to={{pathname: 'search', query: {type: 'reports', authorId: currentUser.id}} + "&createdAtStart=" + yesterday} className="col-md-3 home-tile">
+									<Link to={{pathname: 'search', query: {type: 'reports', authorId: currentUser.id, createdAtStart: yesterday}}} className="col-md-3 home-tile">
 								<h1>{myReportsToday && myReportsToday.totalCount}</h1>
 								My reports in last 24 hrs
 							</Link>
