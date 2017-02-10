@@ -92,18 +92,23 @@ export default class Search extends Page {
 
 		//Any query with a field other than 'text' and 'type' is an advanced query.
 		let advQuery = Object.without(props.location.query, "type", "text")
-		let isAdvQuery = Object.keys(advQuery).length;
-		advQuery.text = text;
+		let isAdvQuery = Object.keys(advQuery).length
+		advQuery.text = text
 
 		if (isAdvQuery) {
-			let config = SEARCH_CONFIG[type];
-			API.query(/* GraphQL */
-					`${config.listName} (f:search, query:$query) {
-							pageNum, pageSize, totalCount, list { ${config.fields} }
-					}`,
-					{ query: advQuery},
-					`($query: ${config.variableType} )`
-				).then( data => {
+			// FIXME currently you have to pass page params in the query object
+			// instead of the query variables
+			advQuery.pageSize = 1
+			advQuery.pageNum = 1
+
+			let config = SEARCH_CONFIG[type]
+			API.query(/* GraphQL */`
+					${config.listName} (f:search, query:$query) {
+						pageNum, pageSize, totalCount, list { ${config.fields} }
+					}
+				`,
+				{query: advQuery}, `($query: ${config.variableType})`
+			).then(data => {
 				this.setState({results: data})
 			}).catch(response =>
 				this.setState({error: response})
@@ -113,7 +118,7 @@ export default class Search extends Page {
 			//TODO: escape query in the graphQL query
 			API.query(/* GraphQL */`
 				searchResults(f:search, q:"${text}") {
-					reports { totalCount, list { ${SEARCH_CONFIG.reports.fields}} }
+					report { totalCount, list { ${SEARCH_CONFIG.reports.fields}} }
 					people { totalCount, list { ${SEARCH_CONFIG.persons.fields}} }
 					positions { totalCount, list { ${SEARCH_CONFIG.positions.fields} }}
 					poams { totalCount, list { ${SEARCH_CONFIG.poams.fields} }}
@@ -183,7 +188,7 @@ export default class Search extends Page {
 				{results.reports && results.reports.totalCount > 0 &&
 					<fieldset>
 						<legend>Reports</legend>
-						<ReportCollection reports={this.state.results.reports.list} />
+						<ReportCollection paginatedReports={results.reports} />
 					</fieldset>
 				}
 

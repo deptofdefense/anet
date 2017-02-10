@@ -73,7 +73,7 @@ const API = {
 		return promise
 	},
 
-	query(query, variables, variableDef ) {
+	query(query, variables, variableDef) {
 		variables = variables || {}
 		variableDef = variableDef || ""
 		query = 'query ' + variableDef + ' { ' + query + ' }'
