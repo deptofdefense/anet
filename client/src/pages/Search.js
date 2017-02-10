@@ -70,7 +70,7 @@ export default class Search extends Page {
 		super(props)
 
 		this.state = {
-			query: props.location.query.q,
+			query: props.location.query.text,
 			saveSearch: {show: false},
 			results: {
 				reports: null,
@@ -158,7 +158,7 @@ export default class Search extends Page {
 		let noResults = numResults === 0
 
 		let query = this.props.location.query
-		let queryString = QUERY_STRINGS[query.type] || query.q || "TODO"
+		let queryString = QUERY_STRINGS[query.type] || query.text || "TODO"
 
 		if (typeof queryString === 'object') {
 			queryString = queryString[Object.keys(query)[1]]
