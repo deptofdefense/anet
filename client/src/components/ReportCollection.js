@@ -59,11 +59,11 @@ export default class ReportCollection extends Component {
 				{numPages > 1 &&
 					<Pagination
 						className="pull-right"
-						prev={pageNum > 1}
-						next={pageNum < numPages}
+						prev
+						next
 						items={numPages}
-						ellipsis={numPages > 10}
-						maxButtons={10}
+						ellipsis
+						maxButtons={6}
 						activePage={pageNum}
 						onSelect={(value) => {this.props.goToPage(value - 1)}}
 					/>
