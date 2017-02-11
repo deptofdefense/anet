@@ -65,7 +65,7 @@ export default class ReportCollection extends Component {
 						ellipsis={numPages > 10}
 						maxButtons={10}
 						activePage={pageNum}
-						onSelect={this.props.goToPage}
+						onSelect={(value) => {this.props.goToPage(value - 1)}}
 					/>
 				}
 			</header>

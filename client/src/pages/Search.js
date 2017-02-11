@@ -399,7 +399,6 @@ export default class Search extends Page {
 
 	@autobind
 	goToReportsPage(reportsPageNum) {
-		this.setState({reportsPageNum})
-		this.fetchData(this.props)
+		this.setState({reportsPageNum}, () => {this.fetchData(this.props)})
 	}
 }
