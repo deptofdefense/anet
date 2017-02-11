@@ -4,6 +4,7 @@ This repository is structured in two main, disparate components: the frontend an
 
 
 We recommend reading through the documentation in the following order:
+
 1. [Getting your Development Environment Set Up](./docs/dev-setup.md)
 1. [Working on the backend](./docs/backend-overview.md)
 1. [Working on the frontend](./docs/frontend-overview.md)
