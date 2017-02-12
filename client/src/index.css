@@ -167,6 +167,11 @@ a.home-tile {
 	font-size: 2rem;
 }
 
+.nav img {
+	width: 16px;
+	margin-right: 6px;
+}
+
 .nav .nav > li {
 	border-left: 4px solid rgba(0,0,0,0);
 }

@@ -13,7 +13,6 @@ import {Person, Organization} from 'models'
 export default class App extends Page {
 	static PagePropTypes = {
 		useNavigation: PropTypes.bool,
-		navElement: PropTypes.element,
 		fluidContainer: PropTypes.bool,
 	}
 
@@ -99,7 +98,7 @@ export default class App extends Page {
 						? <Row><Col xs={12}>{this.props.children}</Col></Row>
 						: <Row>
 							<Col sm={3}>
-								{pageProps.navElement || <Nav />}
+								<Nav />
 							</Col>
 							<Col sm={9}>
 								{this.props.children}

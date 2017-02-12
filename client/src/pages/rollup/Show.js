@@ -5,7 +5,6 @@ import moment from 'moment'
 
 import {DropdownButton, MenuItem} from 'react-bootstrap'
 import Breadcrumbs from 'components/Breadcrumbs'
-import History from 'components/History'
 import ReportCollection from 'components/ReportCollection'
 import ReportSummary from 'components/ReportSummary'
 
@@ -47,7 +46,7 @@ export default class RollupShow extends Page {
 		super(props)
 		this.state = {
 			date: {},
-			reports: [],
+			reports: {list: []},
 		}
 	}
 
@@ -88,12 +87,18 @@ export default class RollupShow extends Page {
 				}
 			}
 		`).then(data => {
-			this.setState({reports: Report.fromArray(data.reportList.list)})
+			data.reportList.list = Report.fromArray(data.reportList.list)
+			if (data.reportList.pageSize == null) {
+				data.reportList.pageSize = 1
+				data.reportList.pageNum = 1
+				data.reportList.totalCount = data.reportList.list.length
+			}
+			this.setState({reports: data.reportList})
 		})
 	}
 
 	componentDidUpdate() {
-		let {reports} = this.state
+		let reports = this.state.reports.list
 		if (!reports || !d3)
 			return
 
@@ -157,8 +162,8 @@ export default class RollupShow extends Page {
 	}
 
 	render() {
-		let {reports} = this.state
-		let reportOTD = null; //reports[0]
+		// let reports = this.state.reports.list
+		let reportOTD = null //reports[0]
 
 		// Admins can edit poams, or super users if this poam is assigned to their org.
 		let currentUser = this.context.app.state.currentUser
@@ -171,7 +176,8 @@ export default class RollupShow extends Page {
 				{canEdit &&
 					<div className="pull-right">
 						<DropdownButton bsStyle="primary" title="Actions" id="actions" className="pull-right" onSelect={this.actionSelect}>
-							<MenuItem eventKey="edit" >Edit</MenuItem>
+							<MenuItem eventKey="email">Email rollup</MenuItem>
+							<MenuItem eventKey="print">Print</MenuItem>
 						</DropdownButton>
 					</div>
 				}
@@ -192,7 +198,7 @@ export default class RollupShow extends Page {
 				<fieldset>
 					<legend>Reports - {this.dateLongStr}</legend>
 
-					<ReportCollection reports={reports} />
+					<ReportCollection paginatedReports={this.state.reports} />
 				</fieldset>
 			</div>
 		)
@@ -200,10 +206,6 @@ export default class RollupShow extends Page {
 
 	@autobind
 	actionSelect(eventKey, event) {
-		if (eventKey === "edit") {
-			History.push(`/report/${this.state.report.id}/edit`);
-		} else {
-			console.log("Unimplemented Action: " + eventKey);
-		}
+		console.log("Unimplemented Action: " + eventKey);
 	}
 }
