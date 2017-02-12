@@ -88,7 +88,20 @@ task dbDrop(dependsOn: 'compileJava', type: JavaExec) {
 	args = ["db","drop-all","--confirm-delete-everything","anet.yml"]
 }
 
+//Configure the Java Checkstyle settings.  Run with ./gradlew check
 checkstyle {
 	configFile = rootProject.file('gradle/checkstyle.xml')
 	toolVersion = '7.5'
+}
+
+//Configure extra files to include the distribution file
+distributions {
+	main {
+		contents {
+			into('docs/') {
+				from('anet.yml') { rename('anet.yml', 'anet.yml.template') }
+				from('docs/')
+			}
+		}
+	}
 }
