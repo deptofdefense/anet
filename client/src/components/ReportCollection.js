@@ -44,7 +44,7 @@ export default class ReportCollection extends Component {
 			reports = this.props.reports
 		}
 
-		if (!reports.length) {
+		if (!reports || !reports.length) {
 			return <div>No Reports Found</div>
 		}
 
