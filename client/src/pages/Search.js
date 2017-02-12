@@ -121,16 +121,15 @@ export default class Search extends Page {
 				this.setState({error: response})
 			)
 		} else {
-			this.setState({text})
 			//TODO: escape query in the graphQL query
 			API.query(/* GraphQL */`
 				searchResults(f:search, q:"${text}") {
-					report { totalCount, list { ${SEARCH_CONFIG.reports.fields}} }
-					people { totalCount, list { ${SEARCH_CONFIG.persons.fields}} }
-					positions { totalCount, list { ${SEARCH_CONFIG.positions.fields} }}
-					poams { totalCount, list { ${SEARCH_CONFIG.poams.fields} }}
-					locations { totalCount, list { ${SEARCH_CONFIG.locations.fields} }}
-					organizations { totalCount, list { ${SEARCH_CONFIG.organizations.fields} }}
+					reports { pageNum, pageSize, totalCount, list { ${SEARCH_CONFIG.reports.fields}} }
+					people { pageNum, pageSize, totalCount, list { ${SEARCH_CONFIG.persons.fields}} }
+					positions { pageNum, pageSize, totalCount, list { ${SEARCH_CONFIG.positions.fields} }}
+					poams { pageNum, pageSize, totalCount, list { ${SEARCH_CONFIG.poams.fields} }}
+					locations { pageNum, pageSize, totalCount, list { ${SEARCH_CONFIG.locations.fields} }}
+					organizations { pageNum, pageSize, totalCount, list { ${SEARCH_CONFIG.organizations.fields} }}
 				}
 			`).then(data =>
 				this.setState({results: data.searchResults})
