@@ -158,6 +158,7 @@ export default class Search extends Page {
 
 		let query = this.props.location.query
 		let queryString = QUERY_STRINGS[query.type] || query.text || "TODO"
+		let queryType = this.state.queryType || query.type || 'everything'
 
 		if (typeof queryString === 'object') {
 			queryString = queryString[Object.keys(query)[1]]
@@ -171,7 +172,7 @@ export default class Search extends Page {
 					<div>
 						<div><Link to="/">&lt; Return to previous page</Link></div>
 
-						<Nav stacked bsStyle="pills" activeKey={query.type || "everything"} onSelect={this.onSelectQueryType}>
+						<Nav stacked bsStyle="pills" activeKey={queryType} onSelect={this.onSelectQueryType}>
 							<NavItem eventKey="everything" disabled={!numResults}>
 								<img src={EVERYTHING_ICON} role="presentation" /> Everything
 								{numResults > 0 && <Badge pullRight>{numResults}</Badge>}
@@ -179,15 +180,17 @@ export default class Search extends Page {
 
 							<NavItem eventKey="reports" disabled={!numReports}>
 								<img src={REPORTS_ICON} role="presentation" /> Reports
-								{!!numReports && <Badge pullRight>{numReports}</Badge>}
+								{numReports > 0 && <Badge pullRight>{numReports}</Badge>}
 							</NavItem>
+
 							<NavItem eventKey="people" disabled={!numPeople}>
 								<img src={PEOPLE_ICON} role="presentation" /> People
-								{!!numPeople && <Badge pullRight>{numPeople}</Badge>}
+								{numPeople > 0 && <Badge pullRight>{numPeople}</Badge>}
 							</NavItem>
+
 							<NavItem eventKey="positions" disabled={!numPositions}>
 								<img src={POSITIONS_ICON} role="presentation" /> Positions
-								{!!numPositions && <Badge pullRight>{numPositions}</Badge>}
+								{numPositions > 0 && <Badge pullRight>{numPositions}</Badge>}
 							</NavItem>
 
 							<NavItem eventKey="poams" disabled={!numPoams}>
@@ -197,11 +200,12 @@ export default class Search extends Page {
 
 							<NavItem eventKey="locations" disabled={!numLocations}>
 								<img src={LOCATIONS_ICON} role="presentation" /> Locations
-								{!!numLocations && <Badge pullRight>{numLocations}</Badge>}
+								{numLocations > 0 && <Badge pullRight>{numLocations}</Badge>}
 							</NavItem>
+
 							<NavItem eventKey="organizations" disabled={!numOrganizations}>
 								<img src={ORGANIZATIONS_ICON} role="presentation" /> Organizations
-								{!!numOrganizations && <Badge pullRight>{numOrganizations}</Badge>}
+								{numOrganizations > 0 && <Badge pullRight>{numOrganizations}</Badge>}
 							</NavItem>
 						</Nav>
 					</div>
@@ -219,42 +223,42 @@ export default class Search extends Page {
 					{this.props.location.query.text && <Button onClick={this.showSaveModal}>Save search</Button>}
 				</div>
 
-				{results.reports && results.reports.totalCount > 0 &&
+				{numReports > 0 && (queryType === 'everything' || queryType === 'reports') &&
 					<fieldset>
 						<legend>Reports</legend>
 						<ReportCollection paginatedReports={results.reports} goToPage={this.goToReportsPage} />
 					</fieldset>
 				}
 
-				{results.people && results.people.totalCount > 0 &&
+				{numPeople > 0 && (queryType === 'everything' || queryType === 'people') &&
 					<fieldset>
 						<legend>People</legend>
 						{this.renderPeople()}
 					</fieldset>
 				}
 
-				{results.organizations && results.organizations.totalCount > 0 &&
+				{numOrganizations > 0 && (queryType === 'everything' || queryType === 'organizations') &&
 					<fieldset>
 						<legend>Organizations</legend>
 						{this.renderOrgs()}
 					</fieldset>
 				}
 
-				{results.positions && results.positions.totalCount > 0 &&
+				{numPositions > 0 && (queryType === 'everything' || queryType === 'positions') &&
 					<fieldset>
 						<legend>Positions</legend>
 						{this.renderPositions()}
 					</fieldset>
 				}
 
-				{results.locations && results.locations.totalCount > 0 &&
+				{numLocations > 0 && (queryType === 'everything' || queryType === 'locations') &&
 					<fieldset>
 						<legend>Locations</legend>
 						{this.renderLocations()}
 					</fieldset>
 				}
 
-				{results.poams && results.poams.totalCount > 0 &&
+				{numPoams > 0 && (queryType === 'everything' || queryType === 'poams') &&
 					<fieldset>
 						<legend>PoAMs</legend>
 						{this.renderPoams()}
@@ -428,6 +432,11 @@ export default class Search extends Page {
 	@autobind
 	closeSaveModal() {
 		this.setState({saveSearch: {show: false}})
+	}
+
+	@autobind
+	onSelectQueryType(type) {
+		this.setState({queryType: type})
 	}
 
 	@autobind
