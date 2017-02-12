@@ -125,7 +125,7 @@ export default class Search extends Page {
 		} else {
 			//TODO: escape query in the graphQL query
 			API.query(/* GraphQL */`
-				searchResults(f:search, q:"${text}") {
+				searchResults(f:search, q:"${text}", pageNum:0, pageSize: 10) {
 					reports { pageNum, pageSize, totalCount, list { ${SEARCH_CONFIG.reports.fields}} }
 					people { pageNum, pageSize, totalCount, list { ${SEARCH_CONFIG.persons.fields}} }
 					positions { pageNum, pageSize, totalCount, list { ${SEARCH_CONFIG.positions.fields} }}
