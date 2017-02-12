@@ -31,6 +31,7 @@ import mil.dds.anet.graphql.GraphQLFetcher;
 import mil.dds.anet.graphql.GraphQLParam;
 import mil.dds.anet.graphql.IGraphQLResource;
 import mil.dds.anet.utils.AnetAuditLogger;
+import mil.dds.anet.utils.AuthUtils;
 import mil.dds.anet.utils.ResponseUtils;
 
 @Path("/api/people")
@@ -127,23 +128,25 @@ public class PersonResource implements IGraphQLResource {
 	@Path("/update")
 	public Response updatePerson(@Auth Person user, Person p) {
 		if (canEditPerson(user, p) == false) { 
-			throw new WebApplicationException("You do not have permissions to edit this person", Status.UNAUTHORIZED);
+			throw new WebApplicationException("You do not have permissions to edit this person", Status.FORBIDDEN);
 		}
 		
-		int numRows = dao.update(p);
-		
+		//Swap the position first in order to do the authentication check. 
 		if (p.getPosition() != null) {
 			//Maybe update position? 
 			Position existing = AnetObjectEngine.getInstance()
 					.getPositionDao().getCurrentPositionForPerson(Person.createWithId(p.getId()));
-			if (existing == null || existing.getId().equals(p.getPosition().getId()) == false) { 
+			if (existing == null || existing.getId().equals(p.getPosition().getId()) == false) {
 				//Update the position for this person. 
+				AuthUtils.assertSuperUser(user);
 				AnetObjectEngine.getInstance().getPositionDao().setPersonInPosition(p, p.getPosition());
 			} else if (existing != null && p.getPosition().getId() == null) {
 				//Remove this person from their position.
+				AuthUtils.assertSuperUser(user);
 				AnetObjectEngine.getInstance().getPositionDao().removePersonFromPosition(existing);
 			}
 		}
+		int numRows = dao.update(p);
 		
 		AnetAuditLogger.log("Person {} edited by {}", p, user);
 		return (numRows == 1) ? Response.ok().build() : Response.status(Status.NOT_FOUND).build();
