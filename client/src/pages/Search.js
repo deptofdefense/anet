@@ -5,6 +5,7 @@ import autobind from 'autobind-decorator'
 import {Alert, Radio, Table, Modal, Button} from 'react-bootstrap'
 import {Link} from 'react-router'
 
+import {ContentForNav} from 'components/Nav'
 import RadioGroup from 'components/RadioGroup'
 import Breadcrumbs from 'components/Breadcrumbs'
 import LinkTo from 'components/LinkTo'
@@ -134,22 +135,6 @@ export default class Search extends Page {
 		}
 	}
 
-	static pageProps = {
-		navElement:
-			<div>
-				<Link to="/">&lt; Return to previous page</Link>
-
-				<RadioGroup vertical size="large" style={{width: '100%'}}>
-					<Radio value="all">Everything</Radio>
-					<Radio value="reports">Reports</Radio>
-					<Radio value="people">People</Radio>
-					<Radio value="positions">Positions</Radio>
-					<Radio value="locations">Locations</Radio>
-					<Radio value="organizations">Organizations</Radio>
-				</RadioGroup>
-			</div>
-	}
-
 	render() {
 		let results = this.state.results
 		let error = this.state.error
@@ -173,6 +158,21 @@ export default class Search extends Page {
 		return (
 			<div>
 				<Breadcrumbs items={[['Searching for ' + queryString, '/search']]} />
+
+				<ContentForNav>
+					<div>
+						<Link to="/">&lt; Return to previous page</Link>
+
+						<RadioGroup vertical size="large" style={{width: '100%'}}>
+							<Radio value="all">Everything</Radio>
+							<Radio value="reports">Reports</Radio>
+							<Radio value="people">People</Radio>
+							<Radio value="positions">Positions</Radio>
+							<Radio value="locations">Locations</Radio>
+							<Radio value="organizations">Organizations</Radio>
+						</RadioGroup>
+					</div>
+				</ContentForNav>
 
 				<Messages error={error} success={success} />
 
