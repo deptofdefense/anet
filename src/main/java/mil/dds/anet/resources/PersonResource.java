@@ -214,7 +214,7 @@ public class PersonResource implements IGraphQLResource {
 	@GET
 	@Timed
 	@GraphQLFetcher
-	@Path("/recent")
+	@Path("/recents")
 	public PersonList recents(@Auth Person user) { 
 		return new PersonList(dao.getRecentPeople(user));
 	}

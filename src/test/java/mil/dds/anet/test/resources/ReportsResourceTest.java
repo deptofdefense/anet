@@ -35,6 +35,7 @@ import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.LocationList;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.OrganizationList;
+import mil.dds.anet.beans.lists.AbstractAnetBeanList.PersonList;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.PoamList;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.ReportList;
 import mil.dds.anet.beans.search.ReportSearchQuery;
@@ -292,12 +293,15 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		assertThat(rollup.getTotalCount()).isGreaterThan(0);
 		assertThat(rollup.getList()).contains(returned);
 		
-		//Search for this report by Author
-		//Search for this report by Advisor
-		//Search for this report by Location
-		//Search for this report by Date
-		//Search for this report by keyword
-		//Search for this report by POAM (top level and bottom level)
+		//Pull recent People, Poams, and Locations and verify that the records from the last report are there. 
+		List<Person> recentPeople = httpQuery("/api/people/recents", author).get(PersonList.class).getList();
+		assertThat(recentPeople).contains(principal);
+		
+		List<Poam> recentPoams = httpQuery("/api/poams/recents", author).get(PoamList.class).getList();
+		assertThat(recentPoams).contains(action);
+		
+		List<Location> recentLocations = httpQuery("/api/locations/recents", author).get(LocationList.class).getList();
+		assertThat(recentLocations).contains(loc);
 
 	}
 
