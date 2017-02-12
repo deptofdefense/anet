@@ -2,11 +2,10 @@ import React from 'react'
 import Page from 'components/Page'
 import autobind from 'autobind-decorator'
 
-import {Alert, Radio, Table, Modal, Button} from 'react-bootstrap'
+import {Alert, Table, Modal, Button, Nav, NavItem, Badge} from 'react-bootstrap'
 import {Link} from 'react-router'
 
 import {ContentForNav} from 'components/Nav'
-import RadioGroup from 'components/RadioGroup'
 import Breadcrumbs from 'components/Breadcrumbs'
 import LinkTo from 'components/LinkTo'
 import ReportCollection from 'components/ReportCollection'
@@ -15,6 +14,12 @@ import Messages from 'components/Messages'
 
 import API from 'api'
 import {Person, Organization, Position, Poam} from 'models'
+
+import REPORTS_ICON from 'resources/reports.png'
+import PEOPLE_ICON from 'resources/people.png'
+import LOCATIONS_ICON from 'resources/locations.png'
+import POSITIONS_ICON from 'resources/positions.png'
+import ORGANIZATIONS_ICON from 'resources/organizations.png'
 
 const QUERY_STRINGS = {
 	reports: {
@@ -140,12 +145,13 @@ export default class Search extends Page {
 		let error = this.state.error
 		let success = this.state.success
 
-		let numResults = (results.reports ? results.reports.totalCount : 0) +
-			(results.people ? results.people.totalCount : 0) +
-			(results.positions ? results.positions.totalCount : 0) +
-			(results.locations ? results.locations.totalCount : 0) +
-			(results.organizations ? results.organizations.totalCount : 0)
+		let numReports = results.reports ? results.reports.totalCount : 0
+		let numPeople = results.people ? results.people.totalCount : 0
+		let numPositions = results.positions ? results.positions.totalCount : 0
+		let numLocations = results.locations ? results.locations.totalCount : 0
+		let numOrganizations = results.organizations ? results.organizations.totalCount : 0
 
+		let numResults = numReports + numPeople + numPositions + numLocations + numOrganizations
 		let noResults = numResults === 0
 
 		let query = this.props.location.query
@@ -161,16 +167,30 @@ export default class Search extends Page {
 
 				<ContentForNav>
 					<div>
-						<Link to="/">&lt; Return to previous page</Link>
+						<div><Link to="/">&lt; Return to previous page</Link></div>
 
-						<RadioGroup vertical size="large" style={{width: '100%'}}>
-							<Radio value="all">Everything</Radio>
-							<Radio value="reports">Reports</Radio>
-							<Radio value="people">People</Radio>
-							<Radio value="positions">Positions</Radio>
-							<Radio value="locations">Locations</Radio>
-							<Radio value="organizations">Organizations</Radio>
-						</RadioGroup>
+						<Nav stacked bsStyle="pills" activeKey={query.type}>
+							<NavItem eventKey="reports" disabled={!numReports}>
+								<img src={REPORTS_ICON} role="presentation" /> Reports
+								{!!numReports && <Badge pullRight>{numReports}</Badge>}
+							</NavItem>
+							<NavItem eventKey="people" disabled={!numPeople}>
+								<img src={PEOPLE_ICON} role="presentation" /> People
+								{!!numPeople && <Badge pullRight>{numPeople}</Badge>}
+							</NavItem>
+							<NavItem eventKey="positions" disabled={!numPositions}>
+								<img src={POSITIONS_ICON} role="presentation" /> Positions
+								{!!numPositions && <Badge pullRight>{numPositions}</Badge>}
+							</NavItem>
+							<NavItem eventKey="locations" disabled={!numLocations}>
+								<img src={LOCATIONS_ICON} role="presentation" /> Locations
+								{!!numLocations && <Badge pullRight>{numLocations}</Badge>}
+							</NavItem>
+							<NavItem eventKey="organizations" disabled={!numOrganizations}>
+								<img src={ORGANIZATIONS_ICON} role="presentation" /> Organizations
+								{!!numOrganizations && <Badge pullRight>{numOrganizations}</Badge>}
+							</NavItem>
+						</Nav>
 					</div>
 				</ContentForNav>
 
