@@ -168,7 +168,12 @@ export default class Search extends Page {
 					<div>
 						<div><Link to="/">&lt; Return to previous page</Link></div>
 
-						<Nav stacked bsStyle="pills" activeKey={query.type}>
+						<Nav stacked bsStyle="pills" activeKey={query.type || "everything"} onSelect={this.onSelectQueryType}>
+							<NavItem eventKey="everything" disabled={!numResults}>
+								<img src={REPORTS_ICON} role="presentation" /> Everything
+								{!!numResults && <Badge pullRight>{numResults}</Badge>}
+							</NavItem>
+
 							<NavItem eventKey="reports" disabled={!numReports}>
 								<img src={REPORTS_ICON} role="presentation" /> Reports
 								{!!numReports && <Badge pullRight>{numReports}</Badge>}
