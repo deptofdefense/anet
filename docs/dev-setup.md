@@ -15,8 +15,8 @@ This section describes the recommended Developer Environment and how to set it u
    ```
 
 ### Possible Problems
-- **You cannot access [the source code repo](https://github.com/deptofdefense/anet).** Solution: Get someone who does have admin access to add you as a collaborator.
-- **The git clone command takes a long time, then fails.** Solution: Some networks block ssh. Try connecting to a different network.
+- **You cannot access [the source code repo](https://github.com/deptofdefense/anet).** Solution: Get someone who does have admin access to add you as a collaborator. Ensure that you have the correct public key installed to github. See https://help.github.com/articles/connecting-to-github-with-ssh/ for more information on troubleshooting this step. 
+- **The git clone command takes a long time, then fails.** Solution: Some networks block ssh. Try using the `https` URL from github to download the source code. 
 
 ## Set Up Gradle, Eclipse and NPM
 The frontend is run with `npm`.  We recommend running the backend via `eclipse` if you are doing any backend development, and `gradle` if you are only doing frontend development.
@@ -48,7 +48,7 @@ The frontend is run with `npm`.  We recommend running the backend via `eclipse` 
     - To re-force gradle to use SQLite you can set the `DB_DRIVER` environment variable to `sqlite` (e.g. `export DB_DRIVER=sqlite`)
   - MSSQL
     - Run the gradle commands in the rest of this document with the DB_DRIVER env variable (e.g. `DB_DRIVER=sqlserver ./gradlew run`)
-    - Paste the following in your `localSettings.gradle` file (with the correct values) and set them in your Eclipse run configuration:
+    - Paste the following in your `localSettings.gradle` file (with the correct values):
 
       ```java
       run.environment("ANET_DB_USERNAME","username")
@@ -63,6 +63,21 @@ The frontend is run with `npm`.  We recommend running the backend via `eclipse` 
   - MSSQL: You'll need to manually connect to your sqlserver instance and run `insertBaseData.sql`
 1. Run `./gradlew build` to download all dependencies and build the project.
   - Some tests will fail if you are using SQLite, because it has a bad implementation of some timezone stuff. You'll need to use MSSQL to see all the tests passing.
+
+_Note_: You can run the backend with either `gradle` or with Eclipse. Eclipse does not use gradle's configurations, so you'll have to set them up yourself.  You'll want to create a run configuration with:
+- Main Class: `mil.dds.anet.AnetApplication`
+- Program Arguments: `server anet.yml`
+- Environment Variables: These values are used in anet.yml. We set them through environment variables rather than checking them into the git repository to allow each developer to use different settings. 
+  - SQLite: 
+    - `ANET_DB_DATE_CLASS` : `text`
+    - `ANET_DB_DATE_STRING_FORMAT` : `yyyy-MM-dd hh:mm:ss`
+    - `ANET_DB_URL` : `jdbc:sqlite:development.db`
+    - `ANET_DB_DRIVER` : `org.sqlite.JDBC`
+  - MSSQL: 
+    - `ANET_DB_URL` : `jdbc:sqlserver://[sqlserver hostname]:1433;databaseName=[dbName]`
+	- `ANET_DB_USERNAME` : username to your db
+	- `ANET_DB_PASSWORD` : password to your db
+	- `ANET_DB_DRIVER` : `com.microsoft.sqlserver.jdbc.SQLServerDriver`
 
 ### The Base Data Set
 Provided with the ANET source code is the file `insertBaseData.sql`.  This file contains a series of raw SQL commands that insert some sample data into the database that is both required in order to pass all the unit tests, and also helpful for quickly developing and testing new features.  The Base Data Set includes a set of fake users, organizations, locations, and reports.  Here are some of the accounts that you can use to log in and test with:
