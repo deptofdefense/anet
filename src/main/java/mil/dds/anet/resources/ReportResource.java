@@ -517,14 +517,4 @@ public class ReportResource implements IGraphQLResource {
 		return dao.search(query);
 	}
 
-	@GET
-	@Timed
-	@GraphQLFetcher
-	@Path("/releasedToday")
-	public ReportList releasedToday() {
-		ReportSearchQuery query = new ReportSearchQuery();
-		query.setReleasedAtStart(new DateTime().minusDays(1));
-		query.setEngagementDateStart(new DateTime().minusDays(14));
-		return dao.search(query);
-	}
 }

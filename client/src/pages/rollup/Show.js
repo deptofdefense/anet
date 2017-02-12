@@ -53,8 +53,9 @@ export default class RollupShow extends Page {
 	componentDidMount() {
 		super.componentDidMount()
 
-		if (d3)
+		if (d3) {
 			return
+		}
 
 		require.ensure([], () => {
 			d3 = require('d3')
@@ -63,9 +64,13 @@ export default class RollupShow extends Page {
 	}
 
 	fetchData(props) {
-		// TODO: this is a hack to make sure we get some data, I am not using the
+		let rollupQuery = {
+			releasedAtStart: this.rollupStart.valueOf(),
+			releasedAtEnd: this.rollupEnd.valueOf(),
+			engagementDateStart: this.rollupStart.subtract(14, 'days').valueOf()
+		}
 		API.query(/* GraphQL */`
-			reportList(f:releasedToday) {
+			reportList(f:search, query:$rollupQuery) {
 				pageNum, pageSize, totalCount, list {
 					id, state, intent, engagementDate, intent, keyOutcomes, nextSteps
 					author { id, name }
@@ -86,7 +91,8 @@ export default class RollupShow extends Page {
 					}
 				}
 			}
-		`).then(data => {
+		`, {rollupQuery}, `($rollupQuery: ReportSearchQuery)`)
+		.then(data => {
 			data.reportList.list = Report.fromArray(data.reportList.list)
 			if (data.reportList.pageSize == null) {
 				data.reportList.pageSize = 1
