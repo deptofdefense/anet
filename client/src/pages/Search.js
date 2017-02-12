@@ -19,6 +19,7 @@ import EVERYTHING_ICON from 'resources/search-alt.png'
 import REPORTS_ICON from 'resources/reports.png'
 import PEOPLE_ICON from 'resources/people.png'
 import LOCATIONS_ICON from 'resources/locations.png'
+import POAMS_ICON from 'resources/poams.png'
 import POSITIONS_ICON from 'resources/positions.png'
 import ORGANIZATIONS_ICON from 'resources/organizations.png'
 
@@ -148,6 +149,7 @@ export default class Search extends Page {
 		let numReports = results.reports ? results.reports.totalCount : 0
 		let numPeople = results.people ? results.people.totalCount : 0
 		let numPositions = results.positions ? results.positions.totalCount : 0
+		let numPoams = results.poams ? results.poams.totalCount : 0
 		let numLocations = results.locations ? results.locations.totalCount : 0
 		let numOrganizations = results.organizations ? results.organizations.totalCount : 0
 
@@ -187,6 +189,12 @@ export default class Search extends Page {
 								<img src={POSITIONS_ICON} role="presentation" /> Positions
 								{!!numPositions && <Badge pullRight>{numPositions}</Badge>}
 							</NavItem>
+
+							<NavItem eventKey="poams" disabled={!numPoams}>
+								<img src={POAMS_ICON} role="presentation" /> PoAMs
+								{numPoams > 0 && <Badge pullRight>{numPoams}</Badge>}
+							</NavItem>
+
 							<NavItem eventKey="locations" disabled={!numLocations}>
 								<img src={LOCATIONS_ICON} role="presentation" /> Locations
 								{!!numLocations && <Badge pullRight>{numLocations}</Badge>}
