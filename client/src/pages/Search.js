@@ -15,6 +15,7 @@ import Messages from 'components/Messages'
 import API from 'api'
 import {Person, Organization, Position, Poam} from 'models'
 
+import EVERYTHING_ICON from 'resources/search-alt.png'
 import REPORTS_ICON from 'resources/reports.png'
 import PEOPLE_ICON from 'resources/people.png'
 import LOCATIONS_ICON from 'resources/locations.png'
@@ -170,8 +171,8 @@ export default class Search extends Page {
 
 						<Nav stacked bsStyle="pills" activeKey={query.type || "everything"} onSelect={this.onSelectQueryType}>
 							<NavItem eventKey="everything" disabled={!numResults}>
-								<img src={REPORTS_ICON} role="presentation" /> Everything
-								{!!numResults && <Badge pullRight>{numResults}</Badge>}
+								<img src={EVERYTHING_ICON} role="presentation" /> Everything
+								{numResults > 0 && <Badge pullRight>{numResults}</Badge>}
 							</NavItem>
 
 							<NavItem eventKey="reports" disabled={!numReports}>
