@@ -75,10 +75,12 @@ public class OrganizationSearchQuery implements ISearchQuery {
 		this.pageSize = pageSize;
 	}
 	
-	public static OrganizationSearchQuery withText(String text) {
-		OrganizationSearchQuery q = new OrganizationSearchQuery();
-		q.setText(text);
-		return q;
+	public static OrganizationSearchQuery withText(String text, int pageNum, int pageSize) {
+		OrganizationSearchQuery query = new OrganizationSearchQuery();
+		query.setText(text);
+		query.setPageNum(pageNum);
+		query.setPageSize(pageSize);
+		return query;
 	}
 	
 }

@@ -58,10 +58,12 @@ public class PoamSearchQuery implements ISearchQuery {
 		this.pageSize = pageSize;
 	}
 	
-	public static PoamSearchQuery withText(String text) {
-		PoamSearchQuery q = new PoamSearchQuery();
-		q.setText(text);
-		return q;
+	public static PoamSearchQuery withText(String text, int pageNum, int pageSize) {
+		PoamSearchQuery query = new PoamSearchQuery();
+		query.setText(text);
+		query.setPageNum(pageNum);
+		query.setPageSize(pageSize);
+		return query;
 	}
 
 }

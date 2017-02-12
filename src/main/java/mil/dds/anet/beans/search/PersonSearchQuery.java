@@ -106,9 +106,11 @@ public class PersonSearchQuery implements ISearchQuery {
 		this.pageSize = pageSize;
 	}
 	
-	public static PersonSearchQuery withText(String text) {
+	public static PersonSearchQuery withText(String text, int pageNum, int pageSize) {
 		PersonSearchQuery query = new PersonSearchQuery();
 		query.setText(text);
+		query.setPageNum(pageNum);
+		query.setPageSize(pageSize);
 		return query;
 	}
 	

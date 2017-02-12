@@ -189,9 +189,11 @@ public class ReportSearchQuery implements ISearchQuery {
 		this.pageSize = pageSize;
 	}
 	
-	public static ReportSearchQuery withText(String text) {
+	public static ReportSearchQuery withText(String text, int pageNum, int pageSize) {
 		ReportSearchQuery query = new ReportSearchQuery();
 		query.setText(text);
+		query.setPageNum(pageNum);
+		query.setPageSize(pageSize);
 		return query;
 	}
 	

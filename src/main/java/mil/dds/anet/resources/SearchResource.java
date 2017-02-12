@@ -37,28 +37,31 @@ public class SearchResource implements IGraphQLResource  {
 	
 	@GET
 	@GraphQLFetcher
-	public SearchResults search(@QueryParam("q") String query, @QueryParam("types") @DefaultValue(ALL_TYPES) String types) {
+	public SearchResults search(@QueryParam("q") String query, 
+			@QueryParam("types") @DefaultValue(ALL_TYPES) String types,
+			@QueryParam("pageNum") @DefaultValue("0") int pageNum, 
+			@QueryParam("pageSize") @DefaultValue("10") int pageSize) {
 		types = types.toLowerCase();
 
 		SearchResults results = new SearchResults();
 
 		if (types.contains("people")) {
-			results.setPeople(engine.getPersonDao().search(PersonSearchQuery.withText(query)));
+			results.setPeople(engine.getPersonDao().search(PersonSearchQuery.withText(query, pageNum, pageSize)));
 		}
 		if (types.contains("reports")) {
-			results.setReports(engine.getReportDao().search(ReportSearchQuery.withText(query)));
+			results.setReports(engine.getReportDao().search(ReportSearchQuery.withText(query, pageNum, pageSize)));
 		}
 		if (types.contains("positions")) {
-			results.setPositions(engine.getPositionDao().search(PositionSearchQuery.withText(query)));
+			results.setPositions(engine.getPositionDao().search(PositionSearchQuery.withText(query, pageNum, pageSize)));
 		}
 		if (types.contains("poams")) {
-			results.setPoams(engine.getPoamDao().search(PoamSearchQuery.withText(query)));
+			results.setPoams(engine.getPoamDao().search(PoamSearchQuery.withText(query, pageNum, pageSize)));
 		}
 		if (types.contains("locations")) {
-			results.setLocations(engine.getLocationDao().search(LocationSearchQuery.withText(query)));
+			results.setLocations(engine.getLocationDao().search(LocationSearchQuery.withText(query, pageNum, pageSize)));
 		}
 		if (types.contains("organizations")) { 
-			results.setOrganizations(engine.getOrganizationDao().search(OrganizationSearchQuery.withText(query)));
+			results.setOrganizations(engine.getOrganizationDao().search(OrganizationSearchQuery.withText(query, pageNum, pageSize)));
 		}
 
 		return results;
@@ -67,7 +70,9 @@ public class SearchResource implements IGraphQLResource  {
 	@GET
 	@Path("saved/{searchId}")
 	@GraphQLFetcher
-	public SearchResults runSavedSearch(@PathParam("searchId") int searchId) { 
+	public SearchResults runSavedSearch(@PathParam("searchId") int searchId, 
+			@QueryParam("pageNum") @DefaultValue("0") int pageNum, 
+			@QueryParam("pageSize") @DefaultValue("10") int pageSize) { 
 		SavedSearch search = engine.getSavedSearchDao().getById(searchId);
 		SearchResults results = new SearchResults();
 		switch (search.getObjectType()) {
@@ -80,7 +85,7 @@ public class SearchResource implements IGraphQLResource  {
 		case POSITIONS:
 			break;
 		case REPORTS:
-			results.setReports(engine.getReportDao().search(ReportSearchQuery.withText(search.getQuery())));
+			results.setReports(engine.getReportDao().search(ReportSearchQuery.withText(search.getQuery(), pageNum, pageSize)));
 			break;
 		}
 		
