@@ -97,9 +97,11 @@ public class PositionSearchQuery implements ISearchQuery {
 		this.pageSize = pageSize;
 	}
 	
-	public static PositionSearchQuery withText(String text) {
+	public static PositionSearchQuery withText(String text, int pageNum, int pageSize) {
 		PositionSearchQuery query = new PositionSearchQuery();
 		query.setText(text);
+		query.setPageNum(pageNum);
+		query.setPageSize(pageSize);
 		return query;
 	}
 	

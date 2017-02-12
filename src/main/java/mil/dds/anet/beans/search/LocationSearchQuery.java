@@ -21,10 +21,12 @@ public class LocationSearchQuery implements ISearchQuery {
 		this.text = text;
 	}
 
-	public static LocationSearchQuery withText(String text) {
-		LocationSearchQuery q = new LocationSearchQuery();
-		q.setText(text);
-		return q;
+	public static LocationSearchQuery withText(String text, int pageNum, int pageSize) {
+		LocationSearchQuery query = new LocationSearchQuery();
+		query.setText(text);
+		query.setPageNum(pageNum);
+		query.setPageSize(pageSize);
+		return query;
 	}
 	
 	@Override

@@ -2,10 +2,10 @@ import React from 'react'
 import Page from 'components/Page'
 import autobind from 'autobind-decorator'
 
-import {Alert, Radio, Table, Modal, Button} from 'react-bootstrap'
+import {Alert, Table, Modal, Button, Nav, NavItem, Badge} from 'react-bootstrap'
 import {Link} from 'react-router'
 
-import RadioGroup from 'components/RadioGroup'
+import {ContentForNav} from 'components/Nav'
 import Breadcrumbs from 'components/Breadcrumbs'
 import LinkTo from 'components/LinkTo'
 import ReportCollection from 'components/ReportCollection'
@@ -14,6 +14,14 @@ import Messages from 'components/Messages'
 
 import API from 'api'
 import {Person, Organization, Position, Poam} from 'models'
+
+import EVERYTHING_ICON from 'resources/search-alt.png'
+import REPORTS_ICON from 'resources/reports.png'
+import PEOPLE_ICON from 'resources/people.png'
+import LOCATIONS_ICON from 'resources/locations.png'
+import POAMS_ICON from 'resources/poams.png'
+import POSITIONS_ICON from 'resources/positions.png'
+import ORGANIZATIONS_ICON from 'resources/organizations.png'
 
 const QUERY_STRINGS = {
 	reports: {
@@ -115,16 +123,15 @@ export default class Search extends Page {
 				this.setState({error: response})
 			)
 		} else {
-			this.setState({text})
 			//TODO: escape query in the graphQL query
 			API.query(/* GraphQL */`
 				searchResults(f:search, q:"${text}") {
-					report { totalCount, list { ${SEARCH_CONFIG.reports.fields}} }
-					people { totalCount, list { ${SEARCH_CONFIG.persons.fields}} }
-					positions { totalCount, list { ${SEARCH_CONFIG.positions.fields} }}
-					poams { totalCount, list { ${SEARCH_CONFIG.poams.fields} }}
-					locations { totalCount, list { ${SEARCH_CONFIG.locations.fields} }}
-					organizations { totalCount, list { ${SEARCH_CONFIG.organizations.fields} }}
+					reports { pageNum, pageSize, totalCount, list { ${SEARCH_CONFIG.reports.fields}} }
+					people { pageNum, pageSize, totalCount, list { ${SEARCH_CONFIG.persons.fields}} }
+					positions { pageNum, pageSize, totalCount, list { ${SEARCH_CONFIG.positions.fields} }}
+					poams { pageNum, pageSize, totalCount, list { ${SEARCH_CONFIG.poams.fields} }}
+					locations { pageNum, pageSize, totalCount, list { ${SEARCH_CONFIG.locations.fields} }}
+					organizations { pageNum, pageSize, totalCount, list { ${SEARCH_CONFIG.organizations.fields} }}
 				}
 			`).then(data =>
 				this.setState({results: data.searchResults})
@@ -134,37 +141,24 @@ export default class Search extends Page {
 		}
 	}
 
-	static pageProps = {
-		navElement:
-			<div>
-				<Link to="/">&lt; Return to previous page</Link>
-
-				<RadioGroup vertical size="large" style={{width: '100%'}}>
-					<Radio value="all">Everything</Radio>
-					<Radio value="reports">Reports</Radio>
-					<Radio value="people">People</Radio>
-					<Radio value="positions">Positions</Radio>
-					<Radio value="locations">Locations</Radio>
-					<Radio value="organizations">Organizations</Radio>
-				</RadioGroup>
-			</div>
-	}
-
 	render() {
 		let results = this.state.results
 		let error = this.state.error
 		let success = this.state.success
 
-		let numResults = (results.reports ? results.reports.totalCount : 0) +
-			(results.people ? results.people.totalCount : 0) +
-			(results.positions ? results.positions.totalCount : 0) +
-			(results.locations ? results.locations.totalCount : 0) +
-			(results.organizations ? results.organizations.totalCount : 0)
+		let numReports = results.reports ? results.reports.totalCount : 0
+		let numPeople = results.people ? results.people.totalCount : 0
+		let numPositions = results.positions ? results.positions.totalCount : 0
+		let numPoams = results.poams ? results.poams.totalCount : 0
+		let numLocations = results.locations ? results.locations.totalCount : 0
+		let numOrganizations = results.organizations ? results.organizations.totalCount : 0
 
+		let numResults = numReports + numPeople + numPositions + numLocations + numOrganizations
 		let noResults = numResults === 0
 
 		let query = this.props.location.query
 		let queryString = QUERY_STRINGS[query.type] || query.text || "TODO"
+		let queryType = this.state.queryType || query.type || 'everything'
 
 		if (typeof queryString === 'object') {
 			queryString = queryString[Object.keys(query)[1]]
@@ -173,6 +167,49 @@ export default class Search extends Page {
 		return (
 			<div>
 				<Breadcrumbs items={[['Searching for ' + queryString, '/search']]} />
+
+				<ContentForNav>
+					<div>
+						<div><Link to="/">&lt; Return to previous page</Link></div>
+
+						<Nav stacked bsStyle="pills" activeKey={queryType} onSelect={this.onSelectQueryType}>
+							<NavItem eventKey="everything" disabled={!numResults}>
+								<img src={EVERYTHING_ICON} role="presentation" /> Everything
+								{numResults > 0 && <Badge pullRight>{numResults}</Badge>}
+							</NavItem>
+
+							<NavItem eventKey="reports" disabled={!numReports}>
+								<img src={REPORTS_ICON} role="presentation" /> Reports
+								{numReports > 0 && <Badge pullRight>{numReports}</Badge>}
+							</NavItem>
+
+							<NavItem eventKey="people" disabled={!numPeople}>
+								<img src={PEOPLE_ICON} role="presentation" /> People
+								{numPeople > 0 && <Badge pullRight>{numPeople}</Badge>}
+							</NavItem>
+
+							<NavItem eventKey="positions" disabled={!numPositions}>
+								<img src={POSITIONS_ICON} role="presentation" /> Positions
+								{numPositions > 0 && <Badge pullRight>{numPositions}</Badge>}
+							</NavItem>
+
+							<NavItem eventKey="poams" disabled={!numPoams}>
+								<img src={POAMS_ICON} role="presentation" /> PoAMs
+								{numPoams > 0 && <Badge pullRight>{numPoams}</Badge>}
+							</NavItem>
+
+							<NavItem eventKey="locations" disabled={!numLocations}>
+								<img src={LOCATIONS_ICON} role="presentation" /> Locations
+								{numLocations > 0 && <Badge pullRight>{numLocations}</Badge>}
+							</NavItem>
+
+							<NavItem eventKey="organizations" disabled={!numOrganizations}>
+								<img src={ORGANIZATIONS_ICON} role="presentation" /> Organizations
+								{numOrganizations > 0 && <Badge pullRight>{numOrganizations}</Badge>}
+							</NavItem>
+						</Nav>
+					</div>
+				</ContentForNav>
 
 				<Messages error={error} success={success} />
 
@@ -186,42 +223,42 @@ export default class Search extends Page {
 					{this.props.location.query.text && <Button onClick={this.showSaveModal}>Save search</Button>}
 				</div>
 
-				{results.reports && results.reports.totalCount > 0 &&
+				{numReports > 0 && (queryType === 'everything' || queryType === 'reports') &&
 					<fieldset>
 						<legend>Reports</legend>
 						<ReportCollection paginatedReports={results.reports} goToPage={this.goToReportsPage} />
 					</fieldset>
 				}
 
-				{results.people && results.people.totalCount > 0 &&
+				{numPeople > 0 && (queryType === 'everything' || queryType === 'people') &&
 					<fieldset>
 						<legend>People</legend>
 						{this.renderPeople()}
 					</fieldset>
 				}
 
-				{results.organizations && results.organizations.totalCount > 0 &&
+				{numOrganizations > 0 && (queryType === 'everything' || queryType === 'organizations') &&
 					<fieldset>
 						<legend>Organizations</legend>
 						{this.renderOrgs()}
 					</fieldset>
 				}
 
-				{results.positions && results.positions.totalCount > 0 &&
+				{numPositions > 0 && (queryType === 'everything' || queryType === 'positions') &&
 					<fieldset>
 						<legend>Positions</legend>
 						{this.renderPositions()}
 					</fieldset>
 				}
 
-				{results.locations && results.locations.totalCount > 0 &&
+				{numLocations > 0 && (queryType === 'everything' || queryType === 'locations') &&
 					<fieldset>
 						<legend>Locations</legend>
 						{this.renderLocations()}
 					</fieldset>
 				}
 
-				{results.poams && results.poams.totalCount > 0 &&
+				{numPoams > 0 && (queryType === 'everything' || queryType === 'poams') &&
 					<fieldset>
 						<legend>PoAMs</legend>
 						{this.renderPoams()}
@@ -398,8 +435,12 @@ export default class Search extends Page {
 	}
 
 	@autobind
+	onSelectQueryType(type) {
+		this.setState({queryType: type})
+	}
+
+	@autobind
 	goToReportsPage(reportsPageNum) {
-		this.setState({reportsPageNum})
-		this.fetchData(this.props)
+		this.setState({reportsPageNum}, () => {this.fetchData(this.props)})
 	}
 }

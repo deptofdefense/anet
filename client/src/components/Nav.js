@@ -1,16 +1,22 @@
 import React, {Component, PropTypes} from 'react'
-import {Nav, NavItem, NavDropdown, MenuItem} from 'react-bootstrap'
+import {Nav as BSNav, NavItem, NavDropdown, MenuItem} from 'react-bootstrap'
 import {IndexLinkContainer as Link} from 'react-router-bootstrap'
+import {Injectable, Injector} from 'react-injectables'
+
 import LinkTo from 'components/LinkTo'
 
 import {Organization} from 'models'
 
-export default class extends Component {
+class Nav extends Component {
 	static contextTypes = {
 		app: PropTypes.object.isRequired,
 	}
 
 	render() {
+		if (this.props.injections.length) {
+			return <div>{this.props.injections}</div>
+		}
+
 		let appData = this.context.app.state
 		let currentUser = appData.currentUser
 		let organizations = appData.organizations || []
@@ -19,7 +25,7 @@ export default class extends Component {
 		if (inOrg) { path = "/organizations/" + this.context.app.props.params.id }
 
 		return (
-			<Nav bsStyle="pills" stacked>
+			<BSNav bsStyle="pills" stacked>
 				<Link to="/">
 					<NavItem>Home</NavItem>
 				</Link>
@@ -61,7 +67,7 @@ export default class extends Component {
 						<NavItem>Admin</NavItem>
 					</Link>
 				}
-			</Nav>
+			</BSNav>
 		)
 	}
 }
@@ -75,3 +81,25 @@ class SubNav extends Component {
 		</li>
 	}
 }
+
+let InjectableNav = null
+let ContentForNav = null
+if (process.env.NODE_ENV === 'test') {
+	ContentForNav = function(props) {
+		return <div />
+	}
+} else {
+	// this is some magic around the Injectable library to allow
+	// components further down the tree to inject children into the header
+	InjectableNav = Injectable(Nav)
+
+	const NavInjector = Injector({into: InjectableNav})
+	ContentForNav = function(props) {
+		let {children, ...childProps} = props
+		let Component = NavInjector(function() { return children })
+		return <Component {...childProps} />
+	}
+}
+
+export default InjectableNav
+export {ContentForNav}
