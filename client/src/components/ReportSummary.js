@@ -53,7 +53,7 @@ export default class ReportSummary extends Component {
 					{report.nextSteps && <p><strong>Next steps:</strong> {report.nextSteps}</p>}
 				</Col>
 			</Row>
-			<Button className="read-full"><LinkTo report={report} >Read Full Report</LinkTo></Button>
+			<LinkTo report={report} className="pull-right" ><Button>Read Full Report</Button></LinkTo>
 		</Grid>
 	}
 
