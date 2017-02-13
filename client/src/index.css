@@ -268,3 +268,7 @@ a.home-tile {
 .onboarding-new .create-account-button-wrapper {
 	text-align: center;
 }
+
+.onboarding-new .role {
+	text-transform: uppercase;
+}
