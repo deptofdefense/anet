@@ -4,7 +4,7 @@ const API = {
 		params.credentials = 'same-origin'
 
 		params.headers = params.headers || {}
-		params.headers['Accept'] = 'application/json'
+		params.headers.Accept = 'application/json'
 
 		let promise = window.fetch(url, params)
 					.then(response => {

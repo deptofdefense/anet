@@ -119,7 +119,8 @@
     "rules": {
       "quotes": ["error", "single"],
       "quote-props": ["error", "as-needed"],
-      "semi": ["error", "never"]
+      "semi": ["error", "never"],
+      "dot-notation": ["error"]
     }
   }
 }

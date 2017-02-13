@@ -124,7 +124,7 @@ export default class Leaflet extends Component {
 	@autobind
 	addLayers() {
 		let app = this.context.app
-		let rawLayers = app.state.settings['MAP_LAYERS']
+		let rawLayers = app.state.settings.MAP_LAYERS
 		if (!rawLayers || rawLayers.length === 0) {
 			return
 		}
