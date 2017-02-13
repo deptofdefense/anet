@@ -101,11 +101,13 @@ export default class PositionForm extends Component {
 				</fieldset>
 
 				<fieldset>
-					<legend>Assigned Position Relationships</legend>
+					<legend>Assigned {position.type === "PRINCIPAL" ? "advisor" : "advisee"}</legend>
+
+					<p className="help-text">Advisor positions are associated with Principal positions and vice versa.</p>
 
 					<Form.Field id="associatedPositions">
 						<Autocomplete
-							placeholder="Assign new Position Relationship"
+							placeholder={"Start typing to search for " + (position.type === "PRINCIPAL" ? "an advisor" : "a principal") + " position..."}
 							objectType={Position}
 							fields={"id, name, code, type, person { id, name, rank }"}
 							template={pos =>
@@ -139,9 +141,9 @@ export default class PositionForm extends Component {
 				</fieldset>
 
 				<fieldset>
-					<legend>Additional Information</legend>
+					<legend>Additional information</legend>
 					<Form.Field id="location">
-						<Autocomplete valueKey="name" placeholder="Position Location" url="/api/locations/search" />
+						<Autocomplete valueKey="name" placeholder="Start typing to find a location where this Position will operate from..." url="/api/locations/search" />
 					</Form.Field>
 				</fieldset>
 			</Form>
