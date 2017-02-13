@@ -76,9 +76,9 @@ class Nav extends Component {
 class SubNav extends Component {
 	render() {
 		return <li>
-			<Nav>
+			<BSNav>
 				{this.props.children}
-			</Nav>
+			</BSNav>
 		</li>
 	}
 }
