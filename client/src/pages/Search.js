@@ -1,11 +1,10 @@
 import React from 'react'
 import Page from 'components/Page'
+import {Alert, Table, Modal, Button, Nav, NavItem, Badge} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
-import {Alert, Table, Modal, Button, Nav, NavItem, Badge} from 'react-bootstrap'
-import {Link} from 'react-router'
-
 import {ContentForNav} from 'components/Nav'
+import History from 'components/History'
 import Breadcrumbs from 'components/Breadcrumbs'
 import LinkTo from 'components/LinkTo'
 import ReportCollection from 'components/ReportCollection'
@@ -170,7 +169,7 @@ export default class Search extends Page {
 
 				<ContentForNav>
 					<div>
-						<div><Link to="/">&lt; Return to previous page</Link></div>
+						<div><Button onClick={History.goBack} bsStyle="link">&lt; Return to previous page</Button></div>
 
 						<Nav stacked bsStyle="pills" activeKey={queryType} onSelect={this.onSelectQueryType}>
 							<NavItem eventKey="everything" disabled={!numResults}>
