@@ -46,6 +46,8 @@ import AdminIndex from './pages/admin/Index'
 
 import GraphiQL from './pages/GraphiQL'
 
+import OnboardingShow from './pages/onboarding/Show'
+
 ReactDOM.render((
 	<InjectablesProvider>
 		<Router history={browserHistory}>
@@ -97,6 +99,8 @@ ReactDOM.render((
 				<Route path="graphiql" component={GraphiQL} />
 
 				<Route path="admin" component={AdminIndex} />
+
+				<Route path="onboarding" component={OnboardingShow} />
 			</Route>
 		</Router>
 	</InjectablesProvider>
