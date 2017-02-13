@@ -1,5 +1,9 @@
 Here are the results of Nick's attempt to follow the setup instructions in a locked-down environment.
 
+# EOP PC
+1. Can't install Eclipse, NodeJS, or git.
+1. Can't open `cmd`.
+
 # IRS PC
 ## Download open source software
 1. I can't download Eclipse, because the firewall blocks various downloads. I could file a request for it, but I'll just move ahead with Notepad for now. This is one of the images that the IRS displays when it blocks access to a site:
@@ -23,3 +27,6 @@ at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:188) �
 at java.net.PlainSocketImpl.connect(PlainSocketImpl.java:172)        
 at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392)        at java.net.Socket.connect(Socket.java:589)        at sun.security.ssl.SSLSocketImpl.connect(SSLSocketImpl.java:656)        at sun.security.ssl.BaseSSLSocketImpl.connect(BaseSSLSocketImpl.java:173)        at sun.net.NetworkClient.doConnect(NetworkClient.java:180)        at sun.net.www.http.HttpClient.openServer(HttpClient.java:432)        at sun.net.www.http.HttpClient.openServer(HttpClient.java:527)        at sun.net.www.protocol.https.HttpsClient.<init>(HttpsClient.java:275)        at sun.net.www.protocol.https.HttpsClient.New(HttpsClient.java:371)        at sun.net.www.protocol.https.AbstractDelegateHttpsURLConnection.getNewHttpClient(AbstractDelegateHttpsURLConnection.java:191)        at sun.net.www.protocol.http.HttpURLConnection.plainConnect0(HttpURLConnection.java:1104)        at sun.net.www.protocol.http.HttpURLConnection.plainConnect(HttpURLConnection.java:998)        at sun.net.www.protocol.https.AbstractDelegateHttpsURLConnection.connect(AbstractDelegateHttpsURLConnection.java:177)        at sun.net.www.protocol.http.HttpURLConnection.getInputStream0(HttpURLConnection.java:1512)        at sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1440)        at sun.net.www.protocol.https.HttpsURLConnectionImpl.getInputStream(HttpsURLConnectionImpl.java:254)        at org.gradle.wrapper.Download.downloadInternal(Download.java:58)        at org.gradle.wrapper.Download.download(Download.java:44)        at org.gradle.wrapper.Install$1.call(Install.java:61)        at org.gradle.wrapper.Install$1.call(Install.java:48)        at org.gradle.wrapper.ExclusiveFileAccessManager.access(ExclusiveFileAccessManager.java:65)        at org.gradle.wrapper.Install.createDist(Install.java:48)        at org.gradle.wrapper.WrapperExecutor.execute(WrapperExecutor.java:128)        at org.gradle.wrapper.GradleWrapperMain.main(GradleWrapperMain.java:61)
 ```
+
+`npm install` in `client/` also fails:
+
