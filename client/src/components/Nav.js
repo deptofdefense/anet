@@ -13,8 +13,9 @@ class Nav extends Component {
 	}
 
 	render() {
-		if (this.props.injections.length) {
-			return <div>{this.props.injections}</div>
+		let injections = this.props.injections
+		if (injections && injections.length) {
+			return <div>{injections}</div>
 		}
 
 		let appData = this.context.app.state
