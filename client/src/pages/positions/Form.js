@@ -1,10 +1,11 @@
 import React, {Component, PropTypes} from 'react'
-import {Table} from 'react-bootstrap'
+import {Table, Radio} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
 import Form from 'components/Form'
 import Messages from 'components/Messages'
 import Autocomplete from 'components/Autocomplete'
+import RadioGroup from 'components/RadioGroup'
 import History from 'components/History'
 
 import API from 'api'
@@ -56,12 +57,14 @@ export default class PositionForm extends Component {
 				<fieldset>
 					<legend>Create a new Position</legend>
 
-					<Form.Field id="type" componentClass="select" disabled={this.props.edit} >
-						<option value="ADVISOR">Advisor (CE Billet)</option>
-						<option value="PRINCIPAL">Principal (Tashkil)</option>
+					<Form.Field id="type" disabled={this.props.edit}>
+						<RadioGroup>
+							<Radio value="ADVISOR">Advisor (CE Billet)</Radio>
+							<Radio value="PRINCIPAL">Principal (Tashkil)</Radio>
+						</RadioGroup>
 					</Form.Field>
 
-					<Form.Field id="organization" >
+					<Form.Field id="organization">
 						<Autocomplete
 							placeholder="Select the organization for this position"
 							objectType={Organization}
@@ -75,7 +78,7 @@ export default class PositionForm extends Component {
 					<Form.Field id="code" placeholder="Postion ID or Number" />
 					<Form.Field id="name" label="Position Name" placeholder="Name/Description of Position"/>
 
-					<Form.Field id="person" >
+					<Form.Field id="person">
 						<Autocomplete valueKey="name"
 							placeholder="Select the person in this position"
 							url="/api/people/search"
@@ -84,12 +87,14 @@ export default class PositionForm extends Component {
 					</Form.Field>
 
 					{position.type !== "PRINCIPAL" &&
-						<Form.Field id="permissions" componentClass="select">
-							<option value="ADVISOR">Advisor</option>
-							<option value="SUPER_USER">Super User</option>
-							{currentUser && currentUser.isAdmin() &&
-								<option value="ADMINISTRATOR">Administrator</option>
-							}
+						<Form.Field id="permissions">
+							<RadioGroup>
+								<Radio value="ADVISOR">Advisor</Radio>
+								<Radio value="SUPER_USER">Super User</Radio>
+								{currentUser && currentUser.isAdmin() &&
+									<Radio value="ADMINISTRATOR">Administrator</Radio>
+								}
+							</RadioGroup>
 						</Form.Field>
 					}
 
