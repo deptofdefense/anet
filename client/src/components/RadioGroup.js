@@ -24,18 +24,24 @@ export default class RadioGroup extends Component {
 
 		return (
 			<ButtonGroup data-toggle="buttons" {...props}>
-				{children.map((child, index) =>
-					<Button key={child.props.value} active={this.props.value === child.props.value} onClick={this.onButtonClick}>
-						<Radio
-							id={this.id + '-' + child.props.value}
-							name={this.id}
-							{...child.props}
-							onChange={this.onRadioChange}
-							inline
-							checked={this.props.value === child.props.value}
-						/>
-					</Button>
-				)}
+				{React.Children.map(children, (child, index) => {
+					if (!child) {
+						return null
+					}
+
+					return (
+						<Button key={child.props.value} active={this.props.value === child.props.value} onClick={this.onButtonClick}>
+							<Radio
+								id={this.id + '-' + child.props.value}
+								name={this.id}
+								{...child.props}
+								onChange={this.onRadioChange}
+								inline
+								checked={this.props.value === child.props.value}
+							/>
+						</Button>
+					)
+				})}
 			</ButtonGroup>
 		)
 	}
