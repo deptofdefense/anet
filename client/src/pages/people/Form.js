@@ -13,7 +13,6 @@ import {Person} from 'models'
 
 import {HelpBlock} from 'react-bootstrap'
 import CALENDAR_ICON from 'resources/calendar.png'
-import WARNING_ICON from "resources/warning.png"
 
 export default class PersonForm extends Component {
 	static propTypes = {
@@ -38,11 +37,9 @@ export default class PersonForm extends Component {
 
 			<fieldset>
 				<legend>{edit ? "Edit " + person.name : "Create a new Person"}</legend>
-				<Form.Field id="name" />
-				<HelpBlock>
-						<img src={WARNING_ICON} role="presentation" height="20px" />
-						Person not found in ANET Database.
-					</HelpBlock>
+				<Form.Field id="name" validationState="error">
+				</Form.Field>	
+				<HelpBlock>Name is required.</HelpBlock>
 
 				{edit ?
 					<Form.Field type="static" id="role" />
