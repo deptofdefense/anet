@@ -11,7 +11,6 @@ import History from 'components/History'
 import API from 'api'
 import {Person} from 'models'
 
-import {HelpBlock} from 'react-bootstrap'
 import CALENDAR_ICON from 'resources/calendar.png'
 
 export default class PersonForm extends Component {
@@ -37,9 +36,7 @@ export default class PersonForm extends Component {
 
 			<fieldset>
 				<legend>{edit ? "Edit " + person.name : "Create a new Person"}</legend>
-				<Form.Field id="name" validationState="error">
-				</Form.Field>	
-				<HelpBlock>Name is required.</HelpBlock>
+				<Form.Field id="name" validationState="error" helpText="helper text" />
 
 				{edit ?
 					<Form.Field type="static" id="role" />

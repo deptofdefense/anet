@@ -2,7 +2,7 @@ import React, {Component, PropTypes} from 'react'
 import utils from 'utils'
 import deepEqual from 'deep-equal'
 import autobind from 'autobind-decorator'
-import {FormGroup, Col, ControlLabel, FormControl, InputGroup} from 'react-bootstrap'
+import {FormGroup, Col, ControlLabel, FormControl, InputGroup, HelpBlock} from 'react-bootstrap'
 
 class FormFieldExtraCol extends Component {
 	render() {
@@ -42,6 +42,11 @@ export default class FormField extends Component {
 		// If you pass children, we will try to autobind them to the id key
 		// if any of the children have propTypes that include onChange
 		children: PropTypes.node,
+
+		// Text to show in a <HelpBlock> next to the input. 
+		// This prop is ignored if children are passed.
+		// Default value: empty string, which causes the <HelpBlock> to be omitted. 
+		helpText: PropTypes.string,
 
 		// If you don't pass children, we will automatically create a FormControl.
 		// You can use componentClass to override its type (for example, for a select).
@@ -122,7 +127,13 @@ export default class FormField extends Component {
 			if (children.length)
 				childProps.children = children
 
-			children = <FormControl {...childProps} value={defaultValue} onChange={this.props.onChange || this.onChange} />
+			const formControl = <FormControl {...childProps} value={defaultValue} onChange={this.props.onChange || this.onChange} />
+			children = this.props.helpText ? 
+				<div>
+					{formControl}
+					<HelpBlock>Help block</HelpBlock>
+				</div>
+				: formControl
 		}
 
 		if (icon) {
