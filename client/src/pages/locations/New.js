@@ -62,10 +62,10 @@ export default class LocationNew extends React.Component {
 
 	@autobind
 	onMarkerMove(event) {
-		let latLng = event.latlng;
-		let loc = this.state.location;
-		loc.lat = latLng.lat;
-		loc.lng = latLng.lng;
+		let latLng = event.latlng
+		let loc = this.state.location
+		loc.lat = latLng.lat
+		loc.lng = latLng.lng
 		this.setState({location: loc})
 	}
 

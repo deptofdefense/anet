@@ -118,7 +118,8 @@
     "extends": "react-app",
     "rules": {
       "quotes": ["error", "single"],
-      "quote-props": ["error", "as-needed"]
+      "quote-props": ["error", "as-needed"],
+      "semi": ["error", "never"]
     }
   }
 }

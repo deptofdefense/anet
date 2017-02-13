@@ -69,7 +69,7 @@ export default class ReportForm extends Component {
 	}
 
 	componentWillReceiveProps(nextProps) {
-		let report = nextProps.report;
+		let report = nextProps.report
 		if (report.cancelledReason) {
 			this.setState({isCancelled: true})
 		}
@@ -86,7 +86,7 @@ export default class ReportForm extends Component {
 		let {report} = this.props
 		let {recents, errors, isCancelled} = this.state
 
-		let hasErrors = Object.keys(errors).length > 0;
+		let hasErrors = Object.keys(errors).length > 0
 
 		return <Form formFor={report} horizontal onChange={this.onChange} onSubmit={this.onSubmit} submitText="Save report" submitDisabled={hasErrors} >
 			<fieldset>
@@ -250,15 +250,15 @@ export default class ReportForm extends Component {
 	@autobind
 	toggleCancelled() {
 		//Toggle the isCancelled state. And set a default reason if necessary
-		let cancelled = !this.state.isCancelled;
+		let cancelled = !this.state.isCancelled
 		this.props.report.cancelledReason = (cancelled) ? 'CANCELLED_BY_ADVISOR' : null
 		this.setState({isCancelled: cancelled})
 	}
 
 	@autobind
 	setLocation(location) {
-		this.props.report.location = location;
-		this.onChange();
+		this.props.report.location = location
+		this.onChange()
 	}
 
 	@autobind
@@ -287,24 +287,24 @@ export default class ReportForm extends Component {
 
 	@autobind
 	attendeeError(isError, message) {
-		let errors = this.state.errors;
+		let errors = this.state.errors
 		if (isError) {
 			errors.attendees = 'error'
 		} else {
 			delete errors.attendees
 		}
-		this.setState({errors});
+		this.setState({errors})
 	}
 
 	@autobind
 	onPoamError(isError, message) {
-		let errors = this.state.errors;
+		let errors = this.state.errors
 		if (isError) {
 			errors.poams = 'error'
 		} else {
 			delete errors.poams
 		}
-		this.setState({errors});
+		this.setState({errors})
 	}
 
 	@autobind
@@ -351,14 +351,14 @@ export default class ReportForm extends Component {
 	@autobind
 	validateReport() {
 		let report = this.props.report
-		let errors = this.state.errors;
+		let errors = this.state.errors
 		if (report.location && (typeof report.location !== 'object')) {
 			errors.location = 'error'
 		} else {
 			delete errors.location
 		}
 
-		return errors;
+		return errors
 	}
 
 	@autobind

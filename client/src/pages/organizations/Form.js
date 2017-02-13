@@ -127,50 +127,50 @@ export default class OrganizationForm extends Component {
 
 	@autobind
 	addApprover(index, position) {
-		let org = this.props.organization;
-		let step = org.approvalSteps[index];
-		let newApprovers = step.approvers.slice();
-		newApprovers.push(position);
-		step.approvers = newApprovers;
+		let org = this.props.organization
+		let step = org.approvalSteps[index]
+		let newApprovers = step.approvers.slice()
+		newApprovers.push(position)
+		step.approvers = newApprovers
 
-		this.onChange();
+		this.onChange()
 	}
 
 	@autobind
 	removeApprover(approver, index) {
-		let step = this.props.organization.approvalSteps[index];
-		let approvers = step.approvers;
-		let approverIndex = approvers.findIndex(m => m.id === approver.id );
+		let step = this.props.organization.approvalSteps[index]
+		let approvers = step.approvers
+		let approverIndex = approvers.findIndex(m => m.id === approver.id )
 
 		if (approverIndex !== -1) {
-			approvers.splice(approverIndex, 1);
-			this.onChange();
+			approvers.splice(approverIndex, 1)
+			this.onChange()
 		}
 	}
 
 	@autobind
 	setStepName(index, event) {
 		let name = event && event.target ? event.target.value : event
-		let step = this.props.organization.approvalSteps[index];
-		step.name = name;
+		let step = this.props.organization.approvalSteps[index]
+		step.name = name
 
-		this.onChange();
+		this.onChange()
 	}
 
 	@autobind
 	addApprovalStep() {
-		let org = this.props.organization;
-		let approvalSteps = org.approvalSteps || [];
-		approvalSteps.push({name: '', approvers: []});
+		let org = this.props.organization
+		let approvalSteps = org.approvalSteps || []
+		approvalSteps.push({name: '', approvers: []})
 
 		this.onChange()
 	}
 
 	@autobind
 	removeApprovalStep(index) {
-		let steps = this.props.organization.approvalSteps;
+		let steps = this.props.organization.approvalSteps
 		steps.splice(index, 1)
-		this.onChange();
+		this.onChange()
 	}
 
 	@autobind

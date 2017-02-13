@@ -72,7 +72,7 @@ export default class App extends Page {
 		let currentUser = new Person(data.person)
 		let organizations = (data.organizationList && data.organizationList.list) || []
 		organizations = Organization.fromArray(organizations)
-		organizations.sort((a, b) => a.shortName.localeCompare(b.shortName));
+		organizations.sort((a, b) => a.shortName.localeCompare(b.shortName))
 
 		let settings = this.state.settings
 		data.adminSettings.forEach(setting => settings[setting.key] = setting.value)

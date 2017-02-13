@@ -48,7 +48,7 @@ export default class PositionShow extends Page {
 
 	render() {
 		let position = this.state.position
-		let assignedRole = (position.type === 'ADVISOR') ? 'Afghan Principals' : 'Advisors';
+		let assignedRole = (position.type === 'ADVISOR') ? 'Afghan Principals' : 'Advisors'
 
 		let currentUser = this.context.app.state.currentUser
 		let canEdit = currentUser && (
@@ -158,11 +158,11 @@ export default class PositionShow extends Page {
 
 	@autobind
 	actionSelect(eventKey, event) {
-		let position = this.state.position;
+		let position = this.state.position
 		if (eventKey === 'edit') {
 			History.push('/positions/' + position.id + '/edit')
 		} else {
-			console.error('Unimplemented Action: ' + eventKey);
+			console.error('Unimplemented Action: ' + eventKey)
 		}
 	}
 

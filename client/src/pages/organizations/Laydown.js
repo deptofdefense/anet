@@ -52,10 +52,10 @@ export default class OrganizationLaydown extends Page {
 		let positionsNeedingAttention = org.positions.filter(position => !position.person )
 		let supportedPositions = org.positions.filter(position => positionsNeedingAttention.indexOf(position) === -1)
 
-		let currentUser = this.context.app.state.currentUser;
+		let currentUser = this.context.app.state.currentUser
 		let isSuperUser = (currentUser) ? currentUser.isSuperUserForOrg(org) : false
 		let isAdmin = (currentUser) ? currentUser.isAdmin() : false
-		let showActions = isAdmin || isSuperUser;
+		let showActions = isAdmin || isSuperUser
 
 		return (
 			<div>
@@ -196,7 +196,7 @@ export default class OrganizationLaydown extends Page {
 		} else if (eventKey === 'createPoam') {
 			History.push({pathname: 'poams/new', query: {responsibleOrg: this.state.organization.id}})
 		} else {
-			console.log('Unimplemented Action: ' + eventKey);
+			console.log('Unimplemented Action: ' + eventKey)
 		}
 	}
 }

@@ -70,7 +70,7 @@ const SEARCH_CONFIG = {
 		variableType: 'OrganizationSearchQuery',
 		fields: 'id, shortName, longName'
 	}
-};
+}
 
 export default class Search extends Page {
 	constructor(props) {
@@ -404,7 +404,7 @@ export default class Search extends Page {
 
 	@autobind
 	onChangeSaveSearch() {
-		let search = this.state.saveSearch;
+		let search = this.state.saveSearch
 		this.setState({saveSearch: search})
 	}
 

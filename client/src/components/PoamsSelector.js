@@ -19,7 +19,7 @@ export default class PoamsSelector extends Component {
 	}
 
 	render() {
-		let {poams, shortcuts, validationState} = this.props;
+		let {poams, shortcuts, validationState} = this.props
 
 		return <fieldset>
 			<legend>Plans of Action and Milestones / Pillars</legend>
@@ -69,7 +69,7 @@ export default class PoamsSelector extends Component {
 	}
 
 	renderShortcuts() {
-		let shortcuts = this.props.shortcuts || [];
+		let shortcuts = this.props.shortcuts || []
 		return <Form.Field.ExtraCol className="shortcut-list">
 			<h5>Shortcuts</h5>
 				{shortcuts.map(poam =>

@@ -12,42 +12,42 @@ CODE: {
 	fontSize: 16,
 	padding: 2,
 },
-};
+}
 
 export default class TextEditor extends Component {
 	constructor(props) {
-		super(props);
+		super(props)
 
 		this.componentWillReceiveProps(props)
 
-		this.focus = () => this.refs.editor.focus();
+		this.focus = () => this.refs.editor.focus()
 		this.onChange = (editorState) => {
-			this.setState({editorState});
+			this.setState({editorState})
 			if (props.onChange) {
 				let value = stateToHTML(editorState.getCurrentContent())
 				props.onChange(value)
 			}
 		}
 
-		this.handleKeyCommand = (command) => this._handleKeyCommand(command);
-		this.onTab = (e) => this._onTab(e);
-		this.toggleBlockType = (type) => this._toggleBlockType(type);
-		this.toggleInlineStyle = (style) => this._toggleInlineStyle(style);
+		this.handleKeyCommand = (command) => this._handleKeyCommand(command)
+		this.onTab = (e) => this._onTab(e)
+		this.toggleBlockType = (type) => this._toggleBlockType(type)
+		this.toggleInlineStyle = (style) => this._toggleInlineStyle(style)
 	}
 
 	_handleKeyCommand(command) {
-		const {editorState} = this.state;
-		const newState = RichUtils.handleKeyCommand(editorState, command);
+		const {editorState} = this.state
+		const newState = RichUtils.handleKeyCommand(editorState, command)
 		if (newState) {
-			this.onChange(newState);
-			return true;
+			this.onChange(newState)
+			return true
 		}
-		return false;
+		return false
 	}
 
 	_onTab(e) {
-		const maxDepth = 4;
-		this.onChange(RichUtils.onTab(e, this.state.editorState, maxDepth));
+		const maxDepth = 4
+		this.onChange(RichUtils.onTab(e, this.state.editorState, maxDepth))
 	}
 
 	_toggleBlockType(blockType) {
@@ -56,7 +56,7 @@ export default class TextEditor extends Component {
 				this.state.editorState,
 				blockType
 			)
-		);
+		)
 	}
 
 	_toggleInlineStyle(inlineStyle) {
@@ -65,7 +65,7 @@ export default class TextEditor extends Component {
 				this.state.editorState,
 				inlineStyle
 			)
-		);
+		)
 	}
 
 	componentWillReceiveProps(props) {
@@ -84,15 +84,15 @@ export default class TextEditor extends Component {
 	}
 
 	render() {
-		const {editorState} = this.state;
+		const {editorState} = this.state
 
 		// If the user changes block type before entering any text, we can
 		// either style the placeholder or hide it. Let's just hide it now.
-		let className = 'RichEditor-editor';
-		var contentState = editorState.getCurrentContent();
+		let className = 'RichEditor-editor'
+		var contentState = editorState.getCurrentContent()
 		if (!contentState.hasText()) {
 			if (contentState.getBlockMap().first().getType() !== 'unstyled') {
-				className += ' RichEditor-hidePlaceholder';
+				className += ' RichEditor-hidePlaceholder'
 			}
 		}
 
@@ -121,52 +121,52 @@ export default class TextEditor extends Component {
 					/>
 				</div>
 			</div>
-		);
+		)
 	}
 }
 
 function getBlockStyle(block) {
 	switch (block.getType()) {
-		case 'blockquote': return 'RichEditor-blockquote';
-		default: return null;
+		case 'blockquote': return 'RichEditor-blockquote'
+		default: return null
 	}
 }
 
 class StyleButton extends Component {
 	constructor() {
-		super();
+		super()
 		this.onToggle = (e) => {
-			e.preventDefault();
-			this.props.onToggle(this.props.style);
-		};
+			e.preventDefault()
+			this.props.onToggle(this.props.style)
+		}
 	}
 
 	render() {
-		let className = 'RichEditor-styleButton';
+		let className = 'RichEditor-styleButton'
 		if (this.props.active) {
-			className += ' RichEditor-activeButton';
+			className += ' RichEditor-activeButton'
 		}
 
 		return (
 			<span className={className} onMouseDown={this.onToggle}>
 				{this.props.icon || this.props.label}
 			</span>
-		);
+		)
 	}
 }
 
 const BLOCK_TYPES = [
 	{label: 'Unordered list', icon: '•', style: 'unordered-list-item'},
 	{label: 'Numbered list', icon: '⒈', style: 'ordered-list-item'},
-];
+]
 
 const BlockStyleControls = (props) => {
-	const {editorState} = props;
-	const selection = editorState.getSelection();
+	const {editorState} = props
+	const selection = editorState.getSelection()
 	const blockType = editorState
 		.getCurrentContent()
 		.getBlockForKey(selection.getStartKey())
-		.getType();
+		.getType()
 
 	return (
 		<div className="RichEditor-controls">
@@ -181,17 +181,17 @@ const BlockStyleControls = (props) => {
 				/>
 			)}
 		</div>
-	);
-};
+	)
+}
 
 var INLINE_STYLES = [
 	{label: 'Bold', icon: '𝗕', style: 'BOLD'},
 	{label: 'Italic', icon: '𝘐', style: 'ITALIC'},
 	{label: 'Underline', icon: '𝑈', style: 'UNDERLINE'},
-];
+]
 
 const InlineStyleControls = (props) => {
-	var currentStyle = props.editorState.getCurrentInlineStyle();
+	var currentStyle = props.editorState.getCurrentInlineStyle()
 	return (
 		<div className="RichEditor-controls">
 			{INLINE_STYLES.map(type =>
@@ -205,5 +205,5 @@ const InlineStyleControls = (props) => {
 				/>
 			)}
 		</div>
-	);
-};
+	)
+}

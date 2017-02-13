@@ -121,14 +121,14 @@ export default class ReportShow extends Page {
 		let canSubmit = (report.isDraft() || report.isRejected()) && (currentUser.id === report.author.id)
 
 		//Anbody can email a report as long as it's not in draft.
-		let canEmail = !report.isDraft();
+		let canEmail = !report.isDraft()
 
 		//Only the author can delete a report, and only in DRAFT.
 		let canDelete = report.isDraft() && (currentUser.id === report.author.id)
 
-		let errors = report.isDraft() && report.validateForSubmit();
+		let errors = report.isDraft() && report.validateForSubmit()
 
-		let isCancelled = (report.cancelledReason) ? true : false;
+		let isCancelled = (report.cancelledReason) ? true : false
 
 		return (
 			<div>
@@ -357,7 +357,7 @@ export default class ReportShow extends Page {
 
 	@autobind
 	renderApprovals(canApprove) {
-		let report = this.state.report;
+		let report = this.state.report
 		return <fieldset>
 			<a name="approvals" />
 			<legend>Approvals</legend>
@@ -397,16 +397,16 @@ export default class ReportShow extends Page {
 
 	@autobind
 	toggleEmailModal() {
-		this.setState({showEmailModal : !this.state.showEmailModal});
+		this.setState({showEmailModal : !this.state.showEmailModal})
 	}
 
 	@autobind
 	emailReport() {
-		let email = this.state.email;
+		let email = this.state.email
 		if (!email.to) {
 			email.errors = 'You must select a person to send this to'
 			this.setState({email})
-			return;
+			return
 		}
 
 		email = {
@@ -516,7 +516,7 @@ export default class ReportShow extends Page {
 	@autobind
 	actionSelect(eventKey, event) {
 		if (eventKey === 'edit') {
-			History.push(`/reports/${this.state.report.id}/edit`);
+			History.push(`/reports/${this.state.report.id}/edit`)
 		} else if (eventKey === 'submit' ) {
 			this.submitDraft()
 		} else if (eventKey === 'email' ) {
@@ -525,7 +525,7 @@ export default class ReportShow extends Page {
 				this.deleteReport()
 			}
 		} else {
-			console.log('Unimplemented Action: ' + eventKey);
+			console.log('Unimplemented Action: ' + eventKey)
 		}
 	}
 
@@ -582,7 +582,7 @@ export default class ReportShow extends Page {
 	@autobind
 	deleteReport() {
 		API.send(`/api/reports/${this.state.report.id}/delete`, {}, {method: 'DELETE'}).then(data => {
-			History.push('/', {success: 'Report deleted'});
+			History.push('/', {success: 'Report deleted'})
 		}, data => {
 			this.setState({success:null})
 			this.handleError(data)

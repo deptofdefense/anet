@@ -43,11 +43,11 @@ export default class Person extends Model {
 	// - A super user for this orgs parents.
 	isSuperUserForOrg(org) {
 		if (!org) { return false }
-		if (this.position && this.position.type === 'ADMINISTRATOR') { return true; }
-		if (this.position && this.position.type !== 'SUPER_USER') { return false; }
-		if (org.type === 'PRINCIPAL_ORG') { return true; }
+		if (this.position && this.position.type === 'ADMINISTRATOR') { return true }
+		if (this.position && this.position.type !== 'SUPER_USER') { return false }
+		if (org.type === 'PRINCIPAL_ORG') { return true }
 
-		if (!this.position || !this.position.organization) { return false; }
+		if (!this.position || !this.position.organization) { return false }
 		let orgs = this.position.organization.allDescendantOrgs || []
 		orgs.push(this.position.organization)
 		let orgIds = orgs.map(o => o.id)

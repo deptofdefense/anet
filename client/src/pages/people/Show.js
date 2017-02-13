@@ -81,7 +81,7 @@ export default class PersonShow extends Page {
 		let position = person.position
 
 		//User can always edit themselves, or Super Users/Admins.
-		let currentUser = this.context.app.state.currentUser;
+		let currentUser = this.context.app.state.currentUser
 		let canEdit = currentUser && (currentUser.id === person.id ||
 			currentUser.isSuperUser())
 
@@ -140,9 +140,9 @@ export default class PersonShow extends Page {
 	@autobind
 	actionSelect(eventKey, event) {
 		if (eventKey === 'edit') {
-			History.push(`/people/${this.state.person.id}/edit`);
+			History.push(`/people/${this.state.person.id}/edit`)
 		} else {
-			console.log('Unimplemented Action: ' + eventKey);
+			console.log('Unimplemented Action: ' + eventKey)
 		}
 	}
 

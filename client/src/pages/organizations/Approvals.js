@@ -44,10 +44,10 @@ export default class OrganizationApprovals extends Page {
 		let org = this.state.organization
 		let approvalSteps = org.approvalSteps
 
-		let currentUser = this.context.app.state.currentUser;
+		let currentUser = this.context.app.state.currentUser
 		let isSuperUser = (currentUser) ? currentUser.isSuperUserForOrg(org) : false
 		let isAdmin = (currentUser) ? currentUser.isAdmin() : false
-		let showActions = isAdmin || isSuperUser;
+		let showActions = isAdmin || isSuperUser
 
 		return (
 			<div>
@@ -127,7 +127,7 @@ export default class OrganizationApprovals extends Page {
 		} else if (eventKey === 'createPoam') {
 			History.push({pathname: 'poams/new', query: {responsibleOrg: this.state.organization.id}})
 		} else {
-			console.log('Unimplemented Action: ' + eventKey);
+			console.log('Unimplemented Action: ' + eventKey)
 		}
 	}
 }

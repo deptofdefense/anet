@@ -20,7 +20,7 @@ const API = {
 								return respBody.then(r => {
 									r.status = response.status
 									r.statusText = response.statusText
-									if (!r.message) { r.message = r.error || 'You do not have permissions to perform this action'; }
+									if (!r.message) { r.message = r.error || 'You do not have permissions to perform this action' }
 									return Promise.reject(r)
 								})
 							}

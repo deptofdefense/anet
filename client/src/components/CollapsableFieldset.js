@@ -21,7 +21,7 @@ export default class CollapsableFieldset extends Component {
 	}
 
 	constructor(props) {
-		super(props);
+		super(props)
 
 		this.state = {
 			showContent: false
@@ -57,6 +57,6 @@ export default class CollapsableFieldset extends Component {
 
 	@autobind
 	toggleContent() {
-		this.setState({showContent: !this.state.showContent});
+		this.setState({showContent: !this.state.showContent})
 	}
 }
