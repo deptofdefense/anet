@@ -4,6 +4,7 @@ import {Button} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 import History from 'components/History'
 import {Person} from 'models'
+import API from 'api'
 
 export default class OnboardingShow extends Page {
     static pageProps = {
@@ -14,16 +15,32 @@ export default class OnboardingShow extends Page {
 	constructor(props) {
 		super(props)
 		this.state = {
-            currentUser: new Person(window.ANET_DATA.currentUser) 
+            person: null 
         }
 	}
 
+    fetchData() {
+        API.query(/* GraphQL */`
+			person(f:me) {
+				id, name, role, emailAddress, rank, status
+				position {
+					id, name, type,
+					organization { id, shortName , allDescendantOrgs { id }}
+				}
+			}
+		`).then(({person}) => this.setState({person}))
+    }
+
 	render() {
+        if (!this.state.person) {
+            return null
+        }
+        
 		return (
             <div className="onboarding-new">
 			    <h1>Welcome to ANET</h1>
                 <p>ANET is an information system for reporting on TAA engagements, and learning about past engagements and people.</p>
-                <p>Let's create a new account for your as an <span className="role">{this.state.currentUser.role}</span>. We'll get your basic information that will allow your supervisor to approve your account.</p>
+                <p>Let's create a new account for your as an <span className="role">{this.state.person.role}</span>. We'll get your basic information that will allow your supervisor to approve your account.</p>
                 <div className="create-account-button-wrapper">
                     <Button bsStyle="primary" onClick={this.onCreateAccountClick}>Create your account</Button>
                 </div>
@@ -38,6 +55,6 @@ export default class OnboardingShow extends Page {
 
     @autobind
     onCreateAccountClick() {
-        History.push(Person.pathForEdit(this.state.currentUser))
+        History.push(Person.pathForEdit(this.state.person))
     }
 }
