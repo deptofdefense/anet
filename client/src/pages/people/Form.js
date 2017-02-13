@@ -25,6 +25,7 @@ export default class PersonForm extends Component {
 
 		this.state = {
 			error: null,
+			formErrors: {}
 		}
 	}
 
@@ -36,7 +37,10 @@ export default class PersonForm extends Component {
 
 			<fieldset>
 				<legend>{edit ? "Edit " + person.name : "Create a new Person"}</legend>
-				<Form.Field id="name" validationState="error" helpText="helper text" />
+				<Form.Field id="name" 
+					validationState={this.state.formErrors.name} 
+					helpText={this.state.formErrors.name ? 'Name is required.' : ''}
+					onBlur={this.onNameBlur} />
 
 				{edit ?
 					<Form.Field type="static" id="role" />
@@ -143,6 +147,15 @@ export default class PersonForm extends Component {
 	@autobind
 	onChange() {
 		this.forceUpdate()
+	}
+
+	@autobind
+	onNameBlur() {
+		this.setState({
+			formErrors: {
+				name: this.props.person.name ? null : 'error'  
+			}
+		})
 	}
 
 	@autobind

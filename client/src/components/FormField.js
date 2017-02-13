@@ -131,7 +131,7 @@ export default class FormField extends Component {
 			children = this.props.helpText ? 
 				<div>
 					{formControl}
-					<HelpBlock>Help block</HelpBlock>
+					<HelpBlock>{this.props.helpText}</HelpBlock>
 				</div>
 				: formControl
 		}
