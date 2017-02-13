@@ -28,9 +28,9 @@ const atmosphereIconCss = {
 }
 
 const atmosphereIcons = {
-	'POSITIVE': POSITIVE_ICON,
-	'NEUTRAL': NEUTRAL_ICON,
-	'NEGATIVE': NEGATIVE_ICON,
+	POSITIVE: POSITIVE_ICON,
+	NEUTRAL: NEUTRAL_ICON,
+	NEGATIVE: NEGATIVE_ICON,
 }
 
 export default class ReportShow extends Page {

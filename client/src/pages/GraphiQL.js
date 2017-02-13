@@ -25,7 +25,7 @@ export default class extends Component {
 		return fetch('/graphql', {
 			credentials: 'same-origin',
 			method: 'POST',
-			headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+			headers: {'Content-Type': 'application/json', Accept: 'application/json'},
 			body: JSON.stringify(params),
 		}).then(response => response.json())
 	}

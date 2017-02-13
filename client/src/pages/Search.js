@@ -33,7 +33,7 @@ const QUERY_STRINGS = {
 }
 
 const SEARCH_CONFIG = {
-	'reports' : {
+	reports : {
 		listName : 'reports: reportList',
 		variableType: 'ReportSearchQuery',
 		fields : `id, intent, engagementDate, keyOutcomes, nextSteps, cancelledReason,
@@ -45,27 +45,27 @@ const SEARCH_CONFIG = {
 			location { id, name, lat, lng},
 			poams {id, shortName, longName}`
 	},
-	'persons' : {
+	persons : {
 		listName : 'people: peopleList',
 		variableType: 'PersonSearchQuery',
 		fields: 'id, name, rank, emailAddress, role , position { id, name, organization { id, shortName} }'
 	},
-	'positions' : {
+	positions : {
 		listName: 'positions: positionList',
 		variableType: 'PositionSearchQuery',
 		fields: 'id , name, type, organization { id, shortName}, person { id, name }'
 	},
-	'poams' : {
+	poams : {
 		listName: 'poams: poamList',
 		variableType: 'PoamSearchQuery',
 		fields: 'id, shortName, longName'
 	},
-	'locations' : {
+	locations : {
 		listName: 'locations: locationList',
 		variableType: 'LocationSearchQuery',
 		fields : 'id, name, lat, lng'
 	},
-	'organizations' : {
+	organizations : {
 		listName: 'organizations: organizationList',
 		variableType: 'OrganizationSearchQuery',
 		fields: 'id, shortName, longName'
