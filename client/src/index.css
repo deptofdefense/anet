@@ -264,3 +264,7 @@ a.home-tile {
 	color: #999;
 	margin-bottom: 0px;
 }
+
+.onboarding-new .create-account-button-wrapper {
+	text-align: center;
+}
