@@ -445,13 +445,13 @@ export default class Search extends Page {
 
 	@autobind
 	onSelectQueryType(type) {
-		this.setState({queryType: type}, () => this.fetchData(this.props))
+		this.setState({queryType: type}, () => this.loadData())
 	}
 
 	@autobind
 	goToReportsPage(reportsPageNum) {
 		let pageNum = this.state.pageNum
 		pageNum.reports = reportsPageNum
-		this.fetchData(this.props)
+		this.loadData()
 	}
 }
