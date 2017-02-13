@@ -1,7 +1,13 @@
 import React from 'react'
 import Page from 'components/Page'
+import Header from 'components/Header'
 
 export default class OnboardingShow extends Page {
+    static pageProps = {
+        useNavigation: false,
+        minimalHeader: true
+	}
+
 	constructor(props) {
 		super(props)
 		this.state = {}
@@ -9,7 +15,9 @@ export default class OnboardingShow extends Page {
 
 	render() {
 		return (
-			<h1>Welcome to ANET</h1>
+            <div>
+			    <h1>Welcome to ANET</h1>
+			</div>
 		)
 	}
 }

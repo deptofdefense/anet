@@ -91,7 +91,7 @@ export default class App extends Page {
 			<div className="anet">
 				<SecurityBanner location={this.props.location} />
 
-				<Header />
+				<Header minimalHeader={pageProps.minimalHeader} />
 
 				<Grid componentClass="section" bsClass={pageProps.fluidContainer ? "container-fluid" : "container"}>
 					{pageProps.useNavigation === false
