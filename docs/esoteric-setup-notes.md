@@ -30,4 +30,8 @@ at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392)        at j
 
 `npm install` in `client/` also fails:
 
+```
+TODO fill this in when my IRS machine is unlocked.
+```
+
 Running this command actually locked me out, preventing me from accessing any other web pages. I tried to fix this by restarting my machine, but the lockout prevented me from logging in to the machine itself.
