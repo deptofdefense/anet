@@ -1,7 +1,7 @@
 import React, {Component, PropTypes} from 'react'
 
-const SETTING_KEY_TEXT = "SECURITY_BANNER_TEXT"
-const SETTING_KEY_COLOR = "SECURITY_BANNER_COLOR"
+const SETTING_KEY_TEXT = 'SECURITY_BANNER_TEXT'
+const SETTING_KEY_COLOR = 'SECURITY_BANNER_COLOR'
 
 const css = {
 	color: 'white',

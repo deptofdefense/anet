@@ -8,12 +8,12 @@ export default {
 		return pluralize(changeCase.camel(string))
 	},
 	createUrlParams: function (obj) {
-		let str = "";
+		let str = '';
 		Object.forEach(obj, (key, val) => {
-			if (str !== "") {
-				str += "&";
+			if (str !== '') {
+				str += '&';
 			}
-			str += key + "=" + encodeURIComponent(val);
+			str += key + '=' + encodeURIComponent(val);
 		})
 		return str;
 	}

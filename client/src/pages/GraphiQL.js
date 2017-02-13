@@ -33,7 +33,7 @@ export default class extends Component {
 	render() {
 		return <div>
 			<Breadcrumbs items={[['Run GraphQL queries', '/graphiql']]} />
-			{GraphiQL ? <GraphiQL fetcher={this.fetch} /> : "Loading..."}
+			{GraphiQL ? <GraphiQL fetcher={this.fetch} /> : 'Loading...'}
 		</div>
 	}
 }

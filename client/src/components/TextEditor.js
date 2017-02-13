@@ -156,8 +156,8 @@ class StyleButton extends Component {
 }
 
 const BLOCK_TYPES = [
-	{label: "Unordered list", icon: '•', style: 'unordered-list-item'},
-	{label: "Numbered list", icon: '⒈', style: 'ordered-list-item'},
+	{label: 'Unordered list', icon: '•', style: 'unordered-list-item'},
+	{label: 'Numbered list', icon: '⒈', style: 'ordered-list-item'},
 ];
 
 const BlockStyleControls = (props) => {

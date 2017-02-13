@@ -38,7 +38,7 @@ export default class OrganizationForm extends Component {
 
 			<Messages error={this.state.error} />
 			<fieldset>
-				<legend>{edit ? "Editing " + organization.shortName : "Create a new Organization"}</legend>
+				<legend>{edit ? 'Editing ' + organization.shortName : 'Create a new Organization'}</legend>
 
 				<Form.Field id="type">
 					<RadioGroup>
@@ -58,7 +58,7 @@ export default class OrganizationForm extends Component {
 				<Form.Field id="longName" label="Description" placeholder="e.g. Force Sustainment" />
 			</fieldset>
 
-			{organization.type === "ADVISOR_ORG" && <div>
+			{organization.type === 'ADVISOR_ORG' && <div>
 				<PoamsSelector poams={organization.poams} onChange={this.onChange} />
 
 				<fieldset>
@@ -93,11 +93,11 @@ export default class OrganizationForm extends Component {
 				<Autocomplete valueKey="name"
 					placeholder="Search for the approvers position"
 					objectType={Position}
-					fields={"id, name, code, type, person { id, name, rank}"}
+					fields={'id, name, code, type, person { id, name, rank}'}
 					template={pos =>
 						<span>{pos.name} - {pos.code} ({(pos.person) ? pos.person.name : <i>empty</i>})</span>
 					}
-					queryParams={{type: "ADVISOR", matchPersonName: true}}
+					queryParams={{type: 'ADVISOR', matchPersonName: true}}
 					onChange={this.addApprover.bind(this, index)}
 					clearOnSelect={true} />
 
@@ -161,7 +161,7 @@ export default class OrganizationForm extends Component {
 	addApprovalStep() {
 		let org = this.props.organization;
 		let approvalSteps = org.approvalSteps || [];
-		approvalSteps.push({name: "", approvers: []});
+		approvalSteps.push({name: '', approvers: []});
 
 		this.onChange()
 	}
@@ -197,7 +197,7 @@ export default class OrganizationForm extends Component {
 				}
 
 				History.replace(Organization.pathForEdit(organization), false)
-				History.push(Organization.pathFor(organization), {success: "Organization saved successfully"})
+				History.push(Organization.pathFor(organization), {success: 'Organization saved successfully'})
 			}).catch(error => {
 				this.setState({error})
 				window.scrollTo(0, 0)

@@ -28,9 +28,9 @@ export default class LocationShow extends Page {
 	render() {
 		let loc = this.state.location
 		let markers=[]
-		let latlng = "None"
+		let latlng = 'None'
 		if (loc.lat && loc.lng) {
-			latlng = loc.lat + ", " + loc.lng
+			latlng = loc.lat + ', ' + loc.lng
 			markers.push({name: loc.name, lat: loc.lat, lng: loc.lng})
 		}
 

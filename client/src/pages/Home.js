@@ -41,7 +41,7 @@ export default class Home extends Page {
 		let pendingQuery = currentUser.isSuperUser() ?
 			{pendingApprovalOf : currentUser.id}
 			:
-			{authorId : currentUser.id, state : "PENDING_APPROVAL"}
+			{authorId : currentUser.id, state : 'PENDING_APPROVAL'}
 		let myReports = { authorId: currentUser.id, createdAtStart: moment().subtract(1, 'days').valueOf() }
 		API.query(/*GraphQL */`
 			pendingMe: reportList(f:search, query:$pendingQuery) { totalCount },
@@ -50,8 +50,8 @@ export default class Home extends Page {
 			savedSearches: savedSearchs(f:mine) {id, name}
 			upcomingEngagements: reportList(f:search, query: $futureQuery) { totalCount }
 		`, {futureQuery, pendingQuery, orgQuery, myReports},
-			"($futureQuery: ReportSearchQuery, $pendingQuery: ReportSearchQuery,  "
-			+ "$orgQuery: ReportSearchQuery, $myReports: ReportSearchQuery)")
+			'($futureQuery: ReportSearchQuery, $pendingQuery: ReportSearchQuery,  '
+			+ '$orgQuery: ReportSearchQuery, $myReports: ReportSearchQuery)')
 		.then(data => {
 			let selectedSearchId = data.savedSearches && data.savedSearches.length > 0 ? data.savedSearches[0].id : null;
 			this.setState({
@@ -82,7 +82,7 @@ export default class Home extends Page {
 						<Row>
 							<Link to={{pathname: 'search', query: {type: 'reports', pendingApprovalOf: currentUser.id}}} className="col-md-3 home-tile">
 								<h1>{pendingMe && pendingMe.totalCount}</h1>
-								{currentUser.isSuperUser() ? "Pending my approval" : "My reports pending approval" }
+								{currentUser.isSuperUser() ? 'Pending my approval' : 'My reports pending approval' }
 							</Link>
 
 							{org &&

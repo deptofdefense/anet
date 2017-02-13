@@ -21,13 +21,13 @@ export default class ReportSummary extends Component {
 					{report.advisorOrg &&
 						<LinkTo organization={new Organization(report.advisorOrg)} />
 					}
-					{report.principalOrg && "-> "}
+					{report.principalOrg && '-> '}
 					{report.principalOrg &&
 						<LinkTo organization={new Organization(report.principalOrg)} />
 					}
 				</Col>
 				<Col md={6}>
-					{report.engagementDate && moment(report.engagementDate).format("D MMM YYYY")}
+					{report.engagementDate && moment(report.engagementDate).format('D MMM YYYY')}
 					{report.location &&
 						<span> @&nbsp;
 							<LinkTo location={report.location} />

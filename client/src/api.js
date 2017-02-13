@@ -20,7 +20,7 @@ const API = {
 								return respBody.then(r => {
 									r.status = response.status
 									r.statusText = response.statusText
-									if (!r.message) { r.message = r.error || "You do not have permissions to perform this action"; }
+									if (!r.message) { r.message = r.error || 'You do not have permissions to perform this action'; }
 									return Promise.reject(r)
 								})
 							}
@@ -29,7 +29,7 @@ const API = {
 
 						if (!isOk) {
 							if (response.status === 500) {
-								response.message = "An Error occured! Please contact the administrator and let them know what you were doing to get this error"
+								response.message = 'An Error occured! Please contact the administrator and let them know what you were doing to get this error'
 							}
 							response = Promise.reject(response)
 						}
@@ -75,7 +75,7 @@ const API = {
 
 	query(query, variables, variableDef) {
 		variables = variables || {}
-		variableDef = variableDef || ""
+		variableDef = variableDef || ''
 		query = 'query ' + variableDef + ' { ' + query + ' }'
 		return API.send('/graphql', {query, variables}).then(json => json.data)
 	},

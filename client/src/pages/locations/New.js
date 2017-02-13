@@ -80,9 +80,9 @@ export default class LocationNew extends React.Component {
 		event.stopPropagation()
 		event.preventDefault()
 
-		API.send("/api/locations/new", this.state.location, {disableSubmits: true})
+		API.send('/api/locations/new', this.state.location, {disableSubmits: true})
 			.then(location => {
-				History.push(Location.pathFor(location), {success: "Saved Location"})
+				History.push(Location.pathFor(location), {success: 'Saved Location'})
 			}).catch(error => {
 				this.setState({error: error})
 				window.scrollTo(0, 0)

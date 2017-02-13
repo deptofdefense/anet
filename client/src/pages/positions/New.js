@@ -17,7 +17,7 @@ export default class PositionNew extends Page {
 		super(props)
 
 		this.state = {
-			position:  new Position( {type: "ADVISOR"}),
+			position:  new Position( {type: 'ADVISOR'}),
 		}
 	}
 

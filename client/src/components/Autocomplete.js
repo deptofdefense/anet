@@ -114,8 +114,8 @@ export default class Autocomplete extends Component {
 
 	@autobind
 	getStringValue(suggestion) {
-		if (typeof suggestion === "object" ) {
-			return suggestion[this.props.valueKey] || ""
+		if (typeof suggestion === 'object' ) {
+			return suggestion[this.props.valueKey] || ''
 		}
 		return suggestion
 	}
@@ -125,7 +125,7 @@ export default class Autocomplete extends Component {
 		if (this.props.url) {
 			let url = this.props.url + '?text=' + value.value
 			if (this.props.queryParams) {
-				url += "&" + utils.createUrlParams(this.props.queryParams);
+				url += '&' + utils.createUrlParams(this.props.queryParams);
 			}
 
 			let selectedIds = this.selectedIds
@@ -141,10 +141,10 @@ export default class Autocomplete extends Component {
 		} else {
 			let resourceName = this.props.objectType.resourceName
 			let listName = this.props.objectType.listName
-			let graphQlQuery = listName + "(f:search, query: $query) { "
-					+ "list { " + this.props.fields + "}"
-					+ "}";
-			let variableDef = "($query: " + resourceName + "SearchQuery)";
+			let graphQlQuery = listName + '(f:search, query: $query) { '
+					+ 'list { ' + this.props.fields + '}'
+					+ '}';
+			let variableDef = '($query: ' + resourceName + 'SearchQuery)';
 			let queryVars = { text: value.value }
 			if (this.props.queryParams) {
 				Object.forEach(this.props.queryParams, (key,val) => queryVars[key] = val)

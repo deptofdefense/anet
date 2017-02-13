@@ -24,18 +24,18 @@ import ORGANIZATIONS_ICON from 'resources/organizations.png'
 
 const QUERY_STRINGS = {
 	reports: {
-		pendingApprovalOf: "reports pending your approval",
-		authorOrgId: "reports recently authored by your organization",
-		authorId: "reports you recently authored",
+		pendingApprovalOf: 'reports pending your approval',
+		authorOrgId: 'reports recently authored by your organization',
+		authorId: 'reports you recently authored',
 	},
-	organizations: "Organizations TODO",
-	people: "People TODO",
+	organizations: 'Organizations TODO',
+	people: 'People TODO',
 }
 
 const SEARCH_CONFIG = {
-	"reports" : {
-		listName : "reports: reportList",
-		variableType: "ReportSearchQuery",
+	'reports' : {
+		listName : 'reports: reportList',
+		variableType: 'ReportSearchQuery',
 		fields : `id, intent, engagementDate, keyOutcomes, nextSteps, cancelledReason,
 			author { id, name }
 			primaryAdvisor { id, name, role, position { organization { id, shortName}}},
@@ -45,30 +45,30 @@ const SEARCH_CONFIG = {
 			location { id, name, lat, lng},
 			poams {id, shortName, longName}`
 	},
-	"persons" : {
-		listName : "people: peopleList",
-		variableType: "PersonSearchQuery",
-		fields: "id, name, rank, emailAddress, role , position { id, name, organization { id, shortName} }"
+	'persons' : {
+		listName : 'people: peopleList',
+		variableType: 'PersonSearchQuery',
+		fields: 'id, name, rank, emailAddress, role , position { id, name, organization { id, shortName} }'
 	},
-	"positions" : {
-		listName: "positions: positionList",
-		variableType: "PositionSearchQuery",
-		fields: "id , name, type, organization { id, shortName}, person { id, name }"
+	'positions' : {
+		listName: 'positions: positionList',
+		variableType: 'PositionSearchQuery',
+		fields: 'id , name, type, organization { id, shortName}, person { id, name }'
 	},
-	"poams" : {
-		listName: "poams: poamList",
-		variableType: "PoamSearchQuery",
-		fields: "id, shortName, longName"
+	'poams' : {
+		listName: 'poams: poamList',
+		variableType: 'PoamSearchQuery',
+		fields: 'id, shortName, longName'
 	},
-	"locations" : {
-		listName: "locations: locationList",
-		variableType: "LocationSearchQuery",
-		fields : "id, name, lat, lng"
+	'locations' : {
+		listName: 'locations: locationList',
+		variableType: 'LocationSearchQuery',
+		fields : 'id, name, lat, lng'
 	},
-	"organizations" : {
-		listName: "organizations: organizationList",
-		variableType: "OrganizationSearchQuery",
-		fields: "id, shortName, longName"
+	'organizations' : {
+		listName: 'organizations: organizationList',
+		variableType: 'OrganizationSearchQuery',
+		fields: 'id, shortName, longName'
 	}
 };
 
@@ -166,7 +166,7 @@ export default class Search extends Page {
 		let noResults = numResults === 0
 
 		let query = this.props.location.query
-		let queryString = QUERY_STRINGS[query.type] || query.text || "TODO"
+		let queryString = QUERY_STRINGS[query.type] || query.text || 'TODO'
 		let queryType = this.state.queryType || query.type || 'everything'
 
 		if (typeof queryString === 'object') {
@@ -413,14 +413,14 @@ export default class Search extends Page {
 		event.stopPropagation()
 		event.preventDefault()
 
-		let search = Object.without(this.state.saveSearch, "show")
+		let search = Object.without(this.state.saveSearch, 'show')
 		search.query = this.props.location.query.text
 
 		API.send('/api/savedSearches/new', search, {disableSubmits: true})
 			.then(response => {
 				if (response.code) throw response.code
 				this.setState({
-					success: "Search successfully saved!",
+					success: 'Search successfully saved!',
 					saveSearch: {show: false}
 				})
 				window.scrollTo(0, 0)

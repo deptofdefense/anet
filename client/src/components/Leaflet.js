@@ -5,8 +5,8 @@ import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
 const css = {
-	height: "500px",
-	marginBottom: "80px",
+	height: '500px',
+	marginBottom: '80px',
 }
 
 export default class Leaflet extends Component {
@@ -107,7 +107,7 @@ export default class Leaflet extends Component {
 			let marker = L.marker(latLng, {icon: this.icon, draggable: (m.draggable || false), id: m.id})
 				.bindPopup(m.name)
 			if (m.onMove) {
-				marker.on("move", m.onMove);
+				marker.on('move', m.onMove);
 			}
 			newMarkers.push(marker);
 			markerLayer.addLayer(marker);
@@ -124,7 +124,7 @@ export default class Leaflet extends Component {
 	@autobind
 	addLayers() {
 		let app = this.context.app
-		let rawLayers = app.state.settings["MAP_LAYERS"]
+		let rawLayers = app.state.settings['MAP_LAYERS']
 		if (!rawLayers || rawLayers.length === 0) {
 			return
 		}
@@ -134,12 +134,12 @@ export default class Leaflet extends Component {
 		let defaultLayer = null
 		mapLayers.forEach(l => {
 			let layer = null;
-			if (l.type === "wms") {
+			if (l.type === 'wms') {
 				layer = L.tileLayer.wms(l.url, {
 					layers: l.layer,
 					format: l.format || 'image/png'
 				})
-			} else if (l.type === "osm") {
+			} else if (l.type === 'osm') {
 				layer = L.tileLayer(l.url)
 			}
 
