@@ -45,6 +45,16 @@ ANET2 is built primarily using Open Source languages, frameworks, and libraries 
 
 - **Production vs Test Environments**: It is recommended to have a seperate Production and Test environment that mirror each other as closely as possible. However, it is totally acceptable to have less resources for the Test environment.
 
+### Interfaces
+This table lists the interaces produced and consumed by ANET on the network: 
+|      Producer    |    Consumer  |  Protocol    |  Data Format  | Purpose |
+|------------------|--------------|--------------|---------------|-------------------------|
+| ANET             | User         | HTTP/HTTPS   | JSON/HTML/CSS | ANET Web User Interface |
+| ANET             | API users    | HTTP/HTTPS   | JSON          | REST and GraphQL API    |
+| ANET             | Mail Server  | SMTP         | text/HTML     | Emails to users         |
+| Active Directory | ANET | NTLM / Kerberos |    |               | User Authentication     |
+| Tile Server (ArcGIS, iGeoSIT, etc) | Users | HTTP/HTTPS   | JSON/ PNG  | Map Tile Imagery |
+
 ## Installation instructions
 See INSTALL.md
 
