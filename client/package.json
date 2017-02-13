@@ -120,7 +120,8 @@
       "quotes": ["error", "single"],
       "quote-props": ["error", "as-needed"],
       "semi": ["error", "never"],
-      "dot-notation": ["error"]
+      "dot-notation": ["error"],
+      "no-unused-vars": ["error"]
     }
   }
 }
