@@ -76,7 +76,7 @@ export default class FormField extends Component {
 			...childProps
 		} = this.props
 
-		childProps = Object.without(childProps, 'getter', 'horizontal')
+		childProps = Object.without(childProps, 'getter', 'horizontal', 'validationState', 'helpText')
 
 		let validationState = this.props.validationState
 		let horizontal = this.context.form && this.context.form.props.horizontal
