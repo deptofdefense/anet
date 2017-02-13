@@ -78,36 +78,44 @@ export default class Search extends Page {
 
 		this.state = {
 			query: props.location.query.text,
+			queryType: null,
+			pageNum: {
+				reports: 0,
+				people: 0,
+				organizations: 0,
+				positions: 0,
+				locations: 0,
+				poams: 0,
+			},
 			saveSearch: {show: false},
-			reportsPageNum: 0,
 			results: {
 				reports: null,
 				people: null,
 				organizations: null,
 				positions: null,
-				location: null,
-				poams: null
+				locations: null,
+				poams: null,
 			},
 			error: null,
-			success: null
+			success: null,
 		}
 	}
 
-
 	fetchData(props) {
-		let type = props.location.query.type
-		let text = props.location.query.text
+		let {type, text, ...advQuery} = props.location.query
 
 		//Any query with a field other than 'text' and 'type' is an advanced query.
-		let advQuery = Object.without(props.location.query, "type", "text")
 		let isAdvQuery = Object.keys(advQuery).length
-		advQuery.text = text
 
 		if (isAdvQuery) {
+			if (text) {
+				advQuery.text = text
+			}
+
 			// FIXME currently you have to pass page params in the query object
 			// instead of the query variables
 			advQuery.pageSize = 10
-			advQuery.pageNum = this.state.reportsPageNum
+			advQuery.pageNum = this.state.pageNum[type]
 
 			let config = SEARCH_CONFIG[type]
 			API.query(/* GraphQL */`
@@ -123,8 +131,10 @@ export default class Search extends Page {
 			)
 		} else {
 			//TODO: escape query in the graphQL query
+			let pageNum = this.state.pageNum.reports
+			let pageSize = (this.state.queryType || 'everything') === 'everything' ? 5 : 10
 			API.query(/* GraphQL */`
-				searchResults(f:search, q:"${text}", pageNum:0, pageSize: 10) {
+				searchResults(f:search, q:"${text}", pageNum: ${pageNum}, pageSize: ${pageSize}) {
 					reports { pageNum, pageSize, totalCount, list { ${SEARCH_CONFIG.reports.fields}} }
 					people { pageNum, pageSize, totalCount, list { ${SEARCH_CONFIG.persons.fields}} }
 					positions { pageNum, pageSize, totalCount, list { ${SEARCH_CONFIG.positions.fields} }}
@@ -435,11 +445,13 @@ export default class Search extends Page {
 
 	@autobind
 	onSelectQueryType(type) {
-		this.setState({queryType: type})
+		this.setState({queryType: type}, () => this.fetchData(this.props))
 	}
 
 	@autobind
 	goToReportsPage(reportsPageNum) {
-		this.setState({reportsPageNum}, () => {this.fetchData(this.props)})
+		let pageNum = this.state.pageNum
+		pageNum.reports = reportsPageNum
+		this.fetchData(this.props)
 	}
 }
