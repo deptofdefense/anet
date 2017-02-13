@@ -47,6 +47,10 @@ fieldset legend small {
 	font-size: 1.2rem;
 }
 
+fieldset .help-text {
+	margin: 0 0 2rem 5rem;
+}
+
 fieldset.collapsable {
 	background: none;
 	border: none;
@@ -192,10 +196,6 @@ a.home-tile {
 .form-bottom-submit button {
 	font-size: 2.3rem;
 	width: 35%;
-}
-
-.report-approval h5 {
-	text-align: center;
 }
 
 .report-approval .form-group {
