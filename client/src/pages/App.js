@@ -78,7 +78,7 @@ export default class App extends Page {
 		data.adminSettings.forEach(setting => settings[setting.key] = setting.value)
 
 		if (currentUser.id && currentUser.status === "NEW_USER") {
-			History.push(Person.pathForEdit(currentUser))
+			History.push('/onboarding')
 		}
 
 		return {currentUser, settings, organizations}
