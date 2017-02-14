@@ -60,6 +60,13 @@ The frontend is run with `npm`.  We recommend running the backend via `eclipse` 
   - The database schema is stored in `src/main/resources/migrations.xml`.
 1. Seed the initial data:
   - SQLite: `cat insertBaseData.sql | ./mssql2sqlite.sh | sqlite3 development.db`
+    - You may see the following error:
+    ```
+    $ cat insertBaseData.sql | ./mssql2sqlite.sh | sqlite3 development.db
+    -bash(4527,0x7fff97b953c0) malloc: *** error for object 0x7fe1d4d8d020: pointer being freed was not allocated
+    *** set a breakpoint in malloc_error_break to debug
+    ```
+    We are not currently sure why this happens, but you can work around it by having someone else run `cat insertBaseData.sql | ./mssql2sqlite.sh` and send you the output of that command. You can then pipe the output of that command directly in to `sqlite3 development.db`.
   - MSSQL: You'll need to manually connect to your sqlserver instance and run `insertBaseData.sql`
 1. Run `./gradlew build` to download all dependencies and build the project.
   - Some tests will fail if you are using SQLite, because it has a bad implementation of some timezone stuff. You'll need to use MSSQL to see all the tests passing.
