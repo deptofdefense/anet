@@ -35,6 +35,7 @@ You should have the following information on hand for the installation:
 	- username / password (if necessary)
 	- TLS settings (yes/no)
 - Fully Qualified Domain Name of your server. 
+- Information about who will Administer your ANET instance. 
 
 ## How to build ANET from Source
 ANET must be build in two parts, the client, then the server: 
@@ -63,7 +64,13 @@ Pick a directory on your server to install ANET to. In that directory:
 1. Unzip anet.zip
 2. Add an anet.yml file with appropiate settings.  Descriptions of each of the settings in anet.yml can be found in the README.md file in the ANET repository. 
 3. Install Database Schema: Run `bin/anet.bat db migrate anet.yml`
-4. Seed the Database: Run `bin/anet.bat init anet.yml`.
+4. Seed the Database: Run `bin/anet.bat init anet.yml`.  This will ask you the following questions:
+  1. _Classification String_: This is the message that will appear in the top security banner on the screen. For demo instances you should use `FOR DEMO USE ONLY`. 
+  1. _Classification Color_ : This is the color of the top security banner on the screen. For demo instances you should use `green`. 
+  1. _Name of Administrator Organization_: This is the name of the Organization that will be created for the Administrator.  We recommend using something like `ANET Administrators`.
+  1. _Name of Administrator Position_: This is the name of the position that will be created for the Administrator.  We recommend `ANET Administrator`.
+  1. _Your Name_: This is the name that will be given to the ANET Administrator, who you presumabely are. 
+  1. _Your Domain Username_: This is the domain username that will be set on the ANET Administrator (who you presumabely are).  For production situations this will be your windows domain username.   If you get this wrong here, when you first log in to ANET it will create a new user for you. You can either run this database init command again, or do manual SQL commands to fix the `people` table.
 5. Launch the ANET Server: `bin/anet.bat server anet.yml`
 
 # ANET Upgrade Documentation
