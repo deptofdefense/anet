@@ -31,7 +31,6 @@ export default class ReportCollection extends Component {
 		}
 	}
 
-
 	render() {
 		var reports
 

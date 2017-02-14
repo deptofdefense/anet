@@ -35,15 +35,6 @@ export default class OrganizationReports extends Page {
 				id, shortName, longName, type
 				parentOrg { id, shortName, longName }
 				childrenOrgs { id, shortName, longName },
-				reports(pageNum:0, pageSize:25) {
-					id, intent, engagementDate, keyOutcomes, nextSteps
-					author { id, name },
-					primaryAdvisor { id, name } ,
-					primaryPrincipal {id, name },
-					advisorOrg { id, shortName, longName }
-					principalOrg { id, shortName, longName }
-					location { id, name, lat, lng }
-				}
 			}
 		`).then(data => this.setState({organization: data.organization}))
 	}

@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
-import {Table, ListGroup, ListGroupItem, DropdownButton, MenuItem} from 'react-bootstrap'
+import {ListGroup, ListGroupItem, DropdownButton, MenuItem} from 'react-bootstrap'
 
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
@@ -8,12 +8,16 @@ import autobind from 'autobind-decorator'
 import History from 'components/History'
 import LinkTo from 'components/LinkTo'
 import Messages , {setMessages} from 'components/Messages'
-import ScrollableFieldset from 'components/ScrollableFieldset'
+import ReportCollection from 'components/ReportCollection'
+
+import OrganizationPoams from 'pages/organizations/Poams'
+import OrganizationLaydown from 'pages/organizations/Laydown'
+import OrganizationApprovals from 'pages/organizations/Approvals'
 
 import API from 'api'
-import {Organization, Poam} from 'models'
+import {Organization} from 'models'
 
-export default class OrganizationDetails extends Page {
+export default class OrganizationShow extends Page {
 	static contextTypes = {
 		app: PropTypes.object.isRequired,
 	}
@@ -24,9 +28,20 @@ export default class OrganizationDetails extends Page {
 			organization: {
 				id: props.params.id,
 				poams: [],
+				positions: [],
 			},
+			action: props.params.action
 		}
 		setMessages(props,this.state)
+	}
+
+	componentWillReceiveProps(nextProps) {
+		if (nextProps.params.action !== this.state.action) {
+			this.setState({action: nextProps.params.action});
+		}
+		if (nextProps.params.id !== this.state.organization.id) {
+			this.loadData(nextProps);
+		}
 	}
 
 	fetchData(props) {
@@ -36,19 +51,33 @@ export default class OrganizationDetails extends Page {
 				parentOrg { id, shortName, longName }
 				poams { id, longName, shortName }
 				childrenOrgs { id, shortName, longName },
+				positions {
+					id, name, code
+					person { id, name }
+					associatedPositions {
+						id, name, code
+						person { id, name }
+					}
+				},
+				reports(pageNum:0, pageSize:25) {
+					id, intent, engagementDate, keyOutcomes, nextSteps
+					author { id, name },
+					primaryAdvisor { id, name } ,
+					primaryPrincipal {id, name },
+					advisorOrg { id, shortName, longName }
+					principalOrg { id, shortName, longName }
+					location { id, name, lat, lng }
+				},
+				approvalSteps {
+					id, name, approvers { id, name, person { id, name}}
+				},
 			}
 		`).then(data => this.setState({organization: data.organization}))
 	}
 
 	render() {
 		let org = this.state.organization
-
-		let poamsContent = ''
-		if (org.type === 'ADVISOR_ORG') {
-			poamsContent = <ScrollableFieldset title="PoAMs / Pillars" height={500} >
-				{this.renderPoamsTable(org.poams)}
-			</ScrollableFieldset>
-		}
+		let action = this.state.action || "poams"
 
 		let currentUser = this.context.app.state.currentUser;
 		let isSuperUser = (currentUser) ? currentUser.isSuperUserForOrg(org) : false
@@ -99,42 +128,37 @@ export default class OrganizationDetails extends Page {
 						</Form.Field>}
 					</fieldset>
 
-					{poamsContent}
+					{action === "poams" &&
+						<OrganizationPoams organization={org} />
+					}
+
+					{action === "laydown" &&
+						<OrganizationLaydown organization={org} />
+					}
+
+					{action === "approvals" &&
+						<OrganizationApprovals organization={org} />
+					}
+
+					{action === "reports" &&
+						<ReportCollection reports={org.reports} />
+					}
 
 				</Form>
 			</div>
 		)
 	}
 
-	renderPoamsTable(poams) {
-		return <Table>
-			<thead>
-				<tr>
-					<th>Name</th>
-					<th>Description</th>
-				</tr>
-			</thead>
-			<tbody>
-				{Poam.map(poams, poam =>
-					<tr key={poam.id}>
-						<td><LinkTo poam={poam} >{poam.shortName}</LinkTo></td>
-						<td>{poam.longName}</td>
-					</tr>
-				)}
-			</tbody>
-		</Table>
-	}
-
 	@autobind
 	actionSelect(eventKey, event) {
 		if (eventKey === "createPos") {
-			History.push({pathname: 'positions/new', query: {organizationId: this.state.organization.id}})
+			History.push({pathname: '/positions/new', query: {organizationId: this.state.organization.id}})
 		} else if (eventKey === "createSub") {
-			History.push({pathname: 'organizations/new', query: {parentOrgId: this.state.organization.id}})
+			History.push({pathname: '/organizations/new', query: {parentOrgId: this.state.organization.id}})
 		} else if (eventKey === "edit") {
 			History.push(Organization.pathForEdit(this.state.organization))
 		} else if (eventKey === "createPoam") {
-			History.push({pathname: 'poams/new', query: {responsibleOrg: this.state.organization.id}})
+			History.push({pathname: '/poams/new', query: {responsibleOrg: this.state.organization.id}})
 		} else {
 			console.log("Unimplemented Action: " + eventKey);
 		}

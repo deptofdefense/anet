@@ -1,5 +1,5 @@
 import React, {Component, PropTypes} from 'react'
-import {Radio, Checkbox, Table, Button, Collapse, HelpBlock} from 'react-bootstrap'
+import {Checkbox, Table, Button, Collapse, HelpBlock} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
 import Form from 'components/Form'
