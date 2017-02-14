@@ -30,7 +30,7 @@ export default class PoamNew extends Page {
 		if (props.location.query.responsibleOrg) {
 			API.query(/* GraphQL */`
 				organization(id: ${props.location.query.responsibleOrg}) {
-					id,name,type
+					id, shortName, longName, type
 				}
 			`).then(data => {
 				let poam = this.state.poam
