@@ -28,8 +28,8 @@ export default class Home extends Page {
 	}
 
 	fetchData() {
-		let currentUser = this.context.app.state.currentUser;
-		let yesterday = moment().subtract(1, 'days').valueOf();
+		let currentUser = this.context.app.state.currentUser
+		let yesterday = moment().subtract(1, 'days').valueOf()
 
 		let futureQuery = {
 			engagementDateStart: moment().add(1, 'days').hour(0).valueOf()
@@ -37,11 +37,11 @@ export default class Home extends Page {
 		let orgQuery = (currentUser.position && currentUser.position.organization && {
 			authorOrgId: currentUser.position.organization.id,
 			createdAtStart: yesterday
-		}) || {};
+		}) || {}
 		let pendingQuery = currentUser.isSuperUser() ?
 			{pendingApprovalOf : currentUser.id}
 			:
-			{authorId : currentUser.id, state : "PENDING_APPROVAL"}
+			{authorId : currentUser.id, state : 'PENDING_APPROVAL'}
 		let myReports = { authorId: currentUser.id, createdAtStart: moment().subtract(1, 'days').valueOf() }
 		API.query(/*GraphQL */`
 			pendingMe: reportList(f:search, query:$pendingQuery) { totalCount },
@@ -50,10 +50,10 @@ export default class Home extends Page {
 			savedSearches: savedSearchs(f:mine) {id, name}
 			upcomingEngagements: reportList(f:search, query: $futureQuery) { totalCount }
 		`, {futureQuery, pendingQuery, orgQuery, myReports},
-			"($futureQuery: ReportSearchQuery, $pendingQuery: ReportSearchQuery,  "
-			+ "$orgQuery: ReportSearchQuery, $myReports: ReportSearchQuery)")
+			'($futureQuery: ReportSearchQuery, $pendingQuery: ReportSearchQuery,  '
+			+ '$orgQuery: ReportSearchQuery, $myReports: ReportSearchQuery)')
 		.then(data => {
-			let selectedSearchId = data.savedSearches && data.savedSearches.length > 0 ? data.savedSearches[0].id : null;
+			let selectedSearchId = data.savedSearches && data.savedSearches.length > 0 ? data.savedSearches[0].id : null
 			this.setState({
 				pendingMe: data.pendingMe,
 				myOrgToday: data.myOrg,
@@ -61,13 +61,13 @@ export default class Home extends Page {
 				savedSearches: data.savedSearches,
 				upcomingEngagements: data.upcomingEngagements,
 				selectedSearchId: selectedSearchId
-			});
+			})
 		})
 	}
 
 	render() {
 		let {pendingMe, myOrgToday, myReportsToday, upcomingEngagements} = this.state
-		let currentUser = this.context.app.state.currentUser;
+		let currentUser = this.context.app.state.currentUser
 		let org = currentUser && currentUser.position && currentUser.position.organization
 		let yesterday = moment().subtract(1, 'days').valueOf()
 
@@ -82,7 +82,7 @@ export default class Home extends Page {
 						<Row>
 							<Link to={{pathname: 'search', query: {type: 'reports', pendingApprovalOf: currentUser.id}}} className="col-md-3 home-tile">
 								<h1>{pendingMe && pendingMe.totalCount}</h1>
-								{currentUser.isSuperUser() ? "Pending my approval" : "My reports pending approval" }
+								{currentUser.isSuperUser() ? 'Pending my approval' : 'My reports pending approval' }
 							</Link>
 
 							{org &&
@@ -127,6 +127,6 @@ export default class Home extends Page {
 	@autobind
 	onSaveSearchSelect(event) {
 		let value = event && event.target ? event.target.value : event
-		this.setState({selectedSearchId: value});
+		this.setState({selectedSearchId: value})
 	}
 }

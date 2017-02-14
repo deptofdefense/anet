@@ -41,7 +41,7 @@ export default class PersonForm extends Component {
 			<Messages error={this.state.error} />
 
 			<fieldset>
-				<legend>{edit ? "Edit " + person.name : "Create a new Person"}</legend>
+				<legend>{edit ? 'Edit ' + person.name : 'Create a new Person'}</legend>
 				<Form.Field id="name" 
 					validationState={this.state.formErrors.name} 
 					helpText={this.state.formErrors.name ? 'Name is required.' : ''}
@@ -184,7 +184,7 @@ export default class PersonForm extends Component {
 				}
 
 				History.replace(Person.pathForEdit(person), false)
-				History.push(Person.pathFor(person), {success: "Person saved successfully"})
+				History.push(Person.pathFor(person), {success: 'Person saved successfully'})
 			}).catch(error => {
 				this.setState({error: error})
 				window.scrollTo(0, 0)

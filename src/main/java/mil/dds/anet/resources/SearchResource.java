@@ -11,11 +11,6 @@ import javax.ws.rs.core.MediaType;
 
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.SearchResults;
-import mil.dds.anet.beans.search.LocationSearchQuery;
-import mil.dds.anet.beans.search.OrganizationSearchQuery;
-import mil.dds.anet.beans.search.PersonSearchQuery;
-import mil.dds.anet.beans.search.PoamSearchQuery;
-import mil.dds.anet.beans.search.PositionSearchQuery;
 import mil.dds.anet.beans.search.ReportSearchQuery;
 import mil.dds.anet.beans.search.SavedSearch;
 import mil.dds.anet.graphql.GraphQLFetcher;
@@ -31,40 +26,6 @@ public class SearchResource implements IGraphQLResource  {
 	
 	public SearchResource(AnetObjectEngine engine) { 
 		this.engine = engine;
-	}
-	
-	public static final String ALL_TYPES = "people,reports,positions,poams,locations,organizations";
-	
-	@GET
-	@GraphQLFetcher
-	public SearchResults search(@QueryParam("q") String query, 
-			@QueryParam("types") @DefaultValue(ALL_TYPES) String types,
-			@QueryParam("pageNum") @DefaultValue("0") int pageNum, 
-			@QueryParam("pageSize") @DefaultValue("10") int pageSize) {
-		types = types.toLowerCase();
-
-		SearchResults results = new SearchResults();
-
-		if (types.contains("people")) {
-			results.setPeople(engine.getPersonDao().search(PersonSearchQuery.withText(query, pageNum, pageSize)));
-		}
-		if (types.contains("reports")) {
-			results.setReports(engine.getReportDao().search(ReportSearchQuery.withText(query, pageNum, pageSize)));
-		}
-		if (types.contains("positions")) {
-			results.setPositions(engine.getPositionDao().search(PositionSearchQuery.withText(query, pageNum, pageSize)));
-		}
-		if (types.contains("poams")) {
-			results.setPoams(engine.getPoamDao().search(PoamSearchQuery.withText(query, pageNum, pageSize)));
-		}
-		if (types.contains("locations")) {
-			results.setLocations(engine.getLocationDao().search(LocationSearchQuery.withText(query, pageNum, pageSize)));
-		}
-		if (types.contains("organizations")) { 
-			results.setOrganizations(engine.getOrganizationDao().search(OrganizationSearchQuery.withText(query, pageNum, pageSize)));
-		}
-
-		return results;
 	}
 	
 	@GET

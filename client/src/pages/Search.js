@@ -24,18 +24,18 @@ import ORGANIZATIONS_ICON from 'resources/organizations.png'
 
 const QUERY_STRINGS = {
 	reports: {
-		pendingApprovalOf: "reports pending your approval",
-		authorOrgId: "reports recently authored by your organization",
-		authorId: "reports you recently authored",
+		pendingApprovalOf: 'reports pending your approval',
+		authorOrgId: 'reports recently authored by your organization',
+		authorId: 'reports you recently authored',
 	},
-	organizations: "Organizations TODO",
-	people: "People TODO",
+	organizations: 'Organizations TODO',
+	people: 'People TODO',
 }
 
 const SEARCH_CONFIG = {
-	"reports" : {
-		listName : "reports: reportList",
-		variableType: "ReportSearchQuery",
+	reports : {
+		listName : 'reports: reportList',
+		variableType: 'ReportSearchQuery',
 		fields : `id, intent, engagementDate, keyOutcomes, nextSteps, cancelledReason,
 			author { id, name }
 			primaryAdvisor { id, name, role, position { organization { id, shortName}}},
@@ -45,32 +45,32 @@ const SEARCH_CONFIG = {
 			location { id, name, lat, lng},
 			poams {id, shortName, longName}`
 	},
-	"persons" : {
-		listName : "people: peopleList",
-		variableType: "PersonSearchQuery",
-		fields: "id, name, rank, emailAddress, role , position { id, name, organization { id, shortName} }"
+	persons : {
+		listName : 'people: peopleList',
+		variableType: 'PersonSearchQuery',
+		fields: 'id, name, rank, emailAddress, role , position { id, name, organization { id, shortName} }'
 	},
-	"positions" : {
-		listName: "positions: positionList",
-		variableType: "PositionSearchQuery",
-		fields: "id , name, type, organization { id, shortName}, person { id, name }"
+	positions : {
+		listName: 'positions: positionList',
+		variableType: 'PositionSearchQuery',
+		fields: 'id , name, type, organization { id, shortName}, person { id, name }'
 	},
-	"poams" : {
-		listName: "poams: poamList",
-		variableType: "PoamSearchQuery",
-		fields: "id, shortName, longName"
+	poams : {
+		listName: 'poams: poamList',
+		variableType: 'PoamSearchQuery',
+		fields: 'id, shortName, longName'
 	},
-	"locations" : {
-		listName: "locations: locationList",
-		variableType: "LocationSearchQuery",
-		fields : "id, name, lat, lng"
+	locations : {
+		listName: 'locations: locationList',
+		variableType: 'LocationSearchQuery',
+		fields : 'id, name, lat, lng'
 	},
-	"organizations" : {
-		listName: "organizations: organizationList",
-		variableType: "OrganizationSearchQuery",
-		fields: "id, shortName, longName"
+	organizations : {
+		listName: 'organizations: organizationList',
+		variableType: 'OrganizationSearchQuery',
+		fields: 'id, shortName, longName'
 	}
-};
+}
 
 export default class Search extends Page {
 	constructor(props) {
@@ -130,20 +130,22 @@ export default class Search extends Page {
 				this.setState({error: response})
 			)
 		} else {
-			//TODO: escape query in the graphQL query
-			let pageNum = this.state.pageNum.reports
-			let pageSize = (this.state.queryType || 'everything') === 'everything' ? 5 : 10
-			API.query(/* GraphQL */`
-				searchResults(f:search, q:"${text}", pageNum: ${pageNum}, pageSize: ${pageSize}) {
-					reports { pageNum, pageSize, totalCount, list { ${SEARCH_CONFIG.reports.fields}} }
-					people { pageNum, pageSize, totalCount, list { ${SEARCH_CONFIG.persons.fields}} }
-					positions { pageNum, pageSize, totalCount, list { ${SEARCH_CONFIG.positions.fields} }}
-					poams { pageNum, pageSize, totalCount, list { ${SEARCH_CONFIG.poams.fields} }}
-					locations { pageNum, pageSize, totalCount, list { ${SEARCH_CONFIG.locations.fields} }}
-					organizations { pageNum, pageSize, totalCount, list { ${SEARCH_CONFIG.organizations.fields} }}
-				}
-			`).then(data =>
-				this.setState({results: data.searchResults})
+			let graphQL = ''
+			let variables = {}
+			let variableDefs = []
+			Object.keys(SEARCH_CONFIG).forEach(key => {
+				let config = SEARCH_CONFIG[key]
+				/* GraphQL */
+				graphQL += `${config.listName} (f:search, query:$${key}Query) {
+					pageNum, pageSize, totalCount, list { ${config.fields} }
+				}`
+				variables[key + 'Query'] = {text: text, pageNum: this.state.pageNum[key], pageSize: 10}
+				variableDefs.push(`$${key}Query: ${config.variableType}`)
+			})
+
+			API.query(graphQL, variables, '(' + variableDefs.join(',') + ')')
+			.then(data =>
+				this.setState({results: data})
 			).catch(response => {
 				this.setState({error: response})
 			})
@@ -166,7 +168,7 @@ export default class Search extends Page {
 		let noResults = numResults === 0
 
 		let query = this.props.location.query
-		let queryString = QUERY_STRINGS[query.type] || query.text || "TODO"
+		let queryString = QUERY_STRINGS[query.type] || query.text || 'TODO'
 		let queryType = this.state.queryType || query.type || 'everything'
 
 		if (typeof queryString === 'object') {
@@ -404,7 +406,7 @@ export default class Search extends Page {
 
 	@autobind
 	onChangeSaveSearch() {
-		let search = this.state.saveSearch;
+		let search = this.state.saveSearch
 		this.setState({saveSearch: search})
 	}
 
@@ -413,14 +415,14 @@ export default class Search extends Page {
 		event.stopPropagation()
 		event.preventDefault()
 
-		let search = Object.without(this.state.saveSearch, "show")
+		let search = Object.without(this.state.saveSearch, 'show')
 		search.query = this.props.location.query.text
 
 		API.send('/api/savedSearches/new', search, {disableSubmits: true})
 			.then(response => {
 				if (response.code) throw response.code
 				this.setState({
-					success: "Search successfully saved!",
+					success: 'Search successfully saved!',
 					saveSearch: {show: false}
 				})
 				window.scrollTo(0, 0)

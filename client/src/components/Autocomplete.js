@@ -114,8 +114,8 @@ export default class Autocomplete extends Component {
 
 	@autobind
 	getStringValue(suggestion) {
-		if (typeof suggestion === "object" ) {
-			return suggestion[this.props.valueKey] || ""
+		if (typeof suggestion === 'object' ) {
+			return suggestion[this.props.valueKey] || ''
 		}
 		return suggestion
 	}
@@ -125,13 +125,13 @@ export default class Autocomplete extends Component {
 		if (this.props.url) {
 			let url = this.props.url + '?text=' + value.value
 			if (this.props.queryParams) {
-				url += "&" + utils.createUrlParams(this.props.queryParams);
+				url += '&' + utils.createUrlParams(this.props.queryParams)
 			}
 
 			let selectedIds = this.selectedIds
 
 			API.fetch(url, {showLoader: false}).then(data => {
-				data = data.list;
+				data = data.list
 				if (selectedIds)
 					data = data.filter(suggestion => suggestion && suggestion.id && selectedIds.indexOf(suggestion.id) === -1)
 
@@ -141,10 +141,10 @@ export default class Autocomplete extends Component {
 		} else {
 			let resourceName = this.props.objectType.resourceName
 			let listName = this.props.objectType.listName
-			let graphQlQuery = listName + "(f:search, query: $query) { "
-					+ "list { " + this.props.fields + "}"
-					+ "}";
-			let variableDef = "($query: " + resourceName + "SearchQuery)";
+			let graphQlQuery = listName + '(f:search, query: $query) { '
+					+ 'list { ' + this.props.fields + '}'
+					+ '}'
+			let variableDef = '($query: ' + resourceName + 'SearchQuery)'
 			let queryVars = { text: value.value }
 			if (this.props.queryParams) {
 				Object.forEach(this.props.queryParams, (key,val) => queryVars[key] = val)
@@ -194,29 +194,29 @@ export default class Autocomplete extends Component {
 				this.onSuggestionSelected(event, {suggestion: {}, suggestionValue: ''})
 			}
 			if (this.props.onErrorChange) {
-				this.props.onErrorChange(false); //clear any errors.
+				this.props.onErrorChange(false) //clear any errors.
 			}
 		}
 
 		//The user is typing!
-		this.currentSelected = null;
+		this.currentSelected = null
 		this.setState({stringValue: event.target.value})
 		event.stopPropagation()
 	}
 
 	@autobind
 	onInputBlur(event) {
-		if (this.currentSelected) { return; }
+		if (this.currentSelected) { return }
 		//If the user clicks off this Autocomplete with a value left in the Input Box
 		//Send that up to the parent.  The user probably thinks they just 'set' this value
 		// so we should oblige!
-		let val = this.state.stringValue;
+		let val = this.state.stringValue
 		if (val) {
 			this.setState({value: val, stringValue: val})
 			if (this.props.onErrorChange) {
-				this.props.onErrorChange(true, val);
+				this.props.onErrorChange(true, val)
 			} else if (this.props.onChange) {
-				this.props.onChange(val);
+				this.props.onChange(val)
 			}
 		}
 	}

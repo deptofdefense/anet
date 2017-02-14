@@ -91,7 +91,7 @@ export default class RollupShow extends Page {
 					}
 				}
 			}
-		`, {rollupQuery}, `($rollupQuery: ReportSearchQuery)`)
+		`, {rollupQuery}, '($rollupQuery: ReportSearchQuery)')
 		.then(data => {
 			data.reportList.list = Report.fromArray(data.reportList.list)
 			if (data.reportList.pageSize == null) {
@@ -110,7 +110,7 @@ export default class RollupShow extends Page {
 
 		// Sets up the data
 		var step1 = d3.nest()
-				.key(function(d){return (d.advisorOrg && d.advisorOrg.shortName);})
+				.key(function(d){return (d.advisorOrg && d.advisorOrg.shortName)})
 				.rollup(function(d){return {l:d.length,s:d[0].state,r:d}})
 				.entries(reports)
 
@@ -119,52 +119,52 @@ export default class RollupShow extends Page {
 			width = this.graph.clientWidth - margin.left - margin.right,
 			height = this.graph.clientHeight - margin.top - margin.bottom,
 			padding = 22,
-			g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+			g = svg.append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
 
 		var x = d3.scaleBand().rangeRound([0,width])
 
 		var y = d3.scaleLinear()
-			.rangeRound([height, 0]);
+			.rangeRound([height, 0])
 
-		x.domain(step1.map(function(d){return d.key}));
-		y.domain([0,d3.max(step1.map(function(d){return d.value.l}))]);
+		x.domain(step1.map(function(d){return d.key}))
+		y.domain([0,d3.max(step1.map(function(d){return d.value.l}))])
 		d3.line()
-			.x(function(d,i) { return x(d.key); })
-			.y(function(d,i) { return y(d.value); });
+			.x(function(d,i) { return x(d.key) })
+			.y(function(d,i) { return y(d.value) })
 
 		var xAxis = d3.axisBottom()
-			.scale(x);
+			.scale(x)
 		var maxValue = d3.max(step1.map(function(d){
 					return d.value.l
-				  }));
+				  }))
 		var yAxis = d3.axisLeft()
-			.scale(y).ticks(Math.min(maxValue+1,10));
+			.scale(y).ticks(Math.min(maxValue+1,10))
 
-		g.append("g")
-			.attr("transform", "translate(0," + height + ")")
-			.attr("fill", "#000")
-			.call(xAxis);
+		g.append('g')
+			.attr('transform', 'translate(0,' + height + ')')
+			.attr('fill', '#000')
+			.call(xAxis)
 
-		g.append("g")
-			.attr("fill", "#400")
+		g.append('g')
+			.attr('fill', '#400')
 			.call(yAxis)
-			.append("text")
-			.attr("fill", "#000")
-			.attr("transform", "rotate(-90)")
-			.attr("y", 6)
-			.attr("dy", "0.71em")
-			.style("text-anchor", "end")
-			.text("# of Reports");
+			.append('text')
+			.attr('fill', '#000')
+			.attr('transform', 'rotate(-90)')
+			.attr('y', 6)
+			.attr('dy', '0.71em')
+			.style('text-anchor', 'end')
+			.text('# of Reports')
 
-		g.selectAll(".bar")
+		g.selectAll('.bar')
 			.data(step1)
-			.enter().append("rect")
-			.attr("class", "line")
-			.attr("width", width / step1.length - padding)
-			.attr("x",function(d,i){return x(d.key) + (width / (step1.length + padding))})
-			.attr("height", function(d,i){return height - y(d.value.l)})
-			.attr("y",function(d,i){return y(d.value.l) })
-			.attr("fill", function(d){return barColors.verified})
+			.enter().append('rect')
+			.attr('class', 'line')
+			.attr('width', width / step1.length - padding)
+			.attr('x',function(d,i){return x(d.key) + (width / (step1.length + padding))})
+			.attr('height', function(d,i){return height - y(d.value.l)})
+			.attr('y',function(d,i){return y(d.value.l) })
+			.attr('fill', function(d){return barColors.verified})
 	}
 
 	render() {
@@ -212,6 +212,6 @@ export default class RollupShow extends Page {
 
 	@autobind
 	actionSelect(eventKey, event) {
-		console.log("Unimplemented Action: " + eventKey);
+		console.log('Unimplemented Action: ' + eventKey)
 	}
 }

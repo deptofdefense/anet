@@ -85,7 +85,9 @@
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js --env=jsdom"
+    "lint": "eslint src",
+    "lint-fix": "eslint src --fix",
+    "test": "npm run lint && node scripts/test.js --env=jsdom"
   },
   "jest": {
     "moduleFileExtensions": [
@@ -115,6 +117,13 @@
     ]
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": "react-app",
+    "rules": {
+      "quotes": ["error", "single"],
+      "quote-props": ["error", "as-needed"],
+      "semi": ["error", "never"],
+      "dot-notation": ["error"],
+      "no-unused-vars": ["error"]
+    }
   }
 }

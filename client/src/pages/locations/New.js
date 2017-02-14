@@ -62,10 +62,10 @@ export default class LocationNew extends React.Component {
 
 	@autobind
 	onMarkerMove(event) {
-		let latLng = event.latlng;
-		let loc = this.state.location;
-		loc.lat = latLng.lat;
-		loc.lng = latLng.lng;
+		let latLng = event.latlng
+		let loc = this.state.location
+		loc.lat = latLng.lat
+		loc.lng = latLng.lng
 		this.setState({location: loc})
 	}
 
@@ -80,9 +80,9 @@ export default class LocationNew extends React.Component {
 		event.stopPropagation()
 		event.preventDefault()
 
-		API.send("/api/locations/new", this.state.location, {disableSubmits: true})
+		API.send('/api/locations/new', this.state.location, {disableSubmits: true})
 			.then(location => {
-				History.push(Location.pathFor(location), {success: "Saved Location"})
+				History.push(Location.pathFor(location), {success: 'Saved Location'})
 			}).catch(error => {
 				this.setState({error: error})
 				window.scrollTo(0, 0)
