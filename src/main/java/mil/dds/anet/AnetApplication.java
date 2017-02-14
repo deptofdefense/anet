@@ -42,7 +42,6 @@ import mil.dds.anet.resources.PoamResource;
 import mil.dds.anet.resources.PositionResource;
 import mil.dds.anet.resources.ReportResource;
 import mil.dds.anet.resources.SavedSearchResource;
-import mil.dds.anet.resources.SearchResource;
 import mil.dds.anet.views.ViewResponseFilter;
 import waffle.servlet.NegotiateSecurityFilter;
 
@@ -136,7 +135,6 @@ public class AnetApplication extends Application<AnetConfiguration> {
 		ReportResource reportResource = new ReportResource(engine);
 		AdminResource adminResource = new AdminResource(engine);
 		HomeResource homeResource = new HomeResource(engine);
-		SearchResource searchResource = new SearchResource(engine);
 		SavedSearchResource savedSearchResource = new SavedSearchResource(engine);
 
 		environment.jersey().register(personResource);
@@ -148,14 +146,13 @@ public class AnetApplication extends Application<AnetConfiguration> {
 		environment.jersey().register(reportResource);
 		environment.jersey().register(adminResource);
 		environment.jersey().register(homeResource);
-		environment.jersey().register(searchResource);
 		environment.jersey().register(savedSearchResource);
 		environment.jersey().register(new ViewResponseFilter(configuration));
 		environment.jersey().register(new GraphQLResource(
 			ImmutableList.of(reportResource, personResource, 
 				positionResource, locationResource,
 				orgResource, asResource, poamResource, 
-				adminResource, searchResource, savedSearchResource), 
+				adminResource, savedSearchResource), 
 			configuration.isDevelopmentMode()));
 
 	}

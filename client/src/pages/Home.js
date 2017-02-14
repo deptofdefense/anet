@@ -23,7 +23,7 @@ export default class Home extends Page {
 			myReportsToday: null,
 			upcomingEngagements: null,
 			savedSearches: [],
-			selectedSearchId: null,
+			selectedSearch: null,
 		}
 	}
 
@@ -47,20 +47,20 @@ export default class Home extends Page {
 			pendingMe: reportList(f:search, query:$pendingQuery) { totalCount },
 			myOrg: reportList(f:search, query:$orgQuery) { totalCount },
 			myReports: reportList(f:search, query:$myReports) { totalCount},
-			savedSearches: savedSearchs(f:mine) {id, name}
+			savedSearches: savedSearchs(f:mine) {id, name, objectType, query}
 			upcomingEngagements: reportList(f:search, query: $futureQuery) { totalCount }
 		`, {futureQuery, pendingQuery, orgQuery, myReports},
 			'($futureQuery: ReportSearchQuery, $pendingQuery: ReportSearchQuery,  '
 			+ '$orgQuery: ReportSearchQuery, $myReports: ReportSearchQuery)')
 		.then(data => {
-			let selectedSearchId = data.savedSearches && data.savedSearches.length > 0 ? data.savedSearches[0].id : null
+			let selectedSearch = data.savedSearches && data.savedSearches.length > 0 ? data.savedSearches[0] : null
 			this.setState({
 				pendingMe: data.pendingMe,
 				myOrgToday: data.myOrg,
 				myReportsToday: data.myReports,
 				savedSearches: data.savedSearches,
 				upcomingEngagements: data.upcomingEngagements,
-				selectedSearchId: selectedSearchId
+				selectedSearch: selectedSearch
 			})
 		})
 	}
@@ -116,8 +116,8 @@ export default class Home extends Page {
 						</FormControl>
 					</FormGroup>
 
-					{this.state.selectedSearchId &&
-						<SavedSearchTable searchId={this.state.selectedSearchId} />
+					{this.state.selectedSearch &&
+						<SavedSearchTable search={this.state.selectedSearch} />
 					}
 				</fieldset>
 			</div>
@@ -126,7 +126,8 @@ export default class Home extends Page {
 
 	@autobind
 	onSaveSearchSelect(event) {
-		let value = event && event.target ? event.target.value : event
-		this.setState({selectedSearchId: value})
+		let id = event && event.target ? event.target.value : event
+		let search = this.state.savedSearches.find(el => el.id === id)
+		this.setState({selectedSearch: search})
 	}
 }

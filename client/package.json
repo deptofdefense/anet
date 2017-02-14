@@ -117,11 +117,11 @@
   "eslintConfig": {
     "extends": "react-app",
     "rules": {
-      "quotes": ["error", "single"],
-      "quote-props": ["error", "as-needed"],
-      "semi": ["error", "never"],
-      "dot-notation": ["error"],
-      "no-unused-vars": ["error"]
+      "quotes": ["warn", "single"],
+      "quote-props": ["warn", "as-needed"],
+      "semi": ["warn", "never"],
+      "dot-notation": ["warn"],
+      "no-unused-vars": ["warn"]
     }
   }
 }
