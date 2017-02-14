@@ -54,7 +54,7 @@ export default class PoamShow extends Page {
 
 		return (
 			<div>
-				<Breadcrumbs items={[[poam.shortName, Poam.pathFor(poam)]]} />
+				<Breadcrumbs items={[[`PoAM ${poam.shortName}`, Poam.pathFor(poam)]]} />
 				<Messages success={this.state.success} error={this.state.error} />
 
 				{canEdit &&
@@ -67,7 +67,7 @@ export default class PoamShow extends Page {
 
 				<Form static formFor={poam} horizontal>
 					<fieldset>
-						<legend>{poam.shortName}</legend>
+						<legend>PoAM {poam.shortName}</legend>
 						<Form.Field id="shortName" />
 						<Form.Field id="longName" />
 						{ poam.responsibleOrg && poam.responsibleOrg.id && this.renderOrg()}
