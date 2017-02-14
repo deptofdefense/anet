@@ -130,7 +130,7 @@ export default class Search extends Page {
 				this.setState({error: response})
 			)
 		} else {
-			let graphQL = ""
+			let graphQL = ''
 			let variables = {}
 			let variableDefs = []
 			Object.keys(SEARCH_CONFIG).forEach(key => {
@@ -139,11 +139,11 @@ export default class Search extends Page {
 				graphQL += `${config.listName} (f:search, query:$${key}Query) {
 					pageNum, pageSize, totalCount, list { ${config.fields} }
 				}`
-				variables[key + "Query"] = {text: text, pageNum: this.state.pageNum[key], pageSize: 10}
+				variables[key + 'Query'] = {text: text, pageNum: this.state.pageNum[key], pageSize: 10}
 				variableDefs.push(`$${key}Query: ${config.variableType}`)
-			});
+			})
 
-			API.query(graphQL, variables, "(" + variableDefs.join(",") + ")")
+			API.query(graphQL, variables, '(' + variableDefs.join(',') + ')')
 			.then(data =>
 				this.setState({results: data})
 			).catch(response => {
