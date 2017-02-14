@@ -8,6 +8,9 @@ import TextEditor from 'components/TextEditor'
 import Autocomplete from 'components/Autocomplete'
 import History from 'components/History'
 
+import _compact from 'lodash.compact'
+import _values from 'lodash.values'
+
 import API from 'api'
 import {Person} from 'models'
 
@@ -32,7 +35,9 @@ export default class PersonForm extends Component {
 	render() {
 		let {person, edit, showPositionAssignment} = this.props
 
-		return <Form formFor={person} onChange={this.onChange} onSubmit={this.onSubmit} horizontal submitText="Save person">
+		return <Form formFor={person} onChange={this.onChange} onSubmit={this.onSubmit} horizontal submitText="Save person" 
+					 submitDisabled={this.isSubmitDisabled()}>
+					 
 			<Messages error={this.state.error} />
 
 			<fieldset>
@@ -156,6 +161,11 @@ export default class PersonForm extends Component {
 				name: this.props.person.name ? null : 'error'  
 			}
 		})
+	}
+
+	@autobind
+	isSubmitDisabled() {
+		return _compact(_values(this.state.formErrors)).length
 	}
 
 	@autobind
