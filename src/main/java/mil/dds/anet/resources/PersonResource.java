@@ -171,7 +171,7 @@ public class PersonResource implements IGraphQLResource {
 			//Super Users can edit any principal
 			if (subject.getRole().equals(Role.PRINCIPAL)) { return true; }
 			//Ensure that the editor is the Super User for the subject's organization.
-			Position subjectPos = subject.loadPosition();
+			Position subjectPos = Person.createWithId(subject.getId()).loadPosition();
 			if (subjectPos != null && subjectPos.getOrganization() != null
 					&& editorPos.getOrganization() != null
 					&& subjectPos.getOrganization().getId().equals(editorPos.getOrganization().getId())) { 
