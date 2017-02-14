@@ -22,8 +22,8 @@ class Nav extends Component {
 		let currentUser = appData.currentUser
 		let organizations = appData.organizations || []
 		let path = this.context.app.props.location.pathname
-		let inOrg = path.indexOf("/organizations") === 0
-		if (inOrg) { path = "/organizations/" + this.context.app.props.params.id }
+		let inOrg = path.indexOf('/organizations') === 0
+		if (inOrg) { path = '/organizations/' + this.context.app.props.params.id }
 
 		return (
 			<BSNav bsStyle="pills" stacked>
@@ -47,9 +47,9 @@ class Nav extends Component {
 				{inOrg &&
 					<SubNav>
 						<Link to={path}><NavItem>Details</NavItem></Link>
-						<Link to={path + "/approvals"}><NavItem>Approvals</NavItem></Link>
-						<Link to={path + "/reports"}><NavItem>Reports</NavItem></Link>
-						<Link to={path + "/laydown"}><NavItem>Laydown</NavItem></Link>
+						<Link to={path + '/approvals'}><NavItem>Approvals</NavItem></Link>
+						<Link to={path + '/reports'}><NavItem>Reports</NavItem></Link>
+						<Link to={path + '/laydown'}><NavItem>Laydown</NavItem></Link>
 					</SubNav>
 				}
 

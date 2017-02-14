@@ -1,5 +1,5 @@
 import React, {Component, PropTypes} from 'react'
-import {Radio, Checkbox, Table, Button, Collapse, HelpBlock} from 'react-bootstrap'
+import {Checkbox, Table, Button, Collapse, HelpBlock} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
 import Form from 'components/Form'
@@ -14,13 +14,13 @@ import History from 'components/History'
 import API from 'api'
 import {Report, Person} from 'models'
 
-import CALENDAR_ICON from "resources/calendar.png"
-import LOCATION_ICON from "resources/locations.png"
-import POSITIVE_ICON from "resources/thumbs_up.png"
-import NEUTRAL_ICON from "resources/neutral.png"
-import NEGATIVE_ICON from "resources/thumbs_down.png"
-import REMOVE_ICON from "resources/delete.png"
-import WARNING_ICON from "resources/warning.png"
+import CALENDAR_ICON from 'resources/calendar.png'
+import LOCATION_ICON from 'resources/locations.png'
+import POSITIVE_ICON from 'resources/thumbs_up.png'
+import NEUTRAL_ICON from 'resources/neutral.png'
+import NEGATIVE_ICON from 'resources/thumbs_down.png'
+import REMOVE_ICON from 'resources/delete.png'
+import WARNING_ICON from 'resources/warning.png'
 
 export default class ReportForm extends Component {
 	static propTypes = {
@@ -69,7 +69,7 @@ export default class ReportForm extends Component {
 	}
 
 	componentWillReceiveProps(nextProps) {
-		let report = nextProps.report;
+		let report = nextProps.report
 		if (report.cancelledReason) {
 			this.setState({isCancelled: true})
 		}
@@ -87,7 +87,7 @@ export default class ReportForm extends Component {
 		let {recents, errors, isCancelled} = this.state
 		console.log(report)
 
-		let hasErrors = Object.keys(errors).length > 0;
+		let hasErrors = Object.keys(errors).length > 0
 
 		return <Form formFor={report} horizontal onChange={this.onChange} onSubmit={this.onSubmit} submitText="Save report" submitDisabled={hasErrors} >
 			<fieldset>
@@ -152,7 +152,7 @@ export default class ReportForm extends Component {
 						onChange={this.addAttendee}
 						onErrorChange={this.attendeeError}
 						clearOnSelect={true}
-						fields={"id, name, role, position { id, name, organization { id, shortName}} "}
+						fields={'id, name, role, position { id, name, organization { id, shortName}} '}
 						template={person =>
 							<span>{person.name} {person.rank && person.rank.toUpperCase()} - {person.position && `(${person.position.name})`}</span>
 						}
@@ -176,7 +176,7 @@ export default class ReportForm extends Component {
 							{Person.map(report.attendees, (person, idx) =>
 								<tr key={person.id}>
 									<td className="primary-attendee">
-										<Checkbox checked={person.primary} onChange={this.setPrimaryAttendee.bind(this, person)} id={"attendeePrimary_" + idx}/>
+										<Checkbox checked={person.primary} onChange={this.setPrimaryAttendee.bind(this, person)} id={'attendeePrimary_' + idx}/>
 									</td>
 
 									<td>
@@ -186,7 +186,7 @@ export default class ReportForm extends Component {
 									<td><LinkTo position={person.position} /></td>
 									<td>{person.position && person.position.organization && person.position.organization.shortName}</td>
 
-									<td onClick={this.removeAttendee.bind(this, person)} id={"attendeeDelete_" + idx} >
+									<td onClick={this.removeAttendee.bind(this, person)} id={'attendeeDelete_' + idx} >
 										<span style={{cursor: 'pointer'}}><img src={REMOVE_ICON} height={14} alt="Remove attendee" /></span>
 									</td>
 
@@ -229,7 +229,7 @@ export default class ReportForm extends Component {
 				</Form.Field>
 
 				<Button className="center-block toggle-section-button" onClick={this.toggleReportText} id="toggleReportDetails" >
-					{this.state.showReportText ? "Hide" : "Add"} detailed comments
+					{this.state.showReportText ? 'Hide' : 'Add'} detailed comments
 				</Button>
 
 				<Collapse in={this.state.showReportText}>
@@ -251,15 +251,15 @@ export default class ReportForm extends Component {
 	@autobind
 	toggleCancelled() {
 		//Toggle the isCancelled state. And set a default reason if necessary
-		let cancelled = !this.state.isCancelled;
-		this.props.report.cancelledReason = (cancelled) ? "CANCELLED_BY_ADVISOR" : null
+		let cancelled = !this.state.isCancelled
+		this.props.report.cancelledReason = (cancelled) ? 'CANCELLED_BY_ADVISOR' : null
 		this.setState({isCancelled: cancelled})
 	}
 
 	@autobind
 	setLocation(location) {
-		this.props.report.location = location;
-		this.onChange();
+		this.props.report.location = location
+		this.onChange()
 	}
 
 	@autobind
@@ -288,24 +288,24 @@ export default class ReportForm extends Component {
 
 	@autobind
 	attendeeError(isError, message) {
-		let errors = this.state.errors;
+		let errors = this.state.errors
 		if (isError) {
-			errors.attendees = "error"
+			errors.attendees = 'error'
 		} else {
 			delete errors.attendees
 		}
-		this.setState({errors});
+		this.setState({errors})
 	}
 
 	@autobind
 	onPoamError(isError, message) {
-		let errors = this.state.errors;
+		let errors = this.state.errors
 		if (isError) {
-			errors.poams = "error"
+			errors.poams = 'error'
 		} else {
 			delete errors.poams
 		}
-		this.setState({errors});
+		this.setState({errors})
 	}
 
 	@autobind
@@ -352,14 +352,14 @@ export default class ReportForm extends Component {
 	@autobind
 	validateReport() {
 		let report = this.props.report
-		let errors = this.state.errors;
-		if (report.location && (typeof report.location !== "object")) {
-			errors.location = "error"
+		let errors = this.state.errors
+		if (report.location && (typeof report.location !== 'object')) {
+			errors.location = 'error'
 		} else {
 			delete errors.location
 		}
 
-		return errors;
+		return errors
 	}
 
 	@autobind
@@ -393,7 +393,7 @@ export default class ReportForm extends Component {
 				History.replace(Report.pathForEdit(report), false)
 
 				// then after, we redirect you to the to page
-				History.push(Report.pathFor(report), {success: "Report saved successfully"})
+				History.push(Report.pathFor(report), {success: 'Report saved successfully'})
 			})
 			.catch(response => {
 				this.setState({error: {message: response.message || response.error}})

@@ -50,7 +50,7 @@ export default class PoamShow extends Page {
 		// Admins can edit poams, or super users if this poam is assigned to their org.
 		let currentUser = this.context.app.state.currentUser
 		let canEdit = (currentUser && currentUser.isAdmin()) ||
-			(currentUser && poam.responsibleOrg && currentUser.isSuperUserForOrg(poam.responsibleOrg));
+			(currentUser && poam.responsibleOrg && currentUser.isSuperUserForOrg(poam.responsibleOrg))
 
 		return (
 			<div>
@@ -91,10 +91,10 @@ export default class PoamShow extends Page {
 
 	@autobind
 	actionSelect(eventKey, event) {
-		if (eventKey === "edit") {
-			History.push(`/poams/${this.state.poam.id}/edit`);
+		if (eventKey === 'edit') {
+			History.push(`/poams/${this.state.poam.id}/edit`)
 		} else {
-			console.log("Unimplemented Action: " + eventKey);
+			console.log('Unimplemented Action: ' + eventKey)
 		}
 	}
 }

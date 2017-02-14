@@ -51,10 +51,10 @@ export default class OrganizationReports extends Page {
 	render() {
 		let org = this.state.organization
 
-		let currentUser = this.context.app.state.currentUser;
+		let currentUser = this.context.app.state.currentUser
 		let isSuperUser = (currentUser) ? currentUser.isSuperUserForOrg(org) : false
 		let isAdmin = (currentUser) ? currentUser.isAdmin() : false
-		let showActions = isAdmin || isSuperUser;
+		let showActions = isAdmin || isSuperUser
 
 		return (
 			<div>
@@ -111,16 +111,16 @@ export default class OrganizationReports extends Page {
 
 	@autobind
 	actionSelect(eventKey, event) {
-		if (eventKey === "createPos") {
+		if (eventKey === 'createPos') {
 			History.push({pathname: 'positions/new', query: {organizationId: this.state.organization.id}})
-		} else if (eventKey === "createSub") {
+		} else if (eventKey === 'createSub') {
 			History.push({pathname: 'organizations/new', query: {parentOrgId: this.state.organization.id}})
-		} else if (eventKey === "edit") {
+		} else if (eventKey === 'edit') {
 			History.push(Organization.pathForEdit(this.state.organization))
-		} else if (eventKey === "createPoam") {
+		} else if (eventKey === 'createPoam') {
 			History.push({pathname: 'poams/new', query: {responsibleOrg: this.state.organization.id}})
 		} else {
-			console.log("Unimplemented Action: " + eventKey);
+			console.log('Unimplemented Action: ' + eventKey)
 		}
 	}
 }

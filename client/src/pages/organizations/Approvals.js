@@ -44,10 +44,10 @@ export default class OrganizationApprovals extends Page {
 		let org = this.state.organization
 		let approvalSteps = org.approvalSteps
 
-		let currentUser = this.context.app.state.currentUser;
+		let currentUser = this.context.app.state.currentUser
 		let isSuperUser = (currentUser) ? currentUser.isSuperUserForOrg(org) : false
 		let isAdmin = (currentUser) ? currentUser.isAdmin() : false
-		let showActions = isAdmin || isSuperUser;
+		let showActions = isAdmin || isSuperUser
 
 		return (
 			<div>
@@ -95,7 +95,7 @@ export default class OrganizationApprovals extends Page {
 
 					<h2>Approval Process</h2>
 					{approvalSteps && approvalSteps.map((step, idx) =>
-						<fieldset key={"step_" + idx}>
+						<fieldset key={'step_' + idx}>
 							<legend>Step {idx + 1}: {step.name}</legend>
 							<Table>
 								<thead><tr><th>Name</th><th>Position</th></tr></thead>
@@ -118,16 +118,16 @@ export default class OrganizationApprovals extends Page {
 
 	@autobind
 	actionSelect(eventKey, event) {
-		if (eventKey === "createPos") {
+		if (eventKey === 'createPos') {
 			History.push({pathname: 'positions/new', query: {organizationId: this.state.organization.id}})
-		} else if (eventKey === "createSub") {
+		} else if (eventKey === 'createSub') {
 			History.push({pathname: 'organizations/new', query: {parentOrgId: this.state.organization.id}})
-		} else if (eventKey === "edit") {
+		} else if (eventKey === 'edit') {
 			History.push(Organization.pathForEdit(this.state.organization))
-		} else if (eventKey === "createPoam") {
+		} else if (eventKey === 'createPoam') {
 			History.push({pathname: 'poams/new', query: {responsibleOrg: this.state.organization.id}})
 		} else {
-			console.log("Unimplemented Action: " + eventKey);
+			console.log('Unimplemented Action: ' + eventKey)
 		}
 	}
 }

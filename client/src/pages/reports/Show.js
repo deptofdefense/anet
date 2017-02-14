@@ -28,9 +28,9 @@ const atmosphereIconCss = {
 }
 
 const atmosphereIcons = {
-	'POSITIVE': POSITIVE_ICON,
-	'NEUTRAL': NEUTRAL_ICON,
-	'NEGATIVE': NEGATIVE_ICON,
+	POSITIVE: POSITIVE_ICON,
+	NEUTRAL: NEUTRAL_ICON,
+	NEGATIVE: NEGATIVE_ICON,
 }
 
 export default class ReportShow extends Page {
@@ -45,7 +45,7 @@ export default class ReportShow extends Page {
 			newComment: new Comment(),
 			approvalComment: new Comment(),
 			showEmailModal: false,
-			email: { toAddresses: "", comment: "" , errors: null}
+			email: { toAddresses: '', comment: '' , errors: null}
 		}
 	}
 
@@ -121,14 +121,14 @@ export default class ReportShow extends Page {
 		let canSubmit = (report.isDraft() || report.isRejected()) && (currentUser.id === report.author.id)
 
 		//Anbody can email a report as long as it's not in draft.
-		let canEmail = !report.isDraft();
+		let canEmail = !report.isDraft()
 
 		//Only the author can delete a report, and only in DRAFT.
 		let canDelete = report.isDraft() && (currentUser.id === report.author.id)
 
-		let errors = report.isDraft() && report.validateForSubmit();
+		let errors = report.isDraft() && report.validateForSubmit()
 
-		let isCancelled = (report.cancelledReason) ? true : false;
+		let isCancelled = (report.cancelledReason) ? true : false
 
 		return (
 			<div>
@@ -189,7 +189,7 @@ export default class ReportShow extends Page {
 							</div>
 						</Form.Field>
 
-						<Form.Field id="engagementDate" label="Date" icon={CALENDAR_ICON} getter={date => date && moment(date).format("D MMM YYYY")} />
+						<Form.Field id="engagementDate" label="Date" icon={CALENDAR_ICON} getter={date => date && moment(date).format('D MMM YYYY')} />
 
 						<Form.Field id="location" label="Location" icon={LOCATION_ICON}>
 							{report.location && <LinkTo location={report.location} />}
@@ -315,7 +315,7 @@ export default class ReportShow extends Page {
 							)
 						})}
 
-						{!report.comments.length && "There are no comments yet."}
+						{!report.comments.length && 'There are no comments yet.'}
 
 						<Form formFor={this.state.newComment} horizontal onSubmit={this.submitComment} onChange={this.onChange} submitText={false}>
 							<Form.Field id="text" placeholder="Type a comment here" label="">
@@ -349,7 +349,7 @@ export default class ReportShow extends Page {
 
 			<Button bsStyle="danger" onClick={this.rejectReport}>Reject with comment</Button>
 			<div className="right-button">
-				<Button onClick={this.actionSelect.bind(this, "edit")}>Edit report</Button>
+				<Button onClick={this.actionSelect.bind(this, 'edit')}>Edit report</Button>
 				<Button bsStyle="primary" onClick={this.approveReport}><strong>Approve</strong></Button>
 			</div>
 		</fieldset>
@@ -357,7 +357,7 @@ export default class ReportShow extends Page {
 
 	@autobind
 	renderApprovals(canApprove) {
-		let report = this.state.report;
+		let report = this.state.report
 		return <fieldset>
 			<a name="approvals" />
 			<legend>Approvals</legend>
@@ -383,7 +383,7 @@ export default class ReportShow extends Page {
 						<Autocomplete valueKey="name"
 							placeholder="Select the person to email"
 							url="/api/people/search"
-							queryParams={{role: "ADVISOR"}}
+							queryParams={{role: 'ADVISOR'}}
 						/>
 					</Form.Field>
 					<Form.Field componentClass="textarea" id="comment" />
@@ -397,26 +397,26 @@ export default class ReportShow extends Page {
 
 	@autobind
 	toggleEmailModal() {
-		this.setState({showEmailModal : !this.state.showEmailModal});
+		this.setState({showEmailModal : !this.state.showEmailModal})
 	}
 
 	@autobind
 	emailReport() {
-		let email = this.state.email;
+		let email = this.state.email
 		if (!email.to) {
-			email.errors = "You must select a person to send this to"
+			email.errors = 'You must select a person to send this to'
 			this.setState({email})
-			return;
+			return
 		}
 
 		email = {
 			toAddresses: [email.to.emailAddress],
 			context: {comment: email.comment },
-			subject: "Sharing an email from ANET"
+			subject: 'Sharing an email from ANET'
 		}
 		API.send(`/api/reports/${this.state.report.id}/email`, email).then (() =>
 			this.setState({
-				success: "Email successfully sent",
+				success: 'Email successfully sent',
 				showEmailModal: false,
 				email: {}
 			})
@@ -428,7 +428,7 @@ export default class ReportShow extends Page {
 		API.send(`/api/reports/${this.state.report.id}/submit`).then(data => {
 			this.updateReport()
 			this.setState({error:null})
-			this.setState({success:"Successfully submited report"})
+			this.setState({success:'Successfully submited report'})
 		}, data => {
 			this.handleError(data)
 		})
@@ -454,14 +454,14 @@ export default class ReportShow extends Page {
 	rejectReport() {
 		if (this.state.approvalComment.text.length === 0){
 			this.setState({success:null})
-			this.handleError({message:"Please include a comment when rejecting a report."})
+			this.handleError({message:'Please include a comment when rejecting a report.'})
 			return
 		}
 
-		this.state.approvalComment.text = "REJECTED: " + this.state.approvalComment.text
+		this.state.approvalComment.text = 'REJECTED: ' + this.state.approvalComment.text
 		API.send(`/api/reports/${this.state.report.id}/reject`, this.state.approvalComment).then(data => {
 			this.updateReport()
-			this.setState({success:"Successfully rejected report"})
+			this.setState({success:'Successfully rejected report'})
 			this.setState({error:null})
 		}, data => {
 			this.setState({success:null})
@@ -475,7 +475,7 @@ export default class ReportShow extends Page {
 		API.send(`/api/reports/${this.state.report.id}/approve`, comment).then(data => {
 			this.updateReport()
 			this.setState({error:null})
-			this.setState({success:"Successfully approved report"})
+			this.setState({success:'Successfully approved report'})
 		}, data => {
 			this.setState({success:null})
 			this.handleError(data)
@@ -515,17 +515,17 @@ export default class ReportShow extends Page {
 
 	@autobind
 	actionSelect(eventKey, event) {
-		if (eventKey === "edit") {
-			History.push(`/reports/${this.state.report.id}/edit`);
-		} else if (eventKey === "submit" ) {
+		if (eventKey === 'edit') {
+			History.push(`/reports/${this.state.report.id}/edit`)
+		} else if (eventKey === 'submit' ) {
 			this.submitDraft()
-		} else if (eventKey === "email" ) {
-		} else if (eventKey === "delete") {
-			if (confirm("Are you sure you want to delete this report?")) {
+		} else if (eventKey === 'email' ) {
+		} else if (eventKey === 'delete') {
+			if (confirm('Are you sure you want to delete this report?')) {
 				this.deleteReport()
 			}
 		} else {
-			console.log("Unimplemented Action: " + eventKey);
+			console.log('Unimplemented Action: ' + eventKey)
 		}
 	}
 
@@ -549,7 +549,7 @@ export default class ReportShow extends Page {
 				</Modal.Body>
 			</Modal>
 	 	{action.type ?
-				<span> {action.type} by {action.person.name} <small>{moment(action.createdAt).format("D MMM YYYY")}</small></span>
+				<span> {action.type} by {action.person.name} <small>{moment(action.createdAt).format('D MMM YYYY')}</small></span>
 				:
 				<span className="text-danger"> Pending</span>
 			}
@@ -582,7 +582,7 @@ export default class ReportShow extends Page {
 	@autobind
 	deleteReport() {
 		API.send(`/api/reports/${this.state.report.id}/delete`, {}, {method: 'DELETE'}).then(data => {
-			History.push("/", {success: "Report deleted"});
+			History.push('/', {success: 'Report deleted'})
 		}, data => {
 			this.setState({success:null})
 			this.handleError(data)

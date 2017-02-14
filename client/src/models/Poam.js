@@ -1,8 +1,8 @@
 import Model from 'components/Model'
 
 export default class Poam extends Model {
-	static resourceName = "PoAM"
-	static listName = "poamList"
+	static resourceName = 'PoAM'
+	static listName = 'poamList'
 
 	static schema = {
 		shortName: '',
@@ -14,6 +14,6 @@ export default class Poam extends Model {
 	}
 
 	toString() {
-		return this.longName || this.shortName || "Unnamed"
+		return this.longName || this.shortName || 'Unnamed'
 	}
 }

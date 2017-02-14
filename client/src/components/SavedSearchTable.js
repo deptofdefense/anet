@@ -20,7 +20,7 @@ export default class SavedSearchTable extends Component {
 		}
 
 		if (props.searchId) {
-			this.runSearch(props.searchId);
+			this.runSearch(props.searchId)
 		}
 	}
 

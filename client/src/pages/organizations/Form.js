@@ -38,7 +38,7 @@ export default class OrganizationForm extends Component {
 
 			<Messages error={this.state.error} />
 			<fieldset>
-				<legend>{edit ? "Editing " + organization.shortName : "Create a new Organization"}</legend>
+				<legend>{edit ? 'Editing ' + organization.shortName : 'Create a new Organization'}</legend>
 
 				<Form.Field id="type">
 					<RadioGroup>
@@ -58,7 +58,7 @@ export default class OrganizationForm extends Component {
 				<Form.Field id="longName" label="Description" placeholder="e.g. Force Sustainment" />
 			</fieldset>
 
-			{organization.type === "ADVISOR_ORG" && <div>
+			{organization.type === 'ADVISOR_ORG' && <div>
 				<PoamsSelector poams={organization.poams} onChange={this.onChange} />
 
 				<fieldset>
@@ -93,11 +93,11 @@ export default class OrganizationForm extends Component {
 				<Autocomplete valueKey="name"
 					placeholder="Search for the approvers position"
 					objectType={Position}
-					fields={"id, name, code, type, person { id, name, rank}"}
+					fields={'id, name, code, type, person { id, name, rank}'}
 					template={pos =>
 						<span>{pos.name} - {pos.code} ({(pos.person) ? pos.person.name : <i>empty</i>})</span>
 					}
-					queryParams={{type: "ADVISOR", matchPersonName: true}}
+					queryParams={{type: 'ADVISOR', matchPersonName: true}}
 					onChange={this.addApprover.bind(this, index)}
 					clearOnSelect={true} />
 
@@ -127,50 +127,50 @@ export default class OrganizationForm extends Component {
 
 	@autobind
 	addApprover(index, position) {
-		let org = this.props.organization;
-		let step = org.approvalSteps[index];
-		let newApprovers = step.approvers.slice();
-		newApprovers.push(position);
-		step.approvers = newApprovers;
+		let org = this.props.organization
+		let step = org.approvalSteps[index]
+		let newApprovers = step.approvers.slice()
+		newApprovers.push(position)
+		step.approvers = newApprovers
 
-		this.onChange();
+		this.onChange()
 	}
 
 	@autobind
 	removeApprover(approver, index) {
-		let step = this.props.organization.approvalSteps[index];
-		let approvers = step.approvers;
-		let approverIndex = approvers.findIndex(m => m.id === approver.id );
+		let step = this.props.organization.approvalSteps[index]
+		let approvers = step.approvers
+		let approverIndex = approvers.findIndex(m => m.id === approver.id )
 
 		if (approverIndex !== -1) {
-			approvers.splice(approverIndex, 1);
-			this.onChange();
+			approvers.splice(approverIndex, 1)
+			this.onChange()
 		}
 	}
 
 	@autobind
 	setStepName(index, event) {
 		let name = event && event.target ? event.target.value : event
-		let step = this.props.organization.approvalSteps[index];
-		step.name = name;
+		let step = this.props.organization.approvalSteps[index]
+		step.name = name
 
-		this.onChange();
+		this.onChange()
 	}
 
 	@autobind
 	addApprovalStep() {
-		let org = this.props.organization;
-		let approvalSteps = org.approvalSteps || [];
-		approvalSteps.push({name: "", approvers: []});
+		let org = this.props.organization
+		let approvalSteps = org.approvalSteps || []
+		approvalSteps.push({name: '', approvers: []})
 
 		this.onChange()
 	}
 
 	@autobind
 	removeApprovalStep(index) {
-		let steps = this.props.organization.approvalSteps;
+		let steps = this.props.organization.approvalSteps
 		steps.splice(index, 1)
-		this.onChange();
+		this.onChange()
 	}
 
 	@autobind
@@ -197,7 +197,7 @@ export default class OrganizationForm extends Component {
 				}
 
 				History.replace(Organization.pathForEdit(organization), false)
-				History.push(Organization.pathFor(organization), {success: "Organization saved successfully"})
+				History.push(Organization.pathFor(organization), {success: 'Organization saved successfully'})
 			}).catch(error => {
 				this.setState({error})
 				window.scrollTo(0, 0)

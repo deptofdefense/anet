@@ -21,13 +21,13 @@ export default class ReportSummary extends Component {
 					{report.advisorOrg &&
 						<LinkTo organization={new Organization(report.advisorOrg)} />
 					}
-					{report.principalOrg && "-> "}
+					{report.principalOrg && '-> '}
 					{report.principalOrg &&
 						<LinkTo organization={new Organization(report.principalOrg)} />
 					}
 				</Col>
 				<Col md={6}>
-					{report.engagementDate && moment(report.engagementDate).format("D MMM YYYY")}
+					{report.engagementDate && moment(report.engagementDate).format('D MMM YYYY')}
 					{report.location &&
 						<span> @&nbsp;
 							<LinkTo location={report.location} />
@@ -58,7 +58,7 @@ export default class ReportSummary extends Component {
 	}
 
 	renderPerson(person) {
-		person = new Person(person);
+		person = new Person(person)
 		return <div>
 			<img height={20} width={20} src={person.iconUrl()} alt={person.role} className="person-icon" />
 			<LinkTo person={person} />

@@ -7,7 +7,7 @@ import SEARCH_ICON from 'resources/search-alt.png'
 export default class SearchBar extends Component {
 	constructor(props) {
 		super(props)
-		this.state = {query: History.getCurrentLocation().query.text || ""}
+		this.state = {query: History.getCurrentLocation().query.text || ''}
 
 		this.onChange = this.onChange.bind(this)
 		this.onSubmit = this.onSubmit.bind(this)

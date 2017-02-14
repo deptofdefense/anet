@@ -4,8 +4,8 @@ import RS_ICON from 'resources/rs_small.png'
 import AFG_ICON from 'resources/afg_small.png'
 
 export default class Person extends Model {
-	static resourceName = "Person"
-	static listName = "personList"
+	static resourceName = 'Person'
+	static listName = 'personList'
 
 	static schema = {
 		name: '',
@@ -43,11 +43,11 @@ export default class Person extends Model {
 	// - A super user for this orgs parents.
 	isSuperUserForOrg(org) {
 		if (!org) { return false }
-		if (this.position && this.position.type === "ADMINISTRATOR") { return true; }
-		if (this.position && this.position.type !== "SUPER_USER") { return false; }
-		if (org.type === "PRINCIPAL_ORG") { return true; }
+		if (this.position && this.position.type === 'ADMINISTRATOR') { return true }
+		if (this.position && this.position.type !== 'SUPER_USER') { return false }
+		if (org.type === 'PRINCIPAL_ORG') { return true }
 
-		if (!this.position || !this.position.organization) { return false; }
+		if (!this.position || !this.position.organization) { return false }
 		let orgs = this.position.organization.allDescendantOrgs || []
 		orgs.push(this.position.organization)
 		let orgIds = orgs.map(o => o.id)
@@ -56,9 +56,9 @@ export default class Person extends Model {
 	}
 
 	iconUrl() {
-		if (this.role === "ADVISOR") {
+		if (this.role === 'ADVISOR') {
 			return RS_ICON
-		} else if (this.role === "PRINCIPAL") {
+		} else if (this.role === 'PRINCIPAL') {
 			return AFG_ICON
 		}
 

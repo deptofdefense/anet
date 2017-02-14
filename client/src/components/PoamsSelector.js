@@ -5,8 +5,8 @@ import Autocomplete from 'components/Autocomplete'
 import Form from 'components/Form'
 import {Table, Button, HelpBlock} from 'react-bootstrap'
 
-import REMOVE_ICON from "resources/delete.png"
-import WARNING_ICON from "resources/warning.png"
+import REMOVE_ICON from 'resources/delete.png'
+import WARNING_ICON from 'resources/warning.png'
 
 export default class PoamsSelector extends Component {
 	static propTypes = {
@@ -19,7 +19,7 @@ export default class PoamsSelector extends Component {
 	}
 
 	render() {
-		let {poams, shortcuts, validationState} = this.props;
+		let {poams, shortcuts, validationState} = this.props
 
 		return <fieldset>
 			<legend>Plans of Action and Milestones / Pillars</legend>
@@ -49,7 +49,7 @@ export default class PoamsSelector extends Component {
 						{poams.map((poam, idx) =>
 							<tr key={poam.id}>
 								<td>{poam.shortName} - {poam.longName}</td>
-								<td onClick={this.removePoam.bind(this, poam)} id={"poamDelete_" + idx}>
+								<td onClick={this.removePoam.bind(this, poam)} id={'poamDelete_' + idx}>
 									<span style={{cursor: 'pointer'}}><img src={REMOVE_ICON} height={14} alt="Remove attendee" /></span>
 								</td>
 							</tr>
@@ -59,7 +59,7 @@ export default class PoamsSelector extends Component {
 
 				{poams.length === 0 && <p style={{textAlign: 'center'}}>
 					No PoAMs selected
-					{this.props.optional && " (this is fine if no PoAMs were discussed)"}
+					{this.props.optional && ' (this is fine if no PoAMs were discussed)'}
 					.
 				</p>}
 
@@ -69,7 +69,7 @@ export default class PoamsSelector extends Component {
 	}
 
 	renderShortcuts() {
-		let shortcuts = this.props.shortcuts || [];
+		let shortcuts = this.props.shortcuts || []
 		return <Form.Field.ExtraCol className="shortcut-list">
 			<h5>Shortcuts</h5>
 				{shortcuts.map(poam =>
