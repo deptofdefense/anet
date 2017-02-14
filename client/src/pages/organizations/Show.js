@@ -15,7 +15,7 @@ import OrganizationLaydown from 'pages/organizations/Laydown'
 import OrganizationApprovals from 'pages/organizations/Approvals'
 
 import API from 'api'
-import {Organization} from 'models'
+import {Organization, Position, Poam} from 'models'
 
 export default class OrganizationShow extends Page {
 	static contextTypes = {
@@ -91,13 +91,13 @@ export default class OrganizationShow extends Page {
 
 				<Messages error={this.state.error} success={this.state.success} />
 
-				{ showActions &&
+				{showActions &&
 					<div className="pull-right">
 						<DropdownButton bsStyle="primary" title="Actions" id="actions" className="pull-right" onSelect={this.actionSelect}>
-							{isSuperUser && <MenuItem eventKey="edit" >Edit Organization</MenuItem>}
-							{isAdmin && <MenuItem eventKey="createSub">Create Sub-Organization</MenuItem> }
-							{isAdmin && <MenuItem eventKey="createPoam">Create Poam</MenuItem> }
-							{isSuperUser && <MenuItem eventKey="createPos">Create new Position</MenuItem> }
+							{isSuperUser && <MenuItem eventKey="edit">Edit Organization</MenuItem>}
+							{isAdmin && <MenuItem eventKey="createSub">Create Sub-Organization</MenuItem>}
+							{isAdmin && <MenuItem eventKey="createPoam">Create PoAM</MenuItem>}
+							{isSuperUser && <MenuItem eventKey="createPos">Create new Position</MenuItem>}
 						</DropdownButton>
 					</div>
 				}
@@ -153,13 +153,13 @@ export default class OrganizationShow extends Page {
 	@autobind
 	actionSelect(eventKey, event) {
 		if (eventKey === 'createPos') {
-			History.push({pathname: '/positions/new', query: {organizationId: this.state.organization.id}})
+			History.push({pathname: Position.pathForNew(), query: {organizationId: this.state.organization.id}})
 		} else if (eventKey === 'createSub') {
-			History.push({pathname: '/organizations/new', query: {parentOrgId: this.state.organization.id}})
+			History.push({pathname: Organization.pathForNew(), query: {parentOrgId: this.state.organization.id}})
 		} else if (eventKey === 'edit') {
 			History.push(Organization.pathForEdit(this.state.organization))
 		} else if (eventKey === 'createPoam') {
-			History.push({pathname: '/poams/new', query: {responsibleOrg: this.state.organization.id}})
+			History.push({pathname: Poam.pathForNew(), query: {responsibleOrg: this.state.organization.id}})
 		} else {
 			console.log('Unimplemented Action: ' + eventKey)
 		}

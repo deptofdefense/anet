@@ -92,7 +92,7 @@ export default class PoamShow extends Page {
 	@autobind
 	actionSelect(eventKey, event) {
 		if (eventKey === 'edit') {
-			History.push(`/poams/${this.state.poam.id}/edit`)
+			History.push(Poam.pathForEdit(this.state.poam))
 		} else {
 			console.log('Unimplemented Action: ' + eventKey)
 		}

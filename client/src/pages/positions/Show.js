@@ -160,7 +160,7 @@ export default class PositionShow extends Page {
 	actionSelect(eventKey, event) {
 		let position = this.state.position
 		if (eventKey === 'edit') {
-			History.push('/positions/' + position.id + '/edit')
+			History.push(Position.pathForEdit(position))
 		} else {
 			console.error('Unimplemented Action: ' + eventKey)
 		}
