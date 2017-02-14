@@ -6,7 +6,7 @@ import Form from 'components/Form'
 import TextEditor from 'components/TextEditor'
 import Autocomplete from 'components/Autocomplete'
 import DatePicker from 'react-bootstrap-date-picker'
-import RadioGroup from 'components/RadioGroup'
+import ButtonToggleGroup from 'components/ButtonToggleGroup'
 import PoamsSelector from 'components/PoamsSelector'
 import LinkTo from 'components/LinkTo'
 import History from 'components/History'
@@ -85,6 +85,7 @@ export default class ReportForm extends Component {
 	render() {
 		let {report} = this.props
 		let {recents, errors, isCancelled} = this.state
+		console.log(report)
 
 		let hasErrors = Object.keys(errors).length > 0
 
@@ -122,11 +123,11 @@ export default class ReportForm extends Component {
 
 				{!isCancelled &&
 					<Form.Field id="atmosphere">
-						<RadioGroup bsSize="large">
-							<Radio value="POSITIVE" id="positiveAtmos" ><img src={POSITIVE_ICON} height={25} alt="positive" /></Radio>
-							<Radio value="NEUTRAL" id="neutralAtmos" ><img src={NEUTRAL_ICON} height={25} alt="neutral" /></Radio>
-							<Radio value="NEGATIVE" id="negativeAtmos" ><img src={NEGATIVE_ICON} height={25} alt="negative" /></Radio>
-						</RadioGroup>
+						<ButtonToggleGroup>
+							<Button value="POSITIVE" id="positiveAtmos" ><img src={POSITIVE_ICON} height={25} alt="positive" /></Button>
+							<Button value="NEUTRAL" id="neutralAtmos" ><img src={NEUTRAL_ICON} height={25} alt="neutral" /></Button>
+							<Button value="NEGATIVE" id="negativeAtmos" ><img src={NEGATIVE_ICON} height={25} alt="negative" /></Button>
+						</ButtonToggleGroup>
 
 					</Form.Field>
 				}

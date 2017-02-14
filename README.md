@@ -9,3 +9,4 @@ We recommend reading through the documentation in the following order:
 1. [Working on the backend](./docs/backend-overview.md)
 1. [Working on the frontend](./docs/frontend-overview.md)
 1. See [DOCUMENTATION.md](./docs/DOCUMENTATION.md) and [INSTALL.md](./docs/INSTALL.md) for additional information.
+1. See [User Workflows](./docs/User_Workflows_and_Documentation.md) for details on user workflows. 

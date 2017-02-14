@@ -16,7 +16,8 @@ export default class ButtonToggleGroup extends Component {
 				{children.map((child, index) =>
 					<Button key={child.props.value}
 						active={this.props.value === child.props.value}
-						onClick={this.onClick} value={child.props.value} >
+						onClick={this.onClick} value={child.props.value}
+						{...child.props} >
 							{child.props.children}
 					</Button>
 				)}
@@ -26,6 +27,6 @@ export default class ButtonToggleGroup extends Component {
 
 	@autobind
 	onClick(event) {
-		this.props.onChange(event.target.value)
+		this.props.onChange(event.currentTarget.value)
 	}
 }

@@ -130,20 +130,22 @@ export default class Search extends Page {
 				this.setState({error: response})
 			)
 		} else {
-			//TODO: escape query in the graphQL query
-			let pageNum = this.state.pageNum.reports
-			let pageSize = (this.state.queryType || 'everything') === 'everything' ? 5 : 10
-			API.query(/* GraphQL */`
-				searchResults(f:search, q:"${text}", pageNum: ${pageNum}, pageSize: ${pageSize}) {
-					reports { pageNum, pageSize, totalCount, list { ${SEARCH_CONFIG.reports.fields}} }
-					people { pageNum, pageSize, totalCount, list { ${SEARCH_CONFIG.persons.fields}} }
-					positions { pageNum, pageSize, totalCount, list { ${SEARCH_CONFIG.positions.fields} }}
-					poams { pageNum, pageSize, totalCount, list { ${SEARCH_CONFIG.poams.fields} }}
-					locations { pageNum, pageSize, totalCount, list { ${SEARCH_CONFIG.locations.fields} }}
-					organizations { pageNum, pageSize, totalCount, list { ${SEARCH_CONFIG.organizations.fields} }}
-				}
-			`).then(data =>
-				this.setState({results: data.searchResults})
+			let graphQL = ""
+			let variables = {}
+			let variableDefs = []
+			Object.keys(SEARCH_CONFIG).forEach(key => {
+				let config = SEARCH_CONFIG[key]
+				/* GraphQL */
+				graphQL += `${config.listName} (f:search, query:$${key}Query) {
+					pageNum, pageSize, totalCount, list { ${config.fields} }
+				}`
+				variables[key + "Query"] = {text: text, pageNum: this.state.pageNum[key], pageSize: 10}
+				variableDefs.push(`$${key}Query: ${config.variableType}`)
+			});
+
+			API.query(graphQL, variables, "(" + variableDefs.join(",") + ")")
+			.then(data =>
+				this.setState({results: data})
 			).catch(response => {
 				this.setState({error: response})
 			})
