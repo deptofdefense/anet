@@ -60,7 +60,7 @@ export default class PoamShow extends Page {
 				{canEdit &&
 					<div className="pull-right">
 						<DropdownButton bsStyle="primary" title="Actions" id="actions" className="pull-right" onSelect={this.actionSelect}>
-							{canEdit && <MenuItem eventKey="edit" >Edit {poam.shortName}</MenuItem>}
+							{canEdit && <MenuItem eventKey="edit">Edit PoAM</MenuItem>}
 						</DropdownButton>
 					</div>
 				}
@@ -70,7 +70,7 @@ export default class PoamShow extends Page {
 						<legend>PoAM {poam.shortName}</legend>
 						<Form.Field id="shortName" />
 						<Form.Field id="longName" />
-						{ poam.responsibleOrg && poam.responsibleOrg.id && this.renderOrg()}
+						{poam.responsibleOrg && poam.responsibleOrg.id && this.renderOrg()}
 					</fieldset>
 				</Form>
 			</div>
