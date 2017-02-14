@@ -46,10 +46,10 @@ class Nav extends Component {
 
 				{inOrg &&
 					<SubNav>
-						<Link to={path + "/"}><NavItem>PoAMs</NavItem></Link>
-						<Link to={path + "/approvals"}><NavItem>Approvals</NavItem></Link>
-						<Link to={path + "/reports"}><NavItem>Reports</NavItem></Link>
-						<Link to={path + "/laydown"}><NavItem>Laydown</NavItem></Link>
+						<Link to={path + '/'}><NavItem>PoAMs</NavItem></Link>
+						<Link to={path + '/approvals'}><NavItem>Approvals</NavItem></Link>
+						<Link to={path + '/reports'}><NavItem>Reports</NavItem></Link>
+						<Link to={path + '/laydown'}><NavItem>Laydown</NavItem></Link>
 					</SubNav>
 				}
 

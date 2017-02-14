@@ -16,7 +16,7 @@ export default class OrganizationApprovals extends Component {
 			<div>
 				<h2>Approval Process</h2>
 				{approvalSteps && approvalSteps.map((step, idx) =>
-					<fieldset key={"step_" + idx}>
+					<fieldset key={'step_' + idx}>
 						<legend>Step {idx + 1}: {step.name}</legend>
 						<Table>
 							<thead><tr><th>Name</th><th>Position</th></tr></thead>

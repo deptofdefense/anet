@@ -37,10 +37,10 @@ export default class OrganizationShow extends Page {
 
 	componentWillReceiveProps(nextProps) {
 		if (nextProps.params.action !== this.state.action) {
-			this.setState({action: nextProps.params.action});
+			this.setState({action: nextProps.params.action})
 		}
 		if (nextProps.params.id !== this.state.organization.id) {
-			this.loadData(nextProps);
+			this.loadData(nextProps)
 		}
 	}
 
@@ -77,7 +77,7 @@ export default class OrganizationShow extends Page {
 
 	render() {
 		let org = this.state.organization
-		let action = this.state.action || "poams"
+		 let action = this.state.action || 'poams'
 
 		let currentUser = this.context.app.state.currentUser
 		let isSuperUser = (currentUser) ? currentUser.isSuperUserForOrg(org) : false
@@ -128,19 +128,19 @@ export default class OrganizationShow extends Page {
 						</Form.Field>}
 					</fieldset>
 
-					{action === "poams" &&
+					{action === 'poams' &&
 						<OrganizationPoams organization={org} />
 					}
 
-					{action === "laydown" &&
+					{action === 'laydown' &&
 						<OrganizationLaydown organization={org} />
 					}
 
-					{action === "approvals" &&
+					{action === 'approvals' &&
 						<OrganizationApprovals organization={org} />
 					}
 
-					{action === "reports" &&
+					{action === 'reports' &&
 						<ReportCollection reports={org.reports} />
 					}
 
@@ -151,13 +151,13 @@ export default class OrganizationShow extends Page {
 
 	@autobind
 	actionSelect(eventKey, event) {
-		if (eventKey === "createPos") {
+		if (eventKey === 'createPos') {
 			History.push({pathname: '/positions/new', query: {organizationId: this.state.organization.id}})
-		} else if (eventKey === "createSub") {
+		} else if (eventKey === 'createSub') {
 			History.push({pathname: '/organizations/new', query: {parentOrgId: this.state.organization.id}})
-		} else if (eventKey === "edit") {
+		} else if (eventKey === 'edit') {
 			History.push(Organization.pathForEdit(this.state.organization))
-		} else if (eventKey === "createPoam") {
+		} else if (eventKey === 'createPoam') {
 			History.push({pathname: '/poams/new', query: {responsibleOrg: this.state.organization.id}})
 		} else {
 			console.log('Unimplemented Action: ' + eventKey)

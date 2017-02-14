@@ -30,16 +30,16 @@ export default class PositionForm extends Component {
 
 		let orgSearchQuery = {}
 		let personSearchQuery = {}
-		if (position.type === "ADVISOR" || position.type === "SUPER_USER" || position.type === "ADMINISTRATOR") {
-			orgSearchQuery.type = "ADVISOR_ORG"
-			personSearchQuery.role = "ADVISOR"
-			if (currentUser && currentUser.position && currentUser.position.type === "SUPER_USER") {
+		if (position.type === 'ADVISOR' || position.type === 'SUPER_USER' || position.type === 'ADMINISTRATOR') {
+			orgSearchQuery.type = 'ADVISOR_ORG'
+			personSearchQuery.role = 'ADVISOR'
+			if (currentUser && currentUser.position && currentUser.position.type === 'SUPER_USER') {
 				orgSearchQuery.parentOrgId = currentUser.position.organization.id
 				orgSearchQuery.parentOrgRecursively = true
 			}
-		} else if (position.type === "PRINCIPAL") {
-			orgSearchQuery.type = "PRINCIPAL_ORG"
-			personSearchQuery.role = "PRINCIPAL"
+		} else if (position.type === 'PRINCIPAL') {
+			orgSearchQuery.type = 'PRINCIPAL_ORG'
+			personSearchQuery.role = 'PRINCIPAL'
 		}
 
 		if (!position.permissions) {
