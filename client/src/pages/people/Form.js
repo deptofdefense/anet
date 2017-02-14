@@ -62,6 +62,7 @@ export default class PersonForm extends Component {
 				<Form.Field id="emailAddress" label="Email" />
 				<Form.Field id="phoneNumber" label="Phone Number" />
 				<Form.Field id="rank"  componentClass="select">
+					<option />
 					<option value="OF-1" >OF-1</option>
 					<option value="OF-2" >OF-2</option>
 					<option value="OF-3" >OF-3</option>
