@@ -63,6 +63,26 @@
 </tr>
 <tr>
 	<td>click</td>
+	<td>xpath=(//button[@type='button'])[2]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>xpath=(//button[@type='button'])[3]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>sendKeys</td>
+	<td>id=atmosphereDetails</td>
+	<td>It was just sort of terrible</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=positiveAtmos</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
 	<td>id=attendees</td>
 	<td></td>
 </tr>
@@ -159,6 +179,36 @@
 <tr>
 	<td>click</td>
 	<td>css=div.public-DraftEditor-content</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@type='submit']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>xpath=(//a[contains(text(),'ANET Administrators')])[2]</td>
+	<td>*</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='root']/div/section/div/div[2]/div/div[3]/fieldset/div[7]/div/div</td>
+	<td>*</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='root']/div/section/div/div[2]/div/div[3]/fieldset[3]/table/tbody/tr/td</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>id=atmosphereDetails</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='root']/div/section/div/div[2]/div/div[3]/fieldset[3]/table/tbody/tr/td[2]</td>
 	<td></td>
 </tr>
 <tr>

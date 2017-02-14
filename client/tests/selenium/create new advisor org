@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://localhost:3000/" />
+<title>New Test</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">New Test</td></tr>
+</thead><tbody>
+<tr>
+	<td>open</td>
+	<td>/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=createButton</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=New Organization</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=parentOrg</td>
+	<td>ef4</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=react-autowhatever-1--item-0</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=shortName</td>
+	<td>EF4.44</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=longName</td>
+	<td>Ministry of Cupcakes </td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=poams</td>
+	<td>know</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=#react-autowhatever-1--item-0 &gt; span</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>xpath=(//button[@type='button'])[3]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=name</td>
+	<td>First people</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=addApprover</td>
+	<td>reina</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=#react-autowhatever-1--item-0 &gt; span</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=addApprover</td>
+	<td>j</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=#react-autowhatever-1--item-0 &gt; span</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>xpath=(//button[@type='button'])[3]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>xpath=(//input[@id='name'])[2]</td>
+	<td>Final reviewers</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>css=div.react-autosuggest__container.react-autosuggest__container--open &gt; #addApprover</td>
+	<td>li</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=#react-autowhatever-1--item-0 &gt; span</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>css=div.react-autosuggest__container.react-autosuggest__container--open &gt; #addApprover</td>
+	<td>a</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=react-autowhatever-1--item-1</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=formBottomSubmit</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>css=input.form-control</td>
+	<td>4.44</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>link=EF4.44</td>
+	<td>EF4.44</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='root']/div/section/div/div[2]/div/fieldset/div/table/tbody/tr/td[2]</td>
+	<td>Ministry of Cupcakes</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='root']/div/section/div/div[2]/div/fieldset/div/table/tbody/tr/td[3]</td>
+	<td>Advisor</td>
+</tr>
+</tbody></table>
+</body>
+</html>

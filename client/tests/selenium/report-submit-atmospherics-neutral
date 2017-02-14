@@ -63,6 +63,16 @@
 </tr>
 <tr>
 	<td>click</td>
+	<td>xpath=(//button[@type='button'])[2]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>sendKeys</td>
+	<td>id=atmosphereDetails</td>
+	<td>It was just sort of meh</td>
+</tr>
+<tr>
+	<td>click</td>
 	<td>id=attendees</td>
 	<td></td>
 </tr>
