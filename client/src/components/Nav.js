@@ -22,8 +22,8 @@ class Nav extends Component {
 		let currentUser = appData.currentUser
 		let organizations = appData.organizations || []
 		let path = this.context.app.props.location.pathname
-		let inOrg = path.indexOf("/organizations") === 0
-		if (inOrg) { path = "/organizations/" + this.context.app.props.params.id }
+		let inOrg = path.indexOf('/organizations') === 0
+		if (inOrg) { path = '/organizations/' + this.context.app.props.params.id }
 
 		return (
 			<BSNav bsStyle="pills" stacked>

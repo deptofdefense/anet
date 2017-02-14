@@ -44,10 +44,10 @@ export default class OrganizationLaydown extends Component {
 			otherCodeHeader = "TASHKIL"
 			otherNameHeader = "Afghan"
 		} else {
-			otherCodeHeader = "CE Billet"
-			otherNameHeader = "Advisor"
-			posCodeHeader = "TASHKIL"
-			posNameHeader = "Afghan"
+			otherCodeHeader = 'CE Billet'
+			otherNameHeader = 'Advisor'
+			posCodeHeader = 'TASHKIL'
+			posNameHeader = 'Afghan'
 		}
 		return <Table>
 			<thead>
@@ -104,4 +104,22 @@ export default class OrganizationLaydown extends Component {
 			{otherNameCol}
 		</tr>
 	}
+<<<<<<< HEAD
+=======
+
+	@autobind
+	actionSelect(eventKey, event) {
+		if (eventKey === 'createPos') {
+			History.push({pathname: 'positions/new', query: {organizationId: this.state.organization.id}})
+		} else if (eventKey === 'createSub') {
+			History.push({pathname: 'organizations/new', query: {parentOrgId: this.state.organization.id}})
+		} else if (eventKey === 'edit') {
+			History.push(Organization.pathForEdit(this.organization))
+		} else if (eventKey === 'createPoam') {
+			History.push({pathname: 'poams/new', query: {responsibleOrg: this.state.organization.id}})
+		} else {
+			console.log('Unimplemented Action: ' + eventKey)
+		}
+	}
+>>>>>>> c9e7df81a8a1dc19d13c9e015071f2950790d0df
 }

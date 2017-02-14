@@ -63,6 +63,6 @@ export default class RadioGroup extends Component {
 	@autobind
 	onRadioChange(event) {
 		let checked = event.target
-		this.props.onChange(checked.value);
+		this.props.onChange(checked.value)
 	}
 }

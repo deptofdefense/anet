@@ -25,7 +25,7 @@ export default class extends Component {
 		return fetch('/graphql', {
 			credentials: 'same-origin',
 			method: 'POST',
-			headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+			headers: {'Content-Type': 'application/json', Accept: 'application/json'},
 			body: JSON.stringify(params),
 		}).then(response => response.json())
 	}
@@ -33,7 +33,7 @@ export default class extends Component {
 	render() {
 		return <div>
 			<Breadcrumbs items={[['Run GraphQL queries', '/graphiql']]} />
-			{GraphiQL ? <GraphiQL fetcher={this.fetch} /> : "Loading..."}
+			{GraphiQL ? <GraphiQL fetcher={this.fetch} /> : 'Loading...'}
 		</div>
 	}
 }

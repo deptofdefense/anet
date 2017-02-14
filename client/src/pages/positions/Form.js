@@ -25,7 +25,7 @@ export default class PositionForm extends Component {
 	render() {
 		let {position, error, success} = this.props
 
-		let relationshipPositionType = position.type === "PRINCIPAL" ? "ADVISOR" : "PRINCIPAL"
+		let relationshipPositionType = position.type === 'PRINCIPAL' ? 'ADVISOR' : 'PRINCIPAL'
 		let currentUser = this.context.app.state.currentUser
 
 		let orgSearchQuery = {}
@@ -89,7 +89,7 @@ export default class PositionForm extends Component {
 						/>
 					</Form.Field>
 
-					{position.type !== "PRINCIPAL" &&
+					{position.type !== 'PRINCIPAL' &&
 						<Form.Field id="permissions">
 							<RadioGroup>
 								<Radio value="ADVISOR">Advisor</Radio>
@@ -104,15 +104,15 @@ export default class PositionForm extends Component {
 				</fieldset>
 
 				<fieldset>
-					<legend>Assigned {position.type === "PRINCIPAL" ? "advisor" : "advisee"}</legend>
+					<legend>Assigned {position.type === 'PRINCIPAL' ? 'advisor' : 'advisee'}</legend>
 
 					<p className="help-text">Advisor positions are associated with Principal positions and vice versa.</p>
 
 					<Form.Field id="associatedPositions">
 						<Autocomplete
-							placeholder={"Start typing to search for " + (position.type === "PRINCIPAL" ? "an advisor" : "a principal") + " position..."}
+							placeholder={'Start typing to search for ' + (position.type === 'PRINCIPAL' ? 'an advisor' : 'a principal') + ' position...'}
 							objectType={Position}
-							fields={"id, name, code, type, person { id, name, rank }"}
+							fields={'id, name, code, type, person { id, name, rank }'}
 							template={pos =>
 								<span>{pos.name} - {pos.code} ({(pos.person) ? pos.person.name : <i>empty</i>})</span>
 							}
@@ -188,8 +188,8 @@ export default class PositionForm extends Component {
 	onSubmit(event) {
 		let {position, edit} = this.props
 
-		if (position.type !== "PRINCIPAL") {
-			position.type = position.permissions || "ADVISOR"
+		if (position.type !== 'PRINCIPAL') {
+			position.type = position.permissions || 'ADVISOR'
 		}
 		delete position.permissions
 		position.organization = {id: position.organization.id}
@@ -203,7 +203,7 @@ export default class PositionForm extends Component {
 				}
 
 				History.replace(Position.pathForEdit(position), false)
-				History.push(Position.pathFor(position), {success: "Saved Position"})
+				History.push(Position.pathFor(position), {success: 'Saved Position'})
 			}).catch(error => {
 				this.setState({error: error})
 				window.scrollTo(0, 0)
