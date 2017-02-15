@@ -42,6 +42,7 @@ import mil.dds.anet.resources.PoamResource;
 import mil.dds.anet.resources.PositionResource;
 import mil.dds.anet.resources.ReportResource;
 import mil.dds.anet.resources.SavedSearchResource;
+import mil.dds.anet.utils.AnetDbLogger;
 import mil.dds.anet.views.ViewResponseFilter;
 import waffle.servlet.NegotiateSecurityFilter;
 
@@ -96,6 +97,7 @@ public class AnetApplication extends Application<AnetConfiguration> {
 		DateTimeZone.setDefault(DateTimeZone.UTC);
 		final DBIFactory factory = new DBIFactory();
 		final DBI jdbi = factory.build(environment, configuration.getDataSourceFactory(), "mssql");
+		jdbi.setSQLLog(new AnetDbLogger());
 
 		final AnetObjectEngine engine = new AnetObjectEngine(jdbi);
 		environment.servlets().setSessionHandler(new SessionHandler());

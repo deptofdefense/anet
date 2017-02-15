@@ -44,7 +44,6 @@ export default class OrganizationShow extends Page {
 		if (nextProps.params.action !== this.state.action) {
 			this.setState({action: nextProps.params.action})
 		}
-
 		if (+nextProps.params.id !== this.state.organization.id) {
 			console.log(nextProps.params.id, this.state.organization.id)
 			this.loadData(nextProps)
@@ -66,13 +65,15 @@ export default class OrganizationShow extends Page {
 					}
 				},
 				reports(pageNum:0, pageSize:25) {
-					id, intent, engagementDate, keyOutcomes, nextSteps
-					author { id, name },
-					primaryAdvisor { id, name } ,
-					primaryPrincipal {id, name },
-					advisorOrg { id, shortName, longName }
-					principalOrg { id, shortName, longName }
-					location { id, name, lat, lng }
+					list {
+						id, intent, engagementDate, keyOutcomes, nextSteps
+						author { id, name },
+						primaryAdvisor { id, name } ,
+						primaryPrincipal {id, name },
+						advisorOrg { id, shortName, longName }
+						principalOrg { id, shortName, longName }
+						location { id, name, lat, lng }
+					}
 				},
 				approvalSteps {
 					id, name, approvers { id, name, person { id, name}}
@@ -83,7 +84,7 @@ export default class OrganizationShow extends Page {
 
 	render() {
 		let org = this.state.organization
-		 let action = this.state.action || 'poams'
+		let action = this.state.action || 'poams'
 
 		let currentUser = this.context.app.state.currentUser
 		let isSuperUser = (currentUser) ? currentUser.isSuperUserForOrg(org) : false
@@ -137,7 +138,6 @@ export default class OrganizationShow extends Page {
 					</fieldset>
 
 					<ActionComponent organization={org} />
-
 				</Form>
 			</div>
 		)

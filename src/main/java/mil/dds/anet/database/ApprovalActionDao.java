@@ -7,6 +7,7 @@ import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.Query;
 
 import mil.dds.anet.beans.ApprovalAction;
+import mil.dds.anet.beans.lists.AbstractAnetBeanList;
 import mil.dds.anet.database.mappers.ApprovalActionMapper;
 
 public class ApprovalActionDao implements IAnetDao<ApprovalAction> {
@@ -20,7 +21,7 @@ public class ApprovalActionDao implements IAnetDao<ApprovalAction> {
 	@Override
 	public ApprovalAction insert(ApprovalAction action) {
 		action.setCreatedAt(DateTime.now());
-		dbHandle.createStatement("INSERT INTO approvalActions "
+		dbHandle.createStatement("/* insertApprovalAction */ INSERT INTO approvalActions "
 				+ "(approvalStepId, personId, reportId, createdAt, type) "
 				+ "VALUES (:approvalStepId, :personId, :reportId, :createdAt, :type)")
 			.bind("approvalStepId", action.getStep().getId())
@@ -37,7 +38,7 @@ public class ApprovalActionDao implements IAnetDao<ApprovalAction> {
 	 * Ordered by their date ascending (earliest to most recent). 
 	 */
 	public List<ApprovalAction> getActionsForReport(int reportId) {
-		Query<ApprovalAction> query = dbHandle.createQuery("SELECT * FROM approvalActions " 
+		Query<ApprovalAction> query = dbHandle.createQuery("/* getReportApprovals */ SELECT * FROM approvalActions " 
 				+ "WHERE reportId = :reportId ORDER BY createdAt ASC")
 			.bind("reportId", reportId)
 			.map(new ApprovalActionMapper());
@@ -51,7 +52,7 @@ public class ApprovalActionDao implements IAnetDao<ApprovalAction> {
 	 */
 	public List<ApprovalAction> getFinalActionsForReport(int reportId) {
 		//TODO: test this. I don't think it works.... 
-		return dbHandle.createQuery("SELECT * FROM approvalActions "
+		return dbHandle.createQuery("/* getReportFinalActions */ SELECT * FROM approvalActions "
 				+ "WHERE reportId = :reportId GROUP BY approvalStepId "
 				+ "ORDER BY createdAt DESC")
 			.bind("reportId", reportId)
@@ -60,7 +61,7 @@ public class ApprovalActionDao implements IAnetDao<ApprovalAction> {
 	}
 	
 	@Override
-	public List<ApprovalAction> getAll(int pageNum, int pageSize) {
+	public AbstractAnetBeanList<?> getAll(int pageNum, int pageSize) {
 		throw new UnsupportedOperationException();
 	}
 

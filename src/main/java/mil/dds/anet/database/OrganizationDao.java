@@ -28,12 +28,12 @@ public class OrganizationDao implements IAnetDao<Organization> {
 		this.dbHandle = dbHandle;
 	}
 	
-	public List<Organization> getAll(int pageNum, int pageSize) {
+	public OrganizationList getAll(int pageNum, int pageSize) {
 		return getAll(pageNum, pageSize, null);
 	}
 	
-	public List<Organization> getAll(int pageNum, int pageSize, OrganizationType type) {
-		StringBuilder queryBuilder = new StringBuilder("SELECT " + ORGANIZATION_FIELDS + " from organizations ");
+	public OrganizationList getAll(int pageNum, int pageSize, OrganizationType type) {
+		StringBuilder queryBuilder = new StringBuilder("/* getAllOrgs */ SELECT " + ORGANIZATION_FIELDS + " from organizations ");
 		if (type != null) { 
 			queryBuilder.append("AND type = :type ");
 		}
@@ -44,17 +44,17 @@ public class OrganizationDao implements IAnetDao<Organization> {
 			queryBuilder.append("LIMIT :limit OFFSET :offset");	
 		}
 		
-		return dbHandle.createQuery(queryBuilder.toString())
+		Query<Organization> query = dbHandle.createQuery(queryBuilder.toString())
 			.bind("limit", pageSize)
 			.bind("offset", pageSize * pageNum)
 			.bind("type", DaoUtils.getEnumId(type))
-			.map(new OrganizationMapper())
-			.list();
+			.map(new OrganizationMapper());
+		return OrganizationList.fromQuery(query, pageNum, pageSize);
 	}
 	
 	public Organization getById(int id) { 
 		Query<Organization> query = dbHandle.createQuery(
-				"Select " + ORGANIZATION_FIELDS + " from organizations where id = :id")
+				"/* getOrgById */ SELECT " + ORGANIZATION_FIELDS + " from organizations where id = :id")
 			.bind("id",id)
 			.map(new OrganizationMapper());
 		List<Organization> results = query.list();
@@ -62,7 +62,7 @@ public class OrganizationDao implements IAnetDao<Organization> {
 	}
 	
 	public List<Organization> getTopLevelOrgs(OrganizationType type) { 
-		return dbHandle.createQuery("SELECT " + ORGANIZATION_FIELDS
+		return dbHandle.createQuery("/* getTopLevelOrgs */ SELECT " + ORGANIZATION_FIELDS
 				+ " FROM organizations "
 				+ "WHERE parentOrgId IS NULL "
 				+ "AND type = :type")
@@ -76,7 +76,7 @@ public class OrganizationDao implements IAnetDao<Organization> {
 		org.setUpdatedAt(org.getCreatedAt());
 		
 		GeneratedKeys<Map<String,Object>> keys = dbHandle.createStatement(
-				"INSERT INTO organizations (shortName, longName, type, createdAt, updatedAt, parentOrgId) "
+				"/* insertOrg */ INSERT INTO organizations (shortName, longName, type, createdAt, updatedAt, parentOrgId) "
 				+ "VALUES (:shortName, :longName, :type, :createdAt, :updatedAt, :parentOrgId)")
 			.bindFromProperties(org)
 			.bind("type", DaoUtils.getEnumId(org.getType()))
@@ -89,7 +89,7 @@ public class OrganizationDao implements IAnetDao<Organization> {
 	
 	public int update(Organization org) {
 		org.setUpdatedAt(DateTime.now());
-		int numRows = dbHandle.createStatement("UPDATE organizations "
+		int numRows = dbHandle.createStatement("/* updateOrg */ UPDATE organizations "
 				+ "SET shortName = :shortName, longName = :longName, type = :type, "
 				+ "updatedAt = :updatedAt, parentOrgid = :parentOrgId where id = :id")
 				.bindFromProperties(org)
@@ -101,7 +101,7 @@ public class OrganizationDao implements IAnetDao<Organization> {
 	}
 	
 	public void deleteAdvisorOrganization(Organization ao) { 
-		dbHandle.createStatement("DELETE from advisorOrganizations where id = :id")
+		dbHandle.createStatement("/* deleteOrg */ DELETE from advisorOrganizations where id = :id")
 			.bind("id", ao.getId())
 			.execute();
 	}

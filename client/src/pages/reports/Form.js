@@ -85,7 +85,6 @@ export default class ReportForm extends Component {
 	render() {
 		let {report} = this.props
 		let {recents, errors, isCancelled} = this.state
-		console.log(report)
 
 		let hasErrors = Object.keys(errors).length > 0
 

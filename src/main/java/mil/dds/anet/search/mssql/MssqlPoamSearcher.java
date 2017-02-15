@@ -19,7 +19,7 @@ public class MssqlPoamSearcher implements IPoamSearcher {
 
 	@Override
 	public PoamList runSearch(PoamSearchQuery query, Handle dbHandle) {
-		StringBuilder sql = new StringBuilder("SELECT poams.*, COUNT(*) OVER() AS totalCount FROM poams");
+		StringBuilder sql = new StringBuilder("/* MssqlPoamSearch */ SELECT poams.*, COUNT(*) OVER() AS totalCount FROM poams");
 		Map<String,Object> args = new HashMap<String,Object>();
 		
 		sql.append(" WHERE ");

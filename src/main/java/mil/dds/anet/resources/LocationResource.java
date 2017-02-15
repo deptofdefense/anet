@@ -44,7 +44,7 @@ public class LocationResource implements IGraphQLResource {
 	@GraphQLFetcher
 	@Path("/")
 	public LocationList getAll(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
-		return new LocationList(dao.getAll(pageNum, pageSize));
+		return dao.getAll(pageNum, pageSize);
 	}
 	
 	@GET
