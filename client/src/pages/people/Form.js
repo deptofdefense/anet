@@ -58,7 +58,10 @@ export default class PersonForm extends Component {
 
 			<fieldset>
 				<legend>Additional Information</legend>
-				<Form.Field id="emailAddress" label="Email" />
+				<Form.Field id="emailAddress" label="Email" required={isAdvisor} 
+					humanName="Email address"
+					onErrorStart={() => this.setState(prevState => ({formErrorsCount: prevState.formErrorsCount + 1}))}
+					onErrorStop={() => this.setState(prevState => ({formErrorsCount: prevState.formErrorsCount - 1}))} />
 				<Form.Field id="phoneNumber" label="Phone Number" />
 				<Form.Field id="rank"  componentClass="select">
 					<option />
