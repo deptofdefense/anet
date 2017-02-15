@@ -9,7 +9,7 @@ person(id:${personId}) {
             shortName, longName
         }
     },
-    authoredReports(pageNum:0,pageSize:10) {
+    authoredReports(pageNum:0,pageSize:10) { list { 
         id,
         engagementDate,
         advisorOrg { id, shortName, longName }
@@ -18,8 +18,8 @@ person(id:${personId}) {
             id,
             name
         }
-    },
-    attendedReports(pageNum:0, pageSize:10) {
+    }},
+    attendedReports(pageNum:0, pageSize:10) { list { 
         id,
         engagementDate,
         advisorOrg { id, shortName, longName}
@@ -28,6 +28,6 @@ person(id:${personId}) {
             id,
             name
         }
-    }
+    }}
 
 }

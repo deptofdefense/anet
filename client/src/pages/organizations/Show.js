@@ -61,13 +61,15 @@ export default class OrganizationShow extends Page {
 					}
 				},
 				reports(pageNum:0, pageSize:25) {
-					id, intent, engagementDate, keyOutcomes, nextSteps
-					author { id, name },
-					primaryAdvisor { id, name } ,
-					primaryPrincipal {id, name },
-					advisorOrg { id, shortName, longName }
-					principalOrg { id, shortName, longName }
-					location { id, name, lat, lng }
+					list {
+						id, intent, engagementDate, keyOutcomes, nextSteps
+						author { id, name },
+						primaryAdvisor { id, name } ,
+						primaryPrincipal {id, name },
+						advisorOrg { id, shortName, longName }
+						principalOrg { id, shortName, longName }
+						location { id, name, lat, lng }
+					}
 				},
 				approvalSteps {
 					id, name, approvers { id, name, person { id, name}}
@@ -142,7 +144,7 @@ export default class OrganizationShow extends Page {
 					}
 
 					{action === 'reports' &&
-						<ReportCollection reports={org.reports} />
+						<ReportCollection reports={org.reports.list} />
 					}
 
 				</Form>

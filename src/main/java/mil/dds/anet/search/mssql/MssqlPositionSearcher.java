@@ -22,7 +22,7 @@ public class MssqlPositionSearcher implements IPositionSearcher {
 	
 	@Override
 	public PositionList runSearch(PositionSearchQuery query, Handle dbHandle) {
-		StringBuilder sql = new StringBuilder("SELECT " + PositionDao.POSITIONS_FIELDS 
+		StringBuilder sql = new StringBuilder("/* MssqlPositionSearch */ SELECT " + PositionDao.POSITIONS_FIELDS 
 				+ " FROM positions WHERE positions.id IN (SELECT positions.id FROM positions ");
 		Map<String,Object> sqlArgs = new HashMap<String,Object>();
 		String commonTableExpression = null;

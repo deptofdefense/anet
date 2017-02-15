@@ -9,6 +9,7 @@ import org.skife.jdbi.v2.Handle;
 
 import mil.dds.anet.beans.Comment;
 import mil.dds.anet.beans.Report;
+import mil.dds.anet.beans.lists.AbstractAnetBeanList;
 import mil.dds.anet.database.mappers.CommentMapper;
 import mil.dds.anet.utils.DaoUtils;
 
@@ -21,14 +22,14 @@ public class CommentDao implements IAnetDao<Comment> {
 	}
 	
 	@Override
-	public List<Comment> getAll(int pageNum, int pageSize) {
+	public AbstractAnetBeanList<?> getAll(int pageNum, int pageSize) {
 		throw new UnsupportedOperationException();
 	}
 
 	//Comments are ALWAYS loaded with the author, since they are never displayed without their author
 	@Override
 	public Comment getById(int id) {
-		List<Comment> results = dbHandle.createQuery("SELECT comments.id AS c_id, "
+		List<Comment> results = dbHandle.createQuery("/* getCommentById */ SELECT comments.id AS c_id, "
 				+ "comments.createdAt AS c_createdAt, c.updatedAt AS c_updatedAt, "
 				+ "c.authorId, c.reportId, c.text, people.* "
 				+ "FROM comments LEFT JOIN people ON comments.authorId = person.id "
@@ -44,7 +45,8 @@ public class CommentDao implements IAnetDao<Comment> {
 	public Comment insert(Comment c) {
 		c.setCreatedAt(DateTime.now());
 		c.setUpdatedAt(DateTime.now());
-		GeneratedKeys<Map<String,Object>> keys = dbHandle.createStatement("INSERT INTO comments (reportId, authorId, createdAt, updatedAt, text)"
+		GeneratedKeys<Map<String,Object>> keys = dbHandle.createStatement("/* insertComment */ "
+				+ "INSERT INTO comments (reportId, authorId, createdAt, updatedAt, text)"
 				+ "VALUES (:reportId, :authorId, :createdAt, :updatedAt, :text)")
 			.bindFromProperties(c)
 			.bind("authorId", DaoUtils.getId(c.getAuthor()))
@@ -56,13 +58,13 @@ public class CommentDao implements IAnetDao<Comment> {
 	@Override
 	public int update(Comment c) {
 		c.setUpdatedAt(DateTime.now());
-		return dbHandle.createStatement("UPDATE comments SET text = :text, updatedAt = :updatedAt WHERE id = :id")
+		return dbHandle.createStatement("/* updateComment */ UPDATE comments SET text = :text, updatedAt = :updatedAt WHERE id = :id")
 			.bindFromProperties(c)
 			.execute();
 	}
 
 	public List<Comment> getCommentsForReport(Report report) {
-		return dbHandle.createQuery("SELECT c.id AS c_id, "
+		return dbHandle.createQuery("/* getCommentForReport */ SELECT c.id AS c_id, "
 				+ "c.createdAt AS c_createdAt, c.updatedAt AS c_updatedAt, "
 				+ "c.authorId, c.reportId, c.text, " + PersonDao.PERSON_FIELDS + " "
 				+ "FROM comments c LEFT JOIN people ON c.authorId = people.id "
@@ -73,7 +75,7 @@ public class CommentDao implements IAnetDao<Comment> {
 	}
 
 	public int delete(int commentId) {
-		return dbHandle.createStatement("DELETE FROM comments where id = :id")
+		return dbHandle.createStatement("/* deleteComment */ DELETE FROM comments where id = :id")
 			.bind("id", commentId)
 			.execute();
 		

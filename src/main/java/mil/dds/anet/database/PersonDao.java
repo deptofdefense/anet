@@ -33,22 +33,23 @@ public class PersonDao implements IAnetDao<Person> {
 		this.dbHandle = h;
 	}
 	
-	public List<Person> getAll(int pageNum, int pageSize) {
+	public PersonList getAll(int pageNum, int pageSize) {
 		String sql;
 		if (DaoUtils.isMsSql(dbHandle)) { 
-			sql = "SELECT " + PERSON_FIELDS + " FROM people ORDER BY createdAt ASC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY";
+			sql = "/* personGetAll */ SELECT " + PERSON_FIELDS + ", count(*) over() as totalCount "
+					+ "FROM people ORDER BY createdAt ASC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY";
 		} else { 
-			sql = "SELECT " + PERSON_FIELDS + " from people ORDER BY createdAt ASC LIMIT :limit OFFSET :offset";
+			sql = "/* personGetAll */ SELECT " + PERSON_FIELDS + "FROM people ORDER BY createdAt ASC LIMIT :limit OFFSET :offset";
 		}
 		Query<Person> query = dbHandle.createQuery(sql)
 			.bind("limit", pageSize)
 			.bind("offset", pageSize * pageNum)
 			.map(new PersonMapper());
-		return query.list();
+		return PersonList.fromQuery(query, pageNum, pageSize);
 	}
 
 	public Person getById(int id) { 
-		Query<Person> query = dbHandle.createQuery("SELECT " + PERSON_FIELDS + " FROM people WHERE id = :id")
+		Query<Person> query = dbHandle.createQuery("/* personGetById */ SELECT " + PERSON_FIELDS + " FROM people WHERE id = :id")
 				.bind("id",  id)
 				.map(new PersonMapper());
 		List<Person> rs = query.list();
@@ -60,7 +61,7 @@ public class PersonDao implements IAnetDao<Person> {
 		p.setCreatedAt(DateTime.now());
 		p.setUpdatedAt(DateTime.now());
 		StringBuilder sql = new StringBuilder();
-		sql.append("INSERT INTO people " 
+		sql.append("/* personInsert */ INSERT INTO people " 
 				+ "(name, status, role, emailAddress, phoneNumber, rank, pendingVerification, "
 				+ "gender, country, endOfTourDate, biography, domainUsername, createdAt, updatedAt) " 
 				+ "VALUES (:name, :status, :role, :emailAddress, :phoneNumber, :rank, :pendingVerification, "
@@ -84,7 +85,7 @@ public class PersonDao implements IAnetDao<Person> {
 	
 	public int update(Person p) {
 		p.setUpdatedAt(DateTime.now());
-		StringBuilder sql = new StringBuilder("UPDATE people "
+		StringBuilder sql = new StringBuilder("/* personUpdate */ UPDATE people "
 				+ "SET name = :name, status = :status, role = :role, "
 				+ "gender = :gender, country = :country,  emailAddress = :emailAddress, "
 				+ "phoneNumber = :phoneNumber, rank = :rank, biography = :biography, "
@@ -111,13 +112,13 @@ public class PersonDao implements IAnetDao<Person> {
 	public Organization getOrganizationForPerson(int personId) {
 		String sql;
 		if (DaoUtils.isMsSql(dbHandle)) { 
-			sql = "SELECT TOP(1) " + OrganizationDao.ORGANIZATION_FIELDS 
+			sql = "/* getOrganizationForPerson */ SELECT TOP(1) " + OrganizationDao.ORGANIZATION_FIELDS 
 					+ "FROM organizations, positions, peoplePositions WHERE "
 					+ "peoplePositions.personId = :personId AND peoplePositions.positionId = positions.id "
 					+ "AND positions.organizationId = organizations.id "
 					+ "ORDER BY peoplePositions.createdAt DESC";
 		} else { 
-			sql = "SELECT " + OrganizationDao.ORGANIZATION_FIELDS
+			sql = "/* getOrganizationForPerson */ SELECT " + OrganizationDao.ORGANIZATION_FIELDS
 					+ "FROM organizations, positions, peoplePositions WHERE "
 					+ "peoplePositions.personId = :personId AND peoplePositions.positionId = positions.id "
 					+ "AND positions.organizationId = organizations.id " 
@@ -133,7 +134,7 @@ public class PersonDao implements IAnetDao<Person> {
 	}
 
 	public List<Person> findByDomainUsername(String domainUsername) {
-		return dbHandle.createQuery("SELECT " + PERSON_FIELDS + "," + PositionDao.POSITIONS_FIELDS 
+		return dbHandle.createQuery("/* findByDomainUsername */ SELECT " + PERSON_FIELDS + "," + PositionDao.POSITIONS_FIELDS 
 				+ "FROM people LEFT JOIN positions ON people.id = positions.currentPersonId "
 				+ "WHERE people.domainUsername = :domainUsername")
 			.bind("domainUsername", domainUsername)
@@ -144,7 +145,7 @@ public class PersonDao implements IAnetDao<Person> {
 	public List<Person> getRecentPeople(Person author) {
 		String sql;
 		if (DaoUtils.isMsSql(dbHandle)) {
-			sql = "SELECT " + PersonDao.PERSON_FIELDS
+			sql = "/* getRecentPeople */ SELECT " + PersonDao.PERSON_FIELDS
 				+ "FROM people WHERE people.id IN ( "
 					+ "SELECT top(3) reportPeople.personId "
 					+ "FROM reports JOIN reportPeople ON reports.id = reportPeople.reportId "
@@ -153,7 +154,7 @@ public class PersonDao implements IAnetDao<Person> {
 					+ "ORDER BY MAX(reports.createdAt) DESC"
 				+ ")";
 		} else {
-			sql = "SELECT " + PersonDao.PERSON_FIELDS
+			sql = "/* getRecentPeople */ SELECT " + PersonDao.PERSON_FIELDS
 				+ "FROM people WHERE people.id IN ( "
 					+ "SELECT reportPeople.personId "
 					+ "FROM reports JOIN reportPeople ON reports.id = reportPeople.reportId "

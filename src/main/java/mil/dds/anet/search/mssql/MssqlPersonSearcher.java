@@ -21,7 +21,7 @@ public class MssqlPersonSearcher implements IPersonSearcher {
 
 	@Override
 	public PersonList runSearch(PersonSearchQuery query, Handle dbHandle) { 
-		StringBuilder sql = new StringBuilder("SELECT " + PersonDao.PERSON_FIELDS 
+		StringBuilder sql = new StringBuilder("/* MssqlPersonSearch */ SELECT " + PersonDao.PERSON_FIELDS 
 				+ ", count(*) over() as totalCount "
 				+ "FROM people ");
 		Map<String,Object> sqlArgs = new HashMap<String,Object>();

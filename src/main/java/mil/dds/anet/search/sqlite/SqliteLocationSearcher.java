@@ -18,7 +18,7 @@ public class SqliteLocationSearcher implements ILocationSearcher {
 			return result;
 		}
 		
-		result.setList(dbHandle.createQuery("SELECT * FROM locations WHERE name LIKE '%' || :name || '%' LIMIT :limit OFFSET :offset")
+		result.setList(dbHandle.createQuery("/* SqliteLocationSearch */ SELECT * FROM locations WHERE name LIKE '%' || :name || '%' LIMIT :limit OFFSET :offset")
 			.bind("name", query.getText())
 			.bind("offset", query.getPageSize() * query.getPageNum())
 			.bind("limit", query.getPageSize())

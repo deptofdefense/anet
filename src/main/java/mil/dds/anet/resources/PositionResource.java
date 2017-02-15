@@ -67,7 +67,7 @@ public class PositionResource implements IGraphQLResource {
 	@Path("/")
 	public PositionList getAll(@DefaultValue("0") @QueryParam("pageNum") int pageNum, 
 			@DefaultValue("100") @QueryParam("pageSize") int pageSize) {
-		return new PositionList(pageNum, pageSize, dao.getAll(pageNum, pageSize));
+		return dao.getAll(pageNum, pageSize);
 	}
 
 	@GET

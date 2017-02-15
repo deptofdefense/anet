@@ -1,27 +1,29 @@
 organization(id:${orgId}) {
-    id, shortName, longName, type
-    parentOrg { id, shortName, longName }
-    poams { id, longName, shortName }
-    positions {
-        id, name, code
-        person { id, name }
-        associatedPositions {
-            id, name, code
-            person { id, name }
-        }
-    },
-    childrenOrgs { id, shortName, longName },
-    approvalSteps {
-        id, name, approvers { id, name, person { id, name}}
-    },
-    reports(pageNum:0, pageSize:25) {
-        id, intent, engagementDate, keyOutcomes, nextSteps
-        author { id, name },
-        primaryAdvisor { id, name } ,
-        primaryPrincipal {id, name },
-        advisorOrg { id, shortName, longName }
-        principalOrg { id, shortName, longName }
-        location { id, name, lat, lng }
-    }
-
+	id, shortName, longName, type
+	parentOrg { id, shortName, longName }
+	poams { id, longName, shortName }
+	childrenOrgs { id, shortName, longName },
+	positions {
+		id, name, code
+		person { id, name }
+		associatedPositions {
+			id, name, code
+			person { id, name }
+		}
+	},
+	reports(pageNum:0, pageSize:25) {
+		list { 
+			id, intent, engagementDate, keyOutcomes, nextSteps
+			author { id, name },
+			primaryAdvisor { id, name } ,
+			primaryPrincipal {id, name },
+			advisorOrg { id, shortName, longName }
+			principalOrg { id, shortName, longName }
+			location { id, name, lat, lng }
+		}
+	},
+	approvalSteps {
+		id, name, approvers { id, name, person { id, name}}
+	},
 }
+

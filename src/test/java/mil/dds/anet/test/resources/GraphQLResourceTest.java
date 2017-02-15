@@ -41,7 +41,7 @@ public class GraphQLResourceTest extends AbstractResourceTest {
 		variables.put("positionId", jack.loadPosition().getId());
 		variables.put("orgId", jack.loadPosition().loadOrganization().getId());
 		variables.put("searchQuery", "hospital");
-		variables.put("reportId", jack.loadAttendedReports(0, 20).get(0).getId());
+		variables.put("reportId", jack.loadAttendedReports(0, 20).getList().get(0).getId());
 		
 		for (File f : testDir.listFiles()) { 
 			if (f.isFile()) { 

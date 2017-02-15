@@ -67,8 +67,10 @@ public abstract class AbstractResourceTest {
 	 */
 	public Person findOrPutPersonInDb(Person stub) {
 		if (stub.getDomainUsername() != null) { 
-			Person user = httpQuery("/api/people/me", stub).get(Person.class);
-			if (user != null) { return user; }
+			try { 
+				Person user = httpQuery("/api/people/me", stub).get(Person.class);
+				if (user != null) { return user; }
+			} catch (Exception ignore) { /* ignore */ } 
 		} else { 
 			PersonSearchQuery query = new PersonSearchQuery();
 			query.setText(stub.getName());

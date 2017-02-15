@@ -27,24 +27,24 @@ public class LocationDao implements IAnetDao<Location> {
 		this.dbHandle = h;
 	}
 	
-	public List<Location> getAll(int pageNum, int pageSize) { 
+	public LocationList getAll(int pageNum, int pageSize) { 
 		String sql;
 		if (DaoUtils.isMsSql(dbHandle)) { 
-			sql = "SELECT * from locations ORDER BY createdAt DESC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY";
+			sql = "/* getAllLocations */ SELECT locations.*, COUNT(*) OVER() AS totalCount from locations ORDER BY createdAt DESC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY";
 		} else {
-			sql = "SELECT * from locations ORDER BY createdAt ASC LIMIT :limit OFFSET :offset";
+			sql = "/* getAllLocations */ SELECT * from locations ORDER BY createdAt ASC LIMIT :limit OFFSET :offset";
 		}
 		
 		Query<Location> query = dbHandle.createQuery(sql)
 				.bind("limit", pageSize)
 				.bind("offset", pageSize * pageNum)
 				.map(new LocationMapper());
-			return query.list();
+		return LocationList.fromQuery(query, pageNum, pageSize);
 	}
 	
 	@Override
 	public Location getById(@Bind("id") int id) { 
-		Query<Location> query = dbHandle.createQuery("SELECT * from locations where id = :id")
+		Query<Location> query = dbHandle.createQuery("/* getLocationById */ SELECT * from locations where id = :id")
 				.bind("id", id)
 				.map(new LocationMapper());
 			List<Location> results = query.list();
@@ -57,7 +57,7 @@ public class LocationDao implements IAnetDao<Location> {
 		l.setCreatedAt(DateTime.now());
 		l.setUpdatedAt(DateTime.now());
 		GeneratedKeys<Map<String,Object>> keys = dbHandle.createStatement(
-				"INSERT INTO locations (name, lat, lng, createdAt, updatedAt) " 
+				"/* locationInsert */ INSERT INTO locations (name, lat, lng, createdAt, updatedAt) " 
 					+ "VALUES (:name, :lat, :lng, :createdAt, :updatedAt)")
 			.bind("name", l.getName())
 			.bind("lat", l.getLat())
@@ -71,7 +71,7 @@ public class LocationDao implements IAnetDao<Location> {
 	
 	@Override
 	public int update(Location l) {
-		return dbHandle.createStatement("UPDATE locations SET name = :name, lat = :lat, lng = :lng, updatedAt = :updatedAt WHERE id = :id")
+		return dbHandle.createStatement("/* updateLocation */ UPDATE locations SET name = :name, lat = :lat, lng = :lng, updatedAt = :updatedAt WHERE id = :id")
 				.bind("id", l.getId())
 				.bind("name", l.getName())
 				.bind("lat", l.getLat())
@@ -83,7 +83,7 @@ public class LocationDao implements IAnetDao<Location> {
 	public List<Location> getRecentLocations(Person author) {
 		String sql;
 		if (DaoUtils.isMsSql(dbHandle)) {
-			sql = "SELECT locations.* FROM locations WHERE id IN ( "
+			sql = "/* recentLocations */ SELECT locations.* FROM locations WHERE id IN ( "
 					+ "SELECT TOP(3) reports.locationId "
 					+ "FROM reports "
 					+ "WHERE authorid = :authorId "
@@ -91,7 +91,7 @@ public class LocationDao implements IAnetDao<Location> {
 					+ "ORDER BY MAX(reports.createdAt) DESC"
 				+ ")";
 		} else {
-			sql = "SELECT locations.* FROM locations WHERE id IN ( "
+			sql = "/* recentLocations */ SELECT locations.* FROM locations WHERE id IN ( "
 					+ "SELECT reports.locationId "
 					+ "FROM reports "
 					+ "WHERE authorid = :authorId "

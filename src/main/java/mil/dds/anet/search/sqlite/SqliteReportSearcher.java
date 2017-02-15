@@ -23,7 +23,7 @@ public class SqliteReportSearcher implements IReportSearcher {
 
 	public ReportList runSearch(ReportSearchQuery query, Handle dbHandle) { 
 		StringBuffer sql = new StringBuffer();
-		sql.append("SELECT " + ReportDao.REPORT_FIELDS + "," + PersonDao.PERSON_FIELDS);
+		sql.append("/* SqliteReportSearch */ SELECT " + ReportDao.REPORT_FIELDS + "," + PersonDao.PERSON_FIELDS);
 		sql.append(" FROM reports, people WHERE reports.authorId = people.id ");
 		sql.append("AND reports.id IN ( SELECT reports.id FROM reports ");
 		

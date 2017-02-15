@@ -116,7 +116,7 @@ public class PoamResource implements IGraphQLResource {
 	@GraphQLFetcher
 	@Path("/tree")
 	public PoamList getFullPoamTree() { 
-		List<Poam> poams = dao.getAll(0, Integer.MAX_VALUE);
+		List<Poam> poams = dao.getAll(0, Integer.MAX_VALUE).getList();
 		
 		Map<Integer,Poam> poamById = new HashMap<Integer,Poam>();
 		List<Poam> topPoams = new LinkedList<Poam>();

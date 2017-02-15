@@ -20,7 +20,7 @@ public class SqlitePersonSearcher implements IPersonSearcher {
 
 	@Override
 	public PersonList runSearch(PersonSearchQuery query, Handle dbHandle) { 
-		StringBuilder sql = new StringBuilder("SELECT " + PersonDao.PERSON_FIELDS 
+		StringBuilder sql = new StringBuilder("/* SqlitePersonSearch */ SELECT " + PersonDao.PERSON_FIELDS 
 				+ " FROM people WHERE people.id IN (SELECT people.id FROM people ");
 		Map<String,Object> sqlArgs = new HashMap<String,Object>();
 		

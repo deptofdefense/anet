@@ -1,15 +1,27 @@
-searchResults(f:search, q:"${searchQuery}") {
-	reports { list { id, intent, engagementDate, keyOutcomes, nextSteps
+reportList (f:search, query:{text:"${searchQuery}"}) {
+	list { id, intent, engagementDate, keyOutcomes, nextSteps
         primaryAdvisor { id, name, position { organization { id, shortName, longName}}},
         primaryPrincipal { id, name, position { organization { id, shortName, longName}}},
         advisorOrg { id, shortName, longName},
         principalOrg { id, shortName, longName},
         location { id, name},
         poams {id, shortName, longName}
-	}},
-    people { totalCount, list { id, name, rank, emailAddress }}
-    positions { totalCount, list { id, name, type, organization{ id, shortName} , person { id, name}}}
-    poams { totalCount, list { id, shortName, longName}}
-    locations { totalCount, list { id, name, lat, lng}}
-    organizations { totalCount, list { id, shortName, longName }}
+	}
 }
+
+personList(f:search, query:{text:"${searchQuery}"}) { 
+	totalCount, list { id, name, rank, emailAddress }
+}
+positionList (f:search, query:{text:"${searchQuery}"}) { 
+	totalCount, list { id, name, type, organization{ id, shortName} , person { id, name}}
+}
+poamList (f:search, query:{text:"${searchQuery}"}) { 
+	totalCount, list { id, shortName, longName}
+}
+locationList (f:search, query:{text:"${searchQuery}"}) { 
+	totalCount, list { id, name, lat, lng}
+}
+organizationList (f:search, query:{text:"${searchQuery}"}) { 
+	totalCount, list { id, shortName, longName }
+}
+

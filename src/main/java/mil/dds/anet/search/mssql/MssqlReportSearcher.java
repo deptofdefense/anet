@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.Query;
-import org.skife.jdbi.v2.StatementContext;
 
 import jersey.repackaged.com.google.common.base.Joiner;
 import mil.dds.anet.beans.Report;
@@ -23,7 +22,7 @@ public class MssqlReportSearcher implements IReportSearcher {
 	
 	public ReportList runSearch(ReportSearchQuery query, Handle dbHandle) { 
 		StringBuffer sql = new StringBuffer();
-		sql.append("SELECT " + ReportDao.REPORT_FIELDS + "," + PersonDao.PERSON_FIELDS);
+		sql.append("/* MssqlReportSearch */ SELECT " + ReportDao.REPORT_FIELDS + "," + PersonDao.PERSON_FIELDS);
 		sql.append(", count(*) OVER() AS totalCount "
 				+ "FROM reports, people WHERE reports.authorId = people.id "
 				+ "AND ");
@@ -146,16 +145,7 @@ public class MssqlReportSearcher implements IReportSearcher {
 				.bind("offset", query.getPageSize() * query.getPageNum())
 				.bind("limit", query.getPageSize())
 				.map(new ReportMapper());
-		StatementContext context = map.getContext();
-		
-		results.setList(map.list());
-		if (results.getList().size() == 0) { 
-			results.setTotalCount(0);
-		} else {
-			//This value gets set by the ReportMapper on each row. 
-			results.setTotalCount((Integer) context.getAttribute("totalCount"));
-		}
-		return results;
+		return ReportList.fromQuery(map, query.getPageNum(), query.getPageSize());
 		
 	}
 	

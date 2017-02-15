@@ -1,10 +1,10 @@
 package mil.dds.anet.database;
 
-import java.util.List;
+import mil.dds.anet.beans.lists.AbstractAnetBeanList;
 
 public interface IAnetDao<T> {
 
-	public List<T> getAll(int pageNum, int pageSize);
+	public AbstractAnetBeanList<?> getAll(int pageNum, int pageSize);
 	
 	public T getById(int id);
 	
