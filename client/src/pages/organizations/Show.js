@@ -39,6 +39,7 @@ export default class OrganizationShow extends Page {
 		if (nextProps.params.action !== this.state.action) {
 			this.setState({action: nextProps.params.action})
 		}
+		// eslint-disable-next-line
 		if (nextProps.params.id != this.state.organization.id) {
 			console.log(nextProps.params.id, this.state.organization.id)
 			this.loadData(nextProps)

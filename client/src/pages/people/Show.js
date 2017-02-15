@@ -60,7 +60,7 @@ export default class PersonShow extends Page {
 						name
 					}
 				}},
-				attendedReports(pageNum:0, pageSize:10) {{
+				attendedReports(pageNum:0, pageSize:10) { list {
 					id,
 					engagementDate,
 					advisorOrg { id, shortName}
@@ -125,12 +125,12 @@ export default class PersonShow extends Page {
 
 					<fieldset>
 						<legend>Reports authored</legend>
-						<ReportTable reports={person.authoredReports.list} showAuthors={false} />
+						<ReportTable reports={person.authoredReports.list || []} showAuthors={false} />
 					</fieldset>
 
 					<fieldset>
 						<legend>Reports this person is listed as an attendee of</legend>
-						<ReportTable reports={person.attendedReports.list} showAuthors={true} />
+						<ReportTable reports={person.attendedReports.list || []} showAuthors={true} />
 					</fieldset>
 				</Form>
 			</div>
