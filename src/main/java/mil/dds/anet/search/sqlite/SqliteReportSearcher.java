@@ -127,9 +127,18 @@ public class SqliteReportSearcher implements IReportSearcher {
 			args.put("approverId", query.getPendingApprovalOf());
 		}
 		
-		if (query.getState() != null) { 
-			whereClauses.add("reports.state = :state");
-			args.put("state", DaoUtils.getEnumId(query.getState()));
+		if (query.getState() != null && query.getState().size() > 0) {
+			if (query.getState().size() == 1) { 
+				whereClauses.add("reports.state = :state");
+				args.put("state", DaoUtils.getEnumId(query.getState().get(0)));
+			} else {
+				List<String> argNames = new LinkedList<String>();
+				for (int i=0;i<query.getState().size();i++) { 
+					argNames.add(":state" + i);
+					args.put("state" + i, DaoUtils.getEnumId(query.getState().get(i)));
+				}
+				whereClauses.add("reports.state IN (" + Joiner.on(", ").join(argNames) + ")");
+			}
 		}
 		
 		if (whereClauses.size() == 0) { return new ReportList(); }

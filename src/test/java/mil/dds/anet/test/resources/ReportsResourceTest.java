@@ -575,6 +575,18 @@ public class ReportsResourceTest extends AbstractResourceTest {
 				r.getLocation().getId().equals(cabot.getId())
 			)).hasSameSizeAs(searchResults.getList());
 
+		//Search by Status. 
+		query.setLocationId(null);
+		query.setState(ImmutableList.of(ReportState.CANCELLED));
+		searchResults = httpQuery("/api/reports/search", jack).post(Entity.json(query), ReportList.class);
+		assertThat(searchResults.getList()).isNotEmpty();
+		int numCancelled = searchResults.getTotalCount();
+		
+		query.setState(ImmutableList.of(ReportState.CANCELLED, ReportState.RELEASED));
+		searchResults = httpQuery("/api/reports/search", jack).post(Entity.json(query), ReportList.class);
+		assertThat(searchResults.getList()).isNotEmpty();
+		assertThat(searchResults.getTotalCount()).isGreaterThan(numCancelled);
+		
 		//Search by Principal Organization
 
 		//Search by Principal Parent Organization

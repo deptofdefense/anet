@@ -45,7 +45,6 @@ export default class OrganizationShow extends Page {
 			this.setState({action: nextProps.params.action})
 		}
 		if (+nextProps.params.id !== this.state.organization.id) {
-			console.log(nextProps.params.id, this.state.organization.id)
 			this.loadData(nextProps)
 		}
 	}
