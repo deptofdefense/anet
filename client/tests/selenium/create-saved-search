@@ -17,13 +17,18 @@
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
+	<td>click</td>
+	<td>css=input.form-control</td>
+	<td></td>
+</tr>
+<tr>
+	<td>sendKeys</td>
 	<td>css=input.form-control</td>
 	<td>budget</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=img[alt=&quot;ANET logo&quot;]</td>
+	<td>css=button.btn.btn-default</td>
 	<td></td>
 </tr>
 <tr>
@@ -42,6 +47,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>click</td>
+	<td>css=img[alt=&quot;ANET logo&quot;]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>verifyText</td>
 	<td>id=savedSearchSelect</td>
 	<td>budget</td>
@@ -51,7 +61,6 @@
 	<td></td>
 	<td>how to verify that results are the same as results on search page? </td>
 </tr>
-
 </tbody></table>
 </body>
 </html>

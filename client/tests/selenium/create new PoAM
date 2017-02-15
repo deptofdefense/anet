@@ -37,7 +37,12 @@
 	<td>Teach counterparts how to make a paper airplane</td>
 </tr>
 <tr>
-	<td>type</td>
+	<td>click</td>
+	<td>id=responsibleOrg</td>
+	<td></td>
+</tr>
+<tr>
+	<td>sendKeys</td>
 	<td>id=responsibleOrg</td>
 	<td>min</td>
 </tr>
@@ -52,21 +57,20 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
-	<td>css=div.alert.alert-success</td>
-	<td>PoAm saved successfully</td>
-</tr>
-<tr>
-	<td>type</td>
+	<td>sendKeys</td>
 	<td>css=input.form-control</td>
 	<td>flying</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=button.btn.btn-default</td>
+	<td></td>
 </tr>
 <tr>
 	<td>verifyText</td>
 	<td>link=flying lessons! Teach counterparts how to make a paper airplane</td>
 	<td>flying lessons! Teach counterparts how to make a paper airplane</td>
 </tr>
-
 </tbody></table>
 </body>
 </html>

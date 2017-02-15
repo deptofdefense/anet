@@ -27,7 +27,12 @@
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
+	<td>click</td>
+	<td>id=parentOrg</td>
+	<td></td>
+</tr>
+<tr>
+	<td>sendKeys</td>
 	<td>id=parentOrg</td>
 	<td>ef4</td>
 </tr>
@@ -47,7 +52,12 @@
 	<td>Ministry of Cupcakes </td>
 </tr>
 <tr>
-	<td>type</td>
+	<td>click</td>
+	<td>id=poams</td>
+	<td></td>
+</tr>
+<tr>
+	<td>sendKeys</td>
 	<td>id=poams</td>
 	<td>know</td>
 </tr>
@@ -67,7 +77,12 @@
 	<td>First people</td>
 </tr>
 <tr>
-	<td>type</td>
+	<td>click</td>
+	<td>id=addApprover</td>
+	<td></td>
+</tr>
+<tr>
+	<td>sendKeys</td>
 	<td>id=addApprover</td>
 	<td>reina</td>
 </tr>
@@ -77,7 +92,12 @@
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
+	<td>click</td>
+	<td>id=addApprover</td>
+	<td></td>
+</tr>
+<tr>
+	<td>sendKeys</td>
 	<td>id=addApprover</td>
 	<td>j</td>
 </tr>
@@ -97,8 +117,13 @@
 	<td>Final reviewers</td>
 </tr>
 <tr>
-	<td>type</td>
-	<td>css=div.react-autosuggest__container.react-autosuggest__container--open &gt; #addApprover</td>
+	<td>click</td>
+	<td>xpath=(//input[@id='addApprover'])[2]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>sendKeys</td>
+	<td>xpath=(//input[@id='addApprover'])[2]</td>
 	<td>li</td>
 </tr>
 <tr>
@@ -107,24 +132,19 @@
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
-	<td>css=div.react-autosuggest__container.react-autosuggest__container--open &gt; #addApprover</td>
-	<td>a</td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>id=react-autowhatever-1--item-1</td>
-	<td></td>
-</tr>
-<tr>
 	<td>click</td>
 	<td>id=formBottomSubmit</td>
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
+	<td>sendKeys</td>
 	<td>css=input.form-control</td>
 	<td>4.44</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=button.btn.btn-default</td>
+	<td></td>
 </tr>
 <tr>
 	<td>verifyText</td>

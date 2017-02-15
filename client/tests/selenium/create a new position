@@ -52,7 +52,12 @@
 	<td>barista</td>
 </tr>
 <tr>
-	<td>type</td>
+	<td>click</td>
+	<td>id=associatedPositions</td>
+	<td></td>
+</tr>
+<tr>
+	<td>sendKeys</td>
 	<td>id=associatedPositions</td>
 	<td>ste</td>
 </tr>
@@ -62,7 +67,12 @@
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
+	<td>click</td>
+	<td>id=location</td>
+	<td></td>
+</tr>
+<tr>
+	<td>sendKeys</td>
 	<td>id=location</td>
 	<td>ho</td>
 </tr>
@@ -76,7 +86,6 @@
 	<td>id=formBottomSubmit</td>
 	<td></td>
 </tr>
-
 </tbody></table>
 </body>
 </html>

@@ -32,12 +32,12 @@
 	<td></td>
 </tr>
 <tr>
-	<td>selectWindow</td>
-	<td>null</td>
+	<td>click</td>
+	<td>id=parentOrg</td>
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
+	<td>sendKeys</td>
 	<td>id=parentOrg</td>
 	<td>m</td>
 </tr>
