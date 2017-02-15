@@ -17,6 +17,13 @@ import OrganizationApprovals from 'pages/organizations/Approvals'
 import API from 'api'
 import {Organization, Position, Poam} from 'models'
 
+const ACTION_COMPONENTS = {
+	poams: OrganizationPoams,
+	approvals: OrganizationApprovals,
+	reports: ReportCollection,
+	laydown: OrganizationLaydown,
+}
+
 export default class OrganizationShow extends Page {
 	static contextTypes = {
 		app: PropTypes.object.isRequired,
@@ -24,14 +31,12 @@ export default class OrganizationShow extends Page {
 
 	constructor(props) {
 		super(props)
+
 		this.state = {
-			organization: {
-				id: +props.params.id,
-				poams: [],
-				positions: [],
-			},
+			organization: new Organization({id: props.params.id}),
 			action: props.params.action
 		}
+
 		setMessages(props,this.state)
 	}
 
@@ -51,7 +56,6 @@ export default class OrganizationShow extends Page {
 			organization(id:${props.params.id}) {
 				id, shortName, longName, type
 				parentOrg { id, shortName, longName }
-				poams { id, longName, shortName }
 				childrenOrgs { id, shortName, longName },
 				positions {
 					id, name, code
@@ -85,6 +89,8 @@ export default class OrganizationShow extends Page {
 		let isSuperUser = (currentUser) ? currentUser.isSuperUserForOrg(org) : false
 		let isAdmin = (currentUser) ? currentUser.isAdmin() : false
 		let showActions = isAdmin || isSuperUser
+
+		let ActionComponent = ACTION_COMPONENTS[action]
 
 		return (
 			<div>
@@ -130,21 +136,7 @@ export default class OrganizationShow extends Page {
 						</Form.Field>}
 					</fieldset>
 
-					{action === 'poams' &&
-						<OrganizationPoams organization={org} />
-					}
-
-					{action === 'laydown' &&
-						<OrganizationLaydown organization={org} />
-					}
-
-					{action === 'approvals' &&
-						<OrganizationApprovals organization={org} />
-					}
-
-					{action === 'reports' &&
-						<ReportCollection reports={org.reports} />
-					}
+					<ActionComponent organization={org} />
 
 				</Form>
 			</div>
