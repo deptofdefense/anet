@@ -224,8 +224,13 @@ export default class FormField extends Component {
 		this.setState(
 			{userHasTouchedField: true}, 
 			() => {
-				if (this.props.required) {
-					this.isMissingRequiredField() ? this.props.onErrorStart() : this.props.onErrorStop()
+				if ((this.props.required && this.isMissingRequiredField()) 
+					|| this.state.isValid === false) {
+					this.props.onErrorStart()
+				} else if (this.props.onErrorStop
+					&& (this.props.required && !this.isMissingRequiredField() && this.state.isValid) 
+					|| this.state.isValid) {
+					this.props.onErrorStop()
 				}
 			}
 		)
