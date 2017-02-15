@@ -15,7 +15,7 @@ export default class OrganizationPoams extends Component {
 		this.state = {
 			poamList: {
 				totalCount: 0,
-				pageSize: 1,
+				pageSize: 10,
 				pageNum: 0,
 				list: [],
 			}
