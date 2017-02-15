@@ -15,7 +15,14 @@ import OrganizationLaydown from 'pages/organizations/Laydown'
 import OrganizationApprovals from 'pages/organizations/Approvals'
 
 import API from 'api'
-import {Organization} from 'models'
+import {Organization, Position, Poam} from 'models'
+
+const ACTION_COMPONENTS = {
+	poams: OrganizationPoams,
+	approvals: OrganizationApprovals,
+	reports: ReportCollection,
+	laydown: OrganizationLaydown,
+}
 
 export default class OrganizationShow extends Page {
 	static contextTypes = {
@@ -24,14 +31,12 @@ export default class OrganizationShow extends Page {
 
 	constructor(props) {
 		super(props)
+
 		this.state = {
-			organization: {
-				id: props.params.id,
-				poams: [],
-				positions: [],
-			},
+			organization: new Organization({id: props.params.id}),
 			action: props.params.action
 		}
+
 		setMessages(props,this.state)
 	}
 
@@ -39,8 +44,7 @@ export default class OrganizationShow extends Page {
 		if (nextProps.params.action !== this.state.action) {
 			this.setState({action: nextProps.params.action})
 		}
-		// eslint-disable-next-line
-		if (nextProps.params.id != this.state.organization.id) {
+		if (+nextProps.params.id !== this.state.organization.id) {
 			console.log(nextProps.params.id, this.state.organization.id)
 			this.loadData(nextProps)
 		}
@@ -51,7 +55,6 @@ export default class OrganizationShow extends Page {
 			organization(id:${props.params.id}) {
 				id, shortName, longName, type
 				parentOrg { id, shortName, longName }
-				poams { id, longName, shortName }
 				childrenOrgs { id, shortName, longName },
 				positions {
 					id, name, code
@@ -81,12 +84,14 @@ export default class OrganizationShow extends Page {
 
 	render() {
 		let org = this.state.organization
-		 let action = this.state.action || 'poams'
+		let action = this.state.action || 'poams'
 
 		let currentUser = this.context.app.state.currentUser
 		let isSuperUser = (currentUser) ? currentUser.isSuperUserForOrg(org) : false
 		let isAdmin = (currentUser) ? currentUser.isAdmin() : false
 		let showActions = isAdmin || isSuperUser
+
+		let ActionComponent = ACTION_COMPONENTS[action]
 
 		return (
 			<div>
@@ -94,13 +99,13 @@ export default class OrganizationShow extends Page {
 
 				<Messages error={this.state.error} success={this.state.success} />
 
-				{ showActions &&
+				{showActions &&
 					<div className="pull-right">
 						<DropdownButton bsStyle="primary" title="Actions" id="actions" className="pull-right" onSelect={this.actionSelect}>
-							{isSuperUser && <MenuItem eventKey="edit" >Edit Organization</MenuItem>}
-							{isAdmin && <MenuItem eventKey="createSub">Create Sub-Organization</MenuItem> }
-							{isAdmin && <MenuItem eventKey="createPoam">Create Poam</MenuItem> }
-							{isSuperUser && <MenuItem eventKey="createPos">Create new Position</MenuItem> }
+							{isSuperUser && <MenuItem eventKey="edit">Edit Organization</MenuItem>}
+							{isAdmin && <MenuItem eventKey="createSub">Create Sub-Organization</MenuItem>}
+							{isAdmin && <MenuItem eventKey="createPoam">Create PoAM</MenuItem>}
+							{isSuperUser && <MenuItem eventKey="createPos">Create new Position</MenuItem>}
 						</DropdownButton>
 					</div>
 				}
@@ -132,22 +137,7 @@ export default class OrganizationShow extends Page {
 						</Form.Field>}
 					</fieldset>
 
-					{action === 'poams' &&
-						<OrganizationPoams organization={org} />
-					}
-
-					{action === 'laydown' &&
-						<OrganizationLaydown organization={org} />
-					}
-
-					{action === 'approvals' &&
-						<OrganizationApprovals organization={org} />
-					}
-
-					{action === 'reports' &&
-						<ReportCollection reports={org.reports.list} />
-					}
-
+					<ActionComponent organization={org} />
 				</Form>
 			</div>
 		)
@@ -156,13 +146,13 @@ export default class OrganizationShow extends Page {
 	@autobind
 	actionSelect(eventKey, event) {
 		if (eventKey === 'createPos') {
-			History.push({pathname: '/positions/new', query: {organizationId: this.state.organization.id}})
+			History.push({pathname: Position.pathForNew(), query: {organizationId: this.state.organization.id}})
 		} else if (eventKey === 'createSub') {
-			History.push({pathname: '/organizations/new', query: {parentOrgId: this.state.organization.id}})
+			History.push({pathname: Organization.pathForNew(), query: {parentOrgId: this.state.organization.id}})
 		} else if (eventKey === 'edit') {
 			History.push(Organization.pathForEdit(this.state.organization))
 		} else if (eventKey === 'createPoam') {
-			History.push({pathname: '/poams/new', query: {responsibleOrg: this.state.organization.id}})
+			History.push({pathname: Poam.pathForNew(), query: {responsibleOrg: this.state.organization.id}})
 		} else {
 			console.log('Unimplemented Action: ' + eventKey)
 		}

@@ -15,7 +15,7 @@ export default class PoamForm extends Component {
 	}
 
 	render() {
-		let {poam} = this.props
+		let {poam, edit} = this.props
 
 		return (
 			<Form
@@ -27,7 +27,7 @@ export default class PoamForm extends Component {
 			>
 
 				<fieldset>
-					<legend>Create a new Poam</legend>
+					<legend>{edit ? "Edit PoAM " + poam.shortName : "Create a new PoAM"}</legend>
 					<Form.Field id="shortName" />
 					<Form.Field id="longName" />
 					<Form.Field id="responsibleOrg">
