@@ -13,7 +13,7 @@ class FormFieldExtraCol extends Component {
 export default class FormField extends Component {
 	constructor(props, context) {
 		super(props, context)
-		this.state = {value: ''}
+		this.state = {value: '', userHasBlurred: false}
 	}
 	static contextTypes = {
 		formFor: PropTypes.object,
@@ -43,10 +43,9 @@ export default class FormField extends Component {
 		// if any of the children have propTypes that include onChange
 		children: PropTypes.node,
 
-		// Text to show in a <HelpBlock> next to the input. 
-		// This prop is ignored if children are passed.
-		// Default value: empty string, which causes the <HelpBlock> to be omitted. 
-		helpText: PropTypes.string,
+		humanName: PropTypes.string,
+		required: PropTypes.bool,
+		setError: PropTypes.func,
 
 		// If you don't pass children, we will automatically create a FormControl.
 		// You can use componentClass to override its type (for example, for a select).
@@ -76,9 +75,10 @@ export default class FormField extends Component {
 			...childProps
 		} = this.props
 
-		childProps = Object.without(childProps, 'getter', 'horizontal', 'validationState', 'helpText')
+		childProps = Object.without(childProps, 'getter', 'horizontal', 'setError', 'humanName')
 
-		let validationState = this.props.validationState
+		const isMissingRequiredField = this.props.required && !this.state.value && this.state.userHasBlurred
+		let validationState = this.props.validationState || isMissingRequiredField ? 'error' : null
 		let horizontal = this.context.form && this.context.form.props.horizontal
 		if (typeof this.props.horizontal !== 'undefined') {
 			horizontal = this.props.horizontal
@@ -127,11 +127,16 @@ export default class FormField extends Component {
 			if (children.length)
 				childProps.children = children
 
-			const formControl = <FormControl {...childProps} value={defaultValue} onChange={this.props.onChange || this.onChange} />
-			children = this.props.helpText ? 
+			const formControl = <FormControl 
+				{...childProps} 
+				value={defaultValue} 
+				onChange={this.props.onChange || this.onChange} 
+				onBlur={this.onBlur} />
+
+			children = isMissingRequiredField ? 
 				<div>
 					{formControl}
-					<HelpBlock>{this.props.helpText}</HelpBlock>
+					<HelpBlock>{this.props.humanName} is required</HelpBlock>
 				</div>
 				: formControl
 		}
@@ -170,6 +175,10 @@ export default class FormField extends Component {
 		let newValue = this.getDefaultValue(newProps, newContext)
 		let oldValue = this.state.value
 
+		if (this.state.userHasBlurred !== newState.userHasBlurred) {
+			return true;
+		}
+
 		if (newValue !== oldValue) {
 			return true
 		}
@@ -197,6 +206,11 @@ export default class FormField extends Component {
 
 	getDefaultValue(props, context) {
 		return props.value || this.getValue(props, context) || ''
+	}
+
+	@autobind
+	onBlur(event) {
+		this.setState({userHasBlurred: true})
 	}
 
 	@autobind

@@ -43,9 +43,9 @@ export default class PersonForm extends Component {
 			<fieldset>
 				<legend>{edit ? 'Edit ' + person.name : 'Create a new Person'}</legend>
 				<Form.Field id="name" 
-					validationState={this.state.formErrors.name} 
-					helpText={this.state.formErrors.name ? 'Name is required.' : ''}
-					onBlur={this.onNameBlur} />
+					required
+					humanName="Name"
+					setError={(val) => this.setState({formErrors: {name: val}})} />
 
 				{edit ?
 					<Form.Field type="static" id="role" />
@@ -156,17 +156,8 @@ export default class PersonForm extends Component {
 	}
 
 	@autobind
-	onNameBlur() {
-		this.setState({
-			formErrors: {
-				name: this.props.person.name ? null : 'error'  
-			}
-		})
-	}
-
-	@autobind
 	isSubmitDisabled() {
-		return _compact(_values(this.state.formErrors)).length
+		return _compact(_values(this.state.formErrors)).length > 0
 	}
 
 	@autobind
