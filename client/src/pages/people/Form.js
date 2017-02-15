@@ -40,6 +40,7 @@ export default class PersonForm extends Component {
 
 			<fieldset>
 				<legend>{edit ? 'Edit ' + person.name : 'Create a new Person'}</legend>
+
 				<Form.Field id="name" 
 					required
 					humanName="Name"
@@ -178,11 +179,13 @@ export default class PersonForm extends Component {
 
 	@autobind
 	incrementFormErrorCount() {
+		console.log('incr');
 		this.setState(prevState => ({formErrorsCount: prevState.formErrorsCount + 1}))
 	}
 
 	@autobind
 	decrementFormErrorCount() {
+		console.log('decr');
 		this.setState(prevState => ({formErrorsCount: prevState.formErrorsCount - 1}))
 	}
 

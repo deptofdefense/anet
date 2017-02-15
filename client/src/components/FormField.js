@@ -15,7 +15,7 @@ export default class FormField extends Component {
 		super(props, context)
 		this.state = {
 			value: '', 
-			userHasBlurred: false,
+			userHasTouchedField: false,
 			isValid: null
 		}
 	}
@@ -82,6 +82,15 @@ export default class FormField extends Component {
 
 		childProps = Object.without(childProps, 'getter', 'horizontal', 'onErrorStart', 'onErrorStop', 'humanName')
 
+		let defaultValue = this.getDefaultValue(this.props, this.context)
+
+		let state = this.state
+		if (Array.isArray(defaultValue)) {
+			state.value = Array.from(defaultValue)
+		} else {
+			state.value = defaultValue
+		}
+
 		const validationState = this.props.validationState || 
 			(this.state.isValid === false || this.isMissingRequiredField()) ? 'error' : null
 
@@ -100,15 +109,6 @@ export default class FormField extends Component {
 		let extra = children.find(child => child.type === FormFieldExtraCol)
 		if (extra)
 			children.splice(children.indexOf(extra), 1)
-
-		let defaultValue = this.getDefaultValue(this.props, this.context)
-
-		let state = this.state
-		if (Array.isArray(defaultValue)) {
-			state.value = Array.from(defaultValue)
-		} else {
-			state.value = defaultValue
-		}
 
 		// if type is static, render out a static value
 		if (this.props.type === 'static' || (!this.props.type && !this.props.componentClass && this.context.form.props.static)) {
@@ -179,14 +179,14 @@ export default class FormField extends Component {
 
 	@autobind
 	isMissingRequiredField() {
-		return this.props.required && !this.state.value && this.state.userHasBlurred
+		return this.props.required && !this.state.value && this.state.userHasTouchedField
 	}
 
 	shouldComponentUpdate(newProps, newState, newContext) {
 		let newValue = this.getDefaultValue(newProps, newContext)
 		let oldValue = this.state.value
 
-		if (this.state.userHasBlurred !== newState.userHasBlurred) {
+		if (this.state.userHasTouchedField !== newState.userHasTouchedField) {
 			return true
 		}
 
@@ -222,9 +222,11 @@ export default class FormField extends Component {
 	@autobind
 	onUserTouchedField() {
 		this.setState(
-			{userHasBlurred: true}, 
+			{userHasTouchedField: true}, 
 			() => {
 				if (this.props.required) {
+					// TODO We need to only call these functions when the validity has changed, not every time
+					// that anything changes.
 					this.isMissingRequiredField() ? this.props.onErrorStart() : this.props.onErrorStop()
 				}
 			}
