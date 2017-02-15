@@ -59,7 +59,8 @@ export default class PersonForm extends Component {
 			<fieldset>
 				<legend>Additional Information</legend>
 				<Form.Field id="emailAddress" label="Email" required={isAdvisor} 
-					humanName="Email address"
+					humanName="Valid email address"
+					type="email"
 					onErrorStart={() => this.setState(prevState => ({formErrorsCount: prevState.formErrorsCount + 1}))}
 					onErrorStop={() => this.setState(prevState => ({formErrorsCount: prevState.formErrorsCount - 1}))} />
 				<Form.Field id="phoneNumber" label="Phone Number" />
@@ -82,7 +83,7 @@ export default class PersonForm extends Component {
 
 				<Form.Field id="gender" componentClass="select"
 					required={isAdvisor} 
-					humanName="Rank"
+					humanName="Gender"
 					onErrorStart={() => this.setState(prevState => ({formErrorsCount: prevState.formErrorsCount + 1}))}
 					onErrorStop={() => this.setState(prevState => ({formErrorsCount: prevState.formErrorsCount - 1}))}>
 					<option />
@@ -92,7 +93,7 @@ export default class PersonForm extends Component {
 
 				<Form.Field id="country" componentClass="select"
 					required={isAdvisor} 
-					humanName="Rank"
+					humanName="Country"
 					onErrorStart={() => this.setState(prevState => ({formErrorsCount: prevState.formErrorsCount + 1}))}
 					onErrorStop={() => this.setState(prevState => ({formErrorsCount: prevState.formErrorsCount - 1}))}>
 					<option />

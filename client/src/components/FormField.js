@@ -13,7 +13,11 @@ class FormFieldExtraCol extends Component {
 export default class FormField extends Component {
 	constructor(props, context) {
 		super(props, context)
-		this.state = {value: '', userHasBlurred: false}
+		this.state = {
+			value: '', 
+			userHasBlurred: false,
+			isValid: null
+		}
 	}
 	static contextTypes = {
 		formFor: PropTypes.object,
@@ -78,7 +82,9 @@ export default class FormField extends Component {
 
 		childProps = Object.without(childProps, 'getter', 'horizontal', 'onErrorStart', 'onErrorStop', 'humanName')
 
-		let validationState = this.props.validationState || this.isMissingRequiredField() ? 'error' : null
+		const validationState = this.props.validationState || 
+			(this.state.isValid === false || this.isMissingRequiredField()) ? 'error' : null
+
 		let horizontal = this.context.form && this.context.form.props.horizontal
 		if (typeof this.props.horizontal !== 'undefined') {
 			horizontal = this.props.horizontal
@@ -131,11 +137,13 @@ export default class FormField extends Component {
 				{...childProps} 
 				value={defaultValue} 
 				onChange={this.props.onChange || this.onChange} 
-				onBlur={this.onUserTouchedField} />
+				onBlur={this.onBlur} />
 
 			children = <div>
 				{formControl}
-				<HelpBlock className={!this.isMissingRequiredField() ? 'hidden' : ''} >{this.props.humanName} is required</HelpBlock>
+				<HelpBlock className={validationState === 'error' ? '' : 'hidden'} >
+					{this.props.humanName} is required
+				</HelpBlock>
 			</div>
 		}
 
@@ -221,6 +229,12 @@ export default class FormField extends Component {
 				}
 			}
 		)
+	}
+
+	@autobind
+	onBlur(event) {
+		this.onUserTouchedField()
+		this.setState({isValid: event.target.checkValidity()})
 	}
 
 	@autobind
