@@ -25,7 +25,7 @@ export default class PersonForm extends Component {
 
 		this.state = {
 			error: null,
-			formErrorsCount: 0
+			formErrors: {}
 		}
 	}
 
@@ -44,8 +44,8 @@ export default class PersonForm extends Component {
 				<Form.Field id="name" 
 					required
 					humanName="Name"
-					onErrorStart={this.incrementFormErrorCount}
-					onErrorStop={this.decrementFormErrorCount} />
+					onErrorStart={() => this.onFieldEnterErrorState('name')}
+					onErrorStop={() => this.onFieldExitErrorState('name')} />
 
 				{edit ?
 					<Form.Field type="static" id="role" />
@@ -62,14 +62,14 @@ export default class PersonForm extends Component {
 				<Form.Field id="emailAddress" label="Email" required={isAdvisor} 
 					humanName="Valid email address"
 					type="email"
-					onErrorStart={this.incrementFormErrorCount}
-					onErrorStop={this.decrementFormErrorCount} />
+					onErrorStart={() => this.onFieldEnterErrorState('emailAddress')}
+					onErrorStop={() => this.onFieldExitErrorState('emailAddress')} />
 				<Form.Field id="phoneNumber" label="Phone Number" />
 				<Form.Field id="rank"  componentClass="select"
 					required={isAdvisor} 
 					humanName="Rank"
-					onErrorStart={this.incrementFormErrorCount}
-					onErrorStop={this.decrementFormErrorCount}>
+					onErrorStart={this.onFieldEnterErrorState}
+					onErrorStop={this.onFieldExitErrorState}>
 
 					<option />
 					<option value="OF-1" >OF-1</option>
@@ -85,8 +85,8 @@ export default class PersonForm extends Component {
 				<Form.Field id="gender" componentClass="select"
 					required={isAdvisor} 
 					humanName="Gender"
-					onErrorStart={this.incrementFormErrorCount}
-					onErrorStop={this.decrementFormErrorCount}>
+					onErrorStart={this.onFieldEnterErrorState}
+					onErrorStop={this.onFieldExitErrorState}>
 					<option />
 					<option value="MALE" >Male</option>
 					<option value="FEMALE" >Female</option>
@@ -95,8 +95,8 @@ export default class PersonForm extends Component {
 				<Form.Field id="country" componentClass="select"
 					required={isAdvisor} 
 					humanName="Country"
-					onErrorStart={this.incrementFormErrorCount}
-					onErrorStop={this.decrementFormErrorCount}>
+					onErrorStart={this.onFieldEnterErrorState}
+					onErrorStop={this.onFieldExitErrorState}>
 					<option />
 					<option>Afghanistan</option>
 					<option>Albania</option>
@@ -178,15 +178,13 @@ export default class PersonForm extends Component {
 	}
 
 	@autobind
-	incrementFormErrorCount() {
-		console.log('incr');
-		this.setState(prevState => ({formErrorsCount: prevState.formErrorsCount + 1}))
+	onFieldEnterErrorState(fieldName) {
+		this.setState({formErrors: {[fieldName]: true}})
 	}
 
 	@autobind
-	decrementFormErrorCount() {
-		console.log('decr');
-		this.setState(prevState => ({formErrorsCount: prevState.formErrorsCount - 1}))
+	onFieldExitErrorState(fieldName) {
+		this.setState({formErrors: {[fieldName]: false}})
 	}
 
 	@autobind
