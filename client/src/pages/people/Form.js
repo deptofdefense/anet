@@ -63,7 +63,12 @@ export default class PersonForm extends Component {
 					onErrorStart={() => this.setState(prevState => ({formErrorsCount: prevState.formErrorsCount + 1}))}
 					onErrorStop={() => this.setState(prevState => ({formErrorsCount: prevState.formErrorsCount - 1}))} />
 				<Form.Field id="phoneNumber" label="Phone Number" />
-				<Form.Field id="rank"  componentClass="select">
+				<Form.Field id="rank"  componentClass="select"
+					required={isAdvisor} 
+					humanName="Rank"
+					onErrorStart={() => this.setState(prevState => ({formErrorsCount: prevState.formErrorsCount + 1}))}
+					onErrorStop={() => this.setState(prevState => ({formErrorsCount: prevState.formErrorsCount - 1}))}>
+
 					<option />
 					<option value="OF-1" >OF-1</option>
 					<option value="OF-2" >OF-2</option>
@@ -75,13 +80,21 @@ export default class PersonForm extends Component {
 					<option value="CTR">CTR</option>
 				</Form.Field>
 
-				<Form.Field id="gender" componentClass="select">
+				<Form.Field id="gender" componentClass="select"
+					required={isAdvisor} 
+					humanName="Rank"
+					onErrorStart={() => this.setState(prevState => ({formErrorsCount: prevState.formErrorsCount + 1}))}
+					onErrorStop={() => this.setState(prevState => ({formErrorsCount: prevState.formErrorsCount - 1}))}>
 					<option />
 					<option value="MALE" >Male</option>
 					<option value="FEMALE" >Female</option>
 				</Form.Field>
 
-				<Form.Field id="country" componentClass="select">
+				<Form.Field id="country" componentClass="select"
+					required={isAdvisor} 
+					humanName="Rank"
+					onErrorStart={() => this.setState(prevState => ({formErrorsCount: prevState.formErrorsCount + 1}))}
+					onErrorStop={() => this.setState(prevState => ({formErrorsCount: prevState.formErrorsCount - 1}))}>
 					<option />
 					<option>Afghanistan</option>
 					<option>Albania</option>
