@@ -8,9 +8,6 @@ import TextEditor from 'components/TextEditor'
 import Autocomplete from 'components/Autocomplete'
 import History from 'components/History'
 
-import _compact from 'lodash.compact'
-import _values from 'lodash.values'
-
 import API from 'api'
 import {Person} from 'models'
 
@@ -28,7 +25,7 @@ export default class PersonForm extends Component {
 
 		this.state = {
 			error: null,
-			formErrors: {}
+			formErrorsCount: 0
 		}
 	}
 
@@ -45,7 +42,8 @@ export default class PersonForm extends Component {
 				<Form.Field id="name" 
 					required
 					humanName="Name"
-					setError={(val) => this.setState({formErrors: {name: val}})} />
+					onErrorStart={() => this.setState(prevState => ({formErrorsCount: prevState.formErrorsCount + 1}))}
+					onErrorStop={() => this.setState(prevState => ({formErrorsCount: prevState.formErrorsCount - 1}))} />
 
 				{edit ?
 					<Form.Field type="static" id="role" />
@@ -157,7 +155,7 @@ export default class PersonForm extends Component {
 
 	@autobind
 	isSubmitDisabled() {
-		return _compact(_values(this.state.formErrors)).length > 0
+		return this.state.formErrorsCount > 0
 	}
 
 	@autobind

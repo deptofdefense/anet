@@ -45,7 +45,8 @@ export default class FormField extends Component {
 
 		humanName: PropTypes.string,
 		required: PropTypes.bool,
-		setError: PropTypes.func,
+		onErrorStart: PropTypes.func,
+		onErrorStop: PropTypes.func,
 
 		// If you don't pass children, we will automatically create a FormControl.
 		// You can use componentClass to override its type (for example, for a select).
@@ -75,10 +76,9 @@ export default class FormField extends Component {
 			...childProps
 		} = this.props
 
-		childProps = Object.without(childProps, 'getter', 'horizontal', 'setError', 'humanName')
+		childProps = Object.without(childProps, 'getter', 'horizontal', 'onErrorStart', 'onErrorStop', 'humanName')
 
-		const isMissingRequiredField = this.props.required && !this.state.value && this.state.userHasBlurred
-		let validationState = this.props.validationState || isMissingRequiredField ? 'error' : null
+		let validationState = this.props.validationState || this.isMissingRequiredField() ? 'error' : null
 		let horizontal = this.context.form && this.context.form.props.horizontal
 		if (typeof this.props.horizontal !== 'undefined') {
 			horizontal = this.props.horizontal
@@ -133,7 +133,7 @@ export default class FormField extends Component {
 				onChange={this.props.onChange || this.onChange} 
 				onBlur={this.onBlur} />
 
-			children = isMissingRequiredField ? 
+			children = this.isMissingRequiredField() ? 
 				<div>
 					{formControl}
 					<HelpBlock>{this.props.humanName} is required</HelpBlock>
@@ -171,12 +171,17 @@ export default class FormField extends Component {
 		)
 	}
 
+	@autobind
+	isMissingRequiredField() {
+		return this.props.required && !this.state.value && this.state.userHasBlurred
+	}
+
 	shouldComponentUpdate(newProps, newState, newContext) {
 		let newValue = this.getDefaultValue(newProps, newContext)
 		let oldValue = this.state.value
 
 		if (this.state.userHasBlurred !== newState.userHasBlurred) {
-			return true;
+			return true
 		}
 
 		if (newValue !== oldValue) {
@@ -210,7 +215,10 @@ export default class FormField extends Component {
 
 	@autobind
 	onBlur(event) {
-		this.setState({userHasBlurred: true})
+		this.setState(
+			{userHasBlurred: true}, 
+			() => this.isMissingRequiredField() ? this.props.onErrorStart() : this.props.onErrorStop()
+		)
 	}
 
 	@autobind
