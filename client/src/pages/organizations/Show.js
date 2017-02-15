@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
-import {Table, ListGroup, ListGroupItem, DropdownButton, MenuItem} from 'react-bootstrap'
+import {ListGroup, ListGroupItem, DropdownButton, MenuItem} from 'react-bootstrap'
 
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
@@ -8,25 +8,46 @@ import autobind from 'autobind-decorator'
 import History from 'components/History'
 import LinkTo from 'components/LinkTo'
 import Messages , {setMessages} from 'components/Messages'
-import ScrollableFieldset from 'components/ScrollableFieldset'
+import ReportCollection from 'components/ReportCollection'
+
+import OrganizationPoams from 'pages/organizations/Poams'
+import OrganizationLaydown from 'pages/organizations/Laydown'
+import OrganizationApprovals from 'pages/organizations/Approvals'
 
 import API from 'api'
-import {Organization, Poam} from 'models'
+import {Organization, Position, Poam} from 'models'
 
-export default class OrganizationDetails extends Page {
+const ACTION_COMPONENTS = {
+	poams: OrganizationPoams,
+	approvals: OrganizationApprovals,
+	reports: ReportCollection,
+	laydown: OrganizationLaydown,
+}
+
+export default class OrganizationShow extends Page {
 	static contextTypes = {
 		app: PropTypes.object.isRequired,
 	}
 
 	constructor(props) {
 		super(props)
+
 		this.state = {
-			organization: {
-				id: props.params.id,
-				poams: [],
-			},
+			organization: new Organization({id: props.params.id}),
+			action: props.params.action
 		}
+
 		setMessages(props,this.state)
+	}
+
+	componentWillReceiveProps(nextProps) {
+		if (nextProps.params.action !== this.state.action) {
+			this.setState({action: nextProps.params.action})
+		}
+		if (+nextProps.params.id !== this.state.organization.id) {
+			console.log(nextProps.params.id, this.state.organization.id)
+			this.loadData(nextProps)
+		}
 	}
 
 	fetchData(props) {
@@ -34,26 +55,43 @@ export default class OrganizationDetails extends Page {
 			organization(id:${props.params.id}) {
 				id, shortName, longName, type
 				parentOrg { id, shortName, longName }
-				poams { id, longName, shortName }
 				childrenOrgs { id, shortName, longName },
+				positions {
+					id, name, code
+					person { id, name }
+					associatedPositions {
+						id, name, code
+						person { id, name }
+					}
+				},
+				reports(pageNum:0, pageSize:25) {
+					list {
+						id, intent, engagementDate, keyOutcomes, nextSteps
+						author { id, name },
+						primaryAdvisor { id, name } ,
+						primaryPrincipal {id, name },
+						advisorOrg { id, shortName, longName }
+						principalOrg { id, shortName, longName }
+						location { id, name, lat, lng }
+					}
+				},
+				approvalSteps {
+					id, name, approvers { id, name, person { id, name}}
+				},
 			}
 		`).then(data => this.setState({organization: data.organization}))
 	}
 
 	render() {
 		let org = this.state.organization
-
-		let poamsContent = ''
-		if (org.type === 'ADVISOR_ORG') {
-			poamsContent = <ScrollableFieldset title="PoAMs / Pillars" height={500} >
-				{this.renderPoamsTable(org.poams)}
-			</ScrollableFieldset>
-		}
+		let action = this.state.action || 'poams'
 
 		let currentUser = this.context.app.state.currentUser
 		let isSuperUser = (currentUser) ? currentUser.isSuperUserForOrg(org) : false
 		let isAdmin = (currentUser) ? currentUser.isAdmin() : false
 		let showActions = isAdmin || isSuperUser
+
+		let ActionComponent = ACTION_COMPONENTS[action]
 
 		return (
 			<div>
@@ -61,13 +99,13 @@ export default class OrganizationDetails extends Page {
 
 				<Messages error={this.state.error} success={this.state.success} />
 
-				{ showActions &&
+				{showActions &&
 					<div className="pull-right">
 						<DropdownButton bsStyle="primary" title="Actions" id="actions" className="pull-right" onSelect={this.actionSelect}>
-							{isSuperUser && <MenuItem eventKey="edit" >Edit Organization</MenuItem>}
-							{isAdmin && <MenuItem eventKey="createSub">Create Sub-Organization</MenuItem> }
-							{isAdmin && <MenuItem eventKey="createPoam">Create Poam</MenuItem> }
-							{isSuperUser && <MenuItem eventKey="createPos">Create new Position</MenuItem> }
+							{isSuperUser && <MenuItem eventKey="edit">Edit Organization</MenuItem>}
+							{isAdmin && <MenuItem eventKey="createSub">Create Sub-Organization</MenuItem>}
+							{isAdmin && <MenuItem eventKey="createPoam">Create PoAM</MenuItem>}
+							{isSuperUser && <MenuItem eventKey="createPos">Create new Position</MenuItem>}
 						</DropdownButton>
 					</div>
 				}
@@ -99,42 +137,22 @@ export default class OrganizationDetails extends Page {
 						</Form.Field>}
 					</fieldset>
 
-					{poamsContent}
-
+					<ActionComponent organization={org} />
 				</Form>
 			</div>
 		)
 	}
 
-	renderPoamsTable(poams) {
-		return <Table>
-			<thead>
-				<tr>
-					<th>Name</th>
-					<th>Description</th>
-				</tr>
-			</thead>
-			<tbody>
-				{Poam.map(poams, poam =>
-					<tr key={poam.id}>
-						<td><LinkTo poam={poam} >{poam.shortName}</LinkTo></td>
-						<td>{poam.longName}</td>
-					</tr>
-				)}
-			</tbody>
-		</Table>
-	}
-
 	@autobind
 	actionSelect(eventKey, event) {
 		if (eventKey === 'createPos') {
-			History.push({pathname: 'positions/new', query: {organizationId: this.state.organization.id}})
+			History.push({pathname: Position.pathForNew(), query: {organizationId: this.state.organization.id}})
 		} else if (eventKey === 'createSub') {
-			History.push({pathname: 'organizations/new', query: {parentOrgId: this.state.organization.id}})
+			History.push({pathname: Organization.pathForNew(), query: {parentOrgId: this.state.organization.id}})
 		} else if (eventKey === 'edit') {
 			History.push(Organization.pathForEdit(this.state.organization))
 		} else if (eventKey === 'createPoam') {
-			History.push({pathname: 'poams/new', query: {responsibleOrg: this.state.organization.id}})
+			History.push({pathname: Poam.pathForNew(), query: {responsibleOrg: this.state.organization.id}})
 		} else {
 			console.log('Unimplemented Action: ' + eventKey)
 		}

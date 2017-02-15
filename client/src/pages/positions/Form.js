@@ -29,14 +29,17 @@ export default class PositionForm extends Component {
 		let currentUser = this.context.app.state.currentUser
 
 		let orgSearchQuery = {}
-		if (position.type === 'ADVISOR') {
+		let personSearchQuery = {}
+		if (position.type === 'ADVISOR' || position.type === 'SUPER_USER' || position.type === 'ADMINISTRATOR') {
 			orgSearchQuery.type = 'ADVISOR_ORG'
+			personSearchQuery.role = 'ADVISOR'
 			if (currentUser && currentUser.position && currentUser.position.type === 'SUPER_USER') {
 				orgSearchQuery.parentOrgId = currentUser.position.organization.id
 				orgSearchQuery.parentOrgRecursively = true
 			}
 		} else if (position.type === 'PRINCIPAL') {
 			orgSearchQuery.type = 'PRINCIPAL_ORG'
+			personSearchQuery.role = 'PRINCIPAL'
 		}
 
 		if (!position.permissions) {
@@ -82,7 +85,7 @@ export default class PositionForm extends Component {
 						<Autocomplete valueKey="name"
 							placeholder="Select the person in this position"
 							url="/api/people/search"
-							queryParams={position.type ? {role: position.type} : {}}
+							queryParams={personSearchQuery}
 						/>
 					</Form.Field>
 
@@ -189,6 +192,8 @@ export default class PositionForm extends Component {
 			position.type = position.permissions || 'ADVISOR'
 		}
 		delete position.permissions
+		position.organization = {id: position.organization.id}
+		position.person = (position.person.id) ? {id: position.person.id} : null
 
 		let url = `/api/positions/${edit ? 'update' : 'new'}`
 		API.send(url, position, {disableSubmits: true})

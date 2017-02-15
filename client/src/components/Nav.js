@@ -31,7 +31,7 @@ class Nav extends Component {
 					<NavItem>Home</NavItem>
 				</Link>
 
-				{currentUser && <Link to={{pathname: 'search', query: {type: 'reports', authorId: currentUser.id}}}>
+				{currentUser && <Link to={{pathname: '/search', query: {type: 'reports', authorId: currentUser.id}}}>
 					<NavItem>My Reports</NavItem>
 				</Link>
 				}
@@ -46,7 +46,7 @@ class Nav extends Component {
 
 				{inOrg &&
 					<SubNav>
-						<Link to={path}><NavItem>Details</NavItem></Link>
+						<Link to={path + '/'}><NavItem>PoAMs</NavItem></Link>
 						<Link to={path + '/approvals'}><NavItem>Approvals</NavItem></Link>
 						<Link to={path + '/reports'}><NavItem>Reports</NavItem></Link>
 						<Link to={path + '/laydown'}><NavItem>Laydown</NavItem></Link>

@@ -516,7 +516,7 @@ export default class ReportShow extends Page {
 	@autobind
 	actionSelect(eventKey, event) {
 		if (eventKey === 'edit') {
-			History.push(`/reports/${this.state.report.id}/edit`)
+			History.push(Report.pathForEdit(this.state.report))
 		} else if (eventKey === 'submit' ) {
 			this.submitDraft()
 		} else if (eventKey === 'email' ) {

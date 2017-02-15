@@ -17,7 +17,7 @@ public class SqlitePoamSearcher implements IPoamSearcher {
 
 	@Override
 	public PoamList runSearch(PoamSearchQuery query, Handle dbHandle) {
-		StringBuilder sql = new StringBuilder("SELECT poams.* FROM poams");
+		StringBuilder sql = new StringBuilder("/* SqlitePoamSearch */ SELECT poams.* FROM poams");
 		Map<String,Object> args = new HashMap<String,Object>();
 		
 		sql.append(" WHERE ");

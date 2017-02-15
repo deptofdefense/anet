@@ -20,7 +20,7 @@ public class SqliteOrganizationSearcher implements IOrganizationSearcher {
 
 	@Override
 	public OrganizationList runSearch(OrganizationSearchQuery query, Handle dbHandle) {
-		StringBuilder sql = new StringBuilder("SELECT " + OrganizationDao.ORGANIZATION_FIELDS
+		StringBuilder sql = new StringBuilder("/* SqliteOrganizationSearch */ SELECT " + OrganizationDao.ORGANIZATION_FIELDS
 				+ " FROM organizations WHERE organizations.id IN (SELECT organizations.id FROM organizations ");
 		Map<String,Object> sqlArgs = new HashMap<String,Object>();
 		

@@ -71,7 +71,7 @@ public class PersonResource implements IGraphQLResource {
 	@GraphQLFetcher
 	@Path("/")
 	public PersonList getAll(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
-		return new PersonList(pageNum, pageSize, dao.getAll(pageNum, pageSize));
+		return dao.getAll(pageNum, pageSize);
 	}
 	
 	/**

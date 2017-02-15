@@ -11,7 +11,7 @@ import Messages , {setMessages} from 'components/Messages'
 import ReportCollection from 'components/ReportCollection'
 
 import API from 'api'
-import {Organization} from 'models'
+import {Organization, Position, Poam} from 'models'
 
 export default class OrganizationReports extends Page {
 	static contextTypes = {
@@ -35,15 +35,6 @@ export default class OrganizationReports extends Page {
 				id, shortName, longName, type
 				parentOrg { id, shortName, longName }
 				childrenOrgs { id, shortName, longName },
-				reports(pageNum:0, pageSize:25) {
-					id, intent, engagementDate, keyOutcomes, nextSteps
-					author { id, name },
-					primaryAdvisor { id, name } ,
-					primaryPrincipal {id, name },
-					advisorOrg { id, shortName, longName }
-					principalOrg { id, shortName, longName }
-					location { id, name, lat, lng }
-				}
 			}
 		`).then(data => this.setState({organization: data.organization}))
 	}
@@ -112,13 +103,13 @@ export default class OrganizationReports extends Page {
 	@autobind
 	actionSelect(eventKey, event) {
 		if (eventKey === 'createPos') {
-			History.push({pathname: 'positions/new', query: {organizationId: this.state.organization.id}})
+			History.push({pathname: Position.pathForNew(), query: {organizationId: this.state.organization.id}})
 		} else if (eventKey === 'createSub') {
-			History.push({pathname: 'organizations/new', query: {parentOrgId: this.state.organization.id}})
+			History.push({pathname: Organization.pathForNew(), query: {parentOrgId: this.state.organization.id}})
 		} else if (eventKey === 'edit') {
 			History.push(Organization.pathForEdit(this.state.organization))
 		} else if (eventKey === 'createPoam') {
-			History.push({pathname: 'poams/new', query: {responsibleOrg: this.state.organization.id}})
+			History.push({pathname: Poam.pathForNew(), query: {responsibleOrg: this.state.organization.id}})
 		} else {
 			console.log('Unimplemented Action: ' + eventKey)
 		}

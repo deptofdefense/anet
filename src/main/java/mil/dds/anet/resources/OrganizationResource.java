@@ -73,7 +73,7 @@ public class OrganizationResource implements IGraphQLResource {
 	@Path("/")
 	public OrganizationList getAll(@DefaultValue("0") @QueryParam("pageNum") Integer pageNum, 
 			@DefaultValue("100") @QueryParam("pageSize") Integer pageSize) {
-		return new OrganizationList(pageNum, pageSize, dao.getAll(pageNum, pageSize));
+		return dao.getAll(pageNum, pageSize);
 	} 
 
 	@GET

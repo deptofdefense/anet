@@ -8,6 +8,7 @@ import org.skife.jdbi.v2.GeneratedKeys;
 import org.skife.jdbi.v2.Handle;
 
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.lists.AbstractAnetBeanList;
 import mil.dds.anet.beans.search.SavedSearch;
 import mil.dds.anet.database.mappers.SavedSearchMapper;
 import mil.dds.anet.utils.DaoUtils;
@@ -21,31 +22,20 @@ public class SavedSearchDao implements IAnetDao<SavedSearch> {
 	}
 	
 	@Override
-	public List<SavedSearch> getAll(int pageNum, int pageSize) {
-		String sql;
-		if (DaoUtils.isMsSql(dbHandle)) { 
-			sql = "SELECT * FROM savedSearches ORDER BY createdAt ASC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY";
-		} else { 
-			sql = "SELECT * from savedSearches ORDER BY createdAt ASC LIMIT :limit OFFSET :offset";
-		}
-		
-		return dbHandle.createQuery(sql)
-			.bind("limit", pageSize)
-			.bind("offset", pageSize * pageNum)
-			.map(new SavedSearchMapper())
-			.list();
+	public AbstractAnetBeanList<?> getAll(int pageNum, int pageSize) {
+		throw new UnsupportedOperationException();
 	}
 	
 	@Override
 	public SavedSearch getById(int id) { 
-		return dbHandle.createQuery("SELECT * from savedSearches where id = :id")
+		return dbHandle.createQuery("/* getSavedSearchById */ SELECT * from savedSearches where id = :id")
 				.bind("id", id)
 				.map(new SavedSearchMapper())
 				.first();
 	}
 
 	public List<SavedSearch> getSearchesByOwner(Person owner) { 
-		return dbHandle.createQuery("SELECT * FROM savedSearches WHERE ownerId = :ownerId")
+		return dbHandle.createQuery("/* getSavedSearchByOwner */ SELECT * FROM savedSearches WHERE ownerId = :ownerId")
 			.bind("ownerId", owner.getId())
 			.map(new SavedSearchMapper())
 			.list();
@@ -54,7 +44,7 @@ public class SavedSearchDao implements IAnetDao<SavedSearch> {
 	@Override
 	public SavedSearch insert(SavedSearch obj) {
 		obj.setCreatedAt(DateTime.now());
-		GeneratedKeys<Map<String, Object>> keys = dbHandle.createStatement("INSERT INTO savedSearches "
+		GeneratedKeys<Map<String, Object>> keys = dbHandle.createStatement("/* insertSavedSearch */ INSERT INTO savedSearches "
 				+ "(ownerId, name, objectType, query) "
 				+ "VALUES (:ownerId, :name, :objectType, :query)")
 			.bindFromProperties(obj)
@@ -67,7 +57,7 @@ public class SavedSearchDao implements IAnetDao<SavedSearch> {
 
 	@Override
 	public int update(SavedSearch obj) {
-		return dbHandle.createStatement("UPDATE savedSearches "
+		return dbHandle.createStatement("/* updateSavedSearch */ UPDATE savedSearches "
 				+ "SET name = :name, objectType = :objectType, query = :query "
 				+ "WHERE id = :id")
 			.bindFromProperties(obj)

@@ -46,7 +46,7 @@ const SEARCH_CONFIG = {
 			poams {id, shortName, longName}`
 	},
 	persons : {
-		listName : 'people: peopleList',
+		listName : 'people: personList',
 		variableType: 'PersonSearchQuery',
 		fields: 'id, name, rank, emailAddress, role , position { id, name, organization { id, shortName} }'
 	},
@@ -230,13 +230,12 @@ export default class Search extends Page {
 					</Alert>
 				}
 
-				<div className="pull-right">
-					{this.props.location.query.text && <Button onClick={this.showSaveModal}>Save search</Button>}
-				</div>
-
 				{numReports > 0 && (queryType === 'everything' || queryType === 'reports') &&
 					<fieldset>
 						<legend>Reports</legend>
+						<div className="pull-right">
+							{this.props.location.query.text && <Button onClick={this.showSaveModal}>Save search</Button>}
+						</div>
 						<ReportCollection paginatedReports={results.reports} goToPage={this.goToReportsPage} />
 					</fieldset>
 				}
@@ -416,7 +415,8 @@ export default class Search extends Page {
 		event.preventDefault()
 
 		let search = Object.without(this.state.saveSearch, 'show')
-		search.query = this.props.location.query.text
+		search.query = JSON.stringify({text: this.props.location.query.text })
+		search.objectType = 'REPORTS' //right now we only support saving searches for reports.
 
 		API.send('/api/savedSearches/new', search, {disableSubmits: true})
 			.then(response => {
