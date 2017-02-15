@@ -42,12 +42,12 @@
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
+	<td>sendKeys</td>
 	<td>id=code</td>
 	<td>yxvuts</td>
 </tr>
 <tr>
-	<td>type</td>
+	<td>sendKeys</td>
 	<td>id=name</td>
 	<td>barista super user</td>
 </tr>

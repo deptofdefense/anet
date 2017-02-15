@@ -42,12 +42,12 @@
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
+	<td>sendKeys</td>
 	<td>id=shortName</td>
 	<td>EF4.44</td>
 </tr>
 <tr>
-	<td>type</td>
+	<td>sendKeys</td>
 	<td>id=longName</td>
 	<td>Ministry of Cupcakes </td>
 </tr>

@@ -27,12 +27,12 @@
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
+	<td>sendKeys</td>
 	<td>id=SECURITY_BANNER_TEXT</td>
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
+	<td>sendKeys</td>
 	<td>id=SECURITY_BANNER_TEXT</td>
 	<td>DEMO&nbsp;&nbsp;ONLY</td>
 </tr>
@@ -43,11 +43,11 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>id=formBottomSubmit</td>
+	<td>id=SECURITY_BANNER_TEXT</td>
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
+	<td>sendKeys</td>
 	<td>id=SECURITY_BANNER_TEXT</td>
 	<td>DEMO USE ONLY</td>
 </tr>

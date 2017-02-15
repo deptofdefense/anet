@@ -27,7 +27,7 @@
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
+	<td>sendKeys</td>
 	<td>id=name</td>
 	<td>Abe Appleton</td>
 </tr>
@@ -37,12 +37,12 @@
 	<td>label=Advisor</td>
 </tr>
 <tr>
-	<td>type</td>
+	<td>sendKeys</td>
 	<td>id=emailAddress</td>
 	<td>abe@example.com</td>
 </tr>
 <tr>
-	<td>type</td>
+	<td>sendKeys</td>
 	<td>id=phoneNumber</td>
 	<td>555865309</td>
 </tr>

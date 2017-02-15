@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link rel="selenium.base" href="http://anet-dev.dds.mil:8080/" />
+<link rel="selenium.base" href="http://localhost:3000/" />
 <title>report-submit</title>
 </head>
 <body>
@@ -19,6 +19,11 @@
 <tr>
 	<td>click</td>
 	<td>id=createButton</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=New Report</td>
 	<td></td>
 </tr>
 <tr>
@@ -99,7 +104,7 @@
 <tr>
 	<td>sendKeys</td>
 	<td>class=public-DraftEditor-content</td>
-	<td>The engagement went very well and we decided to continue meeting to discuss the teenage mutant ninja turtles. </td>
+	<td>T</td>
 </tr>
 <tr>
 	<td>click</td>

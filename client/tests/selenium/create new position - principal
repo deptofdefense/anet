@@ -47,12 +47,12 @@
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
+	<td>sendKeys</td>
 	<td>id=code</td>
 	<td>fedcba</td>
 </tr>
 <tr>
-	<td>type</td>
+	<td>sendKeys</td>
 	<td>id=name</td>
 	<td>pastry chef</td>
 </tr>
