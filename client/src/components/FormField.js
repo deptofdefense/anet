@@ -131,14 +131,12 @@ export default class FormField extends Component {
 				{...childProps} 
 				value={defaultValue} 
 				onChange={this.props.onChange || this.onChange} 
-				onBlur={this.onBlur} />
+				onBlur={this.onUserTouchedField} />
 
-			children = this.isMissingRequiredField() ? 
-				<div>
-					{formControl}
-					<HelpBlock>{this.props.humanName} is required</HelpBlock>
-				</div>
-				: formControl
+			children = <div>
+				{formControl}
+				<HelpBlock className={!this.isMissingRequiredField() ? 'hidden' : ''} >{this.props.humanName} is required</HelpBlock>
+			</div>
 		}
 
 		if (icon) {
@@ -214,10 +212,14 @@ export default class FormField extends Component {
 	}
 
 	@autobind
-	onBlur(event) {
+	onUserTouchedField() {
 		this.setState(
 			{userHasBlurred: true}, 
-			() => this.isMissingRequiredField() ? this.props.onErrorStart() : this.props.onErrorStop()
+			() => {
+				if (this.props.required) {
+					this.isMissingRequiredField() ? this.props.onErrorStart() : this.props.onErrorStop()
+				}
+			}
 		)
 	}
 
@@ -228,6 +230,8 @@ export default class FormField extends Component {
 		let formContext = this.context.formFor
 		if (formContext)
 			formContext[id] = value
+
+		this.onUserTouchedField()
 
 		let form = this.context.form
 		if (form && form.props.onChange) {
