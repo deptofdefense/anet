@@ -3,6 +3,10 @@ import utils from 'utils'
 export default class Model {
 	static schema = {}
 
+	static resourceName = null
+	static displayName = null
+	static listName = null
+
 	static fromArray(array) {
 		if (!array)
 			return []
@@ -53,9 +57,19 @@ export default class Model {
 	}
 
 	constructor(props) {
-		Object.assign(this, this.constructor.schema)
-		if (props)
+		Object.forEach(this.constructor.schema, (key, value) => {
+			if (Array.isArray(value) && value.length === 0) {
+				this[key] = []
+			} else if (value && typeof value === 'object' && Object.keys(value).length === 0) {
+				this[key] = {}
+			} else {
+				this[key] = value
+			}
+		})
+
+		if (props) {
 			this.setState(props)
+		}
 	}
 
 	setState(props) {
@@ -74,5 +88,4 @@ export default class Model {
 	toString() {
 		return this.name || this.id
 	}
-
 }

@@ -117,7 +117,6 @@
   "eslintConfig": {
     "extends": "react-app",
     "rules": {
-      "quotes": ["warn", "single"],
       "quote-props": ["warn", "as-needed"],
       "semi": ["warn", "never"],
       "dot-notation": ["warn"],

@@ -88,7 +88,7 @@ export default class PositionShow extends Page {
 						</Form.Field>}
 
 						<Form.Field id="location" label="Location">
-							{position.location && <Link to={'/locations/' + position.location.id}>{position.location.name}</Link>}
+							{position.location && <LinkTo location={position.location}>{position.location.name}</LinkTo>}
 						</Form.Field>
 
 						{position.person && <Form.Field id="person" label="Current Assigned Person" value={position.person && position.person.name} >
@@ -160,7 +160,7 @@ export default class PositionShow extends Page {
 	actionSelect(eventKey, event) {
 		let position = this.state.position
 		if (eventKey === 'edit') {
-			History.push('/positions/' + position.id + '/edit')
+			History.push(Position.pathForEdit(position))
 		} else {
 			console.error('Unimplemented Action: ' + eventKey)
 		}

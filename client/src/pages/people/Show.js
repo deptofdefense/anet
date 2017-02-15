@@ -140,7 +140,7 @@ export default class PersonShow extends Page {
 	@autobind
 	actionSelect(eventKey, event) {
 		if (eventKey === 'edit') {
-			History.push(`/people/${this.state.person.id}/edit`)
+			History.push(Person.pathForEdit(this.state.person))
 		} else {
 			console.log('Unimplemented Action: ' + eventKey)
 		}

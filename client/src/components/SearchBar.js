@@ -31,7 +31,7 @@ export default class SearchBar extends Component {
 	}
 
 	onSubmit(event) {
-		History.push({pathname: 'search', query: {text: this.state.query}})
+		History.push({pathname: '/search', query: {text: this.state.query}})
 		event.preventDefault()
 		event.stopPropagation()
 	}
