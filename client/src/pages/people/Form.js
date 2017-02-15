@@ -8,6 +8,9 @@ import TextEditor from 'components/TextEditor'
 import Autocomplete from 'components/Autocomplete'
 import History from 'components/History'
 
+import _compact from 'lodash.compact'
+import _values from 'lodash.values'
+
 import API from 'api'
 import {Person} from 'models'
 
@@ -68,8 +71,8 @@ export default class PersonForm extends Component {
 				<Form.Field id="rank"  componentClass="select"
 					required={isAdvisor} 
 					humanName="Rank"
-					onErrorStart={this.onFieldEnterErrorState}
-					onErrorStop={this.onFieldExitErrorState}>
+					onErrorStart={() => this.onFieldEnterErrorState('rank')}
+					onErrorStop={() => this.onFieldExitErrorState('rank')}>
 
 					<option />
 					<option value="OF-1" >OF-1</option>
@@ -85,8 +88,8 @@ export default class PersonForm extends Component {
 				<Form.Field id="gender" componentClass="select"
 					required={isAdvisor} 
 					humanName="Gender"
-					onErrorStart={this.onFieldEnterErrorState}
-					onErrorStop={this.onFieldExitErrorState}>
+					onErrorStart={() => this.onFieldEnterErrorState('gender')}
+					onErrorStop={() => this.onFieldExitErrorState('gender')}>
 					<option />
 					<option value="MALE" >Male</option>
 					<option value="FEMALE" >Female</option>
@@ -95,8 +98,8 @@ export default class PersonForm extends Component {
 				<Form.Field id="country" componentClass="select"
 					required={isAdvisor} 
 					humanName="Country"
-					onErrorStart={this.onFieldEnterErrorState}
-					onErrorStop={this.onFieldExitErrorState}>
+					onErrorStart={() => this.onFieldEnterErrorState('country')}
+					onErrorStop={() => this.onFieldExitErrorState('country')}>
 					<option />
 					<option>Afghanistan</option>
 					<option>Albania</option>
@@ -173,11 +176,6 @@ export default class PersonForm extends Component {
 	}
 
 	@autobind
-	isSubmitDisabled() {
-		return this.state.formErrorsCount > 0
-	}
-
-	@autobind
 	onFieldEnterErrorState(fieldName) {
 		this.setState({formErrors: {[fieldName]: true}})
 	}
@@ -185,6 +183,11 @@ export default class PersonForm extends Component {
 	@autobind
 	onFieldExitErrorState(fieldName) {
 		this.setState({formErrors: {[fieldName]: false}})
+	}
+
+	@autobind
+	isSubmitDisabled() {
+		return _compact(_values(this.state.formErrors)).length > 0
 	}
 
 	@autobind

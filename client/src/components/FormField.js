@@ -225,8 +225,6 @@ export default class FormField extends Component {
 			{userHasTouchedField: true}, 
 			() => {
 				if (this.props.required) {
-					// TODO We need to only call these functions when the validity has changed, not every time
-					// that anything changes.
 					this.isMissingRequiredField() ? this.props.onErrorStart() : this.props.onErrorStop()
 				}
 			}
