@@ -92,7 +92,7 @@ export default class FormField extends Component {
 		}
 
 		const validationState = this.props.validationState || 
-			(this.state.isValid === false || this.isMissingRequiredField()) ? 'error' : null
+			(this.state.isValid === false || this.isMissingRequiredField(this.props)) ? 'error' : null
 
 		let horizontal = this.context.form && this.context.form.props.horizontal
 		if (typeof this.props.horizontal !== 'undefined') {
@@ -178,8 +178,8 @@ export default class FormField extends Component {
 	}
 
 	@autobind
-	isMissingRequiredField() {
-		return this.props.required && !this.state.value && this.state.userHasTouchedField
+	isMissingRequiredField(props) {
+		return props.required && !this.state.value && this.state.userHasTouchedField
 	}
 
 	shouldComponentUpdate(newProps, newState, newContext) {
@@ -219,22 +219,28 @@ export default class FormField extends Component {
 		return props.value || this.getValue(props, context) || ''
 	}
 
+	componentWillReceiveProps(nextProps) {
+		if (nextProps.required !== this.props.required) {
+			this.updateValidationState(nextProps)
+		}
+	}
+
+	@autobind
+	updateValidationState(props) {
+		if (!this.state.userHasTouchedField) {
+			return
+		}
+
+		if (this.isMissingRequiredField(props) || this.state.isValid === false) {
+			props.onErrorStart()
+		} else if (props.onErrorStop && !this.isMissingRequiredField(props) && this.state.isValid !== false) {
+			props.onErrorStop()
+		}
+	}
+
 	@autobind
 	onUserTouchedField() {
-		this.setState(
-			{userHasTouchedField: true}, 
-			() => {
-				if ((this.props.required && this.isMissingRequiredField()) 
-					|| this.state.isValid === false) {
-					this.props.onErrorStart()
-				} else if (this.props.onErrorStop && (
-						(this.props.required && !this.isMissingRequiredField() && this.state.isValid) 
-						|| this.state.isValid)
-					) {
-					this.props.onErrorStop()
-				}
-			}
-		)
+		this.setState({userHasTouchedField: true}, () => this.updateValidationState(this.props))
 	}
 
 	@autobind
