@@ -8,7 +8,7 @@ import TextEditor from 'components/TextEditor'
 import Autocomplete from 'components/Autocomplete'
 import History from 'components/History'
 
-import _compact from 'lodash.compact'
+import _some from 'lodash.some'
 import _values from 'lodash.values'
 
 import API from 'api'
@@ -187,7 +187,7 @@ export default class PersonForm extends Component {
 
 	@autobind
 	isSubmitDisabled() {
-		return _compact(_values(this.state.formErrors)).length > 0
+		return _some(_values(this.state.formErrors))
 	}
 
 	@autobind

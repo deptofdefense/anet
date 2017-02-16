@@ -67,6 +67,7 @@
     "graphql": "^0.8.2",
     "immutability-helper": "kolodny/immutability-helper",
     "leaflet": "^1.0.2",
+    "lodash.some": "^4.6.0",
     "moment": "^2.17.1",
     "nprogress": "^0.2.0",
     "pluralize": "^3.1.0",
@@ -117,10 +118,20 @@
   "eslintConfig": {
     "extends": "react-app",
     "rules": {
-      "quote-props": ["warn", "as-needed"],
-      "semi": ["warn", "never"],
-      "dot-notation": ["warn"],
-      "no-unused-vars": ["warn"]
+      "quote-props": [
+        "warn",
+        "as-needed"
+      ],
+      "semi": [
+        "warn",
+        "never"
+      ],
+      "dot-notation": [
+        "warn"
+      ],
+      "no-unused-vars": [
+        "warn"
+      ]
     }
   }
 }
