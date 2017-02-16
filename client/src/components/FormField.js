@@ -136,7 +136,7 @@ export default class FormField extends Component {
 			const formControl = <FormControl 
 				{...childProps} 
 				value={defaultValue} 
-				onChange={this.props.onChange || this.onChange} 
+				onChange={this.onChange} 
 				onBlur={this.onUserTouchedField} />
 
 			children = <div>
@@ -248,13 +248,18 @@ export default class FormField extends Component {
 
 	@autobind
 	onChange(event) {
+		this.onUserTouchedField(event)
+
+		if (this.props.onChange) {
+			this.props.onChange()
+			return
+		}
+
 		let id = this.props.id
 		let value = event && event.target ? event.target.value : event
 		let formContext = this.context.formFor
 		if (formContext)
 			formContext[id] = value
-
-		this.onUserTouchedField(event)
 
 		let form = this.context.form
 		if (form && form.props.onChange) {
