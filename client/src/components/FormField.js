@@ -49,8 +49,8 @@ export default class FormField extends Component {
 
 		humanName: PropTypes.string,
 		required: PropTypes.bool,
-		onErrorStart: PropTypes.func,
-		onErrorStop: PropTypes.func,
+		onError: PropTypes.func,
+		onValid: PropTypes.func,
 
 		// If you don't pass children, we will automatically create a FormControl.
 		// You can use componentClass to override its type (for example, for a select).
@@ -80,7 +80,7 @@ export default class FormField extends Component {
 			...childProps
 		} = this.props
 
-		childProps = Object.without(childProps, 'getter', 'horizontal', 'onErrorStart', 'onErrorStop', 'humanName')
+		childProps = Object.without(childProps, 'getter', 'horizontal', 'onError', 'onValid', 'humanName')
 
 		let defaultValue = this.getDefaultValue(this.props, this.context)
 
@@ -232,9 +232,9 @@ export default class FormField extends Component {
 		}
 
 		if (this.isMissingRequiredField(props) || this.state.isValid === false) {
-			props.onErrorStart()
-		} else if (props.onErrorStop && !this.isMissingRequiredField(props) && this.state.isValid !== false) {
-			props.onErrorStop()
+			props.onError()
+		} else if (props.onValid && !this.isMissingRequiredField(props) && this.state.isValid !== false) {
+			props.onValid()
 		}
 	}
 

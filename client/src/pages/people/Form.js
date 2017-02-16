@@ -47,8 +47,8 @@ export default class PersonForm extends Component {
 				<Form.Field id="name" 
 					required
 					humanName="Name"
-					onErrorStart={() => this.onFieldEnterErrorState('name')}
-					onErrorStop={() => this.onFieldExitErrorState('name')} />
+					onError={() => this.onFieldEnterErrorState('name')}
+					onValid={() => this.onFieldExitErrorState('name')} />
 
 				{edit ?
 					<Form.Field type="static" id="role" />
@@ -65,14 +65,14 @@ export default class PersonForm extends Component {
 				<Form.Field id="emailAddress" label="Email" required={isAdvisor} 
 					humanName="Valid email address"
 					type="email"
-					onErrorStart={() => this.onFieldEnterErrorState('emailAddress')}
-					onErrorStop={() => this.onFieldExitErrorState('emailAddress')} />
+					onError={() => this.onFieldEnterErrorState('emailAddress')}
+					onValid={() => this.onFieldExitErrorState('emailAddress')} />
 				<Form.Field id="phoneNumber" label="Phone Number" />
 				<Form.Field id="rank"  componentClass="select"
 					required={isAdvisor} 
 					humanName="Rank"
-					onErrorStart={() => this.onFieldEnterErrorState('rank')}
-					onErrorStop={() => this.onFieldExitErrorState('rank')}>
+					onError={() => this.onFieldEnterErrorState('rank')}
+					onValid={() => this.onFieldExitErrorState('rank')}>
 
 					<option />
 					<option value="OF-1" >OF-1</option>
@@ -88,8 +88,8 @@ export default class PersonForm extends Component {
 				<Form.Field id="gender" componentClass="select"
 					required={isAdvisor} 
 					humanName="Gender"
-					onErrorStart={() => this.onFieldEnterErrorState('gender')}
-					onErrorStop={() => this.onFieldExitErrorState('gender')}>
+					onError={() => this.onFieldEnterErrorState('gender')}
+					onValid={() => this.onFieldExitErrorState('gender')}>
 					<option />
 					<option value="MALE" >Male</option>
 					<option value="FEMALE" >Female</option>
@@ -98,8 +98,8 @@ export default class PersonForm extends Component {
 				<Form.Field id="country" componentClass="select"
 					required={isAdvisor} 
 					humanName="Country"
-					onErrorStart={() => this.onFieldEnterErrorState('country')}
-					onErrorStop={() => this.onFieldExitErrorState('country')}>
+					onError={() => this.onFieldEnterErrorState('country')}
+					onValid={() => this.onFieldExitErrorState('country')}>
 					<option />
 					<option>Afghanistan</option>
 					<option>Albania</option>
