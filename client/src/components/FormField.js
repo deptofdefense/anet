@@ -227,9 +227,10 @@ export default class FormField extends Component {
 				if ((this.props.required && this.isMissingRequiredField()) 
 					|| this.state.isValid === false) {
 					this.props.onErrorStart()
-				} else if (this.props.onErrorStop
-					&& (this.props.required && !this.isMissingRequiredField() && this.state.isValid) 
-					|| this.state.isValid) {
+				} else if (this.props.onErrorStop && (
+						(this.props.required && !this.isMissingRequiredField() && this.state.isValid) 
+						|| this.state.isValid)
+					) {
 					this.props.onErrorStop()
 				}
 			}
@@ -239,7 +240,6 @@ export default class FormField extends Component {
 	@autobind
 	onBlur(event) {
 		this.onUserTouchedField()
-		this.setState({isValid: event.target.checkValidity()})
 	}
 
 	@autobind
@@ -250,7 +250,10 @@ export default class FormField extends Component {
 		if (formContext)
 			formContext[id] = value
 
-		this.onUserTouchedField()
+		this.setState(
+			{isValid: event.target.checkValidity()}, 
+			() => this.onUserTouchedField()
+		)
 
 		let form = this.context.form
 		if (form && form.props.onChange) {
