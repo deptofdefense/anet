@@ -239,8 +239,11 @@ export default class FormField extends Component {
 	}
 
 	@autobind
-	onUserTouchedField() {
-		this.setState({userHasTouchedField: true}, () => this.updateValidationState(this.props))
+	onUserTouchedField(event) {
+		this.setState({
+			isValid: event.target.checkValidity(),
+			userHasTouchedField: true
+		}, () => this.updateValidationState(this.props))
 	}
 
 	@autobind
@@ -251,10 +254,7 @@ export default class FormField extends Component {
 		if (formContext)
 			formContext[id] = value
 
-		this.setState(
-			{isValid: event.target.checkValidity()}, 
-			() => this.onUserTouchedField()
-		)
+		this.onUserTouchedField(event)
 
 		let form = this.context.form
 		if (form && form.props.onChange) {
