@@ -183,12 +183,12 @@ export default class FormField extends Component {
 	}
 
 	shouldComponentUpdate(newProps, newState, newContext) {
-		let newValue = this.getDefaultValue(newProps, newContext)
-		let oldValue = this.state.value
-
 		if (this.state.userHasTouchedField !== newState.userHasTouchedField) {
 			return true
 		}
+
+		let newValue = this.getDefaultValue(newProps, newContext)
+		let oldValue = this.state.value
 
 		if (newValue !== oldValue) {
 			return true
