@@ -77,13 +77,7 @@ public class MssqlOrganizationSearcher implements IOrganizationSearcher {
 			.bind("offset", query.getPageSize() * query.getPageNum())
 			.bind("limit", query.getPageSize())
 			.map(new OrganizationMapper());
-		result.setList(sqlQuery.list());
-		if (result.getList().size() >  0) { 
-			result.setTotalCount((Integer) sqlQuery.getContext().getAttribute("totalCount"));
-		} else { 
-			result.setTotalCount(0);
-		}
-		return result;
+		return OrganizationList.fromQuery(sqlQuery, query.getPageNum(), query.getPageSize());
 	}
 	
 }
