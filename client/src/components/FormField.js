@@ -137,7 +137,7 @@ export default class FormField extends Component {
 				{...childProps} 
 				value={defaultValue} 
 				onChange={this.props.onChange || this.onChange} 
-				onBlur={this.onBlur} />
+				onBlur={this.onUserTouchedField} />
 
 			children = <div>
 				{formControl}
@@ -241,11 +241,6 @@ export default class FormField extends Component {
 	@autobind
 	onUserTouchedField() {
 		this.setState({userHasTouchedField: true}, () => this.updateValidationState(this.props))
-	}
-
-	@autobind
-	onBlur(event) {
-		this.onUserTouchedField()
 	}
 
 	@autobind
