@@ -69,6 +69,7 @@
     "graphql": "^0.8.2",
     "immutability-helper": "kolodny/immutability-helper",
     "leaflet": "^1.0.2",
+    "locale-compare-polyfill": "0.0.2",
     "lodash.some": "^4.6.0",
     "moment": "^2.17.1",
     "nprogress": "^0.2.0",
