@@ -50,15 +50,19 @@ export default class PersonEdit extends Page {
 		let currentUser = this.context.app.state.currentUser
 		let canEditPosition = currentUser && currentUser.isSuperUser()
 
+		const legendText = person.status === 'NEW_USER' ? 'Create your profile' : `Edit ${person.name}`
+
 		return (
 			<div>
 				<ContentForHeader>
-					<h2>Edit {person.name}</h2>
+					<h2 className="header-text">{legendText}</h2>
 				</ContentForHeader>
 
-				<Breadcrumbs items={[[`Edit ${person.name}`, Person.pathForEdit(person)]]} />
+				{person.status !== 'NEW_USER' && 
+					<Breadcrumbs items={[[`Edit ${person.name}`, Person.pathForEdit(person)]]} />
+				}
 
-				<PersonForm person={person} edit showPositionAssignment={canEditPosition} />
+				<PersonForm person={person} edit showPositionAssignment={canEditPosition} legendText={legendText} />
 			</div>
 		)
 	}

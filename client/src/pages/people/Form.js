@@ -21,6 +21,7 @@ export default class PersonForm extends Component {
 		person: PropTypes.object.isRequired,
 		edit: PropTypes.bool,
 		showPositionAssignment: PropTypes.bool,
+		legendText: PropTypes.string
 	}
 
 	constructor(props) {
@@ -35,13 +36,7 @@ export default class PersonForm extends Component {
 	render() {
 		let {person, edit, showPositionAssignment} = this.props
 		const isAdvisor = person.role === 'ADVISOR'
-
-		let legendText
-		if (person.status === 'NEW_USER') {
-			legendText = 'Create your profile'
-		} else {
-			legendText = edit ? `Edit ${person.name}` : 'Create a new person'
-		}
+		const legendText = this.props.legendText || (edit ? `Edit ${person.name}` : 'Create a new person')
 
 		return <Form formFor={person} onChange={this.onChange} onSubmit={this.onSubmit} horizontal submitText="Save person" 
 					 submitDisabled={this.isSubmitDisabled()}>

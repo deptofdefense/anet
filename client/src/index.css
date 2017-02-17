@@ -322,3 +322,7 @@ a.home-tile {
 .getting-started-grid p {
 	margin-bottom: 0;
 }
+
+.header-text {
+	text-align: center;
+}

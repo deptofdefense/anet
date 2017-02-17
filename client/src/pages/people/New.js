@@ -30,7 +30,7 @@ export default class PersonNew extends Page {
 		return (
 			<div>
 				<ContentForHeader>
-					<h2>Create a new Person</h2>
+					<h2 className="header-text">Create a new Person</h2>
 				</ContentForHeader>
 
 				<Breadcrumbs items={[['Create new Person', Person.pathForNew()]]} />
