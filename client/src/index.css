@@ -255,3 +255,8 @@ a.home-tile {
 	float: right;
 	margin-top: -38px;
 }
+
+.not-found {
+	background: red;
+	/*background-image: url(../public/mountains.png)*/
+}
