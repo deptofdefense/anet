@@ -40,10 +40,6 @@ export default class PersonEdit extends Page {
 			if (data.person.endOfTourDate) {
 				data.person.endOfTourDate = moment(data.person.endOfTourDate).format()
 			}
-			if (data.person.status === 'NEW_USER') {
-				//this is the inital setup of this user
-				data.person.status = 'ACTIVE'
-			}
 			this.setState({person: new Person(data.person)})
 		})
 	}
