@@ -2,6 +2,7 @@ import React, {Component, PropTypes} from 'react'
 import {FormControl} from 'react-bootstrap'
 import Autosuggest from 'react-autosuggest-ie11-compatible'
 import autobind from 'autobind-decorator'
+import _debounce from 'lodash.debounce'
 
 import API from 'api'
 import utils from 'utils'
@@ -47,6 +48,8 @@ export default class Autocomplete extends Component {
 	constructor(props) {
 		super(props)
 
+		this.fetchSuggestionsDebounced = _debounce(this.fetchSuggestions, 200)
+
 		let value = this.componentWillReceiveProps(props)
 
 		this.state = {
@@ -84,7 +87,7 @@ export default class Autocomplete extends Component {
 		return <div>
 			<Autosuggest
 				suggestions={this.state.noSuggestions ? [{}] : this.state.suggestions}
-				onSuggestionsFetchRequested={this.fetchSuggestions}
+				onSuggestionsFetchRequested={this.fetchSuggestionsDebounced}
 				onSuggestionsClearRequested={this.clearSuggestions}
 				onSuggestionSelected={this.onSuggestionSelected}
 				getSuggestionValue={this.getStringValue}
