@@ -46,7 +46,7 @@ class Header extends Component {
 						</Col>
 						
 						{ !this.props.minimalHeader && 
-							<Col xs={7}>
+							<Col xs={7} className="middle-header">
 								{middleContent || <SearchBar />}
 							</Col>
 						}
