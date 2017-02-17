@@ -9,6 +9,8 @@ import ReactDOM from 'react-dom'
 import {Router, Route, IndexRoute, browserHistory} from 'react-router'
 import {InjectablesProvider} from 'react-injectables'
 
+import API from 'api'
+
 import App from './pages/App'
 import Home from './pages/Home'
 import Search from './pages/Search'
@@ -48,8 +50,7 @@ import OnboardingShow from './pages/onboarding/Show'
 ReactDOM.render((
 	<InjectablesProvider>
 		<Router history={browserHistory}>
-			<Route path="/" component={App}>
-				<IndexRoute component={Home} />
+			<Route path="/" component={App} getIndexRoute={getIndexRoute}>
 				<Route path="search" component={Search} />
 
 				<Route path="reports">
@@ -99,3 +100,13 @@ ReactDOM.render((
 		</Router>
 	</InjectablesProvider>
 ), document.getElementById('root'))
+
+function getIndexRoute(_, cb) {
+	API.query(/* GraphQL */`
+		person(f:me) {
+			status
+		}
+	`).then(({status}) => 
+		cb(null, <Route component={status === 'NEW_USER' ? OnboardingShow : Home} />)
+	)
+}
