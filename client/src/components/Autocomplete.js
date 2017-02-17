@@ -129,8 +129,14 @@ export default class Autocomplete extends Component {
 	fetchSuggestions(value) {
 		if (this.props.url) {
 			let url = this.props.url + '?text=' + value.value
-			if (this.props.queryParams) {
-				url += '&' + utils.createUrlParams(this.props.queryParams)
+
+			let queryParams = this.props.queryParams || {}
+			if (!queryParams.pageSize) {
+				queryParams.pageSize = 25
+			}
+
+			if (queryParams) {
+				url += '&' + utils.createUrlParams(queryParams)
 			}
 
 			let selectedIds = this.selectedIds
@@ -150,12 +156,12 @@ export default class Autocomplete extends Component {
 					+ 'list { ' + this.props.fields + '}'
 					+ '}'
 			let variableDef = '($query: ' + resourceName + 'SearchQuery)'
-			let queryVars = { text: value.value }
+			let queryVars = {text: value.value, pageSize: 25}
 			if (this.props.queryParams) {
-				Object.forEach(this.props.queryParams, (key,val) => queryVars[key] = val)
+				Object.assign(queryVars, this.props.queryParams)
 			}
 
-			API.query(graphQlQuery, { query: queryVars}, variableDef)
+			API.query(graphQlQuery, {query: queryVars}, variableDef)
 				.then(data => {
 					let noSuggestions = data[listName].list.length === 0
 					this.setState({suggestions: data[listName].list, noSuggestions})
