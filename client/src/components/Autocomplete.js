@@ -8,6 +8,8 @@ import utils from 'utils'
 
 import './Autocomplete.css'
 
+import SEARCH_ICON from 'resources/search.png'
+
 export default class Autocomplete extends Component {
 	static propTypes = {
 		value: PropTypes.oneOfType([
@@ -78,6 +80,7 @@ export default class Autocomplete extends Component {
 		inputProps.value = this.state.stringValue
 		inputProps.onChange = this.onInputChange
 		inputProps.onBlur = this.onInputBlur
+
 		return <div>
 			<Autosuggest
 				suggestions={this.state.noSuggestions ? [{}] : this.state.suggestions}
@@ -90,6 +93,8 @@ export default class Autocomplete extends Component {
 				renderSuggestion={this.renderSuggestion}
 				focusInputOnSuggestionClick={false}
 			/>
+
+			<img src={SEARCH_ICON} className="form-control-icon" />
 		</div>
 	}
 
