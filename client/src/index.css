@@ -75,6 +75,24 @@ fieldset.collapsable legend div.collapsableToggle {
 	width: 100%;
 }
 
+.form-control-icon {
+	position: absolute;
+	top: 4px;
+	right: 2rem;
+	height: 26px;
+	z-index: 2;
+	opacity: 0.5;
+}
+
+.input-group .form-control-icon {
+	right: 5rem;
+}
+
+.react-autosuggest__suggestions-list {
+	max-height: 231px;
+	overflow-y: scroll;
+}
+
 .shortcut-list {
 	padding: 0;
 	margin-top: -4px;
