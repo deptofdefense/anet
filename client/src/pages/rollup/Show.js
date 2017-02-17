@@ -39,8 +39,8 @@ export default class RollupShow extends Page {
 
 	get dateStr() { return this.props.date.format('DD MMM YYYY') }
 	get dateLongStr() { return this.props.date.format('DD MMMM YYYY') }
-	get rollupStart() { return this.props.date.startOf('day') }
-	get rollupEnd() { return this.props.date.endOf('day') }
+	get rollupStart() { return moment(this.props.date).startOf('day') }
+	get rollupEnd() { return moment(this.props.date).endOf('day') }
 
 	constructor(props) {
 		super(props)
@@ -67,7 +67,7 @@ export default class RollupShow extends Page {
 		let rollupQuery = {
 			releasedAtStart: this.rollupStart.valueOf(),
 			releasedAtEnd: this.rollupEnd.valueOf(),
-			engagementDateStart: this.rollupStart.subtract(14, 'days').valueOf()
+			engagementDateStart: moment(this.rollupStart).subtract(14, 'days').valueOf()
 		}
 		API.query(/* GraphQL */`
 			reportList(f:search, query:$rollupQuery) {
