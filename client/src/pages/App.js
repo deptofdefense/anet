@@ -51,7 +51,7 @@ export default class App extends Page {
 	fetchData() {
 		API.query(/* GraphQL */`
 			person(f:me) {
-				id, name, role, emailAddress, rank, status
+				name
 				position {
 					id, name, type,
 					organization { id, shortName , allDescendantOrgs { id }}
@@ -76,10 +76,6 @@ export default class App extends Page {
 
 		let settings = this.state.settings
 		data.adminSettings.forEach(setting => settings[setting.key] = setting.value)
-
-		if (currentUser.id && currentUser.status === 'NEW_USER') {
-			History.push('/onboarding')
-		}
 
 		return {currentUser, settings, organizations}
 	}

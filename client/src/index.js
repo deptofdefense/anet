@@ -106,7 +106,7 @@ function getIndexRoute(_, cb) {
 		person(f:me) {
 			status
 		}
-	`).then(({status}) => 
-		cb(null, <Route component={status === 'NEW_USER' ? OnboardingShow : Home} />)
+	`).then(
+		({person}) => cb(null, <Route component={person.status === 'NEW_USER' ? OnboardingShow : Home} />)
 	)
 }
