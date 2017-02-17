@@ -24,6 +24,7 @@ export default class Home extends Page {
 			upcomingEngagements: null,
 			savedSearches: [],
 			selectedSearch: null,
+			hasDismissedGettingStarted: window.localStorage.hasDismissedGettingStarted
 		}
 	}
 
@@ -77,31 +78,33 @@ export default class Home extends Page {
 				<Breadcrumbs />
 				<Messages error={this.state.error} success={this.state.success} />
 
-				<fieldset className="home-tile-row">
-					<legend>Getting Started</legend>
-					<Grid fluid className="getting-started-grid">
-						<Row>
-							<h3>Welcome to ANET!</h3>
-						</Row>
-						<Row>
-							<Col xs={4}>
-								<p>Just getting started?</p>
-								<a>Download the manual</a>
-							</Col>
-							<Col xs={4}>
-								<p>Not sure where things are?</p>
-								<a>Take a guided tour</a>
-							</Col>
-							<Col xs={4}>
-								<p>Still having trouble?</p>
-								<a>Contact CJ7 Trexs for training</a>
-							</Col>
-						</Row>
-						<Row>
-							<Button bsStyle="primary">Dismiss</Button>
-						</Row>
-					</Grid>
-				</fieldset>
+				{!this.state.hasDismissedGettingStarted && 
+					<fieldset className="home-tile-row">
+						<legend>Getting Started</legend>
+						<Grid fluid className="getting-started-grid">
+							<Row>
+								<h3>Welcome to ANET!</h3>
+							</Row>
+							<Row>
+								<Col xs={4}>
+									<p>Just getting started?</p>
+									<a>Download the manual</a>
+								</Col>
+								<Col xs={4}>
+									<p>Not sure where things are?</p>
+									<a>Take a guided tour</a>
+								</Col>
+								<Col xs={4}>
+									<p>Still having trouble?</p>
+									<a href="mailto:todo.what.is.the.real.address@dds.mil">Contact CJ7 Trexs for training</a>
+								</Col>
+							</Row>
+							<Row>
+								<Button bsStyle="primary" onClick={this.onDismissGettingStarted}>Dismiss</Button>
+							</Row>
+						</Grid>
+					</fieldset>
+				}
 				<fieldset className="home-tile-row">
 					<legend>My ANET Snapshot</legend>
 					<Grid fluid>
@@ -155,5 +158,11 @@ export default class Home extends Page {
 		let id = event && event.target ? event.target.value : event
 		let search = this.state.savedSearches.find(el => el.id === id)
 		this.setState({selectedSearch: search})
+	}
+
+	@autobind
+	onDismissGettingStarted() {
+		window.localStorage.hasDismissedGettingStarted = true
+		this.setState({hasDismissedGettingStarted: true})
 	}
 }
