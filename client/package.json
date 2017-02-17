@@ -69,6 +69,7 @@
     "immutability-helper": "kolodny/immutability-helper",
     "leaflet": "^1.0.2",
     "locale-compare-polyfill": "0.0.2",
+    "lodash.debounce": "^4.0.8",
     "lodash.some": "^4.6.0",
     "lodash.values": "^4.3.0",
     "moment": "^2.17.1",
