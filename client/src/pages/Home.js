@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
-import {Grid, Row, FormControl, FormGroup, ControlLabel, Button} from 'react-bootstrap'
+import {Grid, Row, Col, FormControl, FormGroup, ControlLabel, Button} from 'react-bootstrap'
 import SavedSearchTable from 'components/SavedSearchTable'
 import {Link} from 'react-router'
 import moment from 'moment'
@@ -80,13 +80,25 @@ export default class Home extends Page {
 				<fieldset className="home-tile-row">
 					<legend>Getting Started</legend>
 					<Grid fluid className="getting-started-grid">
-						<Row className="getting-started-row">
-							<h3 className="center">Welcome to ANET!</h3>
+						<Row>
+							<h3>Welcome to ANET!</h3>
 						</Row>
-						<Row className="getting-started-row">
-							<div className="center">
-								<Button bsStyle="primary">Dismiss</Button>
-							</div> 
+						<Row>
+							<Col xs={4}>
+								<p>Just getting started?</p>
+								<a>Download the manual</a>
+							</Col>
+							<Col xs={4}>
+								<p>Not sure where things are?</p>
+								<a>Take a guided tour</a>
+							</Col>
+							<Col xs={4}>
+								<p>Still having trouble?</p>
+								<a>Contact CJ7 Trexs for training</a>
+							</Col>
+						</Row>
+						<Row>
+							<Button bsStyle="primary">Dismiss</Button>
 						</Row>
 					</Grid>
 				</fieldset>
