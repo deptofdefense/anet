@@ -22,10 +22,7 @@ export default class OnboardingShow extends Page {
     fetchData() {
         API.query(/* GraphQL */`
 			person(f:me) {
-				id, name, role, emailAddress, rank, status
-				position {
-					id, name, type,
-					organization { id, shortName , allDescendantOrgs { id }}
+				id, role
 				}
 			}
 		`).then(({person}) => this.setState({person}))
