@@ -257,5 +257,7 @@ a.home-tile {
 }
 
 .not-found {
-	background-image: url(../public/mountains.png)
+	background-image: url(../public/mountains.png);
+	background-repeat: no-repeat;
+	background-position: center bottom;
 }
