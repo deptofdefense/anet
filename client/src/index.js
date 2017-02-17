@@ -91,6 +91,8 @@ ReactDOM.render((
 				<Route path="graphiql" component={GraphiQL} />
 
 				<Route path="admin" component={AdminIndex} />
+
+				<Route path="*" component={NotFound} />
 			</Route>
 		</Router>
 	</InjectablesProvider>
