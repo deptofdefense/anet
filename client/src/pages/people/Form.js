@@ -207,6 +207,7 @@ export default class PersonForm extends Component {
 				}
 
 				if (isFirstTimeUser) {
+					window.localStorage.showGettingStartedPanel = 'true'
 					History.push('/')	
 				} else {
 					if (response.id) {

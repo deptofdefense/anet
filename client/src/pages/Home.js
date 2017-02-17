@@ -24,7 +24,7 @@ export default class Home extends Page {
 			upcomingEngagements: null,
 			savedSearches: [],
 			selectedSearch: null,
-			hasDismissedGettingStarted: window.localStorage.hasDismissedGettingStarted
+			showGettingStartedPanel: window.localStorage.showGettingStartedPanel
 		}
 	}
 
@@ -78,7 +78,7 @@ export default class Home extends Page {
 				<Breadcrumbs />
 				<Messages error={this.state.error} success={this.state.success} />
 
-				{!this.state.hasDismissedGettingStarted && 
+				{this.state.showGettingStartedPanel === 'true' && 
 					<fieldset className="home-tile-row">
 						<legend>Getting Started</legend>
 						<Grid fluid className="getting-started-grid">
@@ -162,7 +162,7 @@ export default class Home extends Page {
 
 	@autobind
 	onDismissGettingStarted() {
-		window.localStorage.hasDismissedGettingStarted = true
-		this.setState({hasDismissedGettingStarted: true})
+		window.localStorage.showGettingStartedPanel = 'false'
+		this.setState({showGettingStartedPanel: 'false'})
 	}
 }
