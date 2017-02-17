@@ -257,6 +257,5 @@ a.home-tile {
 }
 
 .not-found {
-	background: red;
-	/*background-image: url(../public/mountains.png)*/
+	background-image: url(../public/mountains.png)
 }
