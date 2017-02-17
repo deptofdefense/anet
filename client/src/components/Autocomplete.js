@@ -94,7 +94,7 @@ export default class Autocomplete extends Component {
 				focusInputOnSuggestionClick={false}
 			/>
 
-			<img src={SEARCH_ICON} className="form-control-icon" />
+			<img src={SEARCH_ICON} className="form-control-icon" role="presentation" />
 		</div>
 	}
 
