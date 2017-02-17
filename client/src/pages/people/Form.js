@@ -36,13 +36,20 @@ export default class PersonForm extends Component {
 		let {person, edit, showPositionAssignment} = this.props
 		const isAdvisor = person.role === 'ADVISOR'
 
+		let legendText
+		if (person.status === 'NEW_USER') {
+			legendText = 'Create your profile'
+		} else {
+			legendText = edit ? `Edit ${person.name}` : 'Create a new person'
+		}
+
 		return <Form formFor={person} onChange={this.onChange} onSubmit={this.onSubmit} horizontal submitText="Save person" 
 					 submitDisabled={this.isSubmitDisabled()}>
 					 
 			<Messages error={this.state.error} />
 
 			<fieldset>
-				<legend>{edit ? 'Edit ' + person.name : 'Create a new Person'}</legend>
+				<legend>{legendText}</legend>
 
 				<Form.Field id="name" 
 					required
