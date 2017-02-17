@@ -8,6 +8,8 @@ import utils from 'utils'
 
 import './Autocomplete.css'
 
+import SEARCH_ICON from 'resources/search.png'
+
 export default class Autocomplete extends Component {
 	static propTypes = {
 		value: PropTypes.oneOfType([
@@ -78,6 +80,7 @@ export default class Autocomplete extends Component {
 		inputProps.value = this.state.stringValue
 		inputProps.onChange = this.onInputChange
 		inputProps.onBlur = this.onInputBlur
+
 		return <div>
 			<Autosuggest
 				suggestions={this.state.noSuggestions ? [{}] : this.state.suggestions}
@@ -90,6 +93,8 @@ export default class Autocomplete extends Component {
 				renderSuggestion={this.renderSuggestion}
 				focusInputOnSuggestionClick={false}
 			/>
+
+			<img src={SEARCH_ICON} className="form-control-icon" />
 		</div>
 	}
 
@@ -124,8 +129,14 @@ export default class Autocomplete extends Component {
 	fetchSuggestions(value) {
 		if (this.props.url) {
 			let url = this.props.url + '?text=' + value.value
-			if (this.props.queryParams) {
-				url += '&' + utils.createUrlParams(this.props.queryParams)
+
+			let queryParams = this.props.queryParams || {}
+			if (!queryParams.pageSize) {
+				queryParams.pageSize = 25
+			}
+
+			if (queryParams) {
+				url += '&' + utils.createUrlParams(queryParams)
 			}
 
 			let selectedIds = this.selectedIds
@@ -145,12 +156,12 @@ export default class Autocomplete extends Component {
 					+ 'list { ' + this.props.fields + '}'
 					+ '}'
 			let variableDef = '($query: ' + resourceName + 'SearchQuery)'
-			let queryVars = { text: value.value }
+			let queryVars = {text: value.value, pageSize: 25}
 			if (this.props.queryParams) {
-				Object.forEach(this.props.queryParams, (key,val) => queryVars[key] = val)
+				Object.assign(queryVars, this.props.queryParams)
 			}
 
-			API.query(graphQlQuery, { query: queryVars}, variableDef)
+			API.query(graphQlQuery, {query: queryVars}, variableDef)
 				.then(data => {
 					let noSuggestions = data[listName].list.length === 0
 					this.setState({suggestions: data[listName].list, noSuggestions})
