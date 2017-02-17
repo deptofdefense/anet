@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
-import {Grid, Row, FormControl, FormGroup, ControlLabel} from 'react-bootstrap'
+import {Grid, Row, FormControl, FormGroup, ControlLabel, Button} from 'react-bootstrap'
 import SavedSearchTable from 'components/SavedSearchTable'
 import {Link} from 'react-router'
 import moment from 'moment'
@@ -77,6 +77,19 @@ export default class Home extends Page {
 				<Breadcrumbs />
 				<Messages error={this.state.error} success={this.state.success} />
 
+				<fieldset className="home-tile-row">
+					<legend>Getting Started</legend>
+					<Grid fluid className="getting-started-grid">
+						<Row className="getting-started-row">
+							<h3 className="center">Welcome to ANET!</h3>
+						</Row>
+						<Row className="getting-started-row">
+							<div className="center">
+								<Button bsStyle="primary">Dismiss</Button>
+							</div> 
+						</Row>
+					</Grid>
+				</fieldset>
 				<fieldset className="home-tile-row">
 					<legend>My ANET Snapshot</legend>
 					<Grid fluid>

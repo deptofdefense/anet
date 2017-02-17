@@ -276,3 +276,31 @@ a.home-tile {
 .onboarding-new .role {
 	text-transform: uppercase;
 }
+
+.getting-started-row {
+	width: 100%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.getting-started-row .center {
+	text-align: center;
+}
+
+.getting-started-row h3,button {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+.getting-started-row h3 {
+	font-size: 16px;
+}
+
+.getting-started-row button {
+	font-size: 12px;
+}
+
+.getting-started-grid {
+	padding-top: 15px;
+	padding-bottom: 15px;
+}
