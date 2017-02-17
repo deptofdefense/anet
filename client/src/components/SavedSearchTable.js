@@ -7,57 +7,51 @@ import API from 'api'
 
 export default class SavedSearchTable extends Component {
 	static propTypes = {
-		searchId: PropTypes.any.isRequired,
+		search: PropTypes.any.isRequired,
 	}
 
 	constructor(props) {
 		super(props)
 
 		this.state = {
-			searchResults: {
-				reports: []
-			}
+			reports: []
 		}
 
-		if (props.searchId) {
-			this.runSearch(props.searchId);
+		if (props.search) {
+			this.runSearch(props.search)
 		}
 	}
 
 	componentWillReceiveProps(nextProps) {
-		if (nextProps.searchId && (nextProps.searchId !== this.props.searchId)) {
-			this.runSearch(nextProps.searchId)
+		console.log('sst' , nextProps)
+		if (nextProps.search && (nextProps.search.id !== this.props.search.id)) {
+			this.runSearch(nextProps.search)
 		}
 	}
 
 	@autobind
-	runSearch(searchId) {
+	runSearch(search) {
+		let query = JSON.parse(search.query)
 		API.query(/*GraphQL */`
-			searchResults(f:runSavedSearch, searchId:${searchId}, pageNum:0, pageSize: 10) {
-				reports { pageNum, pageSize, totalCount, list {
+			reports: reportList(f:search, query: $query) {
+				pageNum, pageSize, totalCount, list {
 					id, intent, engagementDate, keyOutcomes, nextSteps
-						primaryAdvisor { id, name, role, position { organization { id, shortName}}},
-						primaryPrincipal { id, name, role, position { organization { id, shortName}}},
-						author{ id, name},
-						advisorOrg { id, shortName},
-						principalOrg { id, shortName},
-						location { id, name},
-						poams {id, shortName, longName}
-					}
-				},
-				people { list { id, name, rank, emailAddress, role , position { id, name, organization { id, shortName} }}}
-				positions { list { id , name, type, organization { id, shortName}, person { id, name } }}
-				poams { list { id, shortName, longName}}
-				locations { list { id, name, lat, lng}}
-				organizations { list { id, shortName, longName }}
+					primaryAdvisor { id, name, role, position { organization { id, shortName}}},
+					primaryPrincipal { id, name, role, position { organization { id, shortName}}},
+					author{ id, name},
+					advisorOrg { id, shortName},
+					principalOrg { id, shortName},
+					location { id, name, lat, lng},
+					poams {id, shortName, longName}
+				}
 			}
-		`).then(data =>
-			this.setState({searchResults: data.searchResults})
+		`, {query}, '($query: ReportSearchQuery)').then(data =>
+			this.setState({reports: data.reports})
 		)
 	}
 
 	render() {
-		return <ReportCollection reports={this.state.searchResults.reports.list} />
+		return <ReportCollection reports={this.state.reports.list} />
 	}
 
 }

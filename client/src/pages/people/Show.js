@@ -49,7 +49,7 @@ export default class PersonShow extends Page {
 						organization { id, shortName }
 					}
 				},
-				authoredReports(pageNum:0,pageSize:10) {
+				authoredReports(pageNum:0,pageSize:10) { list {
 					id,
 					engagementDate,
 					advisorOrg { id, shortName }
@@ -59,8 +59,8 @@ export default class PersonShow extends Page {
 						id,
 						name
 					}
-				},
-				attendedReports(pageNum:0, pageSize:10) {
+				}},
+				attendedReports(pageNum:0, pageSize:10) { list {
 					id,
 					engagementDate,
 					advisorOrg { id, shortName}
@@ -70,7 +70,7 @@ export default class PersonShow extends Page {
 						id,
 						name
 					}
-				}
+				}}
 
 			}
 		`).then(data => this.setState({person: new Person(data.person)}))
@@ -81,7 +81,7 @@ export default class PersonShow extends Page {
 		let position = person.position
 
 		//User can always edit themselves, or Super Users/Admins.
-		let currentUser = this.context.app.state.currentUser;
+		let currentUser = this.context.app.state.currentUser
 		let canEdit = currentUser && (currentUser.id === person.id ||
 			currentUser.isSuperUser())
 
@@ -109,7 +109,7 @@ export default class PersonShow extends Page {
 						</Form.Field>
 						<Form.Field id="country" />
 						<Form.Field id="gender" />
-						<Form.Field label="End of Tour Date" id="endOfTourDate" value={moment(person.endOfTourDate).format("D MMM YYYY")} />
+						<Form.Field label="End of Tour Date" id="endOfTourDate" value={moment(person.endOfTourDate).format('D MMM YYYY')} />
 						<Form.Field label="Biography" id="biography" >
 							<div dangerouslySetInnerHTML={{__html: person.biography}} />
 						</Form.Field>
@@ -125,12 +125,12 @@ export default class PersonShow extends Page {
 
 					<fieldset>
 						<legend>Reports authored</legend>
-						<ReportTable reports={person.authoredReports} showAuthors={false} />
+						<ReportTable reports={person.authoredReports.list || []} showAuthors={false} />
 					</fieldset>
 
 					<fieldset>
 						<legend>Reports this person is listed as an attendee of</legend>
-						<ReportTable reports={person.attendedReports} showAuthors={true} />
+						<ReportTable reports={person.attendedReports.list || []} showAuthors={true} />
 					</fieldset>
 				</Form>
 			</div>
@@ -139,16 +139,16 @@ export default class PersonShow extends Page {
 
 	@autobind
 	actionSelect(eventKey, event) {
-		if (eventKey === "edit") {
-			History.push(`/people/${this.state.person.id}/edit`);
+		if (eventKey === 'edit') {
+			History.push(Person.pathForEdit(this.state.person))
 		} else {
-			console.log("Unimplemented Action: " + eventKey);
+			console.log('Unimplemented Action: ' + eventKey)
 		}
 	}
 
 	@autobind
 	renderPosition(position) {
-		let assocTitle = position.type === "PRINCIPAL" ? "Is advised by" : "Advises"
+		let assocTitle = position.type === 'PRINCIPAL' ? 'Is advised by' : 'Advises'
 		return <div>
 			<Form.Field id="organization" label="Organization">
 				<LinkTo organization={position.organization} />

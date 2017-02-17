@@ -6,7 +6,9 @@ import java.util.Objects;
 import org.joda.time.DateTime;
 
 import mil.dds.anet.AnetObjectEngine;
+import mil.dds.anet.beans.lists.AbstractAnetBeanList.ReportList;
 import mil.dds.anet.beans.search.OrganizationSearchQuery;
+import mil.dds.anet.beans.search.ReportSearchQuery;
 import mil.dds.anet.graphql.GraphQLFetcher;
 import mil.dds.anet.graphql.GraphQLIgnore;
 import mil.dds.anet.graphql.GraphQLParam;
@@ -156,8 +158,16 @@ public class Organization extends AbstractAnetBean {
 	}
 	
 	@GraphQLFetcher("reports")
-	public List<Report> fetchReports(@GraphQLParam("pageNum") int pageNum, @GraphQLParam("pageSize") int pageSize) {
-		return AnetObjectEngine.getInstance().getReportDao().getReportsByOrg(this, pageNum, pageSize);
+	public ReportList fetchReports(@GraphQLParam("pageNum") int pageNum, @GraphQLParam("pageSize") int pageSize) {
+		ReportSearchQuery query = new ReportSearchQuery();
+		query.setPageNum(pageNum);
+		query.setPageSize(pageSize);
+		if (this.getType() == OrganizationType.ADVISOR_ORG) { 
+			query.setAuthorOrgId(id);
+		} else { 
+			query.setPrincipalOrgId(id);
+		}
+		return AnetObjectEngine.getInstance().getReportDao().search(query);
 	}
 	
 	public static Organization create(String shortName, OrganizationType type) { 

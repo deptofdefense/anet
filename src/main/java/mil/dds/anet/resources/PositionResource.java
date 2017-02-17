@@ -67,7 +67,7 @@ public class PositionResource implements IGraphQLResource {
 	@Path("/")
 	public PositionList getAll(@DefaultValue("0") @QueryParam("pageNum") int pageNum, 
 			@DefaultValue("100") @QueryParam("pageSize") int pageSize) {
-		return new PositionList(pageNum, pageSize, dao.getAll(pageNum, pageSize));
+		return dao.getAll(pageNum, pageSize);
 	}
 
 	@GET
@@ -96,7 +96,8 @@ public class PositionResource implements IGraphQLResource {
 		}
 		if (p.getType() == null) { throw new WebApplicationException("Position type must be defined", Status.BAD_REQUEST); }
 		if (p.getOrganization() == null) { throw new WebApplicationException("A Position must belong to an organization", Status.BAD_REQUEST); }
-
+		if (p.getType() == PositionType.ADMINISTRATOR) { AuthUtils.assertAdministrator(user); } 
+		
 		AuthUtils.assertSuperUserForOrg(user, p.getOrganization());
 
 		Position created = dao.insert(p);
@@ -122,6 +123,8 @@ public class PositionResource implements IGraphQLResource {
 	@RolesAllowed("SUPER_USER")
 	public Response updatePosition(@Auth Person user, Position pos) {
 		AuthUtils.assertSuperUserForOrg(user, pos.getOrganization());
+		if (pos.getType() == PositionType.ADMINISTRATOR) { AuthUtils.assertAdministrator(user); } 
+		
 		int numRows = dao.update(pos);
 
 		if (pos.getPerson() != null || pos.getAssociatedPositions() != null) {

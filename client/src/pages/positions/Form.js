@@ -25,18 +25,21 @@ export default class PositionForm extends Component {
 	render() {
 		let {position, error, success} = this.props
 
-		let relationshipPositionType = position.type === "PRINCIPAL" ? "ADVISOR" : "PRINCIPAL"
+		let relationshipPositionType = position.type === 'PRINCIPAL' ? 'ADVISOR' : 'PRINCIPAL'
 		let currentUser = this.context.app.state.currentUser
 
 		let orgSearchQuery = {}
-		if (position.type === "ADVISOR") {
-			orgSearchQuery.type = "ADVISOR_ORG"
-			if (currentUser && currentUser.position && currentUser.position.type === "SUPER_USER") {
+		let personSearchQuery = {}
+		if (position.type === 'ADVISOR' || position.type === 'SUPER_USER' || position.type === 'ADMINISTRATOR') {
+			orgSearchQuery.type = 'ADVISOR_ORG'
+			personSearchQuery.role = 'ADVISOR'
+			if (currentUser && currentUser.position && currentUser.position.type === 'SUPER_USER') {
 				orgSearchQuery.parentOrgId = currentUser.position.organization.id
 				orgSearchQuery.parentOrgRecursively = true
 			}
-		} else if (position.type === "PRINCIPAL") {
-			orgSearchQuery.type = "PRINCIPAL_ORG"
+		} else if (position.type === 'PRINCIPAL') {
+			orgSearchQuery.type = 'PRINCIPAL_ORG'
+			personSearchQuery.role = 'PRINCIPAL'
 		}
 
 		if (!position.permissions) {
@@ -82,11 +85,11 @@ export default class PositionForm extends Component {
 						<Autocomplete valueKey="name"
 							placeholder="Select the person in this position"
 							url="/api/people/search"
-							queryParams={position.type ? {role: position.type} : {}}
+							queryParams={personSearchQuery}
 						/>
 					</Form.Field>
 
-					{position.type !== "PRINCIPAL" &&
+					{position.type !== 'PRINCIPAL' &&
 						<Form.Field id="permissions">
 							<RadioGroup>
 								<Radio value="ADVISOR">Advisor</Radio>
@@ -101,15 +104,15 @@ export default class PositionForm extends Component {
 				</fieldset>
 
 				<fieldset>
-					<legend>Assigned {position.type === "PRINCIPAL" ? "advisor" : "advisee"}</legend>
+					<legend>Assigned {position.type === 'PRINCIPAL' ? 'advisor' : 'advisee'}</legend>
 
 					<p className="help-text">Advisor positions are associated with Principal positions and vice versa.</p>
 
 					<Form.Field id="associatedPositions">
 						<Autocomplete
-							placeholder={"Start typing to search for " + (position.type === "PRINCIPAL" ? "an advisor" : "a principal") + " position..."}
+							placeholder={'Start typing to search for ' + (position.type === 'PRINCIPAL' ? 'an advisor' : 'a principal') + ' position...'}
 							objectType={Position}
-							fields={"id, name, code, type, person { id, name, rank }"}
+							fields={'id, name, code, type, person { id, name, rank }'}
 							template={pos =>
 								<span>{pos.name} - {pos.code} ({(pos.person) ? pos.person.name : <i>empty</i>})</span>
 							}
@@ -185,10 +188,12 @@ export default class PositionForm extends Component {
 	onSubmit(event) {
 		let {position, edit} = this.props
 
-		if (position.type !== "PRINCIPAL") {
-			position.type = position.permissions || "ADVISOR"
+		if (position.type !== 'PRINCIPAL') {
+			position.type = position.permissions || 'ADVISOR'
 		}
 		delete position.permissions
+		position.organization = {id: position.organization.id}
+		position.person = (position.person.id) ? {id: position.person.id} : null
 
 		let url = `/api/positions/${edit ? 'update' : 'new'}`
 		API.send(url, position, {disableSubmits: true})
@@ -198,7 +203,7 @@ export default class PositionForm extends Component {
 				}
 
 				History.replace(Position.pathForEdit(position), false)
-				History.push(Position.pathFor(position), {success: "Saved Position"})
+				History.push(Position.pathFor(position), {success: 'Saved Position'})
 			}).catch(error => {
 				this.setState({error: error})
 				window.scrollTo(0, 0)

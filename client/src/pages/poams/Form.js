@@ -15,7 +15,7 @@ export default class PoamForm extends Component {
 	}
 
 	render() {
-		let {poam} = this.props
+		let {poam, edit} = this.props
 
 		return (
 			<Form
@@ -27,10 +27,10 @@ export default class PoamForm extends Component {
 			>
 
 				<fieldset>
-					<legend>Create a new Poam</legend>
-					<Form.Field id="shortName" />
-					<Form.Field id="longName" />
-					<Form.Field id="responsibleOrg">
+					<legend>{edit ? "Edit PoAM " + poam.shortName : "Create a new PoAM"}</legend>
+					<Form.Field id="shortName" label="PoAM number" />
+					<Form.Field id="longName" label="PoAM description" />
+					<Form.Field id="responsibleOrg" label="Responsible organization">
 						<Autocomplete valueKey="shortName"
 							placeholder="Select a responsible organization for this poam"
 							url="/api/organizations/search" />
@@ -61,7 +61,7 @@ export default class PoamForm extends Component {
 				}
 
 				History.replace(Poam.pathForEdit(poam), false)
-				History.push(Poam.pathFor(poam), {success: "PoAM saved successfully"})
+				History.push(Poam.pathFor(poam), {success: 'PoAM saved successfully'})
 			}).catch(error => {
 				this.setState({error: error})
 				window.scrollTo(0, 0)

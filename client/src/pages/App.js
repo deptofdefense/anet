@@ -72,12 +72,12 @@ export default class App extends Page {
 		let currentUser = new Person(data.person)
 		let organizations = (data.organizationList && data.organizationList.list) || []
 		organizations = Organization.fromArray(organizations)
-		organizations.sort((a, b) => a.shortName.localeCompare(b.shortName));
+		organizations.sort((a, b) => a.shortName.localeCompare(b.shortName))
 
 		let settings = this.state.settings
 		data.adminSettings.forEach(setting => settings[setting.key] = setting.value)
 
-		if (currentUser.id && currentUser.status === "NEW_USER") {
+		if (currentUser.id && currentUser.status === 'NEW_USER') {
 			History.push('/onboarding')
 		}
 
@@ -93,7 +93,7 @@ export default class App extends Page {
 
 				<Header minimalHeader={pageProps.minimalHeader} />
 
-				<Grid componentClass="section" bsClass={pageProps.fluidContainer ? "container-fluid" : "container"}>
+				<Grid componentClass="section" bsClass={pageProps.fluidContainer ? 'container-fluid' : 'container'}>
 					{pageProps.useNavigation === false
 						? <Row><Col xs={12}>{this.props.children}</Col></Row>
 						: <Row>

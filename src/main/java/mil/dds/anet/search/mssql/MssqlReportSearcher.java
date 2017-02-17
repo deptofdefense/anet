@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.Query;
-import org.skife.jdbi.v2.StatementContext;
 
 import jersey.repackaged.com.google.common.base.Joiner;
 import mil.dds.anet.beans.Report;
@@ -23,7 +22,7 @@ public class MssqlReportSearcher implements IReportSearcher {
 	
 	public ReportList runSearch(ReportSearchQuery query, Handle dbHandle) { 
 		StringBuffer sql = new StringBuffer();
-		sql.append("SELECT " + ReportDao.REPORT_FIELDS + "," + PersonDao.PERSON_FIELDS);
+		sql.append("/* MssqlReportSearch */ SELECT " + ReportDao.REPORT_FIELDS + "," + PersonDao.PERSON_FIELDS);
 		sql.append(", count(*) OVER() AS totalCount "
 				+ "FROM reports, people WHERE reports.authorId = people.id "
 				+ "AND ");
@@ -127,9 +126,18 @@ public class MssqlReportSearcher implements IReportSearcher {
 			args.put("approverId", query.getPendingApprovalOf());
 		}
 		
-		if (query.getState() != null) { 
-			whereClauses.add("reports.state = :state");
-			args.put("state", DaoUtils.getEnumId(query.getState()));
+		if (query.getState() != null && query.getState().size() > 0) {
+			if (query.getState().size() == 1) { 
+				whereClauses.add("reports.state = :state");
+				args.put("state", DaoUtils.getEnumId(query.getState().get(0)));
+			} else {
+				List<String> argNames = new LinkedList<String>();
+				for (int i=0;i<query.getState().size();i++) { 
+					argNames.add(":state" + i);
+					args.put("state" + i, DaoUtils.getEnumId(query.getState().get(i)));
+				}
+				whereClauses.add("reports.state IN (" + Joiner.on(", ").join(argNames) + ")");
+			}
 		}
 		
 		if (whereClauses.size() == 0) { return results; }
@@ -146,16 +154,7 @@ public class MssqlReportSearcher implements IReportSearcher {
 				.bind("offset", query.getPageSize() * query.getPageNum())
 				.bind("limit", query.getPageSize())
 				.map(new ReportMapper());
-		StatementContext context = map.getContext();
-		
-		results.setList(map.list());
-		if (results.getList().size() == 0) { 
-			results.setTotalCount(0);
-		} else {
-			//This value gets set by the ReportMapper on each row. 
-			results.setTotalCount((Integer) context.getAttribute("totalCount"));
-		}
-		return results;
+		return ReportList.fromQuery(map, query.getPageNum(), query.getPageSize());
 		
 	}
 	

@@ -47,6 +47,14 @@ fieldset legend small {
 	font-size: 1.2rem;
 }
 
+fieldset .pagination {
+	margin: 0;
+}
+
+fieldset .negative-bottom {
+	margin-bottom: -20px;
+}
+
 fieldset .help-text {
 	margin: 0 0 2rem 5rem;
 }
@@ -217,10 +225,6 @@ a.home-tile {
 
 .report-collection header {
 	margin-bottom: 18px;
-}
-
-.report-collection .pagination {
-	margin: 0;
 }
 
 .report-summary {

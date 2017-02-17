@@ -71,7 +71,7 @@ public class PersonResource implements IGraphQLResource {
 	@GraphQLFetcher
 	@Path("/")
 	public PersonList getAll(@DefaultValue("0") @QueryParam("pageNum") int pageNum, @DefaultValue("100") @QueryParam("pageSize") int pageSize) {
-		return new PersonList(pageNum, pageSize, dao.getAll(pageNum, pageSize));
+		return dao.getAll(pageNum, pageSize);
 	}
 	
 	/**
@@ -100,6 +100,14 @@ public class PersonResource implements IGraphQLResource {
 	@Path("/new")
 	@RolesAllowed("SUPER_USER")
 	public Person createNewPerson(@Auth Person user, Person p) {
+		if (p.getPosition() != null) { 
+			Position position = AnetObjectEngine.getInstance().getPositionDao().getById(p.getPosition().getId());
+			if (position == null) { 
+				throw new WebApplicationException("Position " + p.getPosition() + " does not exist", Status.BAD_REQUEST);
+			}
+			if (position.getType() == PositionType.ADMINISTRATOR) { AuthUtils.assertAdministrator(user); } 
+		}
+		
 		Person created = dao.insert(p);
 		
 		if (created.getPosition() != null) { 
@@ -163,7 +171,7 @@ public class PersonResource implements IGraphQLResource {
 			//Super Users can edit any principal
 			if (subject.getRole().equals(Role.PRINCIPAL)) { return true; }
 			//Ensure that the editor is the Super User for the subject's organization.
-			Position subjectPos = subject.loadPosition();
+			Position subjectPos = Person.createWithId(subject.getId()).loadPosition();
 			if (subjectPos != null && subjectPos.getOrganization() != null
 					&& editorPos.getOrganization() != null
 					&& subjectPos.getOrganization().getId().equals(editorPos.getOrganization().getId())) { 

@@ -50,27 +50,27 @@ export default class PoamShow extends Page {
 		// Admins can edit poams, or super users if this poam is assigned to their org.
 		let currentUser = this.context.app.state.currentUser
 		let canEdit = (currentUser && currentUser.isAdmin()) ||
-			(currentUser && poam.responsibleOrg && currentUser.isSuperUserForOrg(poam.responsibleOrg));
+			(currentUser && poam.responsibleOrg && currentUser.isSuperUserForOrg(poam.responsibleOrg))
 
 		return (
 			<div>
-				<Breadcrumbs items={[[poam.shortName, Poam.pathFor(poam)]]} />
+				<Breadcrumbs items={[[`PoAM ${poam.shortName}`, Poam.pathFor(poam)]]} />
 				<Messages success={this.state.success} error={this.state.error} />
 
 				{canEdit &&
 					<div className="pull-right">
 						<DropdownButton bsStyle="primary" title="Actions" id="actions" className="pull-right" onSelect={this.actionSelect}>
-							{canEdit && <MenuItem eventKey="edit" >Edit {poam.shortName}</MenuItem>}
+							{canEdit && <MenuItem eventKey="edit">Edit PoAM</MenuItem>}
 						</DropdownButton>
 					</div>
 				}
 
 				<Form static formFor={poam} horizontal>
 					<fieldset>
-						<legend>{poam.shortName}</legend>
+						<legend>PoAM {poam.shortName}</legend>
 						<Form.Field id="shortName" />
 						<Form.Field id="longName" />
-						{ poam.responsibleOrg && poam.responsibleOrg.id && this.renderOrg()}
+						{poam.responsibleOrg && poam.responsibleOrg.id && this.renderOrg()}
 					</fieldset>
 				</Form>
 			</div>
@@ -91,10 +91,10 @@ export default class PoamShow extends Page {
 
 	@autobind
 	actionSelect(eventKey, event) {
-		if (eventKey === "edit") {
-			History.push(`/poams/${this.state.poam.id}/edit`);
+		if (eventKey === 'edit') {
+			History.push(Poam.pathForEdit(this.state.poam))
 		} else {
-			console.log("Unimplemented Action: " + eventKey);
+			console.log('Unimplemented Action: ' + eventKey)
 		}
 	}
 }

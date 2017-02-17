@@ -21,7 +21,7 @@ public class MssqlOrganizationSearcher implements IOrganizationSearcher {
 
 	@Override
 	public OrganizationList runSearch(OrganizationSearchQuery query, Handle dbHandle) {
-		StringBuilder sql = new StringBuilder("SELECT " + OrganizationDao.ORGANIZATION_FIELDS
+		StringBuilder sql = new StringBuilder("/* MssqlOrganizationSearch */ SELECT " + OrganizationDao.ORGANIZATION_FIELDS
 				+ ", count(*) OVER() AS totalCount "
 				+ "FROM organizations WHERE organizations.id IN (SELECT organizations.id FROM organizations ");
 		Map<String,Object> sqlArgs = new HashMap<String,Object>();
@@ -77,13 +77,7 @@ public class MssqlOrganizationSearcher implements IOrganizationSearcher {
 			.bind("offset", query.getPageSize() * query.getPageNum())
 			.bind("limit", query.getPageSize())
 			.map(new OrganizationMapper());
-		result.setList(sqlQuery.list());
-		if (result.getList().size() >  0) { 
-			result.setTotalCount((Integer) sqlQuery.getContext().getAttribute("totalCount"));
-		} else { 
-			result.setTotalCount(0);
-		}
-		return result;
+		return OrganizationList.fromQuery(sqlQuery, query.getPageNum(), query.getPageSize());
 	}
 	
 }

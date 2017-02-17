@@ -8,6 +8,8 @@ import org.joda.time.DateTime;
 import org.skife.jdbi.v2.GeneratedKeys;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.Query;
+import org.skife.jdbi.v2.TransactionCallback;
+import org.skife.jdbi.v2.TransactionStatus;
 
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Organization;
@@ -35,48 +37,51 @@ public class PositionDao implements IAnetDao<Position> {
 		this.dbHandle = h;
 	}
 	
-	public List<Position> getAll(int pageNum, int pageSize) {
+	public PositionList getAll(int pageNum, int pageSize) {
 		String sql;
 		if (DaoUtils.isMsSql(dbHandle)) { 
-			sql = "SELECT " + POSITIONS_FIELDS + " FROM positions ORDER BY createdAt ASC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY";
+			sql = "/* positionGetAll */ SELECT " + POSITIONS_FIELDS + ", COUNT(*) OVER() AS totalCount FROM positions ORDER BY createdAt ASC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY";
 		} else { 
-			sql = "SELECT " + POSITIONS_FIELDS + " from positions ORDER BY createdAt ASC LIMIT :limit OFFSET :offset";
+			sql = "/* positionGetAll */ SELECT " + POSITIONS_FIELDS + " from positions ORDER BY createdAt ASC LIMIT :limit OFFSET :offset";
 		}
 		Query<Position> query = dbHandle.createQuery(sql)
 			.bind("limit", pageSize)
 			.bind("offset", pageSize * pageNum)
 			.map(new PositionMapper());
-		return query.list();
+		return PositionList.fromQuery(query, pageNum, pageSize);
 	}
 	
 	public Position insert(Position p) {
-		p.setCreatedAt(DateTime.now());
-		p.setUpdatedAt(p.getCreatedAt());
-		GeneratedKeys<Map<String,Object>> keys = dbHandle.createStatement(
-				"INSERT INTO positions (name, code, type, organizationId, currentPersonId, locationId, createdAt, updatedAt) " 
-				+ "VALUES (:name, :code, :type, :organizationId, :currentPersonId, :locationId, :createdAt, :updatedAt)")
-			.bindFromProperties(p)
-			.bind("type", DaoUtils.getEnumId(p.getType()))
-			.bind("organizationId", DaoUtils.getId(p.getOrganization()))
-			.bind("currentPersonId", DaoUtils.getId(p.getPerson()))
+		return dbHandle.inTransaction(new TransactionCallback<Position>() {
+			public Position inTransaction(Handle conn, TransactionStatus status) throws Exception {
+				p.setCreatedAt(DateTime.now());
+				p.setUpdatedAt(p.getCreatedAt());
+				GeneratedKeys<Map<String,Object>> keys = dbHandle.createStatement(
+						"/* positionInsert */ INSERT INTO positions (name, code, type, organizationId, currentPersonId, locationId, createdAt, updatedAt) " 
+						+ "VALUES (:name, :code, :type, :organizationId, :currentPersonId, :locationId, :createdAt, :updatedAt)")
+					.bindFromProperties(p)
+					.bind("type", DaoUtils.getEnumId(p.getType()))
+					.bind("organizationId", DaoUtils.getId(p.getOrganization()))
+					.bind("currentPersonId", DaoUtils.getId(p.getPerson()))
 
-			.bind("locationId", DaoUtils.getId(p.getLocation()))
-			.executeAndReturnGeneratedKeys();
-		p.setId(DaoUtils.getGeneratedId(keys));
-		
-		//TODO: this should be in a transaction.
-		if (p.getPerson() != null) { 
-			dbHandle.createStatement("INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES (:positionId, :personId, :createdAt)")
-				.bind("positionId", p.getId())
-				.bind("personId", DaoUtils.getId(p.getPerson()))
-				.bind("createdAt", p.getCreatedAt())
-				.execute();
-		}
-		return p;
+					.bind("locationId", DaoUtils.getId(p.getLocation()))
+					.executeAndReturnGeneratedKeys();
+				p.setId(DaoUtils.getGeneratedId(keys));
+				
+				if (p.getPerson() != null) { 
+					dbHandle.createStatement("/*positionInsertPerson*/ INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES (:positionId, :personId, :createdAt)")
+						.bind("positionId", p.getId())
+						.bind("personId", DaoUtils.getId(p.getPerson()))
+						.bind("createdAt", p.getCreatedAt())
+						.execute();
+				}
+				return p;
+			}
+		});
 	}
 	
 	public Position getById(int id) { 
-		Query<Position> query = dbHandle.createQuery("SELECT " + POSITIONS_FIELDS + ", " + PersonDao.PERSON_FIELDS
+		Query<Position> query = dbHandle.createQuery("/* positionGetById */ SELECT " + POSITIONS_FIELDS + ", " + PersonDao.PERSON_FIELDS
 				+ "FROM positions LEFT JOIN people ON positions.currentPersonId = people.id "
 				+ "WHERE positions.id = :id")
 			.bind("id", id)
@@ -91,7 +96,7 @@ public class PositionDao implements IAnetDao<Position> {
 	 */
 	public int update(Position p) { 
 		p.setUpdatedAt(DateTime.now());
-		return dbHandle.createStatement("UPDATE positions SET name = :name, "
+		return dbHandle.createStatement("/* positionUpdate */ UPDATE positions SET name = :name, "
 				+ "code = :code, organizationId = :organizationId, type = :type, "
 				+ "locationId = :locationId, updatedAt = :updatedAt WHERE id = :id")
 			.bindFromProperties(p)
@@ -102,72 +107,92 @@ public class PositionDao implements IAnetDao<Position> {
 	}
 	
 	public void setPersonInPosition(Person person, Position position) {
-		//TODO: this should be in a transaction. 
-		DateTime now = DateTime.now();
-		//If this person is in a position already, we need to remove them. 
-		Position currPos = dbHandle.createQuery("SELECT " + POSITIONS_FIELDS + " FROM positions WHERE currentPersonId = :personId")
-			.bind("personId", person.getId())
-			.map(new PositionMapper())
-			.first();
-		if (currPos != null) { 
-			dbHandle.createStatement("UPDATE positions set currentPersonId = null WHERE currentPersonId = :personId")
-				.bind("personId", person.getId())
-				.execute();
-			
-			dbHandle.createStatement("INSERT INTO peoplePositions (positionId, personId, createdAt) "
-					+ "VALUES (:positionId, NULL, :createdAt)")
-				.bind("positionId", currPos.getId())
-				.bind("createdAt", now)
-				.execute();
-		}
+		dbHandle.inTransaction(new TransactionCallback<Void>() {
+			public Void inTransaction(Handle conn, TransactionStatus status) throws Exception {
+				DateTime now = DateTime.now();
+				//If this person is in a position already, we need to remove them. 
+				Position currPos = dbHandle.createQuery("/* positionSetPerson.find */ SELECT " + POSITIONS_FIELDS 
+						+ " FROM positions WHERE currentPersonId = :personId")
+					.bind("personId", person.getId())
+					.map(new PositionMapper())
+					.first();
+				if (currPos != null) { 
+					dbHandle.createStatement("/* positionSetPerson.remove1 */ UPDATE positions set currentPersonId = null "
+							+ "WHERE currentPersonId = :personId")
+						.bind("personId", person.getId())
+						.execute();
+					
+					dbHandle.createStatement("/* positionSetPerson.remove2 */ INSERT INTO peoplePositions "
+							+ "(positionId, personId, createdAt) "
+							+ "VALUES (:positionId, NULL, :createdAt)")
+						.bind("positionId", currPos.getId())
+						.bind("createdAt", now)
+						.execute();
+				}
+				
+				dbHandle.createStatement("/* positionSetPerson.set1 */ UPDATE positions "
+						+ "SET currentPersonId = :personId WHERE id = :positionId")
+					.bind("personId", person.getId())
+					.bind("positionId", position.getId())
+					.execute();
+				dbHandle.createStatement("/* positionSetPerson.set2 */ INSERT INTO peoplePositions "
+						+ "(positionId, personId, createdAt) " 
+						+ "VALUES (:positionId, :personId, :createdAt)")
+					.bind("positionId", position.getId())
+					.bind("personId", person.getId())
+					.bind("createdAt", now)
+					.execute();
+				return null;
+			}
+		});
 		
-		dbHandle.createStatement("UPDATE positions SET currentPersonId = :personId WHERE id = :positionId")
-			.bind("personId", person.getId())
-			.bind("positionId", position.getId())
-			.execute();
-		dbHandle.createStatement("INSERT INTO peoplePositions (positionId, personId, createdAt) " 
-				+ "VALUES (:positionId, :personId, :createdAt)")
-			.bind("positionId", position.getId())
-			.bind("personId", person.getId())
-			.bind("createdAt", now)
-			.execute();
 	}
 	
 	public void removePersonFromPosition(Position position) {
-		DateTime now = DateTime.now();
-		dbHandle.createStatement("UPDATE positions SET currentPersonId = :personId, updatedAt = :updatedAt WHERE id = :positionId")
-			.bind("personId", (Integer) null)
-			.bind("updatedAt", now)
-			.bind("positionId", position.getId())
-			.execute();
+		dbHandle.inTransaction(new TransactionCallback<Void>() {
+			public Void inTransaction(Handle conn, TransactionStatus status) throws Exception {
+				DateTime now = DateTime.now();
+				dbHandle.createStatement("/*positionRemovePerson.update */ UPDATE positions "
+						+ "SET currentPersonId = :personId, updatedAt = :updatedAt "
+						+ "WHERE id = :positionId")
+					.bind("personId", (Integer) null)
+					.bind("updatedAt", now)
+					.bind("positionId", position.getId())
+					.execute();
+					
+				String sql;
+				if (DaoUtils.isMsSql(dbHandle)) { 
+					sql = "/*positionRemovePerson.insert1 */INSERT INTO peoplePositions "
+						+ "(positionId, personId, createdAt) "
+						+ "VALUES(null, " 
+							+ "(SELECT TOP(1)personId FROM peoplePositions WHERE positionId = :positionId ORDER BY createdAt DESC), "
+						+ ":createdAt)";
+				} else { 
+					sql = "/*positionRemovePerson.insert1 */INSERT INTO peoplePositions (positionId, personId, createdAt) "
+						+ "VALUES(null, " 
+							+ "(SELECT personId FROM peoplePositions WHERE positionId = :positionId ORDER BY createdAt DESC LIMIT 1), " 
+						+ ":createdAt)";
+				}
+				dbHandle.createStatement(sql)
+					.bind("positionId", position.getId())
+					.bind("createdAt", now)
+					.execute();
 			
-		String sql;
-		if (DaoUtils.isMsSql(dbHandle)) { 
-			sql = "INSERT INTO peoplePositions (positionId, personId, createdAt) "
-				+ "VALUES(null, " 
-					+ "(SELECT TOP(1)personId FROM peoplePositions WHERE positionId = :positionId ORDER BY createdAt DESC), "
-				+ ":createdAt)";
-		} else { 
-			sql = "INSERT INTO peoplePositions (positionId, personId, createdAt) "
-				+ "VALUES(null, " 
-					+ "(SELECT personId FROM peoplePositions WHERE positionId = :positionId ORDER BY createdAt DESC LIMIT 1), " 
-				+ ":createdAt)";
-		}
-		dbHandle.createStatement(sql)
-			.bind("positionId", position.getId())
-			.bind("createdAt", now)
-			.execute();
-	
-		dbHandle.createStatement("INSERT INTO peoplePositions (positionId, personId, createdAt) "
-				+ "VALUES (:positionId, null, :createdAt)")
-			.bind("positionId", position.getId())
-			.bind("createdAt", now)
-			.execute();
+				dbHandle.createStatement("/*positionRemovePerson.insert2 */ INSERT INTO peoplePositions "
+						+ "(positionId, personId, createdAt) "
+						+ "VALUES (:positionId, null, :createdAt)")
+					.bind("positionId", position.getId())
+					.bind("createdAt", now)
+					.execute();
+				return null;
+			}
+		});
 	}
 	
 	public Person getPersonInPositionNow(Position p) { 
 		if (p.getPerson() == null) { return null; } //No person currently in position.
-		List<Person> people = dbHandle.createQuery("SELECT " + PersonDao.PERSON_FIELDS + " FROM people WHERE id = :personId")
+		List<Person> people = dbHandle.createQuery("/*positionFindCurrentPerson */ SELECT " + PersonDao.PERSON_FIELDS 
+				+ " FROM people WHERE id = :personId")
 			.bind("personId", p.getPerson().getId())
 			.map(new PersonMapper())
 			.list();
@@ -178,13 +203,13 @@ public class PositionDao implements IAnetDao<Position> {
 	public Person getPersonInPosition(Position b, DateTime dtg) { 
 		String sql;
 		if (DaoUtils.isMsSql(dbHandle)) {
-			sql = "SELECT TOP(1) " + PersonDao.PERSON_FIELDS + " FROM peoplePositions "
+			sql = "/*positionFindPerson */ SELECT TOP(1) " + PersonDao.PERSON_FIELDS + " FROM peoplePositions "
 				+ " LEFT JOIN people ON people.id = peoplePositions.personId "
 				+ "WHERE peoplePositions.positionId = :positionId "
 				+ "AND peoplePositions.createdAt < :dtg "
 				+ "ORDER BY peoplePositions.createdAt DESC";
 		} else {
-			sql = "SELECT " + PersonDao.PERSON_FIELDS + " FROM peoplePositions "
+			sql = "/*positionFindPerson */ SELECT " + PersonDao.PERSON_FIELDS + " FROM peoplePositions "
 				+ " LEFT JOIN people ON people.id = peoplePositions.personId "
 				+ "WHERE peoplePositions.positionId = :positionId "
 				+ "AND peoplePositions.createdAt < :dtg "
@@ -200,7 +225,8 @@ public class PositionDao implements IAnetDao<Position> {
 	}
 
 	public List<Person> getPeoplePreviouslyInPosition(Position p) { 
-		List<Person> people = dbHandle.createQuery("SELECT people.* from peoplePositions "
+		List<Person> people = dbHandle.createQuery("/*positionFindPreviousPeople */SELECT " + PersonDao.PERSON_FIELDS 
+				+ "FROM peoplePositions "
 				+ "LEFT JOIN people ON peoplePositions.personId = people.id "
 				+ "WHERE peoplePositions.positionId = :positionId " 
 				+ "AND peoplePositions.personId IS NOT NULL "
@@ -214,7 +240,9 @@ public class PositionDao implements IAnetDao<Position> {
 	}
 	
 	public Position getCurrentPositionForPerson(Person p) {
-		List<Position> positions = dbHandle.createQuery("SELECT " + POSITIONS_FIELDS + " FROM positions WHERE currentPersonId = :personId")
+		List<Position> positions = dbHandle.createQuery("/* getCurrentPositionForPerson */ SELECT " 
+				+ POSITIONS_FIELDS + " FROM positions "
+				+ "WHERE currentPersonId = :personId")
 			.bind("personId", p.getId())
 			.map(new PositionMapper())
 			.list();
@@ -223,7 +251,8 @@ public class PositionDao implements IAnetDao<Position> {
 	}
 	
 	public List<Position> getAllPositionsForPerson(Person p) { 
-		return dbHandle.createQuery("SELECT " + POSITIONS_FIELDS + " FROM positions, peoplePositions "
+		return dbHandle.createQuery("/* getAllPositionsForPerson */ SELECT " + POSITIONS_FIELDS 
+				+ " FROM positions, peoplePositions "
 				+ "WHERE peoplePositions.personId = :personId "
 				+ "AND peoplePositions.positionId = positions.id "
 				+ "ORDER BY peoplePositions.createdAt DESC")
@@ -233,7 +262,8 @@ public class PositionDao implements IAnetDao<Position> {
 	}
 
 	public List<Position> getAssociatedPositions(Position p) {
-		Query<Position> query = dbHandle.createQuery("SELECT " + POSITIONS_FIELDS + ", people.* FROM positions "
+		Query<Position> query = dbHandle.createQuery("/* getAssociatedPositions */ SELECT " 
+				+ POSITIONS_FIELDS + ", people.* FROM positions "
 				+ "LEFT JOIN people ON positions.currentPersonId = people.id "
 				+ "WHERE positions.id IN "
 				+ "(SELECT positionId_a FROM positionRelationships WHERE positionId_b = :positionId AND deleted = :deleted) "
@@ -248,7 +278,8 @@ public class PositionDao implements IAnetDao<Position> {
 		DateTime now = DateTime.now();
 		Integer idOne = Math.min(a.getId(), b.getId());
 		Integer idTwo = Math.max(a.getId(), b.getId());
-		dbHandle.createStatement("INSERT INTO positionRelationships (positionId_a, positionId_b, createdAt, updatedAt, deleted) "
+		dbHandle.createStatement("/* associatePosition */ INSERT INTO positionRelationships "
+				+ "(positionId_a, positionId_b, createdAt, updatedAt, deleted) "
 				+ "VALUES (:positionId_a, :positionId_b, :createdAt, :updatedAt, :deleted)")
 			.bind("positionId_a", idOne)
 			.bind("positionId_b", idTwo)
@@ -261,7 +292,8 @@ public class PositionDao implements IAnetDao<Position> {
 	public int deletePositionAssociation(Position a, Position b) {
 		Integer idOne = Math.min(a.getId(), b.getId());
 		Integer idTwo = Math.max(a.getId(), b.getId());
-		return dbHandle.createStatement("UPDATE positionRelationships SET deleted = :deleted, updatedAt = :updatedAt "
+		return dbHandle.createStatement("/* deletePositionAssociation */ UPDATE positionRelationships "
+				+ "SET deleted = :deleted, updatedAt = :updatedAt "
 				+ "WHERE positionId_a = :positionId_a AND positionId_b = :positionId_b")
 			.bind("deleted", true)
 			.bind("positionId_a", idOne)
@@ -281,27 +313,11 @@ public class PositionDao implements IAnetDao<Position> {
 	}
 
 	public List<Position> getByOrganization(Organization organization) {
-		return dbHandle.createQuery("SELECT " + POSITIONS_FIELDS + ", people.* from positions "
+		return dbHandle.createQuery("/* getPositionByOrg */ SELECT " + POSITIONS_FIELDS 
+				+ ", people.* from positions "
 				+ "LEFT JOIN people ON positions.currentPersonId = people.id "
 				+ "WHERE organizationId = :orgId")
 			.bind("orgId", organization.getId())
-			.map(new PositionMapper())
-			.list();
-	}
-
-	public List<Position> getByCode(String code, boolean prefixMatch, PositionType type) {
-		StringBuilder queryBuilder = new StringBuilder("SELECT " + POSITIONS_FIELDS + " from positions WHERE ");
-		if (prefixMatch) { 
-			queryBuilder.append("code LIKE :code || '%' ");
-		} else { 
-			queryBuilder.append("code = :code");
-		}
-		if (type != null) { 
-			queryBuilder.append("AND type = :type");
-		}
-		return dbHandle.createQuery(queryBuilder.toString())
-			.bind("code", code)
-			.bind("type", DaoUtils.getEnumId(type))
 			.map(new PositionMapper())
 			.list();
 	}
@@ -312,7 +328,8 @@ public class PositionDao implements IAnetDao<Position> {
 	}
 
 	public List<PersonPositionHistory> getPositionHistory(Position position) {
-		List<Map<String, Object>> results = dbHandle.createQuery("SELECT * FROM peoplePositions WHERE positionId = :positionId ORDER BY createdAt ASC")
+		List<Map<String, Object>> results = dbHandle.createQuery("/* getPositionHistory */ SELECT * FROM peoplePositions "
+				+ "WHERE positionId = :positionId ORDER BY createdAt ASC")
 			.bind("positionId", DaoUtils.getId(position))
 			.list();
 		

@@ -23,51 +23,52 @@ export default class Home extends Page {
 			myReportsToday: null,
 			upcomingEngagements: null,
 			savedSearches: [],
-			selectedSearchId: null,
+			selectedSearch: null,
 		}
 	}
 
 	fetchData() {
-		let currentUser = this.context.app.state.currentUser;
-		let yesterday = moment().subtract(1, 'days').valueOf();
+		let currentUser = this.context.app.state.currentUser
+		let yesterday = moment().subtract(1, 'days').valueOf()
 
 		let futureQuery = {
 			engagementDateStart: moment().add(1, 'days').hour(0).valueOf()
 		}
 		let orgQuery = (currentUser.position && currentUser.position.organization && {
 			authorOrgId: currentUser.position.organization.id,
-			createdAtStart: yesterday
-		}) || {};
+			createdAtStart: yesterday,
+			state: ["RELEASED","CANCELLED","PENDING_APPROVAL"]
+		}) || {}
 		let pendingQuery = currentUser.isSuperUser() ?
 			{pendingApprovalOf : currentUser.id}
 			:
-			{authorId : currentUser.id, state : "PENDING_APPROVAL"}
+			{authorId : currentUser.id, state : ['PENDING_APPROVAL']}
 		let myReports = { authorId: currentUser.id, createdAtStart: moment().subtract(1, 'days').valueOf() }
 		API.query(/*GraphQL */`
 			pendingMe: reportList(f:search, query:$pendingQuery) { totalCount },
 			myOrg: reportList(f:search, query:$orgQuery) { totalCount },
 			myReports: reportList(f:search, query:$myReports) { totalCount},
-			savedSearches: savedSearchs(f:mine) {id, name}
+			savedSearches: savedSearchs(f:mine) {id, name, objectType, query}
 			upcomingEngagements: reportList(f:search, query: $futureQuery) { totalCount }
 		`, {futureQuery, pendingQuery, orgQuery, myReports},
-			"($futureQuery: ReportSearchQuery, $pendingQuery: ReportSearchQuery,  "
-			+ "$orgQuery: ReportSearchQuery, $myReports: ReportSearchQuery)")
+			'($futureQuery: ReportSearchQuery, $pendingQuery: ReportSearchQuery,  '
+			+ '$orgQuery: ReportSearchQuery, $myReports: ReportSearchQuery)')
 		.then(data => {
-			let selectedSearchId = data.savedSearches && data.savedSearches.length > 0 ? data.savedSearches[0].id : null;
+			let selectedSearch = data.savedSearches && data.savedSearches.length > 0 ? data.savedSearches[0] : null
 			this.setState({
 				pendingMe: data.pendingMe,
 				myOrgToday: data.myOrg,
 				myReportsToday: data.myReports,
 				savedSearches: data.savedSearches,
 				upcomingEngagements: data.upcomingEngagements,
-				selectedSearchId: selectedSearchId
-			});
+				selectedSearch: selectedSearch
+			})
 		})
 	}
 
 	render() {
 		let {pendingMe, myOrgToday, myReportsToday, upcomingEngagements} = this.state
-		let currentUser = this.context.app.state.currentUser;
+		let currentUser = this.context.app.state.currentUser
 		let org = currentUser && currentUser.position && currentUser.position.organization
 		let yesterday = moment().subtract(1, 'days').valueOf()
 
@@ -80,24 +81,24 @@ export default class Home extends Page {
 					<legend>My ANET Snapshot</legend>
 					<Grid fluid>
 						<Row>
-							<Link to={{pathname: 'search', query: {type: 'reports', pendingApprovalOf: currentUser.id}}} className="col-md-3 home-tile">
+							<Link to={{pathname: '/search', query: {type: 'reports', pendingApprovalOf: currentUser.id}}} className="col-md-3 home-tile">
 								<h1>{pendingMe && pendingMe.totalCount}</h1>
-								{currentUser.isSuperUser() ? "Pending my approval" : "My reports pending approval" }
+								{currentUser.isSuperUser() ? 'Pending my approval' : 'My reports pending approval' }
 							</Link>
 
 							{org &&
-								<Link to={{pathname: 'search', query: {type: 'reports', authorOrgId: org.id, createdAtStart: yesterday}}} className="col-md-3 home-tile">
+								<Link to={{pathname: '/search', query: {type: 'reports', authorOrgId: org.id, createdAtStart: yesterday,state: ["RELEASED","CANCELLED","PENDING_APPROVAL"] }}} className="col-md-3 home-tile">
 									<h1>{myOrgToday && myOrgToday.totalCount}</h1>
 									{org.shortName}'{org.shortName[org.shortName.length - 1].toLowerCase() !== 's' && 's'} recent reports
 								</Link>
-								}
+							}
 
-									<Link to={{pathname: 'search', query: {type: 'reports', authorId: currentUser.id, createdAtStart: yesterday}}} className="col-md-3 home-tile">
+							<Link to={{pathname: '/search', query: {type: 'reports', authorId: currentUser.id, createdAtStart: yesterday}}} className="col-md-3 home-tile">
 								<h1>{myReportsToday && myReportsToday.totalCount}</h1>
 								My reports in last 24 hrs
 							</Link>
 
-							<Link to={{pathname: 'search', query: {type: 'reports', pageSize: 100, engagementDateStart: moment().add(1, 'days').hour(0).valueOf()}}} className="col-md-3 home-tile">
+							<Link to={{pathname: '/search', query: {type: 'reports', pageSize: 100, engagementDateStart: moment().add(1, 'days').hour(0).valueOf()}}} className="col-md-3 home-tile">
 								<h1>{upcomingEngagements && upcomingEngagements.totalCount}</h1>
 								Upcoming engagements
 							</Link>
@@ -116,8 +117,8 @@ export default class Home extends Page {
 						</FormControl>
 					</FormGroup>
 
-					{this.state.selectedSearchId &&
-						<SavedSearchTable searchId={this.state.selectedSearchId} />
+					{this.state.selectedSearch &&
+						<SavedSearchTable search={this.state.selectedSearch} />
 					}
 				</fieldset>
 			</div>
@@ -126,7 +127,8 @@ export default class Home extends Page {
 
 	@autobind
 	onSaveSearchSelect(event) {
-		let value = event && event.target ? event.target.value : event
-		this.setState({selectedSearchId: value});
+		let id = event && event.target ? event.target.value : event
+		let search = this.state.savedSearches.find(el => el.id === id)
+		this.setState({selectedSearch: search})
 	}
 }

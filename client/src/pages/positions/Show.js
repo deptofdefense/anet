@@ -48,12 +48,12 @@ export default class PositionShow extends Page {
 
 	render() {
 		let position = this.state.position
-		let assignedRole = (position.type === "ADVISOR") ? "Afghan Principals" : "Advisors";
+		let assignedRole = (position.type === 'ADVISOR') ? 'Afghan Principals' : 'Advisors'
 
 		let currentUser = this.context.app.state.currentUser
 		let canEdit = currentUser && (
 			//Super Users can edit any Principal
-			(currentUser.isSuperUser() && position.type === "PRINCIPAL") ||
+			(currentUser.isSuperUser() && position.type === 'PRINCIPAL') ||
 			//Admins can edit anybody
 			(currentUser.isAdmin()) ||
 			//Super users can edit positions within their own organization
@@ -88,7 +88,7 @@ export default class PositionShow extends Page {
 						</Form.Field>}
 
 						<Form.Field id="location" label="Location">
-							{position.location && <Link to={"/locations/" + position.location.id}>{position.location.name}</Link>}
+							{position.location && <LinkTo location={position.location}>{position.location.name}</LinkTo>}
 						</Form.Field>
 
 						{position.person && <Form.Field id="person" label="Current Assigned Person" value={position.person && position.person.name} >
@@ -132,8 +132,8 @@ export default class PositionShow extends Page {
 									<tr key={pp.person.id} >
 										<td><LinkTo person={pp.person} /></td>
 										<td>
-											{moment(pp.startTime).format("D MMM YYYY")} - &nbsp;
-											{pp.endTime && moment(pp.endTime).format("D MMM YYYY")}
+											{moment(pp.startTime).format('D MMM YYYY')} - &nbsp;
+											{pp.endTime && moment(pp.endTime).format('D MMM YYYY')}
 										</td>
 									</tr>
 								)}
@@ -146,7 +146,7 @@ export default class PositionShow extends Page {
 	}
 
 	renderAssociatedPositionRow(pos) {
-		let personName = "Unfilled"
+		let personName = 'Unfilled'
 		if (pos.person) {
 			personName = <Link to={Person.pathFor(pos.person)}>{pos.person.name}</Link>
 		}
@@ -158,11 +158,11 @@ export default class PositionShow extends Page {
 
 	@autobind
 	actionSelect(eventKey, event) {
-		let position = this.state.position;
-		if (eventKey === "edit") {
-			History.push("/positions/" + position.id + "/edit")
+		let position = this.state.position
+		if (eventKey === 'edit') {
+			History.push(Position.pathForEdit(position))
 		} else {
-			console.error("Unimplemented Action: " + eventKey);
+			console.error('Unimplemented Action: ' + eventKey)
 		}
 	}
 

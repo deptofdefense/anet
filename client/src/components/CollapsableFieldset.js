@@ -21,7 +21,7 @@ export default class CollapsableFieldset extends Component {
 	}
 
 	constructor(props) {
-		super(props);
+		super(props)
 
 		this.state = {
 			showContent: false
@@ -39,7 +39,7 @@ export default class CollapsableFieldset extends Component {
 				{title && <legend>
 					{title}
 					<div className="pull-right collapsableToggle" onClick={this.toggleContent} >
-						<img src={(this.state.showContent) ? "/assets/img/minus.svg" : "/assets/img/plus.svg"}
+						<img src={(this.state.showContent) ? '/assets/img/minus.svg' : '/assets/img/plus.svg'}
 							alt="Toggle Content"
 							height={12}/>
 					</div>
@@ -57,6 +57,6 @@ export default class CollapsableFieldset extends Component {
 
 	@autobind
 	toggleContent() {
-		this.setState({showContent: !this.state.showContent});
+		this.setState({showContent: !this.state.showContent})
 	}
 }

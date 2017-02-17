@@ -23,6 +23,10 @@ public class PositionMapper implements ResultSetMapper<Position> {
 		
 		Position p = fillInFields(new Position(), rs);
 		
+		if (MapperUtils.containsColumnNamed(rs, "totalCount")) { 
+			ctx.setAttribute("totalCount", rs.getInt("totalCount"));
+		}
+		
 		if (MapperUtils.containsColumnNamed(rs, "people_id")) { 
 			PersonMapper.fillInFields(p.getPerson(), rs);
 		}
