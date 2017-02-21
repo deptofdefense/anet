@@ -273,16 +273,23 @@ a.home-tile {
 
 .not-found .face-1 {
 	width: 250px;
+	margin-left: 5vw;
+	margin-top: 5vh;
 }
 
 .not-found .face-2 {
-	width: 250px;
+	width: 200px;
+	margin-left: 21vw;
 }
 
 .not-found .face-3 {
 	width: 250px;
+	margin-left: 5vw;
 }
 
 .not-found .planet {
 	width: 250px;
+	position: absolute;
+	right: 0;
+	top: 65px;
 }
