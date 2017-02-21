@@ -102,6 +102,11 @@ ReactDOM.render((
 	</InjectablesProvider>
 ), document.getElementById('root'))
 
+/**
+ * react-router allows us to dynamically determine what the path '/' resolves to.
+ * We would like to choose that for the user based on whether this is their first
+ * time to the app.
+ */
 function getIndexRoute(_, cb) {
 	API.query(/* GraphQL */`
 		person(f:me) {
