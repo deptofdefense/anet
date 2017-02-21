@@ -257,7 +257,12 @@ a.home-tile {
 }
 
 .not-found {
+	height: 100%;
+}
+
+.not-found body {
 	background-image: url(../public/mountains.png);
 	background-repeat: no-repeat;
 	background-position: center bottom;
+	background-size: contain;
 }

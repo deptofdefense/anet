@@ -6,12 +6,17 @@ export default class NotFound extends Page {
         useNavigation: false
     }
 
+    constructor() {
+        super()
+        this.state = {}
+    }
+
     componentWillMount() {
-        document.querySelector('body').classList.add('not-found')
+        document.getElementsByTagName('html')[0].classList.add('not-found')
     }
 
     componentWillUnmount() {
-        document.querySelector('body').classList.remove('not-found')
+        document.getElementsByTagName('html')[0].classList.remove('not-found')
     }
     
 	render() {
