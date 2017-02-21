@@ -51,7 +51,7 @@ export default class App extends Page {
 	fetchData() {
 		API.query(/* GraphQL */`
 			person(f:me) {
-				name
+				id, name, role, emailAddress, rank, status
 				position {
 					id, name, type,
 					organization { id, shortName , allDescendantOrgs { id }}
