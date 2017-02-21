@@ -1,6 +1,8 @@
 import React from 'react'
 import Page from 'components/Page'
 
+import FACE_1 from 'resources/face-1.png'
+
 export default class NotFound extends Page {
     static pageProps = {
         useNavigation: false
@@ -21,7 +23,8 @@ export default class NotFound extends Page {
     
 	render() {
 		return <div>
-            <h1>404 Not Found</h1>
+            <img src={FACE_1} className="face-1" />
+            <h1 className="not-found-text">404 Not Found</h1>
         </div>
 	}
 }

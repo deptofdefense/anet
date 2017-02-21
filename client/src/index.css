@@ -261,8 +261,16 @@ a.home-tile {
 }
 
 .not-found body {
-	background-image: url(../public/mountains.png);
+	background-image: url(resources/mountains.png);
 	background-repeat: no-repeat;
 	background-position: center bottom;
 	background-size: contain;
+}
+
+.not-found .not-found-text {
+	text-align: center;
+}
+
+.not-found .face-1 {
+	width: 250px;
 }
