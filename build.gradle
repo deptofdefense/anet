@@ -13,6 +13,7 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'application'
 apply plugin: 'checkstyle'
+apply plugin: 'org.kordamp.markdown.convert'
 
 apply from: 'localSettings.gradle'
 
@@ -103,8 +104,27 @@ distributions {
 		contents {
 			into('docs/') {
 				from('anet.yml') { rename('anet.yml', 'anet.yml.template') }
-				from('docs/')
+				from(markdownToHtml)
 			}
 		}
 	}
 }
+
+//Add gradle plugin repos
+buildscript {
+  repositories {
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
+  }
+  dependencies {
+    classpath "org.kordamp:markdown-gradle-plugin:1.1.0"
+ }
+}
+
+//Configure Markdown plugin
+allprojects {
+  markdownToHtml.sourceDir = file("docs")
+  markdownToHtml.outputDir = file("$buildDir/documentation")
+}
+
