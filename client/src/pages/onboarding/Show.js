@@ -1,35 +1,27 @@
-import React from 'react'
+import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 import {Button} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 import History from 'components/History'
 import {Person} from 'models'
-import API from 'api'
 
 export default class OnboardingShow extends Page {
+	static contextTypes = {
+		app: PropTypes.object.isRequired,
+	}
     static pageProps = {
         useNavigation: false,
         minimalHeader: true
 	}
 
-	constructor(props) {
-		super(props)
-		this.state = {
-            person: null 
-        }
-	}
-
-    fetchData() {
-        API.query(/* GraphQL */`
-			person(f:me) {
-				id, role
-				}
-			}
-		`).then(({person}) => this.setState({person}))
+    constructor() {
+        super()
+        this.state = {}
     }
 
 	render() {
-        if (!this.state.person) {
+        const currentUser = this.context.app.state.currentUser
+        if (!currentUser) {
             return null
         }
         
@@ -37,9 +29,9 @@ export default class OnboardingShow extends Page {
             <div className="onboarding-new">
 			    <h1>Welcome to ANET</h1>
                 <p>ANET is an information system for reporting on TAA engagements, and learning about past engagements and people.</p>
-                <p>Let's create a new account for your as an <span className="role">{this.state.person.role}</span>. We'll get your basic information that will allow your supervisor to approve your account.</p>
+                <p>Let's create a new account for your as an <span className="role">{currentUser.role}</span>. We'll get your basic information that will allow your supervisor to approve your account.</p>
                 <div className="create-account-button-wrapper">
-                    <Button bsStyle="primary" onClick={this.onCreateAccountClick}>Create your account</Button>
+                    <Button bsStyle="primary" onClick={() => this.onCreateAccountClick(currentUser)}>Create your account</Button>
                 </div>
                 <div className="help">
                     <p>Concerned or stuck?</p>
@@ -51,7 +43,7 @@ export default class OnboardingShow extends Page {
 	}
 
     @autobind
-    onCreateAccountClick() {
-        History.push(Person.pathForEdit(this.state.person))
+    onCreateAccountClick(currentUser) {
+        History.push(Person.pathForEdit(currentUser))
     }
 }

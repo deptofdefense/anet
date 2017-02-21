@@ -5,7 +5,6 @@ import {Grid, Row, Col} from 'react-bootstrap'
 import SecurityBanner from 'components/SecurityBanner'
 import Header from 'components/Header'
 import Nav from 'components/Nav'
-import History from 'components/History'
 
 import API from 'api'
 import {Person, Organization} from 'models'
