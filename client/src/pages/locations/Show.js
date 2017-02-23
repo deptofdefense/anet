@@ -7,6 +7,7 @@ import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
 import Messages, {setMessages} from 'components/Messages'
 import Leaflet from 'components/Leaflet'
+import NotFound from 'components/NotFound'
 
 export default class LocationShow extends Page {
 	constructor(props) {
@@ -22,11 +23,22 @@ export default class LocationShow extends Page {
 			location(id:${props.params.id}) {
 				id, name, lat, lng
 			}
-		`).then(data => this.setState({location: new Location(data.location)}))
+			
+		`).then(data => {
+			LocationShow.pageProps = {useGrid: Boolean(data.location)}
+			this.setState({
+				location: data.location ? new Location(data.location) : null
+			})
+		})
 	}
 
 	render() {
 		let loc = this.state.location
+
+		if (!loc) {
+			return <NotFound notFoundText={`No location with ID ${this.props.params.id} found.`} />
+		}
+
 		let markers=[]
 		let latlng = 'None'
 		if (loc.lat && loc.lng) {

@@ -11,6 +11,7 @@ import History from 'components/History'
 import API from 'api'
 import {Poam} from 'models'
 import Messages, {setMessages} from 'components/Messages'
+import NotFound from 'components/NotFound'
 
 export default class PoamShow extends Page {
 	static contextTypes = {
@@ -38,15 +39,20 @@ export default class PoamShow extends Page {
 				responsibleOrg {id, shortName, longName}
 			}
 		`).then(data => {
+			PoamShow.pageProps = {useGrid: Boolean(data.poam)}
             this.setState({
-                poam: new Poam(data.poam)
+                poam: data.poam ? new Poam(data.poam) : null
             })
-        }
-        )
+        })
 	}
 
 	render() {
 		let {poam} = this.state
+
+		if (!poam) {
+			return <NotFound notFoundText={`No PoAM with ID ${this.props.params.id} was found.`} />
+		}
+
 		// Admins can edit poams, or super users if this poam is assigned to their org.
 		let currentUser = this.context.app.state.currentUser
 		let canEdit = (currentUser && currentUser.isAdmin()) ||
@@ -68,8 +74,8 @@ export default class PoamShow extends Page {
 				<Form static formFor={poam} horizontal>
 					<fieldset>
 						<legend>PoAM {poam.shortName}</legend>
-						<Form.Field id="shortName" />
-						<Form.Field id="longName" />
+						<Form.Field id="shortName" label="PoAM number" />
+						<Form.Field id="longName" label="PoAM description" />
 						{poam.responsibleOrg && poam.responsibleOrg.id && this.renderOrg()}
 					</fieldset>
 				</Form>
