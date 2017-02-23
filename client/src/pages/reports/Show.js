@@ -12,6 +12,7 @@ import Messages from 'components/Messages'
 import LinkTo from 'components/LinkTo'
 import History from 'components/History'
 import Autocomplete from 'components/Autocomplete'
+import NotFound from 'components/NotFound'
 
 import API from 'api'
 
@@ -102,12 +103,20 @@ export default class ReportShow extends Page {
 				approvalStep { name, approvers { id } }
 			}
 		`).then(data => {
-			this.setState({report: new Report(data.report)})
+			ReportShow.pageProps = {useGrid: Boolean(data.report)}
+			this.setState({
+				report: data.report ? new Report(data.report) : null
+			})
 		})
 	}
 
 	render() {
 		let {report} = this.state
+
+		if (!report) {
+			return <NotFound notFoundText={`Report with ID ${this.props.params.id} not found.`} />
+		}
+
 		let {currentUser} = this.context.app.state
 
 		let canApprove = report.isPending() && currentUser.position &&
