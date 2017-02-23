@@ -26,11 +26,19 @@ export default class NotFound extends Page {
     
 	render() {
 		return <div>
-            <img src={FACE_3} className="face-3" role="presentation" />
-            <img src={FACE_2} className="face-2" role="presentation" />
-            <img src={FACE_1} className="face-1" role="presentation" />
-            <img src={PLANET} className="planet" role="presentation" />
             <h1 className="not-found-text">404 Not Found</h1>
+            <div className="face-row">
+                <div className="image-container">
+                    <img src={FACE_3} className="face-3" role="presentation" />
+                </div>
+                <div className="image-container face-2">
+                    <img src={FACE_2} className="face-2" role="presentation" />
+                </div>
+                <div className="image-container face-1">
+                    <img src={FACE_1} className="face-1" role="presentation" />
+                </div>
+            </div>
+            <img src={PLANET} className="planet" role="presentation" />
         </div>
 	}
 }
