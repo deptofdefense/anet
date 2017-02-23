@@ -1,21 +1,11 @@
-import React from 'react'
-import Page from 'components/Page'
+import React, {Component} from 'react'
 
 import FACE_1 from 'resources/face-1.png'
 import FACE_2 from 'resources/face-2.png'
 import FACE_3 from 'resources/face-3.png'
 import PLANET from 'resources/planet.png'
 
-export default class NotFound extends Page {
-    static pageProps = {
-        useGrid: false
-    }
-
-    constructor() {
-        super()
-        this.state = {}
-    }
-
+export default class NotFound extends Component {
     componentWillMount() {
         document.getElementsByTagName('html')[0].classList.add('not-found')
     }
@@ -26,7 +16,7 @@ export default class NotFound extends Page {
     
 	render() {
 		return <div>
-            <h1 className="not-found-text">404 Not Found</h1>
+            <h1 className="not-found-text">{this.props.notFoundText}</h1>
             <div className="face-row">
                 <div className="image-container">
                     <img src={FACE_3} className="face-3" role="presentation" />

@@ -13,7 +13,7 @@ import {InjectablesProvider} from 'react-injectables'
 import App from './pages/App'
 import Home from './pages/Home'
 import Search from './pages/Search'
-import NotFound from './pages/NotFound'
+import PageMissing from './pages/PageMissing'
 
 import ReportsIndex from './pages/reports/Index'
 import ReportNew from './pages/reports/New'
@@ -94,8 +94,7 @@ ReactDOM.render((
 
 				<Route path="admin" component={AdminIndex} />
 
-				<Route path="not-found" component={NotFound} />
-				<Route path="*" component={NotFound} />
+				<Route path="*" component={PageMissing} />
 			</Route>
 		</Router>
 	</InjectablesProvider>
