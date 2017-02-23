@@ -13,14 +13,16 @@ export default class ButtonToggleGroup extends Component {
 
 		return (
 			<ButtonGroup {...props}>
-				{children.map((child, index) =>
-					<Button key={child.props.value}
+				{children.map((child, index) => {
+					if (!child) { return null }
+
+					return <Button key={child.props.value}
+						{...child.props}
 						active={this.props.value === child.props.value}
-						onClick={this.onClick} value={child.props.value}
-						{...child.props} >
+						onClick={this.onClick} value={child.props.value} >
 							{child.props.children}
 					</Button>
-				)}
+				})}
 			</ButtonGroup>
 		)
 	}

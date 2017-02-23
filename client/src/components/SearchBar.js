@@ -17,9 +17,9 @@ export default class SearchBar extends Component {
 		return (
 			<Form onSubmit={this.onSubmit}>
 				<InputGroup>
-					<FormControl value={this.state.query} placeholder="Search for people, reports, positions, or locations" onChange={this.onChange}/>
+					<FormControl value={this.state.query} placeholder="Search for people, reports, positions, or locations" onChange={this.onChange} id="searchBarInput" />
 					<InputGroup.Button>
-						<Button onClick={this.onSubmit} ><img src={SEARCH_ICON} height={16} alt="Search" /></Button>
+						<Button onClick={this.onSubmit} id="searchBarSubmit" ><img src={SEARCH_ICON} height={16} alt="Search" /></Button>
 					</InputGroup.Button>
 				</InputGroup>
 			</Form>

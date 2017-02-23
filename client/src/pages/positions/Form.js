@@ -1,11 +1,11 @@
 import React, {Component, PropTypes} from 'react'
-import {Table, Radio} from 'react-bootstrap'
+import {Table, Button} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
 import Form from 'components/Form'
 import Messages from 'components/Messages'
 import Autocomplete from 'components/Autocomplete'
-import RadioGroup from 'components/RadioGroup'
+import ButtonToggleGroup from 'components/ButtonToggleGroup'
 import History from 'components/History'
 
 import API from 'api'
@@ -61,10 +61,10 @@ export default class PositionForm extends Component {
 					<legend>Create a new Position</legend>
 
 					<Form.Field id="type" disabled={this.props.edit}>
-						<RadioGroup>
-							<Radio value="ADVISOR">Advisor (CE Billet)</Radio>
-							<Radio value="PRINCIPAL">Principal (Tashkil)</Radio>
-						</RadioGroup>
+						<ButtonToggleGroup>
+							<Button id="typeAdvisorButton" value="ADVISOR">Advisor (CE Billet)</Button>
+							<Button id="typePrincipalButton" value="PRINCIPAL">Principal (Tashkil)</Button>
+						</ButtonToggleGroup>
 					</Form.Field>
 
 					<Form.Field id="organization">
@@ -91,13 +91,13 @@ export default class PositionForm extends Component {
 
 					{position.type !== 'PRINCIPAL' &&
 						<Form.Field id="permissions">
-							<RadioGroup>
-								<Radio value="ADVISOR">Advisor</Radio>
-								<Radio value="SUPER_USER">Super User</Radio>
+							<ButtonToggleGroup>
+								<Button id="permsAdvisorButton" value="ADVISOR">Advisor</Button>
+								<Button id="permsSuperUserButton" value="SUPER_USER">Super User</Button>
 								{currentUser && currentUser.isAdmin() &&
-									<Radio value="ADMINISTRATOR">Administrator</Radio>
+									<Button id="permsAdminButton" value="ADMINISTRATOR">Administrator</Button>
 								}
-							</RadioGroup>
+							</ButtonToggleGroup>
 						</Form.Field>
 					}
 

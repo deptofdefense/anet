@@ -17,11 +17,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>waitForText</td>
-	<td>id=createButton</td>
-	<td>Create</td>
-</tr>
-<tr>
 	<td>click</td>
 	<td>id=createButton</td>
 	<td></td>
@@ -43,7 +38,7 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>//div[@id='date-picker-popover-0']/div[2]/table/tbody/tr/td[4]</td>
+	<td>//button[@type='button']</td>
 	<td></td>
 </tr>
 <tr>
@@ -68,8 +63,13 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>id=positiveAtmos</td>
+	<td>css=input[type=&quot;checkbox&quot;]</td>
 	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=cancelledReason</td>
+	<td>label=Cancelled by Principal</td>
 </tr>
 <tr>
 	<td>click</td>
@@ -79,7 +79,7 @@
 <tr>
 	<td>sendKeys</td>
 	<td>id=attendees</td>
-	<td>st</td>
+	<td>ste</td>
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
@@ -95,56 +95,6 @@
 	<td>verifyText</td>
 	<td>//div[@id='root']/div/section/div/div/div/form/fieldset[2]/div/div/table/tbody/tr[2]/td[2]</td>
 	<td>Steve Steveson</td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>id=poams</td>
-	<td></td>
-</tr>
-<tr>
-	<td>sendKeys</td>
-	<td>id=poams</td>
-	<td>budg</td>
-</tr>
-<tr>
-	<td>waitForElementPresent</td>
-	<td>id=react-autowhatever-1--item-0</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>id=react-autowhatever-1--item-0</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>id=poamDelete_0</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>id=poams</td>
-	<td></td>
-</tr>
-<tr>
-	<td>sendKeys</td>
-	<td>id=poams</td>
-	<td>mil</td>
-</tr>
-<tr>
-	<td>waitForElementPresent</td>
-	<td>css=#react-autowhatever-1--item-2 &gt; span</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>css=#react-autowhatever-1--item-2 &gt; span</td>
-	<td></td>
-</tr>
-<tr>
-	<td>sendKeys</td>
-	<td>id=keyOutcomes</td>
-	<td>The test case went very well</td>
 </tr>
 <tr>
 	<td>sendKeys</td>
@@ -173,28 +123,33 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>//button[@type='submit']</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForElementPresent</td>
-	<td>id=submitReportButton</td>
+	<td>css=input[type=&quot;checkbox&quot;]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>id=submitReportButton</td>
+	<td>css=button.btn.btn-default</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForText</td>
-	<td>css=h4.text-danger</td>
-	<td>This report is PENDING approvals.</td>
+	<td>sendKeys</td>
+	<td>id=poams</td>
+	<td>budget</td>
 </tr>
 <tr>
-	<td>assertText</td>
-	<td>css=h4.text-danger</td>
-	<td>This report is PENDING approvals.</td>
+	<td>sendKeys</td>
+	<td>id=keyOutcomes</td>
+	<td>we agreed to many things</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@type='submit']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@type='submit']</td>
+	<td></td>
 </tr>
 </tbody></table>
 </body>

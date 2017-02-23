@@ -17,11 +17,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>waitForText</td>
-	<td>id=createButton</td>
-	<td>Create</td>
-</tr>
-<tr>
 	<td>click</td>
 	<td>id=createButton</td>
 	<td></td>
@@ -70,6 +65,21 @@
 	<td>click</td>
 	<td>id=positiveAtmos</td>
 	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>xpath=(//button[@type='button'])[2]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>xpath=(//button[@type='button'])[3]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>sendKeys</td>
+	<td>id=atmosphereDetails</td>
+	<td>It was just sort of terrible</td>
 </tr>
 <tr>
 	<td>click</td>
@@ -175,26 +185,6 @@
 	<td>click</td>
 	<td>//button[@type='submit']</td>
 	<td></td>
-</tr>
-<tr>
-	<td>waitForElementPresent</td>
-	<td>id=submitReportButton</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>id=submitReportButton</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForText</td>
-	<td>css=h4.text-danger</td>
-	<td>This report is PENDING approvals.</td>
-</tr>
-<tr>
-	<td>assertText</td>
-	<td>css=h4.text-danger</td>
-	<td>This report is PENDING approvals.</td>
 </tr>
 </tbody></table>
 </body>

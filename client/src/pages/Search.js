@@ -234,7 +234,7 @@ export default class Search extends Page {
 					<fieldset>
 						<legend>Reports</legend>
 						<div className="pull-right">
-							{this.props.location.query.text && <Button onClick={this.showSaveModal}>Save search</Button>}
+							{this.props.location.query.text && <Button onClick={this.showSaveModal} id="saveSearchButton" >Save search</Button>}
 						</div>
 						<ReportCollection paginatedReports={results.reports} goToPage={this.goToReportsPage} />
 					</fieldset>
@@ -396,7 +396,7 @@ export default class Search extends Page {
 				<Form formFor={this.state.saveSearch} onChange={this.onChangeSaveSearch}
 					onSubmit={this.onSubmitSaveSearch} submitText={false}>
 					<Form.Field id="name" placeholder="Give this saved search a name" />
-					<Button type="submit" bsStyle="primary">Save</Button>
+					<Button type="submit" bsStyle="primary" id="saveSearchModalSubmitButton" >Save</Button>
 				</Form>
 			</Modal.Body>
 		</Modal>
