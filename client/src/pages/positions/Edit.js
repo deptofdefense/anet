@@ -4,6 +4,7 @@ import Page from 'components/Page'
 import PositionForm from './Form'
 import {ContentForHeader} from 'components/Header'
 import Breadcrumbs from 'components/Breadcrumbs'
+import NotFound from 'components/NotFound'
 
 import API from 'api'
 import {Position} from 'models'
@@ -31,12 +32,22 @@ export default class PositionEdit extends Page {
 				person { id, name}
 			}
 		`).then(data => {
+			PositionEdit.pageProps.useGrid = true
 			this.setState({position: new Position(data.position)})
+		}, err => {
+			if (err.errors[0] === 'Exception while fetching data: javax.ws.rs.WebApplicationException: Not Found') {
+				PositionEdit.pageProps.useGrid = false
+				this.setState({position: null})
+			}	
 		})
 	}
 
 	render() {
 		let position = this.state.position
+
+		if (!position) {
+			return <NotFound notFoundText={`Position with ID ${this.props.params.id} not found.`} />
+		}
 
 		return (
 			<div>
