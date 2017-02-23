@@ -10,6 +10,7 @@ import Messages , {setMessages} from 'components/Messages'
 import autobind from 'autobind-decorator'
 import {browserHistory as History} from 'react-router'
 import LinkTo from 'components/LinkTo'
+import NotFound from 'components/NotFound'
 import moment from 'moment'
 
 import {Person, Position, Organization} from 'models'
@@ -43,11 +44,25 @@ export default class PositionShow extends Page {
 				previousPeople { startTime, endTime, person { id, name, rank }}
 				location { id, name }
 			}
-		`).then(data => this.setState({position: new Position(data.position)}))
+		`).then(data => {
+				PositionShow.pageProps = {useGrid: true}
+				this.setState({position: new Position(data.position)})
+			}, 
+			err => {
+				if (err.errors[0] === 'Exception while fetching data: javax.ws.rs.WebApplicationException: Not Found') {
+					PositionShow.pageProps = {useGrid: false}
+					this.setState({position: null})
+				}	
+			})
 	}
 
 	render() {
 		let position = this.state.position
+
+		if (!position) {
+			return <NotFound notFoundText={`Position with ID ${this.props.params.id} not found.`} />
+		}
+
 		let assignedRole = (position.type === 'ADVISOR') ? 'Afghan Principals' : 'Advisors'
 
 		let currentUser = this.context.app.state.currentUser
