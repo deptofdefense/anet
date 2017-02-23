@@ -8,6 +8,7 @@ import Messages from 'components/Messages'
 
 import API from 'api'
 import {Poam} from 'models'
+import NotFound from 'components/NotFound'
 
 export default class PoamEdit extends Page {
 	static pageProps = {
@@ -31,12 +32,17 @@ export default class PoamEdit extends Page {
 				responsibleOrg {id,shortName, longName}
 			}
 		`).then(data => {
-			this.setState({poam: new Poam(data.poam)})
+			PoamEdit.pageProps.useGrid = Boolean(data.poam)
+			this.setState({poam: data.poam ? new Poam(data.poam) : null})
 		})
 	}
 
 	render() {
 		let poam = this.state.poam
+
+		if (!poam) {
+			return <NotFound notFoundText={`No PoAM with ID ${this.props.params.id} was found.`} />
+		}
 
 		return (
 			<div>
