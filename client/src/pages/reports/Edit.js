@@ -5,9 +5,11 @@ import moment from 'moment'
 import ReportForm from './Form'
 import {ContentForHeader} from 'components/Header'
 import Breadcrumbs from 'components/Breadcrumbs'
+import NotFound from 'components/NotFound'
 
 import API from 'api'
 import {Report} from 'models'
+import _get from 'lodash.get'
 
 export default class ReportEdit extends Page {
 	static pageProps = {
@@ -39,16 +41,24 @@ export default class ReportEdit extends Page {
 				poams { id, shortName, longName, responsibleOrg { id, shortName} }
 			}
 		`).then(data => {
+			ReportEdit.pageProps.useGrid = Boolean(data.report)
 			let newState = {
-				report: new Report(data.report),
+				report: data.report ? new Report(data.report) : null,
 			}
-			newState.report.engagementDate = newState.report.engagementDate && moment(newState.report.engagementDate).format()
+			if (_get(newState, ['report', 'engagementDate'])) {
+				newState.report.engagementDate = moment(newState.report.engagementDate).format()
+			}
+
 			this.setState(newState)
 		})
 	}
 
 	render() {
 		let report = this.state.report
+
+		if (!report) {
+			return <NotFound notFoundText={`Report with ID ${this.props.params.id} not found.`} />
+		}
 
 		return (
 			<div>
