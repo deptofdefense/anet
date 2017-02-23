@@ -37,8 +37,13 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
-	<td>css=li.active &gt; span</td>
+	<td>waitForText</td>
+	<td>css=legend</td>
+	<td>Happiest place on Earth</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>css=legend</td>
 	<td>Happiest place on Earth</td>
 </tr>
 </tbody></table>

@@ -99,7 +99,12 @@
 <tr>
 	<td>sendKeys</td>
 	<td>id=attendees</td>
-	<td>ja</td>
+	<td>jack</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>id=react-autowhatever-1--item-0</td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>

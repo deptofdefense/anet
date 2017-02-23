@@ -1,9 +1,9 @@
 import React, {Component, PropTypes} from 'react'
-import {Button, Table, Radio} from 'react-bootstrap'
+import {Button, Table} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
 import Form from 'components/Form'
-import RadioGroup from 'components/RadioGroup'
+import ButtonToggleGroup from 'components/ButtonToggleGroup'
 import Autocomplete from 'components/Autocomplete'
 import PoamsSelector from 'components/PoamsSelector'
 import History from 'components/History'
@@ -41,10 +41,10 @@ export default class OrganizationForm extends Component {
 				<legend>{edit ? 'Editing ' + organization.shortName : 'Create a new Organization'}</legend>
 
 				<Form.Field id="type">
-					<RadioGroup>
-						<Radio value="ADVISOR_ORG">Advisor Organization</Radio>
-						<Radio value="PRINCIPAL_ORG">Afghan Govt Organization</Radio>
-					</RadioGroup>
+					<ButtonToggleGroup>
+						<Button id="advisorOrgButton" value="ADVISOR_ORG">Advisor Organization</Button>
+						<Button id="principalOrgButton" value="PRINCIPAL_ORG">Afghan Govt Organization</Button>
+					</ButtonToggleGroup>
 				</Form.Field>
 
 				<Form.Field id="parentOrg" label="Parent organization">
@@ -64,7 +64,7 @@ export default class OrganizationForm extends Component {
 				<fieldset>
 					<legend>Approval Process</legend>
 
-					<Button className="pull-right" onClick={this.addApprovalStep} bsStyle="primary" >
+					<Button className="pull-right" onClick={this.addApprovalStep} bsStyle="primary" id="addApprovalStepButton" >
 						Add an Approval Step
 					</Button>
 
@@ -78,6 +78,7 @@ export default class OrganizationForm extends Component {
 
 	renderApprovalStep(step, index) {
 		let approvers = step.approvers
+		console.log(step)
 
 		return <fieldset key={index}>
 			<legend>Step {index + 1}</legend>
@@ -110,8 +111,8 @@ export default class OrganizationForm extends Component {
 						</tr>
 					</thead>
 					<tbody>
-						{approvers.map(approver =>
-							<tr key={approver.id}>
+						{approvers.map((approver, approverIndex) =>
+							<tr key={approver.id} id={`step_${index}_approver_${approverIndex}`} >
 								<td onClick={this.removeApprover.bind(this, approver, index)}>
 									<span style={{cursor: 'pointer'}}>⛔️</span>
 								</td>
@@ -127,6 +128,10 @@ export default class OrganizationForm extends Component {
 
 	@autobind
 	addApprover(index, position) {
+		if (!position || !position.id) {
+			return
+		}
+
 		let org = this.props.organization
 		let step = org.approvalSteps[index]
 		let newApprovers = step.approvers.slice()
@@ -153,6 +158,7 @@ export default class OrganizationForm extends Component {
 		let name = event && event.target ? event.target.value : event
 		let step = this.props.organization.approvalSteps[index]
 		step.name = name
+		console.log(event, step, name)
 
 		this.onChange()
 	}

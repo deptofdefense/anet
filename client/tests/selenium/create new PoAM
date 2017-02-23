@@ -27,12 +27,12 @@
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
+	<td>sendKeys</td>
 	<td>id=shortName</td>
 	<td>flying lessons!</td>
 </tr>
 <tr>
-	<td>type</td>
+	<td>sendKeys</td>
 	<td>id=longName</td>
 	<td>Teach counterparts how to make a paper airplane</td>
 </tr>
@@ -44,7 +44,12 @@
 <tr>
 	<td>sendKeys</td>
 	<td>id=responsibleOrg</td>
-	<td>min</td>
+	<td>cupcake</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>id=react-autowhatever-1--item-2</td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
@@ -57,17 +62,32 @@
 	<td></td>
 </tr>
 <tr>
+	<td>waitForText</td>
+	<td>id=shortName</td>
+	<td>flying lessons!</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>id=shortName</td>
+	<td>flying lessons!</td>
+</tr>
+<tr>
 	<td>sendKeys</td>
-	<td>css=input.form-control</td>
+	<td>id=searchBarInput</td>
 	<td>flying</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=button.btn.btn-default</td>
+	<td>id=searchBarSubmit</td>
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
+	<td>waitForText</td>
+	<td>css=legend</td>
+	<td>PoAMs</td>
+</tr>
+<tr>
+	<td>assertText</td>
 	<td>link=flying lessons! Teach counterparts how to make a paper airplane</td>
 	<td>flying lessons! Teach counterparts how to make a paper airplane</td>
 </tr>

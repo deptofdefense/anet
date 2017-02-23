@@ -74,8 +74,8 @@ export default class OrganizationPoams extends Component {
 				</thead>
 
 				<tbody>
-					{Poam.map(poamList.list, poam =>
-						<tr key={poam.id}>
+					{Poam.map(poamList.list, (poam, idx) =>
+						<tr key={poam.id} id={`poam_${idx}`} >
 							<td><LinkTo poam={poam} >{poam.shortName}</LinkTo></td>
 							<td>{poam.longName}</td>
 						</tr>

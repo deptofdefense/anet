@@ -37,6 +37,11 @@
 	<td>ef</td>
 </tr>
 <tr>
+	<td>waitForElementPresent</td>
+	<td>id=react-autowhatever-1--item-2</td>
+	<td></td>
+</tr>
+<tr>
 	<td>click</td>
 	<td>id=react-autowhatever-1--item-2</td>
 	<td></td>
@@ -53,7 +58,7 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>xpath=(//button[@type='button'])[4]</td>
+	<td>id=permsSuperUserButton</td>
 	<td></td>
 </tr>
 <tr>
@@ -64,11 +69,16 @@
 <tr>
 	<td>sendKeys</td>
 	<td>id=associatedPositions</td>
-	<td>ste</td>
+	<td>steve</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>id=react-autowhatever-1--item-0</td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=#react-autowhatever-1--item-1 &gt; span</td>
+	<td>id=react-autowhatever-1--item-0</td>
 	<td></td>
 </tr>
 <tr>
@@ -82,6 +92,11 @@
 	<td>ho</td>
 </tr>
 <tr>
+	<td>waitForElementPresent</td>
+	<td>id=react-autowhatever-1--item-2</td>
+	<td></td>
+</tr>
+<tr>
 	<td>click</td>
 	<td>id=react-autowhatever-1--item-2</td>
 	<td></td>
@@ -90,6 +105,26 @@
 	<td>click</td>
 	<td>id=formBottomSubmit</td>
 	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>css=legend</td>
+	<td>barista super user</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>id=type</td>
+	<td>SUPER_USER</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>id=code</td>
+	<td>yxvuts</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//tr[@id='associatedPosition_0']/td</td>
+	<td>Steve Steveson</td>
 </tr>
 </tbody></table>
 </body>

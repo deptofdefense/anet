@@ -82,6 +82,11 @@
 	<td>ste</td>
 </tr>
 <tr>
+	<td>waitForElementPresent</td>
+	<td>id=react-autowhatever-1--item-0</td>
+	<td></td>
+</tr>
+<tr>
 	<td>click</td>
 	<td>id=react-autowhatever-1--item-0</td>
 	<td></td>

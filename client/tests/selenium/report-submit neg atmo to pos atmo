@@ -17,8 +17,18 @@
 	<td></td>
 </tr>
 <tr>
+	<td>waitForText</td>
+	<td>id=createButton</td>
+	<td>Create</td>
+</tr>
+<tr>
 	<td>click</td>
 	<td>id=createButton</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=New Report</td>
 	<td></td>
 </tr>
 <tr>
@@ -187,33 +197,43 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
-	<td>xpath=(//a[contains(text(),'ANET Administrators')])[2]</td>
-	<td>*</td>
-</tr>
-<tr>
-	<td>verifyText</td>
-	<td>//div[@id='root']/div/section/div/div[2]/div/div[3]/fieldset/div[7]/div/div</td>
-	<td>*</td>
-</tr>
-<tr>
-	<td>verifyText</td>
-	<td>//div[@id='root']/div/section/div/div[2]/div/div[3]/fieldset[3]/table/tbody/tr/td</td>
+	<td>waitForElementPresent</td>
+	<td>id=submitReportButton</td>
 	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>id=advisorOrg</td>
+	<td>ANET Administrators</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>id=principalOrg</td>
+	<td>MoD</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//tr[@id='poam_0']/td</td>
+	<td>This is the first Milestone in EF2</td>
 </tr>
 <tr>
 	<td>verifyText</td>
 	<td>id=atmosphereDetails</td>
-	<td></td>
+	<td>It was just sort of terrible</td>
 </tr>
 <tr>
-	<td>verifyText</td>
-	<td>//div[@id='root']/div/section/div/div[2]/div/div[3]/fieldset[3]/table/tbody/tr/td[2]</td>
+	<td>verifyElementPresent</td>
+	<td>css=img[alt=&quot;POSITIVE&quot;]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//button[@type='submit']</td>
+	<td>id=submitReportButton</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=New Report</td>
 	<td></td>
 </tr>
 </tbody></table>

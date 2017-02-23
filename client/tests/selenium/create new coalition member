@@ -37,6 +37,11 @@
 	<td>label=Advisor</td>
 </tr>
 <tr>
+	<td>click</td>
+	<td>id=emailAddress</td>
+	<td></td>
+</tr>
+<tr>
 	<td>sendKeys</td>
 	<td>id=emailAddress</td>
 	<td>abe@example.com</td>
@@ -80,6 +85,21 @@
 	<td>click</td>
 	<td>id=formBottomSubmit</td>
 	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>css=legend</td>
+	<td>OF-4 Abe Appleton</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>id=phoneNumber</td>
+	<td>555865309</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>id=endOfTourDate</td>
+	<td>12 Apr 2017</td>
 </tr>
 </tbody></table>
 </body>

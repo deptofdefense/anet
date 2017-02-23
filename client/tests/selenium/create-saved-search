@@ -18,22 +18,27 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=input.form-control</td>
+	<td>id=searchBarInput</td>
 	<td></td>
 </tr>
 <tr>
 	<td>sendKeys</td>
-	<td>css=input.form-control</td>
+	<td>id=searchBarInput</td>
 	<td>budget</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=button.btn.btn-default</td>
+	<td>id=searchBarSubmit</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>id=saveSearchButton</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=div.pull-right &gt; button.btn.btn-default</td>
+	<td>id=saveSearchButton</td>
 	<td></td>
 </tr>
 <tr>
@@ -43,7 +48,7 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=form &gt; button.btn.btn-primary</td>
+	<td>id=saveSearchModalSubmitButton</td>
 	<td></td>
 </tr>
 <tr>
@@ -52,15 +57,16 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
-	<td>id=savedSearchSelect</td>
-	<td>budget</td>
+	<td>waitForElementPresent</td>
+	<td>css=#savedSearchSelect option</td>
+	<td></td>
 </tr>
 <tr>
-	<td>comment</td>
-	<td></td>
-	<td>how to verify that results are the same as results on search page? </td>
+	<td>assertText</td>
+	<td>css=#savedSearchSelect option</td>
+	<td>budget</td>
 </tr>
+<!--how to verify that results are the same as results on search page? -->
 </tbody></table>
 </body>
 </html>

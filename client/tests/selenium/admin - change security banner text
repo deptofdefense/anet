@@ -22,12 +22,22 @@
 	<td></td>
 </tr>
 <tr>
+	<td>waitForElementPresent</td>
+	<td>id=SECURITY_BANNER_TEXT</td>
+	<td></td>
+</tr>
+<tr>
 	<td>click</td>
 	<td>id=SECURITY_BANNER_TEXT</td>
 	<td></td>
 </tr>
 <tr>
 	<td>sendKeys</td>
+	<td>id=SECURITY_BANNER_TEXT</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
 	<td>id=SECURITY_BANNER_TEXT</td>
 	<td></td>
 </tr>
@@ -42,7 +52,22 @@
 	<td></td>
 </tr>
 <tr>
+	<td>waitForText</td>
+	<td>css=div.security</td>
+	<td>DEMO ONLY || Arthur Dmin</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>css=div.security</td>
+	<td>DEMO ONLY || Arthur Dmin</td>
+</tr>
+<tr>
 	<td>click</td>
+	<td>id=SECURITY_BANNER_TEXT</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
 	<td>id=SECURITY_BANNER_TEXT</td>
 	<td></td>
 </tr>
@@ -56,7 +81,16 @@
 	<td>id=formBottomSubmit</td>
 	<td></td>
 </tr>
-
+<tr>
+	<td>waitForText</td>
+	<td>css=div.security</td>
+	<td>DEMO USE ONLY || Arthur Dmin</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>css=div.security</td>
+	<td>DEMO USE ONLY || Arthur Dmin</td>
+</tr>
 </tbody></table>
 </body>
 </html>

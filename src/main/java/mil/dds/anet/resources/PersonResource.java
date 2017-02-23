@@ -100,7 +100,7 @@ public class PersonResource implements IGraphQLResource {
 	@Path("/new")
 	@RolesAllowed("SUPER_USER")
 	public Person createNewPerson(@Auth Person user, Person p) {
-		if (p.getPosition() != null) { 
+		if (p.getPosition() != null && p.getPosition().getId() != null) { 
 			Position position = AnetObjectEngine.getInstance().getPositionDao().getById(p.getPosition().getId());
 			if (position == null) { 
 				throw new WebApplicationException("Position " + p.getPosition() + " does not exist", Status.BAD_REQUEST);
