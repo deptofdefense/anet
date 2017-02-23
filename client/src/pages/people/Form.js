@@ -8,6 +8,9 @@ import TextEditor from 'components/TextEditor'
 import Autocomplete from 'components/Autocomplete'
 import History from 'components/History'
 
+import _some from 'lodash.some'
+import _values from 'lodash.values'
+
 import API from 'api'
 import {Person} from 'models'
 
@@ -25,18 +28,28 @@ export default class PersonForm extends Component {
 
 		this.state = {
 			error: null,
+			formErrors: {}
 		}
 	}
 
 	render() {
 		let {person, edit, showPositionAssignment} = this.props
+		const isAdvisor = person.role === 'ADVISOR'
 
-		return <Form formFor={person} onChange={this.onChange} onSubmit={this.onSubmit} horizontal submitText="Save person">
+		return <Form formFor={person} onChange={this.onChange} onSubmit={this.onSubmit} horizontal submitText="Save person" 
+					 submitDisabled={this.isSubmitDisabled()}>
+					 
 			<Messages error={this.state.error} />
 
 			<fieldset>
 				<legend>{edit ? 'Edit ' + person.name : 'Create a new Person'}</legend>
-				<Form.Field id="name" />
+
+				<Form.Field id="name" 
+					required
+					humanName="Name"
+					onError={() => this.onFieldEnterErrorState('name')}
+					onValid={() => this.onFieldExitErrorState('name')} />
+
 				{edit ?
 					<Form.Field type="static" id="role" />
 					:
@@ -49,9 +62,19 @@ export default class PersonForm extends Component {
 
 			<fieldset>
 				<legend>Additional Information</legend>
-				<Form.Field id="emailAddress" label="Email" />
+				<Form.Field id="emailAddress" label="Email" required={isAdvisor} 
+					humanName="Valid email address"
+					type="email"
+					onError={() => this.onFieldEnterErrorState('emailAddress')}
+					onValid={() => this.onFieldExitErrorState('emailAddress')} />
 				<Form.Field id="phoneNumber" label="Phone Number" />
-				<Form.Field id="rank"  componentClass="select">
+				<Form.Field id="rank"  componentClass="select"
+					required={isAdvisor} 
+					humanName="Rank"
+					onError={() => this.onFieldEnterErrorState('rank')}
+					onValid={() => this.onFieldExitErrorState('rank')}>
+
+					<option />
 					<option value="OF-1" >OF-1</option>
 					<option value="OF-2" >OF-2</option>
 					<option value="OF-3" >OF-3</option>
@@ -62,13 +85,21 @@ export default class PersonForm extends Component {
 					<option value="CTR">CTR</option>
 				</Form.Field>
 
-				<Form.Field id="gender" componentClass="select">
+				<Form.Field id="gender" componentClass="select"
+					required={isAdvisor} 
+					humanName="Gender"
+					onError={() => this.onFieldEnterErrorState('gender')}
+					onValid={() => this.onFieldExitErrorState('gender')}>
 					<option />
 					<option value="MALE" >Male</option>
 					<option value="FEMALE" >Female</option>
 				</Form.Field>
 
-				<Form.Field id="country" componentClass="select">
+				<Form.Field id="country" componentClass="select"
+					required={isAdvisor} 
+					humanName="Country"
+					onError={() => this.onFieldEnterErrorState('country')}
+					onValid={() => this.onFieldExitErrorState('country')}>
 					<option />
 					<option>Afghanistan</option>
 					<option>Albania</option>
@@ -142,6 +173,21 @@ export default class PersonForm extends Component {
 	@autobind
 	onChange() {
 		this.forceUpdate()
+	}
+
+	@autobind
+	onFieldEnterErrorState(fieldName) {
+		this.setState({formErrors: {[fieldName]: true}})
+	}
+
+	@autobind
+	onFieldExitErrorState(fieldName) {
+		this.setState({formErrors: {[fieldName]: false}})
+	}
+
+	@autobind
+	isSubmitDisabled() {
+		return _some(_values(this.state.formErrors))
 	}
 
 	@autobind

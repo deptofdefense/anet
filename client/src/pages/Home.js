@@ -36,12 +36,13 @@ export default class Home extends Page {
 		}
 		let orgQuery = (currentUser.position && currentUser.position.organization && {
 			authorOrgId: currentUser.position.organization.id,
-			createdAtStart: yesterday
+			createdAtStart: yesterday,
+			state: ["RELEASED","CANCELLED","PENDING_APPROVAL"]
 		}) || {}
 		let pendingQuery = currentUser.isSuperUser() ?
 			{pendingApprovalOf : currentUser.id}
 			:
-			{authorId : currentUser.id, state : 'PENDING_APPROVAL'}
+			{authorId : currentUser.id, state : ['PENDING_APPROVAL']}
 		let myReports = { authorId: currentUser.id, createdAtStart: moment().subtract(1, 'days').valueOf() }
 		API.query(/*GraphQL */`
 			pendingMe: reportList(f:search, query:$pendingQuery) { totalCount },
@@ -86,7 +87,7 @@ export default class Home extends Page {
 							</Link>
 
 							{org &&
-								<Link to={{pathname: '/search', query: {type: 'reports', authorOrgId: org.id, createdAtStart: yesterday}}} className="col-md-3 home-tile">
+								<Link to={{pathname: '/search', query: {type: 'reports', authorOrgId: org.id, createdAtStart: yesterday,state: ["RELEASED","CANCELLED","PENDING_APPROVAL"] }}} className="col-md-3 home-tile">
 									<h1>{myOrgToday && myOrgToday.totalCount}</h1>
 									{org.shortName}'{org.shortName[org.shortName.length - 1].toLowerCase() !== 's' && 's'} recent reports
 								</Link>

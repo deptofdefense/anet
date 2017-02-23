@@ -2,7 +2,7 @@ import React, {Component, PropTypes} from 'react'
 import utils from 'utils'
 import deepEqual from 'deep-equal'
 import autobind from 'autobind-decorator'
-import {FormGroup, Col, ControlLabel, FormControl, InputGroup} from 'react-bootstrap'
+import {FormGroup, Col, ControlLabel, FormControl, InputGroup, HelpBlock} from 'react-bootstrap'
 
 class FormFieldExtraCol extends Component {
 	render() {
@@ -13,7 +13,11 @@ class FormFieldExtraCol extends Component {
 export default class FormField extends Component {
 	constructor(props, context) {
 		super(props, context)
-		this.state = {value: ''}
+		this.state = {
+			value: '', 
+			userHasTouchedField: false,
+			isValid: null
+		}
 	}
 	static contextTypes = {
 		formFor: PropTypes.object,
@@ -43,6 +47,11 @@ export default class FormField extends Component {
 		// if any of the children have propTypes that include onChange
 		children: PropTypes.node,
 
+		humanName: PropTypes.string,
+		required: PropTypes.bool,
+		onError: PropTypes.func,
+		onValid: PropTypes.func,
+
 		// If you don't pass children, we will automatically create a FormControl.
 		// You can use componentClass to override its type (for example, for a select).
 		componentClass: PropTypes.oneOfType([
@@ -71,9 +80,20 @@ export default class FormField extends Component {
 			...childProps
 		} = this.props
 
-		childProps = Object.without(childProps, 'getter', 'horizontal')
+		childProps = Object.without(childProps, 'getter', 'horizontal', 'onError', 'onValid', 'humanName')
 
-		let validationState = this.props.validationState
+		let defaultValue = this.getDefaultValue(this.props, this.context)
+
+		let state = this.state
+		if (Array.isArray(defaultValue)) {
+			state.value = Array.from(defaultValue)
+		} else {
+			state.value = defaultValue
+		}
+
+		const validationState = this.props.validationState || 
+			(this.state.isValid === false || this.isMissingRequiredField(this.props)) ? 'error' : null
+
 		let horizontal = this.context.form && this.context.form.props.horizontal
 		if (typeof this.props.horizontal !== 'undefined') {
 			horizontal = this.props.horizontal
@@ -89,15 +109,6 @@ export default class FormField extends Component {
 		let extra = children.find(child => child.type === FormFieldExtraCol)
 		if (extra)
 			children.splice(children.indexOf(extra), 1)
-
-		let defaultValue = this.getDefaultValue(this.props, this.context)
-
-		let state = this.state
-		if (Array.isArray(defaultValue)) {
-			state.value = Array.from(defaultValue)
-		} else {
-			state.value = defaultValue
-		}
 
 		// if type is static, render out a static value
 		if (this.props.type === 'static' || (!this.props.type && !this.props.componentClass && this.context.form.props.static)) {
@@ -122,7 +133,18 @@ export default class FormField extends Component {
 			if (children.length)
 				childProps.children = children
 
-			children = <FormControl {...childProps} value={defaultValue} onChange={this.props.onChange || this.onChange} />
+			const formControl = <FormControl 
+				{...childProps} 
+				value={defaultValue} 
+				onChange={this.onChange} 
+				onBlur={this.onUserTouchedField} />
+
+			children = <div>
+				{formControl}
+				<HelpBlock className={validationState === 'error' ? '' : 'hidden'} >
+					{this.props.humanName} is required
+				</HelpBlock>
+			</div>
 		}
 
 		if (icon) {
@@ -155,7 +177,16 @@ export default class FormField extends Component {
 		)
 	}
 
+	@autobind
+	isMissingRequiredField(props) {
+		return props.required && !this.state.value && this.state.userHasTouchedField
+	}
+
 	shouldComponentUpdate(newProps, newState, newContext) {
+		if (this.state.userHasTouchedField !== newState.userHasTouchedField) {
+			return true
+		}
+
 		let newValue = this.getDefaultValue(newProps, newContext)
 		let oldValue = this.state.value
 
@@ -188,8 +219,42 @@ export default class FormField extends Component {
 		return props.value || this.getValue(props, context) || ''
 	}
 
+	componentWillReceiveProps(nextProps) {
+		if (nextProps.required !== this.props.required) {
+			this.updateValidationState(nextProps)
+		}
+	}
+
+	@autobind
+	updateValidationState(props) {
+		if (!this.state.userHasTouchedField) {
+			return
+		}
+
+		if (this.isMissingRequiredField(props) || this.state.isValid === false) {
+			props.onError()
+		} else if (props.onValid && !this.isMissingRequiredField(props) && this.state.isValid !== false) {
+			props.onValid()
+		}
+	}
+
+	@autobind
+	onUserTouchedField(event) {
+		this.setState({
+			isValid: event && event.target ? event.target.checkValidity() : null,
+			userHasTouchedField: true
+		}, () => this.updateValidationState(this.props))
+	}
+
 	@autobind
 	onChange(event) {
+		this.onUserTouchedField(event)
+
+		if (this.props.onChange) {
+			this.props.onChange()
+			return
+		}
+
 		let id = this.props.id
 		let value = event && event.target ? event.target.value : event
 		let formContext = this.context.formFor

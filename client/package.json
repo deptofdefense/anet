@@ -12,6 +12,7 @@
     "babel-jest": "16.0.0",
     "babel-loader": "6.2.5",
     "babel-plugin-transform-decorators-legacy": "^1.3.4",
+    "babel-plugin-transform-proto-to-assign": "^6.23.0",
     "babel-preset-react-app": "^1.0.0",
     "babel-preset-stage-1": "^6.16.0",
     "case-sensitive-paths-webpack-plugin": "1.1.4",
@@ -67,6 +68,10 @@
     "graphql": "^0.8.2",
     "immutability-helper": "kolodny/immutability-helper",
     "leaflet": "^1.0.2",
+    "locale-compare-polyfill": "0.0.2",
+    "lodash.debounce": "^4.0.8",
+    "lodash.some": "^4.6.0",
+    "lodash.values": "^4.3.0",
     "moment": "^2.17.1",
     "nprogress": "^0.2.0",
     "pluralize": "^3.1.0",
@@ -111,16 +116,27 @@
       "stage-1"
     ],
     "plugins": [
-      "transform-decorators-legacy"
+      "transform-decorators-legacy",
+      "transform-proto-to-assign"
     ]
   },
   "eslintConfig": {
     "extends": "react-app",
     "rules": {
-      "quote-props": ["warn", "as-needed"],
-      "semi": ["warn", "never"],
-      "dot-notation": ["warn"],
-      "no-unused-vars": ["warn"]
+      "quote-props": [
+        "warn",
+        "as-needed"
+      ],
+      "semi": [
+        "warn",
+        "never"
+      ],
+      "dot-notation": [
+        "warn"
+      ],
+      "no-unused-vars": [
+        "warn"
+      ]
     }
   }
 }
