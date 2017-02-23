@@ -9,6 +9,7 @@ import Form from 'components/Form'
 import ReportTable from 'components/ReportTable'
 import LinkTo from 'components/LinkTo'
 import History from 'components/History'
+import NotFound from 'components/NotFound'
 
 import API from 'api'
 import {Person} from 'models'
@@ -73,11 +74,22 @@ export default class PersonShow extends Page {
 				}}
 
 			}
-		`).then(data => this.setState({person: new Person(data.person)}))
+		`).then(data => this.setState({person: new Person(data.person)}),
+			err => {
+				if (err.errors[0] === 'Exception while fetching data: javax.ws.rs.WebApplicationException: No such person') {
+					PersonShow.pageProps = {useGrid: false}
+					this.setState({person: null})
+				}	
+			})
 	}
 
 	render() {
 		let {person} = this.state
+
+		if (!person) {
+			return <NotFound notFoundText={`User with ID ${this.props.params.id} not found.`} />
+		}
+
 		let position = person.position
 
 		//User can always edit themselves, or Super Users/Admins.

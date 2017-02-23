@@ -51,17 +51,17 @@ export default class PersonEdit extends Page {
 			// TODO It would be better to check the status code, but the backend returns 500 for this case.
 			if (err.errors[0] === 'Exception while fetching data: javax.ws.rs.WebApplicationException: No such person') {
 				PersonEdit.pageProps.useGrid = false
-				this.setState({personNotFound: true})
+				this.setState({person: null})
 			}
 		})
 	}
 
 	render() {
-		if (this.state.personNotFound) {
+		let person = this.state.person
+		
+		if (!person) {
 			return <NotFound notFoundText={`User with ID ${this.props.params.id} not found.`} />
 		}
-		
-		let person = this.state.person
 
 		let currentUser = this.context.app.state.currentUser
 		let canEditPosition = currentUser && currentUser.isSuperUser()
