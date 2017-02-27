@@ -12,6 +12,7 @@ import {browserHistory as History} from 'react-router'
 import LinkTo from 'components/LinkTo'
 import NotFound from 'components/NotFound'
 import moment from 'moment'
+import _includes from 'lodash.includes'
 
 import {Person, Position, Organization} from 'models'
 
@@ -49,7 +50,10 @@ export default class PositionShow extends Page {
 				this.setState({position: new Position(data.position)})
 			}, 
 			err => {
-				if (err.errors[0] === 'Exception while fetching data: javax.ws.rs.WebApplicationException: Not Found') {
+				if (_includes([
+					'Exception while fetching data: javax.ws.rs.WebApplicationException: Not Found',
+					'Invalid Syntax'
+				], err.errors[0])) {
 					PositionShow.pageProps = {useGrid: false}
 					this.setState({position: null})
 				}	
