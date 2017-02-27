@@ -11,6 +11,8 @@ import LinkTo from 'components/LinkTo'
 import History from 'components/History'
 import NotFound from 'components/NotFound'
 
+import _includes from 'lodash.includes'
+
 import API from 'api'
 import {Person} from 'models'
 import Messages , {setMessages} from 'components/Messages'
@@ -76,7 +78,10 @@ export default class PersonShow extends Page {
 			}
 		`).then(data => this.setState({person: new Person(data.person)}),
 			err => {
-				if (err.errors[0] === 'Exception while fetching data: javax.ws.rs.WebApplicationException: No such person') {
+				if (_includes([
+					'Exception while fetching data: javax.ws.rs.WebApplicationException: No such person',
+					'Invalid Syntax'
+				], err.errors[0])) {
 					PersonShow.pageProps = {useGrid: false}
 					this.setState({person: null})
 				}	
