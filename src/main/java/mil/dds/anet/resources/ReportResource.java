@@ -2,6 +2,7 @@ package mil.dds.anet.resources;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -517,4 +518,10 @@ public class ReportResource implements IGraphQLResource {
 		return dao.search(query);
 	}
 
+	@GET
+	@Timed
+	@Path("/rollupGraph")
+	public Map<Integer,Map<ReportState,Integer>> getDailyRollupGraph(@QueryParam("startDate") Long start, @QueryParam("endDate") Long end) { 
+		return dao.getDailyRollupGraph(new DateTime(start), new DateTime(end));
+	}
 }

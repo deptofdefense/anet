@@ -1,5 +1,6 @@
 package mil.dds.anet.database;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,12 +12,16 @@ import org.skife.jdbi.v2.TransactionCallback;
 import org.skife.jdbi.v2.TransactionStatus;
 
 import mil.dds.anet.AnetObjectEngine;
+import mil.dds.anet.beans.Organization;
+import mil.dds.anet.beans.Organization.OrganizationType;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.Report;
+import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.ReportList;
 import mil.dds.anet.beans.search.ReportSearchQuery;
+import mil.dds.anet.database.mappers.OrganizationMapper;
 import mil.dds.anet.database.mappers.PoamMapper;
 import mil.dds.anet.database.mappers.ReportMapper;
 import mil.dds.anet.database.mappers.ReportPersonMapper;
@@ -260,6 +265,43 @@ public class ReportDao implements IAnetDao<Report> {
 			}
 		});
 		
+	}
+
+	public Map<Integer,Map<ReportState,Integer>> getDailyRollupGraph(DateTime start, DateTime end) {
+		List<Map<String, Object>> results = dbHandle.createQuery("/* dailyRollupGraph */ "
+				+ "SELECT advisorOrganizationId, state, count(*) AS count "
+				+ "FROM reports WHERE releasedAt >= :startDate and releasedAt <= :endDate "
+				+ "GROUP BY advisorOrganizationId, state")
+			.bind("startDate", start)
+			.bind("endDate", end)
+			.list();
+		
+		//Need all orgs to build the tree. 
+		List<Organization> allOrgs = dbHandle.createQuery("/* rollupGetOrgs */ "
+				+ "SELECT " + OrganizationDao.ORGANIZATION_FIELDS 
+				+ " FROM organizations WHERE type = :advisorOrgType")
+				.bind("advisorOrgType", DaoUtils.getEnumId(OrganizationType.ADVISOR_ORG))
+				.map(new OrganizationMapper())
+				.list();
+		Map<Integer, Organization> orgMap = new HashMap<Integer, Organization>();
+		allOrgs.stream().forEach(o -> orgMap.put(o.getId(), o));
+		
+		Map<Integer,Map<ReportState,Integer>> rollupGraph = new HashMap<Integer,Map<ReportState,Integer>>();
+		
+		for (Map<String,Object> result : results) { 
+			Integer orgId = (Integer) result.get("advisorOrganizationId");
+			Integer count = (Integer) result.get("count");
+			ReportState state = ReportState.values()[(Integer) result.get("state")];
+			
+			Map<ReportState,Integer> orgBar = rollupGraph.get(orgId);
+			if (orgBar == null) { 
+				orgBar = new HashMap<ReportState,Integer>();
+				rollupGraph.put(orgId,  orgBar);
+			}
+			orgBar.put(state,  count);
+		}
+		
+		return rollupGraph;
 	}
 
 

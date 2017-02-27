@@ -125,8 +125,8 @@ export default class PositionShow extends Page {
 								</tr>
 							</thead>
 							<tbody>
-							{Position.map(position.associatedPositions, pos =>
-								this.renderAssociatedPositionRow(pos)
+							{Position.map(position.associatedPositions, (pos, idx) =>
+								this.renderAssociatedPositionRow(pos, idx)
 							)}
 							</tbody>
 						</Table>
@@ -143,8 +143,8 @@ export default class PositionShow extends Page {
 								</tr>
 							</thead>
 							<tbody>
-								{position.previousPeople.map( pp =>
-									<tr key={pp.person.id} >
+								{position.previousPeople.map( (pp, idx) =>
+									<tr key={pp.person.id} id={`previousPerson_${idx}`}>
 										<td><LinkTo person={pp.person} /></td>
 										<td>
 											{moment(pp.startTime).format('D MMM YYYY')} - &nbsp;
@@ -160,12 +160,12 @@ export default class PositionShow extends Page {
 		)
 	}
 
-	renderAssociatedPositionRow(pos) {
+	renderAssociatedPositionRow(pos, idx) {
 		let personName = 'Unfilled'
 		if (pos.person) {
 			personName = <Link to={Person.pathFor(pos.person)}>{pos.person.name}</Link>
 		}
-		return <tr key={pos.id}>
+		return <tr key={pos.id} id={`associatedPosition_${idx}`}>
 			<td>{personName}</td>
 			<td><Link to={Position.pathFor(pos)}>{pos.name}</Link></td>
 		</tr>

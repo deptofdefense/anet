@@ -85,6 +85,8 @@ public class GraphQLUtils {
 			gqlType = Scalars.GraphQLBoolean;
 		} else if (Double.class.equals(clazz)) { 
 			gqlType = Scalars.GraphQLFloat;
+		} else if (Long.class.equals(clazz)) { 
+			gqlType = Scalars.GraphQLLong; 
 		} else if (clazz != null && clazz.isEnum()) {
 			@SuppressWarnings("unchecked")
 			Class<? extends Enum<?>> enumType = (Class<? extends Enum<?>>) type;
