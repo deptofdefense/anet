@@ -198,7 +198,7 @@ export default class ReportShow extends Page {
 						{!isCancelled &&
 							<Form.Field id="atmosphere" label="Atmospherics">
 								<img style={atmosphereIconCss} src={atmosphereIcons[report.atmosphere]} alt={report.atmosphere} />
-								{report.atmosphereDetails}
+								<span id="atmosphereDetails" >{report.atmosphereDetails}</span>
 							</Form.Field>
 						}
 						{isCancelled &&
@@ -260,10 +260,10 @@ export default class ReportShow extends Page {
 							</thead>
 
 							<tbody>
-								{Poam.map(report.poams, poam =>
-									<tr key={poam.id}>
-										<td><LinkTo poam={poam} /></td>
-										<td><LinkTo organization={poam.responsibleOrg} /></td>
+								{Poam.map(report.poams, (poam, idx) =>
+									<tr key={poam.id} id={"poam_" + idx}>
+										<td className="poamName" ><LinkTo poam={poam} /></td>
+										<td className="poamOrg" ><LinkTo organization={poam.responsibleOrg} /></td>
 									</tr>
 								)}
 							</tbody>
@@ -294,7 +294,8 @@ export default class ReportShow extends Page {
 							<Col md={3}>
 								<Button type="submit" bsStyle="primary" bsSize="large"
 									onClick={this.submitDraft}
-									disabled={errors && errors.length > 0}>
+									disabled={errors && errors.length > 0}
+									id="submitReportButton" >
 									Submit report
 								</Button>
 							</Col>
