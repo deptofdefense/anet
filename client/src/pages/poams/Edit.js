@@ -34,6 +34,11 @@ export default class PoamEdit extends Page {
 		`).then(data => {
 			PoamEdit.pageProps.useGrid = Boolean(data.poam)
 			this.setState({poam: data.poam ? new Poam(data.poam) : null})
+		}, err => {
+			if (err.errors[0] === 'Invalid Syntax') {
+				PoamEdit.pageProps = {useGrid: false}
+				this.setState({poam: null})
+			}
 		})
 	}
 

@@ -46,9 +46,7 @@ export default class PoamShow extends Page {
         }, err => {
 			if (err.errors[0] === 'Invalid Syntax') {
 				PoamShow.pageProps = {useGrid: false}
-				this.setState({
-					poam: null
-				})
+				this.setState({poam: null})
 			}
 		})
 	}
