@@ -271,42 +271,6 @@ a.home-tile {
 	text-align: center;
 }
 
-.not-found .face-row {
-	display: flex;
-	justify-content: space-between;
-	margin-left: 15vw;
-	margin-right: 15vw;
-}
-
-.not-found .face-1 {
-	max-width: 502px;
-	max-height: 642px;
-}
-
-.not-found .face-2 {
-	max-width: 508px;
-	max-height: 888px;
-}
-
-.not-found .face-3 {
-	max-width: 604px;
-	max-height: 534px;
-}
-
-.not-found .image-container img {
-	display: block;
-	width: 100%;
-	height: auto;
-}
-
-.not-found .image-container {
-	width: 20vw;
-}
-
-.not-found .image-container.face-2 {
-	width: 14vw;
-}
-
 .not-found .planet {
 	width: 250px;
 	position: absolute;
