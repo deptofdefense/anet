@@ -42,10 +42,12 @@ export default class PersonEdit extends Page {
 			if (data.person.endOfTourDate) {
 				data.person.endOfTourDate = moment(data.person.endOfTourDate).format()
 			}
+
 			if (data.person.status === 'NEW_USER') {
 				//this is the inital setup of this user
 				data.person.status = 'ACTIVE'
 			}
+			
 			PersonEdit.pageProps.useGrid = true
 			this.setState({person: new Person(data.person)})
 		}, err => {
@@ -69,15 +71,20 @@ export default class PersonEdit extends Page {
 		let currentUser = this.context.app.state.currentUser
 		let canEditPosition = currentUser && currentUser.isSuperUser()
 
+		const legendText = person.status === 'NEW_USER' ? 'Create your account' : `Edit ${person.name}`
+		const saveText = person.status === 'NEW_USER' ? 'Create profile' : null
+
 		return (
 			<div>
 				<ContentForHeader>
-					<h2>Edit {person.name}</h2>
+					<h2>{legendText}</h2>
 				</ContentForHeader>
 
-				<Breadcrumbs items={[[`Edit ${person.name}`, Person.pathForEdit(person)]]} />
+				{person.status !== 'NEW_USER' && 
+					<Breadcrumbs items={[[`Edit ${person.name}`, Person.pathForEdit(person)]]} />
+				}
 
-				<PersonForm person={person} edit showPositionAssignment={canEditPosition} />
+				<PersonForm person={person} edit showPositionAssignment={canEditPosition} legendText={legendText} saveText={saveText} />
 			</div>
 		)
 	}

@@ -277,3 +277,92 @@ a.home-tile {
 	right: 0;
 	top: 65px;
 }
+
+.onboarding-new {
+	width: 40%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.onboarding-new h1,p,button {
+	text-align: center;
+}
+
+.onboarding-new h1 {
+	font-size: 24px;
+	font-weight: bold;
+	margin-bottom: 36px;
+}
+
+.onboarding-new p {
+	font-size: 16px;
+	margin-bottom: 24px;
+}
+
+.onboarding-new .help {
+	margin-top: 36px;
+}
+
+.onboarding-new .help p {
+	font-size: 12px;
+	color: #999;
+	margin-bottom: 0px;
+}
+
+.onboarding-new .create-account-button-wrapper {
+	text-align: center;
+}
+
+.onboarding-new .role {
+	text-transform: uppercase;
+}
+
+.getting-started-grid {
+	padding-left: 0;
+	padding-right: 0;
+}
+
+.getting-started-grid .row  {
+	width: 100%;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+}
+
+.getting-started-grid .row:first-child {
+	margin-bottom: 20px;
+}
+
+.getting-started-grid .row:last-child {
+	margin-top: 20px;
+}
+
+.getting-started-grid .row h3,button {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+.getting-started-grid .row h3 {
+	font-size: 16px;
+}
+
+.getting-started-grid .row button {
+	font-size: 12px;
+}
+
+.getting-started-grid {
+	padding-top: 15px;
+	padding-bottom: 15px;
+}
+
+.getting-started-grid a {
+	font-weight: bold;
+}
+
+.getting-started-grid p {
+	margin-bottom: 0;
+}
+
+.middle-header {
+	text-align: center;
+}

@@ -21,6 +21,8 @@ export default class PersonForm extends Component {
 		person: PropTypes.object.isRequired,
 		edit: PropTypes.bool,
 		showPositionAssignment: PropTypes.bool,
+		legendText: PropTypes.string,
+		saveText: PropTypes.string,
 	}
 
 	constructor(props) {
@@ -35,14 +37,16 @@ export default class PersonForm extends Component {
 	render() {
 		let {person, edit, showPositionAssignment} = this.props
 		const isAdvisor = person.role === 'ADVISOR'
+		const legendText = this.props.legendText || (edit ? `Edit ${person.name}` : 'Create a new person')
 
-		return <Form formFor={person} onChange={this.onChange} onSubmit={this.onSubmit} horizontal submitText="Save person" 
-					 submitDisabled={this.isSubmitDisabled()}>
+		return <Form formFor={person} onChange={this.onChange} onSubmit={this.onSubmit} horizontal 
+					submitText={this.props.saveText || 'Save person'}
+					submitDisabled={this.isSubmitDisabled()}>
 					 
 			<Messages error={this.state.error} />
 
 			<fieldset>
-				<legend>{edit ? 'Edit ' + person.name : 'Create a new Person'}</legend>
+				<legend>{legendText}</legend>
 
 				<Form.Field id="name" 
 					required
@@ -193,6 +197,11 @@ export default class PersonForm extends Component {
 	@autobind
 	onSubmit(event) {
 		let {person, edit} = this.props
+		let isFirstTimeUser = false
+		if (person.status === 'NEW_USER') {
+			isFirstTimeUser = true
+			person.status = 'ACTIVE'
+		}
 
 		let url = `/api/people/${edit ? 'update' : 'new'}`
 		API.send(url, person, {disableSubmits: true})
@@ -201,12 +210,17 @@ export default class PersonForm extends Component {
 					throw response.code
 				}
 
-				if (response.id) {
-					person.id = response.id
+				if (isFirstTimeUser) {
+					window.localStorage.showGettingStartedPanel = 'true'
+					History.push('/')	
+				} else {
+					if (response.id) {
+						person.id = response.id
+					}
+					
+					History.replace(Person.pathForEdit(person), false)
+					History.push(Person.pathFor(person), {success: 'Person saved successfully'})
 				}
-
-				History.replace(Person.pathForEdit(person), false)
-				History.push(Person.pathFor(person), {success: 'Person saved successfully'})
 			}).catch(error => {
 				this.setState({error: error})
 				window.scrollTo(0, 0)
