@@ -35,11 +35,13 @@ export default class PersonForm extends Component {
 	}
 
 	render() {
-		let {person, edit, showPositionAssignment} = this.props
+		let {person, originalPerson, edit, showPositionAssignment} = this.props
 		const isAdvisor = person.role === 'ADVISOR'
 		const legendText = this.props.legendText || (edit ? `Edit ${person.name}` : 'Create a new person')
 
-		return <Form formFor={person} onChange={this.onChange} onSubmit={this.onSubmit} horizontal 
+		return <Form formFor={person} originalFormFor={originalPerson} onChange={this.onChange} 
+					onSubmit={this.onSubmit} 
+					horizontal 
 					submitText={this.props.saveText || 'Save person'}
 					submitDisabled={this.isSubmitDisabled()}>
 					 

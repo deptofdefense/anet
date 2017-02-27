@@ -66,7 +66,8 @@ class PersonEdit extends Page {
 					<Breadcrumbs items={[[`Edit ${person.name}`, Person.pathForEdit(person)]]} />
 				}
 
-				<PersonForm person={person} edit showPositionAssignment={canEditPosition} legendText={legendText} saveText={saveText} />
+				<PersonForm person={person} originalPerson={originalPerson} edit 
+					showPositionAssignment={canEditPosition} legendText={legendText} saveText={saveText} />
 			</div>
 		)
 	}
