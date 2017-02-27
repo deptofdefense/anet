@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom'
 import {Form as BSForm, Row, Button} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 import _isEqual from 'lodash.isequal'
+import _last from 'lodash.last'
+import {withRouter} from 'react-router'
 
 import {ContentForHeader} from 'components/Header'
 import FormField from 'components/FormField'
@@ -12,7 +14,7 @@ const staticFormStyle = {
 	marginTop: '-30px',
 }
 
-export default class Form extends Component {
+class Form extends Component {
 	static propTypes = Object.assign({}, BSForm.propTypes, {
 		formFor: PropTypes.object,
 		originalFormFor: PropTypes.object,
@@ -42,19 +44,33 @@ export default class Form extends Component {
 		}
 	}
 
+	formHasUnsavedChanges() {
+		return !(this.isSubmitting || _isEqual(this.props.formFor, this.props.originalFormFor))
+	}
+
 	@autobind
 	onBeforeUnloadListener(event) {
-		if (!_isEqual(this.props.formFor, this.props.originalFormFor)) {
+		if (this.formHasUnsavedChanges()) {
 			event.returnValue = 'Are you sure you wish to navigate away from the page? You will lose unsaved changes.'
 			event.preventDefault()
 		}
 	}
 
+	@autobind
+	routeLeaveHook(nextRoute) {
+		if (this.formHasUnsavedChanges()) {
+			return 'Are you sure you wish to navigate away from the page? You will lose unsaved changes.'
+		}
+	}
+
 	componentWillMount() {
+		this.unsetRouteLeaveHook = 
+			this.props.router.setRouteLeaveHook(_last(this.props.routes), this.routeLeaveHook)
 		window.addEventListener('beforeunload', this.onBeforeUnloadListener)
 	}
 
 	componentWillUnmount() {
+		this.unsetRouteLeaveHook()
 		window.removeEventListener('beforeunload', this.onBeforeUnloadListener)
 	}
 
@@ -66,7 +82,8 @@ export default class Form extends Component {
 
 	render() {
 		let {children, submitText, submitOnEnter, submitDisabled, ...bsProps} = this.props
-		bsProps = Object.without(bsProps, 'formFor', 'originalFormFor', 'static')
+		bsProps = Object.without(bsProps, 
+			'formFor', 'originalFormFor', 'static', 'routes', 'router', 'params', 'location')
 
 		if (this.props.static) {
 			submitText = false
@@ -116,6 +133,7 @@ export default class Form extends Component {
 	onSubmit(event) {
 		event.stopPropagation()
 		event.preventDefault()
+		this.isSubmitting = true;
 
 		this.props.onSubmit && this.props.onSubmit(event)
 	}
@@ -123,3 +141,5 @@ export default class Form extends Component {
 
 // just a little sugar to make importing and building forms easier
 Form.Field = FormField
+
+export default withRouter(Form)
