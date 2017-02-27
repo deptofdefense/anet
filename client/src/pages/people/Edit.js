@@ -1,6 +1,7 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 import moment from 'moment'
+import _includes from 'lodash.includes'
 
 import PersonForm from './Form'
 import {ContentForHeader} from 'components/Header'
@@ -48,11 +49,13 @@ export default class PersonEdit extends Page {
 			PersonEdit.pageProps.useGrid = true
 			this.setState({person: new Person(data.person)})
 		}, err => {
-			// TODO It would be better to check the status code, but the backend returns 500 for this case.
-			if (err.errors[0] === 'Exception while fetching data: javax.ws.rs.WebApplicationException: No such person') {
-				PersonEdit.pageProps.useGrid = false
+			if (_includes([
+				'Exception while fetching data: javax.ws.rs.WebApplicationException: No such person',
+				'Invalid Syntax'
+			], err.errors[0])) {
+				PersonEdit.pageProps = {useGrid: false}
 				this.setState({person: null})
-			}
+			}	
 		})
 	}
 
