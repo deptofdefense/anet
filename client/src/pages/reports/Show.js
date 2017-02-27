@@ -107,6 +107,11 @@ export default class ReportShow extends Page {
 			this.setState({
 				report: data.report ? new Report(data.report) : null
 			})
+		}, err => {
+			if (err.errors[0] === 'Invalid Syntax') {
+				ReportShow.pageProps = {useGrid: false}
+				this.setState({report: null})
+			}
 		})
 	}
 
