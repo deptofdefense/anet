@@ -29,6 +29,11 @@ export default class LocationShow extends Page {
 			this.setState({
 				location: data.location ? new Location(data.location) : null
 			})
+		}, err => {
+			if (err.errors[0] === 'Invalid Syntax') {
+				LocationShow.pageProps = {useGrid: false}
+				this.setState({location: null})
+			}
 		})
 	}
 
