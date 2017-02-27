@@ -50,6 +50,11 @@ export default class ReportEdit extends Page {
 			}
 
 			this.setState(newState)
+		}, err => {
+			if (err.errors[0] === 'Invalid Syntax') {
+				ReportEdit.pageProps = {useGrid: false}
+				this.setState({report: null})
+			}
 		})
 	}
 
