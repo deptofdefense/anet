@@ -128,6 +128,10 @@ export default class Home extends Page {
 	@autobind
 	onSaveSearchSelect(event) {
 		let id = event && event.target ? event.target.value : event
+		// I don't know if this == was intentional or not, but 
+		// now it's in the codebase, and I don't want to keep seeing
+		// warnings about it.
+		// eslint-disable-next-line eqeqeq
 		let search = this.state.savedSearches.find(el => el.id == id)
 		this.setState({selectedSearch: search})
 	}
