@@ -13,7 +13,7 @@ React structures the application into components instead of technologies. This m
 1. Re launch the frontend server with `./npm run start`
 
 # How to set up Selenium Builds to automatically test workflows
-Selenium makes a plug-in for Firefox that lets you record the actions you take on a webpage so that it can rerun them for your later. We use Selenium builds to walk through a series of workflows to see if everything worked as expected, or if something failed. This helps us quickly identify if changes have broken something that we need to fix. Are you super excited to set this up and get testing?! Me too. Here's what you do:
+Selenium makes a plug-in for Firefox that lets you record the actions you take on a webpage so that it can rerun them for you later. We use Selenium builds to walk through a series of workflows to see if everything worked as expected, or if something failed. This helps us quickly identify if changes have broken something that we need to fix. Are you super excited to set this up and get testing?! Me too. Here's what you do:
 
 1. Make sure you have Mozilla Firefox installed on your computer
 1. Google and download "Selenium IDE" - this is the name of the extension you'll install
