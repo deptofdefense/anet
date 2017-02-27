@@ -2,6 +2,7 @@ import React, {Component, PropTypes} from 'react'
 import ReactDOM from 'react-dom'
 import {Form as BSForm, Row, Button} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
+import _isEqual from 'lodash.isequal'
 
 import {ContentForHeader} from 'components/Header'
 import FormField from 'components/FormField'
@@ -14,6 +15,7 @@ const staticFormStyle = {
 export default class Form extends Component {
 	static propTypes = Object.assign({}, BSForm.propTypes, {
 		formFor: PropTypes.object,
+		originalFormFor: PropTypes.object,
 		static: PropTypes.bool,
 		submitText: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
 		submitOnEnter: PropTypes.bool,
@@ -40,6 +42,22 @@ export default class Form extends Component {
 		}
 	}
 
+	@autobind
+	onBeforeUnloadListener(event) {
+		if (!_isEqual(this.props.formFor, this.props.originalFormFor)) {
+			event.returnValue = 'Are you sure you wish to navigate away from the page? You will lose unsaved changes.'
+			event.preventDefault()
+		}
+	}
+
+	componentWillMount() {
+		window.addEventListener('beforeunload', this.onBeforeUnloadListener)
+	}
+
+	componentWillUnmount() {
+		window.removeEventListener('beforeunload', this.onBeforeUnloadListener)
+	}
+
 	componentDidMount() {
 		let container = ReactDOM.findDOMNode(this.refs.container)
 		let focusElement = container.querySelector('[data-focus]')
@@ -48,7 +66,7 @@ export default class Form extends Component {
 
 	render() {
 		let {children, submitText, submitOnEnter, submitDisabled, ...bsProps} = this.props
-		bsProps = Object.without(bsProps, 'formFor', 'static')
+		bsProps = Object.without(bsProps, 'formFor', 'originalFormFor', 'static')
 
 		if (this.props.static) {
 			submitText = false
