@@ -43,7 +43,14 @@ export default class PoamShow extends Page {
             this.setState({
                 poam: data.poam ? new Poam(data.poam) : null
             })
-        })
+        }, err => {
+			if (err.errors[0] === 'Invalid Syntax') {
+				PoamShow.pageProps = {useGrid: false}
+				this.setState({
+					poam: null
+				})
+			}
+		})
 	}
 
 	render() {
