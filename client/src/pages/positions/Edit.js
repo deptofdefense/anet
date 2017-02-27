@@ -5,6 +5,7 @@ import PositionForm from './Form'
 import {ContentForHeader} from 'components/Header'
 import Breadcrumbs from 'components/Breadcrumbs'
 import NotFound from 'components/NotFound'
+import _includes from 'lodash.includes'
 
 import API from 'api'
 import {Position} from 'models'
@@ -35,7 +36,10 @@ export default class PositionEdit extends Page {
 			PositionEdit.pageProps.useGrid = true
 			this.setState({position: new Position(data.position)})
 		}, err => {
-			if (err.errors[0] === 'Exception while fetching data: javax.ws.rs.WebApplicationException: Not Found') {
+			if (_includes([
+					'Exception while fetching data: javax.ws.rs.WebApplicationException: Not Found',
+					'Invalid Syntax'
+			], err.errors[0])) {
 				PositionEdit.pageProps.useGrid = false
 				this.setState({position: null})
 			}	
