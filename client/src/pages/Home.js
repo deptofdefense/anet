@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
-import {Grid, Row, FormControl, FormGroup, ControlLabel} from 'react-bootstrap'
+import {Grid, Row, Col, FormControl, FormGroup, ControlLabel, Button} from 'react-bootstrap'
 import SavedSearchTable from 'components/SavedSearchTable'
 import {Link} from 'react-router'
 import moment from 'moment'
@@ -24,6 +24,7 @@ export default class Home extends Page {
 			upcomingEngagements: null,
 			savedSearches: [],
 			selectedSearch: null,
+			showGettingStartedPanel: window.localStorage.showGettingStartedPanel
 		}
 	}
 
@@ -77,6 +78,33 @@ export default class Home extends Page {
 				<Breadcrumbs />
 				<Messages error={this.state.error} success={this.state.success} />
 
+				{this.state.showGettingStartedPanel === 'true' && 
+					<fieldset className="home-tile-row">
+						<legend>Getting Started</legend>
+						<Grid fluid className="getting-started-grid">
+							<Row>
+								<h3>Welcome to ANET!</h3>
+							</Row>
+							<Row>
+								<Col xs={4}>
+									<p>Just getting started?</p>
+									<a>Download the manual</a>
+								</Col>
+								<Col xs={4}>
+									<p>Not sure where things are?</p>
+									<a>Take a guided tour</a>
+								</Col>
+								<Col xs={4}>
+									<p>Still having trouble?</p>
+									<a href="mailto:todo.what.is.the.real.address@dds.mil">Contact CJ7 Trexs for training</a>
+								</Col>
+							</Row>
+							<Row>
+								<Button bsStyle="primary" onClick={this.onDismissGettingStarted}>Dismiss</Button>
+							</Row>
+						</Grid>
+					</fieldset>
+				}
 				<fieldset className="home-tile-row">
 					<legend>My ANET Snapshot</legend>
 					<Grid fluid>
@@ -130,5 +158,11 @@ export default class Home extends Page {
 		let id = event && event.target ? event.target.value : event
 		let search = this.state.savedSearches.find(el => el.id == id)
 		this.setState({selectedSearch: search})
+	}
+
+	@autobind
+	onDismissGettingStarted() {
+		window.localStorage.showGettingStartedPanel = 'false'
+		this.setState({showGettingStartedPanel: 'false'})
 	}
 }

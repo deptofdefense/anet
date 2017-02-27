@@ -5,7 +5,6 @@ import {Grid, Row, Col} from 'react-bootstrap'
 import SecurityBanner from 'components/SecurityBanner'
 import Header from 'components/Header'
 import Nav from 'components/Nav'
-import History from 'components/History'
 
 import API from 'api'
 import {Person, Organization} from 'models'
@@ -77,10 +76,6 @@ export default class App extends Page {
 		let settings = this.state.settings
 		data.adminSettings.forEach(setting => settings[setting.key] = setting.value)
 
-		if (currentUser.id && currentUser.status === 'NEW_USER') {
-			History.push(Person.pathForEdit(currentUser))
-		}
-
 		return {currentUser, settings, organizations}
 	}
 
@@ -91,7 +86,7 @@ export default class App extends Page {
 			<div className="anet">
 				<SecurityBanner location={this.props.location} />
 
-				<Header />
+				<Header minimalHeader={pageProps.minimalHeader} />
 
 				<Grid componentClass="section" bsClass={pageProps.fluidContainer ? 'container-fluid' : 'container'}>
 					{pageProps.useNavigation === false

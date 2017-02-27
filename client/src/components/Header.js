@@ -44,16 +44,20 @@ class Header extends Component {
 								<img src={logo} alt="ANET logo" />
 							</Link>}
 						</Col>
+						
+						{ !this.props.minimalHeader && 
+							<Col xs={7} className="middle-header">
+								{middleContent || <SearchBar />}
+							</Col>
+						}
 
-						<Col xs={7}>
-							{middleContent || <SearchBar />}
-						</Col>
-
-						<Col xs={2}>
-							<div className="pull-right">
-								{rightContent || <CreateButton />}
-							</div>
-						</Col>
+						{ !this.props.minimalHeader && 
+							<Col xs={2}>
+								<div className="pull-right">
+									{rightContent || <CreateButton />}
+								</div>
+							</Col>
+						}
 					</Row>
 				</Grid>
 			</header>
