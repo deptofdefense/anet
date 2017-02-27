@@ -43,11 +43,6 @@ export default class PersonEdit extends Page {
 				data.person.endOfTourDate = moment(data.person.endOfTourDate).format()
 			}
 
-			if (data.person.status === 'NEW_USER') {
-				//this is the inital setup of this user
-				data.person.status = 'ACTIVE'
-			}
-			
 			PersonEdit.pageProps.useGrid = true
 			this.setState({person: new Person(data.person)})
 		}, err => {
