@@ -127,4 +127,13 @@ public class PoamResourceTest extends AbstractResourceTest {
 		searchResults = httpQuery("/api/poams/search", jack).post(Entity.json(query), PoamList.class).getList();
 		assertThat(searchResults).isNotEmpty();
 	}
+	
+	@Test
+	public void getAllPoamsTest() { 
+		Person jack = getJackJackson();
+		
+		PoamList list = httpQuery("/api/poams/", jack).get(PoamList.class);
+		assertThat(list).isNotNull();
+		assertThat(list.getList()).isNotEmpty();
+	}
 }
