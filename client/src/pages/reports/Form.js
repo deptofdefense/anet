@@ -139,6 +139,10 @@ export default class ReportForm extends Component {
 					<Form.Field id="cancelledReason" componentClass="select" >
 						<option value="CANCELLED_BY_ADVISOR">Cancelled by Advisor</option>
 						<option value="CANCELLED_BY_PRINCIPAL">Cancelled by Principal</option>
+						<option value="CANCELLED_DUE_TO_TRANSPORTATION">Cancelled due to Transportation</option>
+						<option value="CANCELLED_DUE_TO_FORCE_PROTECTION">Cancelled due to Force Protection</option>
+						<option value="CANCELLED_DUE_TO_ROUTES">Cancelled due to Routes</option>
+						<option value="CANCELLED_DUE_TO_THREAT">Cancelled due to Thrat</option>
 					</Form.Field>
 				}
 			</fieldset>
