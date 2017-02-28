@@ -10,6 +10,8 @@ import ReactDOM from 'react-dom'
 import {Router, Route, IndexRoute, browserHistory} from 'react-router'
 import {InjectablesProvider} from 'react-injectables'
 
+import API from 'api'
+
 import App from './pages/App'
 import Home from './pages/Home'
 import Search from './pages/Search'
@@ -44,11 +46,12 @@ import AdminIndex from './pages/admin/Index'
 
 import GraphiQL from './pages/GraphiQL'
 
+import OnboardingShow from './pages/onboarding/Show'
+
 ReactDOM.render((
 	<InjectablesProvider>
 		<Router history={browserHistory}>
-			<Route path="/" component={App}>
-				<IndexRoute component={Home} />
+			<Route path="/" component={App} getIndexRoute={getIndexRoute}>
 				<Route path="search" component={Search} />
 
 				<Route path="reports">
@@ -92,7 +95,24 @@ ReactDOM.render((
 				<Route path="graphiql" component={GraphiQL} />
 
 				<Route path="admin" component={AdminIndex} />
+
+				<Route path="onboarding" component={OnboardingShow} />
 			</Route>
 		</Router>
 	</InjectablesProvider>
 ), document.getElementById('root'))
+
+/**
+ * react-router allows us to dynamically determine what the path '/' resolves to.
+ * We would like to choose that for the user based on whether this is their first
+ * time to the app.
+ */
+function getIndexRoute(_, cb) {
+	API.query(/* GraphQL */`
+		person(f:me) {
+			status
+		}
+	`).then(
+		({person}) => cb(null, <Route component={person.status === 'NEW_USER' ? OnboardingShow : Home} />)
+	)
+}
