@@ -76,5 +76,11 @@ export default {
             target: '#poams',
             placement: 'right',
         },
+        {
+            title: 'Key outcomes',
+            content: 'List the the key outcome(s) for this engagement.',
+            target: '#keyOutcomes',
+            placement: 'right',
+        },
     ]
 }
