@@ -344,3 +344,7 @@ a.home-tile {
 .middle-header {
 	text-align: center;
 }
+
+hr.attendeeDivider {
+	margin: 5px;
+}

@@ -168,7 +168,7 @@ export default class ReportForm extends Component {
 						<img src={WARNING_ICON} role="presentation" height="20px" />
 						Person not found in ANET Database.
 					</HelpBlock> }
-					<Table hover striped>
+					<Table hover >
 						<thead>
 							<tr>
 								<th style={{textAlign: 'center'}}>Primary</th>
@@ -179,24 +179,12 @@ export default class ReportForm extends Component {
 							</tr>
 						</thead>
 						<tbody>
-							{Person.map(report.attendees, (person, idx) =>
-								<tr key={person.id}>
-									<td className="primary-attendee">
-										<Checkbox checked={person.primary} onChange={this.setPrimaryAttendee.bind(this, person)} id={'attendeePrimary_' + idx}/>
-									</td>
-
-									<td>
-										<img src={person.iconUrl()} alt={person.role} height={20} className="person-icon" />
-										{person.name} {person.rank && person.rank.toUpperCase()}
-									</td>
-									<td><LinkTo position={person.position} /></td>
-									<td>{person.position && person.position.organization && person.position.organization.shortName}</td>
-
-									<td onClick={this.removeAttendee.bind(this, person)} id={'attendeeDelete_' + idx} >
-										<span style={{cursor: 'pointer'}}><img src={REMOVE_ICON} height={14} alt="Remove attendee" /></span>
-									</td>
-
-								</tr>
+							{Person.map(report.attendees.filter(p => p.role === "ADVISOR"), (person, idx) =>
+								this.renderAttendeeRow(person, idx)
+							)}
+							<tr><td colSpan={5}><hr className="attendeeDivider" /></td></tr>
+							{Person.map(report.attendees.filter(p => p.role === "PRINCIPAL"), (person, idx) =>
+								this.renderAttendeeRow(person, idx)
 							)}
 						</tbody>
 					</Table>
@@ -302,6 +290,27 @@ export default class ReportForm extends Component {
 		}
 		this.setState({errors})
 	}
+
+	@autobind
+	renderAttendeeRow(person, idx) {
+		return <tr key={person.id}>
+			<td className="primary-attendee">
+				<Checkbox checked={person.primary} onChange={this.setPrimaryAttendee.bind(this, person)} id={'attendeePrimary_' + idx}/>
+			</td>
+
+			<td>
+				<img src={person.iconUrl()} alt={person.role} height={20} className="person-icon" />
+				{person.name} {person.rank && person.rank.toUpperCase()}
+				</td>
+			<td><LinkTo position={person.position} /></td>
+			<td>{person.position && person.position.organization && person.position.organization.shortName}</td>
+
+			<td onClick={this.removeAttendee.bind(this, person)} id={'attendeeDelete_' + idx} >
+				<span style={{cursor: 'pointer'}}><img src={REMOVE_ICON} height={14} alt="Remove attendee" /></span>
+			</td>
+		</tr>
+	}
+
 
 	@autobind
 	onPoamError(isError, message) {
