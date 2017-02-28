@@ -140,7 +140,7 @@ public class PositionDao implements IAnetDao<Position> {
 						+ "VALUES (:positionId, :personId, :createdAt)")
 					.bind("positionId", position.getId())
 					.bind("personId", person.getId())
-					.bind("createdAt", now)
+					.bind("createdAt", now.plusMillis(1)) // Need to ensure this timestamp is greater than previous INSERT. 
 					.execute();
 				return null;
 			}
