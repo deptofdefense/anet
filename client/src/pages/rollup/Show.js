@@ -3,10 +3,12 @@ import Page from 'components/Page'
 import autobind from 'autobind-decorator'
 import moment from 'moment'
 
-import {DropdownButton, MenuItem} from 'react-bootstrap'
+import {DropdownButton, MenuItem, Button} from 'react-bootstrap'
+
 import Breadcrumbs from 'components/Breadcrumbs'
 import ReportCollection from 'components/ReportCollection'
 import ReportSummary from 'components/ReportSummary'
+import DatePicker from 'react-bootstrap-date-picker'
 
 import API from 'api'
 import {Report} from 'models'
@@ -37,15 +39,15 @@ export default class RollupShow extends Page {
 		app: React.PropTypes.object.isRequired,
 	}
 
-	get dateStr() { return this.props.date.format('DD MMM YYYY') }
-	get dateLongStr() { return this.props.date.format('DD MMMM YYYY') }
-	get rollupStart() { return moment(this.props.date).startOf('day') }
-	get rollupEnd() { return moment(this.props.date).endOf('day') }
+	get dateStr() { return this.state.date.format('DD MMM YYYY') }
+	get dateLongStr() { return this.state.date.format('DD MMMM YYYY') }
+	get rollupStart() { return moment(this.state.date).startOf('day') }
+	get rollupEnd() { return moment(this.state.date).endOf('day') }
 
 	constructor(props) {
 		super(props)
 		this.state = {
-			date: {},
+			date: props.date,
 			reports: {list: []},
 		}
 	}
@@ -105,8 +107,9 @@ export default class RollupShow extends Page {
 
 	componentDidUpdate() {
 		let reports = this.state.reports.list
-		if (!reports || !d3)
+		if (!reports || !d3) {
 			return
+		}
 
 		// Sets up the data
 		var step1 = d3.nest()
@@ -143,7 +146,6 @@ export default class RollupShow extends Page {
 		g.append('g')
 			.attr('transform', 'translate(0,' + height + ')')
 			.attr('fill', '#000')
-			.call(xAxis)
 
 		g.append('g')
 			.attr('fill', '#400')
@@ -190,6 +192,10 @@ export default class RollupShow extends Page {
 
 				<h1>Daily Rollup - {this.dateLongStr}</h1>
 
+				<Button bsStyle="primary" >
+					<DatePicker showTodayButton onChange={this.changeRollupDate} />
+				</Button>
+
 				<fieldset>
 					<legend>Summary of Report Input</legend>
 					<svg ref={el => this.graph = el} style={graphCss} />
@@ -213,5 +219,12 @@ export default class RollupShow extends Page {
 	@autobind
 	actionSelect(eventKey, event) {
 		console.log('Unimplemented Action: ' + eventKey)
+	}
+
+	@autobind
+	changeRollupDate(event) {
+		let dtg = moment(event)
+		this.state.date = dtg
+		this.loadData()
 	}
 }
