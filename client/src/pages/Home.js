@@ -1,19 +1,16 @@
 import React, {PropTypes} from 'react'
-import Page from 'components/Page'
+import HopscotchPage from 'components/HopscotchPage'
 import {Grid, Row, Col, FormControl, FormGroup, ControlLabel, Button} from 'react-bootstrap'
 import SavedSearchTable from 'components/SavedSearchTable'
 import {Link} from 'react-router'
 import moment from 'moment'
 import Messages from 'components/Messages'
 
-import hopscotch from 'hopscotch'
-import 'hopscotch/dist/css/hopscotch.css'
-
 import Breadcrumbs from 'components/Breadcrumbs'
 import API from 'api'
 import autobind from 'autobind-decorator'
 
-export default class Home extends Page {
+export default class Home extends HopscotchPage {
 	static contextTypes = {
 		app: PropTypes.object.isRequired,
 	}
@@ -171,37 +168,7 @@ export default class Home extends Page {
 
 	@autobind
 	startWelcomeTour() {		
-		hopscotch.startTour({
-			id: 'global',
-			steps: [
-				{
-					title: 'Home',
-					content: 'Click on the logo to get back to your homepage, from wherever you are.',
-					target: '.logo img',
-					placement: 'right',
-					fixedElement: true
-				},
-				{
-					title: 'Search',
-					content: 'Search for reports, people, or organizations. You\'ll be able to save your searches.',
-					target: 'searchBarInput',
-					placement: 'bottom',
-					fixedElement: true
-				},
-				{
-					title: 'New Report',
-					content: 'Create a report by clicking on this button. If you are a Super User you may have different options.',
-					target: 'createButton',
-					placement: 'bottom',
-					fixedElement: true
-				},
-				{
-					title: 'Left navigation',
-					content: 'Use this menu to move between areas for a specific section.',
-					target: 'leftNav',
-					placement: 'right',
-				},
-			]
-		})
+		this.hopscotch.endTour();
+		this.hopscotch.startTour(this.hopscotchTour)
 	}
 }

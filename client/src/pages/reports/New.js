@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react'
-import Page from 'components/Page'
+import HopscotchPage from 'components/HopscotchPage'
 
 import ReportForm from './Form'
 import {ContentForHeader} from 'components/Header'
@@ -7,7 +7,7 @@ import Breadcrumbs from 'components/Breadcrumbs'
 import Messages from 'components/Messages'
 import {Report} from 'models'
 
-export default class ReportNew extends Page {
+export default class ReportNew extends HopscotchPage {
 	static pageProps = {
 		useNavigation: false
 	}
@@ -21,6 +21,13 @@ export default class ReportNew extends Page {
 
 		this.state = {
 			report: new Report(),
+		}
+	}
+
+	componentDidMount() {
+		super.componentDidMount()
+		if (this.hopscotch.getState() === `${this.hopscotchTour.id}:3`) {
+			this.hopscotch.startTour(this.hopscotchTour, 4)
 		}
 	}
 
