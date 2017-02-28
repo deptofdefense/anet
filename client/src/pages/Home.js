@@ -6,6 +6,9 @@ import {Link} from 'react-router'
 import moment from 'moment'
 import Messages from 'components/Messages'
 
+import hopscotch from 'hopscotch'
+import 'hopscotch/dist/css/hopscotch.css'
+
 import Breadcrumbs from 'components/Breadcrumbs'
 import API from 'api'
 import autobind from 'autobind-decorator'
@@ -24,7 +27,7 @@ export default class Home extends Page {
 			upcomingEngagements: null,
 			savedSearches: [],
 			selectedSearch: null,
-			showGettingStartedPanel: window.localStorage.showGettingStartedPanel
+			showGettingStartedPanel: 'true' /* just for PR */
 		}
 	}
 
@@ -92,7 +95,7 @@ export default class Home extends Page {
 								</Col>
 								<Col xs={4}>
 									<p>Not sure where things are?</p>
-									<a>Take a guided tour</a>
+									<a onClick={this.startWelcomeTour}>Take a guided tour</a>
 								</Col>
 								<Col xs={4}>
 									<p>Still having trouble?</p>
@@ -164,5 +167,20 @@ export default class Home extends Page {
 	onDismissGettingStarted() {
 		window.localStorage.showGettingStartedPanel = 'false'
 		this.setState({showGettingStartedPanel: 'false'})
+	}
+
+	@autobind
+	startWelcomeTour() {		
+		hopscotch.startTour({
+			id: 'global',
+			steps: [
+				{
+					title: 'Home',
+					content: 'Click on the logo to get back to your homepage, from wherever you are.',
+					target: '.logo img',
+					placement: 'right'
+				}
+			]
+		})
 	}
 }
