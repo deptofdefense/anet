@@ -157,7 +157,10 @@ export default class ReportForm extends Component {
 						clearOnSelect={true}
 						fields={'id, name, role, position { id, name, organization { id, shortName}} '}
 						template={person =>
-							<span>{person.name} {person.rank && person.rank.toUpperCase()} - {person.position && `(${person.position.name})`}</span>
+							<span>
+								<img src={(new Person(person)).iconUrl()} alt={person.role} height={20} className="person-icon" />
+								{person.name} {person.rank && person.rank.toUpperCase()} - {person.position && `(${person.position.name})`}
+							</span>
 						}
 						placeholder="Start typing to search for people who attended the meeting..."
 						valueKey="name" />
