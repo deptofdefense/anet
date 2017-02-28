@@ -29,7 +29,6 @@ import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.PoamList;
-import mil.dds.anet.beans.lists.AbstractAnetBeanList.ReportList;
 import mil.dds.anet.beans.search.PoamSearchQuery;
 import mil.dds.anet.database.PoamDao;
 import mil.dds.anet.graphql.GraphQLFetcher;
