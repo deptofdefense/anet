@@ -38,6 +38,12 @@ export default {
             content: 'List out all of the goals for your meeting.',
             target: 'intent',
             placement: 'right',
-        }
+        },
+        {
+            title: 'Engagement date',
+            content: 'When did this engagement happen, or when will it take place? Simply select it from the calendar.',
+            target: '#engagementDate',
+            placement: 'right',
+        },
     ]
 }
