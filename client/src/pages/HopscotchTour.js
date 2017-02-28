@@ -45,5 +45,18 @@ export default {
             target: '#engagementDate',
             placement: 'right',
         },
+        {
+            title: 'Engagement location',
+            content: 
+                'Start typing the location of where the engagement took place. Select one of the options available, or ask your Super User to add it.',
+            target: '#location',
+            placement: 'right',
+        },
+        {
+            title: 'Atmospherics',
+            content: 'Select whether it went well or not.',
+            target: '#neutralAtmos',
+            placement: 'bottom',
+        },
     ]
 }
