@@ -165,7 +165,7 @@ export default class ReportForm extends Component {
 						<img src={WARNING_ICON} role="presentation" height="20px" />
 						Person not found in ANET Database.
 					</HelpBlock> }
-					<Table hover striped>
+					<Table hover striped id="attendeesTable">
 						<thead>
 							<tr>
 								<th style={{textAlign: 'center'}}>Primary</th>

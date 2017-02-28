@@ -64,5 +64,11 @@ export default {
             target: '#attendees',
             placement: 'right',
         },
+        {
+            title: 'Primary advisor and principal',
+            content: 'Use the checkboxes to select who the primary advisor and primary principal in the meeting were.',
+            target: '#attendeesTable',
+            placement: 'bottom',
+        },
     ]
 }
