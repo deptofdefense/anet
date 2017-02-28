@@ -49,6 +49,7 @@ export default class RollupShow extends Page {
 		this.state = {
 			date: props.date,
 			reports: {list: []},
+			graphData: {}
 		}
 	}
 
@@ -103,19 +104,29 @@ export default class RollupShow extends Page {
 			}
 			this.setState({reports: data.reportList})
 		})
+
+		API.fetch(`/api/reports/rollupGraph?startDate=${this.rollupStart.valueOf()}&endDate=${this.rollupEnd.valueOf()}`
+		).then(data => {
+			this.setState({graphData: data})
+		})
 	}
 
 	componentDidUpdate() {
-		let reports = this.state.reports.list
-		if (!reports || !d3) {
+		let graphData = this.state.graphData
+		if (!graphData || !d3) {
 			return
 		}
 
 		// Sets up the data
-		var step1 = d3.nest()
-				.key(function(d){return (d.advisorOrg && d.advisorOrg.shortName)})
-				.rollup(function(d){return {l:d.length,s:d[0].state,r:d}})
-				.entries(reports)
+		var step1// = d3.nest()
+		//		.key(function(d){return (d.advisorOrg && d.advisorOrg.shortName)})
+		//		.rollup(function(d){return {l:d.length,s:d[0].state,r:d}})
+		//		.entries(reports)
+
+		step1 = d3.nest()
+			.key((orgId) => orgId)
+			.rollup(orgId => graphData[orgId])
+			.entries(Object.keys(graphData));
 
 		var svg = d3.select(this.graph),
 			margin = {top: 20, right: 20, bottom: 20, left: 20},
@@ -129,23 +140,21 @@ export default class RollupShow extends Page {
 		var y = d3.scaleLinear()
 			.rangeRound([height, 0])
 
-		x.domain(step1.map(function(d){return d.key}))
-		y.domain([0,d3.max(step1.map(function(d){return d.value.l}))])
+		x.domain(step1.map(d => d.key))
+		y.domain([0,d3.max(step1.map(d => d.value.RELEASED))])
 		d3.line()
 			.x(function(d,i) { return x(d.key) })
-			.y(function(d,i) { return y(d.value) })
+			.y(function(d,i) { return y(d.value.RELEASED) })
 
 		var xAxis = d3.axisBottom()
 			.scale(x)
-		var maxValue = d3.max(step1.map(function(d){
-					return d.value.l
-				  }))
+		var maxValue = d3.max(step1.map(d => d.value.RELEASED))
 		var yAxis = d3.axisLeft()
 			.scale(y).ticks(Math.min(maxValue+1,10))
 
 		g.append('g')
 			.attr('transform', 'translate(0,' + height + ')')
-			.attr('fill', '#000')
+			.attr('fill', '#00f')
 
 		g.append('g')
 			.attr('fill', '#400')
@@ -164,8 +173,8 @@ export default class RollupShow extends Page {
 			.attr('class', 'line')
 			.attr('width', width / step1.length - padding)
 			.attr('x',function(d,i){return x(d.key) + (width / (step1.length + padding))})
-			.attr('height', function(d,i){return height - y(d.value.l)})
-			.attr('y',function(d,i){return y(d.value.l) })
+			.attr('height', (d,i) => height - y((d.value.RELEASED || 0)))
+			.attr('y', (d,i) => y((d.value.RELEASED || 0)) )
 			.attr('fill', function(d){return barColors.verified})
 	}
 
