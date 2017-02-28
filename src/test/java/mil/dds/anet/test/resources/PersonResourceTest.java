@@ -88,7 +88,7 @@ public class PersonResourceTest extends AbstractResourceTest {
 		//Change this person w/ a new position, and ensure it gets changed. 
 		
 		Position newPos2 = new Position();
-		newPos2.setType(PositionType.SUPER_USER);
+		newPos2.setType(PositionType.ADVISOR);
 		newPos2.setName("A Second Test Position");
 		newPos2.setOrganization(org);
 		newPos2 = httpQuery("/api/positions/new", admin).post(Entity.json(newPos2), Position.class);

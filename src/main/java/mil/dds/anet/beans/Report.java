@@ -21,7 +21,12 @@ public class Report extends AbstractAnetBean {
 
 	public enum ReportState { DRAFT, PENDING_APPROVAL, RELEASED, REJECTED, CANCELLED }
 	public enum Atmosphere { POSITIVE, NEUTRAL, NEGATIVE }
-	public enum ReportCancelledReason { CANCELLED_BY_ADVISOR, CANCELLED_BY_PRINCIPAL }
+	public enum ReportCancelledReason { CANCELLED_BY_ADVISOR,
+                                            CANCELLED_BY_PRINCIPAL,
+                                            CANCELLED_DUE_TO_TRANSPORTATION,
+                                            CANCELLED_DUE_TO_FORCE_PROTECTION,
+                                            CANCELLED_DUE_TO_ROUTES,
+                                            CANCELLED_DUE_TO_THREAT }
 
 	ApprovalStep approvalStep;
 	ReportState state;
