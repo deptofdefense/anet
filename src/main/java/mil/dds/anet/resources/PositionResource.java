@@ -101,11 +101,10 @@ public class PositionResource implements IGraphQLResource {
 		AuthUtils.assertSuperUserForOrg(user, p.getOrganization());
 
 		Position created = dao.insert(p);
-//
-//		if (p.getPerson() != null) {
-//			//Put the person in the position now.
-//			dao.setPersonInPosition(p.getPerson(), p);
-//		}
+		
+		if (p.getPerson() != null) { 
+			dao.setPersonInPosition(p.getPerson(), created);
+		}
 
 		if (p.getAssociatedPositions() != null && p.getAssociatedPositions().size() > 0) {
 			//Create the associations now

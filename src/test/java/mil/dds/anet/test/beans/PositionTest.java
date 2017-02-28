@@ -15,6 +15,14 @@ public class PositionTest extends BeanTester<Position> {
 		return b;
 	}
 	
+	public static Position getTestAdvisor() { 
+		Position b = new Position();
+		b.setName("Test Advisor Position");
+		b.setCode("TST-0101");
+		b.setType(PositionType.ADVISOR);
+		return b;
+	}
+	
 	@Test
 	public void serializesToJson() throws Exception {
 		serializesToJson(getTestPosition(), "testJson/positions/testPosition.json");
