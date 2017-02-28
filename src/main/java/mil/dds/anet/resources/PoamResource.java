@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -21,11 +22,14 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.codahale.metrics.annotation.Timed;
+
 import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.PoamList;
+import mil.dds.anet.beans.lists.AbstractAnetBeanList.ReportList;
 import mil.dds.anet.beans.search.PoamSearchQuery;
 import mil.dds.anet.database.PoamDao;
 import mil.dds.anet.graphql.GraphQLFetcher;
@@ -58,6 +62,16 @@ public class PoamResource implements IGraphQLResource {
 	@Override
 	public String getDescription() {
 		return "Poams";
+	}
+	
+	@GET
+	@Timed
+	@GraphQLFetcher
+	@Path("/")
+	public PoamList getAll(@Auth Person p, 
+			@DefaultValue("0") @QueryParam("pageNum") Integer pageNum, 
+			@DefaultValue("100") @QueryParam("pageSize") Integer pageSize) {
+		return dao.getAll(pageNum, pageSize);
 	}
 	
 	@GET
