@@ -70,5 +70,11 @@ export default {
             target: '#attendeesTable',
             placement: 'bottom',
         },
+        {
+            title: 'PoAMs',
+            content: 'Select the PoAMs that apply to this engagement. These are not required.',
+            target: '#poams',
+            placement: 'right',
+        },
     ]
 }
