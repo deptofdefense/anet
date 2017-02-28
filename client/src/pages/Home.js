@@ -178,8 +178,29 @@ export default class Home extends Page {
 					title: 'Home',
 					content: 'Click on the logo to get back to your homepage, from wherever you are.',
 					target: '.logo img',
-					placement: 'right'
-				}
+					placement: 'right',
+					fixedElement: true
+				},
+				{
+					title: 'Search',
+					content: 'Search for reports, people, or organizations. You\'ll be able to save your searches.',
+					target: 'searchBarInput',
+					placement: 'bottom',
+					fixedElement: true
+				},
+				{
+					title: 'New Report',
+					content: 'Create a report by clicking on this button. If you are a Super User you may have different options.',
+					target: 'createButton',
+					placement: 'bottom',
+					fixedElement: true
+				},
+				{
+					title: 'Left navigation',
+					content: 'Use this menu to move between areas for a specific section.',
+					target: 'leftNav',
+					placement: 'right',
+				},
 			]
 		})
 	}
