@@ -58,5 +58,11 @@ export default {
             target: '#neutralAtmos',
             placement: 'bottom',
         },
+        {
+            title: 'Attendee(s)',
+            content: 'Start typing the name of everyone who was at the meeting. Select one of the options available or ask your Super User to add it.',
+            target: '#attendees',
+            placement: 'right',
+        },
     ]
 }
