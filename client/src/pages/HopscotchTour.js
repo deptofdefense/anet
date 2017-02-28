@@ -82,5 +82,11 @@ export default {
             target: '#keyOutcomes',
             placement: 'right',
         },
+        {
+            title: 'Next steps',
+            content: 'List the next step(s) for this engagement.',
+            target: '#nextSteps',
+            placement: 'right',
+        },
     ]
 }
