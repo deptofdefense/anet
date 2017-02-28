@@ -295,17 +295,17 @@ export default class ReportForm extends Component {
 	renderAttendeeRow(person, idx) {
 		return <tr key={person.id}>
 			<td className="primary-attendee">
-				<Checkbox checked={person.primary} onChange={this.setPrimaryAttendee.bind(this, person)} id={'attendeePrimary_' + idx}/>
+				<Checkbox checked={person.primary} onChange={this.setPrimaryAttendee.bind(this, person)} id={'attendeePrimary_' + person.role + "_" + idx}/>
 			</td>
 
-			<td>
+			<td id={"attendeeName_" + person.role + "_" + idx} >
 				<img src={person.iconUrl()} alt={person.role} height={20} className="person-icon" />
 				{person.name} {person.rank && person.rank.toUpperCase()}
 				</td>
 			<td><LinkTo position={person.position} /></td>
 			<td>{person.position && person.position.organization && person.position.organization.shortName}</td>
 
-			<td onClick={this.removeAttendee.bind(this, person)} id={'attendeeDelete_' + idx} >
+			<td onClick={this.removeAttendee.bind(this, person)} id={'attendeeDelete_' + person.role + "_" + idx} >
 				<span style={{cursor: 'pointer'}}><img src={REMOVE_ICON} height={14} alt="Remove attendee" /></span>
 			</td>
 		</tr>
