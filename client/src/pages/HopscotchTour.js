@@ -88,5 +88,11 @@ export default {
             target: '#nextSteps',
             placement: 'right',
         },
+        {
+            title: 'Detailed report',
+            content: 'If you need to provide extra details, click on this button to display a large area for you to type the details.',
+            target: '#toggleReportDetails',
+            placement: 'right',
+        },
     ]
 }
