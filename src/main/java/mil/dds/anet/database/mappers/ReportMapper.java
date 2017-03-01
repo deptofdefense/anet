@@ -35,7 +35,7 @@ public class ReportMapper implements ResultSetMapper<Report> {
 		}
 		
 		Timestamp releasedAt = rs.getTimestamp("reports_releasedAt");
-		if (engagementDate != null) { 
+		if (releasedAt != null) { 
 			r.setReleasedAt(new DateTime(releasedAt));
 		}
 		
