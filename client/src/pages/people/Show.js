@@ -75,13 +75,16 @@ export default class PersonShow extends Page {
 				}}
 
 			}
-		`).then(data => this.setState({person: new Person(data.person)}),
+		`).then(data => {
+			this.setState({person: new Person(data.person)})
+			PersonShow.pageProps = {useNavigation: true, fluidContainer: false}
+		},
 			err => {
 				if (_includes([
 					'Exception while fetching data: javax.ws.rs.WebApplicationException: No such person',
 					'Invalid Syntax'
 				], err.errors[0])) {
-					PersonShow.pageProps = {useGrid: false}
+					PersonShow.pageProps = {useNavigation: false, fluidContainer: true}
 					this.setState({person: null})
 				}	
 			})

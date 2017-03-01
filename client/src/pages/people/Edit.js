@@ -43,14 +43,14 @@ export default class PersonEdit extends Page {
 				data.person.endOfTourDate = moment(data.person.endOfTourDate).format()
 			}
 
-			PersonEdit.pageProps.useGrid = true
+			PersonEdit.pageProps.fluidContainer = false
 			this.setState({person: new Person(data.person)})
 		}, err => {
 			if (_includes([
 				'Exception while fetching data: javax.ws.rs.WebApplicationException: No such person',
 				'Invalid Syntax'
 			], err.errors[0])) {
-				PersonEdit.pageProps = {useGrid: false}
+				Object.assign(PersonEdit.pageProps, {useNavigation: false, fluidContainer: true})
 				this.setState({person: null})
 			}	
 		})

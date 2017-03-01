@@ -80,29 +80,27 @@ export default class App extends Page {
 	}
 
 	render() {
-		const pageProps = Object.assign({useGrid: true, useNavigation: true}, this.props.children.type.pageProps)
-		const bodyContent = pageProps.useGrid ? 
-			<Grid componentClass="section" bsClass={pageProps.fluidContainer ? 'container-fluid' : 'container'}>
-					{pageProps.useNavigation ? 
-						<Row>
+		let pageProps = this.props.children.type.pageProps || {}
+
+		return (
+			<div className="anet">
+				<SecurityBanner location={this.props.location} />
+
+				<Header minimalHeader={pageProps.minimalHeader} />
+
+				<Grid componentClass="section" bsClass={pageProps.fluidContainer ? 'container-fluid' : 'container'}>
+					{pageProps.useNavigation === false
+						? <Row><Col xs={12}>{this.props.children}</Col></Row>
+						: <Row>
 							<Col sm={3}>
 								<Nav />
 							</Col>
 							<Col sm={9}>
 								{this.props.children}
 							</Col>
-						</Row> : 
-						<Row><Col xs={12}>{this.props.children}</Col></Row>
+						</Row>
 					}
-			</Grid> : this.props.children
-
-		return (
-			<div className="anet">
-				<SecurityBanner location={this.props.location} />
-
-				<Header />
-
-				{bodyContent}
+				</Grid>
 			</div>
 		)
 	}

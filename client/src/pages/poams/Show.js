@@ -39,13 +39,13 @@ export default class PoamShow extends Page {
 				responsibleOrg {id, shortName, longName}
 			}
 		`).then(data => {
-			PoamShow.pageProps = {useGrid: Boolean(data.poam)}
+			PoamShow.pageProps = {fluidContainer: !Boolean(data.poam), useNavigation: Boolean(data.poam)}
             this.setState({
                 poam: data.poam ? new Poam(data.poam) : null
             })
         }, err => {
 			if (err.errors[0] === 'Invalid Syntax') {
-				PoamShow.pageProps = {useGrid: false}
+				PoamShow.pageProps = {fluidContainer: true, useNavigation: false}
 				this.setState({poam: null})
 			}
 		})

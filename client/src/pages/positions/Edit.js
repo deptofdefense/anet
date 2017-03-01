@@ -33,14 +33,14 @@ export default class PositionEdit extends Page {
 				person { id, name}
 			}
 		`).then(data => {
-			PositionEdit.pageProps.useGrid = true
+			PositionEdit.pageProps.fluidContainer = false
 			this.setState({position: new Position(data.position)})
 		}, err => {
 			if (_includes([
 					'Exception while fetching data: javax.ws.rs.WebApplicationException: Not Found',
 					'Invalid Syntax'
 			], err.errors[0])) {
-				PositionEdit.pageProps.useGrid = false
+				PositionEdit.pageProps.fluidContainer = true
 				this.setState({position: null})
 			}	
 		})

@@ -32,11 +32,11 @@ export default class PoamEdit extends Page {
 				responsibleOrg {id,shortName, longName}
 			}
 		`).then(data => {
-			PoamEdit.pageProps.useGrid = Boolean(data.poam)
+			PoamEdit.pageProps.fluidContainer = !Boolean(data.poam)
 			this.setState({poam: data.poam ? new Poam(data.poam) : null})
 		}, err => {
 			if (err.errors[0] === 'Invalid Syntax') {
-				PoamEdit.pageProps = {useGrid: false}
+				PoamEdit.pageProps = {fluidContainer: true, useNavigation: false}
 				this.setState({poam: null})
 			}
 		})

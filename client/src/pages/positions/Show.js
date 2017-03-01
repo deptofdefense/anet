@@ -46,7 +46,7 @@ export default class PositionShow extends Page {
 				location { id, name }
 			}
 		`).then(data => {
-				PositionShow.pageProps = {useGrid: true}
+				PositionShow.pageProps = {fluidContainer: false}
 				this.setState({position: new Position(data.position)})
 			}, 
 			err => {
@@ -54,7 +54,7 @@ export default class PositionShow extends Page {
 					'Exception while fetching data: javax.ws.rs.WebApplicationException: Not Found',
 					'Invalid Syntax'
 				], err.errors[0])) {
-					PositionShow.pageProps = {useGrid: false}
+					PositionShow.pageProps = {fluidContainer: true, useNavigation: false}
 					this.setState({position: null})
 				}	
 			})

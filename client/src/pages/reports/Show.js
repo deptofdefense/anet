@@ -103,13 +103,13 @@ export default class ReportShow extends Page {
 				approvalStep { name, approvers { id } }
 			}
 		`).then(data => {
-			ReportShow.pageProps = {useGrid: Boolean(data.report)}
+			ReportShow.pageProps = {fluidContainer: !Boolean(data.report), useNavigation: Boolean(data.report)}
 			this.setState({
 				report: data.report ? new Report(data.report) : null
 			})
 		}, err => {
 			if (err.errors[0] === 'Invalid Syntax') {
-				ReportShow.pageProps = {useGrid: false}
+				ReportShow.pageProps = {fluidContainer: true, useNavigation: false}
 				this.setState({report: null})
 			}
 		})

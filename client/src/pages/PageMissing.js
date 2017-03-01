@@ -4,7 +4,8 @@ import NotFound from 'components/NotFound'
 
 export default class PageMissing extends Page {
     static pageProps = {
-        useGrid: false
+        fluidContainer: true,
+        useNavigation: false
     }
 
 	render() {

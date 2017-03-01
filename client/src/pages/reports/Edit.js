@@ -41,7 +41,7 @@ export default class ReportEdit extends Page {
 				poams { id, shortName, longName, responsibleOrg { id, shortName} }
 			}
 		`).then(data => {
-			ReportEdit.pageProps.useGrid = Boolean(data.report)
+			ReportEdit.pageProps.fluidContainer = !Boolean(data.report)
 			let newState = {
 				report: data.report ? new Report(data.report) : null,
 			}
@@ -52,7 +52,8 @@ export default class ReportEdit extends Page {
 			this.setState(newState)
 		}, err => {
 			if (err.errors[0] === 'Invalid Syntax') {
-				ReportEdit.pageProps = {useGrid: false}
+				ReportEdit.pageProps = {fluidContainer: true, useNavigation: false}
+				console.log('error set state', err)
 				this.setState({report: null})
 			}
 		})
