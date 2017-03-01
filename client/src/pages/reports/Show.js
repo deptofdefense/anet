@@ -222,7 +222,7 @@ export default class ReportShow extends Page {
 					<fieldset>
 						<legend>Meeting attendees</legend>
 
-						<Table>
+						<Table condensed>
 							<thead>
 								<tr>
 									<th style={{textAlign: 'center'}}>Primary</th>
@@ -232,17 +232,12 @@ export default class ReportShow extends Page {
 							</thead>
 
 							<tbody>
-								{Person.map(report.attendees, person =>
-									<tr key={person.id}>
-										<td className="primary-attendee">
-											{person.primary && <Checkbox readOnly checked />}
-										</td>
-										<td>
-											<img src={person.iconUrl()} alt={person.role} height={20} width={20} className="person-icon" />
-											<LinkTo person={person} />
-										</td>
-										<td><LinkTo position={person.position} /></td>
-									</tr>
+								{Person.map(report.attendees.filter(p => p.role === "ADVISOR"), person =>
+									this.renderAttendeeRow(person)
+								)}
+								<tr className="attendeeTableRow" ><td colSpan={3}><hr className="attendeeDivider" /></td></tr>
+								{Person.map(report.attendees.filter(p => p.role === "PRINCIPAL"), person =>
+									this.renderAttendeeRow(person)
 								)}
 							</tbody>
 						</Table>
@@ -366,6 +361,20 @@ export default class ReportShow extends Page {
 				this.renderApprovalAction(action)
 			)}
 		</fieldset>
+	}
+
+	@autobind
+	renderAttendeeRow(person) {
+		return <tr key={person.id} className="attendeeTableRow" >
+			<td className="primary-attendee">
+				{person.primary && <Checkbox readOnly checked />}
+			</td>
+			<td>
+				<img src={person.iconUrl()} alt={person.role} height={20} width={20} className="person-icon" />
+				<LinkTo person={person} />
+			</td>
+				<td><LinkTo position={person.position} /></td>
+		</tr>
 	}
 
 	@autobind

@@ -3,6 +3,7 @@ package mil.dds.anet.test.resources;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
@@ -666,5 +667,57 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		//Ensure it went to cancelled status.
 		Report returned2 = httpQuery("/api/reports/" + saved.getId(), liz).get(Report.class);
 		assertThat(returned2.getState()).isEqualTo(ReportState.CANCELLED);
+	}
+	
+	@Test
+	public void dailyRollupGraphTest() { 
+		Person authur = getArthurDmin();
+		Person steve = getSteveSteveson();
+		
+		Report r = new Report();
+		r.setAuthor(authur);
+		r.setIntent("Test the Daily rollup graph");
+		r.setNextSteps("Check for a change in the rollup graph");
+		r.setKeyOutcomes("Foobar the bazbiz");
+		r.setAttendees(ImmutableList.of(PersonTest.personToPrimaryReportPerson(authur), PersonTest.personToPrimaryReportPerson(steve)));
+		r = httpQuery("/api/reports/new", authur).post(Entity.json(r), Report.class);
+		
+		//Pull the daily rollup graph
+		DateTime startDate = DateTime.now().minusDays(1);
+		DateTime endDate = DateTime.now().plusDays(1);
+		Map<Integer,Map<ReportState,Integer>> startGraph = httpQuery(
+				String.format("/api/reports/rollupGraph?startDate=%d&endDate=%d", startDate.getMillis(), endDate.getMillis()), authur)
+				.get(new GenericType<Map<Integer,Map<ReportState,Integer>>>() {});
+		
+		//Submit the report
+		Response resp = httpQuery("/api/reports/" + r.getId() + "/submit", authur).post(null);
+		assertThat(resp.getStatus()).isEqualTo(Status.BAD_REQUEST.getStatusCode());
+		
+		//Oops set the engagementDate.
+		r.setEngagementDate(DateTime.now());
+		resp = httpQuery("/api/reports/update", authur).post(Entity.json(r));
+		assertThat(resp.getStatus()).isEqualTo(200);
+		
+		//Re-submit the report, it should work. 
+		resp = httpQuery("/api/reports/" + r.getId() + "/submit", authur).post(null);
+		assertThat(resp.getStatus()).isEqualTo(200);
+		
+		//Authur can approve his own reports. 
+		resp = httpQuery("/api/reports/" + r.getId() + "/approve", authur).post(null);
+		assertThat(resp.getStatus()).isEqualTo(200);
+		
+		//Verify report is in RELEASED state. 
+		r = httpQuery("/api/reports/" + r.getId(), authur).get(Report.class);
+		assertThat(r.getState()).isEqualTo(ReportState.RELEASED);
+	
+		//Check on the daily rollup graph now. 
+		Map<Integer,Map<ReportState,Integer>> endGraph = httpQuery(
+				String.format("/api/reports/rollupGraph?startDate=%d&endDate=%d", startDate.getMillis(), endDate.getMillis()), authur)
+				.get(new GenericType<Map<Integer,Map<ReportState,Integer>>>() {});
+		
+		//Authur's organization should have one more report RELEASED!
+		int startCt = startGraph.get(authur.loadPosition().loadOrganization().getId()).get(ReportState.RELEASED);
+		int endCt = endGraph.get(authur.loadPosition().loadOrganization().getId()).get(ReportState.RELEASED);
+		assertThat(startCt).isEqualTo(endCt - 1);
 	}
 }

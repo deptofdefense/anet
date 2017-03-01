@@ -57,24 +57,25 @@ public class PositionDao implements IAnetDao<Position> {
 				p.setCreatedAt(DateTime.now());
 				p.setUpdatedAt(p.getCreatedAt());
 				GeneratedKeys<Map<String,Object>> keys = dbHandle.createStatement(
-						"/* positionInsert */ INSERT INTO positions (name, code, type, organizationId, currentPersonId, locationId, createdAt, updatedAt) " 
-						+ "VALUES (:name, :code, :type, :organizationId, :currentPersonId, :locationId, :createdAt, :updatedAt)")
+						"/* positionInsert */ INSERT INTO positions (name, code, type, organizationId, locationId, createdAt, updatedAt) " 
+						+ "VALUES (:name, :code, :type, :organizationId, :locationId, :createdAt, :updatedAt)")
 					.bindFromProperties(p)
 					.bind("type", DaoUtils.getEnumId(p.getType()))
 					.bind("organizationId", DaoUtils.getId(p.getOrganization()))
-					.bind("currentPersonId", DaoUtils.getId(p.getPerson()))
 
 					.bind("locationId", DaoUtils.getId(p.getLocation()))
 					.executeAndReturnGeneratedKeys();
 				p.setId(DaoUtils.getGeneratedId(keys));
 				
-				if (p.getPerson() != null) { 
-					dbHandle.createStatement("/*positionInsertPerson*/ INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES (:positionId, :personId, :createdAt)")
-						.bind("positionId", p.getId())
-						.bind("personId", DaoUtils.getId(p.getPerson()))
-						.bind("createdAt", p.getCreatedAt())
-						.execute();
-				}
+				//Specifically don't set currentPersonId here because we'll handle that later in setPersonInPosition();
+				
+//				if (p.getPerson() != null) { 
+//					dbHandle.createStatement("/*positionInsertPerson*/ INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES (:positionId, :personId, :createdAt)")
+//						.bind("positionId", p.getId())
+//						.bind("personId", DaoUtils.getId(p.getPerson()))
+//						.bind("createdAt", p.getCreatedAt())
+//						.execute();
+//				}
 				return p;
 			}
 		});
@@ -248,17 +249,6 @@ public class PositionDao implements IAnetDao<Position> {
 			.list();
 		if (positions.size() == 0) { return null; } 
 		return positions.get(0);		
-	}
-	
-	public List<Position> getAllPositionsForPerson(Person p) { 
-		return dbHandle.createQuery("/* getAllPositionsForPerson */ SELECT " + POSITIONS_FIELDS 
-				+ " FROM positions, peoplePositions "
-				+ "WHERE peoplePositions.personId = :personId "
-				+ "AND peoplePositions.positionId = positions.id "
-				+ "ORDER BY peoplePositions.createdAt DESC")
-			.bind("personId", p.getId())
-			.map(new PositionMapper())
-			.list();
 	}
 
 	public List<Position> getAssociatedPositions(Position p) {

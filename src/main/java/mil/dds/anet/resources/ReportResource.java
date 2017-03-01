@@ -2,7 +2,6 @@ package mil.dds.anet.resources;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -48,6 +47,7 @@ import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
+import mil.dds.anet.beans.RollupGraph;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.ReportList;
 import mil.dds.anet.beans.search.ReportSearchQuery;
 import mil.dds.anet.database.AdminDao.AdminSettingKeys;
@@ -165,39 +165,46 @@ public class ReportResource implements IGraphQLResource {
 		}
 		
 		dao.update(r);
-		//Update Attendees: Fetch the people associated with this report
-		List<ReportPerson> existingPeople = dao.getAttendeesForReport(r.getId());
-		//Find any differences and fix them.
-		for (ReportPerson rp : r.getAttendees()) {
-			Optional<ReportPerson> existingPerson = existingPeople.stream().filter(el -> el.getId().equals(rp.getId())).findFirst();
-			if (existingPerson.isPresent()) { 
-				if (existingPerson.get().isPrimary() != rp.isPrimary()) { 
-					dao.updateAttendeeOnReport(rp, r);
+		
+		//Update Attendees:
+		if (r.getAttendees() != null) { 
+			//Fetch the people associated with this report
+			List<ReportPerson> existingPeople = dao.getAttendeesForReport(r.getId());
+			//Find any differences and fix them.
+			for (ReportPerson rp : r.getAttendees()) {
+				Optional<ReportPerson> existingPerson = existingPeople.stream().filter(el -> el.getId().equals(rp.getId())).findFirst();
+				if (existingPerson.isPresent()) { 
+					if (existingPerson.get().isPrimary() != rp.isPrimary()) { 
+						dao.updateAttendeeOnReport(rp, r);
+					}
+					existingPeople.remove(existingPerson.get());
+				} else { 
+					dao.addAttendeeToReport(rp, r);
 				}
-				existingPeople.remove(existingPerson.get());
-			} else { 
-				dao.addAttendeeToReport(rp, r);
 			}
-		}
-		//Any attendees left in existingPeople needs to be removed.
-		for (ReportPerson rp : existingPeople) {
-			dao.removeAttendeeFromReport(rp, r);
+			//Any attendees left in existingPeople needs to be removed.
+			for (ReportPerson rp : existingPeople) {
+				dao.removeAttendeeFromReport(rp, r);
+			}
 		}
 
 		//Update Poams:
-		List<Poam> existingPoams = dao.getPoamsForReport(r);
-		List<Integer> existingPoamIds = existingPoams.stream().map(p -> p.getId()).collect(Collectors.toList());
-		for (Poam p : r.getPoams()) {
-			int idx = existingPoamIds.indexOf(p.getId());
-			if (idx == -1) { 
-				dao.addPoamToReport(p, r); 
-			} else {
-				existingPoamIds.remove(idx); 
+		if (r.getPoams() != null) { 
+			List<Poam> existingPoams = dao.getPoamsForReport(r);
+			List<Integer> existingPoamIds = existingPoams.stream().map(p -> p.getId()).collect(Collectors.toList());
+			for (Poam p : r.getPoams()) {
+				int idx = existingPoamIds.indexOf(p.getId());
+				if (idx == -1) { 
+					dao.addPoamToReport(p, r); 
+				} else {
+					existingPoamIds.remove(idx); 
+				}
+			}
+			for (Integer id : existingPoamIds) {
+				dao.removePoamFromReport(Poam.createWithId(id), r);
 			}
 		}
-		for (Integer id : existingPoamIds) {
-			dao.removePoamFromReport(Poam.createWithId(id), r);
-		}
+		
 		return Response.ok().build();
 	}
 
@@ -521,7 +528,7 @@ public class ReportResource implements IGraphQLResource {
 	@GET
 	@Timed
 	@Path("/rollupGraph")
-	public Map<Integer,Map<ReportState,Integer>> getDailyRollupGraph(@QueryParam("startDate") Long start, @QueryParam("endDate") Long end) { 
+	public List<RollupGraph> getDailyRollupGraph(@QueryParam("startDate") Long start, @QueryParam("endDate") Long end) { 
 		return dao.getDailyRollupGraph(new DateTime(start), new DateTime(end));
 	}
 }
