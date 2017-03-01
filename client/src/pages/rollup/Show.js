@@ -3,12 +3,14 @@ import Page from 'components/Page'
 import autobind from 'autobind-decorator'
 import moment from 'moment'
 
-import {DropdownButton, MenuItem} from 'react-bootstrap'
+import {DropdownButton, MenuItem, Modal, Alert, Button} from 'react-bootstrap'
 
 import Breadcrumbs from 'components/Breadcrumbs'
 import ReportCollection from 'components/ReportCollection'
 import ReportSummary from 'components/ReportSummary'
 import CalendarButton from 'components/CalendarButton'
+import Form from 'components/Form'
+import Autocomplete from 'components/Autocomplete'
 
 import API from 'api'
 import {Report} from 'models'
@@ -53,7 +55,8 @@ export default class RollupShow extends Page {
 		this.state = {
 			date: props.date,
 			reports: {list: []},
-			graphData: {}
+			graphData: {},
+			showEmailModal: false,
 		}
 	}
 
@@ -227,13 +230,19 @@ export default class RollupShow extends Page {
 
 					<ReportCollection paginatedReports={this.state.reports} />
 				</fieldset>
+
+				{this.renderEmailModal()}
 			</div>
 		)
 	}
 
 	@autobind
 	actionSelect(eventKey, event) {
-		console.log('Unimplemented Action: ' + eventKey)
+		if (eventKey === 'email') {
+			this.toggleEmailModal()
+		} else {
+			console.log('Unimplemented Action: ' + eventKey)
+		}
 	}
 
 	@autobind
@@ -241,5 +250,61 @@ export default class RollupShow extends Page {
 		this.setState({date: moment(newDate)}, () => {
 			this.loadData()
 		})
+	}
+
+	@autobind
+	renderEmailModal() {
+		let email = {}
+		return <Modal show={this.state.showEmailModal} onHide={this.toggleEmailModal} >
+			<Modal.Header closeButton>
+				<Modal.Title>Email rollup</Modal.Title>
+			</Modal.Header>
+			<Modal.Body>
+				{email.errors &&
+					<Alert bsStyle="danger">{email.errors}</Alert>
+				}
+				<Form formFor={email} onChange={this.onChange} submitText={false} >
+					<Form.Field id="to" label="To:" >
+						<Autocomplete valueKey="name"
+							placeholder="Select the person to email"
+							url="/api/people/search"
+							queryParams={{role: 'ADVISOR'}}
+						/>
+					</Form.Field>
+					<Form.Field componentClass="textarea" id="comment" />
+				</Form>
+			</Modal.Body>
+			<Modal.Footer>
+				<Button bsStyle="primary" onClick={this.emailReport}>Send Email</Button>
+			</Modal.Footer>
+		</Modal>
+	}
+
+	@autobind
+	toggleEmailModal() {
+		this.setState({showEmailModal: !this.state.showEmailModal})
+	}
+
+	@autobind
+	emailReport() {
+		let email = this.state.email
+		if (!email.to) {
+			email.errors = 'You must select a person to send this to'
+			this.setState({email})
+			return
+		}
+
+		email = {
+			toAddresses: [email.to.emailAddress],
+			context: {comment: email.comment },
+			subject: 'Sharing an email from ANET'
+		}
+		API.send(`/api/reports/${this.state.report.id}/email`, email).then (() =>
+			this.setState({
+				success: 'Email successfully sent',
+				showEmailModal: false,
+				email: {}
+			})
+		)
 	}
 }
