@@ -168,7 +168,7 @@ export default class ReportForm extends Component {
 						<img src={WARNING_ICON} role="presentation" height="20px" />
 						Person not found in ANET Database.
 					</HelpBlock> }
-					<Table hover >
+					<Table hover condensed>
 						<thead>
 							<tr>
 								<th style={{textAlign: 'center'}}>Primary</th>
@@ -182,7 +182,7 @@ export default class ReportForm extends Component {
 							{Person.map(report.attendees.filter(p => p.role === "ADVISOR"), (person, idx) =>
 								this.renderAttendeeRow(person, idx)
 							)}
-							<tr><td colSpan={5}><hr className="attendeeDivider" /></td></tr>
+							<tr className="attendeeTableRow" ><td colSpan={5}><hr className="attendeeDivider" /></td></tr>
 							{Person.map(report.attendees.filter(p => p.role === "PRINCIPAL"), (person, idx) =>
 								this.renderAttendeeRow(person, idx)
 							)}
@@ -293,7 +293,7 @@ export default class ReportForm extends Component {
 
 	@autobind
 	renderAttendeeRow(person, idx) {
-		return <tr key={person.id}>
+		return <tr key={person.id} className="attendeeTableRow" >
 			<td className="primary-attendee">
 				<Checkbox checked={person.primary} onChange={this.setPrimaryAttendee.bind(this, person)} id={'attendeePrimary_' + person.role + "_" + idx}/>
 			</td>
