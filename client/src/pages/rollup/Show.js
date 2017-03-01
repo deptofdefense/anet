@@ -1,5 +1,6 @@
 import React from 'react'
 import Page from 'components/Page'
+import DatePicker from 'react-bootstrap-date-picker'
 import autobind from 'autobind-decorator'
 import moment from 'moment'
 
@@ -8,7 +9,7 @@ import {DropdownButton, MenuItem, Button} from 'react-bootstrap'
 import Breadcrumbs from 'components/Breadcrumbs'
 import ReportCollection from 'components/ReportCollection'
 import ReportSummary from 'components/ReportSummary'
-import DatePicker from 'react-bootstrap-date-picker'
+import CalendarButton from 'components/CalendarButton'
 
 import API from 'api'
 import {Report} from 'models'
@@ -24,6 +25,10 @@ const barColors = {
 	verified: '#9CBDA4',
 	unverified: '#F5D98C',
 	incoming: '#DA9795',
+}
+
+const calendarButtonCss = {
+	marginRight: '20px',
 }
 
 export default class RollupShow extends Page {
@@ -193,6 +198,8 @@ export default class RollupShow extends Page {
 
 				{canEdit &&
 					<div className="pull-right">
+						<CalendarButton onChange={this.changeRollupDate} style={calendarButtonCss} />
+
 						<DropdownButton bsStyle="primary" title="Actions" id="actions" className="pull-right" onSelect={this.actionSelect}>
 							<MenuItem eventKey="email">Email rollup</MenuItem>
 							<MenuItem eventKey="print">Print</MenuItem>
@@ -200,11 +207,9 @@ export default class RollupShow extends Page {
 					</div>
 				}
 
-				<h1>Daily Rollup - {this.dateLongStr}</h1>
-
-				<Button bsStyle="primary" >
-					<DatePicker showTodayButton onChange={this.changeRollupDate} />
-				</Button>
+				<h1>
+					Daily Rollup - {this.dateLongStr}
+				</h1>
 
 				<fieldset>
 					<legend>Summary of Report Input</legend>
