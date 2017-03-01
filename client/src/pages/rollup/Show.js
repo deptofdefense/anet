@@ -10,7 +10,6 @@ import ReportCollection from 'components/ReportCollection'
 import ReportSummary from 'components/ReportSummary'
 import CalendarButton from 'components/CalendarButton'
 import Form from 'components/Form'
-import Autocomplete from 'components/Autocomplete'
 
 import API from 'api'
 import {Report} from 'models'
@@ -264,18 +263,12 @@ export default class RollupShow extends Page {
 					<Alert bsStyle="danger">{email.errors}</Alert>
 				}
 				<Form formFor={email} onChange={this.onChange} submitText={false} >
-					<Form.Field id="to" label="To:" >
-						<Autocomplete valueKey="name"
-							placeholder="Select the person to email"
-							url="/api/people/search"
-							queryParams={{role: 'ADVISOR'}}
-						/>
-					</Form.Field>
+					<Form.Field id="to" />
 					<Form.Field componentClass="textarea" id="comment" />
 				</Form>
 			</Modal.Body>
 			<Modal.Footer>
-				<Button bsStyle="primary" onClick={this.emailReport}>Send Email</Button>
+				<Button bsStyle="primary" onClick={this.emailRollup}>Send email</Button>
 			</Modal.Footer>
 		</Modal>
 	}
@@ -286,7 +279,7 @@ export default class RollupShow extends Page {
 	}
 
 	@autobind
-	emailReport() {
+	emailRollup() {
 		let email = this.state.email
 		if (!email.to) {
 			email.errors = 'You must select a person to send this to'
@@ -295,11 +288,11 @@ export default class RollupShow extends Page {
 		}
 
 		email = {
-			toAddresses: [email.to.emailAddress],
-			context: {comment: email.comment },
+			toAddresses: email.to.replace(/\s/g, '').split(/[,;]/),
+			context: {comment: email.comment, reports: this.state.reports.list, startDate: this.dateStr},
 			subject: 'Daily rollup for ' + this.dateStr + ' from ANET'
 		}
-		API.send(`/api/reports/${this.state.report.id}/email`, email).then (() =>
+		API.send(`/api/reports/rollup/email?startDate=${this.rollupStart.valueOf()}&endDate=${this.rollupEnd.valueOf()}`, email).then (() =>
 			this.setState({
 				success: 'Email successfully sent',
 				showEmailModal: false,

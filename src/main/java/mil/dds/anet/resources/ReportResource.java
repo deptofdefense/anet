@@ -528,7 +528,17 @@ public class ReportResource implements IGraphQLResource {
 	@GET
 	@Timed
 	@Path("/rollupGraph")
-	public List<RollupGraph> getDailyRollupGraph(@QueryParam("startDate") Long start, @QueryParam("endDate") Long end) { 
+	public List<RollupGraph> getDailyRollupGraph(@QueryParam("startDate") Long start, @QueryParam("endDate") Long end) {
 		return dao.getDailyRollupGraph(new DateTime(start), new DateTime(end));
+	}
+
+	@POST
+	@Timed
+	@Path("/rollup/email")
+	public Response emailReport(@Auth Person user, AnetEmail email) {
+		email.setTemplateName("/emails/rollup.ftl");
+		email.getContext().put("sender", user);
+		AnetEmailWorker.sendEmailAsync(email);
+		return Response.ok().build();
 	}
 }
