@@ -46,4 +46,12 @@ public class Utils {
 			removeFunc.accept(id);
 		}
 	}
+	
+	public static <T> T orIfNull(T value, T ifNull) { 
+		if (value == null) { 
+			return ifNull;
+		} else { 
+			return value; 
+		}
+	}
 }

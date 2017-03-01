@@ -2,7 +2,6 @@ package mil.dds.anet.resources;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -48,6 +47,7 @@ import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
+import mil.dds.anet.beans.RollupGraph;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.ReportList;
 import mil.dds.anet.beans.search.ReportSearchQuery;
 import mil.dds.anet.database.AdminDao.AdminSettingKeys;
@@ -528,14 +528,7 @@ public class ReportResource implements IGraphQLResource {
 	@GET
 	@Timed
 	@Path("/rollupGraph")
-	public Map<Integer,Map<ReportState,Integer>> getDailyRollupGraph(@QueryParam("startDate") Long start, @QueryParam("endDate") Long end) { 
-		Map<Integer,Map<ReportState,Integer>> graph =  dao.getDailyRollupGraph(new DateTime(start), new DateTime(end));
-
-		//Jackson can't serialize a null key, which occurs for reports written by an advisor with no organization
-		if (graph.containsKey(null)) { 
-			graph.put(-1, graph.remove(null));
-		}
-		
-		return graph;
+	public List<RollupGraph> getDailyRollupGraph(@QueryParam("startDate") Long start, @QueryParam("endDate") Long end) { 
+		return dao.getDailyRollupGraph(new DateTime(start), new DateTime(end));
 	}
 }
