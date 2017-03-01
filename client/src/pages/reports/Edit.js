@@ -62,7 +62,7 @@ export default class ReportEdit extends Page {
 		let report = this.state.report
 
 		if (!report) {
-			return <NotFound notFoundText={`Report with ID ${this.props.params.id} not found.`} />
+			return <NotFound text={`Report with ID ${this.props.params.id} not found.`} />
 		}
 
 		return (

@@ -13,7 +13,7 @@ export default class NotFound extends Component {
     
 	render() {
 		return <div>
-            <h1 className="not-found-text">{this.props.notFoundText}</h1>
+            <h1 className="not-found-text">{this.props.text}</h1>
             <img src={PLANET} className="planet" role="presentation" />
         </div>
 	}

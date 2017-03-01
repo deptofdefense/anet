@@ -50,7 +50,7 @@ export default class PositionEdit extends Page {
 		let position = this.state.position
 
 		if (!position) {
-			return <NotFound notFoundText={`Position with ID ${this.props.params.id} not found.`} />
+			return <NotFound text={`Position with ID ${this.props.params.id} not found.`} />
 		}
 
 		return (

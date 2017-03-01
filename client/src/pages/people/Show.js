@@ -91,7 +91,7 @@ export default class PersonShow extends Page {
 		let {person} = this.state
 
 		if (!person) {
-			return <NotFound notFoundText={`User with ID ${this.props.params.id} not found.`} />
+			return <NotFound text={`User with ID ${this.props.params.id} not found.`} />
 		}
 
 		let position = person.position

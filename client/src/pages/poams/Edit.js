@@ -46,7 +46,7 @@ export default class PoamEdit extends Page {
 		let poam = this.state.poam
 
 		if (!poam) {
-			return <NotFound notFoundText={`No PoAM with ID ${this.props.params.id} was found.`} />
+			return <NotFound text={`No PoAM with ID ${this.props.params.id} was found.`} />
 		}
 
 		return (

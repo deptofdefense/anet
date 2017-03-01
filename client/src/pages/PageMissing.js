@@ -8,6 +8,6 @@ export default class PageMissing extends Page {
     }
 
 	render() {
-		return <NotFound notFoundText="404 Not Found" />
+		return <NotFound text="404 Not Found" />
 	}
 }

@@ -64,7 +64,7 @@ export default class PositionShow extends Page {
 		let position = this.state.position
 
 		if (!position) {
-			return <NotFound notFoundText={`Position with ID ${this.props.params.id} not found.`} />
+			return <NotFound text={`Position with ID ${this.props.params.id} not found.`} />
 		}
 
 		let assignedRole = (position.type === 'ADVISOR') ? 'Afghan Principals' : 'Advisors'

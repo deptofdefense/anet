@@ -55,7 +55,7 @@ export default class PoamShow extends Page {
 		let {poam} = this.state
 
 		if (!poam) {
-			return <NotFound notFoundText={`No PoAM with ID ${this.props.params.id} was found.`} />
+			return <NotFound text={`No PoAM with ID ${this.props.params.id} was found.`} />
 		}
 
 		// Admins can edit poams, or super users if this poam is assigned to their org.

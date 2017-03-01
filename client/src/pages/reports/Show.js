@@ -119,7 +119,7 @@ export default class ReportShow extends Page {
 		let {report} = this.state
 
 		if (!report) {
-			return <NotFound notFoundText={`Report with ID ${this.props.params.id} not found.`} />
+			return <NotFound text={`Report with ID ${this.props.params.id} not found.`} />
 		}
 
 		let {currentUser} = this.context.app.state

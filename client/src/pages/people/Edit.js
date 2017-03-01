@@ -60,7 +60,7 @@ export default class PersonEdit extends Page {
 		let person = this.state.person
 		
 		if (!person) {
-			return <NotFound notFoundText={`User with ID ${this.props.params.id} not found.`} />
+			return <NotFound text={`User with ID ${this.props.params.id} not found.`} />
 		}
 
 		let currentUser = this.context.app.state.currentUser

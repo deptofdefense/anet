@@ -41,7 +41,7 @@ export default class LocationShow extends Page {
 		let loc = this.state.location
 
 		if (!loc) {
-			return <NotFound notFoundText={`No location with ID ${this.props.params.id} found.`} />
+			return <NotFound text={`No location with ID ${this.props.params.id} found.`} />
 		}
 
 		let markers=[]
