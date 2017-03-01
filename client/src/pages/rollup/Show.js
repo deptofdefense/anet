@@ -57,6 +57,7 @@ export default class RollupShow extends Page {
 			reports: {list: []},
 			graphData: {},
 			showEmailModal: false,
+			email: {},
 		}
 	}
 
@@ -254,7 +255,7 @@ export default class RollupShow extends Page {
 
 	@autobind
 	renderEmailModal() {
-		let email = {}
+		let email = this.state.email
 		return <Modal show={this.state.showEmailModal} onHide={this.toggleEmailModal} >
 			<Modal.Header closeButton>
 				<Modal.Title>Email rollup</Modal.Title>
@@ -297,7 +298,7 @@ export default class RollupShow extends Page {
 		email = {
 			toAddresses: [email.to.emailAddress],
 			context: {comment: email.comment },
-			subject: 'Sharing an email from ANET'
+			subject: 'Daily rollup for ' + this.dateStr + ' from ANET'
 		}
 		API.send(`/api/reports/${this.state.report.id}/email`, email).then (() =>
 			this.setState({
