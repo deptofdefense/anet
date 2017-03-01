@@ -78,8 +78,7 @@ export default class RollupShow extends Page {
 		let rollupQuery = {
 			releasedAtStart: this.rollupStart.valueOf(),
 			releasedAtEnd: this.rollupEnd.valueOf(),
-			engagementDateStart: moment(this.rollupStart).subtract(14, 'days').valueOf(),
-			state: 'RELEASED',
+			engagementDateStart: moment(this.rollupStart).subtract(14, 'days').valueOf()
 		}
 		API.query(/* GraphQL */`
 			reportList(f:search, query:$rollupQuery) {
