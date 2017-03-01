@@ -7,11 +7,19 @@ import CALENDAR_ICON from 'resources/calendar.png'
 
 export default class CalendarButton extends Component {
 	render() {
-		let {onChange, ...props} = this.props
+		let {onChange, value, ...props} = this.props
 
 		return <Button onClick={this.onClick} {...props}>
 			<img src={CALENDAR_ICON} height={20} alt="Pick a date" />
-			<DatePicker ref="datePicker" style={{display: 'none'}} showTodayButton onChange={onChange} />
+
+			<DatePicker
+				ref="datePicker"
+				value={value}
+				style={{display: 'none'}}
+				showTodayButton
+				showClearButton={false}
+				onChange={onChange}
+			/>
 		</Button>
 	}
 

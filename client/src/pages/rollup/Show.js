@@ -198,7 +198,7 @@ export default class RollupShow extends Page {
 
 				{canEdit &&
 					<div className="pull-right">
-						<CalendarButton onChange={this.changeRollupDate} style={calendarButtonCss} />
+						<CalendarButton onChange={this.changeRollupDate} value={this.state.date.toISOString()} style={calendarButtonCss} />
 
 						<DropdownButton bsStyle="primary" title="Actions" id="actions" className="pull-right" onSelect={this.actionSelect}>
 							<MenuItem eventKey="email">Email rollup</MenuItem>
