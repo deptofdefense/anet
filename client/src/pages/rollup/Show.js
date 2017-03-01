@@ -160,6 +160,7 @@ export default class RollupShow extends Page {
 		g.append('g')
 			.attr('transform', 'translate(0,' + height + ')')
 			.attr('fill', '#00f')
+			.call(xAxis)
 
 		g.append('g')
 			.attr('fill', '#400')
