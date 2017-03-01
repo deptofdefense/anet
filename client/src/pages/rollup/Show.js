@@ -237,9 +237,9 @@ export default class RollupShow extends Page {
 	}
 
 	@autobind
-	changeRollupDate(event) {
-		let dtg = moment(event)
-		this.state.date = dtg
-		this.loadData()
+	changeRollupDate(newDate) {
+		this.setState({date: moment(newDate)}, () => {
+			this.loadData()
+		})
 	}
 }
