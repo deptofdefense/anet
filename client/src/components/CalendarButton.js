@@ -17,6 +17,11 @@ export default class CalendarButton extends Component {
 
 	@autobind
 	onClick() {
-		this.refs.datePicker.handleFocus()
+		let datePicker = this.refs.datePicker
+		if (datePicker.state.inputFocused) {
+			datePicker.handleBlur()
+		} else {
+			datePicker.handleFocus()
+		}
 	}
 }
