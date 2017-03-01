@@ -14,6 +14,11 @@ if (process.env.NODE_ENV !== 'test') {
 }
 
 export default class Page extends Component {
+	constructor() {
+		super()
+		this.state = {}
+	}
+
 	componentWillMount() {
 		window.scrollTo(0,0)
 

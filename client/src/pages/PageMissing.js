@@ -7,11 +7,6 @@ export default class PageMissing extends Page {
         useGrid: false
     }
 
-    constructor() {
-        super()
-        this.state = {}
-    }
-
 	render() {
 		return <NotFound notFoundText="404 Not Found" />
 	}
