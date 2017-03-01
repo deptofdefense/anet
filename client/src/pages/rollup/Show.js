@@ -1,10 +1,9 @@
 import React from 'react'
 import Page from 'components/Page'
-import DatePicker from 'react-bootstrap-date-picker'
 import autobind from 'autobind-decorator'
 import moment from 'moment'
 
-import {DropdownButton, MenuItem, Button} from 'react-bootstrap'
+import {DropdownButton, MenuItem} from 'react-bootstrap'
 
 import Breadcrumbs from 'components/Breadcrumbs'
 import ReportCollection from 'components/ReportCollection'
@@ -132,7 +131,7 @@ export default class RollupShow extends Page {
 		step1 = d3.nest()
 			.key((orgId) => orgId)
 			.rollup(orgId => graphData[orgId])
-			.entries(Object.keys(graphData));
+			.entries(Object.keys(graphData))
 
 		var svg = d3.select(this.graph),
 			margin = {top: 20, right: 20, bottom: 20, left: 20},
