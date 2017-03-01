@@ -13,8 +13,6 @@ import DatePicker from 'react-bootstrap-date-picker'
 import API from 'api'
 import {Report} from 'models'
 
-import CALENDAR_ICON from 'resources/calendar.png'
-
 var d3 = null/* required later */
 
 const graphCss = {
@@ -202,13 +200,11 @@ export default class RollupShow extends Page {
 					</div>
 				}
 
-				<h2>
-					Daily Rollup - {this.dateLongStr}
-					{
-						//<DatePicker showTodayButton onChange={this.changeRollupDate} placeholder="Change Dates" id="rollupDatePicker" />
-					}
-				</h2>
+				<h1>Daily Rollup - {this.dateLongStr}</h1>
 
+				<Button bsStyle="primary" >
+					<DatePicker showTodayButton onChange={this.changeRollupDate} />
+				</Button>
 
 				<fieldset>
 					<legend>Summary of Report Input</legend>
