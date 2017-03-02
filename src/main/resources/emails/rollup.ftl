@@ -1701,11 +1701,6 @@
               <img alt="ANET logo" src="${serverUrl}/assets/img/anet.png" style="box-sizing:border-box;border:0;vertical-align:middle;height:36px">
           <#-- </a> -->
         </div>
-        <div class="col-xs-9" style="box-sizing:border-box;position:relative;min-height:1px;padding-right:15px;padding-left:15px;float:left;width:75%;">
-          <form class="" style="box-sizing:border-box;">
-            <h3 style="box-sizing:border-box;font-family:inherit;font-weight:500;line-height:1.1;color:inherit;margin-top:20px;margin-bottom:10px;font-size:24px;">${subject}</h3>
-          </form>
-        </div>
       </div>
       <div class="row" style="box-sizing:border-box;margin-right:-15px;margin-left:-15px;">
         <div class="col-sm-12" style="box-sizing:border-box;position:relative;min-height:1px;padding-right:15px;padding-left:15px;">
@@ -1729,6 +1724,10 @@
 			  <#-- <a href="${serverUrl}/rollup" class="btn btn-primary pull-right">View on ANET</a> -->
 
               <fieldset style="box-sizing:border-box;padding:.35em .625em .75em;margin:0 2px;border:1px solid silver;min-width:0;margin:0;padding:0;border:0;background:#fff;border:1px solid #e0e0e0;padding:1.25em;margin:7rem 0;position:relative;">
+                  <legend style="box-sizing:border-box;padding:0;border:0;display:block;width:100%;margin-bottom:20px;font-size:21px;line-height:inherit;color:#333;border-bottom:1px solid #e5e5e5;position:absolute;top:-35px;left:3px;font-size:2.5rem;color:#363636;border:none;">
+                      ${subject}
+                  </legend>
+
                 <#list reports as report>
 					<div class="row">
 						<div class="col-md-6" style="float:left">
