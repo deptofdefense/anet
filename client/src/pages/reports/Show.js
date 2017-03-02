@@ -11,7 +11,6 @@ import Form from 'components/Form'
 import Messages from 'components/Messages'
 import LinkTo from 'components/LinkTo'
 import History from 'components/History'
-import Autocomplete from 'components/Autocomplete'
 
 import API from 'api'
 
