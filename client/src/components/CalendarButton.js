@@ -18,7 +18,7 @@ export default class CalendarButton extends Component {
 	render() {
 		let {onChange, value, ...props} = this.props
 
-		return <Button onClick={this.onClick} {...props}>
+		return <Button onClick={this.onClick} onBlur={this.onBlur} {...props}>
 			<img src={CALENDAR_ICON} height={20} alt="Pick a date" />
 
 			<DatePicker
@@ -41,5 +41,10 @@ export default class CalendarButton extends Component {
 		} else {
 			datePicker.handleFocus()
 		}
+	}
+
+	@autobind
+	onBlur() {
+		this.refs.datePicker.handleBlur()
 	}
 }
