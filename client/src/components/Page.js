@@ -38,13 +38,7 @@ export default class Page extends Component {
 					return response
 				}
 
-				promise.then(doneLoading, err => {
-					if (err.status === 404) {
-						this.__proto__.pageProps = {fluidContainer: true, useNavigation: false}
-						this.setState({notFound: true})
-					}
-					doneLoading()
-				})
+				promise.then(doneLoading, doneLoading)
 			} else {
 				NProgress.done()
 				document.body.classList.remove('loading')
