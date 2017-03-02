@@ -128,13 +128,8 @@ export default class RollupShow extends Page {
 			return
 		}
 
-		// Sets up the data
-		var step1// = d3.nest()
-		//		.key(function(d){return (d.advisorOrg && d.advisorOrg.shortName)})
-		//		.rollup(function(d){return {l:d.length,s:d[0].state,r:d}})
-		//		.entries(reports)
-
-		step1 = d3.nest()
+		// Set up the data
+		const step1 = d3.nest()
 			.key((entry) => (entry.org && entry.org.shortName) || "Unknown")
 			.rollup(entry => entry[0] )
 			.entries(graphData)
@@ -152,14 +147,14 @@ export default class RollupShow extends Page {
 			.rangeRound([height, 0])
 
 		x.domain(step1.map(d => d.key))
-		y.domain([0,d3.max(step1.map(d => d.value.released))])
+		y.domain([0,d3.max(step1.map(d => d.value.released + d.value.cancelled))])
 		d3.line()
 			.x(function(d,i) { return x(d.key) })
 			.y(function(d,i) { return y(d.value.released) })
 
 		var xAxis = d3.axisBottom()
 			.scale(x)
-		var maxValue = d3.max(step1.map(d => d.value.released))
+		var maxValue = d3.max(y.domain())
 		var yAxis = d3.axisLeft()
 			.scale(y).ticks(Math.min(maxValue+1,10))
 
@@ -185,8 +180,8 @@ export default class RollupShow extends Page {
 			.attr('class', 'line')
 			.attr('width', width / step1.length - padding)
 			.attr('x',function(d,i){return x(d.key) + (width / (step1.length + padding))})
-			.attr('height', (d,i) => height - y((d.value.released || 0)))
-			.attr('y', (d,i) => y((d.value.released || 0)) )
+			.attr('height', (d,i) => height - y((d.value.released + d.value.cancelled || 0)))
+			.attr('y', (d,i) => y((d.value.released + d.value.cancelled || 0)) )
 			.attr('fill', function(d){return barColors.verified})
 	}
 
