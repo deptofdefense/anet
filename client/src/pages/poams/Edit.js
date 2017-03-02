@@ -1,5 +1,6 @@
 import React from 'react'
 import Page from 'components/Page'
+import ModelPage from 'components/ModelPage'
 
 import PoamForm from './Form'
 import {ContentForHeader} from 'components/Header'
@@ -8,12 +9,12 @@ import Messages from 'components/Messages'
 
 import API from 'api'
 import {Poam} from 'models'
-import NotFound from 'components/NotFound'
 
-export default class PoamEdit extends Page {
+class PoamEdit extends Page {
 	static pageProps = {
 		useNavigation: false
 	}
+	static modelName = 'PoAM'
 
 	constructor(props) {
 		super(props)
@@ -32,13 +33,7 @@ export default class PoamEdit extends Page {
 				responsibleOrg {id,shortName, longName}
 			}
 		`).then(data => {
-			PoamEdit.pageProps.fluidContainer = !Boolean(data.poam)
-			this.setState({poam: data.poam ? new Poam(data.poam) : null})
-		}, err => {
-			if (err.errors[0] === 'Invalid Syntax') {
-				PoamEdit.pageProps = {fluidContainer: true, useNavigation: false}
-				this.setState({poam: null})
-			}
+			this.setState({poam: new Poam(data.poam)})
 		})
 	}
 
@@ -64,3 +59,5 @@ export default class PoamEdit extends Page {
 		)
 	}
 }
+
+export default ModelPage(PoamEdit)
