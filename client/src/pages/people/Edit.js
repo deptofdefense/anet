@@ -1,5 +1,6 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
+import ModelPage from 'components/ModelPage'
 import moment from 'moment'
 import _includes from 'lodash.includes'
 
@@ -11,7 +12,7 @@ import Breadcrumbs from 'components/Breadcrumbs'
 import API from 'api'
 import {Person} from 'models'
 
-export default class PersonEdit extends Page {
+class PersonEdit extends Page {
 	static contextTypes = {
 		app: PropTypes.object.isRequired,
 	}
@@ -19,6 +20,8 @@ export default class PersonEdit extends Page {
 	static pageProps = {
 		useNavigation: false
 	}
+
+	static modelName = 'User'
 
 	constructor(props) {
 		super(props)
@@ -43,16 +46,7 @@ export default class PersonEdit extends Page {
 				data.person.endOfTourDate = moment(data.person.endOfTourDate).format()
 			}
 
-			PersonEdit.pageProps.fluidContainer = false
 			this.setState({person: new Person(data.person)})
-		}, err => {
-			if (_includes([
-				'Exception while fetching data: javax.ws.rs.WebApplicationException: No such person',
-				'Invalid Syntax'
-			], err.errors[0])) {
-				Object.assign(PersonEdit.pageProps, {useNavigation: false, fluidContainer: true})
-				this.setState({person: null})
-			}	
 		})
 	}
 
@@ -84,3 +78,5 @@ export default class PersonEdit extends Page {
 		)
 	}
 }
+
+export default ModelPage(PersonEdit)
