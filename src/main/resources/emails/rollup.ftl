@@ -1729,12 +1729,19 @@
                   </legend>
 
                 <#list reports as report>
+                    <#if report.cancelledReason??>
+                    <p className="report-cancelled" style="border-left:16px solid #DA9795;padding-left:10px;">
+                        <strong>Cancelled: </strong>
+                        ${report.cancelledReason}
+                    </p>
+                    </#if>
+
 					<div class="row">
 						<div class="col-md-6" style="float:left">
 							<#-- <a href="${serverUrl}/organizations/${report.advisorOrg.id}"> -->
                                 ${report.advisorOrg.longName}
                             <#-- </a> -->
-                            &rtrif;
+                            ->
                             <#-- <a href="${serverUrl}/organizations/${report.principalOrg.id}"> -->
                                 ${report.principalOrg.longName}
                             <#-- </a> -->
