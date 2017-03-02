@@ -40,10 +40,6 @@ class PoamEdit extends Page {
 	render() {
 		let poam = this.state.poam
 
-		if (!poam) {
-			return <NotFound text={`No PoAM with ID ${this.props.params.id} was found.`} />
-		}
-
 		return (
 			<div>
 				<ContentForHeader>

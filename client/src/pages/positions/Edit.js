@@ -1,19 +1,21 @@
 import React from 'react'
 import Page from 'components/Page'
+import ModelPage from 'components/ModelPage'
 
 import PositionForm from './Form'
 import {ContentForHeader} from 'components/Header'
 import Breadcrumbs from 'components/Breadcrumbs'
-import NotFound from 'components/NotFound'
 import _includes from 'lodash.includes'
 
 import API from 'api'
 import {Position} from 'models'
 
-export default class PositionEdit extends Page {
+class PositionEdit extends Page {
 	static pageProps = {
 		useNavigation: false
 	}
+
+	static modelName = 'Position'
 
 	constructor(props) {
 		super(props)
@@ -33,25 +35,12 @@ export default class PositionEdit extends Page {
 				person { id, name}
 			}
 		`).then(data => {
-			PositionEdit.pageProps.fluidContainer = false
 			this.setState({position: new Position(data.position)})
-		}, err => {
-			if (_includes([
-					'Exception while fetching data: javax.ws.rs.WebApplicationException: Not Found',
-					'Invalid Syntax'
-			], err.errors[0])) {
-				PositionEdit.pageProps.fluidContainer = true
-				this.setState({position: null})
-			}	
 		})
 	}
 
 	render() {
 		let position = this.state.position
-
-		if (!position) {
-			return <NotFound text={`Position with ID ${this.props.params.id} not found.`} />
-		}
 
 		return (
 			<div>
@@ -66,3 +55,5 @@ export default class PositionEdit extends Page {
 		)
 	}
 }
+
+export default ModelPage(PositionEdit)
