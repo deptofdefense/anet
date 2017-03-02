@@ -38,6 +38,8 @@ class ReportShow extends Page {
 		app: PropTypes.object,
 	}
 
+	static modelName = 'Report'
+
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -106,7 +108,7 @@ class ReportShow extends Page {
 		})
 	}
 
-	renderFound() {
+	render() {
 		let {report} = this.state
 		let {currentUser} = this.context.app.state
 
@@ -596,3 +598,5 @@ class ReportShow extends Page {
 		})
 	}
 }
+
+export default ModelPage(ReportShow)
