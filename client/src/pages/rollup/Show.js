@@ -22,6 +22,7 @@ const graphCss = {
 }
 
 const barColors = {
+	cancelled: '#e39394',
 	verified: '#9CBDA4',
 	unverified: '#F5D98C',
 	incoming: '#DA9795',
@@ -131,7 +132,7 @@ export default class RollupShow extends Page {
 		// Set up the data
 		const step1 = d3.nest()
 			.key((entry) => (entry.org && entry.org.shortName) || "Unknown")
-			.rollup(entry => entry[0] )
+			.rollup(entry => entry[0])
 			.entries(graphData)
 
 		var svg = d3.select(this.graph),
@@ -174,15 +175,21 @@ export default class RollupShow extends Page {
 			.style('text-anchor', 'end')
 			.text('# of Reports')
 
-		g.selectAll('.bar')
-			.data(step1)
-			.enter().append('rect')
-			.attr('class', 'line')
-			.attr('width', width / step1.length - padding)
-			.attr('x',function(d,i){return x(d.key) + (width / (step1.length + padding))})
-			.attr('height', (d,i) => height - y((d.value.released + d.value.cancelled || 0)))
-			.attr('y', (d,i) => y((d.value.released + d.value.cancelled || 0)) )
-			.attr('fill', function(d){return barColors.verified})
+		function createBarPart(color, getYVal, getHeight) {
+			g.selectAll('.bar')
+				.data(step1)
+				.enter()
+				.append('rect')
+				.attr('class', 'line')
+				.attr('width', width / step1.length - padding)
+				.attr('x', d => x(d.key) + (width / (step1.length + padding)))
+				.attr('height', d => height - y(getHeight(d.value) || 0))
+				.attr('y', d => y(getYVal(d.value) || 0))
+				.attr('fill', () => color)
+		}
+
+		createBarPart(barColors.verified, val => val.released, val => val.released)
+		createBarPart(barColors.cancelled, val => val.released + val.cancelled, val => val.cancelled)
 	}
 
 	render() {
