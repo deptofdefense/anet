@@ -536,8 +536,17 @@ public class ReportResource implements IGraphQLResource {
 	@Timed
 	@Path("/rollup/email")
 	public Response emailReport(@Auth Person user, AnetEmail email) {
+	public Response emailReport(@Auth Person user, @QueryParam("startDate") Long start, @QueryParam("endDate") Long end, AnetEmail email) {
+		ReportSearchQuery query = new ReportSearchQuery();
+		query.setPageSize(100000);
+		query.setReleasedAtStart(new DateTime(start));
+		query.setReleasedAtEnd(new DateTime(end));
+
+		ReportList reports = dao.search(query);
+
 		email.setTemplateName("/emails/rollup.ftl");
 		email.getContext().put("sender", user);
+		email.getContext().put("reports", reports.getList());
 		AnetEmailWorker.sendEmailAsync(email);
 		return Response.ok().build();
 	}

@@ -84,7 +84,7 @@ export default class RollupShow extends Page {
 				pageNum, pageSize, totalCount, list {
 					id, state, intent, engagementDate, intent, keyOutcomes, nextSteps
 					author { id, name }
-					location { id, name, lat, lng}
+					location { id, name, lat, lng }
 					poams { id, longName }
 					comments { id }
 					primaryAdvisor {
@@ -289,7 +289,7 @@ export default class RollupShow extends Page {
 
 		email = {
 			toAddresses: email.to.replace(/\s/g, '').split(/[,;]/),
-			context: {comment: email.comment, reports: this.state.reports.list, startDate: this.dateStr},
+			context: {comment: email.comment, startDate: this.dateStr},
 			subject: 'Daily rollup for ' + this.dateStr + ' from ANET'
 		}
 		API.send(`/api/reports/rollup/email?startDate=${this.rollupStart.valueOf()}&endDate=${this.rollupEnd.valueOf()}`, email).then (() =>
