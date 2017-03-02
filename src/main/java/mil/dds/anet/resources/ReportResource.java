@@ -543,7 +543,6 @@ public class ReportResource implements IGraphQLResource {
 		query.setReleasedAtStart(new DateTime(start));
 		query.setReleasedAtEnd(new DateTime(end));
 
-		ReportList reports = dao.search(query);
 		List<Report> reports = dao.search(query).getList();
 		for (int i = 0; i < reports.size(); i++) {
 			reports.get(i).loadAll();
