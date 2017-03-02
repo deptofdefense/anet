@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import {Component} from 'react'
 import {setMessages} from 'components/Messages'
 import API from 'api'
 
