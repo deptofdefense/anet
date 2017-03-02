@@ -106,7 +106,9 @@ public class ReportResource implements IGraphQLResource {
 	@Path("/{id}")
 	@GraphQLFetcher
 	public Report getById(@PathParam("id") Integer id) {
-		return dao.getById(id);
+		Report r = dao.getById(id);
+		if (r == null) { throw new WebApplicationException(Status.NOT_FOUND); } 
+		return r;
 	}
 
 	@POST

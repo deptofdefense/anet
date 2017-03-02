@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import javax.ws.rs.WebApplicationException;
+
 import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
@@ -332,16 +334,22 @@ public class Report extends AbstractAnetBean {
 		
 		Organization ao = engine.getOrganizationForPerson(getAuthor());
 		if (ao == null) {
-			//use the default approval workflow. 
-			ao = Organization.createWithId(
-					Integer.parseInt(engine.getAdminSetting(AdminSettingKeys.DEFAULT_APPROVAL_ORGANIZATION)));
+			//use the default approval workflow.
+			String defaultOrgId = engine.getAdminSetting(AdminSettingKeys.DEFAULT_APPROVAL_ORGANIZATION);
+			if (defaultOrgId == null) { 
+				throw new WebApplicationException("Missing the DEFAULT_APPROVAL_ORGANIZATION admin setting");
+			}
+			ao = Organization.createWithId(Integer.parseInt(defaultOrgId));
 		}
 		
 		List<ApprovalStep> steps = engine.getApprovalStepsForOrg(ao);
 		if (steps == null || steps.size() == 0) {
 			//No approval steps for this organization
-			steps = engine.getApprovalStepsForOrg(Organization.createWithId(
-					Integer.parseInt(engine.getAdminSetting(AdminSettingKeys.DEFAULT_APPROVAL_ORGANIZATION))));
+			String defaultOrgId = engine.getAdminSetting(AdminSettingKeys.DEFAULT_APPROVAL_ORGANIZATION);
+			if (defaultOrgId == null) { 
+				throw new WebApplicationException("Missing the DEFAULT_APPROVAL_ORGANIZATION admin setting");
+			}
+			steps = engine.getApprovalStepsForOrg(Organization.createWithId(Integer.parseInt(defaultOrgId)));
 		}
 				
 		List<ApprovalAction> workflow = new LinkedList<ApprovalAction>();

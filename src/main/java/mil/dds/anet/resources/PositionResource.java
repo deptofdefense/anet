@@ -75,7 +75,7 @@ public class PositionResource implements IGraphQLResource {
 	@GraphQLFetcher
 	public Position getById(@PathParam("id") int id) {
 		Position p = dao.getById(id);
-		if (p == null) { throw new WebApplicationException("Not Found", Status.NOT_FOUND); }
+		if (p == null) { throw new WebApplicationException(Status.NOT_FOUND); }
 		return p;
 	}
 
