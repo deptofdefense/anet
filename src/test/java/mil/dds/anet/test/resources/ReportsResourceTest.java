@@ -627,8 +627,8 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		assertThat(resp.getStatus()).isEqualTo(200);
 
 		//Assert the report is gone.
-		Report returned  = httpQuery("/api/reports/" + r.getId(),liz).get(Report.class);
-		assertThat(returned).isNull();
+		resp = httpQuery("/api/reports/" + r.getId(),liz).get();
+		assertThat(resp.getStatus()).isEqualTo(404);
 	}
 
 	@Test

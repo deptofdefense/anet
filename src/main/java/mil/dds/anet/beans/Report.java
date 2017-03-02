@@ -208,11 +208,13 @@ public class Report extends AbstractAnetBean {
 		return primaryPrincipal;
 	}
 
+	@GraphQLIgnore
 	public ReportPerson getPrimaryAdvisor() {
 		return primaryAdvisor;
 	}
 
-	public ReportPerson getPrimaryPricipal() {
+	@GraphQLIgnore
+	public ReportPerson getPrimaryPrincipal() {
 		return primaryPrincipal;
 	}
 	

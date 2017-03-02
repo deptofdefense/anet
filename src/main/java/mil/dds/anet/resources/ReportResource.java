@@ -1,5 +1,7 @@
 package mil.dds.anet.resources;
 
+import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -31,6 +33,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
+import freemarker.template.Configuration;
+import freemarker.template.DefaultObjectWrapperBuilder;
+import freemarker.template.Template;
 import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetEmailWorker;
 import mil.dds.anet.AnetEmailWorker.AnetEmail;
@@ -58,6 +63,7 @@ import mil.dds.anet.graphql.IGraphQLResource;
 import mil.dds.anet.utils.AnetAuditLogger;
 import mil.dds.anet.utils.ResponseUtils;
 import mil.dds.anet.utils.Utils;
+import mil.dds.anet.views.SimpleView;
 
 @Path("/api/reports")
 @Produces(MediaType.APPLICATION_JSON)
@@ -537,22 +543,56 @@ public class ReportResource implements IGraphQLResource {
 	@POST
 	@Timed
 	@Path("/rollup/email")
-	public Response emailReport(@Auth Person user, @QueryParam("startDate") Long start, @QueryParam("endDate") Long end, AnetEmail email) {
+	public Response emailRollup(@Auth Person user, @QueryParam("startDate") Long start, @QueryParam("endDate") Long end, AnetEmail email) {
+		ReportSearchQuery query = new ReportSearchQuery();
+		query.setPageSize(Integer.MAX_VALUE);
+		query.setReleasedAtStart(new DateTime(start));
+		query.setReleasedAtEnd(new DateTime(end));
+
+		List<Report> reports = dao.search(query).getList();
+
+		email.setTemplateName("/emails/rollup_simple.ftl");
+		email.getContext().put("sender", user);
+		email.getContext().put("subject", email.getSubject());
+		email.getContext().put("reports", reports);
+		AnetEmailWorker.sendEmailAsync(email);
+		return Response.ok().build();
+	}
+	
+	@GET
+	@Timed
+	@Path("/rollupSimple")
+	@Produces(MediaType.TEXT_HTML)
+	public Response showRollup(@Auth Person user, @QueryParam("startDate") Long start, @QueryParam("endDate") Long end) {
 		ReportSearchQuery query = new ReportSearchQuery();
 		query.setPageSize(100000);
 		query.setReleasedAtStart(new DateTime(start));
 		query.setReleasedAtEnd(new DateTime(end));
 
 		List<Report> reports = dao.search(query).getList();
-		for (int i = 0; i < reports.size(); i++) {
-			reports.get(i).loadAll();
-		}
-
-		email.setTemplateName("/emails/rollup.ftl");
+		AnetEmail email = new AnetEmail();
+		email.setTemplateName("/emails/rollup_simple.ftl");
+		email.setContext(new HashMap<String,Object>());
 		email.getContext().put("sender", user);
-		email.getContext().put("subject", email.getSubject());
+		email.getContext().put("serverUrl", "http://localhost:3000");
+		email.getContext().put("subject", "Daily Rollup for SUBJECT");
 		email.getContext().put("reports", reports);
-		AnetEmailWorker.sendEmailAsync(email);
-		return Response.ok().build();
+		
+		try { 
+			Configuration freemarkerConfig = new Configuration(Configuration.getVersion());
+			freemarkerConfig.setObjectWrapper(new DefaultObjectWrapperBuilder(Configuration.getVersion()).build());
+			freemarkerConfig.loadBuiltInEncodingMap();
+			freemarkerConfig.setDefaultEncoding(StandardCharsets.UTF_8.name());
+			freemarkerConfig.setClassForTemplateLoading(this.getClass(), "/");
+			freemarkerConfig.setAPIBuiltinEnabled(true);
+			
+			Template temp = freemarkerConfig.getTemplate(email.getTemplateName());
+			StringWriter writer = new StringWriter();
+			temp.process(email.getContext(), writer);
+			
+			return Response.ok(writer.toString(), MediaType.TEXT_HTML_TYPE).build();
+		} catch (Exception e) { 
+			throw new WebApplicationException(e);
+		}
 	}
 }
