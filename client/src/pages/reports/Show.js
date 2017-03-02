@@ -11,8 +11,6 @@ import Form from 'components/Form'
 import Messages from 'components/Messages'
 import LinkTo from 'components/LinkTo'
 import History from 'components/History'
-import Autocomplete from 'components/Autocomplete'
-import NotFound from 'components/NotFound'
 
 import API from 'api'
 
@@ -103,25 +101,12 @@ export default class ReportShow extends Page {
 				approvalStep { name, approvers { id } }
 			}
 		`).then(data => {
-			ReportShow.pageProps = {fluidContainer: !Boolean(data.report), useNavigation: Boolean(data.report)}
-			this.setState({
-				report: data.report ? new Report(data.report) : null
-			})
-		}, err => {
-			if (err.errors[0] === 'Invalid Syntax') {
-				ReportShow.pageProps = {fluidContainer: true, useNavigation: false}
-				this.setState({report: null})
-			}
+			this.setState({report: new Report(data.report)})
 		})
 	}
 
-	render() {
+	renderFound() {
 		let {report} = this.state
-
-		if (!report) {
-			return <NotFound text={`Report with ID ${this.props.params.id} not found.`} />
-		}
-
 		let {currentUser} = this.context.app.state
 
 		let canApprove = report.isPending() && currentUser.position &&

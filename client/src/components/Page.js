@@ -1,5 +1,6 @@
-import {Component} from 'react'
+import React, {Component} from 'react'
 import {setMessages} from 'components/Messages'
+import NotFound from 'components/NotFound'
 import API from 'api'
 
 import NProgress from 'nprogress'
@@ -43,7 +44,13 @@ export default class Page extends Component {
 					return response
 				}
 
-				promise.then(doneLoading, doneLoading)
+				promise.then(doneLoading, err => {
+					if (err.status === 404) {
+						this.__proto__.pageProps = {fluidContainer: true, useNavigation: false}
+						this.setState({notFound: true})
+					}
+					doneLoading()
+				})
 			} else {
 				NProgress.done()
 				document.body.classList.remove('loading')
@@ -53,6 +60,25 @@ export default class Page extends Component {
 		} else {
 			NProgress.done()
 		}
+	}
+
+	get modelName() {
+		return 'Entry'
+	}
+
+	render() {
+		if (this.state.notFound) {
+			return <NotFound text={`${this.modelName} with ID ${this.props.params.id} not found.`} />
+		}
+
+		this.renderFound()
+	}
+
+	/**
+	 * Render a component when the corresponding model has been found.
+	 */
+	renderFound() {
+		throw new TypeError('Page subclasses must implement renderFound()')
 	}
 
 	componentWillReceiveProps(props, nextContext) {
