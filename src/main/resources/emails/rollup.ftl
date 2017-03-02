@@ -1731,7 +1731,7 @@
               <fieldset style="box-sizing:border-box;padding:.35em .625em .75em;margin:0 2px;border:1px solid silver;min-width:0;margin:0;padding:0;border:0;background:#fff;border:1px solid #e0e0e0;padding:1.25em;margin:7rem 0;position:relative;">
                 <#list reports as report>
 					<div class="row">
-						<div class="col-md-6">
+						<div class="col-md-6" style="float:left">
 							<#-- <a href="${serverUrl}/organizations/${report.advisorOrg.id}"> -->
                                 ${report.advisorOrg.longName}
                             <#-- </a> -->
@@ -1741,7 +1741,7 @@
                             <#-- </a> -->
 						</div>
 
-						<div class="col-md-6">
+						<div class="col-md-6" style="float:right;">
 							${report.engagementDate} @
 							<#-- <a href="${serverUrl}/locations/${report.location.id}"> -->
                                 ${report.location.name}
@@ -1750,14 +1750,14 @@
 					</div>
 
 					<div class="row">
-						<div class="col-md-6">
+						<div class="col-md-6" style="float:left;">
                             <#-- <a href="${serverUrl}/people/${report.primaryAdvisor.id}"> -->
                                 ${(report.primaryAdvisor.rank)!}
                                 ${(report.primaryAdvisor.name)!}
                             <#-- </a> -->
                         </div>
 
-                        <div class="col-md-6">
+                        <div class="col-md-6" style="float:right;">
                             <#-- <a href="${serverUrl}/people/${report.primaryPrincipal.id}"> -->
                                 ${(report.primaryPrincipal.name)!}
                                 ${(report.primaryPrincipal.rank)!}
