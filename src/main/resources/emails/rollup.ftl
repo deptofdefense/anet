@@ -1734,7 +1734,7 @@
 							<#-- <a href="${serverUrl}/organizations/${report.advisorOrg.id}"> -->
                                 ${report.advisorOrg.longName}
                             <#-- </a> -->
-                            ->
+                            &rtrif;
                             <#-- <a href="${serverUrl}/organizations/${report.principalOrg.id}"> -->
                                 ${report.principalOrg.longName}
                             <#-- </a> -->
