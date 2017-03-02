@@ -50,7 +50,7 @@ export default class ReportSummary extends Component {
 				<Col md={6}>{report.primaryPrincipal && this.renderPerson(report.primaryPrincipal)}</Col>
 			</Row>
 
-			{report.poams.map(poam => <Row>
+			{report.poams.map(poam => <Row key={poam.id}>
 				<Col xs={12}>
 					<img height={20} src={POAM_ICON} alt={poam.longName} className="person-icon" />
 					<LinkTo poam={poam} />
