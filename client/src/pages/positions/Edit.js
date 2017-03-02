@@ -5,7 +5,6 @@ import ModelPage from 'components/ModelPage'
 import PositionForm from './Form'
 import {ContentForHeader} from 'components/Header'
 import Breadcrumbs from 'components/Breadcrumbs'
-import _includes from 'lodash.includes'
 
 import API from 'api'
 import {Position} from 'models'

@@ -2,11 +2,9 @@ import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 import ModelPage from 'components/ModelPage'
 import moment from 'moment'
-import _includes from 'lodash.includes'
 
 import PersonForm from './Form'
 import {ContentForHeader} from 'components/Header'
-import NotFound from 'components/NotFound'
 import Breadcrumbs from 'components/Breadcrumbs'
 
 import API from 'api'

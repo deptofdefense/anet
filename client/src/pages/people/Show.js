@@ -4,7 +4,6 @@ import ModelPage from 'components/ModelPage'
 import {Table, DropdownButton, MenuItem, FormGroup, Col, ControlLabel} from 'react-bootstrap'
 import moment from 'moment'
 import autobind from 'autobind-decorator'
-import _includes from 'lodash.includes'
 
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'

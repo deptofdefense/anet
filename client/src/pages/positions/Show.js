@@ -12,7 +12,6 @@ import autobind from 'autobind-decorator'
 import {browserHistory as History} from 'react-router'
 import LinkTo from 'components/LinkTo'
 import moment from 'moment'
-import _includes from 'lodash.includes'
 
 import {Person, Position, Organization} from 'models'
 
