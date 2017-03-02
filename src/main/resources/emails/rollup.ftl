@@ -1697,7 +1697,9 @@
     <div class="container" style="box-sizing:border-box;padding-right:15px;padding-left:15px;margin-right:auto;margin-left:auto;max-width:1024px;">
       <div class="row" style="box-sizing:border-box;margin-right:-15px;margin-left:-15px;background-color: rgb(255, 255, 255); padding-top: 58px; height: 132px; box-shadow: rgba(0, 0, 0, 0.0980392) 0px 4px 3px 0px; z-index: 100; background-position: initial initial; background-repeat: initial initial;">
         <div class="col-xs-3" style="box-sizing:border-box;position:relative;min-height:1px;padding-right:15px;padding-left:15px;float:left;width:25%;">
-          <a class="logo" href="${serverUrl}" style="box-sizing:border-box;background-color:transparent;color:#337ab7;text-decoration:none;"><img alt="ANET logo" src="${serverUrl}/assets/img/anet.png" style="box-sizing:border-box;border:0;vertical-align:middle;height:36px"></a>
+          <#-- <a class="logo" href="${serverUrl}" style="box-sizing:border-box;background-color:transparent;color:#337ab7;text-decoration:none;"> -->
+              <img alt="ANET logo" src="${serverUrl}/assets/img/anet.png" style="box-sizing:border-box;border:0;vertical-align:middle;height:36px">
+          <#-- </a> -->
         </div>
         <div class="col-xs-9" style="box-sizing:border-box;position:relative;min-height:1px;padding-right:15px;padding-left:15px;float:left;width:75%;">
           <form class="" style="box-sizing:border-box;">
@@ -1724,51 +1726,51 @@
               </fieldset>
 			  </#if>
 
-			  <a href="${serverUrl}/rollup" class="btn btn-primary pull-right">View on ANET</a>
+			  <#-- <a href="${serverUrl}/rollup" class="btn btn-primary pull-right">View on ANET</a> -->
 
               <fieldset style="box-sizing:border-box;padding:.35em .625em .75em;margin:0 2px;border:1px solid silver;min-width:0;margin:0;padding:0;border:0;background:#fff;border:1px solid #e0e0e0;padding:1.25em;margin:7rem 0;position:relative;">
                 <#list reports as report>
 					<div class="row">
 						<div class="col-md-6">
-							<a href="${serverUrl}/organizations/${report.advisorOrg.id}">
+							<#-- <a href="${serverUrl}/organizations/${report.advisorOrg.id}"> -->
                                 ${report.advisorOrg.longName}
-                            </a>
+                            <#-- </a> -->
                             ->
-                            <a href="${serverUrl}/organizations/${report.principalOrg.id}">
+                            <#-- <a href="${serverUrl}/organizations/${report.principalOrg.id}"> -->
                                 ${report.principalOrg.longName}
-                            </a>
+                            <#-- </a> -->
 						</div>
 
 						<div class="col-md-6">
 							${report.engagementDate} @
-							<a href="${serverUrl}/locations/${report.location.id}">
+							<#-- <a href="${serverUrl}/locations/${report.location.id}"> -->
                                 ${report.location.name}
-                            </a>
+                            <#-- </a> -->
 						</div>
 					</div>
 
 					<div class="row">
 						<div class="col-md-6">
-                            <a href="${serverUrl}/people/${report.primaryAdvisor.id}">
+                            <#-- <a href="${serverUrl}/people/${report.primaryAdvisor.id}"> -->
                                 ${(report.primaryAdvisor.rank)!}
                                 ${(report.primaryAdvisor.name)!}
-                            </a>
+                            <#-- </a> -->
                         </div>
 
                         <div class="col-md-6">
-                            <a href="${serverUrl}/people/${report.primaryPrincipal.id}">
+                            <#-- <a href="${serverUrl}/people/${report.primaryPrincipal.id}"> -->
                                 ${(report.primaryPrincipal.name)!}
                                 ${(report.primaryPrincipal.rank)!}
-                            </a>
+                            <#-- </a> -->
                         </div>
 					</div>
 
                     <#list (report.poams)! as poam>
                     <div class="row">
                         <div class="col-xs-12">
-                            <a href="${serverUrl}/poams/${poam.id}">
+                            <#-- <a href="${serverUrl}/poams/${poam.id}"> -->
                                 ${poam.longName}
-                            </a>
+                            <#-- </a> -->
                         </div>
                     </div>
                     </#list>
@@ -1785,9 +1787,9 @@
                         </div>
                     </div>
 
-                    <a href="${serverUrl}/reports/${report.id}" class="read-full btn" style="float:right;">
-                        Read Full Report
-                    </a>
+                    <#-- <a href="${serverUrl}/reports/${report.id}" class="read-full btn" style="float:right;"> -->
+                        <#-- Read Full Report -->
+                    <#-- </a> -->
 
                     <#sep><hr /></#sep>
 				</#list>
