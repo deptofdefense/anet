@@ -16,6 +16,13 @@ export default class ReportSummary extends Component {
 		let report = new Report(this.props.report)
 
 		return <Grid fluid className="report-summary">
+			{report.cancelledReason &&
+				<p className="report-cancelled">
+					<strong>Cancelled: </strong>
+					{utils.sentenceCase(report.cancelledReason.substr(report.cancelledReason.indexOf('_')))}
+				</p>
+			}
+
 			<Row>
 				<Col md={6}>
 					{report.advisorOrg &&
@@ -35,17 +42,12 @@ export default class ReportSummary extends Component {
 					}
 				</Col>
 			</Row>
+
 			<Row>
 				<Col md={6}>{report.primaryAdvisor && this.renderPerson(report.primaryAdvisor)}</Col>
 				<Col md={6}>{report.primaryPrincipal && this.renderPerson(report.primaryPrincipal)}</Col>
 			</Row>
-			{report.cancelledReason &&
-				<Row>
-					<Col md={12}>
-						Cancelled for: <b>{utils.sentenceCase(report.cancelledReason)}</b>
-					</Col>
-				</Row>
-			}
+
 			<Row>
 				<Col md={8}>
 					<h5>{report.intent}</h5>

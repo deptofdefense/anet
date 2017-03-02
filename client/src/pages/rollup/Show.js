@@ -82,7 +82,7 @@ export default class RollupShow extends Page {
 		API.query(/* GraphQL */`
 			reportList(f:search, query:$rollupQuery) {
 				pageNum, pageSize, totalCount, list {
-					id, state, intent, engagementDate, intent, keyOutcomes, nextSteps
+					id, state, intent, engagementDate, intent, keyOutcomes, nextSteps, cancelledReason
 					author { id, name }
 					location { id, name, lat, lng }
 					poams { id, longName }
