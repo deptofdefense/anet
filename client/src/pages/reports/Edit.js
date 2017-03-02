@@ -9,7 +9,6 @@ import Breadcrumbs from 'components/Breadcrumbs'
 
 import API from 'api'
 import {Report} from 'models'
-import _get from 'lodash.get'
 
 class ReportEdit extends Page {
 	static pageProps = {
@@ -46,10 +45,7 @@ class ReportEdit extends Page {
 			let newState = {
 				report: new Report(data.report),
 			}
-			if (_get(newState, ['report', 'engagementDate'])) {
-				newState.report.engagementDate = moment(newState.report.engagementDate).format()
-			}
-
+			newState.report.engagementDate = newState.report.engagementDate && moment(newState.report.engagementDate).format()
 			this.setState(newState)
 		})
 	}

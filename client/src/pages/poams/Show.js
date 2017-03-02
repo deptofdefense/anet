@@ -43,12 +43,12 @@ class PoamShow extends Page {
             this.setState({
                 poam: new Poam(data.poam)
             })
-        })
+        }
+        )
 	}
 
 	render() {
 		let {poam} = this.state
-
 		// Admins can edit poams, or super users if this poam is assigned to their org.
 		let currentUser = this.context.app.state.currentUser
 		let canEdit = (currentUser && currentUser.isAdmin()) ||

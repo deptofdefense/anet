@@ -45,14 +45,13 @@ class PersonEdit extends Page {
 			if (data.person.endOfTourDate) {
 				data.person.endOfTourDate = moment(data.person.endOfTourDate).format()
 			}
-
 			this.setState({person: new Person(data.person)})
 		})
 	}
 
 	render() {
 		let person = this.state.person
-		
+
 		let currentUser = this.context.app.state.currentUser
 		let canEditPosition = currentUser && currentUser.isSuperUser()
 

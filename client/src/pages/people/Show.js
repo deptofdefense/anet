@@ -77,14 +77,11 @@ class PersonShow extends Page {
 				}}
 
 			}
-		`).then(data => {
-			this.setState({person: new Person(data.person)})
-		})
+		`).then(data => this.setState({person: new Person(data.person)}))
 	}
 
 	render() {
 		let {person} = this.state
-
 		let position = person.position
 
 		//User can always edit themselves, or Super Users/Admins.

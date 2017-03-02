@@ -25,25 +25,17 @@ class LocationShow extends Page {
 			location(id:${props.params.id}) {
 				id, name, lat, lng
 			}
-			
-		`).then(data => {
-			this.setState({
-				location: new Location(data.location)
-			})
-		})
+		`).then(data => this.setState({location: new Location(data.location)}))
 	}
 
 	render() {
 		let loc = this.state.location
-
 		let markers=[]
 		let latlng = 'None'
 		if (loc.lat && loc.lng) {
 			latlng = loc.lat + ', ' + loc.lng
 			markers.push({name: loc.name, lat: loc.lat, lng: loc.lng})
 		}
-
-
 
 		return (
 			<div>

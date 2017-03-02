@@ -70,7 +70,6 @@
     "leaflet": "^1.0.2",
     "locale-compare-polyfill": "0.0.2",
     "lodash.debounce": "^4.0.8",
-    "lodash.get": "^4.4.2",
     "lodash.includes": "^4.3.0",
     "lodash.some": "^4.6.0",
     "lodash.values": "^4.3.0",

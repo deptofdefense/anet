@@ -47,9 +47,7 @@ class PositionShow extends Page {
 				previousPeople { startTime, endTime, person { id, name, rank }}
 				location { id, name }
 			}
-		`).then(data => {
-			this.setState({position: new Position(data.position)})
-		})
+		`).then(data => this.setState({position: new Position(data.position)}))
 	}
 
 	render() {
