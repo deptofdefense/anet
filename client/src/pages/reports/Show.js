@@ -391,15 +391,8 @@ export default class ReportShow extends Page {
 						<Alert bsStyle="danger">{email.errors}</Alert>
 					}
 
-					<Form.Field id="to" label="To:">
-						<Autocomplete valueKey="name"
-							placeholder="Select the person to email"
-							url="/api/people/search"
-							queryParams={{role: 'ADVISOR'}}
-						/>
-					</Form.Field>
-
-					<Form.Field componentClass="textarea" id="comment" />
+					<Form.Field id="to" />
+					<Form.Field id="comment" componentClass="textarea" />
 				</Modal.Body>
 
 				<Modal.Footer>
@@ -424,7 +417,7 @@ export default class ReportShow extends Page {
 		}
 
 		email = {
-			toAddresses: [email.to.emailAddress],
+			toAddresses: email.to.replace(/\s/g, '').split(/[,;]/),
 			context: {comment: email.comment },
 			subject: 'Sharing an email from ANET'
 		}
