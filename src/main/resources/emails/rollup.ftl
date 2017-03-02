@@ -1739,18 +1739,18 @@
 					<div class="row">
 						<div class="col-md-6" style="float:left">
 							<#-- <a href="${serverUrl}/organizations/${report.advisorOrg.id}"> -->
-                                ${report.advisorOrg.longName}
+                                ${(report.advisorOrg.longName)!}
                             <#-- </a> -->
                             ->
                             <#-- <a href="${serverUrl}/organizations/${report.principalOrg.id}"> -->
-                                ${report.principalOrg.longName}
+                                ${(report.principalOrg.longName)!}
                             <#-- </a> -->
 						</div>
 
 						<div class="col-md-6" style="float:right;">
 							${report.engagementDate} @
 							<#-- <a href="${serverUrl}/locations/${report.location.id}"> -->
-                                ${report.location.name}
+                                ${(report.location.name)!}
                             <#-- </a> -->
 						</div>
 					</div>
@@ -1778,7 +1778,7 @@
                         <div class="col-xs-12">
                             <#-- <a href="${serverUrl}/poams/${poam.id}"> -->
                                 <img src="${serverUrl}/assets/img/poam.png" height="20" alt="${poam.longName}" />
-                                ${poam.longName}
+                                ${(poam.longName)!}
                             <#-- </a> -->
                         </div>
                     </div>
