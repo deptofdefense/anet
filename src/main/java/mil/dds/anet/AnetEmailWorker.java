@@ -39,6 +39,7 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import mil.dds.anet.config.AnetConfiguration;
 import mil.dds.anet.config.AnetConfiguration.SmtpConfiguration;
+import mil.dds.anet.emails.AnetEmailAction;
 
 public class AnetEmailWorker implements Runnable {
 
@@ -58,7 +59,7 @@ public class AnetEmailWorker implements Runnable {
 		this.handle = dbHandle;
 		this.mapper = new ObjectMapper();
 		mapper.registerModule(new JodaModule());
-		mapper.enableDefaultTyping();
+//		mapper.enableDefaultTyping();
 		this.emailMapper = new AnetEmailMapper();
 		this.fromAddr = config.getEmailFromAddr();
 		this.serverUrl = config.getServerUrl();
@@ -102,7 +103,7 @@ public class AnetEmailWorker implements Runnable {
 			List<Integer> sentEmails = new LinkedList<Integer>();
 			for (AnetEmail email : emails) { 
 				try {
-					logger.error("Sending email to {} re: {}",email.getToAddresses(), email.getSubject());
+					logger.error("Sending email to {} re: {}",email.getToAddresses(), email.getAction().getSubject());
 					sendEmail(email);
 					sentEmails.add(email.getId());
 				} catch (Exception e) { 
@@ -142,10 +143,13 @@ public class AnetEmailWorker implements Runnable {
 			//log.error("Unable to send email of subject {}, because there are no valid to email addresses");
 			return;
 		}
-		email.getContext().put("serverUrl", serverUrl);
-		Template temp = freemarkerConfig.getTemplate(email.getTemplateName());
+		
+		Map<String,Object> context = email.getAction().execute();
+		
+		context.put("serverUrl", serverUrl);
+		Template temp = freemarkerConfig.getTemplate(email.getAction().getTemplateName());
 		StringWriter writer = new StringWriter();
-		temp.process(email.getContext(), writer);
+		temp.process(context, writer);
 		
 		Session session = Session.getInstance(props, auth);
 		Message message = new MimeMessage(session);
@@ -153,7 +157,7 @@ public class AnetEmailWorker implements Runnable {
 		String toAddress = Joiner.on(", ").join(email.getToAddresses());
 		message.setRecipients(Message.RecipientType.TO,
 			InternetAddress.parse(toAddress));
-		message.setSubject(email.getSubject());
+		message.setSubject(email.getAction().getSubject());
 		message.setContent(writer.toString(), "text/html; charset=utf-8");
 
 		Transport.send(message);
@@ -182,9 +186,7 @@ public class AnetEmailWorker implements Runnable {
 	
 	public static class AnetEmail { 
 		Integer id;
-		String templateName;
-		String subject;
-		Map<String,Object> context;
+		AnetEmailAction action;
 		List<String> toAddresses;
 		DateTime createdAt;
 		
@@ -196,28 +198,12 @@ public class AnetEmailWorker implements Runnable {
 			this.id = id;
 		}
 		
-		public String getTemplateName() {
-			return templateName;
+		public AnetEmailAction getAction() {
+			return action;
 		}
 		
-		public void setTemplateName(String templateName) {
-			this.templateName = templateName;
-		}
-		
-		public String getSubject() {
-			return subject;
-		}
-		
-		public void setSubject(String subject) {
-			this.subject = subject;
-		}
-		
-		public Map<String, Object> getContext() {
-			return context;
-		}
-		
-		public void setContext(Map<String, Object> context) {
-			this.context = context;
+		public void setAction(AnetEmailAction action) {
+			this.action = action;
 		}
 		
 		public List<String> getToAddresses() {
@@ -244,7 +230,7 @@ public class AnetEmailWorker implements Runnable {
 		public AnetEmailMapper() { 
 			this.mapper = new ObjectMapper();
 			mapper.registerModule(new JodaModule());
-			mapper.enableDefaultTyping();
+//			mapper.enableDefaultTyping();
 		}
 		
 		@Override

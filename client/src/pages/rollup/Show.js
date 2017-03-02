@@ -295,13 +295,8 @@ export default class RollupShow extends Page {
 
 		email = {
 			toAddresses: email.to.replace(/\s/g, '').split(/[,;]/),
-			subject: 'Daily rollup for ' + this.dateStr + ' from ANET',
-			context: {
-				comment: email.comment,
-				startDate: this.dateStr,
-			},
 		}
-		API.send(`/api/reports/rollup/email?startDate=${this.rollupStart.valueOf()}&endDate=${this.rollupEnd.valueOf()}`, email).then (() =>
+		API.send(`/api/reports/rollup/email?startDate=${this.rollupStart.valueOf()}&endDate=${this.rollupEnd.valueOf()}&comment=${email.comment}`, email).then (() =>
 			this.setState({
 				success: 'Email successfully sent',
 				showEmailModal: false,

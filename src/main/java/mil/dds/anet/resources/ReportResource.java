@@ -2,8 +2,8 @@ package mil.dds.anet.resources;
 
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -31,7 +31,6 @@ import org.joda.time.DateTime;
 import com.codahale.metrics.annotation.Timed;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapperBuilder;
@@ -57,13 +56,18 @@ import mil.dds.anet.beans.lists.AbstractAnetBeanList.ReportList;
 import mil.dds.anet.beans.search.ReportSearchQuery;
 import mil.dds.anet.database.AdminDao.AdminSettingKeys;
 import mil.dds.anet.database.ReportDao;
+import mil.dds.anet.emails.ApprovalNeededEmail;
+import mil.dds.anet.emails.DailyRollupEmail;
+import mil.dds.anet.emails.NewReportCommentEmail;
+import mil.dds.anet.emails.ReportEmail;
+import mil.dds.anet.emails.ReportRejectionEmail;
+import mil.dds.anet.emails.ReportReleasedEmail;
 import mil.dds.anet.graphql.GraphQLFetcher;
 import mil.dds.anet.graphql.GraphQLParam;
 import mil.dds.anet.graphql.IGraphQLResource;
 import mil.dds.anet.utils.AnetAuditLogger;
 import mil.dds.anet.utils.ResponseUtils;
 import mil.dds.anet.utils.Utils;
-import mil.dds.anet.views.SimpleView;
 
 @Path("/api/reports")
 @Produces(MediaType.APPLICATION_JSON)
@@ -309,13 +313,14 @@ public class ReportResource implements IGraphQLResource {
 		ApprovalStep step = r.loadApprovalStep();
 		List<Position> approvers = step.loadApprovers();
 		AnetEmail approverEmail = new AnetEmail();
-		approverEmail.setTemplateName("/emails/approvalNeeded.ftl");
-		approverEmail.setSubject("ANET Report needs your approval");
+		ApprovalNeededEmail action = new ApprovalNeededEmail();
+		action.setReport(r);
+		approverEmail.setAction(action);
+		
 		approverEmail.setToAddresses(approvers.stream()
 				.filter(a -> a.getPerson() != null)
 				.map(a -> a.loadPerson().getEmailAddress())
 				.collect(Collectors.toList()));
-		approverEmail.setContext(ImmutableMap.of("report", r, "approvalStepName", step.getName()));
 		AnetEmailWorker.sendEmailAsync(approverEmail);
 	}
 
@@ -380,10 +385,10 @@ public class ReportResource implements IGraphQLResource {
 
 	private void sendReportReleasedEmail(Report r) {
 		AnetEmail email = new AnetEmail();
-		email.setTemplateName("/emails/reportReleased.ftl");
-		email.setSubject("ANET Report Approved");
+		ReportReleasedEmail action = new ReportReleasedEmail();
+		action.setReport(r);
 		email.setToAddresses(ImmutableList.of(r.loadAuthor().getEmailAddress()));
-		email.setContext(ImmutableMap.of("report", r));
+		email.setAction(action);
 		AnetEmailWorker.sendEmailAsync(email);
 	}
 	
@@ -435,10 +440,12 @@ public class ReportResource implements IGraphQLResource {
 
 	private void sendReportRejectEmail(Report r, Person rejector, Comment rejectionComment) {
 		AnetEmail email = new AnetEmail();
-		email.setTemplateName("/emails/reportRejection.ftl");
-		email.setSubject("ANET Report Rejected");
+		ReportRejectionEmail action = new ReportRejectionEmail();
+		action.setReport(r);
+		action.setRejector(rejector);
+		action.setComment(rejectionComment);
 		email.setToAddresses(ImmutableList.of(r.loadAuthor().getEmailAddress()));
-		email.setContext(ImmutableMap.of("report", r, "rejector", rejector, "comment", rejectionComment));
+		email.setAction(action);
 		AnetEmailWorker.sendEmailAsync(email);
 	}
 		
@@ -455,10 +462,11 @@ public class ReportResource implements IGraphQLResource {
 
 	private void sendNewCommentEmail(Report r, Comment comment) {
 		AnetEmail email = new AnetEmail();
-		email.setTemplateName("/emails/newReportComment.ftl");
-		email.setSubject("New Comment on your ANET Report");
+		NewReportCommentEmail action = new NewReportCommentEmail();
+		action.setReport(r);
+		action.setComment(comment);
 		email.setToAddresses(ImmutableList.of(r.loadAuthor().getEmailAddress()));
-		email.setContext(ImmutableMap.of("report", r, "comment", comment));
+		email.setAction(action);
 		AnetEmailWorker.sendEmailAsync(email);
 	}
 	
@@ -481,16 +489,15 @@ public class ReportResource implements IGraphQLResource {
 	@POST
 	@Timed
 	@Path("/{id}/email")
-	public Response emailReport(@Auth Person user, @PathParam("id") int reportId, AnetEmail email) { 
+	public Response emailReport(@Auth Person user, @PathParam("id") int reportId, @QueryParam("comment") String comment, AnetEmail email) { 
 		Report r = dao.getById(reportId);
 		if (r == null) { return Response.status(Status.NOT_FOUND).build(); }
 		
-		if (email.getContext() == null) { email.setContext(new HashMap<String,Object>()); }
-		
-		email.setTemplateName("/emails/emailReport.ftl");
-		email.setSubject("Sharing a report in ANET");
-		email.getContext().put("report", r);
-		email.getContext().put("sender", user);
+		ReportEmail action = new ReportEmail();
+		action.setReport(Report.createWithId(reportId));
+		action.setSender(user);
+		action.setComment(comment);
+		email.setAction(action);
 		AnetEmailWorker.sendEmailAsync(email);
 		return Response.ok().build();
 	}
@@ -543,19 +550,15 @@ public class ReportResource implements IGraphQLResource {
 	@POST
 	@Timed
 	@Path("/rollup/email")
-	public Response emailRollup(@Auth Person user, @QueryParam("startDate") Long start, @QueryParam("endDate") Long end, AnetEmail email) {
-		ReportSearchQuery query = new ReportSearchQuery();
-		query.setPageSize(Integer.MAX_VALUE);
-		query.setReleasedAtStart(new DateTime(start));
-		query.setReleasedAtEnd(new DateTime(end));
+	public Response emailRollup(@Auth Person user, @QueryParam("startDate") Long start, @QueryParam("endDate") Long end, @QueryParam("comment") String comment, AnetEmail email) {
+		DailyRollupEmail action = new DailyRollupEmail();
+		action.setStartDate(new DateTime(start));
+		action.setEndDate(new DateTime(end));
+		action.setComment(comment);
 
-		List<Report> reports = dao.search(query).getList();
-
-		email.setTemplateName("/emails/rollup_simple.ftl");
-		email.getContext().put("sender", user);
-		email.getContext().put("subject", email.getSubject());
-		email.getContext().put("reports", reports);
+		email.setAction(action);
 		AnetEmailWorker.sendEmailAsync(email);
+		
 		return Response.ok().build();
 	}
 	
@@ -571,12 +574,13 @@ public class ReportResource implements IGraphQLResource {
 
 		List<Report> reports = dao.search(query).getList();
 		AnetEmail email = new AnetEmail();
-		email.setTemplateName("/emails/rollup_simple.ftl");
-		email.setContext(new HashMap<String,Object>());
-		email.getContext().put("sender", user);
-		email.getContext().put("serverUrl", "http://localhost:3000");
-		email.getContext().put("subject", "Daily Rollup for SUBJECT");
-		email.getContext().put("reports", reports);
+		DailyRollupEmail action = new DailyRollupEmail();
+		action.setStartDate(new DateTime(start));
+		action.setEndDate(new DateTime(end));
+
+		email.setAction(action);
+		Map<String,Object> context = action.execute();
+		context.put("serverUrl", "http://localhost:3000");
 		
 		try { 
 			Configuration freemarkerConfig = new Configuration(Configuration.getVersion());
@@ -586,9 +590,9 @@ public class ReportResource implements IGraphQLResource {
 			freemarkerConfig.setClassForTemplateLoading(this.getClass(), "/");
 			freemarkerConfig.setAPIBuiltinEnabled(true);
 			
-			Template temp = freemarkerConfig.getTemplate(email.getTemplateName());
+			Template temp = freemarkerConfig.getTemplate(action.getTemplateName());
 			StringWriter writer = new StringWriter();
-			temp.process(email.getContext(), writer);
+			temp.process(context, writer);
 			
 			return Response.ok(writer.toString(), MediaType.TEXT_HTML_TYPE).build();
 		} catch (Exception e) { 
