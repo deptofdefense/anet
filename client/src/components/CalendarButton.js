@@ -5,6 +5,15 @@ import autobind from 'autobind-decorator'
 
 import CALENDAR_ICON from 'resources/calendar.png'
 
+const inputCss = {
+	visibility: 'hidden',
+	display: 'inline',
+	width: 0,
+	height: 0,
+	border: 'none',
+	padding: 0,
+}
+
 export default class CalendarButton extends Component {
 	render() {
 		let {onChange, value, ...props} = this.props
@@ -15,10 +24,11 @@ export default class CalendarButton extends Component {
 			<DatePicker
 				ref="datePicker"
 				value={value}
-				style={{display: 'none'}}
+				style={inputCss}
 				showTodayButton
 				showClearButton={false}
 				onChange={onChange}
+				calendarContainer={document.body}
 			/>
 		</Button>
 	}
