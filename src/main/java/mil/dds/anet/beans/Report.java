@@ -53,7 +53,9 @@ public class Report extends AbstractAnetBean {
 	
 	Organization advisorOrg;
 	Organization principalOrg;
-	
+	ReportPerson primaryAdvisor;
+	ReportPerson primaryPrincipal;
+
 	List<Comment> comments;
 
 	@GraphQLIgnore
@@ -158,6 +160,15 @@ public class Report extends AbstractAnetBean {
 		this.intent = intent;
 	}
 
+	public void loadAll() {
+		this.loadPrincipalOrg();
+		this.loadAdvisorOrg();
+		this.loadLocation();
+		this.loadPrimaryAdvisor();
+		this.loadPrimaryPrincipal();
+		this.loadPoams();
+	}
+
 	@GraphQLFetcher("attendees")
 	public List<ReportPerson> loadAttendees() { 
 		if (attendees == null && id != null) {
@@ -176,19 +187,33 @@ public class Report extends AbstractAnetBean {
 	}
 
 	@GraphQLFetcher("primaryAdvisor")
-	public ReportPerson loadPrimaryAdvisor() { 
-		loadAttendees(); //Force the load of attendees
-		return attendees.stream().filter(p ->
+	public ReportPerson loadPrimaryAdvisor() {
+		if (primaryAdvisor == null) {
+			loadAttendees(); //Force the load of attendees
+			this.primaryAdvisor = attendees.stream().filter(p ->
 				p.isPrimary() && p.getRole().equals(Role.ADVISOR)
 			).findFirst().orElse(null);
+		}
+		return primaryAdvisor;
 	}
-	
+
 	@GraphQLFetcher("primaryPrincipal")
-	public ReportPerson loadPrimaryPrincipal() { 
-		loadAttendees(); //Force the load of attendees
-		return attendees.stream().filter(p ->
+	public ReportPerson loadPrimaryPrincipal() {
+		if (primaryPrincipal == null) {
+			loadAttendees(); //Force the load of attendees
+			this.primaryPrincipal = attendees.stream().filter(p ->
 				p.isPrimary() && p.getRole().equals(Role.PRINCIPAL)
 			).findFirst().orElse(null);
+		}
+		return primaryPrincipal;
+	}
+
+	public ReportPerson getPrimaryAdvisor() {
+		return primaryAdvisor;
+	}
+
+	public ReportPerson getPrimaryPricipal() {
+		return primaryPrincipal;
 	}
 	
 	@GraphQLFetcher("poams")
