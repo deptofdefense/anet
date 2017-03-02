@@ -1,5 +1,6 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
+import ModelPage from 'components/ModelPage'
 import {DropdownButton, MenuItem} from 'react-bootstrap'
 
 import Breadcrumbs from 'components/Breadcrumbs'
@@ -11,12 +12,12 @@ import History from 'components/History'
 import API from 'api'
 import {Poam} from 'models'
 import Messages, {setMessages} from 'components/Messages'
-import NotFound from 'components/NotFound'
 
-export default class PoamShow extends Page {
+class PoamShow extends Page {
 	static contextTypes = {
 		app: PropTypes.object.isRequired,
 	}
+	static modelName = 'PoAM'
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -39,24 +40,14 @@ export default class PoamShow extends Page {
 				responsibleOrg {id, shortName, longName}
 			}
 		`).then(data => {
-			PoamShow.pageProps = {fluidContainer: !Boolean(data.poam), useNavigation: Boolean(data.poam)}
             this.setState({
-                poam: data.poam ? new Poam(data.poam) : null
+                poam: new Poam(data.poam)
             })
-        }, err => {
-			if (err.errors[0] === 'Invalid Syntax') {
-				PoamShow.pageProps = {fluidContainer: true, useNavigation: false}
-				this.setState({poam: null})
-			}
-		})
+        })
 	}
 
 	render() {
 		let {poam} = this.state
-
-		if (!poam) {
-			return <NotFound text={`No PoAM with ID ${this.props.params.id} was found.`} />
-		}
 
 		// Admins can edit poams, or super users if this poam is assigned to their org.
 		let currentUser = this.context.app.state.currentUser
@@ -109,3 +100,5 @@ export default class PoamShow extends Page {
 		}
 	}
 }
+
+export default ModelPage(PoamShow)
