@@ -380,28 +380,32 @@ export default class ReportShow extends Page {
 	@autobind
 	renderEmailModal() {
 		let email = this.state.email
-		return <Modal show={this.state.showEmailModal} onHide={this.toggleEmailModal} >
-			<Modal.Header closeButton>
-				<Modal.Title>Email Report</Modal.Title>
-			</Modal.Header>
-			<Modal.Body>
-				{email.errors &&
-					<Alert bsStyle="danger">{email.errors}</Alert>
-				}
-				<Form formFor={email} onChange={this.onChange} submitText={false} >
-					<Form.Field id="to" label="To:" >
+		return <Modal show={this.state.showEmailModal} onHide={this.toggleEmailModal}>
+			<Form formFor={email} onChange={this.onChange} submitText={false}>
+				<Modal.Header closeButton>
+					<Modal.Title>Email Report</Modal.Title>
+				</Modal.Header>
+
+				<Modal.Body>
+					{email.errors &&
+						<Alert bsStyle="danger">{email.errors}</Alert>
+					}
+
+					<Form.Field id="to" label="To:">
 						<Autocomplete valueKey="name"
 							placeholder="Select the person to email"
 							url="/api/people/search"
 							queryParams={{role: 'ADVISOR'}}
 						/>
 					</Form.Field>
+
 					<Form.Field componentClass="textarea" id="comment" />
-				</Form>
-			</Modal.Body>
-			<Modal.Footer>
-				<Button bsStyle="primary" onClick={this.emailReport}>Send Email</Button>
-			</Modal.Footer>
+				</Modal.Body>
+
+				<Modal.Footer>
+					<Button bsStyle="primary" onClick={this.emailReport}>Send Email</Button>
+				</Modal.Footer>
+			</Form>
 		</Modal>
 	}
 

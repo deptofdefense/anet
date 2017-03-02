@@ -254,22 +254,24 @@ export default class RollupShow extends Page {
 	@autobind
 	renderEmailModal() {
 		let email = this.state.email
-		return <Modal show={this.state.showEmailModal} onHide={this.toggleEmailModal} >
-			<Modal.Header closeButton>
-				<Modal.Title>Email rollup</Modal.Title>
-			</Modal.Header>
-			<Modal.Body>
-				{email.errors &&
-					<Alert bsStyle="danger">{email.errors}</Alert>
-				}
-				<Form formFor={email} onChange={this.onChange} submitText={false} >
+		return <Modal show={this.state.showEmailModal} onHide={this.toggleEmailModal}>
+			<Form formFor={email} onChange={this.onChange} submitText={false} >
+				<Modal.Header closeButton>
+					<Modal.Title>Email rollup</Modal.Title>
+				</Modal.Header>
+
+				<Modal.Body>
+					{email.errors &&
+						<Alert bsStyle="danger">{email.errors}</Alert>
+					}
+
 					<Form.Field id="to" />
 					<Form.Field componentClass="textarea" id="comment" />
-				</Form>
-			</Modal.Body>
-			<Modal.Footer>
-				<Button bsStyle="primary" onClick={this.emailRollup}>Send email</Button>
-			</Modal.Footer>
+				</Modal.Body>
+				<Modal.Footer>
+					<Button bsStyle="primary" onClick={this.emailRollup}>Send email</Button>
+				</Modal.Footer>
+			</Form>
 		</Modal>
 	}
 
