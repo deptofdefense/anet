@@ -1,8 +1,9 @@
 package mil.dds.anet.resources;
 
+import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -32,6 +33,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
+import freemarker.template.Configuration;
+import freemarker.template.DefaultObjectWrapperBuilder;
+import freemarker.template.Template;
 import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetEmailWorker;
 import mil.dds.anet.AnetEmailWorker.AnetEmail;
@@ -48,6 +52,7 @@ import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
+import mil.dds.anet.beans.RollupGraph;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.ReportList;
 import mil.dds.anet.beans.search.ReportSearchQuery;
 import mil.dds.anet.database.AdminDao.AdminSettingKeys;
@@ -58,6 +63,7 @@ import mil.dds.anet.graphql.IGraphQLResource;
 import mil.dds.anet.utils.AnetAuditLogger;
 import mil.dds.anet.utils.ResponseUtils;
 import mil.dds.anet.utils.Utils;
+import mil.dds.anet.views.SimpleView;
 
 @Path("/api/reports")
 @Produces(MediaType.APPLICATION_JSON)
@@ -106,7 +112,9 @@ public class ReportResource implements IGraphQLResource {
 	@Path("/{id}")
 	@GraphQLFetcher
 	public Report getById(@PathParam("id") Integer id) {
-		return dao.getById(id);
+		Report r = dao.getById(id);
+		if (r == null) { throw new WebApplicationException(Status.NOT_FOUND); } 
+		return r;
 	}
 
 	@POST
@@ -165,39 +173,46 @@ public class ReportResource implements IGraphQLResource {
 		}
 		
 		dao.update(r);
-		//Update Attendees: Fetch the people associated with this report
-		List<ReportPerson> existingPeople = dao.getAttendeesForReport(r.getId());
-		//Find any differences and fix them.
-		for (ReportPerson rp : r.getAttendees()) {
-			Optional<ReportPerson> existingPerson = existingPeople.stream().filter(el -> el.getId().equals(rp.getId())).findFirst();
-			if (existingPerson.isPresent()) { 
-				if (existingPerson.get().isPrimary() != rp.isPrimary()) { 
-					dao.updateAttendeeOnReport(rp, r);
+		
+		//Update Attendees:
+		if (r.getAttendees() != null) { 
+			//Fetch the people associated with this report
+			List<ReportPerson> existingPeople = dao.getAttendeesForReport(r.getId());
+			//Find any differences and fix them.
+			for (ReportPerson rp : r.getAttendees()) {
+				Optional<ReportPerson> existingPerson = existingPeople.stream().filter(el -> el.getId().equals(rp.getId())).findFirst();
+				if (existingPerson.isPresent()) { 
+					if (existingPerson.get().isPrimary() != rp.isPrimary()) { 
+						dao.updateAttendeeOnReport(rp, r);
+					}
+					existingPeople.remove(existingPerson.get());
+				} else { 
+					dao.addAttendeeToReport(rp, r);
 				}
-				existingPeople.remove(existingPerson.get());
-			} else { 
-				dao.addAttendeeToReport(rp, r);
 			}
-		}
-		//Any attendees left in existingPeople needs to be removed.
-		for (ReportPerson rp : existingPeople) {
-			dao.removeAttendeeFromReport(rp, r);
+			//Any attendees left in existingPeople needs to be removed.
+			for (ReportPerson rp : existingPeople) {
+				dao.removeAttendeeFromReport(rp, r);
+			}
 		}
 
 		//Update Poams:
-		List<Poam> existingPoams = dao.getPoamsForReport(r);
-		List<Integer> existingPoamIds = existingPoams.stream().map(p -> p.getId()).collect(Collectors.toList());
-		for (Poam p : r.getPoams()) {
-			int idx = existingPoamIds.indexOf(p.getId());
-			if (idx == -1) { 
-				dao.addPoamToReport(p, r); 
-			} else {
-				existingPoamIds.remove(idx); 
+		if (r.getPoams() != null) { 
+			List<Poam> existingPoams = dao.getPoamsForReport(r);
+			List<Integer> existingPoamIds = existingPoams.stream().map(p -> p.getId()).collect(Collectors.toList());
+			for (Poam p : r.getPoams()) {
+				int idx = existingPoamIds.indexOf(p.getId());
+				if (idx == -1) { 
+					dao.addPoamToReport(p, r); 
+				} else {
+					existingPoamIds.remove(idx); 
+				}
+			}
+			for (Integer id : existingPoamIds) {
+				dao.removePoamFromReport(Poam.createWithId(id), r);
 			}
 		}
-		for (Integer id : existingPoamIds) {
-			dao.removePoamFromReport(Poam.createWithId(id), r);
-		}
+		
 		return Response.ok().build();
 	}
 
@@ -521,7 +536,63 @@ public class ReportResource implements IGraphQLResource {
 	@GET
 	@Timed
 	@Path("/rollupGraph")
-	public Map<Integer,Map<ReportState,Integer>> getDailyRollupGraph(@QueryParam("startDate") Long start, @QueryParam("endDate") Long end) { 
+	public List<RollupGraph> getDailyRollupGraph(@QueryParam("startDate") Long start, @QueryParam("endDate") Long end) {
 		return dao.getDailyRollupGraph(new DateTime(start), new DateTime(end));
+	}
+
+	@POST
+	@Timed
+	@Path("/rollup/email")
+	public Response emailRollup(@Auth Person user, @QueryParam("startDate") Long start, @QueryParam("endDate") Long end, AnetEmail email) {
+		ReportSearchQuery query = new ReportSearchQuery();
+		query.setPageSize(Integer.MAX_VALUE);
+		query.setReleasedAtStart(new DateTime(start));
+		query.setReleasedAtEnd(new DateTime(end));
+
+		List<Report> reports = dao.search(query).getList();
+
+		email.setTemplateName("/emails/rollup_simple.ftl");
+		email.getContext().put("sender", user);
+		email.getContext().put("subject", email.getSubject());
+		email.getContext().put("reports", reports);
+		AnetEmailWorker.sendEmailAsync(email);
+		return Response.ok().build();
+	}
+	
+	@GET
+	@Timed
+	@Path("/rollupSimple")
+	@Produces(MediaType.TEXT_HTML)
+	public Response showRollup(@Auth Person user, @QueryParam("startDate") Long start, @QueryParam("endDate") Long end) {
+		ReportSearchQuery query = new ReportSearchQuery();
+		query.setPageSize(100000);
+		query.setReleasedAtStart(new DateTime(start));
+		query.setReleasedAtEnd(new DateTime(end));
+
+		List<Report> reports = dao.search(query).getList();
+		AnetEmail email = new AnetEmail();
+		email.setTemplateName("/emails/rollup_simple.ftl");
+		email.setContext(new HashMap<String,Object>());
+		email.getContext().put("sender", user);
+		email.getContext().put("serverUrl", "http://localhost:3000");
+		email.getContext().put("subject", "Daily Rollup for SUBJECT");
+		email.getContext().put("reports", reports);
+		
+		try { 
+			Configuration freemarkerConfig = new Configuration(Configuration.getVersion());
+			freemarkerConfig.setObjectWrapper(new DefaultObjectWrapperBuilder(Configuration.getVersion()).build());
+			freemarkerConfig.loadBuiltInEncodingMap();
+			freemarkerConfig.setDefaultEncoding(StandardCharsets.UTF_8.name());
+			freemarkerConfig.setClassForTemplateLoading(this.getClass(), "/");
+			freemarkerConfig.setAPIBuiltinEnabled(true);
+			
+			Template temp = freemarkerConfig.getTemplate(email.getTemplateName());
+			StringWriter writer = new StringWriter();
+			temp.process(email.getContext(), writer);
+			
+			return Response.ok(writer.toString(), MediaType.TEXT_HTML_TYPE).build();
+		} catch (Exception e) { 
+			throw new WebApplicationException(e);
+		}
 	}
 }

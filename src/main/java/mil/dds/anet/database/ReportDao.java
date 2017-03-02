@@ -1,6 +1,7 @@
 package mil.dds.anet.database;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +20,7 @@ import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
+import mil.dds.anet.beans.RollupGraph;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.ReportList;
 import mil.dds.anet.beans.search.ReportSearchQuery;
 import mil.dds.anet.database.mappers.OrganizationMapper;
@@ -26,6 +28,7 @@ import mil.dds.anet.database.mappers.PoamMapper;
 import mil.dds.anet.database.mappers.ReportMapper;
 import mil.dds.anet.database.mappers.ReportPersonMapper;
 import mil.dds.anet.utils.DaoUtils;
+import mil.dds.anet.utils.Utils;
 
 public class ReportDao implements IAnetDao<Report> {
 
@@ -267,7 +270,7 @@ public class ReportDao implements IAnetDao<Report> {
 		
 	}
 
-	public Map<Integer,Map<ReportState,Integer>> getDailyRollupGraph(DateTime start, DateTime end) {
+	public List<RollupGraph> getDailyRollupGraph(DateTime start, DateTime end) {
 		List<Map<String, Object>> results = dbHandle.createQuery("/* dailyRollupGraph */ "
 				+ "SELECT advisorOrganizationId, state, count(*) AS count "
 				+ "FROM reports WHERE releasedAt >= :startDate and releasedAt <= :endDate "
@@ -286,23 +289,43 @@ public class ReportDao implements IAnetDao<Report> {
 		Map<Integer, Organization> orgMap = new HashMap<Integer, Organization>();
 		allOrgs.stream().forEach(o -> orgMap.put(o.getId(), o));
 		
-		Map<Integer,Map<ReportState,Integer>> rollupGraph = new HashMap<Integer,Map<ReportState,Integer>>();
+		Map<Integer,Map<ReportState,Integer>> rollup = new HashMap<Integer,Map<ReportState,Integer>>();
 		
 		for (Map<String,Object> result : results) { 
 			Integer orgId = (Integer) result.get("advisorOrganizationId");
 			Integer count = (Integer) result.get("count");
 			ReportState state = ReportState.values()[(Integer) result.get("state")];
 			
-			Map<ReportState,Integer> orgBar = rollupGraph.get(orgId);
+			Map<ReportState,Integer> orgBar = rollup.get(orgId);
 			if (orgBar == null) { 
 				orgBar = new HashMap<ReportState,Integer>();
-				rollupGraph.put(orgId,  orgBar);
+				rollup.put(orgId,  orgBar);
 			}
 			orgBar.put(state,  count);
 		}
 		
-		return rollupGraph;
+		List<RollupGraph> result = new LinkedList<RollupGraph>();
+		for (Organization org : allOrgs) { 
+			if (rollup.containsKey(org.getId())) { 
+				Map<ReportState,Integer> values = rollup.get(org.getId());
+				RollupGraph bar = new RollupGraph();
+				bar.setOrg(org);
+				bar.setReleased(Utils.orIfNull(values.get(ReportState.RELEASED), 0));
+				bar.setCancelled(Utils.orIfNull(values.get(ReportState.CANCELLED), 0));
+				result.add(bar);
+			}
+		}
+		
+		// Reports without an Advisor Organization. 
+		if (rollup.containsKey(null)) {
+			Map<ReportState,Integer> values = rollup.get(null);
+			RollupGraph bar = new RollupGraph();
+			bar.setReleased(Utils.orIfNull(values.get(ReportState.RELEASED), 0));
+			bar.setCancelled(Utils.orIfNull(values.get(ReportState.CANCELLED), 0));
+			result.add(bar);
+		}
+		
+		return result;
 	}
-
 
 }

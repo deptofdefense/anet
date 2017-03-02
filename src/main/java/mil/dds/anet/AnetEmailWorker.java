@@ -58,6 +58,7 @@ public class AnetEmailWorker implements Runnable {
 		this.handle = dbHandle;
 		this.mapper = new ObjectMapper();
 		mapper.registerModule(new JodaModule());
+		mapper.enableDefaultTyping();
 		this.emailMapper = new AnetEmailMapper();
 		this.fromAddr = config.getEmailFromAddr();
 		this.serverUrl = config.getServerUrl();
@@ -84,6 +85,7 @@ public class AnetEmailWorker implements Runnable {
 		freemarkerConfig.loadBuiltInEncodingMap();
 		freemarkerConfig.setDefaultEncoding(StandardCharsets.UTF_8.name());
 		freemarkerConfig.setClassForTemplateLoading(this.getClass(), "/");
+		freemarkerConfig.setAPIBuiltinEnabled(true);
 	}
 	
 	@Override
@@ -241,6 +243,8 @@ public class AnetEmailWorker implements Runnable {
 		
 		public AnetEmailMapper() { 
 			this.mapper = new ObjectMapper();
+			mapper.registerModule(new JodaModule());
+			mapper.enableDefaultTyping();
 		}
 		
 		@Override

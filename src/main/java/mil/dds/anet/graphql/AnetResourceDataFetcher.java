@@ -1,5 +1,6 @@
 package mil.dds.anet.graphql;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
@@ -154,6 +155,12 @@ public class AnetResourceDataFetcher implements DataFetcher {
 		List<Object> args = fetchParameters(method, environment);
 		try { 
 			return method.invoke(resource, args.toArray());
+		} catch (InvocationTargetException e) { 
+			if (e.getCause() instanceof WebApplicationException) { 
+				throw (WebApplicationException) e.getCause();
+			} else { 
+				throw new WebApplicationException(e.getCause());
+			}
 		} catch (Exception e) { 
 			if (e.getCause() != null) { 
 				throw new WebApplicationException(e.getCause().getMessage(), e);

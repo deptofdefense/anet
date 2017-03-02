@@ -29,25 +29,17 @@ public class OrganizationDao implements IAnetDao<Organization> {
 	}
 	
 	public OrganizationList getAll(int pageNum, int pageSize) {
-		return getAll(pageNum, pageSize, null);
-	}
-	
-	public OrganizationList getAll(int pageNum, int pageSize, OrganizationType type) {
-		StringBuilder queryBuilder = new StringBuilder("/* getAllOrgs */ SELECT " + ORGANIZATION_FIELDS + " from organizations ");
-		if (type != null) { 
-			queryBuilder.append("AND type = :type ");
-		}
-		queryBuilder.append("ORDER BY createdAt ASC ");
+		String sql;
 		if (DaoUtils.isMsSql(dbHandle)) { 
-			queryBuilder.append("OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY");
+			sql = "/* getAllOrgs */ SELECT " + ORGANIZATION_FIELDS + ", count(*) over() AS totalCount "
+					+ "FROM organizations ORDER BY createdAt ASC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY";
 		} else { 
-			queryBuilder.append("LIMIT :limit OFFSET :offset");	
+			sql = "/* getAllOrgs */ SELECT " + ORGANIZATION_FIELDS + " from organizations ORDER BY createdAt ASC LIMIT :limit OFFSET :offset";
 		}
 		
-		Query<Organization> query = dbHandle.createQuery(queryBuilder.toString())
+		Query<Organization> query = dbHandle.createQuery(sql)
 			.bind("limit", pageSize)
 			.bind("offset", pageSize * pageNum)
-			.bind("type", DaoUtils.getEnumId(type))
 			.map(new OrganizationMapper());
 		return OrganizationList.fromQuery(query, pageNum, pageSize);
 	}
@@ -98,12 +90,6 @@ public class OrganizationDao implements IAnetDao<Organization> {
 				.execute();
 			
 		return numRows;
-	}
-	
-	public void deleteAdvisorOrganization(Organization ao) { 
-		dbHandle.createStatement("/* deleteOrg */ DELETE from advisorOrganizations where id = :id")
-			.bind("id", ao.getId())
-			.execute();
 	}
 
 	public OrganizationList search(OrganizationSearchQuery query) {

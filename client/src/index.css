@@ -284,7 +284,7 @@ a.home-tile {
 	margin-right: auto;
 }
 
-.onboarding-new h1,p,button {
+.onboarding-new h1, .onboarding-new p, .onboarding-new button {
 	text-align: center;
 }
 
@@ -365,4 +365,16 @@ a.home-tile {
 
 .middle-header {
 	text-align: center;
+}
+
+.attendeeTableRow td {
+	border-top: 0px !important;
+}
+hr.attendeeDivider {
+	margin: 0px;
+}
+
+.report-cancelled {
+	border-left: 1.5rem solid #DA9795;
+	padding-left: 1rem;
 }

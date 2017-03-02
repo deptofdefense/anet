@@ -77,7 +77,9 @@ public class PoamResource implements IGraphQLResource {
 	@GraphQLFetcher
 	@Path("/{id}")
 	public Poam getById(@PathParam("id") int id) {
-		return dao.getById(id);
+		Poam p =  dao.getById(id);
+		if (p == null) { throw new WebApplicationException(Status.NOT_FOUND); } 
+		return p;
 	}
 	
 	@GET

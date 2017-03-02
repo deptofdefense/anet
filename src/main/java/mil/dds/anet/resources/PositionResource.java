@@ -75,7 +75,7 @@ public class PositionResource implements IGraphQLResource {
 	@GraphQLFetcher
 	public Position getById(@PathParam("id") int id) {
 		Position p = dao.getById(id);
-		if (p == null) { throw new WebApplicationException("Not Found", Status.NOT_FOUND); }
+		if (p == null) { throw new WebApplicationException(Status.NOT_FOUND); }
 		return p;
 	}
 
@@ -101,11 +101,10 @@ public class PositionResource implements IGraphQLResource {
 		AuthUtils.assertSuperUserForOrg(user, p.getOrganization());
 
 		Position created = dao.insert(p);
-//
-//		if (p.getPerson() != null) {
-//			//Put the person in the position now.
-//			dao.setPersonInPosition(p.getPerson(), p);
-//		}
+		
+		if (p.getPerson() != null) { 
+			dao.setPersonInPosition(p.getPerson(), created);
+		}
 
 		if (p.getAssociatedPositions() != null && p.getAssociatedPositions().size() > 0) {
 			//Create the associations now

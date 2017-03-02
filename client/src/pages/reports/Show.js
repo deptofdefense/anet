@@ -236,7 +236,7 @@ export default class ReportShow extends Page {
 					<fieldset>
 						<legend>Meeting attendees</legend>
 
-						<Table>
+						<Table condensed>
 							<thead>
 								<tr>
 									<th style={{textAlign: 'center'}}>Primary</th>
@@ -246,17 +246,12 @@ export default class ReportShow extends Page {
 							</thead>
 
 							<tbody>
-								{Person.map(report.attendees, person =>
-									<tr key={person.id}>
-										<td className="primary-attendee">
-											{person.primary && <Checkbox readOnly checked />}
-										</td>
-										<td>
-											<img src={person.iconUrl()} alt={person.role} height={20} width={20} className="person-icon" />
-											<LinkTo person={person} />
-										</td>
-										<td><LinkTo position={person.position} /></td>
-									</tr>
+								{Person.map(report.attendees.filter(p => p.role === "ADVISOR"), person =>
+									this.renderAttendeeRow(person)
+								)}
+								<tr className="attendeeTableRow" ><td colSpan={3}><hr className="attendeeDivider" /></td></tr>
+								{Person.map(report.attendees.filter(p => p.role === "PRINCIPAL"), person =>
+									this.renderAttendeeRow(person)
 								)}
 							</tbody>
 						</Table>
@@ -383,30 +378,41 @@ export default class ReportShow extends Page {
 	}
 
 	@autobind
+	renderAttendeeRow(person) {
+		return <tr key={person.id} className="attendeeTableRow" >
+			<td className="primary-attendee">
+				{person.primary && <Checkbox readOnly checked />}
+			</td>
+			<td>
+				<img src={person.iconUrl()} alt={person.role} height={20} width={20} className="person-icon" />
+				<LinkTo person={person} />
+			</td>
+				<td><LinkTo position={person.position} /></td>
+		</tr>
+	}
+
+	@autobind
 	renderEmailModal() {
 		let email = this.state.email
-		return <Modal show={this.state.showEmailModal} onHide={this.toggleEmailModal} >
-			<Modal.Header closeButton>
-				<Modal.Title>Email Report</Modal.Title>
-			</Modal.Header>
-			<Modal.Body>
-				{email.errors &&
-					<Alert bsStyle="danger">{email.errors}</Alert>
-				}
-				<Form formFor={email} onChange={this.onChange} submitText={false} >
-					<Form.Field id="to" label="To:" >
-						<Autocomplete valueKey="name"
-							placeholder="Select the person to email"
-							url="/api/people/search"
-							queryParams={{role: 'ADVISOR'}}
-						/>
-					</Form.Field>
-					<Form.Field componentClass="textarea" id="comment" />
-				</Form>
-			</Modal.Body>
-			<Modal.Footer>
-				<Button bsStyle="primary" onClick={this.emailReport}>Send Email</Button>
-			</Modal.Footer>
+		return <Modal show={this.state.showEmailModal} onHide={this.toggleEmailModal}>
+			<Form formFor={email} onChange={this.onChange} submitText={false}>
+				<Modal.Header closeButton>
+					<Modal.Title>Email Report</Modal.Title>
+				</Modal.Header>
+
+				<Modal.Body>
+					{email.errors &&
+						<Alert bsStyle="danger">{email.errors}</Alert>
+					}
+
+					<Form.Field id="to" />
+					<Form.Field id="comment" componentClass="textarea" />
+				</Modal.Body>
+
+				<Modal.Footer>
+					<Button bsStyle="primary" onClick={this.emailReport}>Send Email</Button>
+				</Modal.Footer>
+			</Form>
 		</Modal>
 	}
 
@@ -425,7 +431,7 @@ export default class ReportShow extends Page {
 		}
 
 		email = {
-			toAddresses: [email.to.emailAddress],
+			toAddresses: email.to.replace(/\s/g, '').split(/[,;]/),
 			context: {comment: email.comment },
 			subject: 'Sharing an email from ANET'
 		}

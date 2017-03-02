@@ -144,7 +144,11 @@ public class PersonResource implements IGraphQLResource {
 			//Maybe update position? 
 			Position existing = AnetObjectEngine.getInstance()
 					.getPositionDao().getCurrentPositionForPerson(Person.createWithId(p.getId()));
-			if (existing == null || existing.getId().equals(p.getPosition().getId()) == false) {
+			if (existing == null && p.getPosition().getId() != null) {
+				//Update the position for this person.
+				AuthUtils.assertSuperUser(user);
+				AnetObjectEngine.getInstance().getPositionDao().setPersonInPosition(p, p.getPosition());
+			} else if (existing != null && existing.getId().equals(p.getPosition().getId()) == false) {
 				//Update the position for this person.
 				AuthUtils.assertSuperUser(user);
 				AnetObjectEngine.getInstance().getPositionDao().setPersonInPosition(p, p.getPosition());

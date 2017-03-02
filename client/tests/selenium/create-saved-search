@@ -17,6 +17,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>waitForText</td>
+	<td>id=createButton</td>
+	<td>Create</td>
+</tr>
+<tr>
 	<td>click</td>
 	<td>id=searchBarInput</td>
 	<td></td>

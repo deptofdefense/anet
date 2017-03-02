@@ -15,6 +15,9 @@ import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.util.Duration;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.Person.Role;
+import mil.dds.anet.beans.Person.Status;
+import mil.dds.anet.beans.PersonPositionHistory;
 import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Position.PositionType;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.OrganizationList;
@@ -244,6 +247,123 @@ public class PositionResourceTest extends AbstractResourceTest {
 		assertThat(searchResults).isNotEmpty();
 		
 		//Search by location
+	}
+	
+	@Test
+	public void getAllPositionsTest() { 
+		Person jack = getJackJackson();
+		
+		int pageNum = 0;
+		int pageSize = 10;
+		int totalReturned = 0;
+		int firstTotalCount = 0;
+		PositionList list = null;
+		do { 
+			list = httpQuery("/api/positions/?pageNum=" + pageNum + "&pageSize=" + pageSize, jack).get(PositionList.class);
+			assertThat(list).isNotNull();
+			assertThat(list.getPageNum()).isEqualTo(pageNum);
+			assertThat(list.getPageSize()).isEqualTo(pageSize);
+			totalReturned += list.getList().size();
+			if (pageNum == 0) { firstTotalCount = list.getTotalCount(); }
+			pageNum++;
+		} while (list.getList().size() != 0); 
+		
+		assertThat(totalReturned).isEqualTo(firstTotalCount);
+	}
+	
+	@Test
+	public void createPositionTest() {
+		Person authur = getArthurDmin();
+		
+		//Create a new position and designate the person upfront
+		Person newb = new Person();
+		newb.setName("PositionTest Person");
+		newb.setRole(Role.PRINCIPAL);
+		newb.setStatus(Status.ACTIVE);
+		
+		newb = httpQuery("/api/people/new", authur).post(Entity.json(newb), Person.class);
+		assertThat(newb.getId()).isNotNull();
+		
+		OrganizationList orgs = httpQuery("/api/organizations/search?text=Ministry&type=PRINCIPAL_ORG", authur)
+				.get(OrganizationList.class);
+		assertThat(orgs.getList().size()).isGreaterThan(0);
+		
+		Position newbPosition = new Position();
+		newbPosition.setName("PositionTest Position for Newb");
+		newbPosition.setType(PositionType.PRINCIPAL);
+		newbPosition.setOrganization(orgs.getList().get(0));
+		newbPosition.setPerson(newb);
+		
+		newbPosition = httpQuery("/api/positions/new", authur).post(Entity.json(newbPosition), Position.class);
+		assertThat(newbPosition.getId()).isNotNull();
+		
+		//Ensure that the position contains the person
+		Position returned = httpQuery("/api/positions/" + newbPosition.getId(), authur).get(Position.class);
+		assertThat(returned.getId()).isNotNull();
+		assertThat(returned.loadPerson()).isNotNull();
+		assertThat(returned.loadPerson().getId()).isEqualTo(newb.getId());
+		
+		//Ensure that the person is assigned to this position. 
+		assertThat(newb.loadPosition()).isNotNull();
+		assertThat(newb.loadPosition().getId()).isEqualTo(returned.getId());
+		
+		//Assign somebody else to this position. 
+		Person prin2 = new Person();
+		prin2.setName("2nd Principal in PrincipalTest");
+		prin2.setRole(Role.PRINCIPAL);
+		prin2 = httpQuery("/api/people/new", authur).post(Entity.json(prin2),Person.class);
+		assertThat(prin2.getId()).isNotNull();
+		assertThat(prin2.loadPosition()).isNull();
+		
+		prin2.setPosition(Position.createWithId(newbPosition.getId()));
+		Response resp = httpQuery("/api/people/update", authur).post(Entity.json(prin2));
+		assertThat(resp.getStatus()).isEqualTo(200);
+		
+		//Reload this person to check their position was set. 
+		prin2 = httpQuery("/api/people/" + prin2.getId(), authur).get(Person.class);
+		assertThat(prin2).isNotNull();
+		assertThat(prin2.loadPosition()).isNotNull();
+		assertThat(prin2.loadPosition().getId()).isEqualTo(newbPosition.getId());
+		
+		//Check with a different API endpoint. 
+		Person currHolder = httpQuery("/api/positions/" + newbPosition.getId() + "/person", authur).get(Person.class);
+		assertThat(currHolder).isNotNull();
+		assertThat(currHolder.getId()).isEqualTo(prin2.getId());
+		
+		//Slow the test down a bit
+		try {
+			Thread.sleep(10);
+		} catch (InterruptedException ignore) { }
+		
+		//Create a new position and move prin2 there on CREATE. 
+		Position pos2 = new Position();
+		pos2.setName("Created by PositionTest");
+		pos2.setType(PositionType.PRINCIPAL);
+		pos2.setOrganization(orgs.getList().get(0));
+		pos2.setPerson(Person.createWithId(prin2.getId()));
+		
+		pos2 = httpQuery("/api/positions/new", authur).post(Entity.json(pos2), Position.class);
+		assertThat(pos2.getId()).isNotNull();
+		
+		returned = httpQuery("/api/positions/" + pos2.getId(), authur).get(Position.class);
+		assertThat(returned).isNotNull();
+		assertThat(returned.getName()).isEqualTo(pos2.getName());
+		assertThat(returned.loadPerson()).isNotNull();
+		assertThat(returned.loadPerson().getId()).isEqualTo(prin2.getId());
+		
+		//Make sure prin2 got moved out of newbPosition
+		currHolder = httpQuery("/api/positions/" + newbPosition.getId() + "/person", authur).get(Person.class);
+		assertThat(currHolder).isNull();
+		
+		//Pull the history of newbPosition
+		newbPosition = httpQuery("/api/positions/" + newbPosition.getId(), authur).get(Position.class);
+		List<PersonPositionHistory> history = newbPosition.loadPreviousPeople();
+		assertThat(history.size()).isEqualTo(2);
+		assertThat(history.get(0).getPerson().getId()).isEqualTo(newb.getId());
+		assertThat(history.get(1).getPerson().getId()).isEqualTo(prin2.getId());
+		
+		
+		
 	}
 	
 }

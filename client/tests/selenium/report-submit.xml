@@ -54,7 +54,7 @@
 <tr>
 	<td>sendKeys</td>
 	<td>id=location</td>
-	<td>hos</td>
+	<td>hospital</td>
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
@@ -79,7 +79,7 @@
 <tr>
 	<td>sendKeys</td>
 	<td>id=attendees</td>
-	<td>st</td>
+	<td>steve</td>
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
@@ -93,7 +93,7 @@
 </tr>
 <tr>
 	<td>verifyText</td>
-	<td>//div[@id='root']/div/section/div/div/div/form/fieldset[2]/div/div/table/tbody/tr[2]/td[2]</td>
+	<td>id=attendeeName_PRINCIPAL_0</td>
 	<td>Steve Steveson</td>
 </tr>
 <tr>
