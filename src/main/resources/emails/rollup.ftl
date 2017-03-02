@@ -1751,6 +1751,7 @@
 					<div class="row">
 						<div class="col-md-6" style="float:left;">
                             <#-- <a href="${serverUrl}/people/${report.primaryAdvisor.id}"> -->
+                                <img src="${serverUrl}/assets/img/rs_small.png" height="20" alt="${(report.primaryAdvisor.role)!}" />
                                 ${(report.primaryAdvisor.rank)!}
                                 ${(report.primaryAdvisor.name)!}
                             <#-- </a> -->
@@ -1758,6 +1759,7 @@
 
                         <div class="col-md-6" style="float:right;">
                             <#-- <a href="${serverUrl}/people/${report.primaryPrincipal.id}"> -->
+                                <img src="${serverUrl}/assets/img/afg_small.png" height="20" alt="${(report.primaryPrincipal.role)!}" />
                                 ${(report.primaryPrincipal.name)!}
                                 ${(report.primaryPrincipal.rank)!}
                             <#-- </a> -->
@@ -1768,6 +1770,7 @@
                     <div class="row">
                         <div class="col-xs-12">
                             <#-- <a href="${serverUrl}/poams/${poam.id}"> -->
+                                <img src="${serverUrl}/assets/img/poam.png" height="20" alt="${poam.longName}" />
                                 ${poam.longName}
                             <#-- </a> -->
                         </div>
