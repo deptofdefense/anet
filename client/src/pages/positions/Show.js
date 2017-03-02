@@ -1,5 +1,6 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
+import ModelPage from 'components/ModelPage'
 import {Link} from 'react-router'
 import {Table, DropdownButton, MenuItem} from 'react-bootstrap'
 
@@ -10,16 +11,17 @@ import Messages , {setMessages} from 'components/Messages'
 import autobind from 'autobind-decorator'
 import {browserHistory as History} from 'react-router'
 import LinkTo from 'components/LinkTo'
-import NotFound from 'components/NotFound'
 import moment from 'moment'
 import _includes from 'lodash.includes'
 
 import {Person, Position, Organization} from 'models'
 
-export default class PositionShow extends Page {
+class PositionShow extends Page {
 	static contextTypes = {
 		app: PropTypes.object.isRequired,
 	}
+
+	static modelName = 'Position'
 
 	constructor(props) {
 		super(props)
@@ -46,27 +48,12 @@ export default class PositionShow extends Page {
 				location { id, name }
 			}
 		`).then(data => {
-				PositionShow.pageProps = {fluidContainer: false}
-				this.setState({position: new Position(data.position)})
-			}, 
-			err => {
-				if (_includes([
-					'Exception while fetching data: javax.ws.rs.WebApplicationException: Not Found',
-					'Invalid Syntax'
-				], err.errors[0])) {
-					PositionShow.pageProps = {fluidContainer: true, useNavigation: false}
-					this.setState({position: null})
-				}	
-			})
+			this.setState({position: new Position(data.position)})
+		})
 	}
 
 	render() {
 		let position = this.state.position
-
-		if (!position) {
-			return <NotFound text={`Position with ID ${this.props.params.id} not found.`} />
-		}
-
 		let assignedRole = (position.type === 'ADVISOR') ? 'Afghan Principals' : 'Advisors'
 
 		let currentUser = this.context.app.state.currentUser
@@ -186,3 +173,5 @@ export default class PositionShow extends Page {
 	}
 
 }
+
+export default ModelPage(PositionShow)
