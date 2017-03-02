@@ -99,6 +99,10 @@ export default class RollupShow extends Page {
 						id, shortName
 						parentOrg { id, shortName }
 					}
+					principalOrg {
+						id, shortName
+						parentOrg { id, shortName }
+					}
 				}
 			}
 		`, {rollupQuery}, '($rollupQuery: ReportSearchQuery)')
