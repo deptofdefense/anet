@@ -53,7 +53,7 @@ export default class ReportSummary extends Component {
 			{report.poams.map(poam => <Row>
 				<Col xs={12}>
 					<img height={20} src={POAM_ICON} alt={poam.longName} className="person-icon" />
-					{poam.longName}
+					<LinkTo poam={poam} />
 				</Col>
 			</Row>)}
 
