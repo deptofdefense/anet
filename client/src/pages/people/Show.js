@@ -11,7 +11,6 @@ import Form from 'components/Form'
 import ReportTable from 'components/ReportTable'
 import LinkTo from 'components/LinkTo'
 import History from 'components/History'
-import NotFound from 'components/NotFound'
 
 import API from 'api'
 import {Person} from 'models'
@@ -85,10 +84,6 @@ class PersonShow extends Page {
 
 	render() {
 		let {person} = this.state
-
-		if (!person) {
-			return <NotFound text={`User with ID ${this.props.params.id} not found.`} />
-		}
 
 		let position = person.position
 

@@ -1,5 +1,6 @@
 import React from 'react'
 import Page from 'components/Page'
+import ModelPage from 'components/ModelPage'
 
 import API from 'api'
 import {Location} from 'models'
@@ -7,9 +8,10 @@ import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
 import Messages, {setMessages} from 'components/Messages'
 import Leaflet from 'components/Leaflet'
-import NotFound from 'components/NotFound'
 
-export default class LocationShow extends Page {
+class LocationShow extends Page {
+	static modelName = 'Location'
+	
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -25,24 +27,14 @@ export default class LocationShow extends Page {
 			}
 			
 		`).then(data => {
-			LocationShow.pageProps = { fluidContainer: !Boolean(data.location), useNavigation: Boolean(data.location) }
 			this.setState({
-				location: data.location ? new Location(data.location) : null
+				location: new Location(data.location)
 			})
-		}, err => {
-			if (err.errors[0] === 'Invalid Syntax') {
-				LocationShow.pageProps = {fluidContainer: true, useNavigation: false}
-				this.setState({location: null})
-			}
 		})
 	}
 
 	render() {
 		let loc = this.state.location
-
-		if (!loc) {
-			return <NotFound text={`No location with ID ${this.props.params.id} found.`} />
-		}
 
 		let markers=[]
 		let latlng = 'None'
@@ -73,3 +65,5 @@ export default class LocationShow extends Page {
 		)
 	}
 }
+
+export default ModelPage(LocationShow)

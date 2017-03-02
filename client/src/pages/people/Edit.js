@@ -53,10 +53,6 @@ class PersonEdit extends Page {
 	render() {
 		let person = this.state.person
 		
-		if (!person) {
-			return <NotFound text={`User with ID ${this.props.params.id} not found.`} />
-		}
-
 		let currentUser = this.context.app.state.currentUser
 		let canEditPosition = currentUser && currentUser.isSuperUser()
 
