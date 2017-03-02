@@ -7,6 +7,8 @@ import {Report, Person, Organization} from 'models'
 
 import moment from 'moment'
 
+import POAM_ICON from 'resources/positions.png'
+
 export default class ReportSummary extends Component {
 	static propTypes = {
 		report: PropTypes.object.isRequired,
@@ -48,6 +50,13 @@ export default class ReportSummary extends Component {
 				<Col md={6}>{report.primaryPrincipal && this.renderPerson(report.primaryPrincipal)}</Col>
 			</Row>
 
+			{report.poams.map(poam => <Row>
+				<Col xs={12}>
+					<img height={20} src={POAM_ICON} alt={poam.longName} className="person-icon" />
+					{poam.longName}
+				</Col>
+			</Row>)}
+
 			<Row>
 				<Col md={8}>
 					<h5>{report.intent}</h5>
@@ -55,6 +64,7 @@ export default class ReportSummary extends Component {
 					{report.nextSteps && <p><strong>Next steps:</strong> {report.nextSteps}</p>}
 				</Col>
 			</Row>
+
 			<LinkTo report={report} className="read-full"><Button>Read Full Report</Button></LinkTo>
 		</Grid>
 	}
@@ -65,10 +75,11 @@ export default class ReportSummary extends Component {
 			<img height={20} width={20} src={person.iconUrl()} alt={person.role} className="person-icon" />
 			<LinkTo person={person} />
 			{person.position && person.position.organization &&
-				<span> -&nbsp;
-				<LinkTo organization={new Organization(person.position.organization)} />
+				<span>
+					-&nbsp;
+					<LinkTo organization={new Organization(person.position.organization)} />
 				</span>
 			}
-			</div>
+		</div>
 	}
 }
