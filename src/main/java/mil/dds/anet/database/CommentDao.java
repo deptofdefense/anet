@@ -32,7 +32,7 @@ public class CommentDao implements IAnetDao<Comment> {
 		List<Comment> results = dbHandle.createQuery("/* getCommentById */ SELECT comments.id AS c_id, "
 				+ "comments.createdAt AS c_createdAt, c.updatedAt AS c_updatedAt, "
 				+ "c.authorId, c.reportId, c.text, people.* "
-				+ "FROM comments LEFT JOIN people ON comments.authorId = person.id "
+				+ "FROM comments LEFT JOIN people ON comments.authorId = people.id "
 				+ "WHERE comments.id = :id")
 			.bind("id", id)
 			.map(new CommentMapper())
