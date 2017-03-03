@@ -162,7 +162,7 @@ export default class ReportShow extends Page {
 				{this.renderEmailModal()}
 
 				<Form static formFor={report} horizontal>
-					<fieldset className="report-summary">
+					<fieldset className="show-report-overview">
 						<legend>Report #{report.id}</legend>
 
 						<Form.Field id="intent" label="Summary" >
