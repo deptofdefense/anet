@@ -370,7 +370,7 @@ hr.attendeeDivider {
 	margin-bottom: 7rem; 
 }
 
-.report-form .button-row button:not(:first-child) {
+.report-form .button-row button:nth-last-child(-n+2) {
 	float: right;
 }
 

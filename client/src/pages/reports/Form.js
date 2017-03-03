@@ -88,11 +88,31 @@ export default class ReportForm extends Component {
 
 		let hasErrors = Object.keys(errors).length > 0
 
+		function SubmitButtons(props) {
+			return <div className="button-row">
+				{props.children ||
+					<Button bsStyle="default" className="cancel">
+						Cancel
+					</Button>
+				}
+				<Button bsStyle="primary">
+					Preview and submit
+				</Button>
+				<Button bsStyle="primary" className="save-for-later">
+					Save for later
+				</Button>
+			</div>
+		}
+
 		return <Form formFor={report} horizontal onChange={this.onChange} onSubmit={this.onSubmit} submitDisabled={hasErrors}
 					className="report-form" showSubmit={false} submitText={false}>
 			<div>
 				<fieldset>
-					<legend>{this.props.title} <small>Required</small></legend>
+					<legend>
+						<SubmitButtons>
+							{this.props.title}
+						</SubmitButtons>
+					</legend>
 
 					<Form.Field id="intent" label="Meeting goal" placeholder="What happened?" data-focus>
 						<Form.Field.ExtraCol>{250 - report.intent.length} characters remaining</Form.Field.ExtraCol>
@@ -237,17 +257,7 @@ export default class ReportForm extends Component {
 					</Collapse>
 				</fieldset>
 			</div>
-			<div className="button-row">
-				<Button bsStyle="default" className="cancel">
-					Cancel
-				</Button>
-				<Button bsStyle="primary">
-					Preview and submit
-				</Button>
-				<Button bsStyle="primary" className="save-for-later">
-					Save for later
-				</Button>
-			</div>
+			<SubmitButtons includeCancel={true} />
 		</Form>
 	}
 
