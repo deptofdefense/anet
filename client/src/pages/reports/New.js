@@ -2,7 +2,6 @@ import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 
 import ReportForm from './Form'
-import {ContentForHeader} from 'components/Header'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Messages from 'components/Messages'
 import {Report} from 'models'
@@ -29,10 +28,6 @@ export default class ReportNew extends Page {
 
 		return (
 			<div>
-				<ContentForHeader>
-					<h2>Create a new Report</h2>
-				</ContentForHeader>
-
 				<Breadcrumbs items={[['Submit a report', Report.pathForNew()]]} />
 				<Messages error={this.state.error} />
 
