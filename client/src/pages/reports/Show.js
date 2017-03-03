@@ -5,6 +5,7 @@ import {Alert, Table, Button, Col, DropdownButton, MenuItem, Modal, Checkbox} fr
 import autobind from 'autobind-decorator'
 import moment from 'moment'
 import utils from 'utils'
+import _capitalize from 'lodash.capitalize'
 
 import {Report, Person, Poam, Comment} from 'models'
 import Breadcrumbs from 'components/Breadcrumbs'
@@ -15,25 +16,7 @@ import History from 'components/History'
 
 import API from 'api'
 
-import CALENDAR_ICON from 'resources/calendar.png'
-import LOCATION_ICON from 'resources/locations.png'
-import POSITIVE_ICON from 'resources/thumbs_up.png'
-import NEUTRAL_ICON from 'resources/neutral.png'
-import NEGATIVE_ICON from 'resources/thumbs_down.png'
-
-const atmosphereIconCss = {
-	height: '48px',
-	marginTop: '-14px',
-	marginRight: '1rem',
-}
-
-const atmosphereIcons = {
-	POSITIVE: POSITIVE_ICON,
-	NEUTRAL: NEUTRAL_ICON,
-	NEGATIVE: NEGATIVE_ICON,
-}
-
-class ReportShow extends Page {
+export default class ReportShow extends Page {
 	static contextTypes = {
 		app: PropTypes.object,
 	}
@@ -190,16 +173,16 @@ class ReportShow extends Page {
 							</div>
 						</Form.Field>
 
-						<Form.Field id="engagementDate" label="Date" icon={CALENDAR_ICON} getter={date => date && moment(date).format('D MMM YYYY')} />
+						<Form.Field id="engagementDate" label="Date" getter={date => date && moment(date).format('D MMM YYYY')} />
 
-						<Form.Field id="location" label="Location" icon={LOCATION_ICON}>
+						<Form.Field id="location" label="Location">
 							{report.location && <LinkTo location={report.location} />}
 						</Form.Field>
 
 						{!isCancelled &&
 							<Form.Field id="atmosphere" label="Atmospherics">
-								<img style={atmosphereIconCss} src={atmosphereIcons[report.atmosphere]} alt={report.atmosphere} />
-								<span id="atmosphereDetails" >{report.atmosphereDetails}</span>
+								{_capitalize(report.atmosphere)}
+								{report.atmosphereDetails && ` – ${report.atmosphereDetails}`}
 							</Form.Field>
 						}
 						{isCancelled &&
