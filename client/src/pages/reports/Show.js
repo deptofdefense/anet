@@ -193,12 +193,6 @@ export default class ReportShow extends Page {
 						<Form.Field id="author" label="Report author">
 							<LinkTo person={report.author} />
 						</Form.Field>
-						<Form.Field id="advisorOrg" label="Advisor Org">
-							<LinkTo organization={report.advisorOrg} />
-						</Form.Field>
-						<Form.Field id="principalOrg" label="Principal Org">
-							<LinkTo organization={report.principalOrg} />
-						</Form.Field>
 					</fieldset>
 
 					{canApprove && this.renderApprovalForm()}
