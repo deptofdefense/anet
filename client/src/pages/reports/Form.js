@@ -88,9 +88,10 @@ export default class ReportForm extends Component {
 
 		let hasErrors = Object.keys(errors).length > 0
 
-		return <Form formFor={report} horizontal onChange={this.onChange} onSubmit={this.onSubmit} submitText="Save report" submitDisabled={hasErrors} >
+		return <Form formFor={report} horizontal onChange={this.onChange} onSubmit={this.onSubmit} submitText="Save report" submitDisabled={hasErrors}
+					className="report-form">
 			<fieldset>
-				<legend>Engagement Details <small>Required</small></legend>
+				<legend>{this.props.title} <small>Required</small></legend>
 
 				<Form.Field id="intent" label="Meeting goal" placeholder="What happened?" data-focus>
 					<Form.Field.ExtraCol>{250 - report.intent.length} characters remaining</Form.Field.ExtraCol>

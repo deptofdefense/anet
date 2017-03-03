@@ -31,7 +31,7 @@ export default class ReportNew extends Page {
 				<Breadcrumbs items={[['Submit a report', Report.pathForNew()]]} />
 				<Messages error={this.state.error} />
 
-				<ReportForm report={this.state.report} defaultAttendee={currentUser} />
+				<ReportForm report={this.state.report} defaultAttendee={currentUser} title="Create a new Report" />
 			</div>
 		)
 	}

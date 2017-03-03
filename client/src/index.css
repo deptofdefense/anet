@@ -356,3 +356,7 @@ hr.attendeeDivider {
 	border-left: 1.5rem solid #DA9795;
 	padding-left: 1rem;
 }
+
+.report-form fieldset:not(:first-child) legend {
+	font-size: 2rem;
+}
