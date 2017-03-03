@@ -360,3 +360,24 @@ hr.attendeeDivider {
 .report-form fieldset:not(:first-child) legend {
 	font-size: 2rem;
 }
+
+.report-form fieldset:last-child {
+	margin-bottom: 10px;
+}
+
+.report-form .button-row {
+	/* This matches the form fieldset's margin-bottom. */
+	margin-bottom: 7rem; 
+}
+
+.report-form .button-row button:not(:first-child) {
+	float: right;
+}
+
+.report-form .button-row .save-for-later {
+	margin-right: 30px; 
+}
+
+.report-form .button-row .cancel {
+	width: 15%; 
+}
