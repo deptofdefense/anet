@@ -173,7 +173,7 @@ export default class ReportShow extends Page {
 							</div>
 						</Form.Field>
 
-						<Form.Field id="engagementDate" label="Date" getter={date => date && moment(date).format('D MMM YYYY')} />
+						<Form.Field id="engagementDate" label="Date" getter={date => date && moment(date).format('D MMMM, YYYY')} />
 
 						<Form.Field id="location" label="Location">
 							{report.location && <LinkTo location={report.location} />}
