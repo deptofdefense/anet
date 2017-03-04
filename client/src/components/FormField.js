@@ -63,6 +63,7 @@ export default class FormField extends Component {
 		value: PropTypes.oneOfType([
 			PropTypes.string,
 			PropTypes.object,
+			PropTypes.array,
 			PropTypes.bool,
 		]),
 
@@ -251,7 +252,7 @@ export default class FormField extends Component {
 		this.onUserTouchedField(event)
 
 		if (this.props.onChange) {
-			this.props.onChange()
+			this.props.onChange(event)
 			return
 		}
 
