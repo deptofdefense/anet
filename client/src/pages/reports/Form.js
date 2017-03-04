@@ -209,7 +209,7 @@ export default class ReportForm extends Component {
 				optional={true} />
 
 			<fieldset>
-				<legend>Meeting Discussion <small>Required</small></legend>
+				<legend>{isCancelled ? "Next Steps" : "Meeting Discussion"} <small>Required</small></legend>
 
 				{!isCancelled &&
 					<Form.Field id="keyOutcomes">
