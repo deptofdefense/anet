@@ -29,8 +29,7 @@ ${sender.name} sent you a report from ANET:
 <li><b>Details:</b> ${report.reportText}</li>
 </ul>
 
-<p>Use this link to view the full report: <a href="${serverUrl}/reports/${report.id}">${serverUrl}/reports/${report.id}</a><p>
-
+<p>Use this link to view the full report: <a href="${serverUrl}/reports/${report.id?c}">${serverUrl}/reports/${report.id?c}</a><p>
 
 </body>
 </html>
