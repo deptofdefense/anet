@@ -12,7 +12,7 @@ ${sender.name} sent you an ANET Report
 <li><b>Text</b>: ${report.reportText}</li>
 </ul>
 
-<p>You can view the full report here: <a href="${serverUrl}/reports/${report.id}">${serverUrl}/reports/${report.id}</a><p>
+<p>You can view the full report here: <a href="${serverUrl}/reports/${report.id?c}">${serverUrl}/reports/${report.id?c}</a><p>
 
 
 </body>
