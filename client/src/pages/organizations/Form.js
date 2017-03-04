@@ -78,7 +78,6 @@ export default class OrganizationForm extends Component {
 
 	renderApprovalStep(step, index) {
 		let approvers = step.approvers
-		console.log(step)
 
 		return <fieldset key={index}>
 			<legend>Step {index + 1}</legend>
@@ -88,9 +87,9 @@ export default class OrganizationForm extends Component {
 
 			<Form.Field id="name"
 				value={step.name}
-				onChange={this.setStepName.bind(this, index)} />
+				onChange={(event) => this.setStepName(index, event)} />
 
-			<Form.Field id="addApprover" label="Add an Approver" value={approvers} >
+			<Form.Field id="addApprover" label="Add an Approver" value={approvers}>
 				<Autocomplete valueKey="name"
 					placeholder="Search for the approvers position"
 					objectType={Position}
@@ -158,7 +157,6 @@ export default class OrganizationForm extends Component {
 		let name = event && event.target ? event.target.value : event
 		let step = this.props.organization.approvalSteps[index]
 		step.name = name
-		console.log(event, step, name)
 
 		this.onChange()
 	}
