@@ -195,19 +195,18 @@ export default class ReportForm extends Component {
 							{Person.map(recents.persons, person =>
 								<Button key={person.id} bsStyle="link" onClick={this.addAttendee.bind(this, person)}>Add {person.name}</Button>
 							)}
-					</Form.Field.ExtraCol>
+						</Form.Field.ExtraCol>
 					}
 				</Form.Field>
 			</fieldset>
 
-			{!isCancelled &&
-				<PoamsSelector poams={report.poams}
-					shortcuts={recents.poams}
-					onChange={this.onChange}
-					onErrorChange={this.onPoamError}
-					validationState={errors.poams}
-					optional={true} />
-				}
+
+			<PoamsSelector poams={report.poams}
+				shortcuts={recents.poams}
+				onChange={this.onChange}
+				onErrorChange={this.onPoamError}
+				validationState={errors.poams}
+				optional={true} />
 
 			<fieldset>
 				<legend>Meeting Discussion <small>Required</small></legend>
