@@ -51,21 +51,27 @@ export default class ReportSummary extends Component {
 			</Row>
 
 			{report.poams.map(poam => <Row key={poam.id}>
-				<Col xs={12}>
+				<Col md={12}>
 					<img height={20} src={POAM_ICON} alt={poam.longName} className="person-icon" />
 					<LinkTo poam={poam} />
 				</Col>
 			</Row>)}
 
 			<Row>
-				<Col md={8}>
-					<h5>{report.intent}</h5>
-					{report.keyOutcomes && <p><strong>Key outcomes:</strong> {report.keyOutcomes}</p>}
-					{report.nextSteps && <p><strong>Next steps:</strong> {report.nextSteps}</p>}
+				<Col md={12}>
+					<strong>Meeting Goal:</strong> {report.intent}.
+					{report.keyOutcomes && <span><strong>Key outcomes:</strong> {report.keyOutcomes}.</span> }
+					{report.nextSteps && <span><strong>Next steps:</strong> {report.nextSteps}.</span> }
 				</Col>
 			</Row>
 
-			<LinkTo report={report} className="read-full"><Button>Read Full Report</Button></LinkTo>
+			<Row>
+				<Col mdOffset={9} md={3}>
+					<LinkTo report={report} className="read-full">
+						<Button bsStyle="primary" >Read Full Report</Button>
+					</LinkTo>
+				</Col>
+			</Row>
 		</Grid>
 	}
 
