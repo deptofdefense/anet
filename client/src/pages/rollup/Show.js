@@ -194,7 +194,7 @@ export default class RollupShow extends Page {
 		// let reports = this.state.reports.list
 		let reportOTD = null //reports[0]
 
-		// Admins can edit poams, or super users if this poam is assigned to their org.
+		// Only admins can email the Rollup out.
 		let currentUser = this.context.app.state.currentUser
 		let canEdit = currentUser && currentUser.isAdmin()
 
@@ -202,16 +202,16 @@ export default class RollupShow extends Page {
 			<div>
 				<Breadcrumbs items={[['Rollup', ''],[this.dateStr, 'rollup/' +this.dateStr]]} />
 
-				{canEdit &&
-					<div className="pull-right">
-						<CalendarButton onChange={this.changeRollupDate} value={this.state.date.toISOString()} style={calendarButtonCss} />
+				<div className="pull-right">
+					<CalendarButton onChange={this.changeRollupDate} value={this.state.date.toISOString()} style={calendarButtonCss} />
 
+					{canEdit &&
 						<DropdownButton bsStyle="primary" title="Actions" id="actions" className="pull-right" onSelect={this.actionSelect}>
 							<MenuItem eventKey="email">Email rollup</MenuItem>
 							<MenuItem eventKey="print">Print</MenuItem>
 						</DropdownButton>
-					</div>
-				}
+					}
+				</div>
 
 				<h1>
 					Daily Rollup - {this.dateLongStr}
