@@ -59,9 +59,17 @@ export default class ReportSummary extends Component {
 
 			<Row>
 				<Col md={12}>
-					<strong>Meeting Goal:</strong> {report.intent}.
-					{report.keyOutcomes && <span><strong>Key outcomes:</strong> {report.keyOutcomes}.</span> }
-					{report.nextSteps && <span><strong>Next steps:</strong> {report.nextSteps}.</span> }
+					{report.intent && <span><strong>Meeting Goal:</strong> {report.intent}</span> }
+				</Col>
+			</Row>
+			<Row>
+				<Col md={12}>
+					{report.keyOutcomes && <span><strong>Key outcomes:</strong> {report.keyOutcomes}</span> }
+				</Col>
+			</Row>
+			<Row>
+				<Col md={12}>
+					{report.nextSteps && <span><strong>Next steps:</strong> {report.nextSteps}</span> }
 				</Col>
 			</Row>
 
