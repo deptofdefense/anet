@@ -59,7 +59,7 @@ export default class ReportSummary extends Component {
 
 			<Row>
 				<Col md={12}>
-					{report.intent && <span><strong>Meeting Goal:</strong> {report.intent}</span> }
+					{report.intent && <span><strong>Meeting goal:</strong> {report.intent}</span> }
 				</Col>
 			</Row>
 			<Row>
