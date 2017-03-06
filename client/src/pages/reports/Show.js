@@ -166,11 +166,11 @@ export default class ReportShow extends Page {
 						<legend>Report #{report.id}</legend>
 
 						<Form.Field id="intent" label="Summary" >
-							<div>
-								<b>Meeting goal:</b> {report.intent} <br />
-								{report.keyOutcomes && <span><b>Key outcomes:</b> {report.keyOutcomes} <br /></span>}
-								<b>Next steps:</b> {report.nextSteps}
-							</div>
+							<p>
+								<strong>Meeting goal:</strong> {report.intent}&nbsp;
+								{report.keyOutcomes && <span><strong>Key outcomes:</strong> {report.keyOutcomes}&nbsp;</span>}
+								<strong>Next steps:</strong> {report.nextSteps}
+							</p>
 						</Form.Field>
 
 						<Form.Field id="engagementDate" label="Date" getter={date => date && moment(date).format('D MMMM, YYYY')} />
@@ -192,6 +192,12 @@ export default class ReportShow extends Page {
 						}
 						<Form.Field id="author" label="Report author">
 							<LinkTo person={report.author} />
+						</Form.Field>
+						<Form.Field id="advisorOrg" label="Advisor Org">
+							<LinkTo organization={report.advisorOrg} />
+						</Form.Field>
+						<Form.Field id="principalOrg" label="Principal Org">
+							<LinkTo organization={report.principalOrg} />
 						</Form.Field>
 					</fieldset>
 
