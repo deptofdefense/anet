@@ -89,18 +89,21 @@ export default class ReportForm extends Component {
 		let hasErrors = Object.keys(errors).length > 0
 
 		function SubmitButtons(props) {
-			return <div className="button-row">
-				{props.children ||
-					<Button bsStyle="default" className="cancel">
-						Cancel
+			return <div className={props.className}>
+				{props.children}
+					<div className="button-row">
+						{ props.includeCancel && 
+							<Button bsStyle="default" className="cancel">
+								Cancel
+							</Button>
+						}
+					<Button bsStyle="primary" className="preview-and-submit">
+						Preview and submit
 					</Button>
-				}
-				<Button bsStyle="primary" className="preview-and-submit">
-					Preview and submit
-				</Button>
-				<Button bsStyle="primary" className="save-for-later">
-					Save for later
-				</Button>
+					<Button bsStyle="primary" className="save-for-later">
+						Save for later
+					</Button>
+				</div>
 			</div>
 		}
 
@@ -109,7 +112,7 @@ export default class ReportForm extends Component {
 			<div>
 				<fieldset>
 					<legend>
-						<SubmitButtons>
+						<SubmitButtons includeCancel={false} className="top-submit-buttons">
 							{this.props.title}
 						</SubmitButtons>
 					</legend>
@@ -170,7 +173,7 @@ export default class ReportForm extends Component {
 				</fieldset>
 
 				<fieldset>
-					<legend>Meeting Attendance <small>Required</small></legend>
+					<legend>Meeting Attendance</legend>
 
 					<Form.Field id="attendees" validationState={errors.attendees}>
 						<Autocomplete objectType={Person}
@@ -232,7 +235,7 @@ export default class ReportForm extends Component {
 					}
 
 				<fieldset>
-					<legend>Meeting Discussion <small>Required</small></legend>
+					<legend>Meeting Discussion</legend>
 
 					{!isCancelled &&
 						<Form.Field id="keyOutcomes">

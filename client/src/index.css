@@ -380,8 +380,15 @@ hr.attendeeDivider {
 
 .report-form .button-row .save-for-later {
 	margin-right: 30px; 
+	background-color: #8ca6c7;
+	border-color: #8ca6c7;
 }
 
 .report-form .button-row .cancel {
 	width: 15%; 
+}
+
+.report-form .top-submit-buttons .button-row {
+	position: relative;
+	top: -40px;
 }
