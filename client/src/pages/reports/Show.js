@@ -181,10 +181,9 @@ export default class ReportShow extends Page {
 
 						<Form.Field id="intent" label="Summary" >
 							<div>
-								<b>The goal of this meeting is to</b> {report.intent}. &nbsp;
-								{report.keyOutcomes &&
-									<span><b>The key outcomes are</b> {report.keyOutcomes}.&nbsp;</span>}
-								<b>The next steps are</b> {report.nextSteps}
+								<b>Meeting goal:</b> {report.intent} <br />
+								{report.keyOutcomes && <span><b>Key outcomes:</b> {report.keyOutcomes} <br /></span>}
+								<b>Next steps:</b> {report.nextSteps}
 							</div>
 						</Form.Field>
 
