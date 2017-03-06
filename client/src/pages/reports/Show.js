@@ -166,11 +166,9 @@ export default class ReportShow extends Page {
 						<legend>Report #{report.id}</legend>
 
 						<Form.Field id="intent" label="Summary" >
-							<p>
-								<strong>Meeting goal:</strong> {report.intent}&nbsp;
-								{report.keyOutcomes && <span><strong>Key outcomes:</strong> {report.keyOutcomes}&nbsp;</span>}
-								<strong>Next steps:</strong> {report.nextSteps}
-							</p>
+							<p><strong>Meeting goal:</strong> {report.intent}</p>
+							{report.keyOutcomes && <p><span><strong>Key outcomes:</strong> {report.keyOutcomes}&nbsp;</span></p>}
+							<p><strong>Next steps:</strong> {report.nextSteps}</p>
 						</Form.Field>
 
 						<Form.Field id="engagementDate" label="Date" getter={date => date && moment(date).format('D MMMM, YYYY')} />
