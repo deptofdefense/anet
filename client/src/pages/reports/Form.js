@@ -88,27 +88,26 @@ export default class ReportForm extends Component {
 
 		let hasErrors = Object.keys(errors).length > 0
 
-		function SubmitButtons(props) {
-			return <div className={props.className}>
+		const SubmitButtons = props =>
+			<div className={props.className}>
 				{props.children}
 					<div className="button-row">
 						{ props.includeCancel && 
-							<Button bsStyle="default" className="cancel">
+							<Button bsStyle="default" className="cancel" onClick={this.onCancel}>
 								Cancel
 							</Button>
 						}
-					<Button bsStyle="primary" className="preview-and-submit">
+					<Button bsStyle="primary" className="preview-and-submit" onClick={this.onSubmit} disabled={hasErrors}>
 						Preview and submit
 					</Button>
-					<Button bsStyle="primary" className="save-for-later">
+					<Button bsStyle="primary" className="save-for-later" onClick={this.onSubmit} disabled={hasErrors}>
 						Save for later
 					</Button>
 				</div>
 			</div>
-		}
 
-		return <Form formFor={report} horizontal onChange={this.onChange} onSubmit={this.onSubmit} submitDisabled={hasErrors}
-					className="report-form" showSubmit={false} submitText={false}>
+		return <Form formFor={report} horizontal onChange={this.onChange} 
+					submitDisabled={hasErrors} className="report-form" submitText={false}>
 			<div>
 				<fieldset>
 					<legend>
@@ -402,6 +401,11 @@ export default class ReportForm extends Component {
 		}
 
 		return errors
+	}
+
+	@autobind
+	onCancel() {
+		History.goBack()
 	}
 
 	@autobind
