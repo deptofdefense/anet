@@ -251,9 +251,12 @@ a.home-tile {
 	border-top: 1px solid #ccc;
 }
 
+.report-summary .row {
+	margin-top: 3px;
+}
+
 .report-summary .read-full {
 	float: right;
-	margin-top: -38px;
 }
 
 .onboarding-new {

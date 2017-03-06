@@ -143,21 +143,72 @@ export default class ReportForm extends Component {
 							This engagement was cancelled
 						</Checkbox>
 					</Form.Field>
+				}
+			</fieldset>
 
-					{!isCancelled &&
-						<Form.Field id="atmosphere">
-							<ButtonToggleGroup>
-								<Button value="POSITIVE" id="positiveAtmos" ><img src={POSITIVE_ICON} height={25} alt="positive" /></Button>
-								<Button value="NEUTRAL" id="neutralAtmos" ><img src={NEUTRAL_ICON} height={25} alt="neutral" /></Button>
-								<Button value="NEGATIVE" id="negativeAtmos" ><img src={NEGATIVE_ICON} height={25} alt="negative" /></Button>
-							</ButtonToggleGroup>
+			<fieldset>
+				<legend>Meeting Attendance <small>Required</small></legend>
 
-						</Form.Field>
+				<Form.Field id="attendees" validationState={errors.attendees}>
+					<Autocomplete objectType={Person}
+						onChange={this.addAttendee}
+						onErrorChange={this.attendeeError}
+						clearOnSelect={true}
+						fields={'id, name, role, position { id, name, organization { id, shortName}} '}
+						template={person =>
+							<span>
+								<img src={(new Person(person)).iconUrl()} alt={person.role} height={20} className="person-icon" />
+								{person.name} {person.rank && person.rank.toUpperCase()} - {person.position && `(${person.position.name})`}
+							</span>
+						}
+						placeholder="Start typing to search for people who attended the meeting..."
+						valueKey="name" />
+					{errors.attendees && <HelpBlock>
+						<img src={WARNING_ICON} role="presentation" height="20px" />
+						Person not found in ANET Database.
+					</HelpBlock> }
+					<Table hover condensed>
+						<thead>
+							<tr>
+								<th style={{textAlign: 'center'}}>Primary</th>
+								<th>Name</th>
+								<th>Position</th>
+								<th>Org</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+							{Person.map(report.attendees.filter(p => p.role === "ADVISOR"), (person, idx) =>
+								this.renderAttendeeRow(person, idx)
+							)}
+							<tr className="attendeeTableRow" ><td colSpan={5}><hr className="attendeeDivider" /></td></tr>
+							{Person.map(report.attendees.filter(p => p.role === "PRINCIPAL"), (person, idx) =>
+								this.renderAttendeeRow(person, idx)
+							)}
+						</tbody>
+					</Table>
+
+					{recents.persons.length > 0 &&
+						<Form.Field.ExtraCol className="shortcut-list">
+							<h5>Shortcuts</h5>
+							{Person.map(recents.persons, person =>
+								<Button key={person.id} bsStyle="link" onClick={this.addAttendee.bind(this, person)}>Add {person.name}</Button>
+							)}
+						</Form.Field.ExtraCol>
 					}
+				</Form.Field>
+			</fieldset>
 
-					{!isCancelled && report.atmosphere && report.atmosphere !== 'POSITIVE' &&
-						<Form.Field id="atmosphereDetails" placeholder={`Why was this engagement ${report.atmosphere}?`} />
-					}
+
+			<PoamsSelector poams={report.poams}
+				shortcuts={recents.poams}
+				onChange={this.onChange}
+				onErrorChange={this.onPoamError}
+				validationState={errors.poams}
+				optional={true} />
+
+			<fieldset>
+				<legend>{isCancelled ? "Next Steps" : "Meeting Discussion"} <small>Required</small></legend>
 
 					{isCancelled &&
 						<Form.Field id="cancelledReason" componentClass="select" >

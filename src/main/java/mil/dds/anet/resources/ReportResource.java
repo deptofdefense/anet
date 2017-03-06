@@ -59,6 +59,7 @@ import mil.dds.anet.database.ReportDao;
 import mil.dds.anet.emails.ApprovalNeededEmail;
 import mil.dds.anet.emails.DailyRollupEmail;
 import mil.dds.anet.emails.NewReportCommentEmail;
+import mil.dds.anet.emails.ReportEditedEmail;
 import mil.dds.anet.emails.ReportEmail;
 import mil.dds.anet.emails.ReportRejectionEmail;
 import mil.dds.anet.emails.ReportReleasedEmail;
@@ -215,6 +216,17 @@ public class ReportResource implements IGraphQLResource {
 			for (Integer id : existingPoamIds) {
 				dao.removePoamFromReport(Poam.createWithId(id), r);
 			}
+		}
+		
+		boolean canApprove = engine.canUserApproveStep(editor.getId(), existing.getApprovalStep().getId());
+		if (canApprove) { 
+			AnetEmail email = new AnetEmail();
+			ReportEditedEmail action = new ReportEditedEmail();
+			action.setReport(existing);
+			action.setEditor(editor);
+			email.setAction(action);
+			email.setToAddresses(ImmutableList.of(existing.loadAuthor().getEmailAddress()));
+			AnetEmailWorker.sendEmailAsync(email);
 		}
 		
 		return Response.ok().build();
@@ -566,13 +578,12 @@ public class ReportResource implements IGraphQLResource {
 	@Timed
 	@Path("/rollupSimple")
 	@Produces(MediaType.TEXT_HTML)
-	public Response showRollup(@Auth Person user, @QueryParam("startDate") Long start, @QueryParam("endDate") Long end) {
+	public Response showRollupEmail(@Auth Person user, @QueryParam("startDate") Long start, @QueryParam("endDate") Long end) {
 		ReportSearchQuery query = new ReportSearchQuery();
 		query.setPageSize(100000);
 		query.setReleasedAtStart(new DateTime(start));
 		query.setReleasedAtEnd(new DateTime(end));
 
-		List<Report> reports = dao.search(query).getList();
 		AnetEmail email = new AnetEmail();
 		DailyRollupEmail action = new DailyRollupEmail();
 		action.setStartDate(new DateTime(start));

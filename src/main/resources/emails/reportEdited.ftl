@@ -17,14 +17,11 @@ a {
 }
 </style>
 <body>
-Hi, ${report.author.name}, 
+Hello ${report.author.name},
 
-<p>Your report, "<i>${report.intent}</i>," has been approved and added to the daily rollup. </p>
-
-<p>You can view the daily rollup by <a href="${serverUrl}/rollup">clicking here</a>.</p> 
+<p>${editor.name} edited your report "${report.intent}". To review the changes, <a href="${serverUrl}/reports/${report.id?c}">click here</a>.</p>
 
 Thanks!<br>
 The ANET Team
-
 </body>
 </html>
