@@ -25,7 +25,7 @@ Hi, ${report.author.name},
 
 You can <a href="${serverUrl}/reports/${report.id?c}">view or reply to this comment by using this link</a>
 
-Thanks,<br>
+Thank you,<br>
 The ANET Team
 
 </body>
