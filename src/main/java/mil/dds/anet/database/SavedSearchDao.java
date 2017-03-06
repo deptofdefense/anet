@@ -63,5 +63,13 @@ public class SavedSearchDao implements IAnetDao<SavedSearch> {
 			.bindFromProperties(obj)
 			.execute();
 	}
+
+	public int deleteSavedSearch(Integer id, Person owner) {
+		return dbHandle.createStatement("/* deleteSavedSearch */ DELETE FROM savedSearches " 
+				+ "WHERE id = :id AND ownerId = :ownerId")
+			.bind("id", id)
+			.bind("ownerId", owner.getId())
+			.execute();
+	}
 	
 }
