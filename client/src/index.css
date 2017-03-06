@@ -374,6 +374,10 @@ hr.attendeeDivider {
 	float: right;
 }
 
+.report-form .button-row .preview-and-submit {
+	margin-right: 2px;
+}
+
 .report-form .button-row .save-for-later {
 	margin-right: 30px; 
 }

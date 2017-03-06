@@ -95,7 +95,7 @@ export default class ReportForm extends Component {
 						Cancel
 					</Button>
 				}
-				<Button bsStyle="primary">
+				<Button bsStyle="primary" className="preview-and-submit">
 					Preview and submit
 				</Button>
 				<Button bsStyle="primary" className="save-for-later">
