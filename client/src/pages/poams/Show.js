@@ -1,5 +1,6 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
+import ModelPage from 'components/ModelPage'
 import {DropdownButton, MenuItem} from 'react-bootstrap'
 
 import Breadcrumbs from 'components/Breadcrumbs'
@@ -12,10 +13,11 @@ import API from 'api'
 import {Poam} from 'models'
 import Messages, {setMessages} from 'components/Messages'
 
-export default class PoamShow extends Page {
+class PoamShow extends Page {
 	static contextTypes = {
 		app: PropTypes.object.isRequired,
 	}
+	static modelName = 'PoAM'
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -68,8 +70,8 @@ export default class PoamShow extends Page {
 				<Form static formFor={poam} horizontal>
 					<fieldset>
 						<legend>PoAM {poam.shortName}</legend>
-						<Form.Field id="shortName" />
-						<Form.Field id="longName" />
+						<Form.Field id="shortName" label="PoAM number" />
+						<Form.Field id="longName" label="PoAM description" />
 						{poam.responsibleOrg && poam.responsibleOrg.id && this.renderOrg()}
 					</fieldset>
 				</Form>
@@ -98,3 +100,5 @@ export default class PoamShow extends Page {
 		}
 	}
 }
+
+export default ModelPage(PoamShow)

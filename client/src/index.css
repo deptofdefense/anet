@@ -251,9 +251,34 @@ a.home-tile {
 	border-top: 1px solid #ccc;
 }
 
+.report-summary .row {
+	margin-top: 3px;
+}
+
 .report-summary .read-full {
 	float: right;
-	margin-top: -38px;
+}
+
+.not-found {
+	height: 100%;
+}
+
+.not-found body {
+	background-image: url(resources/mountains.png);
+	background-repeat: no-repeat;
+	background-position: center bottom;
+	background-size: contain;
+}
+
+.not-found .not-found-text {
+	text-align: center;
+}
+
+.not-found .planet {
+	width: 250px;
+	position: absolute;
+	right: 0;
+	top: -90px;
 }
 
 .onboarding-new {

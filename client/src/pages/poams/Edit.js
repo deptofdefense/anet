@@ -1,5 +1,6 @@
 import React from 'react'
 import Page from 'components/Page'
+import ModelPage from 'components/ModelPage'
 
 import PoamForm from './Form'
 import {ContentForHeader} from 'components/Header'
@@ -9,10 +10,11 @@ import Messages from 'components/Messages'
 import API from 'api'
 import {Poam} from 'models'
 
-export default class PoamEdit extends Page {
+class PoamEdit extends Page {
 	static pageProps = {
 		useNavigation: false
 	}
+	static modelName = 'PoAM'
 
 	constructor(props) {
 		super(props)
@@ -53,3 +55,5 @@ export default class PoamEdit extends Page {
 		)
 	}
 }
+
+export default ModelPage(PoamEdit)

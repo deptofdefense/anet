@@ -1,5 +1,6 @@
 import React from 'react'
 import Page from 'components/Page'
+import ModelPage from 'components/ModelPage'
 
 import OrganizationForm from './Form'
 import {ContentForHeader} from 'components/Header'
@@ -9,10 +10,12 @@ import Messages from 'components/Messages'
 import API from 'api'
 import {Organization} from 'models'
 
-export default class OrganizationEdit extends Page {
+class OrganizationEdit extends Page {
 	static pageProps = {
 		useNavigation: false
 	}
+
+	static modelName = 'Organization'
 
 	constructor(props) {
 		super(props)
@@ -54,3 +57,5 @@ export default class OrganizationEdit extends Page {
 		)
 	}
 }
+
+export default ModelPage(OrganizationEdit)

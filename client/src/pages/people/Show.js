@@ -1,5 +1,6 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
+import ModelPage from 'components/ModelPage'
 import {Table, DropdownButton, MenuItem, FormGroup, Col, ControlLabel} from 'react-bootstrap'
 import moment from 'moment'
 import autobind from 'autobind-decorator'
@@ -14,10 +15,12 @@ import API from 'api'
 import {Person} from 'models'
 import Messages , {setMessages} from 'components/Messages'
 
-export default class PersonShow extends Page {
+class PersonShow extends Page {
 	static contextTypes = {
 		app: PropTypes.object.isRequired,
 	}
+
+	static modelName = 'User'
 
 	constructor(props) {
 		super(props)
@@ -179,3 +182,5 @@ export default class PersonShow extends Page {
 		</div>
 	}
 }
+
+export default ModelPage(PersonShow)
