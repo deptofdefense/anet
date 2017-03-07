@@ -14,6 +14,9 @@ import mil.dds.anet.beans.search.ReportSearchQuery;
 
 public class DailyRollupEmail extends AnetEmailAction {
 
+	public static DateTimeFormatter dtf = DateTimeFormat.forPattern("dd MMM YYYY");
+	public static String SHOW_REPORT_TEXT_FLAG = "showReportText";
+	
 	DateTime startDate;
 	DateTime endDate;
 	String comment;
@@ -21,8 +24,6 @@ public class DailyRollupEmail extends AnetEmailAction {
 	public DailyRollupEmail() { 
 		templateName = "/emails/rollup_simple.ftl";
 	}
-	
-	public static DateTimeFormatter dtf = DateTimeFormat.forPattern("dd MMM YYYY");
 	
 	@Override
 	public String getSubject() { 
@@ -40,6 +41,7 @@ public class DailyRollupEmail extends AnetEmailAction {
 		Map<String,Object> context = new HashMap<String,Object>();
 		context.put("reports", reports);
 		context.put("title", getSubject());
+		context.put(SHOW_REPORT_TEXT_FLAG, false);
 		return context;
 	}
 

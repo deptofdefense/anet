@@ -68,6 +68,9 @@ a {
             <#if report.nextSteps??>
                 <p><strong>Next steps:</strong> ${(report.nextSteps)!}</p>
             </#if>
+            <#if showReportText >
+            	<p><strong>Report Details</strong> ${(report.reportText)!}</p>
+            </#if>
         </div>
     </div>
 <!--

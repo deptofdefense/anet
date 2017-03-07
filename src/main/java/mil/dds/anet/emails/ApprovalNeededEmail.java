@@ -23,7 +23,7 @@ public class ApprovalNeededEmail extends AnetEmailAction {
 		
 		Map<String,Object> context = new HashMap<String,Object>();
 		context.put("report", r);
-		context.put("approvalStepName", step.getName());
+		context.put("approvalStepName", (step != null) ? step.getName() : "");
 		return context;
 	}
 
