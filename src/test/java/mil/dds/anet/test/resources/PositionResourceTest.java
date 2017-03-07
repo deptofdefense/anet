@@ -74,6 +74,7 @@ public class PositionResourceTest extends AbstractResourceTest {
 		//change the person in this position
 		Person steve = getSteveSteveson();
 		final Position stevesCurrentPosition = steve.loadPosition();
+		assertThat(stevesCurrentPosition).isNotNull();
 		resp = httpQuery(String.format("/api/positions/%d/person", returned.getId()), admin).post(Entity.json(steve));
 		assertThat(resp.getStatus()).isEqualTo(200);
 		

@@ -436,6 +436,30 @@ INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 	(SELECT id FROM people where emailAddress='hunter+liz@dds.mil'), (SELECT max(id) FROM reports), 1);
 INSERT INTO reportPoams (poamId, reportId) VALUES ((SELECT id from poams where shortName = '2.A'), (SELECT max(id) from reports));
 
+INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, nextSteps, keyOutcomes, authorId, state, engagementDate, atmosphere, advisorOrganizationId, principalOrganizationId) VALUES
+	(CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from locations where name='General Hospital'), 'Look for Budget Controls',
+	'Goal of the meeting was to look for the word spreadsheet in a report and then return that in a search result about budget. Lets see what happens!!',
+	'Searching for text', 'Test Cases are good', (SELECT id FROM people where domainUsername='erin'), 2, '2017-01-14', 0,
+	(SELECT id FROM organizations where shortName = 'EF2.2'), (SELECT id FROM organizations WHERE longName LIKE 'Ministry of Defense'));
+INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
+	(SELECT id FROM people where emailAddress='hunter+christopf@dds.mil'), (SELECT max(id) FROM reports), 1);
+INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
+	(SELECT id FROM people where emailAddress='hunter+erin@dds.mil'), (SELECT max(id) FROM reports), 1);
+INSERT INTO reportPoams (poamId, reportId) VALUES ((SELECT id from poams where shortName = '1.1.B'), (SELECT max(id) from reports));
+
+INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, nextSteps, keyOutcomes, authorId, state, engagementDate, atmosphere, advisorOrganizationId, principalOrganizationId) VALUES
+	(CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from locations where name='General Hospital'), 'Look for Budget Controls Again',
+	'The search for the spreadsheet was doomed to be successful, so we needed to generate more data in order to get a more full test of the system that really is going to have much much larger reports in it one day.',
+	'Mocking up test cases','Better test data is always better', (SELECT id FROM people where domainUsername='erin'), 2, '2017-01-04', 0,
+	(SELECT id FROM organizations where shortName = 'EF2.2'), (SELECT id FROM organizations WHERE longName LIKE 'Ministry of Defense'));
+INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
+	(SELECT id FROM people where emailAddress='hunter+christopf@dds.mil'), (SELECT max(id) FROM reports), 1);
+INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
+	(SELECT id FROM people where emailAddress='hunter+erin@dds.mil'), (SELECT max(id) FROM reports), 1);
+INSERT INTO reportPoams (poamId, reportId) VALUES ((SELECT id from poams where shortName = '1.1.B'), (SELECT max(id) from reports));
+
+
+UPDATE reports SET releasedAt = reports.createdAt WHERE state = 2;
 
 --Create the default Approval Step
 INSERT INTO approvalSteps (name, advisorOrganizationId) VALUES ('Default Approvers', (select id from organizations where shortName='ANET Administrators'));
