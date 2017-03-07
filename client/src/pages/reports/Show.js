@@ -255,7 +255,7 @@ export default class ReportShow extends Page {
 							<tbody>
 								{Poam.map(report.poams, (poam, idx) =>
 									<tr key={poam.id} id={"poam_" + idx}>
-										<td className="poamName" ><LinkTo poam={poam} /></td>
+										<td className="poamName" ><LinkTo poam={poam} >{poam.shortName} - {poam.longName}</LinkTo></td>
 										<td className="poamOrg" ><LinkTo organization={poam.responsibleOrg} /></td>
 									</tr>
 								)}
