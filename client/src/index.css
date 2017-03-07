@@ -259,6 +259,28 @@ a.home-tile {
 	float: right;
 }
 
+.not-found {
+	height: 100%;
+}
+
+.not-found body {
+	background-image: url(resources/mountains.png);
+	background-repeat: no-repeat;
+	background-position: center bottom;
+	background-size: contain;
+}
+
+.not-found .not-found-text {
+	text-align: center;
+}
+
+.not-found .planet {
+	width: 250px;
+	position: absolute;
+	right: 0;
+	top: -90px;
+}
+
 .onboarding-new {
 	width: 40%;
 	margin-left: auto;

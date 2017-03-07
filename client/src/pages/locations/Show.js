@@ -1,5 +1,6 @@
 import React from 'react'
 import Page from 'components/Page'
+import ModelPage from 'components/ModelPage'
 
 import API from 'api'
 import {Location} from 'models'
@@ -8,7 +9,9 @@ import Form from 'components/Form'
 import Messages, {setMessages} from 'components/Messages'
 import Leaflet from 'components/Leaflet'
 
-export default class LocationShow extends Page {
+class LocationShow extends Page {
+	static modelName = 'Location'
+	
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -34,8 +37,6 @@ export default class LocationShow extends Page {
 			markers.push({name: loc.name, lat: loc.lat, lng: loc.lng})
 		}
 
-
-
 		return (
 			<div>
 				<Breadcrumbs items={[[loc.name || 'Location', Location.pathFor(loc)]]} />
@@ -56,3 +57,5 @@ export default class LocationShow extends Page {
 		)
 	}
 }
+
+export default ModelPage(LocationShow)
