@@ -24,10 +24,10 @@ a {
 <p style="color:red; font-size:12px; font-weight: bold;" align="center"><i>Classification: ${SECURITY_BANNER_TEXT}</i></p>
 <h1 style="color: #000000;">${title}</h1>
 
-<#if report.comment??>
+<#if comment??>
 	<div>
 		<h2 style="color: #981B1E;">Daily Rollup Notes:</h2>
-		<p>${report.comment}</p>
+		<p>${comment}</p>
 	</div>
 </#if>
 
@@ -90,4 +90,5 @@ a {
     </a>
 -->
     <#sep><hr /></#sep>
+
 </#list>
