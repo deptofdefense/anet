@@ -1,16 +1,18 @@
 import React, {Component} from 'react'
 import {Form, Button, InputGroup, FormControl} from 'react-bootstrap'
 import History from 'components/History'
+import autobind from 'autobind-decorator'
 
 import SEARCH_ICON from 'resources/search-alt.png'
 
 export default class SearchBar extends Component {
-	constructor(props) {
-		super(props)
-		this.state = {query: History.getCurrentLocation().query.text || ''}
+	componentWillMount() {
+		this.setQueryState()
+		this.unregisterHistoryListener = History.listen(this.setQueryState)
+	}
 
-		this.onChange = this.onChange.bind(this)
-		this.onSubmit = this.onSubmit.bind(this)
+	componentWillUnmount() {
+		this.unregisterHistoryListener()
 	}
 
 	render() {
@@ -26,10 +28,17 @@ export default class SearchBar extends Component {
 		)
 	}
 
+	@autobind
+	setQueryState() {
+		this.setState({query: History.getCurrentLocation().query.text || ''})
+	}
+
+	@autobind
 	onChange(event) {
 		this.setState({query: event.target.value})
 	}
 
+	@autobind
 	onSubmit(event) {
 		History.push({pathname: '/search', query: {text: this.state.query}})
 		event.preventDefault()
