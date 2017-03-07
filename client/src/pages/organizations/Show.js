@@ -1,5 +1,6 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
+import ModelPage from 'components/ModelPage'
 import {ListGroup, ListGroupItem, DropdownButton, MenuItem} from 'react-bootstrap'
 
 import Breadcrumbs from 'components/Breadcrumbs'
@@ -24,10 +25,12 @@ const ACTION_COMPONENTS = {
 	laydown: OrganizationLaydown,
 }
 
-export default class OrganizationShow extends Page {
+class OrganizationShow extends Page {
 	static contextTypes = {
 		app: PropTypes.object.isRequired,
 	}
+
+	static modelName = 'Organization'
 
 	constructor(props) {
 		super(props)
@@ -157,3 +160,5 @@ export default class OrganizationShow extends Page {
 		}
 	}
 }
+
+export default ModelPage(OrganizationShow)

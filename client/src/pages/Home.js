@@ -163,7 +163,7 @@ export default class Home extends Page {
 	@autobind
 	onSaveSearchSelect(event) {
 		let id = event && event.target ? event.target.value : event
-		let search = this.state.savedSearches.find(el => el.id == id)
+		let search = this.state.savedSearches.find(el => Number(el.id) === Number(id))
 		this.setState({selectedSearch: search})
 	}
 

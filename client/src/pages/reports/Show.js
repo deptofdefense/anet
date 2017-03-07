@@ -1,5 +1,6 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
+import ModelPage from 'components/ModelPage'
 import {Alert, Table, Button, Col, DropdownButton, MenuItem, Modal, Checkbox} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 import moment from 'moment'
@@ -32,10 +33,12 @@ const atmosphereIcons = {
 	NEGATIVE: NEGATIVE_ICON,
 }
 
-export default class ReportShow extends Page {
+class ReportShow extends Page {
 	static contextTypes = {
 		app: PropTypes.object,
 	}
+
+	static modelName = 'Report'
 
 	constructor(props) {
 		super(props)
@@ -594,3 +597,5 @@ export default class ReportShow extends Page {
 		})
 	}
 }
+
+export default ModelPage(ReportShow)
