@@ -23,10 +23,10 @@ a {
 <p style="color:red; font-size:12px; font-weight: bold;" align="center"><i>Classification: NATO/RESOLUTE SUPPORT SECRET</i></p>
 <h1 style="color: #000000;">${title}</h1>
 
-<#if report.comment??>
+<#if comment??>
 	<div>
 		<h2 style="color: #981B1E;">Daily Rollup Notes:</h2>
-		<p>${report.comment}</p>
+		<p>${comment}</p>
 	</div>
 </#if>
 
@@ -84,7 +84,7 @@ a {
     	Read full report
     </a>
 
-    <hr />
+    <#sep><hr /></#sep>
 
 
 </#list>
