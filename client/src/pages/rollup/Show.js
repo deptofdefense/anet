@@ -10,7 +10,6 @@ import ReportCollection from 'components/ReportCollection'
 import ReportSummary from 'components/ReportSummary'
 import CalendarButton from 'components/CalendarButton'
 import Form from 'components/Form'
-import Autocomplete from 'components/Autocomplete'
 
 import API from 'api'
 import {Report} from 'models'
@@ -23,6 +22,7 @@ const graphCss = {
 }
 
 const barColors = {
+	cancelled: '#e39394',
 	verified: '#9CBDA4',
 	unverified: '#F5D98C',
 	incoming: '#DA9795',
@@ -75,17 +75,20 @@ export default class RollupShow extends Page {
 	}
 
 	fetchData(props) {
-		let rollupQuery = {
+		const rollupQuery = {
+			state: ['DRAFT', 'PENDING_APPROVAL', 'RELEASED', 'REJECTED'],
 			releasedAtStart: this.rollupStart.valueOf(),
 			releasedAtEnd: this.rollupEnd.valueOf(),
-			engagementDateStart: moment(this.rollupStart).subtract(14, 'days').valueOf()
+			engagementDateStart: moment(this.rollupStart).subtract(14, 'days').valueOf(),
+			sortBy: "ENGAGEMENT_DATE",
+			sortOrder: "DESC"
 		}
 		API.query(/* GraphQL */`
 			reportList(f:search, query:$rollupQuery) {
 				pageNum, pageSize, totalCount, list {
-					id, state, intent, engagementDate, intent, keyOutcomes, nextSteps
+					id, state, intent, engagementDate, intent, keyOutcomes, nextSteps, cancelledReason
 					author { id, name }
-					location { id, name, lat, lng}
+					location { id, name, lat, lng }
 					poams { id, longName }
 					comments { id }
 					primaryAdvisor {
@@ -97,6 +100,10 @@ export default class RollupShow extends Page {
 						position { organization { id, shortName, longName }}
 					}
 					advisorOrg {
+						id, shortName
+						parentOrg { id, shortName }
+					}
+					principalOrg {
 						id, shortName
 						parentOrg { id, shortName }
 					}
@@ -125,15 +132,10 @@ export default class RollupShow extends Page {
 			return
 		}
 
-		// Sets up the data
-		var step1// = d3.nest()
-		//		.key(function(d){return (d.advisorOrg && d.advisorOrg.shortName)})
-		//		.rollup(function(d){return {l:d.length,s:d[0].state,r:d}})
-		//		.entries(reports)
-
-		step1 = d3.nest()
+		// Set up the data
+		const step1 = d3.nest()
 			.key((entry) => (entry.org && entry.org.shortName) || "Unknown")
-			.rollup(entry => entry[0] )
+			.rollup(entry => entry[0])
 			.entries(graphData)
 
 		var svg = d3.select(this.graph),
@@ -149,14 +151,14 @@ export default class RollupShow extends Page {
 			.rangeRound([height, 0])
 
 		x.domain(step1.map(d => d.key))
-		y.domain([0,d3.max(step1.map(d => d.value.released))])
+		y.domain([0,d3.max(step1.map(d => d.value.released + d.value.cancelled))])
 		d3.line()
 			.x(function(d,i) { return x(d.key) })
 			.y(function(d,i) { return y(d.value.released) })
 
 		var xAxis = d3.axisBottom()
 			.scale(x)
-		var maxValue = d3.max(step1.map(d => d.value.released))
+		var maxValue = d3.max(y.domain())
 		var yAxis = d3.axisLeft()
 			.scale(y).ticks(Math.min(maxValue+1,10))
 
@@ -176,22 +178,28 @@ export default class RollupShow extends Page {
 			.style('text-anchor', 'end')
 			.text('# of Reports')
 
-		g.selectAll('.bar')
-			.data(step1)
-			.enter().append('rect')
-			.attr('class', 'line')
-			.attr('width', width / step1.length - padding)
-			.attr('x',function(d,i){return x(d.key) + (width / (step1.length + padding))})
-			.attr('height', (d,i) => height - y((d.value.released || 0)))
-			.attr('y', (d,i) => y((d.value.released || 0)) )
-			.attr('fill', function(d){return barColors.verified})
+		function createBarPart(color, getYVal, getHeight) {
+			g.selectAll('.bar')
+				.data(step1)
+				.enter()
+				.append('rect')
+				.attr('class', 'line')
+				.attr('width', width / step1.length - padding)
+				.attr('x', d => x(d.key) + (width / (step1.length + padding)))
+				.attr('height', d => height - y(getHeight(d.value) || 0))
+				.attr('y', d => y(getYVal(d.value) || 0))
+				.attr('fill', () => color)
+		}
+
+		createBarPart(barColors.verified, val => val.released, val => val.released)
+		createBarPart(barColors.cancelled, val => val.released + val.cancelled, val => val.cancelled)
 	}
 
 	render() {
 		// let reports = this.state.reports.list
 		let reportOTD = null //reports[0]
 
-		// Admins can edit poams, or super users if this poam is assigned to their org.
+		// Only admins can email the Rollup out.
 		let currentUser = this.context.app.state.currentUser
 		let canEdit = currentUser && currentUser.isAdmin()
 
@@ -199,16 +207,16 @@ export default class RollupShow extends Page {
 			<div>
 				<Breadcrumbs items={[['Rollup', ''],[this.dateStr, 'rollup/' +this.dateStr]]} />
 
-				{canEdit &&
-					<div className="pull-right">
-						<CalendarButton onChange={this.changeRollupDate} value={this.state.date.toISOString()} style={calendarButtonCss} />
+				<div className="pull-right">
+					<CalendarButton onChange={this.changeRollupDate} value={this.state.date.toISOString()} style={calendarButtonCss} />
 
+					{canEdit &&
 						<DropdownButton bsStyle="primary" title="Actions" id="actions" className="pull-right" onSelect={this.actionSelect}>
 							<MenuItem eventKey="email">Email rollup</MenuItem>
 							<MenuItem eventKey="print">Print</MenuItem>
 						</DropdownButton>
-					</div>
-				}
+					}
+				</div>
 
 				<h1>
 					Daily Rollup - {this.dateLongStr}
@@ -255,28 +263,24 @@ export default class RollupShow extends Page {
 	@autobind
 	renderEmailModal() {
 		let email = this.state.email
-		return <Modal show={this.state.showEmailModal} onHide={this.toggleEmailModal} >
-			<Modal.Header closeButton>
-				<Modal.Title>Email rollup</Modal.Title>
-			</Modal.Header>
-			<Modal.Body>
-				{email.errors &&
-					<Alert bsStyle="danger">{email.errors}</Alert>
-				}
-				<Form formFor={email} onChange={this.onChange} submitText={false} >
-					<Form.Field id="to" label="To:" >
-						<Autocomplete valueKey="name"
-							placeholder="Select the person to email"
-							url="/api/people/search"
-							queryParams={{role: 'ADVISOR'}}
-						/>
-					</Form.Field>
+		return <Modal show={this.state.showEmailModal} onHide={this.toggleEmailModal}>
+			<Form formFor={email} onChange={this.onChange} submitText={false} >
+				<Modal.Header closeButton>
+					<Modal.Title>Email rollup</Modal.Title>
+				</Modal.Header>
+
+				<Modal.Body>
+					{email.errors &&
+						<Alert bsStyle="danger">{email.errors}</Alert>
+					}
+
+					<Form.Field id="to" />
 					<Form.Field componentClass="textarea" id="comment" />
-				</Form>
-			</Modal.Body>
-			<Modal.Footer>
-				<Button bsStyle="primary" onClick={this.emailReport}>Send Email</Button>
-			</Modal.Footer>
+				</Modal.Body>
+				<Modal.Footer>
+					<Button bsStyle="primary" onClick={this.emailRollup}>Send email</Button>
+				</Modal.Footer>
+			</Form>
 		</Modal>
 	}
 
@@ -286,7 +290,7 @@ export default class RollupShow extends Page {
 	}
 
 	@autobind
-	emailReport() {
+	emailRollup() {
 		let email = this.state.email
 		if (!email.to) {
 			email.errors = 'You must select a person to send this to'
@@ -295,11 +299,9 @@ export default class RollupShow extends Page {
 		}
 
 		email = {
-			toAddresses: [email.to.emailAddress],
-			context: {comment: email.comment },
-			subject: 'Daily rollup for ' + this.dateStr + ' from ANET'
+			toAddresses: email.to.replace(/\s/g, '').split(/[,;]/),
 		}
-		API.send(`/api/reports/${this.state.report.id}/email`, email).then (() =>
+		API.send(`/api/reports/rollup/email?startDate=${this.rollupStart.valueOf()}&endDate=${this.rollupEnd.valueOf()}&comment=${email.comment}`, email).then (() =>
 			this.setState({
 				success: 'Email successfully sent',
 				showEmailModal: false,

@@ -115,7 +115,9 @@ public class OrganizationResource implements IGraphQLResource {
 	@GraphQLFetcher
 	@Path("/{id}")
 	public Organization getById(@PathParam("id") int id) {
-		return dao.getById(id);
+		Organization org = dao.getById(id);
+		if (org == null) { throw new WebApplicationException(Status.NOT_FOUND); } 
+		return org;
 	}
 	
 	/**

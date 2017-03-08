@@ -1,5 +1,6 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
+import ModelPage from 'components/ModelPage'
 import moment from 'moment'
 
 import ReportForm from './Form'
@@ -9,10 +10,12 @@ import Breadcrumbs from 'components/Breadcrumbs'
 import API from 'api'
 import {Report} from 'models'
 
-export default class ReportEdit extends Page {
+class ReportEdit extends Page {
 	static pageProps = {
 		useNavigation: false
 	}
+
+	static modelName = 'Report'
 
 	static contextTypes = {
 		app: PropTypes.object,
@@ -63,3 +66,5 @@ export default class ReportEdit extends Page {
 		)
 	}
 }
+
+export default ModelPage(ReportEdit)

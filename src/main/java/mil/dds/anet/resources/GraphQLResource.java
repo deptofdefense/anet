@@ -12,6 +12,7 @@ import javax.annotation.security.PermitAll;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -21,8 +22,10 @@ import org.eclipse.jetty.util.log.Logger;
 
 import com.codahale.metrics.annotation.Timed;
 
+import graphql.ExceptionWhileDataFetching;
 import graphql.ExecutionResult;
 import graphql.GraphQL;
+import graphql.GraphQLError;
 import graphql.schema.GraphQLFieldDefinition;
 import graphql.schema.GraphQLList;
 import graphql.schema.GraphQLObjectType;
@@ -200,12 +203,26 @@ public class GraphQLResource {
 		ExecutionResult executionResult = graphql.execute(query, context, variables);
 		Map<String, Object> result = new LinkedHashMap<>();
 		if (executionResult.getErrors().size() > 0) {
+			WebApplicationException actual = null;
+			for (GraphQLError error : executionResult.getErrors()) { 
+				if (error instanceof ExceptionWhileDataFetching) { 
+					ExceptionWhileDataFetching exception = (ExceptionWhileDataFetching) error;
+					if (exception.getException() instanceof WebApplicationException) { 
+						actual = (WebApplicationException) exception.getException();
+						break;
+					}
+				}
+			}
+			
 			result.put("errors", executionResult.getErrors().stream()
 					.map(e -> e.getMessage())
 					.collect(Collectors.toList()));
+			Status status = (actual != null) ? 
+				Status.fromStatusCode(actual.getResponse().getStatus()) 
+				: 
+				Status.INTERNAL_SERVER_ERROR;
 			log.warn("Errors: {}", executionResult.getErrors());
-			//TODO: pull out the errors and figure out the actual status code if it was thrown via a WebApplicationException
-			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+			return Response.status(status).entity(result).build();
 		}
 		result.put("data", executionResult.getData());
 		return Response.ok().entity(result).build();

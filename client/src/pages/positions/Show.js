@@ -1,5 +1,6 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
+import ModelPage from 'components/ModelPage'
 import {Link} from 'react-router'
 import {Table, DropdownButton, MenuItem} from 'react-bootstrap'
 
@@ -14,10 +15,12 @@ import moment from 'moment'
 
 import {Person, Position, Organization} from 'models'
 
-export default class PositionShow extends Page {
+class PositionShow extends Page {
 	static contextTypes = {
 		app: PropTypes.object.isRequired,
 	}
+
+	static modelName = 'Position'
 
 	constructor(props) {
 		super(props)
@@ -167,3 +170,5 @@ export default class PositionShow extends Page {
 	}
 
 }
+
+export default ModelPage(PositionShow)

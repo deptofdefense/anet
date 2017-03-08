@@ -1,5 +1,6 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
+import ModelPage from 'components/ModelPage'
 import {Alert, Table, Button, Col, DropdownButton, MenuItem, Modal, Checkbox} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 import moment from 'moment'
@@ -11,32 +12,15 @@ import Form from 'components/Form'
 import Messages from 'components/Messages'
 import LinkTo from 'components/LinkTo'
 import History from 'components/History'
-import Autocomplete from 'components/Autocomplete'
 
 import API from 'api'
 
-import CALENDAR_ICON from 'resources/calendar.png'
-import LOCATION_ICON from 'resources/locations.png'
-import POSITIVE_ICON from 'resources/thumbs_up.png'
-import NEUTRAL_ICON from 'resources/neutral.png'
-import NEGATIVE_ICON from 'resources/thumbs_down.png'
-
-const atmosphereIconCss = {
-	height: '48px',
-	marginTop: '-14px',
-	marginRight: '1rem',
-}
-
-const atmosphereIcons = {
-	POSITIVE: POSITIVE_ICON,
-	NEUTRAL: NEUTRAL_ICON,
-	NEGATIVE: NEGATIVE_ICON,
-}
-
-export default class ReportShow extends Page {
+class ReportShow extends Page {
 	static contextTypes = {
 		app: PropTypes.object,
 	}
+
+	static modelName = 'Report'
 
 	constructor(props) {
 		super(props)
@@ -177,28 +161,25 @@ export default class ReportShow extends Page {
 				{this.renderEmailModal()}
 
 				<Form static formFor={report} horizontal>
-					<fieldset>
+					<fieldset className="show-report-overview">
 						<legend>Report #{report.id}</legend>
 
 						<Form.Field id="intent" label="Summary" >
-							<div>
-								<b>The goal of this meeting is to</b> {report.intent}. &nbsp;
-								{report.keyOutcomes &&
-									<span><b>The key outcomes are</b> {report.keyOutcomes}.&nbsp;</span>}
-								<b>The next steps are</b> {report.nextSteps}
-							</div>
+							<p><strong>Meeting goal:</strong> {report.intent}</p>
+							{report.keyOutcomes && <p><span><strong>Key outcomes:</strong> {report.keyOutcomes}&nbsp;</span></p>}
+							<p><strong>Next steps:</strong> {report.nextSteps}</p>
 						</Form.Field>
 
-						<Form.Field id="engagementDate" label="Date" icon={CALENDAR_ICON} getter={date => date && moment(date).format('D MMM YYYY')} />
+						<Form.Field id="engagementDate" label="Date" getter={date => date && moment(date).format('D MMMM, YYYY')} />
 
-						<Form.Field id="location" label="Location" icon={LOCATION_ICON}>
+						<Form.Field id="location" label="Location">
 							{report.location && <LinkTo location={report.location} />}
 						</Form.Field>
 
 						{!isCancelled &&
 							<Form.Field id="atmosphere" label="Atmospherics">
-								<img style={atmosphereIconCss} src={atmosphereIcons[report.atmosphere]} alt={report.atmosphere} />
-								<span id="atmosphereDetails" >{report.atmosphereDetails}</span>
+								{utils.upperCaseFirst(report.atmosphere)}
+								{report.atmosphereDetails && ` – ${report.atmosphereDetails}`}
 							</Form.Field>
 						}
 						{isCancelled &&
@@ -257,7 +238,7 @@ export default class ReportShow extends Page {
 							<tbody>
 								{Poam.map(report.poams, (poam, idx) =>
 									<tr key={poam.id} id={"poam_" + idx}>
-										<td className="poamName" ><LinkTo poam={poam} /></td>
+										<td className="poamName" ><LinkTo poam={poam} >{poam.shortName} - {poam.longName}</LinkTo></td>
 										<td className="poamOrg" ><LinkTo organization={poam.responsibleOrg} /></td>
 									</tr>
 								)}
@@ -380,28 +361,25 @@ export default class ReportShow extends Page {
 	@autobind
 	renderEmailModal() {
 		let email = this.state.email
-		return <Modal show={this.state.showEmailModal} onHide={this.toggleEmailModal} >
-			<Modal.Header closeButton>
-				<Modal.Title>Email Report</Modal.Title>
-			</Modal.Header>
-			<Modal.Body>
-				{email.errors &&
-					<Alert bsStyle="danger">{email.errors}</Alert>
-				}
-				<Form formFor={email} onChange={this.onChange} submitText={false} >
-					<Form.Field id="to" label="To:" >
-						<Autocomplete valueKey="name"
-							placeholder="Select the person to email"
-							url="/api/people/search"
-							queryParams={{role: 'ADVISOR'}}
-						/>
-					</Form.Field>
-					<Form.Field componentClass="textarea" id="comment" />
-				</Form>
-			</Modal.Body>
-			<Modal.Footer>
-				<Button bsStyle="primary" onClick={this.emailReport}>Send Email</Button>
-			</Modal.Footer>
+		return <Modal show={this.state.showEmailModal} onHide={this.toggleEmailModal}>
+			<Form formFor={email} onChange={this.onChange} submitText={false}>
+				<Modal.Header closeButton>
+					<Modal.Title>Email Report</Modal.Title>
+				</Modal.Header>
+
+				<Modal.Body>
+					{email.errors &&
+						<Alert bsStyle="danger">{email.errors}</Alert>
+					}
+
+					<Form.Field id="to" />
+					<Form.Field id="comment" componentClass="textarea" />
+				</Modal.Body>
+
+				<Modal.Footer>
+					<Button bsStyle="primary" onClick={this.emailReport}>Send Email</Button>
+				</Modal.Footer>
+			</Form>
 		</Modal>
 	}
 
@@ -420,7 +398,7 @@ export default class ReportShow extends Page {
 		}
 
 		email = {
-			toAddresses: [email.to.emailAddress],
+			toAddresses: email.to.replace(/\s/g, '').split(/[,;]/),
 			context: {comment: email.comment },
 			subject: 'Sharing an email from ANET'
 		}
@@ -599,3 +577,5 @@ export default class ReportShow extends Page {
 		})
 	}
 }
+
+export default ModelPage(ReportShow)

@@ -1,5 +1,6 @@
 package mil.dds.anet.graphql;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Arrays;
@@ -86,6 +87,12 @@ public class PropertyDataFetcherWithArgs implements DataFetcher {
 		Object[] args = fetchParameters(method, environment);
 		try {
 			return method.invoke(source, args);
+		} catch (InvocationTargetException e) { 
+			if (e.getCause() instanceof WebApplicationException) { 
+				throw (WebApplicationException) e.getCause();
+			} else { 
+				throw new WebApplicationException(e.getCause());
+			}
 		} catch (Exception e) {
 			throw new WebApplicationException(e.getMessage(),e);
 		}

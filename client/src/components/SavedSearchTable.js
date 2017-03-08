@@ -23,7 +23,6 @@ export default class SavedSearchTable extends Component {
 	}
 
 	componentWillReceiveProps(nextProps) {
-		console.log('sst' , nextProps)
 		if (nextProps.search && (nextProps.search.id !== this.props.search.id)) {
 			this.runSearch(nextProps.search)
 		}

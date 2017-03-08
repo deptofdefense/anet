@@ -15,6 +15,7 @@ import API from 'api'
 import App from './pages/App'
 import Home from './pages/Home'
 import Search from './pages/Search'
+import PageMissing from './pages/PageMissing'
 
 import ReportsIndex from './pages/reports/Index'
 import ReportNew from './pages/reports/New'
@@ -97,6 +98,7 @@ ReactDOM.render((
 				<Route path="admin" component={AdminIndex} />
 
 				<Route path="onboarding" component={OnboardingShow} />
+				<Route path="*" component={PageMissing} />
 			</Route>
 		</Router>
 	</InjectablesProvider>

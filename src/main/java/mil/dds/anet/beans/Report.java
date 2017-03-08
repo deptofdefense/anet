@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import javax.ws.rs.WebApplicationException;
+
 import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
@@ -51,7 +53,9 @@ public class Report extends AbstractAnetBean {
 	
 	Organization advisorOrg;
 	Organization principalOrg;
-	
+	ReportPerson primaryAdvisor;
+	ReportPerson primaryPrincipal;
+
 	List<Comment> comments;
 
 	@GraphQLIgnore
@@ -156,6 +160,15 @@ public class Report extends AbstractAnetBean {
 		this.intent = intent;
 	}
 
+	public void loadAll() {
+		this.loadPrincipalOrg();
+		this.loadAdvisorOrg();
+		this.loadLocation();
+		this.loadPrimaryAdvisor();
+		this.loadPrimaryPrincipal();
+		this.loadPoams();
+	}
+
 	@GraphQLFetcher("attendees")
 	public List<ReportPerson> loadAttendees() { 
 		if (attendees == null && id != null) {
@@ -174,19 +187,35 @@ public class Report extends AbstractAnetBean {
 	}
 
 	@GraphQLFetcher("primaryAdvisor")
-	public ReportPerson loadPrimaryAdvisor() { 
-		loadAttendees(); //Force the load of attendees
-		return attendees.stream().filter(p ->
+	public ReportPerson loadPrimaryAdvisor() {
+		if (primaryAdvisor == null) {
+			loadAttendees(); //Force the load of attendees
+			this.primaryAdvisor = attendees.stream().filter(p ->
 				p.isPrimary() && p.getRole().equals(Role.ADVISOR)
 			).findFirst().orElse(null);
+		}
+		return primaryAdvisor;
 	}
-	
+
 	@GraphQLFetcher("primaryPrincipal")
-	public ReportPerson loadPrimaryPrincipal() { 
-		loadAttendees(); //Force the load of attendees
-		return attendees.stream().filter(p ->
+	public ReportPerson loadPrimaryPrincipal() {
+		if (primaryPrincipal == null) {
+			loadAttendees(); //Force the load of attendees
+			this.primaryPrincipal = attendees.stream().filter(p ->
 				p.isPrimary() && p.getRole().equals(Role.PRINCIPAL)
 			).findFirst().orElse(null);
+		}
+		return primaryPrincipal;
+	}
+
+	@GraphQLIgnore
+	public ReportPerson getPrimaryAdvisor() {
+		return primaryAdvisor;
+	}
+
+	@GraphQLIgnore
+	public ReportPerson getPrimaryPrincipal() {
+		return primaryPrincipal;
 	}
 	
 	@GraphQLFetcher("poams")
@@ -332,16 +361,22 @@ public class Report extends AbstractAnetBean {
 		
 		Organization ao = engine.getOrganizationForPerson(getAuthor());
 		if (ao == null) {
-			//use the default approval workflow. 
-			ao = Organization.createWithId(
-					Integer.parseInt(engine.getAdminSetting(AdminSettingKeys.DEFAULT_APPROVAL_ORGANIZATION)));
+			//use the default approval workflow.
+			String defaultOrgId = engine.getAdminSetting(AdminSettingKeys.DEFAULT_APPROVAL_ORGANIZATION);
+			if (defaultOrgId == null) { 
+				throw new WebApplicationException("Missing the DEFAULT_APPROVAL_ORGANIZATION admin setting");
+			}
+			ao = Organization.createWithId(Integer.parseInt(defaultOrgId));
 		}
 		
 		List<ApprovalStep> steps = engine.getApprovalStepsForOrg(ao);
 		if (steps == null || steps.size() == 0) {
 			//No approval steps for this organization
-			steps = engine.getApprovalStepsForOrg(Organization.createWithId(
-					Integer.parseInt(engine.getAdminSetting(AdminSettingKeys.DEFAULT_APPROVAL_ORGANIZATION))));
+			String defaultOrgId = engine.getAdminSetting(AdminSettingKeys.DEFAULT_APPROVAL_ORGANIZATION);
+			if (defaultOrgId == null) { 
+				throw new WebApplicationException("Missing the DEFAULT_APPROVAL_ORGANIZATION admin setting");
+			}
+			steps = engine.getApprovalStepsForOrg(Organization.createWithId(Integer.parseInt(defaultOrgId)));
 		}
 				
 		List<ApprovalAction> workflow = new LinkedList<ApprovalAction>();

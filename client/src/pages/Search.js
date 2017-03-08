@@ -287,6 +287,7 @@ export default class Search extends Page {
 					<th>Name</th>
 					<th>Position</th>
 					<th>Org</th>
+					<th>Phone number</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -296,9 +297,9 @@ export default class Search extends Page {
 							<img src={person.iconUrl()} alt={person.role} height={20} className="person-icon" />
 							<LinkTo person={person}>{person.rank} {person.name}</LinkTo>
 						</td>
-						<td>{person.phoneNumber}</td>
 						<td>{person.position && <LinkTo position={person.position} />}</td>
 						<td>{person.position && person.position.organization && <LinkTo organization={person.position.organization} />}</td>
+						<td>{person.phoneNumber}</td>
 					</tr>
 				)}
 			</tbody>

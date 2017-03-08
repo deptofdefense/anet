@@ -251,9 +251,34 @@ a.home-tile {
 	border-top: 1px solid #ccc;
 }
 
+.report-summary .row {
+	margin-top: 3px;
+}
+
 .report-summary .read-full {
 	float: right;
-	margin-top: -38px;
+}
+
+.not-found {
+	height: 100%;
+}
+
+.not-found body {
+	background-image: url(resources/mountains.png);
+	background-repeat: no-repeat;
+	background-position: center bottom;
+	background-size: contain;
+}
+
+.not-found .not-found-text {
+	text-align: center;
+}
+
+.not-found .planet {
+	width: 250px;
+	position: absolute;
+	right: 0;
+	top: -90px;
 }
 
 .onboarding-new {
@@ -262,7 +287,7 @@ a.home-tile {
 	margin-right: auto;
 }
 
-.onboarding-new h1,p,button {
+.onboarding-new h1, .onboarding-new p, .onboarding-new button {
 	text-align: center;
 }
 
@@ -345,9 +370,27 @@ a.home-tile {
 	text-align: center;
 }
 
-.attendeeTableRow td { 
+.attendeeTableRow td {
 	border-top: 0px !important;
 }
 hr.attendeeDivider {
 	margin: 0px;
+}
+
+.report-cancelled {
+	border-left: 1.5rem solid #DA9795;
+	padding-left: 1rem;
+}
+
+.show-report-overview label.col-sm-2 {
+	/* This clobbers the grid system but w/e. */
+	width: 130px; 
+}
+
+.show-report-overview .form-group {
+	/* The design calls for 18px of separation between the form rows.
+		The form row already has padding-top: 7px and padding-bottom: 7px,
+		and 7+7 = 14, so we need 4 more px here to make it 18 in total.
+	*/
+	margin-bottom: 4px;
 }
