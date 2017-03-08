@@ -143,6 +143,32 @@ export default class ReportForm extends Component {
 							This engagement was cancelled
 						</Checkbox>
 					</Form.Field>
+
+					{!isCancelled &&
+						<Form.Field id="atmosphere">
+							<ButtonToggleGroup>
+								<Button value="POSITIVE" id="positiveAtmos" ><img src={POSITIVE_ICON} height={25} alt="positive" /></Button>
+								<Button value="NEUTRAL" id="neutralAtmos" ><img src={NEUTRAL_ICON} height={25} alt="neutral" /></Button>
+								<Button value="NEGATIVE" id="negativeAtmos" ><img src={NEGATIVE_ICON} height={25} alt="negative" /></Button>
+							</ButtonToggleGroup>
+
+						</Form.Field>
+					}
+
+					{!isCancelled && report.atmosphere && report.atmosphere !== 'POSITIVE' &&
+						<Form.Field id="atmosphereDetails" placeholder={`Why was this engagement ${report.atmosphere}?`} />
+					}
+
+					{isCancelled &&
+						<Form.Field id="cancelledReason" componentClass="select" >
+							<option value="CANCELLED_BY_ADVISOR">Cancelled by Advisor</option>
+							<option value="CANCELLED_BY_PRINCIPAL">Cancelled by Principal</option>
+							<option value="CANCELLED_DUE_TO_TRANSPORTATION">Cancelled due to Transportation</option>
+							<option value="CANCELLED_DUE_TO_FORCE_PROTECTION">Cancelled due to Force Protection</option>
+							<option value="CANCELLED_DUE_TO_ROUTES">Cancelled due to Routes</option>
+							<option value="CANCELLED_DUE_TO_THREAT">Cancelled due to Thrat</option>
+						</Form.Field>
+					}
 			</fieldset>
 
 			<fieldset>
