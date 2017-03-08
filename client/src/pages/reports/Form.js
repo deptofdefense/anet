@@ -143,7 +143,6 @@ export default class ReportForm extends Component {
 							This engagement was cancelled
 						</Checkbox>
 					</Form.Field>
-				}
 			</fieldset>
 
 			<fieldset>
