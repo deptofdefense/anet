@@ -178,7 +178,7 @@ class ReportShow extends Page {
 
 						{!isCancelled &&
 							<Form.Field id="atmosphere" label="Atmospherics">
-								{utils.upperCaseFirst(report.atmosphere)}
+								{utils.sentenceCase(report.atmosphere)}
 								{report.atmosphereDetails && ` – ${report.atmosphereDetails}`}
 							</Form.Field>
 						}

@@ -63,13 +63,12 @@ export default class ReportSummary extends Component {
 				</Col>
 			</Row>
 
-			{report.poams.map(poam => <Row key={poam.id}>
+			<Row>
 				<Col md={12}>
-					<img height={20} src={POAM_ICON} alt={poam.longName} className="person-icon" />
-					<LinkTo poam={poam} />
+					{report.atmosphere && <span><strong>Atmospherics:</strong> {utils.sentenceCase(report.atmosphere)} 
+						{report.atmosphereDetails && ` – ${report.atmosphereDetails}`}</span> }
 				</Col>
-			</Row>)}
-
+			</Row>
 			<Row>
 				<Col md={12}>
 					{report.intent && <span><strong>Meeting goal:</strong> {report.intent}</span> }
