@@ -584,19 +584,9 @@ public class ReportResource implements IGraphQLResource {
 	@Timed
 	@Path("/rollup")
 	@Produces(MediaType.TEXT_HTML)
-<<<<<<< HEAD
-	public Response showRollupEmail(@Auth Person user, @QueryParam("startDate") Long start, @QueryParam("endDate") Long end) {
-		ReportSearchQuery query = new ReportSearchQuery();
-		query.setPageSize(100000);
-		query.setReleasedAtStart(new DateTime(start));
-		query.setReleasedAtEnd(new DateTime(end));
-
-		AnetEmail email = new AnetEmail();
-=======
 	public Response showRollupEmail(@Auth Person user, @QueryParam("startDate") Long start, 
 			@QueryParam("endDate") Long end, 
 			@QueryParam("showText") @DefaultValue("false") Boolean showReportText) {
->>>>>>> master
 		DailyRollupEmail action = new DailyRollupEmail();
 		action.setStartDate(new DateTime(start));
 		action.setEndDate(new DateTime(end));
