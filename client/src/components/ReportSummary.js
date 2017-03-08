@@ -1,5 +1,5 @@
 import React, {Component, PropTypes} from 'react'
-import {Button, Grid, Row, Col} from 'react-bootstrap'
+import {Button, Grid, Row, Col, Label} from 'react-bootstrap'
 import utils from 'utils'
 
 import LinkTo from 'components/LinkTo'
@@ -27,20 +27,24 @@ export default class ReportSummary extends Component {
 
 			<Row>
 				<Col md={6}>
+					{report.engagementDate && 
+						<Label bsStyle="primary" className="engagement-date">
+							{moment(report.engagementDate).format('D MMM YYYY')}
+						</Label>
+					}
+					{report.location &&
+						<span>
+							<LinkTo location={report.location} />
+						</span>
+					}
+				</Col>
+				<Col md={6}>
 					{report.advisorOrg &&
 						<LinkTo organization={new Organization(report.advisorOrg)} />
 					}
 					{report.principalOrg && ' -> '}
 					{report.principalOrg &&
 						<LinkTo organization={new Organization(report.principalOrg)} />
-					}
-				</Col>
-				<Col md={6}>
-					{report.engagementDate && moment(report.engagementDate).format('D MMM YYYY')}
-					{report.location &&
-						<span> @&nbsp;
-							<LinkTo location={report.location} />
-						</span>
 					}
 				</Col>
 			</Row>
