@@ -593,6 +593,8 @@ public class ReportResource implements IGraphQLResource {
 		
 		Map<String,Object> context = action.execute();
 		context.put("serverUrl", config.getServerUrl());
+		context.put(AdminSettingKeys.SECURITY_BANNER_TEXT.name(), engine.getAdminSetting(AdminSettingKeys.SECURITY_BANNER_TEXT));
+		context.put(AdminSettingKeys.SECURITY_BANNER_COLOR.name(), engine.getAdminSetting(AdminSettingKeys.SECURITY_BANNER_COLOR));
 		context.put(DailyRollupEmail.SHOW_REPORT_TEXT_FLAG, showReportText);
 		
 		try { 
