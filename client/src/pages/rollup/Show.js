@@ -75,10 +75,13 @@ export default class RollupShow extends Page {
 	}
 
 	fetchData(props) {
-		let rollupQuery = {
+		const rollupQuery = {
+			state: ['DRAFT', 'PENDING_APPROVAL', 'RELEASED', 'REJECTED'],
 			releasedAtStart: this.rollupStart.valueOf(),
 			releasedAtEnd: this.rollupEnd.valueOf(),
-			engagementDateStart: moment(this.rollupStart).subtract(14, 'days').valueOf()
+			engagementDateStart: moment(this.rollupStart).subtract(14, 'days').valueOf(),
+			sortBy: "ENGAGEMENT_DATE",
+			sortOrder: "DESC"
 		}
 		API.query(/* GraphQL */`
 			reportList(f:search, query:$rollupQuery) {

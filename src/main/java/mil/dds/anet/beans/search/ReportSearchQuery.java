@@ -8,6 +8,8 @@ import mil.dds.anet.beans.Report.ReportState;
 
 public class ReportSearchQuery implements ISearchQuery {
 
+	public enum ReportSearchSortBy { CREATED_AT, ENGAGEMENT_DATE, RELEASED_AT } 
+	
 	Integer authorId;
 	String text;
 	DateTime engagementDateStart;
@@ -25,6 +27,8 @@ public class ReportSearchQuery implements ISearchQuery {
 	Integer poamId;
 	Integer pendingApprovalOf;
 	List<ReportState> state;
+	ReportSearchSortBy sortBy;
+	SortOrder sortOrder;
 	
 	int pageNum;
 	int pageSize;
@@ -32,6 +36,8 @@ public class ReportSearchQuery implements ISearchQuery {
 	public ReportSearchQuery() { 
 		this.pageNum = 0;
 		this.pageSize = 10;
+		this.sortBy = ReportSearchSortBy.CREATED_AT;
+		this.sortOrder = SortOrder.DESC;
 	}
 
 	public Integer getAuthorId() {
@@ -168,6 +174,22 @@ public class ReportSearchQuery implements ISearchQuery {
 
 	public void setState(List<ReportState> state) {
 		this.state = state;
+	}
+
+	public ReportSearchSortBy getSortBy() {
+		return sortBy;
+	}
+
+	public void setSortBy(ReportSearchSortBy sortBy) {
+		this.sortBy = sortBy;
+	}
+
+	public SortOrder getSortOrder() {
+		return sortOrder;
+	}
+
+	public void setSortOrder(SortOrder sortOrder) {
+		this.sortOrder = sortOrder;
 	}
 
 	@Override

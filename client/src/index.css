@@ -257,6 +257,31 @@ a.home-tile {
 
 .report-summary .read-full {
 	float: right;
+<<<<<<< HEAD
+=======
+}
+
+.not-found {
+	height: 100%;
+}
+
+.not-found body {
+	background-image: url(resources/mountains.png);
+	background-repeat: no-repeat;
+	background-position: center bottom;
+	background-size: contain;
+}
+
+.not-found .not-found-text {
+	text-align: center;
+}
+
+.not-found .planet {
+	width: 250px;
+	position: absolute;
+	right: 0;
+	top: -90px;
+>>>>>>> master
 }
 
 .onboarding-new {
@@ -394,4 +419,17 @@ hr.attendeeDivider {
 .report-form .top-submit-buttons .button-row {
 	position: relative;
 	top: -40px;
+}
+
+.show-report-overview label.col-sm-2 {
+	/* This clobbers the grid system but w/e. */
+	width: 130px; 
+}
+
+.show-report-overview .form-group {
+	/* The design calls for 18px of separation between the form rows.
+		The form row already has padding-top: 7px and padding-bottom: 7px,
+		and 7+7 = 14, so we need 4 more px here to make it 18 in total.
+	*/
+	margin-bottom: 4px;
 }

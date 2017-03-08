@@ -1,5 +1,6 @@
 import React from 'react'
 import Page from 'components/Page'
+import ModelPage from 'components/ModelPage'
 
 import PositionForm from './Form'
 import {ContentForHeader} from 'components/Header'
@@ -8,10 +9,12 @@ import Breadcrumbs from 'components/Breadcrumbs'
 import API from 'api'
 import {Position} from 'models'
 
-export default class PositionEdit extends Page {
+class PositionEdit extends Page {
 	static pageProps = {
 		useNavigation: false
 	}
+
+	static modelName = 'Position'
 
 	constructor(props) {
 		super(props)
@@ -51,3 +54,5 @@ export default class PositionEdit extends Page {
 		)
 	}
 }
+
+export default ModelPage(PositionEdit)

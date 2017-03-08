@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.Response;
 
 import org.junit.Test;
 
@@ -51,5 +52,13 @@ public class SavedSearchResourceTest extends AbstractResourceTest {
 		ReportSearchQuery query = mapper.readValue(created.getQuery(), ReportSearchQuery.class);
 		ReportList results = httpQuery("/api/reports/search", jack).post(Entity.json(query), ReportList.class);
 		assertThat(results.getList()).isNotEmpty();
+		
+		//Delete it
+		Response resp = httpQuery("/api/savedSearches/" + created.getId(), jack).delete();
+		assertThat(resp.getStatus()).isEqualTo(200);
+		
+		mine = httpQuery("/api/savedSearches/mine", jack).get(new GenericType<List<SavedSearch>>() {});
+		assertThat(mine).doesNotContain(created);
+		
 	}
 }

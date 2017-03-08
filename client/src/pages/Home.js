@@ -78,7 +78,7 @@ export default class Home extends Page {
 				<Breadcrumbs />
 				<Messages error={this.state.error} success={this.state.success} />
 
-				{this.state.showGettingStartedPanel === 'true' && 
+				{this.state.showGettingStartedPanel === 'true' &&
 					<fieldset className="home-tile-row">
 						<legend>Getting Started</legend>
 						<Grid fluid className="getting-started-grid">
@@ -146,7 +146,14 @@ export default class Home extends Page {
 					</FormGroup>
 
 					{this.state.selectedSearch &&
-						<SavedSearchTable search={this.state.selectedSearch} />
+						<div>
+							<div className="pull-right">
+								<Button bsStyle="danger" bsSize="small" onClick={this.deleteSearch} >
+									Delete Search
+								</Button>
+							</div>
+							<SavedSearchTable search={this.state.selectedSearch} />
+						</div>
 					}
 				</fieldset>
 			</div>
@@ -156,9 +163,27 @@ export default class Home extends Page {
 	@autobind
 	onSaveSearchSelect(event) {
 		let id = event && event.target ? event.target.value : event
-		let search = this.state.savedSearches.find(el => el.id == id)
+		let search = this.state.savedSearches.find(el => Number(el.id) === Number(id))
 		this.setState({selectedSearch: search})
 	}
+
+	@autobind
+	deleteSearch() {
+		let search = this.state.selectedSearch
+		let index = this.state.savedSearches.findIndex(s => s.id === search.id)
+		if (confirm("Are you sure you want to delete '" + search.name + "'?")) {
+			API.send(`/api/savedSearches/${search.id}`, {}, {method: 'DELETE'})
+				.then(data => {
+					let savedSearches = this.state.savedSearches
+					savedSearches.splice(index, 1)
+					let nextSelect = savedSearches.length > 0 ? savedSearches[0] : null
+					this.setState({ savedSearches: savedSearches, selectedSearch : nextSelect })
+				}, data => {
+					this.setState({success:null, error: data})
+				})
+		}
+	}
+
 
 	@autobind
 	onDismissGettingStarted() {

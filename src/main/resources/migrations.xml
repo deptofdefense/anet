@@ -552,4 +552,9 @@
 			ALTER TABLE reports ALTER COLUMN releasedAt datetime2;
 		</sql>
 	</changeSet>
+
+<!--	<changeSet id="28" author="hpitelka" dbms="mssql" >
+		<addUniqueConstraint tableName="positions" columnNames="code,type" constraintName="uniquePositionCode" />
+	</changeSet>
+	-->
 </databaseChangeLog>

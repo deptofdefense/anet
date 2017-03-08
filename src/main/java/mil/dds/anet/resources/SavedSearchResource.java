@@ -3,11 +3,15 @@ package mil.dds.anet.resources;
 import java.util.List;
 
 import javax.annotation.security.PermitAll;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
@@ -41,6 +45,17 @@ public class SavedSearchResource implements IGraphQLResource  {
 	@Path("/mine")
 	public List<SavedSearch> getMySearches(@Auth Person user) { 
 		return dao.getSearchesByOwner(user);
+	}
+	
+	@DELETE
+	@Path("/{id}")
+	public Response delete(@Auth Person user, @PathParam("id") Integer id) { 
+		int numDeleted = dao.deleteSavedSearch(id, user);
+		if (numDeleted == 1) { 
+			return Response.ok().build();
+		} else { 
+			return Response.status(Status.NOT_FOUND).build();
+		}
 	}
 	
 	@Override

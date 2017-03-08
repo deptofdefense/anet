@@ -1,5 +1,6 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
+import ModelPage from 'components/ModelPage'
 import moment from 'moment'
 
 import PersonForm from './Form'
@@ -9,7 +10,7 @@ import Breadcrumbs from 'components/Breadcrumbs'
 import API from 'api'
 import {Person} from 'models'
 
-export default class PersonEdit extends Page {
+class PersonEdit extends Page {
 	static contextTypes = {
 		app: PropTypes.object.isRequired,
 	}
@@ -17,6 +18,8 @@ export default class PersonEdit extends Page {
 	static pageProps = {
 		useNavigation: false
 	}
+
+	static modelName = 'User'
 
 	constructor(props) {
 		super(props)
@@ -68,3 +71,5 @@ export default class PersonEdit extends Page {
 		)
 	}
 }
+
+export default ModelPage(PersonEdit)

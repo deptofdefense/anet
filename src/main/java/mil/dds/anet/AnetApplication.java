@@ -134,7 +134,7 @@ public class AnetApplication extends Application<AnetConfiguration> {
 		OrganizationResource orgResource = new OrganizationResource(engine);
 		PositionResource positionResource = new PositionResource(engine);
 		ApprovalStepResource asResource = new ApprovalStepResource(engine);
-		ReportResource reportResource = new ReportResource(engine);
+		ReportResource reportResource = new ReportResource(engine, configuration);
 		AdminResource adminResource = new AdminResource(engine);
 		HomeResource homeResource = new HomeResource(engine);
 		SavedSearchResource savedSearchResource = new SavedSearchResource(engine);

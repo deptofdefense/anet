@@ -32,11 +32,13 @@ export default class Page extends Component {
 			if (promise && promise instanceof Promise) {
 				NProgress.set(0.5)
 
-				promise.then(response => {
+				function doneLoading(response) {
 					NProgress.done()
 					document.body.classList.remove('loading')
 					return response
-				})
+				}
+
+				promise.then(doneLoading, doneLoading)
 			} else {
 				NProgress.done()
 				document.body.classList.remove('loading')

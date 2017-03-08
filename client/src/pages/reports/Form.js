@@ -199,7 +199,6 @@ export default class ReportForm extends Component {
 				</Form.Field>
 			</fieldset>
 
-
 			<PoamsSelector poams={report.poams}
 				shortcuts={recents.poams}
 				onChange={this.onChange}
