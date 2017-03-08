@@ -13,6 +13,8 @@ import jersey.repackaged.com.google.common.base.Joiner;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.ReportList;
 import mil.dds.anet.beans.search.ReportSearchQuery;
+import mil.dds.anet.beans.search.ISearchQuery.SortOrder;
+import mil.dds.anet.beans.search.ReportSearchQuery.ReportSearchSortBy;
 import mil.dds.anet.database.PersonDao;
 import mil.dds.anet.database.ReportDao;
 import mil.dds.anet.database.mappers.ReportMapper;
@@ -145,6 +147,34 @@ public class SqliteReportSearcher implements IReportSearcher {
 		
 		sql.append(" WHERE ");
 		sql.append(Joiner.on(" AND ").join(whereClauses));
+		
+		//Sort Ordering
+		sql.append(" ORDER BY ");
+		if (query.getSortBy() == null) { query.setSortBy(ReportSearchSortBy.CREATED_AT); }
+		switch (query.getSortBy()) {
+			case ENGAGEMENT_DATE:
+				sql.append("reports.engagementDate");
+				break;
+			case RELEASED_AT:
+				sql.append("reports.releasedAt");
+				break;
+			case CREATED_AT:
+			default:
+				sql.append("reports.createdAt");
+				break;
+		}
+
+		if (query.getSortOrder() == null) { query.setSortOrder(SortOrder.DESC); }
+		switch (query.getSortOrder()) {
+			case ASC:
+				sql.append(" ASC ");
+				break;
+			case DESC:
+			default:
+				sql.append(" DESC ");
+				break;
+		}
+		
 		sql.append(" LIMIT :limit OFFSET :offset)");
 		
 		if (commonTableExpression != null) { 

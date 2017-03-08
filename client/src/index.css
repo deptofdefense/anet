@@ -381,3 +381,16 @@ hr.attendeeDivider {
 	border-left: 1.5rem solid #DA9795;
 	padding-left: 1rem;
 }
+
+.show-report-overview label.col-sm-2 {
+	/* This clobbers the grid system but w/e. */
+	width: 130px; 
+}
+
+.show-report-overview .form-group {
+	/* The design calls for 18px of separation between the form rows.
+		The form row already has padding-top: 7px and padding-bottom: 7px,
+		and 7+7 = 14, so we need 4 more px here to make it 18 in total.
+	*/
+	margin-bottom: 4px;
+}

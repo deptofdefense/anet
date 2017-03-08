@@ -15,24 +15,6 @@ import History from 'components/History'
 
 import API from 'api'
 
-import CALENDAR_ICON from 'resources/calendar.png'
-import LOCATION_ICON from 'resources/locations.png'
-import POSITIVE_ICON from 'resources/thumbs_up.png'
-import NEUTRAL_ICON from 'resources/neutral.png'
-import NEGATIVE_ICON from 'resources/thumbs_down.png'
-
-const atmosphereIconCss = {
-	height: '48px',
-	marginTop: '-14px',
-	marginRight: '1rem',
-}
-
-const atmosphereIcons = {
-	POSITIVE: POSITIVE_ICON,
-	NEUTRAL: NEUTRAL_ICON,
-	NEGATIVE: NEGATIVE_ICON,
-}
-
 class ReportShow extends Page {
 	static contextTypes = {
 		app: PropTypes.object,
@@ -179,27 +161,25 @@ class ReportShow extends Page {
 				{this.renderEmailModal()}
 
 				<Form static formFor={report} horizontal>
-					<fieldset>
+					<fieldset className="show-report-overview">
 						<legend>Report #{report.id}</legend>
 
 						<Form.Field id="intent" label="Summary" >
-							<div>
-								<b>Meeting goal:</b> {report.intent} <br />
-								{report.keyOutcomes && <span><b>Key outcomes:</b> {report.keyOutcomes} <br /></span>}
-								<b>Next steps:</b> {report.nextSteps}
-							</div>
+							<p><strong>Meeting goal:</strong> {report.intent}</p>
+							{report.keyOutcomes && <p><span><strong>Key outcomes:</strong> {report.keyOutcomes}&nbsp;</span></p>}
+							<p><strong>Next steps:</strong> {report.nextSteps}</p>
 						</Form.Field>
 
-						<Form.Field id="engagementDate" label="Date" icon={CALENDAR_ICON} getter={date => date && moment(date).format('D MMM YYYY')} />
+						<Form.Field id="engagementDate" label="Date" getter={date => date && moment(date).format('D MMMM, YYYY')} />
 
-						<Form.Field id="location" label="Location" icon={LOCATION_ICON}>
+						<Form.Field id="location" label="Location">
 							{report.location && <LinkTo location={report.location} />}
 						</Form.Field>
 
 						{!isCancelled &&
 							<Form.Field id="atmosphere" label="Atmospherics">
-								<img style={atmosphereIconCss} src={atmosphereIcons[report.atmosphere]} alt={report.atmosphere} />
-								<span id="atmosphereDetails" >{report.atmosphereDetails}</span>
+								{utils.upperCaseFirst(report.atmosphere)}
+								{report.atmosphereDetails && ` – ${report.atmosphereDetails}`}
 							</Form.Field>
 						}
 						{isCancelled &&
@@ -258,7 +238,7 @@ class ReportShow extends Page {
 							<tbody>
 								{Poam.map(report.poams, (poam, idx) =>
 									<tr key={poam.id} id={"poam_" + idx}>
-										<td className="poamName" ><LinkTo poam={poam} /></td>
+										<td className="poamName" ><LinkTo poam={poam} >{poam.shortName} - {poam.longName}</LinkTo></td>
 										<td className="poamOrg" ><LinkTo organization={poam.responsibleOrg} /></td>
 									</tr>
 								)}

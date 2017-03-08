@@ -54,6 +54,7 @@ import mil.dds.anet.beans.ReportPerson;
 import mil.dds.anet.beans.RollupGraph;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.ReportList;
 import mil.dds.anet.beans.search.ReportSearchQuery;
+import mil.dds.anet.config.AnetConfiguration;
 import mil.dds.anet.database.AdminDao.AdminSettingKeys;
 import mil.dds.anet.database.ReportDao;
 import mil.dds.anet.emails.ApprovalNeededEmail;
@@ -77,14 +78,16 @@ public class ReportResource implements IGraphQLResource {
 
 	ReportDao dao;
 	AnetObjectEngine engine;
-	ObjectMapper mapper;
+//	ObjectMapper mapper;
+	AnetConfiguration config;
 
 	private static Logger log = Log.getLogger(ReportResource.class);
 
-	public ReportResource(AnetObjectEngine engine) {
+	public ReportResource(AnetObjectEngine engine, AnetConfiguration config) {
 		this.engine = engine;
 		this.dao = engine.getReportDao();
-		this.mapper = new ObjectMapper();
+//		this.mapper = new ObjectMapper();
+		this.config = config;
 	}
 
 	@Override
@@ -574,24 +577,25 @@ public class ReportResource implements IGraphQLResource {
 		return Response.ok().build();
 	}
 	
+	/* Used to generate an HTML view of the daily rollup email
+	 * 
+	 */
 	@GET
 	@Timed
-	@Path("/rollupSimple")
+	@Path("/rollup")
 	@Produces(MediaType.TEXT_HTML)
-	public Response showRollupEmail(@Auth Person user, @QueryParam("startDate") Long start, @QueryParam("endDate") Long end) {
-		ReportSearchQuery query = new ReportSearchQuery();
-		query.setPageSize(100000);
-		query.setReleasedAtStart(new DateTime(start));
-		query.setReleasedAtEnd(new DateTime(end));
-
-		AnetEmail email = new AnetEmail();
+	public Response showRollupEmail(@Auth Person user, @QueryParam("startDate") Long start, 
+			@QueryParam("endDate") Long end, 
+			@QueryParam("showText") @DefaultValue("false") Boolean showReportText) {
 		DailyRollupEmail action = new DailyRollupEmail();
 		action.setStartDate(new DateTime(start));
 		action.setEndDate(new DateTime(end));
-
-		email.setAction(action);
+		
 		Map<String,Object> context = action.execute();
-		context.put("serverUrl", "http://localhost:3000");
+		context.put("serverUrl", config.getServerUrl());
+		context.put(AdminSettingKeys.SECURITY_BANNER_TEXT.name(), engine.getAdminSetting(AdminSettingKeys.SECURITY_BANNER_TEXT));
+		context.put(AdminSettingKeys.SECURITY_BANNER_COLOR.name(), engine.getAdminSetting(AdminSettingKeys.SECURITY_BANNER_COLOR));
+		context.put(DailyRollupEmail.SHOW_REPORT_TEXT_FLAG, showReportText);
 		
 		try { 
 			Configuration freemarkerConfig = new Configuration(Configuration.getVersion());

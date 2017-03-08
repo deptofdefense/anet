@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react'
-import Page from 'components/Page'
+import HopscotchPage from 'components/HopscotchPage'
 import {Grid, Row, Col, FormControl, FormGroup, ControlLabel, Button} from 'react-bootstrap'
 import SavedSearchTable from 'components/SavedSearchTable'
 import {Link} from 'react-router'
@@ -10,7 +10,7 @@ import Breadcrumbs from 'components/Breadcrumbs'
 import API from 'api'
 import autobind from 'autobind-decorator'
 
-export default class Home extends Page {
+export default class Home extends HopscotchPage {
 	static contextTypes = {
 		app: PropTypes.object.isRequired,
 	}
@@ -78,7 +78,7 @@ export default class Home extends Page {
 				<Breadcrumbs />
 				<Messages error={this.state.error} success={this.state.success} />
 
-				{this.state.showGettingStartedPanel === 'true' && 
+				{this.state.showGettingStartedPanel === 'true' &&
 					<fieldset className="home-tile-row">
 						<legend>Getting Started</legend>
 						<Grid fluid className="getting-started-grid">
@@ -86,17 +86,13 @@ export default class Home extends Page {
 								<h3>Welcome to ANET!</h3>
 							</Row>
 							<Row>
-								<Col xs={4}>
-									<p>Just getting started?</p>
-									<a>Download the manual</a>
-								</Col>
-								<Col xs={4}>
+								<Col xs={6}>
 									<p>Not sure where things are?</p>
-									<a>Take a guided tour</a>
+									<a onClick={this.startWelcomeTour}>Take a guided tour</a>
 								</Col>
-								<Col xs={4}>
+								<Col xs={6}>
 									<p>Still having trouble?</p>
-									<a href="mailto:todo.what.is.the.real.address@dds.mil">Contact CJ7 Trexs for training</a>
+									<a href="mailto:todo.what.is.the.real.address@dds.mil">Contact the ANET Team</a>
 								</Col>
 							</Row>
 							<Row>
@@ -146,7 +142,14 @@ export default class Home extends Page {
 					</FormGroup>
 
 					{this.state.selectedSearch &&
-						<SavedSearchTable search={this.state.selectedSearch} />
+						<div>
+							<div className="pull-right">
+								<Button bsStyle="danger" bsSize="small" onClick={this.deleteSearch} >
+									Delete Search
+								</Button>
+							</div>
+							<SavedSearchTable search={this.state.selectedSearch} />
+						</div>
 					}
 				</fieldset>
 			</div>
@@ -161,8 +164,32 @@ export default class Home extends Page {
 	}
 
 	@autobind
+	deleteSearch() {
+		let search = this.state.selectedSearch
+		let index = this.state.savedSearches.findIndex(s => s.id === search.id)
+		if (confirm("Are you sure you want to delete '" + search.name + "'?")) {
+			API.send(`/api/savedSearches/${search.id}`, {}, {method: 'DELETE'})
+				.then(data => {
+					let savedSearches = this.state.savedSearches
+					savedSearches.splice(index, 1)
+					let nextSelect = savedSearches.length > 0 ? savedSearches[0] : null
+					this.setState({ savedSearches: savedSearches, selectedSearch : nextSelect })
+				}, data => {
+					this.setState({success:null, error: data})
+				})
+		}
+	}
+
+
+	@autobind
 	onDismissGettingStarted() {
 		window.localStorage.showGettingStartedPanel = 'false'
 		this.setState({showGettingStartedPanel: 'false'})
+	}
+
+	@autobind
+	startWelcomeTour() {		
+		this.hopscotch.endTour();
+		this.hopscotch.startTour(this.hopscotchTour)
 	}
 }

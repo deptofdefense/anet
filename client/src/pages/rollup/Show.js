@@ -47,8 +47,8 @@ export default class RollupShow extends Page {
 
 	get dateStr() { return this.state.date.format('DD MMM YYYY') }
 	get dateLongStr() { return this.state.date.format('DD MMMM YYYY') }
-	get rollupStart() { return moment(this.state.date).startOf('day') }
-	get rollupEnd() { return moment(this.state.date).endOf('day') }
+	get rollupStart() { return moment(this.state.date).subtract(1, 'days').startOf('day').hour(19) } //7pm yesterday
+	get rollupEnd() { return moment(this.state.date).endOf('day').hour(18) } // 6:59:59pm today.
 
 	constructor(props) {
 		super(props)
@@ -76,10 +76,12 @@ export default class RollupShow extends Page {
 
 	fetchData(props) {
 		const rollupQuery = {
-			state: ['DRAFT', 'PENDING_APPROVAL', 'RELEASED', 'REJECTED'],
+			state: ['RELEASED'], //Specifically excluding cancelled engagements.
 			releasedAtStart: this.rollupStart.valueOf(),
 			releasedAtEnd: this.rollupEnd.valueOf(),
-			engagementDateStart: moment(this.rollupStart).subtract(14, 'days').valueOf()
+			engagementDateStart: moment(this.rollupStart).subtract(14, 'days').valueOf(),
+			sortBy: "ENGAGEMENT_DATE",
+			sortOrder: "DESC"
 		}
 		API.query(/* GraphQL */`
 			reportList(f:search, query:$rollupQuery) {

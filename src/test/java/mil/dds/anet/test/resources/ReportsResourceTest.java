@@ -39,7 +39,9 @@ import mil.dds.anet.beans.lists.AbstractAnetBeanList.OrganizationList;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.PersonList;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.PoamList;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.ReportList;
+import mil.dds.anet.beans.search.ISearchQuery.SortOrder;
 import mil.dds.anet.beans.search.ReportSearchQuery;
+import mil.dds.anet.beans.search.ReportSearchQuery.ReportSearchSortBy;
 import mil.dds.anet.database.AdminDao.AdminSettingKeys;
 import mil.dds.anet.test.beans.CommentTest;
 import mil.dds.anet.test.beans.OrganizationTest;
@@ -591,6 +593,17 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		//Search by Principal Organization
 
 		//Search by Principal Parent Organization
+		
+		query = new ReportSearchQuery();
+		query.setText("spreadsheet");
+		query.setSortBy(ReportSearchSortBy.ENGAGEMENT_DATE);
+		query.setSortOrder(SortOrder.ASC);
+		searchResults = httpQuery("/api/reports/search", jack).post(Entity.json(query), ReportList.class);
+		DateTime prev = new DateTime(0L);
+		for (Report res : searchResults.getList()) { 
+			assertThat(res.getEngagementDate()).isGreaterThan(prev);
+			prev = res.getEngagementDate();
+		}
 	}
 
 	@Test
