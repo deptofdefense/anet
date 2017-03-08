@@ -553,7 +553,8 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="28" author="hpitelka" dbms="mssql" >
+<!--	<changeSet id="28" author="hpitelka" dbms="mssql" >
 		<addUniqueConstraint tableName="positions" columnNames="code,type" constraintName="uniquePositionCode" />
 	</changeSet>
+	-->
 </databaseChangeLog>
