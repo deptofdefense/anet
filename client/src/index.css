@@ -257,8 +257,6 @@ a.home-tile {
 
 .report-summary .read-full {
 	float: right;
-<<<<<<< HEAD
-=======
 }
 
 .not-found {
@@ -281,7 +279,6 @@ a.home-tile {
 	position: absolute;
 	right: 0;
 	top: -90px;
->>>>>>> master
 }
 
 .onboarding-new {
