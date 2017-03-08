@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react'
-import Page from 'components/Page'
+import HopscotchPage from 'components/HopscotchPage'
 import {Grid, Row, Col, FormControl, FormGroup, ControlLabel, Button} from 'react-bootstrap'
 import SavedSearchTable from 'components/SavedSearchTable'
 import {Link} from 'react-router'
@@ -10,7 +10,7 @@ import Breadcrumbs from 'components/Breadcrumbs'
 import API from 'api'
 import autobind from 'autobind-decorator'
 
-export default class Home extends Page {
+export default class Home extends HopscotchPage {
 	static contextTypes = {
 		app: PropTypes.object.isRequired,
 	}
@@ -86,17 +86,13 @@ export default class Home extends Page {
 								<h3>Welcome to ANET!</h3>
 							</Row>
 							<Row>
-								<Col xs={4}>
-									<p>Just getting started?</p>
-									<a>Download the manual</a>
-								</Col>
-								<Col xs={4}>
+								<Col xs={6}>
 									<p>Not sure where things are?</p>
-									<a>Take a guided tour</a>
+									<a onClick={this.startWelcomeTour}>Take a guided tour</a>
 								</Col>
-								<Col xs={4}>
+								<Col xs={6}>
 									<p>Still having trouble?</p>
-									<a href="mailto:todo.what.is.the.real.address@dds.mil">Contact CJ7 Trexs for training</a>
+									<a href="mailto:todo.what.is.the.real.address@dds.mil">Contact the ANET Team</a>
 								</Col>
 							</Row>
 							<Row>
@@ -189,5 +185,11 @@ export default class Home extends Page {
 	onDismissGettingStarted() {
 		window.localStorage.showGettingStartedPanel = 'false'
 		this.setState({showGettingStartedPanel: 'false'})
+	}
+
+	@autobind
+	startWelcomeTour() {		
+		this.hopscotch.endTour();
+		this.hopscotch.startTour(this.hopscotchTour)
 	}
 }
