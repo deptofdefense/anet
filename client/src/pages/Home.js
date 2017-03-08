@@ -24,7 +24,7 @@ export default class Home extends HopscotchPage {
 			upcomingEngagements: null,
 			savedSearches: [],
 			selectedSearch: null,
-			showGettingStartedPanel: 'true' /* just for PR */
+			showGettingStartedPanel: window.localStorage.showGettingStartedPanel
 		}
 	}
 
