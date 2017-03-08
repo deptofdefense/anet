@@ -7,8 +7,6 @@ import {Report, Person, Organization} from 'models'
 
 import moment from 'moment'
 
-import POAM_ICON from 'resources/positions.png'
-
 export default class ReportSummary extends Component {
 	static propTypes = {
 		report: PropTypes.object.isRequired,
