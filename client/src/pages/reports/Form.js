@@ -172,7 +172,7 @@ export default class ReportForm extends Component {
 			</fieldset>
 
 			<fieldset>
-				<legend>Meeting Attendance <small>Required</small></legend>
+				<legend>Meeting Attendance</legend>
 
 				<Form.Field id="attendees" validationState={errors.attendees}>
 					<Autocomplete objectType={Person}
@@ -224,89 +224,14 @@ export default class ReportForm extends Component {
 				</Form.Field>
 			</fieldset>
 
-			<PoamsSelector poams={report.poams}
-				shortcuts={recents.poams}
-				onChange={this.onChange}
-				onErrorChange={this.onPoamError}
-				validationState={errors.poams}
-				optional={true} />
-
-			<fieldset>
-				<legend>{isCancelled ? "Next Steps" : "Meeting Discussion"} <small>Required</small></legend>
-
-					{isCancelled &&
-						<Form.Field id="cancelledReason" componentClass="select" >
-							<option value="CANCELLED_BY_ADVISOR">Cancelled by Advisor</option>
-							<option value="CANCELLED_BY_PRINCIPAL">Cancelled by Principal</option>
-							<option value="CANCELLED_DUE_TO_TRANSPORTATION">Cancelled due to Transportation</option>
-							<option value="CANCELLED_DUE_TO_FORCE_PROTECTION">Cancelled due to Force Protection</option>
-							<option value="CANCELLED_DUE_TO_ROUTES">Cancelled due to Routes</option>
-							<option value="CANCELLED_DUE_TO_THREAT">Cancelled due to Thrat</option>
-						</Form.Field>
-					}
-				</fieldset>
-
-				<fieldset>
-					<legend>Meeting Attendance</legend>
-
-					<Form.Field id="attendees" validationState={errors.attendees}>
-						<Autocomplete objectType={Person}
-							onChange={this.addAttendee}
-							onErrorChange={this.attendeeError}
-							clearOnSelect={true}
-							fields={'id, name, role, position { id, name, organization { id, shortName}} '}
-							template={person =>
-								<span>
-									<img src={(new Person(person)).iconUrl()} alt={person.role} height={20} className="person-icon" />
-									{person.name} {person.rank && person.rank.toUpperCase()} - {person.position && `(${person.position.name})`}
-								</span>
-							}
-							placeholder="Start typing to search for people who attended the meeting..."
-							valueKey="name" />
-						{errors.attendees && <HelpBlock>
-							<img src={WARNING_ICON} role="presentation" height="20px" />
-							Person not found in ANET Database.
-						</HelpBlock> }
-						<Table hover condensed>
-							<thead>
-								<tr>
-									<th style={{textAlign: 'center'}}>Primary</th>
-									<th>Name</th>
-									<th>Position</th>
-									<th>Org</th>
-									<th></th>
-								</tr>
-							</thead>
-							<tbody>
-								{Person.map(report.attendees.filter(p => p.role === "ADVISOR"), (person, idx) =>
-									this.renderAttendeeRow(person, idx)
-								)}
-								<tr className="attendeeTableRow" ><td colSpan={5}><hr className="attendeeDivider" /></td></tr>
-								{Person.map(report.attendees.filter(p => p.role === "PRINCIPAL"), (person, idx) =>
-									this.renderAttendeeRow(person, idx)
-								)}
-							</tbody>
-						</Table>
-
-						{recents.persons.length > 0 &&
-							<Form.Field.ExtraCol className="shortcut-list">
-								<h5>Shortcuts</h5>
-								{Person.map(recents.persons, person =>
-									<Button key={person.id} bsStyle="link" onClick={this.addAttendee.bind(this, person)}>Add {person.name}</Button>
-								)}
-						</Form.Field.ExtraCol>
-						}
-					</Form.Field>
-				</fieldset>
-
-				{!isCancelled &&
-					<PoamsSelector poams={report.poams}
-						shortcuts={recents.poams}
-						onChange={this.onChange}
-						onErrorChange={this.onPoamError}
-						validationState={errors.poams}
-						optional={true} />
-					}
+			{!isCancelled &&
+				<PoamsSelector poams={report.poams}
+					shortcuts={recents.poams}
+					onChange={this.onChange}
+					onErrorChange={this.onPoamError}
+					validationState={errors.poams}
+					optional={true} />
+				}
 
 				<fieldset>
 					<legend>Meeting Discussion</legend>
