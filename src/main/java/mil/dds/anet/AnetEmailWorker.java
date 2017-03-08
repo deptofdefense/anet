@@ -39,6 +39,7 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import mil.dds.anet.config.AnetConfiguration;
 import mil.dds.anet.config.AnetConfiguration.SmtpConfiguration;
+import mil.dds.anet.database.AdminDao.AdminSettingKeys;
 import mil.dds.anet.emails.AnetEmailAction;
 
 public class AnetEmailWorker implements Runnable {
@@ -145,8 +146,11 @@ public class AnetEmailWorker implements Runnable {
 		}
 		
 		Map<String,Object> context = email.getAction().execute();
+		AnetObjectEngine engine = AnetObjectEngine.getInstance();
 		
 		context.put("serverUrl", serverUrl);
+		context.put(AdminSettingKeys.SECURITY_BANNER_TEXT.name(), engine.getAdminSetting(AdminSettingKeys.SECURITY_BANNER_TEXT));
+		context.put(AdminSettingKeys.SECURITY_BANNER_COLOR.name(), engine.getAdminSetting(AdminSettingKeys.SECURITY_BANNER_COLOR));
 		Template temp = freemarkerConfig.getTemplate(email.getAction().getTemplateName());
 		StringWriter writer = new StringWriter();
 		temp.process(context, writer);
