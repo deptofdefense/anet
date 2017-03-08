@@ -1,5 +1,5 @@
 import React, {Component, PropTypes} from 'react'
-import {Button, Grid, Row, Col, Label} from 'react-bootstrap'
+import {Button, Grid, Row, Col, Label, Glyphicon} from 'react-bootstrap'
 import utils from 'utils'
 
 import LinkTo from 'components/LinkTo'
@@ -16,6 +16,16 @@ export default class ReportSummary extends Component {
 
 	render() {
 		let report = new Report(this.props.report)
+
+		function PersonComponent({person}) {
+			if (!person) {
+				return null
+			}
+			const personModel = new Person(person)
+			return <LinkTo person={personModel}>
+				{personModel.rank} {personModel.name}
+			</LinkTo>
+		}
 
 		return <Grid fluid className="report-summary">
 			{report.cancelledReason &&
@@ -38,20 +48,19 @@ export default class ReportSummary extends Component {
 						</span>
 					}
 				</Col>
+			</Row>
+			<Row>
 				<Col md={6}>
+					<PersonComponent person={report.primaryAdvisor} />
 					{report.advisorOrg &&
-						<LinkTo organization={new Organization(report.advisorOrg)} />
+						<span>&nbsp;(<LinkTo organization={new Organization(report.advisorOrg)} />)</span>
 					}
-					{report.principalOrg && ' -> '}
+					<Glyphicon glyph="play" className="people-separator" />
+					<PersonComponent person={report.primaryPrincipal} />
 					{report.principalOrg &&
-						<LinkTo organization={new Organization(report.principalOrg)} />
+						<span>&nbsp;(<LinkTo organization={new Organization(report.principalOrg)} />)</span>
 					}
 				</Col>
-			</Row>
-
-			<Row>
-				<Col md={6}>{report.primaryAdvisor && this.renderPerson(report.primaryAdvisor)}</Col>
-				<Col md={6}>{report.primaryPrincipal && this.renderPerson(report.primaryPrincipal)}</Col>
 			</Row>
 
 			{report.poams.map(poam => <Row key={poam.id}>
@@ -80,27 +89,10 @@ export default class ReportSummary extends Component {
 			<Row>
 				<Col mdOffset={9} md={3}>
 					<LinkTo report={report} className="read-full">
-						<Button bsStyle="primary" >Read Full Report</Button>
+						<Button bsStyle="primary">Read Full Report</Button>
 					</LinkTo>
 				</Col>
 			</Row>
 		</Grid>
-	}
-
-	renderPerson(person) {
-		person = new Person(person)
-		return <div>
-			<img height={20} src={person.iconUrl()} alt={person.role} className="person-icon" />
-			<LinkTo person={person}>
-				{person.rank} {person.name}
-			</LinkTo>
-
-			{person.position && person.position.organization &&
-				<span>
-					&nbsp;-&nbsp;
-					<LinkTo organization={new Organization(person.position.organization)} />
-				</span>
-			}
-		</div>
 	}
 }
