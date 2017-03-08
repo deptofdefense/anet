@@ -5,7 +5,6 @@ import {Alert, Table, Button, Col, DropdownButton, MenuItem, Modal, Checkbox} fr
 import autobind from 'autobind-decorator'
 import moment from 'moment'
 import utils from 'utils'
-import _capitalize from 'lodash.capitalize'
 
 import {Report, Person, Poam, Comment} from 'models'
 import Breadcrumbs from 'components/Breadcrumbs'
@@ -179,7 +178,7 @@ export default class ReportShow extends Page {
 
 						{!isCancelled &&
 							<Form.Field id="atmosphere" label="Atmospherics">
-								{_capitalize(report.atmosphere)}
+								{utils.upperCaseFirst(report.atmosphere)}
 								{report.atmosphereDetails && ` – ${report.atmosphereDetails}`}
 							</Form.Field>
 						}
