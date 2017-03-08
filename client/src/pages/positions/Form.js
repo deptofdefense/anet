@@ -25,6 +25,8 @@ export default class PositionForm extends Component {
 	render() {
 		let {position, error, success, edit} = this.props
 
+		error = this.props.error || (this.state && this.state.error)
+
 		let relationshipPositionType = position.type === 'PRINCIPAL' ? 'ADVISOR' : 'PRINCIPAL'
 		let currentUser = this.context.app.state.currentUser
 
@@ -193,7 +195,7 @@ export default class PositionForm extends Component {
 		}
 		delete position.permissions
 		position.organization = {id: position.organization.id}
-		position.person = (position.person.id) ? {id: position.person.id} : null
+		position.person = (position.person && position.person.id) ? {id: position.person.id} : null
 
 		let url = `/api/positions/${edit ? 'update' : 'new'}`
 		API.send(url, position, {disableSubmits: true})
