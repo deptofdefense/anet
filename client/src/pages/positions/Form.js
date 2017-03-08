@@ -23,7 +23,7 @@ export default class PositionForm extends Component {
 	}
 
 	render() {
-		let {position, error, success} = this.props
+		let {position, error, success, edit} = this.props
 
 		let relationshipPositionType = position.type === 'PRINCIPAL' ? 'ADVISOR' : 'PRINCIPAL'
 		let currentUser = this.context.app.state.currentUser
@@ -41,6 +41,7 @@ export default class PositionForm extends Component {
 			orgSearchQuery.type = 'PRINCIPAL_ORG'
 			personSearchQuery.role = 'PRINCIPAL'
 		}
+		console.log(position.type);
 
 		if (!position.permissions) {
 			position.permissions = position.type
@@ -58,7 +59,7 @@ export default class PositionForm extends Component {
 				<Messages error={error} success={success} />
 
 				<fieldset>
-					<legend>Create a new Position</legend>
+					<legend>{edit ? "Edit Position" : "Create a new Position"}</legend>
 
 					<Form.Field id="type" disabled={this.props.edit}>
 						<ButtonToggleGroup>
