@@ -41,7 +41,6 @@ export default class PositionForm extends Component {
 			orgSearchQuery.type = 'PRINCIPAL_ORG'
 			personSearchQuery.role = 'PRINCIPAL'
 		}
-		console.log(position.type);
 
 		if (!position.permissions) {
 			position.permissions = position.type
