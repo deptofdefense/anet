@@ -15,7 +15,7 @@ import History from 'components/History'
 
 import API from 'api'
 
-export default class ReportShow extends Page {
+class ReportShow extends Page {
 	static contextTypes = {
 		app: PropTypes.object,
 	}
