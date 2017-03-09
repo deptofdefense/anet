@@ -6,7 +6,7 @@ import moment from 'moment'
 import PersonForm from './Form'
 import {ContentForHeader} from 'components/Header'
 import Breadcrumbs from 'components/Breadcrumbs'
-import RedirectPreventer from 'components/RedirectPreventer'
+import NavigationWarning from 'components/NavigationWarning'
 
 import API from 'api'
 import {Person} from 'models'
@@ -67,7 +67,7 @@ class PersonEdit extends Page {
 					<Breadcrumbs items={[[`Edit ${person.name}`, Person.pathForEdit(person)]]} />
 				}
 
-				<RedirectPreventer original={originalPerson} current={person} />
+				<NavigationWarning original={originalPerson} current={person} />
 				<PersonForm person={person} edit showPositionAssignment={canEditPosition} 
 					legendText={legendText} saveText={saveText} />
 			</div>

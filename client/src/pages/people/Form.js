@@ -221,7 +221,6 @@ export default class PersonForm extends Component {
 					}
 					
 					History.replace(Person.pathForEdit(person), false)
-					debugger
 					History.push(Person.pathFor(person), {success: 'Person saved successfully', skipPageLeaveWarning: true})
 				}
 			}).catch(error => {

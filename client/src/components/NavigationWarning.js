@@ -5,7 +5,7 @@ import _get from 'lodash.get'
 import autobind from 'autobind-decorator'
 import {withRouter} from 'react-router'
 
-class RedirectPreventer extends Component {
+class NavigationWarning extends Component {
 
 	formHasUnsavedChanges() {
 		return !_isEqual(this.props.current, this.props.original)
@@ -47,4 +47,4 @@ class RedirectPreventer extends Component {
 
 }
 
-export default withRouter(RedirectPreventer)
+export default withRouter(NavigationWarning)
