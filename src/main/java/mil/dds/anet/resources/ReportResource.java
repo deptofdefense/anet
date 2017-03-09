@@ -77,7 +77,6 @@ public class ReportResource implements IGraphQLResource {
 
 	ReportDao dao;
 	AnetObjectEngine engine;
-//	ObjectMapper mapper;
 	AnetConfiguration config;
 
 	private static Logger log = Log.getLogger(ReportResource.class);
@@ -85,7 +84,6 @@ public class ReportResource implements IGraphQLResource {
 	public ReportResource(AnetObjectEngine engine, AnetConfiguration config) {
 		this.engine = engine;
 		this.dao = engine.getReportDao();
-//		this.mapper = new ObjectMapper();
 		this.config = config;
 	}
 

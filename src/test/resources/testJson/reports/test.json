@@ -54,7 +54,7 @@
 		"domainUsername" : "jack",
 		"gender" : "Male",
 		"country" : "United States of America",
-		"endOfTourDate" : 1498795200000
+		"endOfTourDate" : 1498780800000
 	},
 	"comments": [{
 		"id": null,
@@ -70,7 +70,7 @@
 			"domainUsername" : "jack",
 			"gender" : "Male",
 			"country" : "United States of America",
-			"endOfTourDate" : 1498795200000
+			"endOfTourDate" : 1498780800000
 		},
 		"createdAt": 1453815803000,
 		"updatedAt": null,
