@@ -9,7 +9,9 @@ import ButtonToggleGroup from 'components/ButtonToggleGroup'
 import History from 'components/History'
 
 import API from 'api'
-import {Position, Organization} from 'models'
+import {Position, Organization, Person} from 'models'
+
+import REMOVE_ICON from 'resources/delete.png'
 
 export default class PositionForm extends Component {
 	static propTypes = {
@@ -128,18 +130,29 @@ export default class PositionForm extends Component {
 									<th></th>
 									<th>Name</th>
 									<th>Position</th>
+									<th>Org</th>
+									<th></th>
 								</tr>
 							</thead>
 							<tbody>
-								{Position.map(position.associatedPositions, relPos =>
-									<tr key={relPos.id}>
-										<td onClick={this.removePositionRelationship.bind(this, relPos)}>
-											<span style={{cursor: 'pointer'}}>⛔️</span>
-										</td>
-										<td>{relPos.person && relPos.person.name}</td>
-										<td>{relPos.name}</td>
-									</tr>
-								)}
+								{Position.map(position.associatedPositions, relPos => {
+									let person = new Person(relPos.person)
+									return (
+										<tr key={relPos.id}>
+											<td>
+												{person && <img src={person.iconUrl()} alt={person.role} height={20} className="person-icon" />}
+											</td>
+
+											<td>{person && person.name}</td>
+											<td>{relPos.name}</td>
+											<td>{relPos.organization && relPos.organization.shortName}</td>
+
+											<td onClick={this.removePositionRelationship.bind(this, relPos)}>
+												<span style={{cursor: 'pointer'}}><img src={REMOVE_ICON} height={14} alt="Unassign person" /></span>
+											</td>
+										</tr>
+									)
+								})}
 							</tbody>
 						</Table>
 					</Form.Field>
