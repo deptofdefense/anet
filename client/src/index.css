@@ -38,6 +38,7 @@ fieldset legend {
 	font-size: 2.5rem;
 	color: #363636;
 	border: none;
+	padding-right: 80px;
 }
 
 fieldset legend small {
