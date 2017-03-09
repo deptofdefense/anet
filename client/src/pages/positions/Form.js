@@ -189,6 +189,7 @@ export default class PositionForm extends Component {
 	@autobind
 	onSubmit(event) {
 		let {position, edit} = this.props
+		position = Object.assign({}, position)
 
 		if (position.type !== 'PRINCIPAL') {
 			position.type = position.permissions || 'ADVISOR'
@@ -196,6 +197,7 @@ export default class PositionForm extends Component {
 		delete position.permissions
 		position.organization = {id: position.organization.id}
 		position.person = (position.person && position.person.id) ? {id: position.person.id} : null
+		position.code = position.code || null //Need to null out empty position codes
 
 		let url = `/api/positions/${edit ? 'update' : 'new'}`
 		API.send(url, position, {disableSubmits: true})
