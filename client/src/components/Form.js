@@ -2,7 +2,6 @@ import React, {Component, PropTypes} from 'react'
 import ReactDOM from 'react-dom'
 import {Form as BSForm, Row, Button} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
-import {withRouter} from 'react-router'
 
 import {ContentForHeader} from 'components/Header'
 import FormField from 'components/FormField'
@@ -12,7 +11,7 @@ const staticFormStyle = {
 	marginTop: '-30px',
 }
 
-class Form extends Component {
+export default class Form extends Component {
 	static propTypes = Object.assign({}, BSForm.propTypes, {
 		formFor: PropTypes.object,
 		static: PropTypes.bool,
@@ -49,8 +48,7 @@ class Form extends Component {
 
 	render() {
 		let {children, submitText, submitOnEnter, submitDisabled, ...bsProps} = this.props
-		bsProps = Object.without(bsProps, 
-			'formFor', 'static', 'routes', 'router', 'params', 'location')
+		bsProps = Object.without(bsProps, 'formFor', 'static')
 
 		if (this.props.static) {
 			submitText = false
@@ -100,7 +98,6 @@ class Form extends Component {
 	onSubmit(event) {
 		event.stopPropagation()
 		event.preventDefault()
-		this.isSubmitting = true
 
 		this.props.onSubmit && this.props.onSubmit(event)
 	}
@@ -108,5 +105,3 @@ class Form extends Component {
 
 // just a little sugar to make importing and building forms easier
 Form.Field = FormField
-
-export default withRouter(Form)
