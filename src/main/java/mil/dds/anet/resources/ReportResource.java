@@ -29,7 +29,6 @@ import org.eclipse.jetty.util.log.Logger;
 import org.joda.time.DateTime;
 
 import com.codahale.metrics.annotation.Timed;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 
 import freemarker.template.Configuration;

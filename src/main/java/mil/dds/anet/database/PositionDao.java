@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response.Status;
 
 import org.joda.time.DateTime;
 import org.skife.jdbi.v2.GeneratedKeys;
@@ -83,7 +84,8 @@ public class PositionDao implements IAnetDao<Position> {
 			SQLException cause = (SQLException) e.getCause();
 			if (cause.getErrorCode() == 2601) { // Unique Key Violation constant for SQL Server
 				if (cause.getMessage().contains("UniquePositionCodes")) { 
-					throw new WebApplicationException("A Position with that Code already exists. Position Codes must be unique.");
+					throw new WebApplicationException("Another position is already using this code and each position must have its own code. "
+							+ "Please double check that you entered the right code. ", Status.CONFLICT);	
 				}
 			}
 		}
