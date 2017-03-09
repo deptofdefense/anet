@@ -26,18 +26,22 @@ export default class Header extends Component {
 				<Grid>
 					<Row>
 						<Col xs={3}>
-							<Link to="/" className="logo">
-								<img src={logo} alt="ANET logo" />
-							</Link>
+							{
+								this.props.minimalHeader ?
+									<span className="logo"><img src={logo} alt="ANET Logo" /></span> :
+									<Link to="/" className="logo">
+										<img src={logo} alt="ANET logo" />
+									</Link>
+							}
 						</Col>
-						
-						{ !this.props.minimalHeader && 
+
+						{ !this.props.minimalHeader &&
 							<Col xs={7} className="middle-header">
 								<SearchBar />
 							</Col>
 						}
 
-						{ !this.props.minimalHeader && 
+						{ !this.props.minimalHeader &&
 							<Col xs={2}>
 								<div className="pull-right">
 									<CreateButton />

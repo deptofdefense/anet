@@ -188,8 +188,8 @@ export default class Home extends HopscotchPage {
 	}
 
 	@autobind
-	startWelcomeTour() {		
-		this.hopscotch.endTour();
+	startWelcomeTour() {
+		this.hopscotch.endTour()
 		this.hopscotch.startTour(this.hopscotchTour)
 	}
 }

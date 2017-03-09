@@ -19,17 +19,17 @@ export default {
             fixedElement: true
         },
         {
-            title: 'New Report',
-            content: 'Create a report by clicking on this button. If you are a Super User you may have different options.',
-            target: 'createButton',
-            placement: 'bottom',
-            fixedElement: true
-        },
-        {
             title: 'Left navigation',
             content: 'Use this menu to move between areas for a specific section.',
             target: 'leftNav',
             placement: 'right',
+        },
+        {
+            title: 'New Report',
+            content: 'Create a report by clicking on this button. If you are a Super User you may have different options.',
+            target: 'createButton',
+            placement: 'left',
+            fixedElement: true,
             multipage: true,
             onNext: () => History.push(Report.pathForNew())
         },

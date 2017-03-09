@@ -29,7 +29,6 @@ import org.eclipse.jetty.util.log.Logger;
 import org.joda.time.DateTime;
 
 import com.codahale.metrics.annotation.Timed;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 
 import freemarker.template.Configuration;
@@ -78,7 +77,6 @@ public class ReportResource implements IGraphQLResource {
 
 	ReportDao dao;
 	AnetObjectEngine engine;
-//	ObjectMapper mapper;
 	AnetConfiguration config;
 
 	private static Logger log = Log.getLogger(ReportResource.class);
@@ -86,7 +84,6 @@ public class ReportResource implements IGraphQLResource {
 	public ReportResource(AnetObjectEngine engine, AnetConfiguration config) {
 		this.engine = engine;
 		this.dao = engine.getReportDao();
-//		this.mapper = new ObjectMapper();
 		this.config = config;
 	}
 
@@ -221,15 +218,17 @@ public class ReportResource implements IGraphQLResource {
 			}
 		}
 		
-		boolean canApprove = engine.canUserApproveStep(editor.getId(), existing.getApprovalStep().getId());
-		if (canApprove) { 
-			AnetEmail email = new AnetEmail();
-			ReportEditedEmail action = new ReportEditedEmail();
-			action.setReport(existing);
-			action.setEditor(editor);
-			email.setAction(action);
-			email.setToAddresses(ImmutableList.of(existing.loadAuthor().getEmailAddress()));
-			AnetEmailWorker.sendEmailAsync(email);
+		if (existing.getState() == ReportState.PENDING_APPROVAL) { 
+			boolean canApprove = engine.canUserApproveStep(editor.getId(), existing.getApprovalStep().getId());
+			if (canApprove) { 
+				AnetEmail email = new AnetEmail();
+				ReportEditedEmail action = new ReportEditedEmail();
+				action.setReport(existing);
+				action.setEditor(editor);
+				email.setAction(action);
+				email.setToAddresses(ImmutableList.of(existing.loadAuthor().getEmailAddress()));
+				AnetEmailWorker.sendEmailAsync(email);
+			}
 		}
 		
 		return Response.ok().build();
