@@ -371,10 +371,11 @@ a.home-tile {
 	text-align: center;
 }
 
-.attendeeTableRow td {
-	border-top: 0px !important;
+table.borderless td {
+	border: none !important;
 }
-hr.attendeeDivider {
+
+table hr.attendee-divider {
 	margin: 0px;
 }
 
@@ -385,7 +386,7 @@ hr.attendeeDivider {
 
 .show-report-overview label.col-sm-2 {
 	/* This clobbers the grid system but w/e. */
-	width: 130px; 
+	width: 130px;
 }
 
 .show-report-overview .form-group {
