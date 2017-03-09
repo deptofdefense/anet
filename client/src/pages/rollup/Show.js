@@ -214,6 +214,8 @@ export default class RollupShow extends Page {
 						<DropdownButton bsStyle="primary" title="Actions" id="actions" className="pull-right" onSelect={this.actionSelect}>
 							<MenuItem eventKey="email">Email rollup</MenuItem>
 							<MenuItem eventKey="print">Print</MenuItem>
+							<MenuItem ><a href={`/api/reports/rollup?startDate=${this.rollupStart.valueOf()}&endDate=${this.rollupEnd.valueOf()}`}>View Rollup Email</a></MenuItem>
+							<MenuItem ><a href={`/api/reports/rollup?startDate=${this.rollupStart.valueOf()}&endDate=${this.rollupEnd.valueOf()}&showText=true`}>View Long Rollup Email</a></MenuItem>
 						</DropdownButton>
 					}
 				</div>
