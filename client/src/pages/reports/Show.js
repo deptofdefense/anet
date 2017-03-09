@@ -83,7 +83,7 @@ class ReportShow extends Page {
 					person { id, name, rank}
 				}
 
-				approvalStep { name, approvers { id } }
+				approvalStep { name, approvers { id }, nextStepId }
 			}
 		`).then(data => {
 			this.setState({report: new Report(data.report)})
@@ -461,9 +461,10 @@ class ReportShow extends Page {
 	approveReport() {
 		let comment = (this.state.approvalComment.text.length > 0) ? this.state.approvalComment : {}
 		API.send(`/api/reports/${this.state.report.id}/approve`, comment).then(data => {
+			let lastApproval = (this.state.report.approvalStep.nextStepId === null)
 			this.updateReport()
-			this.setState({error:null})
-			this.setState({success:'Successfully approved report'})
+			let message = 'Successfully approved report.' + (lastApproval ? ' It has been added to the daily rollup' : '')
+			this.setState({error:null, success: message})
 		}, data => {
 			this.setState({success:null})
 			this.handleError(data)
