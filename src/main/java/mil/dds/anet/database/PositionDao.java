@@ -1,8 +1,12 @@
 package mil.dds.anet.database;
 
+import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response.Status;
 
 import org.joda.time.DateTime;
 import org.skife.jdbi.v2.GeneratedKeys;
@@ -10,6 +14,7 @@ import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.Query;
 import org.skife.jdbi.v2.TransactionCallback;
 import org.skife.jdbi.v2.TransactionStatus;
+import org.skife.jdbi.v2.exceptions.UnableToExecuteStatementException;
 
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Organization;
@@ -52,33 +57,38 @@ public class PositionDao implements IAnetDao<Position> {
 	}
 	
 	public Position insert(Position p) {
-		return dbHandle.inTransaction(new TransactionCallback<Position>() {
-			public Position inTransaction(Handle conn, TransactionStatus status) throws Exception {
-				p.setCreatedAt(DateTime.now());
-				p.setUpdatedAt(p.getCreatedAt());
-				GeneratedKeys<Map<String,Object>> keys = dbHandle.createStatement(
-						"/* positionInsert */ INSERT INTO positions (name, code, type, organizationId, locationId, createdAt, updatedAt) " 
-						+ "VALUES (:name, :code, :type, :organizationId, :locationId, :createdAt, :updatedAt)")
-					.bindFromProperties(p)
-					.bind("type", DaoUtils.getEnumId(p.getType()))
-					.bind("organizationId", DaoUtils.getId(p.getOrganization()))
-
-					.bind("locationId", DaoUtils.getId(p.getLocation()))
-					.executeAndReturnGeneratedKeys();
-				p.setId(DaoUtils.getGeneratedId(keys));
-				
-				//Specifically don't set currentPersonId here because we'll handle that later in setPersonInPosition();
-				
-//				if (p.getPerson() != null) { 
-//					dbHandle.createStatement("/*positionInsertPerson*/ INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES (:positionId, :personId, :createdAt)")
-//						.bind("positionId", p.getId())
-//						.bind("personId", DaoUtils.getId(p.getPerson()))
-//						.bind("createdAt", p.getCreatedAt())
-//						.execute();
-//				}
-				return p;
+		p.setCreatedAt(DateTime.now());
+		p.setUpdatedAt(p.getCreatedAt());
+		try { 
+			GeneratedKeys<Map<String,Object>> keys = dbHandle.createStatement(
+					"/* positionInsert */ INSERT INTO positions (name, code, type, organizationId, locationId, createdAt, updatedAt) " 
+					+ "VALUES (:name, :code, :type, :organizationId, :locationId, :createdAt, :updatedAt)")
+				.bindFromProperties(p)
+				.bind("type", DaoUtils.getEnumId(p.getType()))
+				.bind("organizationId", DaoUtils.getId(p.getOrganization()))
+	
+				.bind("locationId", DaoUtils.getId(p.getLocation()))
+				.executeAndReturnGeneratedKeys();
+			p.setId(DaoUtils.getGeneratedId(keys));
+		
+			//Specifically don't set currentPersonId here because we'll handle that later in setPersonInPosition();
+		} catch (UnableToExecuteStatementException e) {
+			checkForUniqueCodeViolation(e);
+			throw e;
+		}
+		return p;
+	}
+	
+	public void checkForUniqueCodeViolation(UnableToExecuteStatementException e) { 
+		if (e.getCause() != null && e.getCause() instanceof SQLException) { 
+			SQLException cause = (SQLException) e.getCause();
+			if (cause.getErrorCode() == 2601) { // Unique Key Violation constant for SQL Server
+				if (cause.getMessage().contains("UniquePositionCodes")) { 
+					throw new WebApplicationException("Another position is already using this code and each position must have its own code. "
+							+ "Please double check that you entered the right code. ", Status.CONFLICT);	
+				}
 			}
-		});
+		}
 	}
 	
 	public Position getById(int id) { 
@@ -97,14 +107,19 @@ public class PositionDao implements IAnetDao<Position> {
 	 */
 	public int update(Position p) { 
 		p.setUpdatedAt(DateTime.now());
-		return dbHandle.createStatement("/* positionUpdate */ UPDATE positions SET name = :name, "
-				+ "code = :code, organizationId = :organizationId, type = :type, "
-				+ "locationId = :locationId, updatedAt = :updatedAt WHERE id = :id")
-			.bindFromProperties(p)
-			.bind("type", DaoUtils.getEnumId(p.getType()))
-			.bind("organizationId", DaoUtils.getId(p.getOrganization()))
-			.bind("locationId", DaoUtils.getId(p.getLocation()))
-			.execute();
+		try {
+			return dbHandle.createStatement("/* positionUpdate */ UPDATE positions SET name = :name, "
+					+ "code = :code, organizationId = :organizationId, type = :type, "
+					+ "locationId = :locationId, updatedAt = :updatedAt WHERE id = :id")
+				.bindFromProperties(p)
+				.bind("type", DaoUtils.getEnumId(p.getType()))
+				.bind("organizationId", DaoUtils.getId(p.getOrganization()))
+				.bind("locationId", DaoUtils.getId(p.getLocation()))
+				.execute();
+		} catch (UnableToExecuteStatementException e) {
+			checkForUniqueCodeViolation(e);
+			throw e;
+		}
 	}
 	
 	public void setPersonInPosition(Person person, Position position) {

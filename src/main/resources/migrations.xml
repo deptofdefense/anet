@@ -553,8 +553,10 @@
 		</sql>
 	</changeSet>
 
-<!--	<changeSet id="28" author="hpitelka" dbms="mssql" >
-		<addUniqueConstraint tableName="positions" columnNames="code,type" constraintName="uniquePositionCode" />
+	<changeSet id="28" author="hpitelka" dbms="mssql" >
+		<sql dbms="mssql">
+			CREATE UNIQUE NONCLUSTERED INDEX UniquePositionCodes ON positions (code) WHERE code IS NOT NULL;
+		</sql>
 	</changeSet>
-	-->
+	
 </databaseChangeLog>

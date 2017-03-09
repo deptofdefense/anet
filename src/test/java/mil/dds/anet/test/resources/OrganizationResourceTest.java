@@ -7,6 +7,7 @@ import java.util.List;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
 
+import org.joda.time.DateTime;
 import org.junit.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -57,6 +58,7 @@ public class OrganizationResourceTest extends AbstractResourceTest {
 		//Create a position and put it in this AO
 		Position b1 = PositionTest.getTestAdvisor();
 		b1.setOrganization(updated);
+		b1.setCode(b1.getCode() + "_" + DateTime.now().getMillis());
 		b1 = httpQuery("/api/positions/new", admin).post(Entity.json(b1), Position.class);
 		assertThat(b1.getId()).isNotNull();
 		assertThat(b1.getOrganization().getId()).isEqualTo(updated.getId());

@@ -84,11 +84,11 @@ a {
             </#if>
         </div>
     </div>
-<!--
-    <a href="${serverUrl}/reports/${report.id?c}" >
+
+    <a href="${serverUrl}/reports/${report.id?c}/min" >
     	Read full report
     </a>
--->
+
     <#sep><hr /></#sep>
 
 </#list>

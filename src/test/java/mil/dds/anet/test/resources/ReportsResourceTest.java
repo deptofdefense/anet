@@ -3,7 +3,6 @@ package mil.dds.anet.test.resources;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
@@ -34,6 +33,7 @@ import mil.dds.anet.beans.Report.Atmosphere;
 import mil.dds.anet.beans.Report.ReportCancelledReason;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
+import mil.dds.anet.beans.RollupGraph;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.LocationList;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.OrganizationList;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.PersonList;
@@ -698,9 +698,9 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		//Pull the daily rollup graph
 		DateTime startDate = DateTime.now().minusDays(1);
 		DateTime endDate = DateTime.now().plusDays(1);
-		Map<Integer,Map<ReportState,Integer>> startGraph = httpQuery(
+		List<RollupGraph> startGraph = httpQuery(
 				String.format("/api/reports/rollupGraph?startDate=%d&endDate=%d", startDate.getMillis(), endDate.getMillis()), authur)
-				.get(new GenericType<Map<Integer,Map<ReportState,Integer>>>() {});
+				.get(new GenericType<List<RollupGraph>>() {});
 		
 		//Submit the report
 		Response resp = httpQuery("/api/reports/" + r.getId() + "/submit", authur).post(null);
@@ -724,13 +724,14 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		assertThat(r.getState()).isEqualTo(ReportState.RELEASED);
 	
 		//Check on the daily rollup graph now. 
-		Map<Integer,Map<ReportState,Integer>> endGraph = httpQuery(
+		List<RollupGraph> endGraph = httpQuery(
 				String.format("/api/reports/rollupGraph?startDate=%d&endDate=%d", startDate.getMillis(), endDate.getMillis()), authur)
-				.get(new GenericType<Map<Integer,Map<ReportState,Integer>>>() {});
+				.get(new GenericType<List<RollupGraph>>() {});
 		
 		//Authur's organization should have one more report RELEASED!
-		int startCt = startGraph.get(authur.loadPosition().loadOrganization().getId()).get(ReportState.RELEASED);
-		int endCt = endGraph.get(authur.loadPosition().loadOrganization().getId()).get(ReportState.RELEASED);
+		int authurOrgId = authur.loadPosition().loadOrganization().getId();
+		int startCt = startGraph.stream().filter(rg -> rg.getOrg().getId().equals(authurOrgId)).findFirst().get().getReleased();
+		int endCt = endGraph.stream().filter(rg -> rg.getOrg().getId().equals(authurOrgId)).findFirst().get().getReleased();
 		assertThat(startCt).isEqualTo(endCt - 1);
 	}
 }

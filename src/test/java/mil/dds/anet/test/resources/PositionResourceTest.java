@@ -150,6 +150,7 @@ public class PositionResourceTest extends AbstractResourceTest {
 		
 		//Create Position
 		Position test = PositionTest.getTestPosition();
+		test.setCode(test.getCode() + "_" + DateTime.now().getMillis());
 		OrganizationList orgs = httpQuery("/api/organizations/search?text=Ministry&type=PRINCIPAL_ORG", admin)
 			.get(OrganizationList.class);
 		assertThat(orgs.getList().size()).isGreaterThan(0);

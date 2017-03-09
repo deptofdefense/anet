@@ -1,6 +1,7 @@
 package mil.dds.anet.test.beans;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.junit.Test;
 
 import mil.dds.anet.beans.Person;
@@ -22,7 +23,7 @@ public class PersonTest extends BeanTester<Person> {
 		person.setDomainUsername("jack");
 		person.setGender("Male");
 		person.setCountry("United States of America");
-		person.setEndOfTourDate(new DateTime(2017,6,30,0,0,0));
+		person.setEndOfTourDate(new DateTime(2017,6,30,0,0,0,DateTimeZone.UTC));
 		return person;
 	}
 

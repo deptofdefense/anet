@@ -1,4 +1,5 @@
 import Model from 'components/Model'
+import moment from 'moment'
 
 export default class Report extends Model {
 	static resourceName = 'Report'
@@ -37,9 +38,7 @@ export default class Report extends Model {
 
 	validateForSubmit() {
 		let errors = []
-		if (!this.engagementDate) {
-			errors.push('You must provide the Date of Engagement')
-		}
+
 		let isCancelled = this.cancelledReason ? true : false
 		if (!isCancelled) {
 			if (!this.atmosphere) {
@@ -50,6 +49,12 @@ export default class Report extends Model {
 				}
 			}
 		}
+		if (!this.engagementDate) {
+			errors.push('You must provide the Date of Engagement')
+		} else if (!isCancelled && moment(this.engagementDate).isAfter(moment())) {
+			errors.push("You cannot submit reports for future dates, except for cancelled engagements")
+		}
+
 		let primaryPrincipal = this.getPrimaryPrincipal()
 		let primaryAdvisor = this.getPrimaryAdvisor()
 		if (!primaryPrincipal) {
@@ -65,7 +70,7 @@ export default class Report extends Model {
 		if (!isCancelled && !this.keyOutcomes) {
 			errors.push('You must provide a brief summary of the Key Outcomes')
 		}
-			return errors
+		return errors
 	}
 
 	getPrimaryPrincipal() {
