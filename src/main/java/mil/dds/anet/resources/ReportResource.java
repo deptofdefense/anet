@@ -220,15 +220,17 @@ public class ReportResource implements IGraphQLResource {
 			}
 		}
 		
-		boolean canApprove = engine.canUserApproveStep(editor.getId(), existing.getApprovalStep().getId());
-		if (canApprove) { 
-			AnetEmail email = new AnetEmail();
-			ReportEditedEmail action = new ReportEditedEmail();
-			action.setReport(existing);
-			action.setEditor(editor);
-			email.setAction(action);
-			email.setToAddresses(ImmutableList.of(existing.loadAuthor().getEmailAddress()));
-			AnetEmailWorker.sendEmailAsync(email);
+		if (existing.getState() == ReportState.PENDING_APPROVAL) { 
+			boolean canApprove = engine.canUserApproveStep(editor.getId(), existing.getApprovalStep().getId());
+			if (canApprove) { 
+				AnetEmail email = new AnetEmail();
+				ReportEditedEmail action = new ReportEditedEmail();
+				action.setReport(existing);
+				action.setEditor(editor);
+				email.setAction(action);
+				email.setToAddresses(ImmutableList.of(existing.loadAuthor().getEmailAddress()));
+				AnetEmailWorker.sendEmailAsync(email);
+			}
 		}
 		
 		return Response.ok().build();
