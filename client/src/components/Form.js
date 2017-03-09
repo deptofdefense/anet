@@ -2,8 +2,6 @@ import React, {Component, PropTypes} from 'react'
 import ReactDOM from 'react-dom'
 import {Form as BSForm, Row, Button} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
-import _isEqual from 'lodash.isequal'
-import _last from 'lodash.last'
 import {withRouter} from 'react-router'
 
 import {ContentForHeader} from 'components/Header'
@@ -17,7 +15,6 @@ const staticFormStyle = {
 class Form extends Component {
 	static propTypes = Object.assign({}, BSForm.propTypes, {
 		formFor: PropTypes.object,
-		originalFormFor: PropTypes.object,
 		static: PropTypes.bool,
 		submitText: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
 		submitOnEnter: PropTypes.bool,
@@ -44,36 +41,6 @@ class Form extends Component {
 		}
 	}
 
-	formHasUnsavedChanges() {
-		return !(this.isSubmitting || _isEqual(this.props.formFor, this.props.originalFormFor))
-	}
-
-	@autobind
-	onBeforeUnloadListener(event) {
-		if (this.formHasUnsavedChanges()) {
-			event.returnValue = 'Are you sure you wish to navigate away from the page? You will lose unsaved changes.'
-			event.preventDefault()
-		}
-	}
-
-	@autobind
-	routeLeaveHook(nextRoute) {
-		if (this.formHasUnsavedChanges()) {
-			return 'Are you sure you wish to navigate away from the page? You will lose unsaved changes.'
-		}
-	}
-
-	componentWillMount() {
-		this.unsetRouteLeaveHook = 
-			this.props.router.setRouteLeaveHook(_last(this.props.routes), this.routeLeaveHook)
-		window.addEventListener('beforeunload', this.onBeforeUnloadListener)
-	}
-
-	componentWillUnmount() {
-		this.unsetRouteLeaveHook()
-		window.removeEventListener('beforeunload', this.onBeforeUnloadListener)
-	}
-
 	componentDidMount() {
 		let container = ReactDOM.findDOMNode(this.refs.container)
 		let focusElement = container.querySelector('[data-focus]')
@@ -83,7 +50,7 @@ class Form extends Component {
 	render() {
 		let {children, submitText, submitOnEnter, submitDisabled, ...bsProps} = this.props
 		bsProps = Object.without(bsProps, 
-			'formFor', 'originalFormFor', 'static', 'routes', 'router', 'params', 'location')
+			'formFor', 'static', 'routes', 'router', 'params', 'location')
 
 		if (this.props.static) {
 			submitText = false
@@ -133,7 +100,7 @@ class Form extends Component {
 	onSubmit(event) {
 		event.stopPropagation()
 		event.preventDefault()
-		this.isSubmitting = true;
+		this.isSubmitting = true
 
 		this.props.onSubmit && this.props.onSubmit(event)
 	}
