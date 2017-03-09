@@ -1,6 +1,7 @@
 import {Component} from 'react'
 import _isEqual from 'lodash.isequal'
 import _last from 'lodash.last'
+import _get from 'lodash.get'
 import autobind from 'autobind-decorator'
 import {withRouter} from 'react-router'
 
@@ -20,9 +21,13 @@ class RedirectPreventer extends Component {
 
 	@autobind
 	routeLeaveHook(nextRoute) {
-		if (this.formHasUnsavedChanges()) {
+        const skipPageLeaveWarning = _get(nextRoute, ['state', 'skipPageLeaveWarning'])
+		if (this.formHasUnsavedChanges() && !skipPageLeaveWarning) {
 			return 'Are you sure you wish to navigate away from the page? You will lose unsaved changes.'
 		}
+        if (skipPageLeaveWarning) {
+            nextRoute.state.skipPageLeaveWarning = false
+        }
 	}
 
 	componentWillMount() {
