@@ -31,7 +31,7 @@ public class CommentDao implements IAnetDao<Comment> {
 	public Comment getById(int id) {
 		List<Comment> results = dbHandle.createQuery("/* getCommentById */ SELECT comments.id AS c_id, "
 				+ "comments.createdAt AS c_createdAt, comments.updatedAt AS c_updatedAt, "
-				+ "comments.authorId, comments.reportId, comments.text, people.* "
+				+ "comments.authorId, comments.reportId, comments.text, " + PersonDao.PERSON_FIELDS
 				+ "FROM comments LEFT JOIN people ON comments.authorId = people.id "
 				+ "WHERE comments.id = :id")
 			.bind("id", id)
