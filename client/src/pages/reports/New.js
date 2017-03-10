@@ -5,6 +5,7 @@ import ReportForm from './Form'
 import {ContentForHeader} from 'components/Header'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Messages from 'components/Messages'
+import NavigationWarning from 'components/NavigationWarning'
 import {Report} from 'models'
 
 export default class ReportNew extends HopscotchPage {
@@ -21,6 +22,7 @@ export default class ReportNew extends HopscotchPage {
 
 		this.state = {
 			report: new Report(),
+			originalReport: new Report(),
 		}
 	}
 
@@ -29,6 +31,14 @@ export default class ReportNew extends HopscotchPage {
 		if (this.hopscotch.getState() === `${this.hopscotchTour.id}:3`) {
 			this.hopscotch.startTour(this.hopscotchTour, 4)
 		}
+	}
+
+	componentWillReceiveProps(_, nextContext) {
+		let newAttendee = this.context.app.state.currentUser
+
+		this.state.report.addAttendee(newAttendee)
+		this.state.originalReport.addAttendee(newAttendee)
+		this.setState()
 	}
 
 	render() {
@@ -43,7 +53,8 @@ export default class ReportNew extends HopscotchPage {
 				<Breadcrumbs items={[['Submit a report', Report.pathForNew()]]} />
 				<Messages error={this.state.error} />
 
-				<ReportForm report={this.state.report} defaultAttendee={currentUser} />
+				<NavigationWarning original={this.state.originalReport} current={this.state.report} />
+				<ReportForm report={this.state.report} />
 			</div>
 		)
 	}

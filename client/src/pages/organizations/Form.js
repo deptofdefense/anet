@@ -1,6 +1,7 @@
 import React, {Component, PropTypes} from 'react'
 import {Button, Table} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
+import NavigationWarning from 'components/NavigationWarning'
 
 import Form from 'components/Form'
 import ButtonToggleGroup from 'components/ButtonToggleGroup'
@@ -201,7 +202,10 @@ export default class OrganizationForm extends Component {
 				}
 
 				History.replace(Organization.pathForEdit(organization), false)
-				History.push(Organization.pathFor(organization), {success: 'Organization saved successfully'})
+				History.push(Organization.pathFor(organization), {
+					success: 'Organization saved successfully', 
+					skipPageLeaveWarning: true
+				})
 			}).catch(error => {
 				this.setState({error})
 				window.scrollTo(0, 0)

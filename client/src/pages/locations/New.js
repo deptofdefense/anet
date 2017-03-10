@@ -1,6 +1,7 @@
 import React, {PropTypes} from 'react'
 import autobind from 'autobind-decorator'
 
+import NavigationWarning from 'components/NavigationWarning'
 import {ContentForHeader} from 'components/Header'
 import History from 'components/History'
 import Form from 'components/Form'
@@ -38,6 +39,8 @@ export default class LocationNew extends React.Component {
 				<ContentForHeader>
 					<h2>Create a new Location</h2>
 				</ContentForHeader>
+
+				<NavigationWarning original={new Location()} current={location} />
 
 				<Breadcrumbs items={[['Create new Location', Location.pathForNew()]]} />
 				<Messages success={this.state.success} error={this.state.error} />
@@ -82,7 +85,7 @@ export default class LocationNew extends React.Component {
 
 		API.send('/api/locations/new', this.state.location, {disableSubmits: true})
 			.then(location => {
-				History.push(Location.pathFor(location), {success: 'Saved Location'})
+				History.push(Location.pathFor(location), {success: 'Saved Location', skipPageLeaveWarning: true})
 			}).catch(error => {
 				this.setState({error: error})
 				window.scrollTo(0, 0)

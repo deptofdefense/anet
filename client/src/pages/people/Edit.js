@@ -6,6 +6,7 @@ import moment from 'moment'
 import PersonForm from './Form'
 import {ContentForHeader} from 'components/Header'
 import Breadcrumbs from 'components/Breadcrumbs'
+import NavigationWarning from 'components/NavigationWarning'
 
 import API from 'api'
 import {Person} from 'models'
@@ -43,12 +44,12 @@ class PersonEdit extends Page {
 			if (data.person.endOfTourDate) {
 				data.person.endOfTourDate = moment(data.person.endOfTourDate).format()
 			}
-			this.setState({person: new Person(data.person)})
+			this.setState({person: new Person(data.person), originalPerson: new Person(data.person)})
 		})
 	}
 
 	render() {
-		let person = this.state.person
+		let {person, originalPerson} = this.state
 
 		let currentUser = this.context.app.state.currentUser
 		let canEditPosition = currentUser && currentUser.isSuperUser()
@@ -66,7 +67,9 @@ class PersonEdit extends Page {
 					<Breadcrumbs items={[[`Edit ${person.name}`, Person.pathForEdit(person)]]} />
 				}
 
-				<PersonForm person={person} edit showPositionAssignment={canEditPosition} legendText={legendText} saveText={saveText} />
+				<NavigationWarning original={originalPerson} current={person} />
+				<PersonForm person={person} edit showPositionAssignment={canEditPosition} 
+					legendText={legendText} saveText={saveText} />
 			</div>
 		)
 	}

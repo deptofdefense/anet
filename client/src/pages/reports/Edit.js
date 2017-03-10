@@ -6,6 +6,7 @@ import moment from 'moment'
 import ReportForm from './Form'
 import {ContentForHeader} from 'components/Header'
 import Breadcrumbs from 'components/Breadcrumbs'
+import NavigationWarning from 'components/NavigationWarning'
 
 import API from 'api'
 import {Report} from 'models'
@@ -26,6 +27,7 @@ class ReportEdit extends Page {
 
 		this.state = {
 			report: new Report(),
+			originalReport: new Report(),
 		}
 	}
 
@@ -42,11 +44,12 @@ class ReportEdit extends Page {
 				poams { id, shortName, longName, responsibleOrg { id, shortName} }
 			}
 		`).then(data => {
-			let newState = {
-				report: new Report(data.report),
+			function getReportFromData() {
+				const report = new Report(data.report)
+				report.engagementDate = report.engagementDate && moment(report.engagementDate).format()
+				return report
 			}
-			newState.report.engagementDate = newState.report.engagementDate && moment(newState.report.engagementDate).format()
-			this.setState(newState)
+			this.setState({report: getReportFromData(), originalReport: getReportFromData()})
 		})
 	}
 
@@ -61,6 +64,7 @@ class ReportEdit extends Page {
 
 				<Breadcrumbs items={[['Report #' + report.id, '/reports/' + report.id], ['Edit', '/reports/' + report.id + '/edit']]} />
 
+				<NavigationWarning original={this.state.originalReport} current={report} />
 				<ReportForm edit report={report} />
 			</div>
 		)
