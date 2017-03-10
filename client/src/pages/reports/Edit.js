@@ -4,7 +4,6 @@ import ModelPage from 'components/ModelPage'
 import moment from 'moment'
 
 import ReportForm from './Form'
-import {ContentForHeader} from 'components/Header'
 import Breadcrumbs from 'components/Breadcrumbs'
 import NavigationWarning from 'components/NavigationWarning'
 
@@ -57,11 +56,7 @@ class ReportEdit extends Page {
 		let report = this.state.report
 
 		return (
-			<div>
-				<ContentForHeader>
-					<h2>Edit Report #{report.id}</h2>
-				</ContentForHeader>
-
+			<div className="report-edit">
 				<Breadcrumbs items={[['Report #' + report.id, '/reports/' + report.id], ['Edit', '/reports/' + report.id + '/edit']]} />
 
 				<NavigationWarning original={this.state.originalReport} current={report} />

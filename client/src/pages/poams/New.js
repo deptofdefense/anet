@@ -2,7 +2,6 @@ import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 
 import PoamForm from './Form'
-import {ContentForHeader} from 'components/Header'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Messages from 'components/Messages'
 import NavigationWarning from 'components/NavigationWarning'
@@ -48,10 +47,6 @@ export default class PoamNew extends Page {
 
 		return (
 			<div>
-				<ContentForHeader>
-					<h2>Create a new PoAM</h2>
-				</ContentForHeader>
-
 				<Breadcrumbs items={[['Create new PoAM', Poam.pathForNew()]]} />
 
 				<Messages error={this.state.error} success={this.state.success} />

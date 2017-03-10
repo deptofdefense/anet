@@ -2,7 +2,6 @@ import React, {PropTypes} from 'react'
 import autobind from 'autobind-decorator'
 
 import NavigationWarning from 'components/NavigationWarning'
-import {ContentForHeader} from 'components/Header'
 import History from 'components/History'
 import Form from 'components/Form'
 import Breadcrumbs from 'components/Breadcrumbs'
@@ -36,10 +35,6 @@ export default class LocationNew extends React.Component {
 
 		return (
 			<div>
-				<ContentForHeader>
-					<h2>Create a new Location</h2>
-				</ContentForHeader>
-
 				<NavigationWarning original={new Location()} current={location} />
 
 				<Breadcrumbs items={[['Create new Location', Location.pathForNew()]]} />

@@ -2,7 +2,6 @@ import React from 'react'
 import Page from 'components/Page'
 
 import PositionForm from './Form'
-import {ContentForHeader} from 'components/Header'
 import Breadcrumbs from 'components/Breadcrumbs'
 import NavigationWarning from 'components/NavigationWarning'
 
@@ -53,10 +52,6 @@ export default class PositionNew extends Page {
 
 		return (
 			<div>
-				<ContentForHeader>
-					<h2>Create a new Position</h2>
-				</ContentForHeader>
-
 				<Breadcrumbs items={[['Create new Position', Position.pathForNew()]]} />
 
 				<NavigationWarning original={this.state.originalPosition} current={position} />

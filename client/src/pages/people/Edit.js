@@ -4,7 +4,6 @@ import ModelPage from 'components/ModelPage'
 import moment from 'moment'
 
 import PersonForm from './Form'
-import {ContentForHeader} from 'components/Header'
 import Breadcrumbs from 'components/Breadcrumbs'
 import NavigationWarning from 'components/NavigationWarning'
 
@@ -59,10 +58,6 @@ class PersonEdit extends Page {
 
 		return (
 			<div>
-				<ContentForHeader>
-					<h2>{legendText}</h2>
-				</ContentForHeader>
-
 				{person.status !== 'NEW_USER' && 
 					<Breadcrumbs items={[[`Edit ${person.name}`, Person.pathForEdit(person)]]} />
 				}

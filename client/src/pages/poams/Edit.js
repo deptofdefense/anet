@@ -3,7 +3,6 @@ import Page from 'components/Page'
 import ModelPage from 'components/ModelPage'
 
 import PoamForm from './Form'
-import {ContentForHeader} from 'components/Header'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Messages from 'components/Messages'
 import NavigationWarning from 'components/NavigationWarning'
@@ -44,10 +43,6 @@ class PoamEdit extends Page {
 
 		return (
 			<div>
-				<ContentForHeader>
-					<h2>Edit PoAM {poam.shortName}</h2>
-				</ContentForHeader>
-
 				<Breadcrumbs items={[[`PoAM ${poam.shortName}`, Poam.pathFor(poam)], ["Edit", Poam.pathForEdit(poam)]]} />
 
 				<Messages error={this.state.error} success={this.state.success} />

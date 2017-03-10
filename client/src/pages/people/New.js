@@ -2,7 +2,6 @@ import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 
 import PersonForm from './Form'
-import {ContentForHeader} from 'components/Header'
 import Breadcrumbs from 'components/Breadcrumbs'
 import NavigationWarning from 'components/NavigationWarning'
 
@@ -31,10 +30,6 @@ export default class PersonNew extends Page {
 
 		return (
 			<div>
-				<ContentForHeader>
-					<h2>Create a new Person</h2>
-				</ContentForHeader>
-
 				<Breadcrumbs items={[['Create new Person', Person.pathForNew()]]} />
 
 				<NavigationWarning original={this.state.originalPerson} current={person} />

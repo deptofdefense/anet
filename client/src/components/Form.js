@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom'
 import {Form as BSForm, Row, Button} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
-import {ContentForHeader} from 'components/Header'
 import FormField from 'components/FormField'
 
 const staticFormStyle = {
@@ -67,14 +66,6 @@ export default class Form extends Component {
 		return (
 			<BSForm {...bsProps} ref="container">
 				{children}
-
-				{showSubmit &&
-					<ContentForHeader right>
-						<Button bsStyle="primary" type="submit" onClick={bsProps.onSubmit} disabled={submitDisabled} id="formHeaderSubmit" >
-							{submitText}
-						</Button>
-					</ContentForHeader>
-				}
 
 				{showSubmit &&
 					<div className="form-bottom-submit">

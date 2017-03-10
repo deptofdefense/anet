@@ -2,7 +2,6 @@ import React, {PropTypes} from 'react'
 import HopscotchPage from 'components/HopscotchPage'
 
 import ReportForm from './Form'
-import {ContentForHeader} from 'components/Header'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Messages from 'components/Messages'
 import NavigationWarning from 'components/NavigationWarning'
@@ -46,15 +45,11 @@ export default class ReportNew extends HopscotchPage {
 
 		return (
 			<div>
-				<ContentForHeader>
-					<h2>Create a new Report</h2>
-				</ContentForHeader>
-
 				<Breadcrumbs items={[['Submit a report', Report.pathForNew()]]} />
 				<Messages error={this.state.error} />
 
 				<NavigationWarning original={this.state.originalReport} current={this.state.report} />
-				<ReportForm report={this.state.report} />
+				<ReportForm report={this.state.report} title="Create a new Report" />
 			</div>
 		)
 	}
