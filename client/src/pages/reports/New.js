@@ -40,12 +40,23 @@ export default class ReportNew extends HopscotchPage {
 		this.hopscotch.startTour(this.hopscotchTour, 4)
 	}
 
-	componentWillReceiveProps(_, nextContext) {
+	componentWillUpdate() {
+		this.addCurrentUserAsAttendee()
+	}
+
+	componentWillMount() {
+		this.addCurrentUserAsAttendee()
+	}
+
+	addCurrentUserAsAttendee() {
 		let newAttendee = this.context.app.state.currentUser
 
-		this.state.report.addAttendee(newAttendee)
-		this.state.originalReport.addAttendee(newAttendee)
-		this.forceUpdate()
+		const addedAttendeeToReport = this.state.report.addAttendee(newAttendee)
+		const addedAttendeeToOriginalReport = this.state.originalReport.addAttendee(newAttendee)
+
+		if (addedAttendeeToReport || addedAttendeeToOriginalReport) {
+			this.forceUpdate()
+		}
 	}
 
 	render() {

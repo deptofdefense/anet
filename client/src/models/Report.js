@@ -105,6 +105,7 @@ export default class Report extends Model {
 		}
 
 		this.attendees.push(person)
+		return true
 	}
 
 }
