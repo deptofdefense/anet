@@ -117,7 +117,11 @@ export default class PositionForm extends Component {
 				<fieldset>
 					<legend>Assigned {position.type === 'PRINCIPAL' ? 'advisor' : 'advisee'}</legend>
 
-					<p className="help-text">Advisor positions are associated with Principal positions and vice versa.</p>
+					{position.type === 'PRINCIPAL' ?
+						<p className="help-text">Who is this person advised by?</p>
+						:
+						<p className="help-text">Who does this person advise?</p>
+					}
 
 					<Form.Field id="associatedPositions">
 						<Autocomplete

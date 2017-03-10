@@ -73,7 +73,7 @@ INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biograp
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, createdAt, updatedAt)
 	VALUES ('Nick Nicholson', 0, 0, 'hunter+nick@dds.mil', '+1-202-7324', 'CIV', '', 'nick', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt)
-	VALUES ('Shardul Sharton', 0, 1, 'hunter+shardul@dds.mil', '+99-9999-9999', 'CIV', '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	VALUES ('Shardul Sharton', 1, 1, 'hunter+shardul@dds.mil', '+99-9999-9999', 'CIV', '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('ANET Administrator', 3, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF1 Manager', 2, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
