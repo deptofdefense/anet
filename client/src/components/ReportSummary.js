@@ -85,7 +85,7 @@ export default class ReportSummary extends Component {
 			<Row>
 				<Col mdOffset={9} md={3}>
 					<LinkTo report={report} className="read-full">
-						<Button bsStyle="primary">Read Full Report</Button>
+						<Button bsStyle="primary">Read Report</Button>
 					</LinkTo>
 				</Col>
 			</Row>
