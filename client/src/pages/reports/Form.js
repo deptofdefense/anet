@@ -407,7 +407,10 @@ export default class ReportForm extends Component {
 				History.replace(Report.pathForEdit(report), false)
 
 				// then after, we redirect you to the to page
-				History.push(Report.pathFor(report), {success: 'Report saved successfully'})
+				History.push(Report.pathFor(report), {
+					success: 'Report saved successfully', 
+					skipPageLeaveWarning: true
+				})
 			})
 			.catch(response => {
 				this.setState({error: {message: response.message || response.error}})
