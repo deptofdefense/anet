@@ -159,6 +159,24 @@ fieldset.collapsable legend div.collapsableToggle {
 	display: table;
 }
 
+.home-tile-row span.close-getting-started {
+	position: relative;
+	top: -10px;
+	right: 5px;
+	font-size: 1.2rem;
+	float: right;
+	cursor: pointer;
+	opacity: .2;
+	color: #000;
+	text-shadow: 0 1px 0 #fff;
+	font-weight: bold;
+}
+
+.home-tile-row span.close-getting-started:hover {
+	opacity: .5;
+	text-decoration: none;
+}
+
 a.home-tile {
 	display: table-cell;
 	float: none;
