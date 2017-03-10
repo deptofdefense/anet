@@ -2,7 +2,6 @@ import React, {PropTypes} from 'react'
 import autobind from 'autobind-decorator'
 
 import NavigationWarning from 'components/NavigationWarning'
-import {ContentForHeader} from 'components/Header'
 import History from 'components/History'
 import Form from 'components/Form'
 import Breadcrumbs from 'components/Breadcrumbs'

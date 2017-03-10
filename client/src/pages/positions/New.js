@@ -2,7 +2,6 @@ import React from 'react'
 import Page from 'components/Page'
 
 import PositionForm from './Form'
-import {ContentForHeader} from 'components/Header'
 import Breadcrumbs from 'components/Breadcrumbs'
 import NavigationWarning from 'components/NavigationWarning'
 

@@ -4,7 +4,6 @@ import ModelPage from 'components/ModelPage'
 import NavigationWarning from 'components/NavigationWarning'
 
 import OrganizationForm from './Form'
-import {ContentForHeader} from 'components/Header'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Messages from 'components/Messages'
 

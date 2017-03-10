@@ -2,7 +2,6 @@ import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 
 import PoamForm from './Form'
-import {ContentForHeader} from 'components/Header'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Messages from 'components/Messages'
 import NavigationWarning from 'components/NavigationWarning'

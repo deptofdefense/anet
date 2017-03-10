@@ -4,7 +4,6 @@ import ModelPage from 'components/ModelPage'
 import moment from 'moment'
 
 import ReportForm from './Form'
-import {ContentForHeader} from 'components/Header'
 import Breadcrumbs from 'components/Breadcrumbs'
 import NavigationWarning from 'components/NavigationWarning'
 
