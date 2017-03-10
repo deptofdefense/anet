@@ -56,7 +56,7 @@ class ReportEdit extends Page {
 		let report = this.state.report
 
 		return (
-			<div>
+			<div className="report-edit">
 				<Breadcrumbs items={[['Report #' + report.id, '/reports/' + report.id], ['Edit', '/reports/' + report.id + '/edit']]} />
 
 				<NavigationWarning original={this.state.originalReport} current={report} />

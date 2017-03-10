@@ -38,7 +38,6 @@ fieldset legend {
 	font-size: 2.5rem;
 	color: #363636;
 	border: none;
-	padding-right: 80px;
 }
 
 fieldset legend small {
@@ -418,6 +417,10 @@ table hr.attendee-divider {
 .report-form .top-submit-buttons .button-row {
 	position: relative;
 	top: -40px;
+}
+
+.report-edit .report-form .top-submit-buttons .button-row {
+	top: -75px;
 }
 
 .show-report-overview label.col-sm-2 {
