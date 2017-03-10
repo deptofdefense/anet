@@ -38,7 +38,7 @@ class PersonShow extends Page {
 		API.query(/* GraphQL */`
 			person(id:${props.params.id}) {
 				id,
-				name, rank, role, emailAddress, phoneNumber, biography, country, gender, endOfTourDate,
+				name, rank, role, status, emailAddress, phoneNumber, biography, country, gender, endOfTourDate,
 				position {
 					id,
 					name,
@@ -83,6 +83,13 @@ class PersonShow extends Page {
 		let {person} = this.state
 		let position = person.position
 
+		// translate role
+		if (person.role === 'ADVISOR') {
+			person.role = 'NATO Member'
+		} else if (person.role === 'PRINCIPAL') {
+			person.role = 'Principal'
+		}
+
 		//User can always edit themselves, or Super Users/Admins.
 		let currentUser = this.context.app.state.currentUser
 		let canEdit = currentUser && (currentUser.id === person.id ||
@@ -106,6 +113,7 @@ class PersonShow extends Page {
 						<legend>{person.rank} {person.name}</legend>
 						<Form.Field id="rank" />
 						<Form.Field id="role" />
+						<Form.Field id="status" />
 						<Form.Field label="Phone" id="phoneNumber" />
 						<Form.Field label="Email" id="emailAddress">
 							<a href={`mailto:${person.emailAddress}`}>{person.emailAddress}</a>

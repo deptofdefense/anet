@@ -27,14 +27,21 @@ class PositionEdit extends Page {
 	fetchData(props) {
 		API.query(/* GraphQL */`
 			position(id:${props.params.id}) {
-				id, name, code, type
+				id, name, code, status, type
 				location { id, name },
 				associatedPositions { id, name  },
 				organization {id, shortName, longName, type},
 				person { id, name}
 			}
 		`).then(data => {
-			this.setState({position: new Position(data.position)})
+			let position = new Position(data.position)
+			//need to set type to either ADVISOR or PRINCIPAL and add permissions property.
+			//This is undone in the onSubmit method in the Form.
+			position.permissions = position.type
+			if (position.type === "SUPER_USER" || position.type === "ADMINISTRATOR") {
+				position.type = "ADVISOR"
+			}
+			this.setState({position})
 		})
 	}
 

@@ -288,7 +288,6 @@ export default class Search extends Page {
 					<th>Name</th>
 					<th>Position</th>
 					<th>Org</th>
-					<th>Phone number</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -300,7 +299,6 @@ export default class Search extends Page {
 						</td>
 						<td>{person.position && <LinkTo position={person.position} />}</td>
 						<td>{person.position && person.position.organization && <LinkTo organization={person.position.organization} />}</td>
-						<td>{person.phoneNumber}</td>
 					</tr>
 				)}
 			</tbody>

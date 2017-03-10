@@ -73,20 +73,20 @@ INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biograp
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, createdAt, updatedAt)
 	VALUES ('Nick Nicholson', 0, 0, 'hunter+nick@dds.mil', '+1-202-7324', 'CIV', '', 'nick', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt)
-	VALUES ('Shardul Sharton', 0, 1, 'hunter+shardul@dds.mil', '+99-9999-9999', 'CIV', '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	VALUES ('Shardul Sharton', 1, 1, 'hunter+shardul@dds.mil', '+99-9999-9999', 'CIV', '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
-INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('ANET Administrator', 3, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF1 Manager', 2, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF1.1 Advisor A', 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF1.1 SuperUser', 2, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF2.1 Advisor B', 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF2.1 SuperUser', 2, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF2.2 Advisor C', 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF2.2 Advisor D', 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF2.2 Super User', 2, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF2.2 Final Reviewer', 2, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF4.1 Advisor E', 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO positions (name, type, currentPersonId, createdAt, updatedAt) VALUES ('EF9 Advisor <empty>', 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('ANET Administrator', 3, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF1 Manager', 2, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF1.1 Advisor A', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF1.1 SuperUser', 2, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF2.1 Advisor B', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF2.1 SuperUser', 2, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF2.2 Advisor C', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF2.2 Advisor D', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF2.2 Super User', 2, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF2.2 Final Reviewer', 2, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF4.1 Advisor E', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF9 Advisor <empty>', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 
 -- Put Andrew in the EF1 Manager Billet
@@ -268,22 +268,22 @@ INSERT INTO locations (name, createdAt, updatedAt) VALUES ('MoI Office Building 
 INSERT INTO organizations (shortName, longName, type, createdAt, updatedAt) VALUES ('MoD', 'Ministry of Defense', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO organizations (shortName, longName, type, createdAt, updatedAt) VALUES ('MoI', 'Ministry of Interior', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
-INSERT INTO positions (name, code, type, currentPersonId, organizationId, createdAt, updatedAt)
-	VALUES ('Minister of Defense', 'MOD-FO-00001', 1, NULL, (SELECT id FROM organizations WHERE longName LIKE 'Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO positions (name, code, type, currentPersonId, organizationId, createdAt, updatedAt)
-	VALUES ('Chief of Staff - MoD', 'MOD-FO-00002', 1, NULL, (SELECT id FROM organizations WHERE longName LIKE 'Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO positions (name, code, type, currentPersonId, organizationId, createdAt, updatedAt)
-	VALUES ('Executive Assistant to the MoD', 'MOD-FO-00003', 1, NULL, (SELECT id FROM organizations WHERE longName LIKE 'Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO positions (name, code, type, currentPersonId, organizationId, createdAt, updatedAt)
-	VALUES ('Planning Captain', 'MOD-FO-00004', 1, NULL, (SELECT id FROM organizations WHERE longName LIKE 'Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO positions (name, code, type, currentPersonId, organizationId, createdAt, updatedAt)
-	VALUES ('Director of Budgeting - MoD', 'MOD-Bud-00001', 1, NULL, (SELECT id FROM organizations WHERE longName LIKE 'Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO positions (name, code, type, currentPersonId, organizationId, createdAt, updatedAt)
-	VALUES ('Writer of Expenses - MoD', 'MOD-Bud-00002', 1, NULL, (SELECT id FROM organizations WHERE longName LIKE 'Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO positions (name, code, type, currentPersonId, organizationId, createdAt, updatedAt)
-	VALUES ('Cost Adder - MoD', 'MOD-Bud-00003', 1, NULL, (SELECT id FROM organizations WHERE longName LIKE 'Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO positions (name, code, type, currentPersonId, organizationId, createdAt, updatedAt)
-	VALUES ('Chief of Police', 'MOI-Pol-HQ-00001',1, NULL, (SELECT id FROM organizations WHERE longName LIKE 'Ministry of Interior'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, code, type, status, currentPersonId, organizationId, createdAt, updatedAt)
+	VALUES ('Minister of Defense', 'MOD-FO-00001', 1, 0, NULL, (SELECT id FROM organizations WHERE longName LIKE 'Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, code, type, status, currentPersonId, organizationId, createdAt, updatedAt)
+	VALUES ('Chief of Staff - MoD', 'MOD-FO-00002', 1, 0, NULL, (SELECT id FROM organizations WHERE longName LIKE 'Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, code, type, status, currentPersonId, organizationId, createdAt, updatedAt)
+	VALUES ('Executive Assistant to the MoD', 'MOD-FO-00003', 1, 0, NULL, (SELECT id FROM organizations WHERE longName LIKE 'Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, code, type, status, currentPersonId, organizationId, createdAt, updatedAt)
+	VALUES ('Planning Captain', 'MOD-FO-00004', 1, 0, NULL, (SELECT id FROM organizations WHERE longName LIKE 'Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, code, type, status, currentPersonId, organizationId, createdAt, updatedAt)
+	VALUES ('Director of Budgeting - MoD', 'MOD-Bud-00001', 1, 0, NULL, (SELECT id FROM organizations WHERE longName LIKE 'Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, code, type, status, currentPersonId, organizationId, createdAt, updatedAt)
+	VALUES ('Writer of Expenses - MoD', 'MOD-Bud-00002', 1, 0, NULL, (SELECT id FROM organizations WHERE longName LIKE 'Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, code, type, status, currentPersonId, organizationId, createdAt, updatedAt)
+	VALUES ('Cost Adder - MoD', 'MOD-Bud-00003', 1, 0, NULL, (SELECT id FROM organizations WHERE longName LIKE 'Ministry of Defense'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, code, type, status, currentPersonId, organizationId, createdAt, updatedAt)
+	VALUES ('Chief of Police', 'MOI-Pol-HQ-00001', 1, 0, NULL, (SELECT id FROM organizations WHERE longName LIKE 'Ministry of Interior'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Put Steve into a Tashkil and associate with the EF1 Advisor Billet
 INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES
@@ -367,10 +367,10 @@ INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 	(SELECT id FROM people where emailAddress='hunter+jack@dds.mil'), (SELECT max(id) FROM reports), 1);
 INSERT INTO reportPoams (poamId, reportId) VALUES ((SELECT id from poams where shortName = '1.1.A'), (SELECT max(id) from reports));
 
-INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, nextSteps, authorId, state, engagementDate, atmosphere, advisorOrganizationId, principalOrganizationId) VALUES
+INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, nextSteps, authorId, state, releasedAt, engagementDate, atmosphere, atmosphereDetails, advisorOrganizationId, principalOrganizationId) VALUES
 	(CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (select id from locations where name='MoD Headquarters Kabul'), 'Meet with Leadership regarding monthly status update',
 	'This engagement was sooooo interesting',
-	'Meet up with Roger next week to look at the numbers on the charts', (SELECT id FROM people where domainUsername='jack'), 2, '2016-06-12', 2,
+	'Meet up with Roger next week to look at the numbers on the charts', (SELECT id FROM people where domainUsername='jack'), 2,CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 2, 'Guy was grumpy',
 	(SELECT id FROM organizations where shortName = 'EF2.1'), (SELECT id FROM organizations WHERE longName LIKE 'Ministry of Defense'));
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 	(SELECT id FROM people where emailAddress='hunter+steve@dds.mil'), (SELECT max(id) from reports), 1);
@@ -380,11 +380,11 @@ INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 	(SELECT id FROM people where emailAddress='hunter+jack@dds.mil'), (SELECT max(id) FROM reports), 1);
 INSERT INTO reportPoams (poamId, reportId) VALUES ((SELECT id from poams where shortName = '1.1.B'), (SELECT max(id) from reports));
 
-INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, keyOutcomes, nextSteps, authorId, state, engagementDate, atmosphere, advisorOrganizationId, principalOrganizationId) VALUES
+INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, keyOutcomes, nextSteps, authorId, state, releasedAt, engagementDate, atmosphere, atmosphereDetails, advisorOrganizationId, principalOrganizationId) VALUES
 	(CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (select id from locations where name='Fort Amherst'), 'Inspect Ft Amherst Medical Budgeting Facility?',
 	'Went over to the fort to look at the beds and the spreadsheets and the numbers and the whiteboards and the planning and all of the budgets. It was GREAT!',
 	'Seeing the whiteboards firsthand',
-	'head to Cabot Tower and inspect their whiteboards next week', (SELECT id FROM people where domainUsername='jack'), 2, '2016-06-13', 0,
+	'head to Cabot Tower and inspect their whiteboards next week', (SELECT id FROM people where domainUsername='jack'), 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0, 'Very good tea',
 	(SELECT id FROM organizations where shortName = 'EF2.1'), (SELECT id FROM organizations WHERE longName LIKE 'Ministry of Defense'));
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 	(SELECT id FROM people where emailAddress='hunter+roger@dds.mil'), (SELECT max(id) from reports), 1);

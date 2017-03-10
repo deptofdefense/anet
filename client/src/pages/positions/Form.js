@@ -9,7 +9,9 @@ import ButtonToggleGroup from 'components/ButtonToggleGroup'
 import History from 'components/History'
 
 import API from 'api'
-import {Position, Organization} from 'models'
+import {Position, Organization, Person} from 'models'
+
+import REMOVE_ICON from 'resources/delete.png'
 
 export default class PositionForm extends Component {
 	static propTypes = {
@@ -64,8 +66,15 @@ export default class PositionForm extends Component {
 
 					<Form.Field id="type" disabled={this.props.edit}>
 						<ButtonToggleGroup>
-							<Button id="typeAdvisorButton" value="ADVISOR">Advisor (CE Billet)</Button>
+							<Button id="typeAdvisorButton" value="ADVISOR">NATO (Billet)</Button>
 							<Button id="typePrincipalButton" value="PRINCIPAL">Principal (Tashkil)</Button>
+						</ButtonToggleGroup>
+					</Form.Field>
+
+					<Form.Field id="status" >
+						<ButtonToggleGroup>
+							<Button id="statusActiveButton" value="ACTIVE">Active</Button>
+							<Button id="statusInactiveButton" value="INACTIVE">Inactive</Button>
 						</ButtonToggleGroup>
 					</Form.Field>
 
@@ -108,7 +117,11 @@ export default class PositionForm extends Component {
 				<fieldset>
 					<legend>Assigned {position.type === 'PRINCIPAL' ? 'advisor' : 'advisee'}</legend>
 
-					<p className="help-text">Advisor positions are associated with Principal positions and vice versa.</p>
+					{position.type === 'PRINCIPAL' ?
+						<p className="help-text">Who is this person advised by?</p>
+						:
+						<p className="help-text">Who does this person advise?</p>
+					}
 
 					<Form.Field id="associatedPositions">
 						<Autocomplete
@@ -128,18 +141,29 @@ export default class PositionForm extends Component {
 									<th></th>
 									<th>Name</th>
 									<th>Position</th>
+									<th>Org</th>
+									<th></th>
 								</tr>
 							</thead>
 							<tbody>
-								{Position.map(position.associatedPositions, relPos =>
-									<tr key={relPos.id}>
-										<td onClick={this.removePositionRelationship.bind(this, relPos)}>
-											<span style={{cursor: 'pointer'}}>⛔️</span>
-										</td>
-										<td>{relPos.person && relPos.person.name}</td>
-										<td>{relPos.name}</td>
-									</tr>
-								)}
+								{Position.map(position.associatedPositions, relPos => {
+									let person = new Person(relPos.person)
+									return (
+										<tr key={relPos.id}>
+											<td>
+												{person && <img src={person.iconUrl()} alt={person.role} height={20} className="person-icon" />}
+											</td>
+
+											<td>{person && person.name}</td>
+											<td>{relPos.name}</td>
+											<td>{relPos.organization && relPos.organization.shortName}</td>
+
+											<td onClick={this.removePositionRelationship.bind(this, relPos)}>
+												<span style={{cursor: 'pointer'}}><img src={REMOVE_ICON} height={14} alt="Unassign person" /></span>
+											</td>
+										</tr>
+									)
+								})}
 							</tbody>
 						</Table>
 					</Form.Field>
@@ -189,6 +213,7 @@ export default class PositionForm extends Component {
 	@autobind
 	onSubmit(event) {
 		let {position, edit} = this.props
+		position = Object.assign({}, position)
 
 		if (position.type !== 'PRINCIPAL') {
 			position.type = position.permissions || 'ADVISOR'
@@ -196,6 +221,7 @@ export default class PositionForm extends Component {
 		delete position.permissions
 		position.organization = {id: position.organization.id}
 		position.person = (position.person && position.person.id) ? {id: position.person.id} : null
+		position.code = position.code || null //Need to null out empty position codes
 
 		let url = `/api/positions/${edit ? 'update' : 'new'}`
 		API.send(url, position, {disableSubmits: true})

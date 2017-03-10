@@ -86,7 +86,7 @@ export default class RollupShow extends Page {
 		API.query(/* GraphQL */`
 			reportList(f:search, query:$rollupQuery) {
 				pageNum, pageSize, totalCount, list {
-					id, state, intent, engagementDate, intent, keyOutcomes, nextSteps, cancelledReason
+					id, state, intent, engagementDate, intent, keyOutcomes, nextSteps, cancelledReason, atmosphere, atmosphereDetails
 					author { id, name }
 					location { id, name, lat, lng }
 					poams { id, longName }
@@ -214,6 +214,8 @@ export default class RollupShow extends Page {
 						<DropdownButton bsStyle="primary" title="Actions" id="actions" className="pull-right" onSelect={this.actionSelect}>
 							<MenuItem eventKey="email">Email rollup</MenuItem>
 							<MenuItem eventKey="print">Print</MenuItem>
+							<MenuItem ><a href={`/api/reports/rollup?startDate=${this.rollupStart.valueOf()}&endDate=${this.rollupEnd.valueOf()}`}>View Rollup Email</a></MenuItem>
+							<MenuItem ><a href={`/api/reports/rollup?startDate=${this.rollupStart.valueOf()}&endDate=${this.rollupEnd.valueOf()}&showText=true`}>View Long Rollup Email</a></MenuItem>
 						</DropdownButton>
 					}
 				</div>

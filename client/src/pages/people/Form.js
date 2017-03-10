@@ -7,6 +7,8 @@ import Messages from 'components/Messages'
 import TextEditor from 'components/TextEditor'
 import Autocomplete from 'components/Autocomplete'
 import History from 'components/History'
+import ButtonToggleGroup from 'components/ButtonToggleGroup'
+import {Button} from 'react-bootstrap'
 
 import _some from 'lodash.some'
 import _values from 'lodash.values'
@@ -39,16 +41,16 @@ export default class PersonForm extends Component {
 		const isAdvisor = person.role === 'ADVISOR'
 		const legendText = this.props.legendText || (edit ? `Edit ${person.name}` : 'Create a new person')
 
-		return <Form formFor={person} onChange={this.onChange} onSubmit={this.onSubmit} horizontal 
+		return <Form formFor={person} onChange={this.onChange} onSubmit={this.onSubmit} horizontal
 					submitText={this.props.saveText || 'Save person'}
 					submitDisabled={this.isSubmitDisabled()}>
-					 
+
 			<Messages error={this.state.error} />
 
 			<fieldset>
 				<legend>{legendText}</legend>
 
-				<Form.Field id="name" 
+				<Form.Field id="name"
 					required
 					humanName="Name"
 					onError={() => this.onFieldEnterErrorState('name')}
@@ -58,22 +60,29 @@ export default class PersonForm extends Component {
 					<Form.Field type="static" id="role" />
 					:
 					<Form.Field id="role" componentClass="select">
-						<option value="ADVISOR">Advisor</option>
+						<option value="ADVISOR">NATO Member</option>
 						<option value="PRINCIPAL">Principal</option>
 					</Form.Field>
 				}
+
+				<Form.Field id="status" >
+					<ButtonToggleGroup>
+						<Button id="statusActiveButton" value="ACTIVE">Active</Button>
+						<Button id="statusInactiveButton" value="INACTIVE">Inactive</Button>
+					</ButtonToggleGroup>
+				</Form.Field>
 			</fieldset>
 
 			<fieldset>
 				<legend>Additional Information</legend>
-				<Form.Field id="emailAddress" label="Email" required={isAdvisor} 
+				<Form.Field id="emailAddress" label="Email" required={isAdvisor}
 					humanName="Valid email address"
 					type="email"
 					onError={() => this.onFieldEnterErrorState('emailAddress')}
 					onValid={() => this.onFieldExitErrorState('emailAddress')} />
 				<Form.Field id="phoneNumber" label="Phone Number" />
 				<Form.Field id="rank"  componentClass="select"
-					required={isAdvisor} 
+					required={isAdvisor}
 					humanName="Rank"
 					onError={() => this.onFieldEnterErrorState('rank')}
 					onValid={() => this.onFieldExitErrorState('rank')}>
@@ -90,7 +99,7 @@ export default class PersonForm extends Component {
 				</Form.Field>
 
 				<Form.Field id="gender" componentClass="select"
-					required={isAdvisor} 
+					required={isAdvisor}
 					humanName="Gender"
 					onError={() => this.onFieldEnterErrorState('gender')}
 					onValid={() => this.onFieldExitErrorState('gender')}>
@@ -100,7 +109,7 @@ export default class PersonForm extends Component {
 				</Form.Field>
 
 				<Form.Field id="country" componentClass="select"
-					required={isAdvisor} 
+					required={isAdvisor}
 					humanName="Country"
 					onError={() => this.onFieldEnterErrorState('country')}
 					onValid={() => this.onFieldExitErrorState('country')}>
@@ -212,12 +221,12 @@ export default class PersonForm extends Component {
 
 				if (isFirstTimeUser) {
 					window.localStorage.showGettingStartedPanel = 'true'
-					History.push('/')	
+					History.push('/')
 				} else {
 					if (response.id) {
 						person.id = response.id
 					}
-					
+
 					History.replace(Person.pathForEdit(person), false)
 					History.push(Person.pathFor(person), {success: 'Person saved successfully'})
 				}

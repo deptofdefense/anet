@@ -156,6 +156,7 @@ export default class ReportForm extends Component {
 						onErrorChange={this.attendeeError}
 						clearOnSelect={true}
 						fields={'id, name, role, position { id, name, organization { id, shortName}} '}
+						queryParams={{status: 'ACTIVE'}}
 						template={person =>
 							<span>
 								<img src={(new Person(person)).iconUrl()} alt={person.role} height={20} className="person-icon" />
@@ -168,7 +169,7 @@ export default class ReportForm extends Component {
 						<img src={WARNING_ICON} role="presentation" height="20px" />
 						Person not found in ANET Database.
 					</HelpBlock> }
-					<Table hover condensed id="attendeesTable">
+					<Table hover condensed id="attendeesTable" className="borderless">
 						<thead>
 							<tr>
 								<th style={{textAlign: 'center'}}>Primary</th>
@@ -182,7 +183,7 @@ export default class ReportForm extends Component {
 							{Person.map(report.attendees.filter(p => p.role === "ADVISOR"), (person, idx) =>
 								this.renderAttendeeRow(person, idx)
 							)}
-							<tr className="attendeeTableRow" ><td colSpan={5}><hr className="attendeeDivider" /></td></tr>
+							<tr><td colSpan={5}><hr className="attendee-divider" /></td></tr>
 							{Person.map(report.attendees.filter(p => p.role === "PRINCIPAL"), (person, idx) =>
 								this.renderAttendeeRow(person, idx)
 							)}
@@ -292,7 +293,7 @@ export default class ReportForm extends Component {
 
 	@autobind
 	renderAttendeeRow(person, idx) {
-		return <tr key={person.id} className="attendeeTableRow" >
+		return <tr key={person.id}>
 			<td className="primary-attendee">
 				<Checkbox checked={person.primary} onChange={this.setPrimaryAttendee.bind(this, person)} id={'attendeePrimary_' + person.role + "_" + idx}/>
 			</td>
@@ -300,7 +301,7 @@ export default class ReportForm extends Component {
 			<td id={"attendeeName_" + person.role + "_" + idx} >
 				<img src={person.iconUrl()} alt={person.role} height={20} className="person-icon" />
 				{person.name} {person.rank && person.rank.toUpperCase()}
-				</td>
+			</td>
 			<td><LinkTo position={person.position} /></td>
 			<td>{person.position && person.position.organization && person.position.organization.shortName}</td>
 
