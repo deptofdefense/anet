@@ -220,7 +220,7 @@ export default class PositionForm extends Component {
 				}
 
 				History.replace(Position.pathForEdit(position), false)
-				History.push(Position.pathFor(position), {success: 'Saved Position'})
+				History.push(Position.pathFor(position), {success: 'Saved Position', skipPageLeaveWarning: true})
 			}).catch(error => {
 				this.setState({error: error})
 				window.scrollTo(0, 0)
