@@ -12,10 +12,12 @@ import mil.dds.anet.views.AbstractAnetBean;
 public class Position extends AbstractAnetBean {
 
 	public static enum PositionType { ADVISOR, PRINCIPAL, SUPER_USER, ADMINISTRATOR }
+	public static enum PositionStatus {ACTIVE, INACTIVE} 
 	
 	String name;
 	String code;
 	PositionType type;
+	PositionStatus status;
 		
 	//Lazy Loaded
 	Organization organization;
@@ -52,6 +54,14 @@ public class Position extends AbstractAnetBean {
 
 	public void setType(PositionType type) {
 		this.type = type;
+	}
+
+	public PositionStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(PositionStatus status) {
+		this.status = status;
 	}
 
 	@GraphQLFetcher("organization")

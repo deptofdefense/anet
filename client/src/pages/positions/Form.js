@@ -71,6 +71,13 @@ export default class PositionForm extends Component {
 						</ButtonToggleGroup>
 					</Form.Field>
 
+					<Form.Field id="status" >
+						<ButtonToggleGroup>
+							<Button id="statusActiveButton" value="ACTIVE">Active</Button>
+							<Button id="statusInactiveButton" value="INACTIVE">Inactive</Button>
+						</ButtonToggleGroup>
+					</Form.Field>
+
 					<Form.Field id="organization">
 						<Autocomplete
 							placeholder="Select the organization for this position"

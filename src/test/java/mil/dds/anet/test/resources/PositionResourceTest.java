@@ -15,10 +15,11 @@ import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.util.Duration;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.Person.PersonStatus;
 import mil.dds.anet.beans.Person.Role;
-import mil.dds.anet.beans.Person.Status;
 import mil.dds.anet.beans.PersonPositionHistory;
 import mil.dds.anet.beans.Position;
+import mil.dds.anet.beans.Position.PositionStatus;
 import mil.dds.anet.beans.Position.PositionType;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.OrganizationList;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.PositionList;
@@ -45,6 +46,7 @@ public class PositionResourceTest extends AbstractResourceTest {
 		Position test = new Position();
 		test.setName("A Test Position created by PositionResourceTest");
 		test.setType(PositionType.ADVISOR);
+		test.setStatus(PositionStatus.ACTIVE);
 		
 		//Assign to an AO
 		Organization ao = httpQuery("/api/organizations/new", admin)
@@ -115,6 +117,7 @@ public class PositionResourceTest extends AbstractResourceTest {
 		prinPos.setName("A Principal Position created by PositionResourceTest");
 		prinPos.setType(PositionType.PRINCIPAL);
 		prinPos.setOrganization(orgs.getList().get(0));
+		prinPos.setStatus(PositionStatus.ACTIVE);
 		
 		Person principal = getRogerRogwell();
 		assertThat(principal.getId()).isNotNull();
@@ -281,7 +284,7 @@ public class PositionResourceTest extends AbstractResourceTest {
 		Person newb = new Person();
 		newb.setName("PositionTest Person");
 		newb.setRole(Role.PRINCIPAL);
-		newb.setStatus(Status.ACTIVE);
+		newb.setStatus(PersonStatus.ACTIVE);
 		
 		newb = httpQuery("/api/people/new", authur).post(Entity.json(newb), Person.class);
 		assertThat(newb.getId()).isNotNull();
@@ -294,6 +297,7 @@ public class PositionResourceTest extends AbstractResourceTest {
 		newbPosition.setName("PositionTest Position for Newb");
 		newbPosition.setType(PositionType.PRINCIPAL);
 		newbPosition.setOrganization(orgs.getList().get(0));
+		newbPosition.setStatus(PositionStatus.ACTIVE);
 		newbPosition.setPerson(newb);
 		
 		newbPosition = httpQuery("/api/positions/new", authur).post(Entity.json(newbPosition), Position.class);
@@ -342,6 +346,7 @@ public class PositionResourceTest extends AbstractResourceTest {
 		pos2.setName("Created by PositionTest");
 		pos2.setType(PositionType.PRINCIPAL);
 		pos2.setOrganization(orgs.getList().get(0));
+		pos2.setStatus(PositionStatus.ACTIVE);
 		pos2.setPerson(Person.createWithId(prin2.getId()));
 		
 		pos2 = httpQuery("/api/positions/new", authur).post(Entity.json(pos2), Position.class);

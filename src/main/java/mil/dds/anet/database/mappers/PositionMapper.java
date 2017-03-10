@@ -11,6 +11,7 @@ import mil.dds.anet.beans.Location;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Position;
+import mil.dds.anet.beans.Position.PositionStatus;
 import mil.dds.anet.beans.Position.PositionType;
 import mil.dds.anet.views.AbstractAnetBean.LoadLevel;
 
@@ -38,6 +39,8 @@ public class PositionMapper implements ResultSetMapper<Position> {
 		p.setName(rs.getString("positions_name"));
 		p.setCode(rs.getString("positions_code"));
 		p.setType(MapperUtils.getEnumIdx(rs, "positions_type", PositionType.class));
+		p.setStatus(MapperUtils.getEnumIdx(rs, "positions_status", PositionStatus.class));
+
 		Integer orgId = MapperUtils.getInteger(rs, "positions_organizationId");
 		if (orgId != null) { 
 			p.setOrganization(Organization.createWithId(orgId));

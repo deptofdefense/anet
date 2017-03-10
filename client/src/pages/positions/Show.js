@@ -36,7 +36,7 @@ class PositionShow extends Page {
 	fetchData(props) {
 		API.query(/* GraphQL */`
 			position(id:${props.params.id}) {
-				id, name, type, code,
+				id, name, type, status, code,
 				organization { id, shortName, longName },
 				person { id, name, rank },
 				associatedPositions {
@@ -83,6 +83,7 @@ class PositionShow extends Page {
 
 						<Form.Field id="code" />
 						<Form.Field id="type" />
+						<Form.Field id="status" />
 
 						{position.organization && <Form.Field id="organization" label="Organization" value={position.organization && position.organization.shortName} >
 							<Link to={Organization.pathFor(position.organization)}>

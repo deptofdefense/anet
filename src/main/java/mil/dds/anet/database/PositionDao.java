@@ -32,7 +32,7 @@ public class PositionDao implements IAnetDao<Position> {
 
 	private static String[] fields = {"id", "name", "code", "createdAt", 
 			"updatedAt", "organizationId", "currentPersonId", "type", 
-			"locationId" };
+			"status", "locationId" };
 	private static String tableName = "positions";
 	public static String POSITIONS_FIELDS  = DaoUtils.buildFieldAliases(tableName, fields);
 	
@@ -61,12 +61,12 @@ public class PositionDao implements IAnetDao<Position> {
 		p.setUpdatedAt(p.getCreatedAt());
 		try { 
 			GeneratedKeys<Map<String,Object>> keys = dbHandle.createStatement(
-					"/* positionInsert */ INSERT INTO positions (name, code, type, organizationId, locationId, createdAt, updatedAt) " 
-					+ "VALUES (:name, :code, :type, :organizationId, :locationId, :createdAt, :updatedAt)")
+					"/* positionInsert */ INSERT INTO positions (name, code, type, status, organizationId, locationId, createdAt, updatedAt) " 
+					+ "VALUES (:name, :code, :type, :status, :organizationId, :locationId, :createdAt, :updatedAt)")
 				.bindFromProperties(p)
 				.bind("type", DaoUtils.getEnumId(p.getType()))
 				.bind("organizationId", DaoUtils.getId(p.getOrganization()))
-	
+				.bind("status", DaoUtils.getEnumId(p.getStatus()))
 				.bind("locationId", DaoUtils.getId(p.getLocation()))
 				.executeAndReturnGeneratedKeys();
 			p.setId(DaoUtils.getGeneratedId(keys));
@@ -109,11 +109,12 @@ public class PositionDao implements IAnetDao<Position> {
 		p.setUpdatedAt(DateTime.now());
 		try {
 			return dbHandle.createStatement("/* positionUpdate */ UPDATE positions SET name = :name, "
-					+ "code = :code, organizationId = :organizationId, type = :type, "
+					+ "code = :code, organizationId = :organizationId, type = :type, status = :status, "
 					+ "locationId = :locationId, updatedAt = :updatedAt WHERE id = :id")
 				.bindFromProperties(p)
 				.bind("type", DaoUtils.getEnumId(p.getType()))
 				.bind("organizationId", DaoUtils.getId(p.getOrganization()))
+				.bind("status", DaoUtils.getEnumId(p.getStatus()))
 				.bind("locationId", DaoUtils.getId(p.getLocation()))
 				.execute();
 		} catch (UnableToExecuteStatementException e) {

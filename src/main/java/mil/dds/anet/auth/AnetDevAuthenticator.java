@@ -8,8 +8,8 @@ import io.dropwizard.auth.Authenticator;
 import io.dropwizard.auth.basic.BasicCredentials;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.Person.PersonStatus;
 import mil.dds.anet.beans.Person.Role;
-import mil.dds.anet.beans.Person.Status;
 import mil.dds.anet.database.PersonDao;
 
 public class AnetDevAuthenticator implements Authenticator<BasicCredentials, Person> {
@@ -33,7 +33,7 @@ public class AnetDevAuthenticator implements Authenticator<BasicCredentials, Per
 			newUser.setName(credentials.getUsername());
 			newUser.setRole(Role.ADVISOR);
 			newUser.setDomainUsername(credentials.getUsername());
-			newUser.setStatus(Status.NEW_USER);
+			newUser.setStatus(PersonStatus.NEW_USER);
 			newUser = dao.insert(newUser);
         	
 			return Optional.of(newUser);

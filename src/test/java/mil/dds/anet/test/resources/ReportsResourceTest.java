@@ -24,9 +24,11 @@ import mil.dds.anet.beans.Comment;
 import mil.dds.anet.beans.Location;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.Person.PersonStatus;
 import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.Position;
+import mil.dds.anet.beans.Position.PositionStatus;
 import mil.dds.anet.beans.Position.PositionType;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.Atmosphere;
@@ -82,20 +84,21 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		approver1.setEmailAddress("hunter+testApprover1@dds.mil");
 		approver1.setName("Test Approver 1");
 		approver1.setRole(Role.ADVISOR);
-		approver1.setStatus(Person.Status.ACTIVE);
+		approver1.setStatus(PersonStatus.ACTIVE);
 		approver1 = findOrPutPersonInDb(approver1);
 		Person approver2 = new Person();
 		approver2.setDomainUsername("testApprover2");
 		approver2.setEmailAddress("hunter+testApprover2@dds.mil");
 		approver2.setName("Test Approver 2");
 		approver2.setRole(Person.Role.ADVISOR);
-		approver2.setStatus(Person.Status.ACTIVE);
+		approver2.setStatus(PersonStatus.ACTIVE);
 		approver2 = findOrPutPersonInDb(approver2);
 
 		Position approver1Pos = new Position();
 		approver1Pos.setName("Test Approver 1 Position");
 		approver1Pos.setOrganization(advisorOrg);
 		approver1Pos.setType(PositionType.SUPER_USER);
+		approver1Pos.setStatus(PositionStatus.ACTIVE);
 		approver1Pos = httpQuery("/api/positions/new", admin)
 				.post(Entity.json(approver1Pos), Position.class);
 		Response resp = httpQuery("/api/positions/" + approver1Pos.getId() + "/person", admin).post(Entity.json(approver1));
@@ -105,6 +108,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		approver2Pos.setName("Test Approver 2 Position");
 		approver2Pos.setOrganization(advisorOrg);
 		approver2Pos.setType(PositionType.SUPER_USER);
+		approver2Pos.setStatus(PositionStatus.ACTIVE);
 		approver2Pos = httpQuery("/api/positions/new", admin)
 				.post(Entity.json(approver1Pos), Position.class);
 		resp = httpQuery("/api/positions/" + approver2Pos.getId() + "/person", admin).post(Entity.json(approver2));
@@ -115,6 +119,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		authorBillet.setName("A report writer");
 		authorBillet.setType(PositionType.ADVISOR);
 		authorBillet.setOrganization(advisorOrg);
+		authorBillet.setStatus(PositionStatus.ACTIVE);
 		authorBillet = httpQuery("/api/positions/new", admin).post(Entity.json(authorBillet), Position.class);
 		assertThat(authorBillet.getId()).isNotNull();
 
@@ -318,7 +323,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		Person author = new Person();
 		author.setName("A New Guy");
 		author.setRole(Role.ADVISOR);
-		author.setStatus(Person.Status.ACTIVE);
+		author.setStatus(PersonStatus.ACTIVE);
 		author.setDomainUsername("newGuy");
 		author.setEmailAddress("newGuy@example.com");
 		author = httpQuery("/api/people/new", admin).post(Entity.json(author), Person.class);
@@ -365,6 +370,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		Position billet = new Position();
 		billet.setName("EF1.1 new advisor");
 		billet.setType(Position.PositionType.ADVISOR);
+		billet.setStatus(PositionStatus.ACTIVE);
 
 		//Put billet in EF1
 		OrganizationList results = httpQuery("/api/organizations/search?text=EF1&type=ADVISOR_ORG", nick).get(OrganizationList.class);

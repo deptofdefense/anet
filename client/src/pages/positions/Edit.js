@@ -27,7 +27,7 @@ class PositionEdit extends Page {
 	fetchData(props) {
 		API.query(/* GraphQL */`
 			position(id:${props.params.id}) {
-				id, name, code, type
+				id, name, code, status, type
 				location { id, name },
 				associatedPositions { id, name  },
 				organization {id, shortName, longName, type},

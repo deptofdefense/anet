@@ -16,11 +16,11 @@ import mil.dds.anet.views.AbstractAnetBean;
 
 public class Person extends AbstractAnetBean implements Principal {
 
-	public static enum Status { ACTIVE, INACTIVE, NEW_USER }
+	public static enum PersonStatus { ACTIVE, INACTIVE, NEW_USER }
 	public static enum Role { ADVISOR, PRINCIPAL }
 	
 	private String name;
-	private Status status;
+	private PersonStatus status;
 	private Role role;
 	private Boolean pendingVerification;
 	
@@ -48,11 +48,11 @@ public class Person extends AbstractAnetBean implements Principal {
 		this.name = name;
 	}
 	
-	public Status getStatus() {
+	public PersonStatus getStatus() {
 		return status;
 	}
 	
-	public void setStatus(Status status) {
+	public void setStatus(PersonStatus status) {
 		this.status = status;
 	}
 	
@@ -189,8 +189,8 @@ public class Person extends AbstractAnetBean implements Principal {
 			&& Objects.equals(other.getRank(), rank) 
 			&& Objects.equals(other.getBiography(), biography) 
 			&& Objects.equals(other.getPendingVerification(), pendingVerification) 
-			&& Objects.equals(other.getCreatedAt(), createdAt) 
-			&& Objects.equals(other.getUpdatedAt(), updatedAt);
+			&& (createdAt != null) ? (createdAt.isEqual(other.getCreatedAt())) : (other.getCreatedAt() == null) 
+			&& (updatedAt != null) ? (updatedAt.isEqual(other.getUpdatedAt())) : (other.getUpdatedAt() == null);
 		return b;
  	}
 	
