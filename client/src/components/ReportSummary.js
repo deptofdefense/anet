@@ -33,7 +33,7 @@ export default class ReportSummary extends Component {
 			}
 
 			<Row>
-				<Col md={6}>
+				<Col md={12}>
 					{report.engagementDate && 
 						<Label bsStyle="default" className="engagement-date">
 							{moment(report.engagementDate).format('D MMM YYYY')}
@@ -47,7 +47,7 @@ export default class ReportSummary extends Component {
 				</Col>
 			</Row>
 			<Row>
-				<Col md={6}>
+				<Col md={12}>
 					<PersonComponent person={report.primaryAdvisor} />
 					{report.advisorOrg &&
 						<span> (<LinkTo organization={report.advisorOrg} />)</span>
