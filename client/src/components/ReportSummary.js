@@ -50,12 +50,12 @@ export default class ReportSummary extends Component {
 				<Col md={6}>
 					<PersonComponent person={report.primaryAdvisor} />
 					{report.advisorOrg &&
-						<span>&nbsp;(<LinkTo organization={report.advisorOrg} />)</span>
+						<span> (<LinkTo organization={report.advisorOrg} />)</span>
 					}
-					&#x25B6;
+					<span className="people-separator">&#x25B6;</span>
 					<PersonComponent person={report.primaryPrincipal} />
 					{report.principalOrg &&
-						<span>&nbsp;(<LinkTo organization={report.principalOrg} />)</span>
+						<span> (<LinkTo organization={report.principalOrg} />)</span>
 					}
 				</Col>
 			</Row>
