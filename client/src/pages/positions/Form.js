@@ -46,10 +46,6 @@ export default class PositionForm extends Component {
 			personSearchQuery.role = 'PRINCIPAL'
 		}
 
-		if (!position.permissions) {
-			position.permissions = position.type
-		}
-
 		return (
 			<Form
 				formFor={position}
