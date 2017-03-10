@@ -1,11 +1,14 @@
 import React, {PropTypes} from 'react'
 import HopscotchPage from 'components/HopscotchPage'
+import HopscotchLauncher from 'components/HopscotchLauncher'
+import {Row, Col} from 'react-bootstrap'
 
 import ReportForm from './Form'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Messages from 'components/Messages'
 import NavigationWarning from 'components/NavigationWarning'
 import {Report} from 'models'
+import autobind from 'autobind-decorator'
 
 export default class ReportNew extends HopscotchPage {
 	static pageProps = {
@@ -28,8 +31,13 @@ export default class ReportNew extends HopscotchPage {
 	componentDidMount() {
 		super.componentDidMount()
 		if (this.hopscotch.getState() === `${this.hopscotchTour.id}:3`) {
-			this.hopscotch.startTour(this.hopscotchTour, 4)
+			this.startTour()
 		}
+	}
+
+	@autobind
+	startTour() {
+		this.hopscotch.startTour(this.hopscotchTour, 4)
 	}
 
 	componentWillReceiveProps(_, nextContext) {
@@ -37,18 +45,21 @@ export default class ReportNew extends HopscotchPage {
 
 		this.state.report.addAttendee(newAttendee)
 		this.state.originalReport.addAttendee(newAttendee)
-		this.setState()
+		this.forceUpdate()
 	}
 
 	render() {
-		let currentUser = this.context.app.state.currentUser
-
 		return (
-			<div>
+			<div className="report-new">
 				<Breadcrumbs items={[['Submit a report', Report.pathForNew()]]} />
 				<Messages error={this.state.error} />
 
 				<NavigationWarning original={this.state.originalReport} current={this.state.report} />
+				<Row className="hopscotch-launcher-row">
+					<Col xs={12}>
+						<HopscotchLauncher onClick={this.startTour} />
+					</Col>
+				</Row>
 				<ReportForm report={this.state.report} title="Create a new Report" />
 			</div>
 		)

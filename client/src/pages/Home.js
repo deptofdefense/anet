@@ -5,6 +5,7 @@ import SavedSearchTable from 'components/SavedSearchTable'
 import {Link} from 'react-router'
 import moment from 'moment'
 import Messages from 'components/Messages'
+import HopscotchLauncher from 'components/HopscotchLauncher'
 
 import Breadcrumbs from 'components/Breadcrumbs'
 import API from 'api'
@@ -102,7 +103,12 @@ export default class Home extends HopscotchPage {
 					</fieldset>
 				}
 				<fieldset className="home-tile-row">
-					<legend>My ANET Snapshot</legend>
+					<legend>
+						My ANET Snapshot 
+						{ this.state.showGettingStartedPanel !== 'true' && 
+							<HopscotchLauncher onClick={this.startWelcomeTour} />
+						}	
+					</legend>
 					<Grid fluid>
 						<Row>
 							<Link to={{pathname: '/search', query: {type: 'reports', pendingApprovalOf: currentUser.id}}} className="col-md-3 home-tile">

@@ -1,16 +1,13 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
-import ModelPage from 'components/ModelPage'
-import {Alert, Table, Button, Col, DropdownButton, MenuItem, Modal, Checkbox} from 'react-bootstrap'
+import {Alert, Table, Button, Modal, Checkbox} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 import moment from 'moment'
 import utils from 'utils'
 
-import {Report, Person, Poam, Comment} from 'models'
-import Breadcrumbs from 'components/Breadcrumbs'
+import {Report, Person, Poam} from 'models'
 import Form from 'components/Form'
 import Messages from 'components/Messages'
-import History from 'components/History'
 
 import API from 'api'
 
@@ -90,7 +87,6 @@ export default class ReportMinimal extends Page {
 
 	render() {
 		let {report} = this.state
-		let {currentUser} = this.context.app.state
 
 		let errors = report.isDraft() && report.validateForSubmit()
 		let isCancelled = (report.cancelledReason) ? true : false

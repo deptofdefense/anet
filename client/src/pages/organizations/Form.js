@@ -1,7 +1,6 @@
 import React, {Component, PropTypes} from 'react'
 import {Button, Table} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
-import NavigationWarning from 'components/NavigationWarning'
 
 import Form from 'components/Form'
 import ButtonToggleGroup from 'components/ButtonToggleGroup'

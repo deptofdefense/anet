@@ -3,7 +3,7 @@ import {Button, Grid, Row, Col, Label} from 'react-bootstrap'
 import utils from 'utils'
 
 import LinkTo from 'components/LinkTo'
-import {Report, Person, Organization} from 'models'
+import {Report} from 'models'
 
 import moment from 'moment'
 

@@ -177,6 +177,32 @@ a.home-tile {
 	background: #dae3ee;
 }
 
+.report-new .hopscotch-launcher-row {
+	margin-bottom: -15px;
+}
+
+.report-new .persistent-tour-launcher {
+	width: 30%;
+}
+
+.persistent-tour-launcher {
+	width: 40%;
+	float: right;
+	position: relative;
+	top: -5px;
+	left: -2px;
+}
+
+.persistent-tour-launcher div {
+	display: inline;
+}
+
+.persistent-tour-launcher .tour-icon {
+	top: 5px;
+	position: relative;
+	margin-left: 10px;
+}
+
 .person-icon {
 	margin-right: 4px;
 }
