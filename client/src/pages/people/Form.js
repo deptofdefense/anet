@@ -58,7 +58,7 @@ export default class PersonForm extends Component {
 					<Form.Field type="static" id="role" />
 					:
 					<Form.Field id="role" componentClass="select">
-						<option value="ADVISOR">Advisor</option>
+						<option value="ADVISOR">NATO Member</option>
 						<option value="PRINCIPAL">Principal</option>
 					</Form.Field>
 				}

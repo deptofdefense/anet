@@ -83,6 +83,13 @@ class PersonShow extends Page {
 		let {person} = this.state
 		let position = person.position
 
+		// translate role
+		if (person.role === 'ADVISOR') {
+			person.role = 'NATO Member'
+		} else if (person.role === 'PRINCIPAL') {
+			person.role = 'Principal'
+		}
+
 		//User can always edit themselves, or Super Users/Admins.
 		let currentUser = this.context.app.state.currentUser
 		let canEdit = currentUser && (currentUser.id === person.id ||
