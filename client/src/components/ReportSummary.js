@@ -1,5 +1,5 @@
 import React, {Component, PropTypes} from 'react'
-import {Button, Grid, Row, Col, Label, Glyphicon} from 'react-bootstrap'
+import {Button, Grid, Row, Col, Label} from 'react-bootstrap'
 import utils from 'utils'
 
 import LinkTo from 'components/LinkTo'
@@ -53,7 +53,7 @@ export default class ReportSummary extends Component {
 					{report.advisorOrg &&
 						<span>&nbsp;(<LinkTo organization={new Organization(report.advisorOrg)} />)</span>
 					}
-					<Glyphicon glyph="play" className="people-separator" />
+					&#x25B6;
 					<PersonComponent person={report.primaryPrincipal} />
 					{report.principalOrg &&
 						<span>&nbsp;(<LinkTo organization={new Organization(report.principalOrg)} />)</span>
