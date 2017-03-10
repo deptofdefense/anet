@@ -67,9 +67,9 @@ class PoamShow extends Page {
 					</div>
 				}
 
+				<h2 className="form-header">PoAM {poam.shortName}</h2>
 				<Form static formFor={poam} horizontal>
 					<fieldset>
-						<legend>PoAM {poam.shortName}</legend>
 						<Form.Field id="shortName" label="PoAM number" />
 						<Form.Field id="longName" label="PoAM description" />
 						{poam.responsibleOrg && poam.responsibleOrg.id && this.renderOrg()}

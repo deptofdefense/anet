@@ -60,7 +60,7 @@ class ReportEdit extends Page {
 				<Breadcrumbs items={[['Report #' + report.id, '/reports/' + report.id], ['Edit', '/reports/' + report.id + '/edit']]} />
 
 				<NavigationWarning original={this.state.originalReport} current={report} />
-				<ReportForm edit report={report} />
+				<ReportForm edit report={report} title={`Edit Report #${report.id}`} />
 			</div>
 		)
 	}

@@ -1,6 +1,7 @@
 import React from 'react'
 import NotFound from 'components/NotFound'
 import API from 'api'
+import _get from 'lodash.get'
 
 export default WrappedPage => {
     return class ModelPage extends React.Component {
@@ -16,7 +17,8 @@ export default WrappedPage => {
                 let promise = API.inProgress
                 if (promise && promise instanceof Promise) {
                     promise.catch(err => {
-                        if (err.status === 404 || (err.status === 500 && err.errors[0] === 'Invalid Syntax')) {
+                        if (err.status === 404 || 
+                                (err.status === 500 && _get(err, ['errors', 0]) === 'Invalid Syntax')) {
                             ModelPage.pageProps = {fluidContainer: true, useNavigation: false}
                             modelPageThis.setState({notFound: true})
                         }

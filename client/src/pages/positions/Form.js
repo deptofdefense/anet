@@ -57,8 +57,8 @@ export default class PositionForm extends Component {
 
 				<Messages error={error} success={success} />
 
+				<h2 className="form-header">{edit ? "Edit Position" : "Create a new Position"}</h2>
 				<fieldset>
-					<legend>{edit ? "Edit Position" : "Create a new Position"}</legend>
 
 					<Form.Field id="type" disabled={this.props.edit}>
 						<ButtonToggleGroup>

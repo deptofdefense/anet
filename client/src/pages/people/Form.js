@@ -47,9 +47,8 @@ export default class PersonForm extends Component {
 
 			<Messages error={this.state.error} />
 
+			<h2 className="form-header">{legendText}</h2>
 			<fieldset>
-				<legend>{legendText}</legend>
-
 				<Form.Field id="name"
 					required
 					humanName="Name"

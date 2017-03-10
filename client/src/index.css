@@ -27,7 +27,8 @@ fieldset {
 	background: #fff;
 	border: 1px solid #e0e0e0;
 	padding: 1.25em;
-	margin: 7rem 0;
+	margin: 0;
+	margin-bottom: 7rem;
 	position: relative;
 }
 
@@ -193,10 +194,6 @@ a.home-tile {
 
 .home-tile:hover {
 	background: #dae3ee;
-}
-
-.report-new .hopscotch-launcher-row {
-	margin-bottom: -15px;
 }
 
 .report-new .persistent-tour-launcher {
@@ -447,6 +444,21 @@ table hr.attendee-divider {
 	margin-bottom: 10px;
 }
 
+.report-form .submit-buttons {
+	display: flex;
+	align-items: flex-end;
+	margin-bottom: 5px;
+}
+.report-form .submit-buttons > div:first-child {
+	flex-grow: 2;
+}
+.report-form .submit-buttons > div:last-child {
+	margin-left: 10px;
+}
+.report-form .submit-buttons h2 {
+	margin-bottom: 0px;
+}
+
 .report-form .button-row {
 	/* This matches the form fieldset's margin-bottom. */
 	margin-bottom: 7rem; 
@@ -471,12 +483,7 @@ table hr.attendee-divider {
 }
 
 .report-form .top-submit-buttons .button-row {
-	position: relative;
-	top: -40px;
-}
-
-.report-edit .report-form .top-submit-buttons .button-row {
-	top: -75px;
+	margin-bottom: 10px;
 }
 
 .show-report-overview label.col-sm-2 {
@@ -492,4 +499,15 @@ table hr.attendee-divider {
 	margin-bottom: 4px;
 }
 
+h2.form-header {
+	font-size: 2.5rem;
+	color: #363636;
+	font-weight: normal;
+	margin-left: 3px;
+	margin-bottom: 5px;
+	word-break: break-all;
+}
 
+.report-show h2.form-header {
+	margin-bottom: 10px;
+}

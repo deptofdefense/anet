@@ -115,7 +115,7 @@ class ReportShow extends Page {
 		let isCancelled = (report.cancelledReason) ? true : false
 
 		return (
-			<div>
+			<div className="report-show">
 				<Breadcrumbs items={[['Reports', '/reports'], [report.intent || 'Report #' + report.id, Report.pathFor(report)]]} />
 
 				<Messages error={this.state.error} success={this.state.success} />
@@ -146,6 +146,9 @@ class ReportShow extends Page {
 					</fieldset>
 				}
 
+				{/* This is similar to how the report/new page has a title and buttons on the same line. 
+					We may wish to consolidate the two approaches.
+				*/}
 				<div className="pull-right">
 					<DropdownButton bsStyle="primary" title="Actions" id="actions"
 						className="pull-right" onSelect={this.actionSelect}>
@@ -160,9 +163,9 @@ class ReportShow extends Page {
 
 				{this.renderEmailModal()}
 
+				<h2 className="form-header">Report #{report.id}</h2>
 				<Form static formFor={report} horizontal>
 					<fieldset className="show-report-overview">
-						<legend>Report #{report.id}</legend>
 
 						<Form.Field id="intent" label="Summary" >
 							<p><strong>Meeting goal:</strong> {report.intent}</p>

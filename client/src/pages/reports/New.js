@@ -66,7 +66,7 @@ export default class ReportNew extends HopscotchPage {
 				<Messages error={this.state.error} />
 
 				<NavigationWarning original={this.state.originalReport} current={this.state.report} />
-				<Row className="hopscotch-launcher-row">
+				<Row>
 					<Col xs={12}>
 						<HopscotchLauncher onClick={this.startTour} />
 					</Col>

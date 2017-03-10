@@ -5,11 +5,6 @@ import autobind from 'autobind-decorator'
 
 import FormField from 'components/FormField'
 
-const staticFormStyle = {
-	margin: 0,
-	marginTop: '-30px',
-}
-
 export default class Form extends Component {
 	static propTypes = Object.assign({}, BSForm.propTypes, {
 		formFor: PropTypes.object,
@@ -52,8 +47,6 @@ export default class Form extends Component {
 		if (this.props.static) {
 			submitText = false
 			bsProps.componentClass = Row
-			bsProps.style = bsProps.style || {}
-			Object.assign(bsProps.style, staticFormStyle)
 		}
 
 		if (!submitOnEnter) {
