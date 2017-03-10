@@ -17,6 +17,7 @@ import org.eclipse.jetty.util.log.Logger;
 import io.dropwizard.auth.Authorizer;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.Person.PersonStatus;
 import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Position.PositionType;
@@ -45,7 +46,7 @@ public class AnetAuthenticationFilter implements ContainerRequestFilter, Authori
 				person.setDomainUsername(domainUsername);
 				person.setName("");
 				person.setRole(Role.ADVISOR);
-				person.setStatus(Person.Status.NEW_USER);
+				person.setStatus(PersonStatus.NEW_USER);
 				person = engine.getPersonDao().insert(person);
 			} else { 
 				person = matches.get(0);

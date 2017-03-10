@@ -6,6 +6,7 @@ import PoamForm from './Form'
 import {ContentForHeader} from 'components/Header'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Messages from 'components/Messages'
+import NavigationWarning from 'components/NavigationWarning'
 
 import API from 'api'
 import {Poam} from 'models'
@@ -21,6 +22,7 @@ class PoamEdit extends Page {
 
 		this.state = {
 			poam: new Poam(),
+			originalPoam: new Poam()
 		}
 	}
 
@@ -33,7 +35,7 @@ class PoamEdit extends Page {
 				responsibleOrg {id,shortName, longName}
 			}
 		`).then(data => {
-			this.setState({poam: new Poam(data.poam)})
+			this.setState({poam: new Poam(data.poam), originalPoam: new Poam(data.poam)})
 		})
 	}
 
@@ -50,6 +52,7 @@ class PoamEdit extends Page {
 
 				<Messages error={this.state.error} success={this.state.success} />
 
+				<NavigationWarning original={this.state.originalPoam} current={poam} />
 				<PoamForm poam={poam} edit />
 			</div>
 		)

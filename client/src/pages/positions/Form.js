@@ -46,10 +46,6 @@ export default class PositionForm extends Component {
 			personSearchQuery.role = 'PRINCIPAL'
 		}
 
-		if (!position.permissions) {
-			position.permissions = position.type
-		}
-
 		return (
 			<Form
 				formFor={position}
@@ -66,8 +62,15 @@ export default class PositionForm extends Component {
 
 					<Form.Field id="type" disabled={this.props.edit}>
 						<ButtonToggleGroup>
-							<Button id="typeAdvisorButton" value="ADVISOR">Advisor (CE Billet)</Button>
+							<Button id="typeAdvisorButton" value="ADVISOR">NATO (Billet)</Button>
 							<Button id="typePrincipalButton" value="PRINCIPAL">Principal (Tashkil)</Button>
+						</ButtonToggleGroup>
+					</Form.Field>
+
+					<Form.Field id="status" >
+						<ButtonToggleGroup>
+							<Button id="statusActiveButton" value="ACTIVE">Active</Button>
+							<Button id="statusInactiveButton" value="INACTIVE">Inactive</Button>
 						</ButtonToggleGroup>
 					</Form.Field>
 
@@ -110,7 +113,11 @@ export default class PositionForm extends Component {
 				<fieldset>
 					<legend>Assigned {position.type === 'PRINCIPAL' ? 'advisor' : 'advisee'}</legend>
 
-					<p className="help-text">Advisor positions are associated with Principal positions and vice versa.</p>
+					{position.type === 'PRINCIPAL' ?
+						<p className="help-text">Who is this person advised by?</p>
+						:
+						<p className="help-text">Who does this person advise?</p>
+					}
 
 					<Form.Field id="associatedPositions">
 						<Autocomplete
@@ -220,7 +227,7 @@ export default class PositionForm extends Component {
 				}
 
 				History.replace(Position.pathForEdit(position), false)
-				History.push(Position.pathFor(position), {success: 'Saved Position'})
+				History.push(Position.pathFor(position), {success: 'Saved Position', skipPageLeaveWarning: true})
 			}).catch(error => {
 				this.setState({error: error})
 				window.scrollTo(0, 0)

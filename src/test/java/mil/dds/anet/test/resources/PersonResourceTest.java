@@ -12,9 +12,10 @@ import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.util.Duration;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.Person.PersonStatus;
 import mil.dds.anet.beans.Person.Role;
-import mil.dds.anet.beans.Person.Status;
 import mil.dds.anet.beans.Position;
+import mil.dds.anet.beans.Position.PositionStatus;
 import mil.dds.anet.beans.Position.PositionType;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.OrganizationList;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.PersonList;
@@ -42,7 +43,7 @@ public class PersonResourceTest extends AbstractResourceTest {
 		Person newPerson = new Person();
 		newPerson.setName("testCreatePerson Person");
 		newPerson.setRole(Role.ADVISOR);
-		newPerson.setStatus(Status.ACTIVE);
+		newPerson.setStatus(PersonStatus.ACTIVE);
 		newPerson.setBiography("Created buy the PersonResourceTest#testCreatePerson");
 		newPerson.setGender("Female");
 		newPerson.setCountry("Canada");
@@ -69,6 +70,7 @@ public class PersonResourceTest extends AbstractResourceTest {
 		newPos.setType(PositionType.ADVISOR);
 		newPos.setName("Test Position");
 		newPos.setOrganization(org);
+		newPos.setStatus(PositionStatus.ACTIVE);
 		newPos = httpQuery("/api/positions/new", admin).post(Entity.json(newPos), Position.class);
 		assertThat(newPos.getId()).isNotNull();
 		
@@ -91,6 +93,7 @@ public class PersonResourceTest extends AbstractResourceTest {
 		newPos2.setType(PositionType.ADVISOR);
 		newPos2.setName("A Second Test Position");
 		newPos2.setOrganization(org);
+		newPos2.setStatus(PositionStatus.ACTIVE);
 		newPos2 = httpQuery("/api/positions/new", admin).post(Entity.json(newPos2), Position.class);
 		assertThat(newPos2.getId()).isNotNull();
 		

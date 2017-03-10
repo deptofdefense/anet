@@ -61,7 +61,7 @@ export default class PoamForm extends Component {
 				}
 
 				History.replace(Poam.pathForEdit(poam), false)
-				History.push(Poam.pathFor(poam), {success: 'PoAM saved successfully'})
+				History.push(Poam.pathFor(poam), {success: 'PoAM saved successfully', skipPageLeaveWarning: true})
 			}).catch(error => {
 				this.setState({error: error})
 				window.scrollTo(0, 0)
