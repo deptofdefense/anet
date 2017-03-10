@@ -201,7 +201,10 @@ export default class OrganizationForm extends Component {
 				}
 
 				History.replace(Organization.pathForEdit(organization), false)
-				History.push(Organization.pathFor(organization), {success: 'Organization saved successfully'})
+				History.push(Organization.pathFor(organization), {
+					success: 'Organization saved successfully', 
+					skipPageLeaveWarning: true
+				})
 			}).catch(error => {
 				this.setState({error})
 				window.scrollTo(0, 0)
