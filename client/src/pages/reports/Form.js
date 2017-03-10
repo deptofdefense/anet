@@ -25,8 +25,7 @@ import WARNING_ICON from 'resources/warning.png'
 export default class ReportForm extends Component {
 	static propTypes = {
 		report: PropTypes.instanceOf(Report).isRequired,
-		edit: PropTypes.bool,
-		defaultAttendee: PropTypes.instanceOf(Person),
+		edit: PropTypes.bool
 	}
 
 	constructor(props) {
@@ -72,13 +71,6 @@ export default class ReportForm extends Component {
 		let report = nextProps.report
 		if (report.cancelledReason) {
 			this.setState({isCancelled: true})
-		}
-	}
-
-	componentDidUpdate() {
-		let {report, defaultAttendee} = this.props
-		if (defaultAttendee && defaultAttendee.id && !report.attendees.length) {
-			this.addAttendee(defaultAttendee)
 		}
 	}
 
@@ -257,25 +249,7 @@ export default class ReportForm extends Component {
 
 	@autobind
 	addAttendee(newAttendee) {
-		if (!newAttendee || !newAttendee.id) {
-			return
-		}
-
-		let report = this.props.report
-		let attendees = report.attendees
-
-		if (attendees.find(attendee => attendee.id === newAttendee.id)) {
-			return
-		}
-
-		let person = new Person(newAttendee)
-		person.primary = false
-
-		if (!attendees.find(attendee => attendee.role === person.role && attendee.primary)) {
-			person.primary = true
-		}
-
-		attendees.push(person)
+		this.props.report.addAttendee(newAttendee)
 		this.onChange()
 	}
 
