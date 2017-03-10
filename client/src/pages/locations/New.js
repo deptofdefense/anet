@@ -35,10 +35,6 @@ export default class LocationNew extends React.Component {
 
 		return (
 			<div>
-				<ContentForHeader>
-					<h2>Create a new Location</h2>
-				</ContentForHeader>
-
 				<NavigationWarning original={new Location()} current={location} />
 
 				<Breadcrumbs items={[['Create new Location', Location.pathForNew()]]} />

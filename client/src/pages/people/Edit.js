@@ -58,10 +58,6 @@ class PersonEdit extends Page {
 
 		return (
 			<div>
-				<ContentForHeader>
-					<h2>{legendText}</h2>
-				</ContentForHeader>
-
 				{person.status !== 'NEW_USER' && 
 					<Breadcrumbs items={[[`Edit ${person.name}`, Person.pathForEdit(person)]]} />
 				}

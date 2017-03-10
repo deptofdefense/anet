@@ -48,10 +48,6 @@ class OrganizationEdit extends Page {
 
 		return (
 			<div>
-				<ContentForHeader>
-					<h2>Edit {organization.shortName}</h2>
-				</ContentForHeader>
-
 				<NavigationWarning original={this.state.originalOrganization} current={organization} /> 
 
 				<Breadcrumbs items={[[`Edit ${organization.shortName}`, Organization.pathForEdit(organization)]]} />

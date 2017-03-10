@@ -52,10 +52,6 @@ export default class PositionNew extends Page {
 
 		return (
 			<div>
-				<ContentForHeader>
-					<h2>Create a new Position</h2>
-				</ContentForHeader>
-
 				<Breadcrumbs items={[['Create new Position', Position.pathForNew()]]} />
 
 				<NavigationWarning original={this.state.originalPosition} current={position} />

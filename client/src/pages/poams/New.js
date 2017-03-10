@@ -47,10 +47,6 @@ export default class PoamNew extends Page {
 
 		return (
 			<div>
-				<ContentForHeader>
-					<h2>Create a new PoAM</h2>
-				</ContentForHeader>
-
 				<Breadcrumbs items={[['Create new PoAM', Poam.pathForNew()]]} />
 
 				<Messages error={this.state.error} success={this.state.success} />

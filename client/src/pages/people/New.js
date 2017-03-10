@@ -30,10 +30,6 @@ export default class PersonNew extends Page {
 
 		return (
 			<div>
-				<ContentForHeader>
-					<h2>Create a new Person</h2>
-				</ContentForHeader>
-
 				<Breadcrumbs items={[['Create new Person', Person.pathForNew()]]} />
 
 				<NavigationWarning original={this.state.originalPerson} current={person} />

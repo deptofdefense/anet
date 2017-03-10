@@ -43,10 +43,6 @@ class PoamEdit extends Page {
 
 		return (
 			<div>
-				<ContentForHeader>
-					<h2>Edit PoAM {poam.shortName}</h2>
-				</ContentForHeader>
-
 				<Breadcrumbs items={[[`PoAM ${poam.shortName}`, Poam.pathFor(poam)], ["Edit", Poam.pathForEdit(poam)]]} />
 
 				<Messages error={this.state.error} success={this.state.success} />

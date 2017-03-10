@@ -55,10 +55,6 @@ class PositionEdit extends Page {
 
 		return (
 			<div>
-				<ContentForHeader>
-					<h2>Edit Position</h2>
-				</ContentForHeader>
-
 				<Breadcrumbs items={[[`Edit ${position.name}`, Position.pathForEdit(position)]]} />
 
 				<NavigationWarning original={this.state.originalPosition} current={position} />
