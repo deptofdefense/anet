@@ -19,9 +19,8 @@ export default class ReportSummary extends Component {
 			if (!person) {
 				return null
 			}
-			const personModel = new Person(person)
-			return <LinkTo person={personModel}>
-				{personModel.rank} {personModel.name}
+			return <LinkTo person={person}>
+				{person.rank} {person.name}
 			</LinkTo>
 		}
 
