@@ -66,7 +66,7 @@ export default class PositionForm extends Component {
 
 					<Form.Field id="type" disabled={this.props.edit}>
 						<ButtonToggleGroup>
-							<Button id="typeAdvisorButton" value="ADVISOR">Advisor (CE Billet)</Button>
+							<Button id="typeAdvisorButton" value="ADVISOR">NATO (Billet)</Button>
 							<Button id="typePrincipalButton" value="PRINCIPAL">Principal (Tashkil)</Button>
 						</ButtonToggleGroup>
 					</Form.Field>
