@@ -9,7 +9,6 @@ import javax.servlet.FilterRegistration;
 
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
-import org.joda.time.DateTimeZone;
 import org.skife.jdbi.v2.DBI;
 
 import com.google.common.collect.ImmutableList;
@@ -94,7 +93,6 @@ public class AnetApplication extends Application<AnetConfiguration> {
 	@Override
 	public void run(AnetConfiguration configuration, Environment environment) {
 		System.out.println(configuration.getDataSourceFactory().getUrl());
-		DateTimeZone.setDefault(DateTimeZone.UTC);
 		final DBIFactory factory = new DBIFactory();
 		final DBI jdbi = factory.build(environment, configuration.getDataSourceFactory(), "mssql");
 		jdbi.setSQLLog(new AnetDbLogger());
@@ -156,7 +154,6 @@ public class AnetApplication extends Application<AnetConfiguration> {
 				orgResource, asResource, poamResource, 
 				adminResource, savedSearchResource), 
 			configuration.isDevelopmentMode()));
-
 	}
 
 }
