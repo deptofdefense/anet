@@ -259,6 +259,18 @@ a.home-tile {
 	float: right;
 }
 
+.report-summary .engagement-date {
+	margin-right: 10px;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+.report-summary .people-separator {
+	margin-left: 5px;
+	color: #999999;
+	font-size: 1.1rem;
+}
+
 .not-found {
 	height: 100%;
 }
@@ -435,3 +447,5 @@ table hr.attendee-divider {
 	*/
 	margin-bottom: 4px;
 }
+
+

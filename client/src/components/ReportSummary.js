@@ -1,13 +1,11 @@
 import React, {Component, PropTypes} from 'react'
-import {Button, Grid, Row, Col} from 'react-bootstrap'
+import {Button, Grid, Row, Col, Label} from 'react-bootstrap'
 import utils from 'utils'
 
 import LinkTo from 'components/LinkTo'
 import {Report, Person, Organization} from 'models'
 
 import moment from 'moment'
-
-import POAM_ICON from 'resources/positions.png'
 
 export default class ReportSummary extends Component {
 	static propTypes = {
@@ -16,6 +14,15 @@ export default class ReportSummary extends Component {
 
 	render() {
 		let report = new Report(this.props.report)
+
+		function PersonComponent({person}) {
+			if (!person) {
+				return null
+			}
+			return <LinkTo person={person}>
+				{person.rank} {person.name}
+			</LinkTo>
+		}
 
 		return <Grid fluid className="report-summary">
 			{report.cancelledReason &&
@@ -26,37 +33,39 @@ export default class ReportSummary extends Component {
 			}
 
 			<Row>
-				<Col md={6}>
-					{report.advisorOrg &&
-						<LinkTo organization={new Organization(report.advisorOrg)} />
+				<Col md={12}>
+					{report.engagementDate && 
+						<Label bsStyle="default" className="engagement-date">
+							{moment(report.engagementDate).format('D MMM YYYY')}
+						</Label>
 					}
-					{report.principalOrg && ' -> '}
-					{report.principalOrg &&
-						<LinkTo organization={new Organization(report.principalOrg)} />
-					}
-				</Col>
-				<Col md={6}>
-					{report.engagementDate && moment(report.engagementDate).format('D MMM YYYY')}
 					{report.location &&
-						<span> @&nbsp;
+						<span>
 							<LinkTo location={report.location} />
 						</span>
 					}
 				</Col>
 			</Row>
-
 			<Row>
-				<Col md={6}>{report.primaryAdvisor && this.renderPerson(report.primaryAdvisor)}</Col>
-				<Col md={6}>{report.primaryPrincipal && this.renderPerson(report.primaryPrincipal)}</Col>
+				<Col md={12}>
+					<PersonComponent person={report.primaryAdvisor} />
+					{report.advisorOrg &&
+						<span> (<LinkTo organization={report.advisorOrg} />)</span>
+					}
+					<span className="people-separator">&#x25B6;</span>
+					<PersonComponent person={report.primaryPrincipal} />
+					{report.principalOrg &&
+						<span> (<LinkTo organization={report.principalOrg} />)</span>
+					}
+				</Col>
 			</Row>
 
-			{report.poams.map(poam => <Row key={poam.id}>
+			<Row>
 				<Col md={12}>
-					<img height={20} src={POAM_ICON} alt={poam.longName} className="person-icon" />
-					<LinkTo poam={poam} />
+					{report.atmosphere && <span><strong>Atmospherics:</strong> {utils.sentenceCase(report.atmosphere)} 
+						{report.atmosphereDetails && ` – ${report.atmosphereDetails}`}</span> }
 				</Col>
-			</Row>)}
-
+			</Row>
 			<Row>
 				<Col md={12}>
 					{report.intent && <span><strong>Meeting goal:</strong> {report.intent}</span> }
@@ -76,27 +85,10 @@ export default class ReportSummary extends Component {
 			<Row>
 				<Col mdOffset={9} md={3}>
 					<LinkTo report={report} className="read-full">
-						<Button bsStyle="primary" >Read Full Report</Button>
+						<Button bsStyle="primary">Read Report</Button>
 					</LinkTo>
 				</Col>
 			</Row>
 		</Grid>
-	}
-
-	renderPerson(person) {
-		person = new Person(person)
-		return <div>
-			<img height={20} src={person.iconUrl()} alt={person.role} className="person-icon" />
-			<LinkTo person={person}>
-				{person.rank} {person.name}
-			</LinkTo>
-
-			{person.position && person.position.organization &&
-				<span>
-					&nbsp;-&nbsp;
-					<LinkTo organization={new Organization(person.position.organization)} />
-				</span>
-			}
-		</div>
 	}
 }
