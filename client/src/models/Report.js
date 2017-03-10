@@ -51,8 +51,8 @@ export default class Report extends Model {
 		}
 		if (!this.engagementDate) {
 			errors.push('You must provide the Date of Engagement')
-		} else if (!isCancelled && moment(this.engagementDate).isAfter(moment())) {
-			errors.push("You cannot submit reports for future dates, except for cancelled engagements")
+		} else if (!isCancelled && moment(this.engagementDate).isAfter(moment().endOf('day'))) {
+			errors.push('You cannot submit reports for future dates, except for cancelled engagements')
 		}
 
 		let primaryPrincipal = this.getPrimaryPrincipal()
