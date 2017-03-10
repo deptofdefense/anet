@@ -86,7 +86,7 @@ export default class OrganizationLaydown extends Component {
 		if (otherIndex === 0) {
 			positionCodeCol = <td><LinkTo position={position} /></td>
 			positionNameCol = (position.person)
-					? <td><LinkTo person={position.person} /></td>
+					? <td><LinkTo person={position.person} >{this.personWithStatus(position.person)}</LinkTo></td>
 					: <td className="text-danger">Unfilled</td>
 		}
 
@@ -103,5 +103,13 @@ export default class OrganizationLaydown extends Component {
 			{otherCodeCol}
 			{otherNameCol}
 		</tr>
+	}
+
+	personWithStatus(person) {
+		if (person.status === 'INACTIVE') {
+			return <i>{person.name + " (Inactive)"}</i>
+		} else {
+			return person.name
+		}
 	}
 }
