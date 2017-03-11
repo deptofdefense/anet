@@ -32,22 +32,21 @@ export default class OrganizationLaydown extends Component {
 
 		return (
 			<div>
-			<h3>Personnel Laydown</h3>
+			<h2 className="form-header">
+				Positions needing attention
+				<div className="pull-right orgLaydownToggleInactive">
+					<Button bsStyle="link" onClick={this.toggleShowInactive}>
+						{(showInactivePositions ? "Hide " : "Show ") + numInactivePos + " Inactive Position(s)"}
+					</Button>
+				</div>
+			</h2>
 
 			<fieldset>
-				<legend>
-					Positions needing attention
-					<div className="pull-right orgLaydownToggleInactive">
-						<Button bsStyle="link" onClick={this.toggleShowInactive}>
-							{(showInactivePositions ? "Hide " : "Show ") + numInactivePos + " Inactive Position(s)"}
-						</Button>
-					</div>
-				</legend>
 				{this.renderPositionTable(positionsNeedingAttention)}
 			</fieldset>
 
+			<h2 className="form-header" >Supported laydown</h2>
 			<fieldset>
-				<legend>Supported laydown</legend>
 				{this.renderPositionTable(supportedPositions)}
 			</fieldset>
 		</div>

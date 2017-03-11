@@ -60,9 +60,8 @@ export default class OrganizationForm extends Component {
 			{organization.type === 'ADVISOR_ORG' && <div>
 				<PoamsSelector poams={organization.poams} onChange={this.onChange} />
 
+				<h2 className="form-header" >Approval Process</h2>
 				<fieldset>
-					<legend>Approval Process</legend>
-
 					<Button className="pull-right" onClick={this.addApprovalStep} bsStyle="primary" id="addApprovalStepButton" >
 						Add an Approval Step
 					</Button>
@@ -78,50 +77,52 @@ export default class OrganizationForm extends Component {
 	renderApprovalStep(step, index) {
 		let approvers = step.approvers
 
-		return <fieldset key={index}>
-			<legend>Step {index + 1}</legend>
-			<Button className="pull-right" onClick={this.removeApprovalStep.bind(this, index)}>
-				X
-			</Button>
+		return <div key={index}>
+			<h2 className="form-header">Step {index + 1}</h2>
+			<fieldset>
+				<Button className="pull-right" onClick={this.removeApprovalStep.bind(this, index)}>
+					X
+				</Button>
 
-			<Form.Field id="name"
-				value={step.name}
-				onChange={(event) => this.setStepName(index, event)} />
+				<Form.Field id="name"
+					value={step.name}
+					onChange={(event) => this.setStepName(index, event)} />
 
-			<Form.Field id="addApprover" label="Add an Approver" value={approvers}>
-				<Autocomplete valueKey="name"
-					placeholder="Search for the approvers position"
-					objectType={Position}
-					fields={'id, name, code, type, person { id, name, rank}'}
-					template={pos =>
-						<span>{pos.name} - {pos.code} ({(pos.person) ? pos.person.name : <i>empty</i>})</span>
-					}
-					queryParams={{type: 'ADVISOR', matchPersonName: true}}
-					onChange={this.addApprover.bind(this, index)}
-					clearOnSelect={true} />
+				<Form.Field id="addApprover" label="Add an Approver" value={approvers}>
+					<Autocomplete valueKey="name"
+						placeholder="Search for the approvers position"
+						objectType={Position}
+						fields={'id, name, code, type, person { id, name, rank}'}
+						template={pos =>
+							<span>{pos.name} - {pos.code} ({(pos.person) ? pos.person.name : <i>empty</i>})</span>
+						}
+						queryParams={{type: 'ADVISOR', matchPersonName: true}}
+						onChange={this.addApprover.bind(this, index)}
+						clearOnSelect={true} />
 
-				<Table striped>
-					<thead>
-						<tr>
-							<th></th>
-							<th>Name</th>
-							<th>Position</th>
-						</tr>
-					</thead>
-					<tbody>
-						{approvers.map((approver, approverIndex) =>
-							<tr key={approver.id} id={`step_${index}_approver_${approverIndex}`} >
-								<td onClick={this.removeApprover.bind(this, approver, index)}>
-									<span style={{cursor: 'pointer'}}>⛔️</span>
-								</td>
-								<td>{approver.person && approver.person.name}</td>
-								<td >{approver.name}</td>
+					<Table striped>
+						<thead>
+							<tr>
+								<th></th>
+								<th>Name</th>
+								<th>Position</th>
 							</tr>
-						)}
-					</tbody>
-				</Table>
-			</Form.Field>
-		</fieldset>
+						</thead>
+						<tbody>
+							{approvers.map((approver, approverIndex) =>
+								<tr key={approver.id} id={`step_${index}_approver_${approverIndex}`} >
+									<td onClick={this.removeApprover.bind(this, approver, index)}>
+										<span style={{cursor: 'pointer'}}>⛔️</span>
+									</td>
+									<td>{approver.person && approver.person.name}</td>
+									<td >{approver.name}</td>
+								</tr>
+							)}
+						</tbody>
+					</Table>
+				</Form.Field>
+			</fieldset>
+		</div>
 	}
 
 	@autobind
@@ -201,7 +202,7 @@ export default class OrganizationForm extends Component {
 
 				History.replace(Organization.pathForEdit(organization), false)
 				History.push(Organization.pathFor(organization), {
-					success: 'Organization saved successfully', 
+					success: 'Organization saved successfully',
 					skipPageLeaveWarning: true
 				})
 			}).catch(error => {

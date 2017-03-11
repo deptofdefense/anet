@@ -197,7 +197,6 @@ export default class RollupShow extends Page {
 
 	render() {
 		// let reports = this.state.reports.list
-		let reportOTD = null //reports[0]
 
 		// Only admins can email the Rollup out.
 		let currentUser = this.context.app.state.currentUser
@@ -224,20 +223,13 @@ export default class RollupShow extends Page {
 					Daily Rollup - {this.dateLongStr}
 				</h1>
 
+				<h2 className="form-header">Summary of Report Input</h2>
 				<fieldset>
-					<legend>Summary of Report Input</legend>
 					<svg ref={el => this.graph = el} style={graphCss} />
 				</fieldset>
 
-				{reportOTD && <fieldset>
-					<legend>Report of the Day</legend>
-
-					<ReportSummary report={reportOTD} />
-				</fieldset>}
-
+				<h2 className="form-header">Reports - {this.dateLongStr}</h2>
 				<fieldset>
-					<legend>Reports - {this.dateLongStr}</legend>
-
 					<ReportCollection paginatedReports={this.state.reports} />
 				</fieldset>
 

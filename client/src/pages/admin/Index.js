@@ -37,9 +37,8 @@ export default class AdminIndex extends Page {
 				<Breadcrumbs items={[['Admin settings', '/admin']]} />
 
 				<Form formFor={settings} horizontal submitText="Save settings" onChange={this.onChange} onSubmit={this.onSubmit}>
+					<h2 className="form-header">Site Settings</h2>
 					<fieldset>
-						<legend>Site Settings</legend>
-
 						{Object.map(settings, (key, value) =>
 							<Form.Field id={key} key={key} />
 						)}

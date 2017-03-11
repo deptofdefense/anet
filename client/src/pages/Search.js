@@ -232,48 +232,60 @@ export default class Search extends Page {
 				}
 
 				{numReports > 0 && (queryType === 'everything' || queryType === 'reports') &&
+					<div>
+					<h2 className="form-header">Reports</h2>
 					<fieldset>
-						<legend>Reports</legend>
 						<div className="pull-right">
 							{this.props.location.query.text && <Button onClick={this.showSaveModal} id="saveSearchButton" >Save search</Button>}
 						</div>
 						<ReportCollection paginatedReports={results.reports} goToPage={this.goToReportsPage} />
 					</fieldset>
+					</div>
 				}
 
 				{numPeople > 0 && (queryType === 'everything' || queryType === 'people') &&
-					<fieldset>
-						<legend>People</legend>
-						{this.renderPeople()}
-					</fieldset>
+					<div>
+						<h2 className="form-header">People</h2>
+						<fieldset>
+							{this.renderPeople()}
+						</fieldset>
+					</div>
 				}
 
 				{numOrganizations > 0 && (queryType === 'everything' || queryType === 'organizations') &&
-					<fieldset>
-						<legend>Organizations</legend>
-						{this.renderOrgs()}
-					</fieldset>
+					<div>
+						<h2 className="form-header">Organizations</h2>
+						<fieldset>
+							{this.renderOrgs()}
+						</fieldset>
+					</div>
 				}
 
 				{numPositions > 0 && (queryType === 'everything' || queryType === 'positions') &&
-					<fieldset>
-						<legend>Positions</legend>
-						{this.renderPositions()}
-					</fieldset>
+					<div>
+						<h2 className="form-header">Positions</h2>
+						<fieldset>
+							{this.renderPositions()}
+						</fieldset>
+					</div>
 				}
 
 				{numLocations > 0 && (queryType === 'everything' || queryType === 'locations') &&
-					<fieldset>
-						<legend>Locations</legend>
-						{this.renderLocations()}
-					</fieldset>
+					<div>
+						<h2 className="form-header">Locations</h2>
+						<fieldset>
+							{this.renderLocations()}
+						</fieldset>
+					</div>
 				}
 
 				{numPoams > 0 && (queryType === 'everything' || queryType === 'poams') &&
-					<fieldset>
-						<legend>PoAMs</legend>
-						{this.renderPoams()}
-					</fieldset>
+					<div>
+						<h2 className="form-header">Poams</h2>
+						<fieldset>
+							{this.renderPoams()}
+						</fieldset>
+					</div>
 				}
 
 				{this.renderSaveModal()}

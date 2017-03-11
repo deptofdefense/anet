@@ -80,8 +80,9 @@ export default class Home extends HopscotchPage {
 				<Messages error={this.state.error} success={this.state.success} />
 
 				{this.state.showGettingStartedPanel === 'true' &&
+					<div>
+					<h2 className="form-header">Getting Started</h2>
 					<fieldset className="home-tile-row">
-						<legend>Getting Started</legend>
 						<Grid fluid className="getting-started-grid">
 							<span className="close-getting-started" onClick={this.onDismissGettingStarted}>Close ✕</span>
 							<Row>
@@ -99,14 +100,15 @@ export default class Home extends HopscotchPage {
 							</Row>
 						</Grid>
 					</fieldset>
+					</div>
 				}
+				<h2 className="form-header">
+					My ANET Snapshot
+					{ this.state.showGettingStartedPanel !== 'true' &&
+						<HopscotchLauncher onClick={this.startWelcomeTour} />
+					}
+				</h2>
 				<fieldset className="home-tile-row">
-					<legend>
-						My ANET Snapshot 
-						{ this.state.showGettingStartedPanel !== 'true' && 
-							<HopscotchLauncher onClick={this.startWelcomeTour} />
-						}	
-					</legend>
 					<Grid fluid>
 						<Row>
 							<Link to={{pathname: '/search', query: {type: 'reports', pendingApprovalOf: currentUser.id}}} className="col-md-3 home-tile">

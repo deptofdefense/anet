@@ -121,8 +121,8 @@ export default class ReportMinimal extends Page {
 				}
 
 				<Form static formFor={report} horizontal>
+					<h2 className="form-header">Report #{report.id}</h2>
 					<fieldset className="show-report-overview">
-						<legend>Report #{report.id}</legend>
 
 						<Form.Field id="intent" label="Summary" >
 							<p><strong>Meeting goal:</strong> {report.intent}</p>

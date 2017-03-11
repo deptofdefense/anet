@@ -30,6 +30,7 @@ fieldset {
 	margin: 0;
 	margin-bottom: 7rem;
 	position: relative;
+	width: 100%;
 }
 
 fieldset legend {
@@ -501,7 +502,6 @@ table hr.attendee-divider {
 
 .orgLaydownToggleInactive { 
 	position: relative;
-	right: -85px;
 }
 
 h2.form-header {
