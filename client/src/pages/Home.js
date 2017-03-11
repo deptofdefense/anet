@@ -105,7 +105,7 @@ export default class Home extends HopscotchPage {
 				<h2 className="form-header">
 					My ANET Snapshot
 					{ this.state.showGettingStartedPanel !== 'true' &&
-						<HopscotchLauncher onClick={this.startWelcomeTour} />
+						<div className="pull-right" ><HopscotchLauncher onClick={this.startWelcomeTour} /></div>
 					}
 				</h2>
 				<fieldset className="home-tile-row">

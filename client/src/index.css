@@ -198,7 +198,7 @@ a.home-tile {
 }
 
 .report-new .persistent-tour-launcher {
-	width: 30%;
+	padding-right: 100px;
 }
 
 .persistent-tour-launcher {

@@ -10,6 +10,7 @@ import ButtonToggleGroup from 'components/ButtonToggleGroup'
 import PoamsSelector from 'components/PoamsSelector'
 import LinkTo from 'components/LinkTo'
 import History from 'components/History'
+import HopscotchLauncher from 'components/HopscotchLauncher'
 
 import API from 'api'
 import {Report, Person} from 'models'
@@ -83,12 +84,15 @@ export default class ReportForm extends Component {
 		const SubmitButtons = props =>
 			<div className={`${props.className} submit-buttons`}>
 				<div>
-					{props.children || 
+					{props.children ||
 						<Button bsStyle="default" className="cancel" onClick={this.onCancel}>
 							Cancel
 						</Button>
 					}
 				</div>
+				{this.props.startHopscotch && <div>
+					<HopscotchLauncher onClick={this.props.startHopscotch} />
+				</div>}
 				<div>
 					<Button bsStyle="primary" onClick={this.onSubmit} disabled={hasErrors}>
 						Preview and submit
@@ -107,7 +111,7 @@ export default class ReportForm extends Component {
 						{this.props.title}
 					</h2>
 				</SubmitButtons>
-				<Form formFor={report} horizontal onChange={this.onChange} 
+				<Form formFor={report} horizontal onChange={this.onChange}
 						submitDisabled={hasErrors} submitText={false}>
 					<div>
 						<fieldset>
@@ -420,7 +424,7 @@ export default class ReportForm extends Component {
 
 				// then after, we redirect you to the to page
 				History.push(Report.pathFor(report), {
-					success: 'Report saved successfully', 
+					success: 'Report saved successfully',
 					skipPageLeaveWarning: true
 				})
 			})
