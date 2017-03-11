@@ -27,7 +27,8 @@ fieldset {
 	background: #fff;
 	border: 1px solid #e0e0e0;
 	padding: 1.25em;
-	margin: 7rem 0;
+	margin: 0;
+	margin-bottom: 7rem;
 	position: relative;
 }
 
@@ -38,7 +39,6 @@ fieldset legend {
 	font-size: 2.5rem;
 	color: #363636;
 	border: none;
-	padding-right: 80px;
 }
 
 fieldset legend small {
@@ -160,6 +160,24 @@ fieldset.collapsable legend div.collapsableToggle {
 	display: table;
 }
 
+.home-tile-row span.close-getting-started {
+	position: relative;
+	top: -10px;
+	right: 5px;
+	font-size: 1.2rem;
+	float: right;
+	cursor: pointer;
+	opacity: .2;
+	color: #000;
+	text-shadow: 0 1px 0 #fff;
+	font-weight: bold;
+}
+
+.home-tile-row span.close-getting-started:hover {
+	opacity: .5;
+	text-decoration: none;
+}
+
 a.home-tile {
 	display: table-cell;
 	float: none;
@@ -176,6 +194,28 @@ a.home-tile {
 
 .home-tile:hover {
 	background: #dae3ee;
+}
+
+.report-new .persistent-tour-launcher {
+	width: 30%;
+}
+
+.persistent-tour-launcher {
+	width: 40%;
+	float: right;
+	position: relative;
+	top: -5px;
+	left: -2px;
+}
+
+.persistent-tour-launcher div {
+	display: inline;
+}
+
+.persistent-tour-launcher .tour-icon {
+	top: 5px;
+	position: relative;
+	margin-left: 10px;
 }
 
 .person-icon {
@@ -258,6 +298,18 @@ a.home-tile {
 
 .report-summary .read-full {
 	float: right;
+}
+
+.report-summary .engagement-date {
+	margin-right: 10px;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+.report-summary .people-separator {
+	margin-left: 5px;
+	color: #999999;
+	font-size: 1.1rem;
 }
 
 .not-found {
@@ -384,6 +436,56 @@ table hr.attendee-divider {
 	padding-left: 1rem;
 }
 
+.report-form fieldset:not(:first-child) legend {
+	font-size: 2rem;
+}
+
+.report-form fieldset:last-child {
+	margin-bottom: 10px;
+}
+
+.report-form .submit-buttons {
+	display: flex;
+	align-items: flex-end;
+	margin-bottom: 5px;
+}
+.report-form .submit-buttons > div:first-child {
+	flex-grow: 2;
+}
+.report-form .submit-buttons > div:last-child {
+	margin-left: 10px;
+}
+.report-form .submit-buttons h2 {
+	margin-bottom: 0px;
+}
+
+.report-form .button-row {
+	/* This matches the form fieldset's margin-bottom. */
+	margin-bottom: 7rem; 
+}
+
+.report-form .button-row button:nth-last-child(-n+2) {
+	float: right;
+}
+
+.report-form .button-row .preview-and-submit {
+	margin-right: 2px;
+}
+
+.report-form .button-row .save-for-later {
+	margin-right: 30px; 
+	background-color: #8ca6c7;
+	border-color: #8ca6c7;
+}
+
+.report-form .button-row .cancel {
+	width: 15%; 
+}
+
+.report-form .top-submit-buttons .button-row {
+	margin-bottom: 10px;
+}
+
 .show-report-overview label.col-sm-2 {
 	/* This clobbers the grid system but w/e. */
 	width: 130px;
@@ -400,4 +502,17 @@ table hr.attendee-divider {
 .orgLaydownToggleInactive { 
 	position: relative;
 	right: -85px;
+}
+
+h2.form-header {
+	font-size: 2.5rem;
+	color: #363636;
+	font-weight: normal;
+	margin-left: 3px;
+	margin-bottom: 5px;
+	word-break: break-all;
+}
+
+.report-show h2.form-header {
+	margin-bottom: 10px;
 }

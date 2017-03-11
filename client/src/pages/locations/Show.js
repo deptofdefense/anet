@@ -43,9 +43,9 @@ class LocationShow extends Page {
 
 				<Messages success={this.state.success} error={this.state.error} />
 
+				<h2 className="form-header">{loc.name}</h2>
 				<Form static formFor={loc} horizontal>
 					<fieldset>
-						<legend>{loc.name}</legend>
 
 						<Form.Field id="latlng" value={latlng} label="Lat/Lon" />
 					</fieldset>

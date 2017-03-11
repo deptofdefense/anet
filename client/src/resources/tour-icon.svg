@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="21px" height="18px" viewBox="0 0 21 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 42 (36781) - http://www.bohemiancoding.com/sketch -->
+    <title>Slice 1</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M7.875,13.0769231 L19.0054385,13.0769231 C20.1070044,13.0769231 21,12.1780932 21,11.076585 L21,2.00033804 C21,0.895581845 20.0976562,0 19.0054385,0 L1.99456145,0 C0.892995579,0 0,0.898829882 0,2.00033804 L0,11.076585 C0,12.1813412 0.90234375,13.0769231 1.99456145,13.0769231 L3.5,13.0769231 L3.5,15.4285051 C3.5,16.5371573 4.13327267,16.8049444 4.9207256,16.020376 L7.875,13.0769231 Z" id="path-1"></path>
+        <mask id="mask-2" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="21" height="16.4706896" fill="white">
+            <use xlink:href="#path-1"></use>
+        </mask>
+        <rect id="path-3" x="2.625" y="3.48717949" width="15.75" height="0.871794872"></rect>
+        <mask id="mask-4" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="15.75" height="1" fill="white">
+            <use xlink:href="#path-3"></use>
+        </mask>
+        <rect id="path-5" x="2.625" y="6.1025641" width="15.75" height="0.871794872"></rect>
+        <mask id="mask-6" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="15.75" height="1" fill="white">
+            <use xlink:href="#path-5"></use>
+        </mask>
+        <rect id="path-7" x="2.625" y="8.71794872" width="10.5" height="0.871794872"></rect>
+        <mask id="mask-8" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="10.5" height="1" fill="white">
+            <use xlink:href="#path-7"></use>
+        </mask>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Message" stroke="#FFFFFF" stroke-width="4">
+            <use id="Rectangle-56" mask="url(#mask-2)" xlink:href="#path-1"></use>
+            <use id="Rectangle-58" mask="url(#mask-4)" fill="#FFFFFF" xlink:href="#path-3"></use>
+            <use id="Rectangle-59" mask="url(#mask-6)" fill="#FFFFFF" xlink:href="#path-5"></use>
+            <use id="Rectangle-60" mask="url(#mask-8)" fill="#FFFFFF" xlink:href="#path-7"></use>
+        </g>
+    </g>
+</svg>

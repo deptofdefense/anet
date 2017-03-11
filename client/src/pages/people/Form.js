@@ -47,9 +47,8 @@ export default class PersonForm extends Component {
 
 			<Messages error={this.state.error} />
 
+			<h2 className="form-header">{legendText}</h2>
 			<fieldset>
-				<legend>{legendText}</legend>
-
 				<Form.Field id="name"
 					required
 					humanName="Name"
@@ -228,7 +227,7 @@ export default class PersonForm extends Component {
 					}
 
 					History.replace(Person.pathForEdit(person), false)
-					History.push(Person.pathFor(person), {success: 'Person saved successfully'})
+					History.push(Person.pathFor(person), {success: 'Person saved successfully', skipPageLeaveWarning: true})
 				}
 			}).catch(error => {
 				this.setState({error: error})

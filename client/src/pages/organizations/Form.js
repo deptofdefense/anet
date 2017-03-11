@@ -37,9 +37,8 @@ export default class OrganizationForm extends Component {
 				   horizontal>
 
 			<Messages error={this.state.error} />
+			<h2 className="form-header">{edit ? 'Editing ' + organization.shortName : 'Create a new Organization'}</h2>
 			<fieldset>
-				<legend>{edit ? 'Editing ' + organization.shortName : 'Create a new Organization'}</legend>
-
 				<Form.Field id="type">
 					<ButtonToggleGroup>
 						<Button id="advisorOrgButton" value="ADVISOR_ORG">Advisor Organization</Button>
@@ -201,7 +200,10 @@ export default class OrganizationForm extends Component {
 				}
 
 				History.replace(Organization.pathForEdit(organization), false)
-				History.push(Organization.pathFor(organization), {success: 'Organization saved successfully'})
+				History.push(Organization.pathFor(organization), {
+					success: 'Organization saved successfully', 
+					skipPageLeaveWarning: true
+				})
 			}).catch(error => {
 				this.setState({error})
 				window.scrollTo(0, 0)

@@ -46,10 +46,6 @@ export default class PositionForm extends Component {
 			personSearchQuery.role = 'PRINCIPAL'
 		}
 
-		if (!position.permissions) {
-			position.permissions = position.type
-		}
-
 		return (
 			<Form
 				formFor={position}
@@ -61,8 +57,8 @@ export default class PositionForm extends Component {
 
 				<Messages error={error} success={success} />
 
+				<h2 className="form-header">{edit ? "Edit Position" : "Create a new Position"}</h2>
 				<fieldset>
-					<legend>{edit ? "Edit Position" : "Create a new Position"}</legend>
 
 					<Form.Field id="type" disabled={this.props.edit}>
 						<ButtonToggleGroup>
@@ -231,7 +227,7 @@ export default class PositionForm extends Component {
 				}
 
 				History.replace(Position.pathForEdit(position), false)
-				History.push(Position.pathFor(position), {success: 'Saved Position'})
+				History.push(Position.pathFor(position), {success: 'Saved Position', skipPageLeaveWarning: true})
 			}).catch(error => {
 				this.setState({error: error})
 				window.scrollTo(0, 0)

@@ -108,9 +108,9 @@ class PersonShow extends Page {
 					</div>
 				}
 
+				<h2 className="form-header">{person.rank} {person.name}</h2>
 				<Form static formFor={person} horizontal>
 					<fieldset>
-						<legend>{person.rank} {person.name}</legend>
 						<Form.Field id="rank" />
 						<Form.Field id="role" />
 						<Form.Field id="status" />

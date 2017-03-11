@@ -26,8 +26,8 @@ export default class PoamForm extends Component {
 				horizontal
 			>
 
+				<h2 className="form-header">{edit ? "Edit PoAM " + poam.shortName : "Create a new PoAM"}</h2>
 				<fieldset>
-					<legend>{edit ? "Edit PoAM " + poam.shortName : "Create a new PoAM"}</legend>
 					<Form.Field id="shortName" label="PoAM number" />
 					<Form.Field id="longName" label="PoAM description" />
 					<Form.Field id="responsibleOrg" label="Responsible organization">
@@ -61,7 +61,7 @@ export default class PoamForm extends Component {
 				}
 
 				History.replace(Poam.pathForEdit(poam), false)
-				History.push(Poam.pathFor(poam), {success: 'PoAM saved successfully'})
+				History.push(Poam.pathFor(poam), {success: 'PoAM saved successfully', skipPageLeaveWarning: true})
 			}).catch(error => {
 				this.setState({error: error})
 				window.scrollTo(0, 0)

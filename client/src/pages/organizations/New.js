@@ -1,8 +1,8 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 
+import NavigationWarning from 'components/NavigationWarning'
 import OrganizationForm from './Form'
-import {ContentForHeader} from 'components/Header'
 import Breadcrumbs from 'components/Breadcrumbs'
 
 import API from 'api'
@@ -21,6 +21,7 @@ export default class OrganizationNew extends Page {
 		super(props)
 
 		this.state = {
+			originalOrganization: new Organization({type: 'ADVISOR_ORG'}),
 			organization: new Organization({type: 'ADVISOR_ORG'}),
 		}
 	}
@@ -32,10 +33,14 @@ export default class OrganizationNew extends Page {
 					id, shortName, longName, type
 				}
 			`).then(data => {
-				let organization = this.state.organization
+				let {organization, originalOrganization} = this.state
 				organization.parentOrg = new Organization(data.organization)
 				organization.type = organization.parentOrg.type
-				this.setState({organization})
+
+				originalOrganization.parentOrg = new Organization(data.organization)
+				originalOrganization.type = originalOrganization.parentOrg.type
+
+				this.setState({organization, originalOrganization})
 			})
 		}
 	}
@@ -46,12 +51,9 @@ export default class OrganizationNew extends Page {
 
 		return (
 			<div>
-				<ContentForHeader>
-					<h2>Create a new Organization</h2>
-				</ContentForHeader>
-
 				<Breadcrumbs items={[['Create new Organization', Organization.pathForNew()]]} />
 
+				<NavigationWarning original={this.state.originalOrganization} current={organization} />
 				<OrganizationForm organization={organization} />
 			</div>
 		)

@@ -22,7 +22,7 @@ export default class PoamsSelector extends Component {
 		let {poams, shortcuts, validationState} = this.props
 
 		return <fieldset>
-			<legend>Plans of Action and Milestones / Pillars</legend>
+			<legend>Plans of Action and Milestones / Pillars {this.props.optional && <small>(Optional)</small>}</legend>
 
 			<Form.Field id="poams" label="PoAMs" validationState={validationState} >
 				<Autocomplete

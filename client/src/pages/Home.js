@@ -5,6 +5,7 @@ import SavedSearchTable from 'components/SavedSearchTable'
 import {Link} from 'react-router'
 import moment from 'moment'
 import Messages from 'components/Messages'
+import HopscotchLauncher from 'components/HopscotchLauncher'
 
 import Breadcrumbs from 'components/Breadcrumbs'
 import API from 'api'
@@ -82,27 +83,30 @@ export default class Home extends HopscotchPage {
 					<fieldset className="home-tile-row">
 						<legend>Getting Started</legend>
 						<Grid fluid className="getting-started-grid">
+							<span className="close-getting-started" onClick={this.onDismissGettingStarted}>Close ✕</span>
 							<Row>
 								<h3>Welcome to ANET!</h3>
 							</Row>
 							<Row>
-								<Col xs={6}>
-									<p>Not sure where things are?</p>
-									<a onClick={this.startWelcomeTour}>Take a guided tour</a>
-								</Col>
-								<Col xs={6}>
-									<p>Still having trouble?</p>
-									<a href="mailto:todo.what.is.the.real.address@dds.mil">Contact the ANET Team</a>
+								<Col xs={12}>
+									<p>Get started with a self-guided tour.</p>
 								</Col>
 							</Row>
 							<Row>
-								<Button bsStyle="primary" onClick={this.onDismissGettingStarted}>Dismiss</Button>
+								<Col xs={12}>
+									<Button bsStyle="primary" onClick={this.startWelcomeTour}>Take the tour</Button>
+								</Col>
 							</Row>
 						</Grid>
 					</fieldset>
 				}
 				<fieldset className="home-tile-row">
-					<legend>My ANET Snapshot</legend>
+					<legend>
+						My ANET Snapshot 
+						{ this.state.showGettingStartedPanel !== 'true' && 
+							<HopscotchLauncher onClick={this.startWelcomeTour} />
+						}	
+					</legend>
 					<Grid fluid>
 						<Row>
 							<Link to={{pathname: '/search', query: {type: 'reports', pendingApprovalOf: currentUser.id}}} className="col-md-3 home-tile">

@@ -3,13 +3,7 @@ import ReactDOM from 'react-dom'
 import {Form as BSForm, Row, Button} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
-import {ContentForHeader} from 'components/Header'
 import FormField from 'components/FormField'
-
-const staticFormStyle = {
-	margin: 0,
-	marginTop: '-30px',
-}
 
 export default class Form extends Component {
 	static propTypes = Object.assign({}, BSForm.propTypes, {
@@ -53,8 +47,6 @@ export default class Form extends Component {
 		if (this.props.static) {
 			submitText = false
 			bsProps.componentClass = Row
-			bsProps.style = bsProps.style || {}
-			Object.assign(bsProps.style, staticFormStyle)
 		}
 
 		if (!submitOnEnter) {
@@ -67,14 +59,6 @@ export default class Form extends Component {
 		return (
 			<BSForm {...bsProps} ref="container">
 				{children}
-
-				{showSubmit &&
-					<ContentForHeader right>
-						<Button bsStyle="primary" type="submit" onClick={bsProps.onSubmit} disabled={submitDisabled} id="formHeaderSubmit" >
-							{submitText}
-						</Button>
-					</ContentForHeader>
-				}
 
 				{showSubmit &&
 					<div className="form-bottom-submit">

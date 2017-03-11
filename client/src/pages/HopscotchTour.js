@@ -35,7 +35,7 @@ export default {
         },
         {
             title: 'Meeting goal(s)',
-            content: 'List out all of the goals for your meeting.',
+            content: "Use this section to tell readers why you met with your principal. Were you working on a specific goal or problem with them? This will be part of your report's summary, so use this space to tell readers the high-level purpose of your engagement.",
             target: 'intent',
             placement: 'right',
         },
@@ -66,7 +66,7 @@ export default {
         },
         {
             title: 'Primary advisor and principal',
-            content: 'Use the checkboxes to select who the primary advisor and primary principal in the meeting were.',
+            content: "Use these check boxes to indicate who the primary advisor and primary principal was. The people you choose will display on your report's summary as the main individuals involved in your engagement.",
             target: '#attendeesTable',
             placement: 'bottom',
         },
@@ -78,21 +78,27 @@ export default {
         },
         {
             title: 'Key outcomes',
-            content: 'List the the key outcome(s) for this engagement.',
+            content: "Use this section to tell readers what the main information or results from your engagement were. This will be displayed in your report's summary, so include information that you think would be valuable for leadership and other organizations to know.",
             target: '#keyOutcomes',
             placement: 'right',
         },
         {
             title: 'Next steps',
-            content: 'List the next step(s) for this engagement.',
+            content: "Here, tell readers about the next concrete steps that you'll be taking to build on the progress made in your engagement. This will be displayed in your report's summary, so include information that will explain to leadership what you are doing next, as a result of your meeting's outcomes.",
             target: '#nextSteps',
             placement: 'right',
         },
         {
             title: 'Detailed report',
-            content: 'If you need to provide extra details, click on this button to display a large area for you to type the details.',
+            content: `If there's more information from your meeting that you'd like to include, click on the "Add detailed comments" button. You will have additional space to record discussion topics and notes that may be helpful to you, your organization, or leadership later on. This section does not display in the report summary.`,
             target: '#toggleReportDetails',
             placement: 'right',
+        },
+        {
+            title: 'Start this tour again',
+            content: 'Click this button to restart the tour.',
+            target: '.persistent-tour-launcher',
+            placement: 'bottom',
         },
     ]
 }

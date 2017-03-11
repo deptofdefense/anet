@@ -1,9 +1,9 @@
 import React from 'react'
 import Page from 'components/Page'
 import ModelPage from 'components/ModelPage'
+import NavigationWarning from 'components/NavigationWarning'
 
 import OrganizationForm from './Form'
-import {ContentForHeader} from 'components/Header'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Messages from 'components/Messages'
 
@@ -36,7 +36,10 @@ class OrganizationEdit extends Page {
 				poams { id, shortName, longName}
 			}
 		`).then(data => {
-			this.setState({organization: new Organization(data.organization)})
+			this.setState({
+				organization: new Organization(data.organization), 
+				originalOrganization: new Organization(data.organization)
+			})
 		})
 	}
 
@@ -45,9 +48,7 @@ class OrganizationEdit extends Page {
 
 		return (
 			<div>
-				<ContentForHeader>
-					<h2>Edit {organization.shortName}</h2>
-				</ContentForHeader>
+				<NavigationWarning original={this.state.originalOrganization} current={organization} /> 
 
 				<Breadcrumbs items={[[`Edit ${organization.shortName}`, Organization.pathForEdit(organization)]]} />
 				<Messages error={this.state.error} success={this.state.success} />

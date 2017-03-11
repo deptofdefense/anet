@@ -112,12 +112,9 @@ class OrganizationShow extends Page {
 					</div>
 				}
 
+				<h2 className="form-header">{org.shortName}</h2>
 				<Form static formFor={org} horizontal>
 					<fieldset>
-						<legend>
-							{org.shortName}
-						</legend>
-
 						<Form.Field id="longName" label="Description"/>
 
 						<Form.Field id="type">

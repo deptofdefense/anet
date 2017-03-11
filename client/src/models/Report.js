@@ -1,5 +1,6 @@
 import Model from 'components/Model'
 import moment from 'moment'
+import Person from 'models/Person'
 
 export default class Report extends Model {
 	static resourceName = 'Report'
@@ -83,6 +84,28 @@ export default class Report extends Model {
 		return this.attendees.find( el =>
 			el.role === 'ADVISOR' && el.primary
 		)
+	}
+
+	addAttendee(newAttendee) {
+		if (!newAttendee || !newAttendee.id) {
+			return
+		}
+
+		let attendees = this.attendees
+
+		if (attendees.find(attendee => attendee.id === newAttendee.id)) {
+			return
+		}
+
+		let person = new Person(newAttendee)
+		person.primary = false
+
+		if (!attendees.find(attendee => attendee.role === person.role && attendee.primary)) {
+			person.primary = true
+		}
+
+		this.attendees.push(person)
+		return true
 	}
 
 }

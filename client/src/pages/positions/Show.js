@@ -75,12 +75,9 @@ class PositionShow extends Page {
 				}
 
 
+				<h2 className="form-header">{position.name}</h2>
 				<Form static formFor={position} horizontal>
 					<fieldset>
-						<legend>
-							{position.name}
-						</legend>
-
 						<Form.Field id="code" />
 						<Form.Field id="type" />
 						<Form.Field id="status" />
