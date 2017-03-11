@@ -33,7 +33,7 @@ export default class OrganizationLaydown extends Component {
 		return (
 			<div>
 			<h2 className="form-header">
-				Positions needing attention
+				Supported positions
 				<div className="pull-right orgLaydownToggleInactive">
 					<Button bsStyle="link" onClick={this.toggleShowInactive}>
 						{(showInactivePositions ? "Hide " : "Show ") + numInactivePos + " Inactive Position(s)"}
@@ -42,12 +42,12 @@ export default class OrganizationLaydown extends Component {
 			</h2>
 
 			<fieldset>
-				{this.renderPositionTable(positionsNeedingAttention)}
+				{this.renderPositionTable(supportedPositions)}
 			</fieldset>
 
-			<h2 className="form-header" >Supported laydown</h2>
+			<h2 className="form-header" >Vacant Positions</h2>
 			<fieldset>
-				{this.renderPositionTable(supportedPositions)}
+				{this.renderPositionTable(positionsNeedingAttention)}
 			</fieldset>
 		</div>
 		)
@@ -55,25 +55,25 @@ export default class OrganizationLaydown extends Component {
 
 	renderPositionTable(positions) {
 		let org = this.props.organization
-		let posCodeHeader, posNameHeader, otherCodeHeader, otherNameHeader
+		let posNameHeader, posPersonHeader, otherNameHeader, otherPersonHeader
 		if (org.type === 'ADVISOR_ORG') {
-			posCodeHeader = 'CE Billet'
-			posNameHeader = 'Advisor'
-			otherCodeHeader = 'TASHKIL'
-			otherNameHeader = 'Afghan'
+			posNameHeader = 'Billet'
+			posPersonHeader = 'Advisor'
+			otherNameHeader = 'TASHKIL'
+			otherPersonHeader = 'Afghan'
 		} else {
-			otherCodeHeader = 'CE Billet'
-			otherNameHeader = 'Advisor'
-			posCodeHeader = 'TASHKIL'
-			posNameHeader = 'Afghan'
+			otherNameHeader = 'Billet'
+			otherPersonHeader = 'Advisor'
+			posNameHeader = 'TASHKIL'
+			posPersonHeader = 'Afghan'
 		}
 		return <Table>
 			<thead>
 				<tr>
-					<th>{posCodeHeader}</th>
 					<th>{posNameHeader}</th>
-					<th>{otherCodeHeader}</th>
+					<th>{posPersonHeader}</th>
 					<th>{otherNameHeader}</th>
+					<th>{otherPersonHeader}</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -91,55 +91,56 @@ export default class OrganizationLaydown extends Component {
 
 	renderPositionRow(position, other, otherIndex) {
 		let key = position.id
-		let otherCodeCol, otherNameCol, positionCodeCol, positionNameCol
+		let otherPersonCol, otherNameCol, positionPersonCol, positionNameCol
 		if (position.status === 'INACTIVE' && this.state.showInactivePositions === false) {
 			return
 		}
 
 		if (other) {
 			key += '.' + other.id
-			otherCodeCol = <td><LinkTo position={other} >{this.positionWithStatus(other)}</LinkTo></td>
+			otherNameCol = <td><LinkTo position={other} >{this.positionWithStatus(other)}</LinkTo></td>
 
-			otherNameCol = other.person
+			otherPersonCol = other.person
 				? <td><LinkTo person={other.person} >{this.personWithStatus(other.person)}</LinkTo></td>
 				: <td className="text-danger">Unfilled</td>
 		}
 
 		if (otherIndex === 0) {
-			positionCodeCol = <td><LinkTo position={position} >{this.positionWithStatus(position)}</LinkTo></td>
-			positionNameCol = (position.person)
+			positionNameCol = <td><LinkTo position={position} >{this.positionWithStatus(position)}</LinkTo></td>
+			positionPersonCol = (position.person && position.person.id)
 					? <td><LinkTo person={position.person} >{this.personWithStatus(position.person)}</LinkTo></td>
 					: <td className="text-danger">Unfilled</td>
 		}
 
-		otherCodeCol = otherCodeCol || <td></td>
+		otherPersonCol = otherPersonCol || <td></td>
 		otherNameCol = otherNameCol || <td></td>
-		positionCodeCol = positionCodeCol || <td></td>
+		positionPersonCol = positionPersonCol || <td></td>
 		positionNameCol = positionNameCol || <td></td>
 
 
 
 		return <tr key={key}>
-			{positionCodeCol}
 			{positionNameCol}
-			{otherCodeCol}
+			{positionPersonCol}
 			{otherNameCol}
+			{otherPersonCol}
 		</tr>
 	}
 
 	personWithStatus(person) {
 		if (person.status === 'INACTIVE') {
-			return <i>{person.name + " (Inactive)"}</i>
+			return <i>{person.rank + " " + person.name + " (Inactive)"}</i>
 		} else {
-			return person.name
+			return person.rank + " " + person.name
 		}
 	}
 
 	positionWithStatus(pos) {
+		let code = (pos.code) ? ` (${pos.code})` : ''
 		if (pos.status === 'INACTIVE') {
-			return <i>{pos.name + " (Inactive)"}</i>
+			return <i>{`${pos.name}${code} (Inactive)`}</i>
 		} else {
-			return pos.name
+			return pos.name + code
 		}
 	}
 

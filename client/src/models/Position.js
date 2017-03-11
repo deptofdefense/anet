@@ -11,6 +11,7 @@ export default class Position extends Model {
 		name: '',
 		type: '',
 		code: '',
+		status: 'ACTIVE',
 		associatedPositions: [],
 		organization: {},
 		person: {},
