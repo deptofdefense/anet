@@ -59,7 +59,7 @@ class OrganizationShow extends Page {
 				parentOrg { id, shortName, longName }
 				childrenOrgs { id, shortName, longName },
 				positions {
-					id, name, code
+					id, name, code, status
 					person { id, name, status }
 					associatedPositions {
 						id, name, code

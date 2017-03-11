@@ -1,8 +1,9 @@
 import React, {PropTypes, Component} from 'react'
-import {Table} from 'react-bootstrap'
+import {Table, Button} from 'react-bootstrap'
 import LinkTo from 'components/LinkTo'
 
 import {Position} from 'models'
+import autobind from 'autobind-decorator'
 
 export default class OrganizationLaydown extends Component {
 	static contextTypes = {
@@ -13,8 +14,18 @@ export default class OrganizationLaydown extends Component {
 		organization: PropTypes.object.isRequired
 	}
 
+	constructor(props) {
+		super(props)
+
+		this.state = {
+			showInactivePositions: false
+		}
+	}
+
 	render() {
 		let org = this.props.organization
+		let showInactivePositions = this.state.showInactivePositions
+		let numInactivePos = org.positions.filter(p => p.status === 'INACTIVE').length
 
 		let positionsNeedingAttention = org.positions.filter(position => !position.person )
 		let supportedPositions = org.positions.filter(position => positionsNeedingAttention.indexOf(position) === -1)
@@ -22,8 +33,16 @@ export default class OrganizationLaydown extends Component {
 		return (
 			<div>
 			<h3>Personnel Laydown</h3>
+
 			<fieldset>
-				<legend>Positions needing attention</legend>
+				<legend>
+					Positions needing attention
+					<div className="pull-right orgLaydownToggleInactive">
+						<Button bsStyle="link" onClick={this.toggleShowInactive}>
+							{(showInactivePositions ? "Hide " : "Show ") + numInactivePos + " Inactive Position(s)"}
+						</Button>
+					</div>
+				</legend>
 				{this.renderPositionTable(positionsNeedingAttention)}
 			</fieldset>
 
@@ -74,17 +93,21 @@ export default class OrganizationLaydown extends Component {
 	renderPositionRow(position, other, otherIndex) {
 		let key = position.id
 		let otherCodeCol, otherNameCol, positionCodeCol, positionNameCol
+		if (position.status === 'INACTIVE' && this.state.showInactivePositions === false) {
+			return
+		}
+
 		if (other) {
 			key += '.' + other.id
-			otherCodeCol = <td><LinkTo position={other} /></td>
+			otherCodeCol = <td><LinkTo position={other} >{this.positionWithStatus(other)}</LinkTo></td>
 
 			otherNameCol = other.person
-				? <td><LinkTo person={other.person} /></td>
+				? <td><LinkTo person={other.person} >{this.personWithStatus(other.person)}</LinkTo></td>
 				: <td className="text-danger">Unfilled</td>
 		}
 
 		if (otherIndex === 0) {
-			positionCodeCol = <td><LinkTo position={position} /></td>
+			positionCodeCol = <td><LinkTo position={position} >{this.positionWithStatus(position)}</LinkTo></td>
 			positionNameCol = (position.person)
 					? <td><LinkTo person={position.person} >{this.personWithStatus(position.person)}</LinkTo></td>
 					: <td className="text-danger">Unfilled</td>
@@ -111,5 +134,18 @@ export default class OrganizationLaydown extends Component {
 		} else {
 			return person.name
 		}
+	}
+
+	positionWithStatus(pos) {
+		if (pos.status === 'INACTIVE') {
+			return <i>{pos.name + " (Inactive)"}</i>
+		} else {
+			return pos.name
+		}
+	}
+
+	@autobind
+	toggleShowInactive() {
+		this.setState({showInactivePositions: !this.state.showInactivePositions})
 	}
 }

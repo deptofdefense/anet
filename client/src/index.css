@@ -396,3 +396,8 @@ table hr.attendee-divider {
 	*/
 	margin-bottom: 4px;
 }
+
+.orgLaydownToggleInactive { 
+	position: relative;
+	right: -85px;
+}
