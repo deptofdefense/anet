@@ -85,7 +85,12 @@ export default class PositionForm extends Component {
 						/>
 					</Form.Field>
 
-					<Form.Field id="code" placeholder="Postion ID or Number" />
+					{position.type === 'PRINCIPAL' ?
+						<Form.Field id="code" label="Tashkil Code" placeholder="Postion ID or Number" />
+						:
+						<Form.Field id="code" label="Billet Code" placeholder="Postion ID or Number" />
+					}
+					
 					<Form.Field id="name" label="Position Name" placeholder="Name/Description of Position"/>
 
 					<Form.Field id="person">
