@@ -1,5 +1,8 @@
 package mil.dds.anet.beans;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties({ "_loaded" })
 public class ReportPerson extends Person {
 
 	boolean primary;

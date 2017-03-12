@@ -6,6 +6,8 @@ import java.util.Optional;
 
 import org.joda.time.DateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.ReportList;
 import mil.dds.anet.beans.search.ReportSearchQuery;
@@ -14,6 +16,7 @@ import mil.dds.anet.graphql.GraphQLIgnore;
 import mil.dds.anet.graphql.GraphQLParam;
 import mil.dds.anet.views.AbstractAnetBean;
 
+@JsonIgnoreProperties({ "_loaded" })
 public class Person extends AbstractAnetBean implements Principal {
 
 	public static enum PersonStatus { ACTIVE, INACTIVE, NEW_USER }

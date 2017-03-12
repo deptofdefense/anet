@@ -116,7 +116,7 @@ export default class ReportForm extends Component {
 					<div>
 						<fieldset>
 
-							<Form.Field id="intent" label="Meeting goal" placeholder="What happened?" data-focus>
+							<Form.Field id="intent" label="Meeting goal (purpose)" placeholder="What happened?" data-focus componentClass="textarea" >
 								<Form.Field.ExtraCol>{250 - report.intent.length} characters remaining</Form.Field.ExtraCol>
 							</Form.Field>
 
@@ -238,12 +238,12 @@ export default class ReportForm extends Component {
 							<legend>Meeting Discussion</legend>
 
 							{!isCancelled &&
-								<Form.Field id="keyOutcomes">
+								<Form.Field id="keyOutcomes" componentClass="textarea" >
 									<Form.Field.ExtraCol><small>{250 - report.keyOutcomes.length} Characters Remaining</small></Form.Field.ExtraCol>
 								</Form.Field>
 							}
 
-							<Form.Field id="nextSteps">
+							<Form.Field id="nextSteps" componentClass="textarea" >
 								<Form.Field.ExtraCol><small>{250 - report.nextSteps.length} Characters Remaining</small></Form.Field.ExtraCol>
 							</Form.Field>
 
@@ -253,7 +253,7 @@ export default class ReportForm extends Component {
 
 							<Collapse in={this.state.showReportText}>
 								<div>
-									<Form.Field id="reportText" label="" horizontal={false}>
+									<Form.Field id="reportText" label="" horizontal={false} className="reportTextField" >
 										<TextEditor label="Report Details" id="reportTextEditor" />
 									</Form.Field>
 								</div>
