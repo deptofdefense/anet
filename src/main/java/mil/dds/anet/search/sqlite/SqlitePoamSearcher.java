@@ -45,7 +45,7 @@ public class SqlitePoamSearcher implements IPoamSearcher {
 		if (whereClauses.size() == 0) { return result; }
 		
 		sql.append(Joiner.on(" AND ").join(whereClauses));
-		sql.append(" LIMIT :limit OFFSET :offset");
+		sql.append(" ORDER BY shortName ASC LIMIT :limit OFFSET :offset");
 		
 		result.setList(dbHandle.createQuery(sql.toString())
 			.bindFromMap(args)

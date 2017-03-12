@@ -48,7 +48,7 @@ public class MssqlPoamSearcher implements IPoamSearcher {
 		if (whereClauses.size() == 0) { return result; }
 		
 		sql.append(Joiner.on(" AND ").join(whereClauses));
-		sql.append(" ORDER BY createdAt DESC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY");
+		sql.append(" ORDER BY shortName ASC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY");
 		
 		Query<Poam> sqlQuery = dbHandle.createQuery(sql.toString())
 			.bindFromMap(args)

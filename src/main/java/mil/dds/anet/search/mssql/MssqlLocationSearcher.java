@@ -22,7 +22,7 @@ public class MssqlLocationSearcher implements ILocationSearcher {
 		
 		Query<Location> sqlQuery = dbHandle.createQuery("/* MssqlLocationSearch */ SELECT *, count(*) over() as totalCount "
 				+ "FROM locations WHERE CONTAINS (name, :name) "
-				+ "ORDER BY createdAt DESC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY")
+				+ "ORDER BY name ASC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY")
 			.bind("name", "\"" + query.getText() + "*\"")
 			.bind("offset", query.getPageSize() * query.getPageNum())
 			.bind("limit", query.getPageSize())
