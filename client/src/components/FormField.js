@@ -14,7 +14,7 @@ export default class FormField extends Component {
 	constructor(props, context) {
 		super(props, context)
 		this.state = {
-			value: '', 
+			value: '',
 			userHasTouchedField: false,
 			isValid: null
 		}
@@ -68,6 +68,8 @@ export default class FormField extends Component {
 		]),
 
 		onChange: PropTypes.func,
+
+		maxCharacters: PropTypes.number,
 	}
 
 	render() {
@@ -81,7 +83,7 @@ export default class FormField extends Component {
 			...childProps
 		} = this.props
 
-		childProps = Object.without(childProps, 'getter', 'horizontal', 'onError', 'onValid', 'humanName')
+		childProps = Object.without(childProps, 'getter', 'horizontal', 'onError', 'onValid', 'humanName', 'maxCharacters')
 
 		let defaultValue = this.getDefaultValue(this.props, this.context)
 
@@ -92,7 +94,7 @@ export default class FormField extends Component {
 			state.value = defaultValue
 		}
 
-		const validationState = this.props.validationState || 
+		const validationState = this.props.validationState ||
 			(this.state.isValid === false || this.isMissingRequiredField(this.props)) ? 'error' : null
 
 		let horizontal = this.context.form && this.context.form.props.horizontal
@@ -134,10 +136,10 @@ export default class FormField extends Component {
 			if (children.length)
 				childProps.children = children
 
-			const formControl = <FormControl 
-				{...childProps} 
-				value={defaultValue} 
-				onChange={this.onChange} 
+			const formControl = <FormControl
+				{...childProps}
+				value={defaultValue}
+				onChange={this.onChange}
 				onBlur={this.onUserTouchedField} />
 
 			children = <div>
@@ -258,6 +260,11 @@ export default class FormField extends Component {
 
 		let id = this.props.id
 		let value = event && event.target ? event.target.value : event
+
+		if (this.props.maxCharacters && value.length > this.props.maxCharacters) {
+			return
+		}
+
 		let formContext = this.context.formFor
 		if (formContext)
 			formContext[id] = value

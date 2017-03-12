@@ -87,12 +87,25 @@ export default class PersonForm extends Component {
 					onValid={() => this.onFieldExitErrorState('rank')}>
 
 					<option />
-					<option value="OF-1" >OF-1</option>
-					<option value="OF-2" >OF-2</option>
-					<option value="OF-3" >OF-3</option>
-					<option value="OF-4" >OF-4</option>
-					<option value="OF-5" >OF-5</option>
-					<option value="OF-6" >OF-6</option>
+					<option value="OR-1">OR-1</option>
+					<option value="OR-2">OR-2</option>
+					<option value="OR-3">OR-3</option>
+					<option value="OR-4">OR-4</option>
+					<option value="OR-5">OR-5</option>
+					<option value="OR-6">OR-6</option>
+					<option value="OR-7">OR-7</option>
+					<option value="OR-8">OR-8</option>
+					<option value="OR-9">OR-9</option>
+					<option value="OF-1">OF-1</option>
+					<option value="OF-2">OF-2</option>
+					<option value="OF-3">OF-3</option>
+					<option value="OF-4">OF-4</option>
+					<option value="OF-5">OF-5</option>
+					<option value="OF-6">OF-6</option>
+					<option value="OF-7">OF-7</option>
+					<option value="OF-8">OF-8</option>
+					<option value="OF-9">OF-9</option>
+					<option value="OF-10">OF-10</option>
 					<option value="CIV">CIV</option>
 					<option value="CTR">CTR</option>
 				</Form.Field>

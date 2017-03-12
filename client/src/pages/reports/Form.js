@@ -1,5 +1,5 @@
 import React, {Component, PropTypes} from 'react'
-import {Checkbox, Table, Button, Collapse, HelpBlock, Row, Col} from 'react-bootstrap'
+import {Checkbox, Table, Button, Collapse, HelpBlock} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
 import Form from 'components/Form'
@@ -106,69 +106,70 @@ export default class ReportForm extends Component {
 			</div>
 
 		return <div className="report-form">
-				<SubmitButtons className="top-submit-buttons">
-					<h2 className="form-header">
-						{this.props.title}
-					</h2>
-				</SubmitButtons>
-				<Form formFor={report} horizontal onChange={this.onChange}
-						submitDisabled={hasErrors} submitText={false}>
-					<div>
-						<fieldset>
+			<SubmitButtons className="top-submit-buttons">
+				<h2 className="form-header">
+					{this.props.title}
+				</h2>
+			</SubmitButtons>
 
-							<Form.Field id="intent" label="Meeting goal (purpose)" placeholder="What happened?" data-focus componentClass="textarea" >
-								<Form.Field.ExtraCol>{250 - report.intent.length} characters remaining</Form.Field.ExtraCol>
+			<Form formFor={report} horizontal onChange={this.onChange}
+				submitDisabled={hasErrors} submitText={false}>
+				<div>
+					<fieldset>
+
+						<Form.Field id="intent" label="Meeting goal (purpose)" placeholder="What happened?" data-focus componentClass="textarea" maxCharacters={250}>
+							<Form.Field.ExtraCol>{250 - report.intent.length} characters remaining</Form.Field.ExtraCol>
+						</Form.Field>
+
+						<Form.Field id="engagementDate" addon={CALENDAR_ICON}>
+							<DatePicker showTodayButton placeholder="When did it happen?" dateFormat="DD/MM/YYYY" />
+						</Form.Field>
+
+						<Form.Field id="location" addon={LOCATION_ICON} validationState={errors.location}>
+							<Autocomplete valueKey="name" placeholder="Start typing to search for the location where this happened..." url="/api/locations/search" />
+							{errors.location && <HelpBlock><b>
+								<img src={WARNING_ICON} role="presentation" height="20px" />
+								Location not found in database
+							</b></HelpBlock>}
+
+							<Form.Field.ExtraCol className="shortcut-list">
+								{recents.locations && recents.locations.length > 0 &&
+									<Button bsStyle="link"  onClick={this.setLocation.bind(this,recents.locations[0])} >Add {recents.locations[0].name}</Button>
+								}
+							</Form.Field.ExtraCol>
+						</Form.Field>
+
+						<Form.Field id="isCancelled" value={isCancelled} label="">
+							<Checkbox inline onChange={this.toggleCancelled} checked={isCancelled} >
+								This engagement was cancelled
+							</Checkbox>
+						</Form.Field>
+
+						{!isCancelled &&
+							<Form.Field id="atmosphere">
+								<ButtonToggleGroup>
+									<Button value="POSITIVE" id="positiveAtmos" ><img src={POSITIVE_ICON} height={25} alt="positive" /></Button>
+									<Button value="NEUTRAL" id="neutralAtmos" ><img src={NEUTRAL_ICON} height={25} alt="neutral" /></Button>
+									<Button value="NEGATIVE" id="negativeAtmos" ><img src={NEGATIVE_ICON} height={25} alt="negative" /></Button>
+								</ButtonToggleGroup>
+
 							</Form.Field>
+						}
 
-							<Form.Field id="engagementDate" addon={CALENDAR_ICON}>
-								<DatePicker showTodayButton placeholder="When did it happen?" dateFormat="DD/MM/YYYY" />
+						{!isCancelled && report.atmosphere && report.atmosphere !== 'POSITIVE' &&
+							<Form.Field id="atmosphereDetails" placeholder={`Why was this engagement ${report.atmosphere}?`} />
+						}
+
+						{isCancelled &&
+							<Form.Field id="cancelledReason" componentClass="select" >
+								<option value="CANCELLED_BY_ADVISOR">Cancelled by Advisor</option>
+								<option value="CANCELLED_BY_PRINCIPAL">Cancelled by Principal</option>
+								<option value="CANCELLED_DUE_TO_TRANSPORTATION">Cancelled due to Transportation</option>
+								<option value="CANCELLED_DUE_TO_FORCE_PROTECTION">Cancelled due to Force Protection</option>
+								<option value="CANCELLED_DUE_TO_ROUTES">Cancelled due to Routes</option>
+								<option value="CANCELLED_DUE_TO_THREAT">Cancelled due to Threat</option>
 							</Form.Field>
-
-							<Form.Field id="location" addon={LOCATION_ICON} validationState={errors.location}>
-								<Autocomplete valueKey="name" placeholder="Start typing to search for the location where this happened..." url="/api/locations/search" />
-								{errors.location && <HelpBlock><b>
-									<img src={WARNING_ICON} role="presentation" height="20px" />
-									Location not found in database
-								</b></HelpBlock>}
-
-								<Form.Field.ExtraCol className="shortcut-list">
-									{recents.locations && recents.locations.length > 0 &&
-										<Button bsStyle="link"  onClick={this.setLocation.bind(this,recents.locations[0])} >Add {recents.locations[0].name}</Button>
-									}
-								</Form.Field.ExtraCol>
-							</Form.Field>
-
-							<Form.Field id="isCancelled" value={isCancelled} label="">
-								<Checkbox inline onChange={this.toggleCancelled} checked={isCancelled} >
-									This engagement was cancelled
-								</Checkbox>
-							</Form.Field>
-
-							{!isCancelled &&
-								<Form.Field id="atmosphere">
-									<ButtonToggleGroup>
-										<Button value="POSITIVE" id="positiveAtmos" ><img src={POSITIVE_ICON} height={25} alt="positive" /></Button>
-										<Button value="NEUTRAL" id="neutralAtmos" ><img src={NEUTRAL_ICON} height={25} alt="neutral" /></Button>
-										<Button value="NEGATIVE" id="negativeAtmos" ><img src={NEGATIVE_ICON} height={25} alt="negative" /></Button>
-									</ButtonToggleGroup>
-
-								</Form.Field>
-							}
-
-							{!isCancelled && report.atmosphere && report.atmosphere !== 'POSITIVE' &&
-								<Form.Field id="atmosphereDetails" placeholder={`Why was this engagement ${report.atmosphere}?`} />
-							}
-
-							{isCancelled &&
-								<Form.Field id="cancelledReason" componentClass="select" >
-									<option value="CANCELLED_BY_ADVISOR">Cancelled by Advisor</option>
-									<option value="CANCELLED_BY_PRINCIPAL">Cancelled by Principal</option>
-									<option value="CANCELLED_DUE_TO_TRANSPORTATION">Cancelled due to Transportation</option>
-									<option value="CANCELLED_DUE_TO_FORCE_PROTECTION">Cancelled due to Force Protection</option>
-									<option value="CANCELLED_DUE_TO_ROUTES">Cancelled due to Routes</option>
-									<option value="CANCELLED_DUE_TO_THREAT">Cancelled due to Threat</option>
-								</Form.Field>
-							}
+						}
 					</fieldset>
 
 					<fieldset>
@@ -189,10 +190,12 @@ export default class ReportForm extends Component {
 								}
 								placeholder="Start typing to search for people who attended the meeting..."
 								valueKey="name" />
+
 							{errors.attendees && <HelpBlock>
 								<img src={WARNING_ICON} role="presentation" height="20px" />
 								Person not found in ANET Database.
-							</HelpBlock> }
+							</HelpBlock>}
+
 							<Table hover condensed id="attendeesTable" className="borderless">
 								<thead>
 									<tr>
@@ -232,34 +235,35 @@ export default class ReportForm extends Component {
 							onErrorChange={this.onPoamError}
 							validationState={errors.poams}
 							optional={true} />
+					}
+
+					<fieldset>
+						<legend>Meeting Discussion</legend>
+
+						{!isCancelled &&
+							<Form.Field id="keyOutcomes" componentClass="textarea" maxCharacters={250}>
+								<Form.Field.ExtraCol><small>{250 - report.keyOutcomes.length} characters remaining</small></Form.Field.ExtraCol>
+							</Form.Field>
 						}
 
-						<fieldset>
-							<legend>Meeting Discussion</legend>
+						<Form.Field id="nextSteps" componentClass="textarea" maxCharacters={250}>
+							<Form.Field.ExtraCol><small>{250 - report.nextSteps.length} characters remaining</small></Form.Field.ExtraCol>
+						</Form.Field>
 
-							{!isCancelled &&
-								<Form.Field id="keyOutcomes" componentClass="textarea" >
-									<Form.Field.ExtraCol><small>{250 - report.keyOutcomes.length} Characters Remaining</small></Form.Field.ExtraCol>
+						<Button className="center-block toggle-section-button" onClick={this.toggleReportText} id="toggleReportDetails" >
+							{this.state.showReportText ? 'Hide' : 'Add'} detailed comments
+						</Button>
+
+						<Collapse in={this.state.showReportText}>
+							<div>
+								<Form.Field id="reportText" label="" horizontal={false} className="reportTextField" >
+									<TextEditor label="Report Details" id="reportTextEditor" />
 								</Form.Field>
-							}
+							</div>
+						</Collapse>
+					</fieldset>
+				</div>
 
-							<Form.Field id="nextSteps" componentClass="textarea" >
-								<Form.Field.ExtraCol><small>{250 - report.nextSteps.length} Characters Remaining</small></Form.Field.ExtraCol>
-							</Form.Field>
-
-							<Button className="center-block toggle-section-button" onClick={this.toggleReportText} id="toggleReportDetails" >
-								{this.state.showReportText ? 'Hide' : 'Add'} detailed comments
-							</Button>
-
-							<Collapse in={this.state.showReportText}>
-								<div>
-									<Form.Field id="reportText" label="" horizontal={false} className="reportTextField" >
-										<TextEditor label="Report Details" id="reportTextEditor" />
-									</Form.Field>
-								</div>
-							</Collapse>
-						</fieldset>
-					</div>
 				<SubmitButtons />
 			</Form>
 		</div>
