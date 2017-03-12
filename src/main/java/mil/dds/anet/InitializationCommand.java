@@ -94,6 +94,7 @@ public class InitializationCommand extends ConfiguredCommand<AnetConfiguration> 
 		adminPos.setType(PositionType.ADMINISTRATOR);
 		adminPos.setOrganization(adminOrg);
 		adminPos.setName(scanner.nextLine());
+		adminPos.setStatus(Position.PositionStatus.ACTIVE);
 		adminPos = engine.getPositionDao().insert(adminPos);
 		System.out.println("... Position " + adminPos.getId() + " Saved!");
 		

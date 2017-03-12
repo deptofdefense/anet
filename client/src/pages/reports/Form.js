@@ -166,7 +166,7 @@ export default class ReportForm extends Component {
 									<option value="CANCELLED_DUE_TO_TRANSPORTATION">Cancelled due to Transportation</option>
 									<option value="CANCELLED_DUE_TO_FORCE_PROTECTION">Cancelled due to Force Protection</option>
 									<option value="CANCELLED_DUE_TO_ROUTES">Cancelled due to Routes</option>
-									<option value="CANCELLED_DUE_TO_THREAT">Cancelled due to Thrat</option>
+									<option value="CANCELLED_DUE_TO_THREAT">Cancelled due to Threat</option>
 								</Form.Field>
 							}
 					</fieldset>
