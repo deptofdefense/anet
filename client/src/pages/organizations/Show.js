@@ -129,17 +129,20 @@ class OrganizationShow extends Page {
 							</Form.Field>
 						}
 
-						<Form.Field id="superUsers" label="Super Users">
-							{superUsers.map(position =>
-								<p key={position.id}>
-									{position.person ?
-										<LinkTo person={position.person} />
-										:
-										<i><LinkTo position={position} />- (Unfilled)</i>
-									}
+						{org.type === 'ADVISOR_ORG' &&
+							<Form.Field id="superUsers" label="Super Users">
+								{superUsers.map(position =>
+									<p key={position.id}>
+										{position.person ?
+											<LinkTo person={position.person} />
+											:
+											<i><LinkTo position={position} />- (Unfilled)</i>
+										}
 								</p>
-							)}
-						</Form.Field>
+								)}
+								{superUsers.length === 0 && <p><i>No Super Users!</i></p>}
+							</Form.Field>
+						}
 						{org.childrenOrgs && org.childrenOrgs.length > 0 && <Form.Field id="childrenOrgs" label="Sub-Orgs">
 							<ListGroup>
 								{org.childrenOrgs.map(org =>

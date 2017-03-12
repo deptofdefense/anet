@@ -43,7 +43,7 @@ class ReportShow extends Page {
 
 				location { id, name }
 				author {
-					id, name
+					id, name, rank,
 					position {
 						organization {
 							shortName, longName
@@ -59,7 +59,7 @@ class ReportShow extends Page {
 				}
 
 				attendees {
-					id, name, role, primary
+					id, name, role, primary, rank,
 					position { id, name }
 				}
 				primaryAdvisor { id }
@@ -78,7 +78,7 @@ class ReportShow extends Page {
 				approvalStatus {
 					type, createdAt
 					step { id , name
-						approvers { id, name, person { id, name } }
+						approvers { id, name, person { id, name, rank } }
 					},
 					person { id, name, rank}
 				}
@@ -146,7 +146,7 @@ class ReportShow extends Page {
 					</fieldset>
 				}
 
-				{/* This is similar to how the report/new page has a title and buttons on the same line. 
+				{/* This is similar to how the report/new page has a title and buttons on the same line.
 					We may wish to consolidate the two approaches.
 				*/}
 				<div className="pull-right">
