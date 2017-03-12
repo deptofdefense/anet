@@ -125,13 +125,13 @@ class PersonShow extends Page {
 
 					<fieldset>
 						<legend>Position</legend>
+
 						{position && position.id &&
 							this.renderPosition(position)
 						}
-
 					</fieldset>
 
-					{person.role !== 'Principal' &&
+					{person.isAdvisor() &&
 						<fieldset>
 							<legend>Reports authored</legend>
 							<ReportTable reports={person.authoredReports.list || []} showAuthors={false} />
