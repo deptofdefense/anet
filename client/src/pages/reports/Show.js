@@ -249,12 +249,14 @@ class ReportShow extends Page {
 						</Table>
 					</fieldset>
 
-					<fieldset>
-						<legend>Meeting discussion</legend>
-						<div dangerouslySetInnerHTML={{__html: report.reportText}} />
-					</fieldset>
+					{report.reportText &&
+						<fieldset>
+							<legend>Meeting discussion</legend>
+							<div dangerouslySetInnerHTML={{__html: report.reportText}} />
+						</fieldset>
+					}
 
-					{report.isPending() && this.renderApprovals() }
+					{report.isPending() && this.renderApprovals()}
 
 					{canSubmit &&
 						<fieldset>
