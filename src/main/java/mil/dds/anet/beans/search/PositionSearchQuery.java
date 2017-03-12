@@ -1,16 +1,23 @@
 package mil.dds.anet.beans.search;
 
+import java.util.List;
+
 import mil.dds.anet.beans.Position.PositionType;
 
 public class PositionSearchQuery implements ISearchQuery {
 
+	public enum PositionSearchSortBy { NAME, CODE, CREATED_AT }
+	
 	String text;
 	Boolean matchPersonName;
 	Integer organizationId;
 	Boolean includeChildrenOrgs;
-	PositionType type;
+	List<PositionType> type;
 	Boolean isFilled;
 	Integer locationId;
+	PositionSearchSortBy sortBy;
+	SortOrder sortOrder;
+
 	int pageNum;
 	int pageSize;
 	
@@ -52,11 +59,11 @@ public class PositionSearchQuery implements ISearchQuery {
 		this.includeChildrenOrgs = includeChildrenOrgs;
 	}
 	
-	public PositionType getType() {
+	public List<PositionType> getType() {
 		return type;
 	}
 	
-	public void setType(PositionType type) {
+	public void setType(List<PositionType> type) {
 		this.type = type;
 	}
 	
@@ -74,6 +81,22 @@ public class PositionSearchQuery implements ISearchQuery {
 	
 	public void setLocationId(Integer locationId) {
 		this.locationId = locationId;
+	}
+	
+	public PositionSearchSortBy getSortBy() {
+		return sortBy;
+	}
+
+	public void setSortBy(PositionSearchSortBy sortBy) {
+		this.sortBy = sortBy;
+	}
+
+	public SortOrder getSortOrder() {
+		return sortOrder;
+	}
+
+	public void setSortOrder(SortOrder sortOrder) {
+		this.sortOrder = sortOrder;
 	}
 	
 	@Override

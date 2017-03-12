@@ -29,7 +29,7 @@ export default class PositionForm extends Component {
 
 		error = this.props.error || (this.state && this.state.error)
 
-		let relationshipPositionType = position.type === 'PRINCIPAL' ? 'ADVISOR' : 'PRINCIPAL'
+		let relationshipPositionType = position.type === 'PRINCIPAL' ? ['ADVISOR', 'SUPER_USER', 'ADMINISTRATOR'] : ['PRINCIPAL']
 		let currentUser = this.context.app.state.currentUser
 
 		let orgSearchQuery = {}
@@ -90,7 +90,7 @@ export default class PositionForm extends Component {
 						:
 						<Form.Field id="code" label="Billet Code" placeholder="Postion ID or Number" />
 					}
-					
+
 					<Form.Field id="name" label="Position Name" placeholder="Name/Description of Position"/>
 
 					<Form.Field id="person">

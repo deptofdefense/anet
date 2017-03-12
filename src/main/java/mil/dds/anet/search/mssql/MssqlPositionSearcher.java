@@ -10,9 +10,10 @@ import org.skife.jdbi.v2.Query;
 
 import jersey.repackaged.com.google.common.base.Joiner;
 import mil.dds.anet.beans.Position;
-import mil.dds.anet.beans.Position.PositionType;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.PositionList;
+import mil.dds.anet.beans.search.ISearchQuery.SortOrder;
 import mil.dds.anet.beans.search.PositionSearchQuery;
+import mil.dds.anet.beans.search.PositionSearchQuery.PositionSearchSortBy;
 import mil.dds.anet.database.PositionDao;
 import mil.dds.anet.database.mappers.PositionMapper;
 import mil.dds.anet.search.IPositionSearcher;
@@ -50,15 +51,12 @@ public class MssqlPositionSearcher implements IPositionSearcher {
 		}
 		
 		if (query.getType() != null) { 
-			if (PositionType.ADVISOR.equals(query.getType())) { 
-				whereClauses.add("positions.type IN (:advisor, :superUser, :admin)");
-				sqlArgs.put("advisor", PositionType.ADVISOR.ordinal());
-				sqlArgs.put("superUser", PositionType.SUPER_USER.ordinal());
-				sqlArgs.put("admin", PositionType.ADMINISTRATOR.ordinal());
-			} else { 
-				whereClauses.add("positions.type = :type");
-				sqlArgs.put("type", DaoUtils.getEnumId(query.getType()));
+			List<String> argNames = new LinkedList<String>();
+			for (int i=0;i<query.getType().size();i++) { 
+				argNames.add(":state" + i);
+				sqlArgs.put("state" + i, DaoUtils.getEnumId(query.getType().get(i)));
 			}
+			whereClauses.add("positions.type IN (" + Joiner.on(", ").join(argNames) + ")");
 		}
 		
 		if (query.getOrganizationId() != null) { 
@@ -92,7 +90,34 @@ public class MssqlPositionSearcher implements IPositionSearcher {
 		
 		sql.append(Joiner.on(" AND ").join(whereClauses));
 		
-		sql.append(" ORDER BY positions.createdAt DESC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY )");
+		//Sort Ordering
+		sql.append(" ORDER BY ");
+		if (query.getSortBy() == null) { query.setSortBy(PositionSearchSortBy.NAME); }
+		switch (query.getSortBy()) {
+			case CODE:
+				sql.append("positions.code");
+				break;
+			case CREATED_AT:
+				sql.append("positions.createdAt");
+				break;
+			case NAME:
+			default:
+				sql.append("positions.name");
+				break;
+		}
+		
+		if (query.getSortOrder() == null) { query.setSortOrder(SortOrder.ASC); }
+		switch (query.getSortOrder()) {
+			case ASC:
+				sql.append(" ASC ");
+				break;
+			case DESC:
+			default:
+				sql.append(" DESC ");
+				break;
+		}
+		
+		sql.append(" OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY )");
 		
 		if (commonTableExpression != null) { 
 			sql.insert(0, commonTableExpression);

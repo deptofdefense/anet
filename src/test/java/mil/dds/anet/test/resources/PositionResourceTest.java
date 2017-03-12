@@ -11,6 +11,8 @@ import javax.ws.rs.core.Response;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
+import com.google.common.collect.ImmutableList;
+
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.util.Duration;
 import mil.dds.anet.beans.Organization;
@@ -23,7 +25,9 @@ import mil.dds.anet.beans.Position.PositionStatus;
 import mil.dds.anet.beans.Position.PositionType;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.OrganizationList;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.PositionList;
+import mil.dds.anet.beans.search.ISearchQuery.SortOrder;
 import mil.dds.anet.beans.search.PositionSearchQuery;
+import mil.dds.anet.beans.search.PositionSearchQuery.PositionSearchSortBy;
 import mil.dds.anet.test.beans.OrganizationTest;
 import mil.dds.anet.test.beans.PositionTest;
 
@@ -216,7 +220,7 @@ public class PositionResourceTest extends AbstractResourceTest {
 		
 		//Search by name and is filled and type
 		query.setIsFilled(true);
-		query.setType(PositionType.ADVISOR);
+		query.setType(ImmutableList.of(PositionType.ADVISOR));
 		searchResults = httpQuery("/api/positions/search", jack).post(Entity.json(query), PositionList.class).getList();
 		assertThat(searchResults).isNotEmpty();
 		assertThat(searchResults.stream()
@@ -225,7 +229,8 @@ public class PositionResourceTest extends AbstractResourceTest {
 				.collect(Collectors.toList()))
 			.hasSameElementsAs(searchResults);
 		
-		query.setType(PositionType.ADMINISTRATOR);
+		//Search for text= advisor and type = admin should be empty. 
+		query.setType(ImmutableList.of(PositionType.ADMINISTRATOR));
 		searchResults = httpQuery("/api/positions/search", jack).post(Entity.json(query), PositionList.class).getList();
 		assertThat(searchResults).isEmpty();
 		
@@ -245,11 +250,34 @@ public class PositionResourceTest extends AbstractResourceTest {
 		query.setType(null);
 		query.setOrganizationId(ef1.getId());
 		searchResults = httpQuery("/api/positions/search", jack).post(Entity.json(query), PositionList.class).getList();
-		assertThat(searchResults).isEmpty();
+		assertThat(searchResults.stream()
+				.filter(p -> p.getOrganization().getId() == ef1.getId())
+				.collect(Collectors.toList()))
+			.hasSameElementsAs(searchResults);
 		
 		query.setIncludeChildrenOrgs(true);
 		searchResults = httpQuery("/api/positions/search", jack).post(Entity.json(query), PositionList.class).getList();
 		assertThat(searchResults).isNotEmpty();
+		
+		query.setIncludeChildrenOrgs(false);
+		query.setText("a");
+		query.setSortBy(PositionSearchSortBy.NAME);
+		query.setSortOrder(SortOrder.DESC); 
+		searchResults = httpQuery("/api/positions/search", jack).post(Entity.json(query), PositionList.class).getList();
+		String prevName = null;
+		for (Position p : searchResults) { 
+			if (prevName != null) { assertThat(p.getName().compareToIgnoreCase(prevName)).isLessThanOrEqualTo(0); } 
+			prevName = p.getName();
+		}
+		
+		query.setSortBy(PositionSearchSortBy.CODE);
+		query.setSortOrder(SortOrder.ASC); 
+		searchResults = httpQuery("/api/positions/search", jack).post(Entity.json(query), PositionList.class).getList();
+		String prevCode = null;
+		for (Position p : searchResults) { 
+			if (prevCode != null) { assertThat(p.getCode().compareToIgnoreCase(prevCode)).isGreaterThanOrEqualTo(0); } 
+			prevCode = p.getCode();
+		}
 		
 		//Search by location
 	}

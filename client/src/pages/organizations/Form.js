@@ -96,7 +96,7 @@ export default class OrganizationForm extends Component {
 						template={pos =>
 							<span>{pos.name} - {pos.code} ({(pos.person) ? pos.person.name : <i>empty</i>})</span>
 						}
-						queryParams={{type: 'ADVISOR', matchPersonName: true}}
+						queryParams={{type: ['ADVISOR', 'SUPER_USER', 'ADMINISTRATOR'], matchPersonName: true}}
 						onChange={this.addApprover.bind(this, index)}
 						clearOnSelect={true} />
 
