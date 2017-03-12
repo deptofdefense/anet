@@ -117,7 +117,7 @@ export default class ReportForm extends Component {
 				<div>
 					<fieldset>
 
-						<Form.Field id="intent" label="Meeting goal (purpose)" placeholder="What happened?" data-focus componentClass="textarea">
+						<Form.Field id="intent" label="Meeting goal (purpose)" placeholder="What happened?" data-focus componentClass="textarea" maxCharacters={250}>
 							<Form.Field.ExtraCol>{250 - report.intent.length} characters remaining</Form.Field.ExtraCol>
 						</Form.Field>
 
@@ -241,13 +241,13 @@ export default class ReportForm extends Component {
 						<legend>Meeting Discussion</legend>
 
 						{!isCancelled &&
-							<Form.Field id="keyOutcomes" componentClass="textarea" >
-								<Form.Field.ExtraCol><small>{250 - report.keyOutcomes.length} Characters Remaining</small></Form.Field.ExtraCol>
+							<Form.Field id="keyOutcomes" componentClass="textarea" maxCharacters={250}>
+								<Form.Field.ExtraCol><small>{250 - report.keyOutcomes.length} characters remaining</small></Form.Field.ExtraCol>
 							</Form.Field>
 						}
 
-						<Form.Field id="nextSteps" componentClass="textarea" >
-							<Form.Field.ExtraCol><small>{250 - report.nextSteps.length} Characters Remaining</small></Form.Field.ExtraCol>
+						<Form.Field id="nextSteps" componentClass="textarea" maxCharacters={250}>
+							<Form.Field.ExtraCol><small>{250 - report.nextSteps.length} characters remaining</small></Form.Field.ExtraCol>
 						</Form.Field>
 
 						<Button className="center-block toggle-section-button" onClick={this.toggleReportText} id="toggleReportDetails" >
