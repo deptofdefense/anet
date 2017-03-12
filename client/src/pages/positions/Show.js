@@ -3,6 +3,7 @@ import Page from 'components/Page'
 import ModelPage from 'components/ModelPage'
 import {Link} from 'react-router'
 import {Table, DropdownButton, MenuItem} from 'react-bootstrap'
+import {sentenceCase} from 'utils'
 
 import API from 'api'
 import Breadcrumbs from 'components/Breadcrumbs'
@@ -79,7 +80,11 @@ class PositionShow extends Page {
 				<Form static formFor={position} horizontal>
 					<fieldset>
 						<Form.Field id="code" />
-						<Form.Field id="type" />
+
+						<Form.Field id="type">
+							{position.type === "PRINCIPAL" ? "Principal" : `NATO ${sentenceCase(position.type)}`}
+						</Form.Field>
+
 						<Form.Field id="status" />
 
 						{position.organization && <Form.Field id="organization" label="Organization" value={position.organization && position.organization.shortName} >
