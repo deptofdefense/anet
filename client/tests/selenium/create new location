@@ -43,12 +43,12 @@
 </tr>
 <tr>
 	<td>waitForText</td>
-	<td>css=legend</td>
+	<td>css=h2.form-header</td>
 	<td>Happiest place on Earth</td>
 </tr>
 <tr>
 	<td>assertText</td>
-	<td>css=legend</td>
+	<td>css=h2.form-header</td>
 	<td>Happiest place on Earth</td>
 </tr>
 </tbody></table>

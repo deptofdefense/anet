@@ -83,7 +83,7 @@
 </tr>
 <tr>
 	<td>assertText</td>
-	<td>css=legend</td>
+	<td>css=h2.form-header</td>
 	<td>MoI staffing</td>
 </tr>
 </tbody></table>

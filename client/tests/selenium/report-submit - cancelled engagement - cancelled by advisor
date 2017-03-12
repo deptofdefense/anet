@@ -43,7 +43,7 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>//button[@type='button']</td>
+	<td>//div[@id='date-picker-popover-0']/div[2]/table/tfoot/tr/td/button</td>
 	<td></td>
 </tr>
 <tr>

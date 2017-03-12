@@ -113,7 +113,7 @@
 </tr>
 <tr>
 	<td>waitForText</td>
-	<td>css=legend</td>
+	<td>css=h2.form-header</td>
 	<td>barista super user</td>
 </tr>
 <tr>

@@ -174,7 +174,7 @@
 <!--Ensure the org got saved correctly-->
 <tr>
 	<td>waitForText</td>
-	<td>css=legend</td>
+	<td>css=h2.form-header</td>
 	<td>EF4.44</td>
 </tr>
 <tr>
