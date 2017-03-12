@@ -2,7 +2,7 @@ import React, {PropTypes, Component} from 'react'
 import {Table, Button} from 'react-bootstrap'
 import LinkTo from 'components/LinkTo'
 
-import {Position} from 'models'
+import {Position, Person} from 'models'
 import autobind from 'autobind-decorator'
 
 export default class OrganizationLaydown extends Component {
@@ -128,10 +128,11 @@ export default class OrganizationLaydown extends Component {
 	}
 
 	personWithStatus(person) {
+		person = new Person(person)
 		if (person.status === 'INACTIVE') {
-			return <i>{person.rank + " " + person.name + " (Inactive)"}</i>
+			return <i>{person.toString() + " (Inactive)"}</i>
 		} else {
-			return person.rank + " " + person.name
+			return person.toString()
 		}
 	}
 

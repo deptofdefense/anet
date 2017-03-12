@@ -59,7 +59,7 @@ class OrganizationShow extends Page {
 				parentOrg { id, shortName, longName }
 				childrenOrgs { id, shortName, longName },
 				positions {
-					id, name, code, status
+					id, name, code, status, type,
 					person { id, name, status, rank }
 					associatedPositions {
 						id, name, code, status
@@ -92,6 +92,8 @@ class OrganizationShow extends Page {
 		let isSuperUser = (currentUser) ? currentUser.isSuperUserForOrg(org) : false
 		let isAdmin = (currentUser) ? currentUser.isAdmin() : false
 		let showActions = isAdmin || isSuperUser
+
+		let superUsers = org.positions.filter(pos => pos.type === 'SUPER_USER')
 
 		let ActionComponent = ACTION_COMPONENTS[action]
 
@@ -127,6 +129,17 @@ class OrganizationShow extends Page {
 							</Form.Field>
 						}
 
+						<Form.Field id="superUsers" label="Super Users">
+							{superUsers.map(position =>
+								<p key={position.id}>
+									{position.person ?
+										<LinkTo person={position.person} />
+										:
+										<i><LinkTo position={position} />- (Unfilled)</i>
+									}
+								</p>
+							)}
+						</Form.Field>
 						{org.childrenOrgs && org.childrenOrgs.length > 0 && <Form.Field id="childrenOrgs" label="Sub-Orgs">
 							<ListGroup>
 								{org.childrenOrgs.map(org =>

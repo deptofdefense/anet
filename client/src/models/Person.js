@@ -65,4 +65,12 @@ export default class Person extends Model {
 		return ''
 	}
 
+	toString() {
+		if (this.rank) {
+			return this.rank + " " + this.name
+		} else {
+			return this.name || this.id
+		}
+	}
+
 }

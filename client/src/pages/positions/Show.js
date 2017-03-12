@@ -41,7 +41,7 @@ class PositionShow extends Page {
 				person { id, name, rank },
 				associatedPositions {
 					id, name,
-					person { id, name }
+					person { id, name, rank }
 				},
 				previousPeople { startTime, endTime, person { id, name, rank }}
 				location { id, name }
@@ -130,7 +130,7 @@ class PositionShow extends Page {
 							</thead>
 							<tbody>
 								{position.previousPeople.map( (pp, idx) =>
-									<tr key={pp.person.id} id={`previousPerson_${idx}`}>
+									<tr key={idx} id={`previousPerson_${idx}`}>
 										<td><LinkTo person={pp.person} /></td>
 										<td>
 											{moment(pp.startTime).format('D MMM YYYY')} - &nbsp;
@@ -149,7 +149,7 @@ class PositionShow extends Page {
 	renderAssociatedPositionRow(pos, idx) {
 		let personName = 'Unfilled'
 		if (pos.person) {
-			personName = <Link to={Person.pathFor(pos.person)}>{pos.person.name}</Link>
+			personName = <LinkTo person={pos.person} />
 		}
 		return <tr key={pos.id} id={`associatedPosition_${idx}`}>
 			<td>{personName}</td>
