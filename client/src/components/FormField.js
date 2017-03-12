@@ -69,7 +69,7 @@ export default class FormField extends Component {
 
 		onChange: PropTypes.func,
 
-		maxCharacters: PropTypes.int,
+		maxCharacters: PropTypes.number,
 	}
 
 	render() {
@@ -83,7 +83,7 @@ export default class FormField extends Component {
 			...childProps
 		} = this.props
 
-		childProps = Object.without(childProps, 'getter', 'horizontal', 'onError', 'onValid', 'humanName')
+		childProps = Object.without(childProps, 'getter', 'horizontal', 'onError', 'onValid', 'humanName', 'maxCharacters')
 
 		let defaultValue = this.getDefaultValue(this.props, this.context)
 
