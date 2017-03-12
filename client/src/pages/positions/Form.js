@@ -104,7 +104,7 @@ export default class PositionForm extends Component {
 					{position.type !== 'PRINCIPAL' &&
 						<Form.Field id="permissions">
 							<ButtonToggleGroup>
-								<Button id="permsAdvisorButton" value="ADVISOR">Advisor</Button>
+								<Button id="permsAdvisorButton" value="ADVISOR">User</Button>
 								<Button id="permsSuperUserButton" value="SUPER_USER">Super User</Button>
 								{currentUser && currentUser.isAdmin() &&
 									<Button id="permsAdminButton" value="ADMINISTRATOR">Administrator</Button>
