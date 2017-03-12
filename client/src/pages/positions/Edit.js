@@ -30,7 +30,7 @@ class PositionEdit extends Page {
 			position(id:${props.params.id}) {
 				id, name, code, status, type
 				location { id, name },
-				associatedPositions { id, name  },
+				associatedPositions { id, name, person { id, name, rank } },
 				organization {id, shortName, longName, type},
 				person { id, name}
 			}
