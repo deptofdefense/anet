@@ -134,10 +134,12 @@ class PersonShow extends Page {
 
 					</fieldset>
 
-					<fieldset>
-						<legend>Reports authored</legend>
-						<ReportTable reports={person.authoredReports.list || []} showAuthors={false} />
-					</fieldset>
+					{person.role !== 'Principal' &&
+						<fieldset>
+							<legend>Reports authored</legend>
+							<ReportTable reports={person.authoredReports.list || []} showAuthors={false} />
+						</fieldset>
+					}
 
 					<fieldset>
 						<legend>Reports this person is listed as an attendee of</legend>
