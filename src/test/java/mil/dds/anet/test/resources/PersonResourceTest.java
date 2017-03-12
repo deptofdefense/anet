@@ -19,7 +19,9 @@ import mil.dds.anet.beans.Position.PositionStatus;
 import mil.dds.anet.beans.Position.PositionType;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.OrganizationList;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.PersonList;
+import mil.dds.anet.beans.search.ISearchQuery.SortOrder;
 import mil.dds.anet.beans.search.PersonSearchQuery;
+import mil.dds.anet.beans.search.PersonSearchQuery.PersonSearchSortBy;
 
 public class PersonResourceTest extends AbstractResourceTest {
 
@@ -163,6 +165,17 @@ public class PersonResourceTest extends AbstractResourceTest {
 		query.setRole(Role.ADVISOR);
 		searchResults = httpQuery("/api/people/search", jack).post(Entity.json(query), PersonList.class);
 		assertThat(searchResults.getList().size()).isGreaterThan(1);
+		
+		query.setRole(null);
+		query.setText("e");
+		query.setSortBy(PersonSearchSortBy.NAME);
+		query.setSortOrder(SortOrder.DESC); 
+		searchResults = httpQuery("/api/people/search", jack).post(Entity.json(query), PersonList.class);
+		String prevName = null;
+		for (Person p : searchResults.getList()) { 
+			if (prevName != null) { assertThat(p.getName().compareToIgnoreCase(prevName)).isLessThanOrEqualTo(0); } 
+			prevName = p.getName();
+		}
 
 	}
 	

@@ -11,6 +11,8 @@ import jersey.repackaged.com.google.common.base.Joiner;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.PersonList;
 import mil.dds.anet.beans.search.PersonSearchQuery;
+import mil.dds.anet.beans.search.ISearchQuery.SortOrder;
+import mil.dds.anet.beans.search.PersonSearchQuery.PersonSearchSortBy;
 import mil.dds.anet.database.PersonDao;
 import mil.dds.anet.database.mappers.PersonMapper;
 import mil.dds.anet.search.IPersonSearcher;
@@ -83,6 +85,33 @@ public class SqlitePersonSearcher implements IPersonSearcher {
 		
 		sql.append(Joiner.on(" AND ").join(whereClauses));
 		
+		//Sort Ordering
+		sql.append(" ORDER BY ");
+		if (query.getSortBy() == null) { query.setSortBy(PersonSearchSortBy.NAME); }
+		switch (query.getSortBy()) {
+			case RANK:
+				sql.append("people.rank");
+				break;
+			case CREATED_AT:
+				sql.append("people.createdAt");
+				break;
+			case NAME:
+			default:
+				sql.append("people.name");
+				break;
+		}
+		
+		if (query.getSortOrder() == null) { query.setSortOrder(SortOrder.ASC); }
+		switch (query.getSortOrder()) {
+			case ASC:
+				sql.append(" ASC ");
+				break;
+			case DESC:
+			default:
+				sql.append(" DESC ");
+				break;
+		}
+
 		sql.append(" LIMIT :limit OFFSET :offset)");
 		
 		List<Person> list = dbHandle.createQuery(sql.toString())

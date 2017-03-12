@@ -5,6 +5,8 @@ import mil.dds.anet.beans.Person.Role;
 
 public class PersonSearchQuery implements ISearchQuery {
 
+	public enum PersonSearchSortBy { CREATED_AT, NAME, RANK }
+	
 	String text;
 	Integer orgId;
 	Role role;
@@ -13,6 +15,9 @@ public class PersonSearchQuery implements ISearchQuery {
 	String country;
 	Integer locationId;
 	Boolean pendingVerification;
+	PersonSearchSortBy sortBy;
+	SortOrder sortOrder;
+	
 	int pageNum;
 	int pageSize;
 	
@@ -83,6 +88,22 @@ public class PersonSearchQuery implements ISearchQuery {
 
 	public void setPendingVerification(Boolean pendingVerification) {
 		this.pendingVerification = pendingVerification;
+	}
+
+	public PersonSearchSortBy getSortBy() {
+		return sortBy;
+	}
+
+	public void setSortBy(PersonSearchSortBy sortBy) {
+		this.sortBy = sortBy;
+	}
+
+	public SortOrder getSortOrder() {
+		return sortOrder;
+	}
+
+	public void setSortOrder(SortOrder sortOrder) {
+		this.sortOrder = sortOrder;
 	}
 
 	@Override
