@@ -206,7 +206,7 @@ class ReportShow extends Page {
 					<fieldset>
 						<legend>Meeting attendees</legend>
 
-						<Table condensed>
+						<Table condensed className="borderless">
 							<thead>
 								<tr>
 									<th style={{textAlign: 'center'}}>Primary</th>
@@ -219,7 +219,7 @@ class ReportShow extends Page {
 								{Person.map(report.attendees.filter(p => p.role === "ADVISOR"), person =>
 									this.renderAttendeeRow(person)
 								)}
-								<tr className="attendeeTableRow" ><td colSpan={3}><hr className="attendeeDivider" /></td></tr>
+								<tr><td colSpan={3}><hr className="attendeeDivider" /></td></tr>
 								{Person.map(report.attendees.filter(p => p.role === "PRINCIPAL"), person =>
 									this.renderAttendeeRow(person)
 								)}
@@ -349,7 +349,7 @@ class ReportShow extends Page {
 
 	@autobind
 	renderAttendeeRow(person) {
-		return <tr key={person.id} className="attendeeTableRow" >
+		return <tr key={person.id}>
 			<td className="primary-attendee">
 				{person.primary && <Checkbox readOnly checked />}
 			</td>
