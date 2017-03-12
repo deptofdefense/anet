@@ -59,7 +59,7 @@ export default class Report extends Model {
 		let primaryPrincipal = this.getPrimaryPrincipal()
 		let primaryAdvisor = this.getPrimaryAdvisor()
 		if (!primaryPrincipal) {
-			errors.push('You must provide the primary Princpal for the Engagement')
+			errors.push('You must provide the primary Principal for the Engagement')
 		}
 		if (!primaryAdvisor) {
 			errors.push('You must provide the primary Advisor for the Engagement')
