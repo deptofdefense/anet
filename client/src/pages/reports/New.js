@@ -1,7 +1,5 @@
 import React, {PropTypes} from 'react'
 import HopscotchPage from 'components/HopscotchPage'
-import HopscotchLauncher from 'components/HopscotchLauncher'
-import {Row, Col} from 'react-bootstrap'
 
 import ReportForm from './Form'
 import Breadcrumbs from 'components/Breadcrumbs'

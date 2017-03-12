@@ -7,7 +7,6 @@ import {DropdownButton, MenuItem, Modal, Alert, Button} from 'react-bootstrap'
 
 import Breadcrumbs from 'components/Breadcrumbs'
 import ReportCollection from 'components/ReportCollection'
-import ReportSummary from 'components/ReportSummary'
 import CalendarButton from 'components/CalendarButton'
 import Form from 'components/Form'
 
