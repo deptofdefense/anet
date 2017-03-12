@@ -372,4 +372,13 @@ public class PositionDao implements IAnetDao<Position> {
 		return history;
 	}
 
+	public Boolean getIsApprover(Position position) {
+		Integer count = (Integer) dbHandle.createQuery("/* getIsApprover */ SELECT count(*) as ct from approvers where positionId = :positionId")
+			.bind("positionId", position.getId())
+			.first()
+			.get("ct");
+		
+		return count > 0;
+	}
+
 }

@@ -19,60 +19,137 @@ export default class Home extends HopscotchPage {
 	constructor(props) {
 		super(props)
 		this.state = {
-			pendingMe: null,
-			myOrgToday: null,
-			myReportsToday: null,
-			upcomingEngagements: null,
+			tileCounts: [],
 			savedSearches: [],
 			selectedSearch: null,
 			showGettingStartedPanel: window.localStorage.showGettingStartedPanel
 		}
 	}
 
-	fetchData() {
-		let currentUser = this.context.app.state.currentUser
-		let yesterday = moment().subtract(1, 'days').valueOf()
+	adminQueries(currentUser) {
+		return [ this.allDraft(), this.allPending(), this.pendingMe(currentUser), this.allUpcoming() ]
+	}
 
-		let futureQuery = {
-			engagementDateStart: moment().add(1, 'days').hour(0).valueOf()
+	approverQueries(currentUser) {
+		return [ this.pendingMe(currentUser), this.myDraft(currentUser), this.myOrgRecent(currentUser), this.myOrgFuture(currentUser) ]
+	}
+
+	advisorQueries(currentUser) {
+		return [ this.myDraft(currentUser), this.myPending(currentUser), this.myOrgRecent(currentUser), this.myOrgFuture(currentUser) ]
+	}
+
+	allDraft() { return {
+		title: "All draft reports",
+		query: { state: ["DRAFT"] }
+	}}
+
+	myDraft(currentUser) {
+		return {
+			title: "My draft reports",
+			query: { state: ["DRAFT"], authorId: currentUser.id }
 		}
-		let orgQuery = (currentUser.position && currentUser.position.organization && {
-			authorOrgId: currentUser.position.organization.id,
-			createdAtStart: yesterday,
-			state: ["RELEASED","CANCELLED","PENDING_APPROVAL"]
-		}) || {}
-		let pendingQuery = currentUser.isSuperUser() ?
-			{pendingApprovalOf : currentUser.id}
-			:
-			{authorId : currentUser.id, state : ['PENDING_APPROVAL']}
-		let myReports = { authorId: currentUser.id, createdAtStart: moment().subtract(1, 'days').valueOf() }
-		API.query(/*GraphQL */`
-			pendingMe: reportList(f:search, query:$pendingQuery) { totalCount },
-			myOrg: reportList(f:search, query:$orgQuery) { totalCount },
-			myReports: reportList(f:search, query:$myReports) { totalCount},
-			savedSearches: savedSearchs(f:mine) {id, name, objectType, query}
-			upcomingEngagements: reportList(f:search, query: $futureQuery) { totalCount }
-		`, {futureQuery, pendingQuery, orgQuery, myReports},
-			'($futureQuery: ReportSearchQuery, $pendingQuery: ReportSearchQuery,  '
-			+ '$orgQuery: ReportSearchQuery, $myReports: ReportSearchQuery)')
+	}
+
+	myPending(currentUser) {
+		return {
+			title: "My reports pending approval",
+			query: { authorId: currentUser.id, state: ["PENDING_APPROVAL"]}
+		}
+	}
+
+	pendingMe(currentUser) {
+		return {
+			title: "Reports pending my approval",
+			query: { pendingApprovalOf: currentUser.id }
+		}
+	}
+
+	allPending() {
+		return {
+			title: "All reports pending approval",
+			query: { state: ["PENDING_APPROVAL"] }
+		}
+	}
+
+	myOrgRecent(currentUser) {
+		if (!currentUser.position || !currentUser.position.organization) { return { query: {}} }
+		let lastWeek = moment().subtract(7, 'days').startOf('day').valueOf()
+		return {
+			title: currentUser.position.organization.shortName + "'s reports in the last 7 days",
+			query: {
+				authorOrgId: currentUser.position.organization.id,
+				createdAtStart: lastWeek,
+				state: ["RELEASED", "CANCELLED", "PENDING_APPROVAL"]
+			}
+		}
+	}
+
+	myOrgFuture(currentUser) {
+		if (!currentUser.position || !currentUser.position.organization) { return { query: {}} }
+		let start = moment().endOf('day').valueOf()
+		return {
+			title: currentUser.position.organization.shortName + "'s upcoming engagements",
+			query: {
+				authorOrgId: currentUser.position.organization.id,
+				createdAtStart: start
+			}
+		}
+	}
+
+	allUpcoming() {
+		return {
+			title: "All upcoming engagements",
+			query: { createdAtStart: moment().endOf('day').valueOf() }
+		}
+	}
+
+	getQueriesForUser() {
+		let user = this.context.app.state.currentUser
+		if (user.isAdmin()) {
+			return this.adminQueries(user)
+		} else if (user.position && user.position.isApprover) {
+			return this.approverQueries(user)
+		} else {
+			return this.advisorQueries(user)
+		}
+	}
+
+	fetchData() {
+		//If we don't have the currentUser yet (ie page is still loading, don't run these queries)
+		let currentUser = this.context.app.state.currentUser
+		if (!currentUser || !currentUser._loaded) { return }
+
+		//queries will contain the four queries that will show up on the home tiles
+		//Based on the users role. They are all report searches
+		let queries = this.getQueriesForUser()
+		//Run those four queries
+		let graphQL = /* GraphQL */`
+			tileOne: reportList(f:search, query:$queryOne) { totalCount},
+			tileTwo: reportList(f:search, query: $queryTwo) { totalCount},
+			tileThree: reportList(f:search, query: $queryThree) { totalCount },
+			tileFour: reportList(f:search, query: $queryFour) { totalCount },
+			savedSearches: savedSearchs(f:mine) {id, name, objectType, query}`
+		let variables = {
+			queryOne: queries[0].query,
+			queryTwo: queries[1].query,
+			queryThree: queries[2].query,
+			queryFour: queries[3].query
+		}
+
+		API.query(graphQL, variables,
+			"($queryOne: ReportSearchQuery, $queryTwo: ReportSearchQuery, $queryThree: ReportSearchQuery, $queryFour: ReportSearchQuery)")
 		.then(data => {
 			let selectedSearch = data.savedSearches && data.savedSearches.length > 0 ? data.savedSearches[0] : null
 			this.setState({
-				pendingMe: data.pendingMe,
-				myOrgToday: data.myOrg,
-				myReportsToday: data.myReports,
+				tileCounts: [data.tileOne.totalCount, data.tileTwo.totalCount, data.tileThree.totalCount, data.tileFour.totalCount],
 				savedSearches: data.savedSearches,
-				upcomingEngagements: data.upcomingEngagements,
 				selectedSearch: selectedSearch
 			})
 		})
 	}
 
 	render() {
-		let {pendingMe, myOrgToday, myReportsToday, upcomingEngagements} = this.state
-		let currentUser = this.context.app.state.currentUser
-		let org = currentUser && currentUser.position && currentUser.position.organization
-		let yesterday = moment().subtract(1, 'days').valueOf()
+		let queries = this.getQueriesForUser()
 
 		return (
 			<div>
@@ -111,27 +188,13 @@ export default class Home extends HopscotchPage {
 				<fieldset className="home-tile-row">
 					<Grid fluid>
 						<Row>
-							<Link to={{pathname: '/search', query: {type: 'reports', pendingApprovalOf: currentUser.id}}} className="col-md-3 home-tile">
-								<h1>{pendingMe && pendingMe.totalCount}</h1>
-								{currentUser.isSuperUser() ? 'Pending my approval' : 'My reports pending approval' }
-							</Link>
-
-							{org &&
-								<Link to={{pathname: '/search', query: {type: 'reports', authorOrgId: org.id, createdAtStart: yesterday,state: ["RELEASED","CANCELLED","PENDING_APPROVAL"] }}} className="col-md-3 home-tile">
-									<h1>{myOrgToday && myOrgToday.totalCount}</h1>
-									{org.shortName}'{org.shortName[org.shortName.length - 1].toLowerCase() !== 's' && 's'} recent reports
+							{queries.map((query, index) =>{
+								query.query.type = "reports"
+								return <Link to={{pathname: '/search', query: query.query, }} className="col-md-3 home-tile" key={index}>
+									<h1>{this.state.tileCounts[index]}</h1>
+									{query.title}
 								</Link>
-							}
-
-							<Link to={{pathname: '/search', query: {type: 'reports', authorId: currentUser.id, createdAtStart: yesterday}}} className="col-md-3 home-tile">
-								<h1>{myReportsToday && myReportsToday.totalCount}</h1>
-								My reports in last 24 hrs
-							</Link>
-
-							<Link to={{pathname: '/search', query: {type: 'reports', pageSize: 100, engagementDateStart: moment().add(1, 'days').hour(0).valueOf()}}} className="col-md-3 home-tile">
-								<h1>{upcomingEngagements && upcomingEngagements.totalCount}</h1>
-								Upcoming engagements
-							</Link>
+							})}
 						</Row>
 					</Grid>
 				</fieldset>

@@ -154,6 +154,9 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		assertThat(steps.get(0).getNextStepId()).isEqualTo(releaseApproval.getId());
 		assertThat(steps.get(1).getId()).isEqualTo(releaseApproval.getId());
 
+		//Ensure the approver is an approver
+		assertThat(approver1Pos.loadIsApprover()).isTrue();
+		
 		//Create some poams for this organization
 		Poam top = httpQuery("/api/poams/new", admin)
 				.post(Entity.json(Poam.create("test-1", "Test Top Poam", "TOP", null, advisorOrg)), Poam.class);

@@ -52,7 +52,7 @@ export default class App extends Page {
 			person(f:me) {
 				id, name, role, emailAddress, rank, status
 				position {
-					id, name, type,
+					id, name, type, isApprover
 					organization { id, shortName , allDescendantOrgs { id }}
 				}
 			}
@@ -63,7 +63,10 @@ export default class App extends Page {
 			organizationList(f:getTopLevelOrgs, type: ADVISOR_ORG) {
 				list { id, shortName }
 			}
-		`).then(data => this.setState(this.processData(data)))
+		`).then(data => {
+			data.person._loaded = true
+			this.setState(this.processData(data))
+		})
 
 	}
 

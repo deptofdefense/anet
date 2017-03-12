@@ -25,6 +25,7 @@ public class Position extends AbstractAnetBean {
 	List<Position> associatedPositions;
 	Location location;
 	List<PersonPositionHistory> previousPeople;
+	Boolean isApprover;
 
 	public static Position createWithId(Integer id) {
 		Position b = new Position();
@@ -147,6 +148,14 @@ public class Position extends AbstractAnetBean {
 			this.previousPeople = AnetObjectEngine.getInstance().getPositionDao().getPositionHistory(this);
 		}
 		return previousPeople;
+	}
+	
+	@GraphQLFetcher("isApprover")
+	public Boolean loadIsApprover() { 
+		if (this.isApprover == null) { 
+			this.isApprover = AnetObjectEngine.getInstance().getPositionDao().getIsApprover(this);
+		}
+		return isApprover;
 	}
 	
 	@Override
