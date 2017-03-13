@@ -1,8 +1,9 @@
-import React, {Component, PropTypes} from 'react'
+import React, {PropTypes} from 'react'
 import {Button} from 'react-bootstrap'
 import DatePicker from 'react-bootstrap-date-picker'
 import autobind from 'autobind-decorator'
 
+import ValidatableForm from 'components/ValidatableForm'
 import Form from 'components/Form'
 import Fieldset from 'components/Fieldset'
 import Messages from 'components/Messages'
@@ -11,15 +12,12 @@ import Autocomplete from 'components/Autocomplete'
 import History from 'components/History'
 import ButtonToggleGroup from 'components/ButtonToggleGroup'
 
-import _some from 'lodash.some'
-import _values from 'lodash.values'
-
 import API from 'api'
 import {Person, Position} from 'models'
 
 import CALENDAR_ICON from 'resources/calendar.png'
 
-export default class PersonForm extends Component {
+export default class PersonForm extends ValidatableForm {
 	static propTypes = {
 		person: PropTypes.object.isRequired,
 		edit: PropTypes.bool,
@@ -35,10 +33,7 @@ export default class PersonForm extends Component {
 	constructor(props) {
 		super(props)
 
-		this.state = {
-			error: null,
-			formErrors: {}
-		}
+		Object.assign(this.state, {error: null})
 	}
 
 	render() {
@@ -215,21 +210,6 @@ export default class PersonForm extends Component {
 	@autobind
 	onChange() {
 		this.forceUpdate()
-	}
-
-	@autobind
-	onFieldEnterErrorState(fieldName) {
-		this.setState({formErrors: {[fieldName]: true}})
-	}
-
-	@autobind
-	onFieldExitErrorState(fieldName) {
-		this.setState({formErrors: {[fieldName]: false}})
-	}
-
-	@autobind
-	isSubmitDisabled() {
-		return _some(_values(this.state.formErrors))
 	}
 
 	@autobind
