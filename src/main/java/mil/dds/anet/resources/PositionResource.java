@@ -130,8 +130,13 @@ public class PositionResource implements IGraphQLResource {
 			//Run the diff and see if anything changed and update.
 
 			Position current = dao.getById(pos.getId());
-			if (pos.getPerson() != null && Utils.idEqual(pos.getPerson(), current.getPerson()) == false) {
-				dao.setPersonInPosition(pos.getPerson(), pos);
+			if (pos.getPerson() != null) { 
+				if (current != null && pos.getPerson().getId() == null) { 
+					//Intentionally remove the person
+					dao.removePersonFromPosition(current);
+				} else if ( Utils.idEqual(pos.getPerson(), current.getPerson()) == false) {
+					dao.setPersonInPosition(pos.getPerson(), pos);
+				}
 			}
 
 			if (pos.getAssociatedPositions() != null) {

@@ -221,7 +221,7 @@ export default class PositionForm extends Component {
 		}
 		delete position.permissions
 		position.organization = {id: position.organization.id}
-		position.person = (position.person && position.person.id) ? {id: position.person.id} : null
+		position.person = (position.person && position.person.id) ? {id: position.person.id} : {}
 		position.code = position.code || null //Need to null out empty position codes
 
 		let url = `/api/positions/${edit ? 'update' : 'new'}`
