@@ -105,6 +105,11 @@ export default class ReportForm extends Component {
 				</div>
 			</div>
 
+		const invalidInputWarningMessage = <HelpBlock><b>
+			<img src={WARNING_ICON} role="presentation" height="20px" />
+			Location not found in database
+		</b></HelpBlock>
+
 		return <div className="report-form">
 			<SubmitButtons className="top-submit-buttons">
 				<h2 className="form-header">
@@ -125,13 +130,9 @@ export default class ReportForm extends Component {
 							<DatePicker showTodayButton placeholder="When did it happen?" dateFormat="DD/MM/YYYY" />
 						</Form.Field>
 
-						<Form.Field id="location" addon={LOCATION_ICON} validationState={errors.location}>
+						<Form.Field id="location" addon={LOCATION_ICON} validationState={errors.location} 
+							postInputGroupChildren={errors.location && invalidInputWarningMessage}>
 							<Autocomplete valueKey="name" placeholder="Start typing to search for the location where this happened..." url="/api/locations/search" />
-							{errors.location && <HelpBlock><b>
-								<img src={WARNING_ICON} role="presentation" height="20px" />
-								Location not found in database
-							</b></HelpBlock>}
-
 							<Form.Field.ExtraCol className="shortcut-list">
 								{recents.locations && recents.locations.length > 0 &&
 									<Button bsStyle="link"  onClick={this.setLocation.bind(this,recents.locations[0])} >Add {recents.locations[0].name}</Button>

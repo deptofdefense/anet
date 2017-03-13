@@ -80,6 +80,7 @@ export default class FormField extends Component {
 			icon,
 			addon,
 			children,
+			postInputGroupChildren,
 			...childProps
 		} = this.props
 
@@ -161,10 +162,13 @@ export default class FormField extends Component {
 				addon = <img src={addon} height={20} role="presentation" />
 			}
 
-			children = <InputGroup>
-				{children}
-				<InputGroup.Addon onClick={this.focus}>{addon}</InputGroup.Addon>
-			</InputGroup>
+			children = <div>
+				<InputGroup>
+					{children}
+					<InputGroup.Addon onClick={this.focus}>{addon}</InputGroup.Addon>
+				</InputGroup>
+				{postInputGroupChildren}
+			</div>
 		}
 
 		return (
