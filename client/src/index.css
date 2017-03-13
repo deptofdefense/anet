@@ -256,6 +256,19 @@ a.home-tile {
 	border-left:4px solid #1772B8;
 }
 
+@media (min-width: 768px) {
+	.nav-fixed {
+		position: fixed;
+		width: 158px;
+	}
+}
+
+@media (min-width: 992px) {
+	.nav-fixed {
+		width: 212px;
+	}
+}
+
 .form-bottom-submit {
 	text-align: center;
 	margin: -30px 0 40px 0;
