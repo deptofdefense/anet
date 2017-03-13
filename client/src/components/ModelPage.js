@@ -1,11 +1,18 @@
-import React from 'react'
+import React, {PropTypes} from 'react'
 import NotFound from 'components/NotFound'
 import API from 'api'
 import _get from 'lodash.get'
 
 export default WrappedPage => {
-    return class ModelPage extends React.Component {
-        static pageProps = {}
+    return class ModelPage extends React.PureComponent {
+        static pageProps = {
+            useNavigation: false,
+            fluidContainer: true
+        }
+
+        static contextTypes = {
+            app: PropTypes.object,
+        }
 
         constructor() {
             super()
@@ -22,8 +29,9 @@ export default WrappedPage => {
                 if (promise && promise instanceof Promise) {
 
                     function onRequestNot404() {
-                        Object.assign(ModelPage.pageProps, WrappedPage.pageProps)
+                        Object.assign(ModelPage.pageProps, {fluidContainer: false, useNavigation: true}, WrappedPage.pageProps)
                         modelPageThis.setState({notFound: false})
+                        modelPageThis.context.app.forceUpdate()
                     }
 
                     promise.then(
