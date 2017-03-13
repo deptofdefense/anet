@@ -82,7 +82,7 @@ export default class Model {
 	}
 
 	toPath() {
-		return (this.id) ? this.constructor.pathFor(this) : this.constructor.pathForNew()
+		return this.id ? this.constructor.pathFor(this) : this.constructor.pathForNew()
 	}
 
 	toString() {

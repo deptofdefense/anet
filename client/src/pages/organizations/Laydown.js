@@ -1,5 +1,6 @@
 import React, {PropTypes, Component} from 'react'
 import {Table, Button} from 'react-bootstrap'
+import {Link} from 'react-router'
 import LinkTo from 'components/LinkTo'
 
 import {Position, Person} from 'models'
@@ -32,24 +33,29 @@ export default class OrganizationLaydown extends Component {
 
 		return (
 			<div>
-			<h2 className="form-header">
-				Supported positions
-				<div className="pull-right orgLaydownToggleInactive">
-					<Button bsStyle="link" onClick={this.toggleShowInactive}>
-						{(showInactivePositions ? "Hide " : "Show ") + numInactivePos + " Inactive Position(s)"}
-					</Button>
-				</div>
-			</h2>
+				<fieldset>
+					<legend>
+						Supported positions
 
-			<fieldset>
-				{this.renderPositionTable(supportedPositions)}
-			</fieldset>
+						<small>
+							{numInactivePos > 0 && <Button bsSize="sm" onClick={this.toggleShowInactive}>
+								{(showInactivePositions ? "Hide " : "Show ") + numInactivePos + " inactive position(s)"}
+							</Button>}
 
-			<h2 className="form-header" >Vacant Positions</h2>
-			<fieldset>
-				{this.renderPositionTable(positionsNeedingAttention)}
-			</fieldset>
-		</div>
+							<Link className="btn btn-default btn-sm" to={{pathname: Position.pathForNew(), query: {organizationId: org.id}}}>
+								Create position
+							</Link>
+						</small>
+					</legend>
+
+					{this.renderPositionTable(supportedPositions)}
+				</fieldset>
+
+				<fieldset>
+					<legend className="form-header" >Vacant positions</legend>
+					{this.renderPositionTable(positionsNeedingAttention)}
+				</fieldset>
+			</div>
 		)
 	}
 

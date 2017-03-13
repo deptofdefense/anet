@@ -1,4 +1,4 @@
-import React, {PropTypes} from 'react'
+import React from 'react'
 import Page from 'components/Page'
 
 import NavigationWarning from 'components/NavigationWarning'
@@ -9,10 +9,6 @@ import API from 'api'
 import {Organization} from 'models'
 
 export default class OrganizationNew extends Page {
-	static contextTypes = {
-		router: PropTypes.object.isRequired,
-	}
-
 	static pageProps = {
 		useNavigation: false,
 	}

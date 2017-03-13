@@ -1,12 +1,11 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 import ModelPage from 'components/ModelPage'
-import {ListGroup, ListGroupItem, DropdownButton, MenuItem} from 'react-bootstrap'
+import {ListGroup, ListGroupItem} from 'react-bootstrap'
+import {Link} from 'react-router'
 
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
-import autobind from 'autobind-decorator'
-import History from 'components/History'
 import LinkTo from 'components/LinkTo'
 import Messages , {setMessages} from 'components/Messages'
 import ReportCollection from 'components/ReportCollection'
@@ -16,14 +15,7 @@ import OrganizationLaydown from 'pages/organizations/Laydown'
 import OrganizationApprovals from 'pages/organizations/Approvals'
 
 import API from 'api'
-import {Organization, Position, Poam} from 'models'
-
-const ACTION_COMPONENTS = {
-	poams: OrganizationPoams,
-	approvals: OrganizationApprovals,
-	reports: ReportCollection,
-	laydown: OrganizationLaydown,
-}
+import {Organization} from 'models'
 
 class OrganizationShow extends Page {
 	static contextTypes = {
@@ -87,16 +79,12 @@ class OrganizationShow extends Page {
 
 	render() {
 		let org = this.state.organization
-		let action = this.state.action || 'poams'
 
 		let currentUser = this.context.app.state.currentUser
 		let isSuperUser = (currentUser) ? currentUser.isSuperUserForOrg(org) : false
 		let isAdmin = (currentUser) ? currentUser.isAdmin() : false
-		let showActions = isAdmin || isSuperUser
 
 		let superUsers = org.positions.filter(pos => pos.type === 'SUPER_USER')
-
-		let ActionComponent = ACTION_COMPONENTS[action]
 
 		return (
 			<div>
@@ -104,20 +92,22 @@ class OrganizationShow extends Page {
 
 				<Messages error={this.state.error} success={this.state.success} />
 
-				{showActions &&
-					<div className="pull-right">
-						<DropdownButton bsStyle="primary" title="Actions" id="actions" className="pull-right" onSelect={this.actionSelect}>
-							{isSuperUser && <MenuItem eventKey="edit">Edit Organization</MenuItem>}
-							{isAdmin && <MenuItem eventKey="createSub">Create Sub-Organization</MenuItem>}
-							{isAdmin && <MenuItem eventKey="createPoam">Create PoAM</MenuItem>}
-							{isSuperUser && <MenuItem eventKey="createPos">Create new Position</MenuItem>}
-						</DropdownButton>
-					</div>
-				}
-
-				<h2 className="form-header">{org.shortName}</h2>
 				<Form static formFor={org} horizontal>
 					<fieldset>
+						<legend>
+							{org.shortName}
+
+							<small>
+								{isAdmin && <Link className="btn btn-default btn-sm" to={{pathname: Organization.pathForNew(), query: {parentOrgId: org.id}}}>
+									Create sub-organization
+								</Link>}
+
+								{isSuperUser && <Link className="btn btn-primary btn-sm" to={Organization.pathForEdit(org)}>
+									Edit
+								</Link>}
+							</small>
+						</legend>
+
 						<Form.Field id="longName" label="Description"/>
 
 						<Form.Field id="type">
@@ -139,7 +129,7 @@ class OrganizationShow extends Page {
 											:
 											<i><LinkTo position={position} />- (Unfilled)</i>
 										}
-								</p>
+									</p>
 								)}
 								{superUsers.length === 0 && <p><i>No Super Users!</i></p>}
 							</Form.Field>
@@ -153,25 +143,17 @@ class OrganizationShow extends Page {
 						</Form.Field>}
 					</fieldset>
 
-					<ActionComponent organization={org} />
+					<OrganizationPoams organization={org} />
+					<OrganizationLaydown organization={org} />
+					<OrganizationApprovals organization={org} />
+
+					<fieldset>
+						<legend>Reports from {org.shortName}</legend>
+						<ReportCollection organization={org} />
+					</fieldset>
 				</Form>
 			</div>
 		)
-	}
-
-	@autobind
-	actionSelect(eventKey, event) {
-		if (eventKey === 'createPos') {
-			History.push({pathname: Position.pathForNew(), query: {organizationId: this.state.organization.id}})
-		} else if (eventKey === 'createSub') {
-			History.push({pathname: Organization.pathForNew(), query: {parentOrgId: this.state.organization.id}})
-		} else if (eventKey === 'edit') {
-			History.push(Organization.pathForEdit(this.state.organization))
-		} else if (eventKey === 'createPoam') {
-			History.push({pathname: Poam.pathForNew(), query: {responsibleOrg: this.state.organization.id}})
-		} else {
-			console.log('Unimplemented Action: ' + eventKey)
-		}
 	}
 }
 

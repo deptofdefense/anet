@@ -18,7 +18,7 @@ export default class OrganizationPoams extends Component {
 		return <fieldset>
 			<legend>
 				PoAMs / Pillars
-				<small><Link to={Poam.pathForNew()}>Create PoAM</Link></small>
+				<small><Link className="btn btn-default btn-sm" to={Poam.pathForNew()}>Create PoAM</Link></small>
 			</legend>
 
 			<Table>
