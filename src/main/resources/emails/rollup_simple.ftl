@@ -15,6 +15,20 @@ h2 {
 a {
 	color:#0072BD;
 }
+
+
+.tallyTable tr th { 
+	background-color:#cccccc;
+	border-bottom: 1px solid black;
+	border-right: 1px solid black;
+	padding:4px;
+}
+
+.tallyTable tr td { 
+	border-bottom: 1px solid black;
+	border-right: 1px solid black;
+	padding:2px;
+}
 </style>
 <body>
 
@@ -31,9 +45,48 @@ a {
 	</div>
 </#if>
 
-    <hr />
+<table class="tallyTable" cellspacing=0 >
+	<tr>
+		<th>Organization</th>
+		<th># of Reports</th>
+	</tr>
+	<#list topLevelOrgs as topOrg>
+		<#assign numReports = reportsByOrg?api.get(topOrg.id)?size >
+		<#if numReports gt 0>
+			<tr>
+				<td>${topOrg.shortName}</td>
+				<td>${numReports}</td>
+			</tr>
+		</#if>
+	</#list>
+</table>
 
-<#list reports as report>
+<hr />
+
+<#assign counter = 1>
+
+<#list topLevelOrgs as topOrg>
+	<#assign orgReports = reportsByOrg?api.get(topOrg.id) >
+	<#list orgReports >
+		<h2>${topOrg.shortName} - ${topOrg.longName}</h2>
+		<#items as report>
+			(${counter}) <#assign counter = counter + 1>
+			<@renderReport report />
+			<#sep><hr /></#sep>
+		</#items>
+		<hr>
+	</#list>
+</#list>
+
+
+<h2>Other Reports</h2>
+<#list otherReports as report>
+	(${counter}) <#assign counter = counter + 1>
+	<@renderReport report />
+	<#sep><hr /></#sep>
+</#list>
+
+<#macro renderReport report>
 	<#if report.cancelledReason??>
 	    <p className="report-cancelled" style="border-left:16px solid #DA9795;padding-left:10px;">
 	        <strong>Cancelled:</strong>
@@ -95,7 +148,4 @@ a {
     <a href="${serverUrl}/reports/${report.id?c}/min" >
     	Read full report
     </a>
-
-    <#sep><hr /></#sep>
-
-</#list>
+</#macro>
