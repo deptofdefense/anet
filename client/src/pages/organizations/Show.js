@@ -58,6 +58,7 @@ class OrganizationShow extends Page {
 				id, shortName, longName, type
 				parentOrg { id, shortName, longName }
 				childrenOrgs { id, shortName, longName },
+				poams { id, shortName, longName },
 				positions {
 					id, name, code, status, type,
 					person { id, name, status, rank }
