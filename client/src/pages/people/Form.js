@@ -3,7 +3,7 @@ import {Button} from 'react-bootstrap'
 import DatePicker from 'react-bootstrap-date-picker'
 import autobind from 'autobind-decorator'
 
-import ValidatableForm from 'components/ValidatableForm'
+import ValidatableFormWrapper from 'components/ValidatableFormWrapper'
 import Form from 'components/Form'
 import Fieldset from 'components/Fieldset'
 import Messages from 'components/Messages'
@@ -17,7 +17,7 @@ import {Person, Position} from 'models'
 
 import CALENDAR_ICON from 'resources/calendar.png'
 
-export default class PersonForm extends ValidatableForm {
+export default class PersonForm extends ValidatableFormWrapper {
 	static propTypes = {
 		person: PropTypes.object.isRequired,
 		edit: PropTypes.bool,
@@ -55,7 +55,9 @@ export default class PersonForm extends ValidatableForm {
 			positionSearchTypes = ['PRINCIPAL']
 		}
 
-		return <Form formFor={person} onChange={this.onChange} onSubmit={this.onSubmit} horizontal
+		const {ValidatableForm} = this
+
+		return <ValidatableForm formFor={person} onChange={this.onChange} onSubmit={this.onSubmit} horizontal
 			submitText={this.props.saveText || 'Save person'}
 			submitDisabled={this.isSubmitDisabled()}>
 
@@ -204,7 +206,7 @@ export default class PersonForm extends ValidatableForm {
 					<span>You can optionally assign this person to a position now</span>
 				</Fieldset>
 			}
-		</Form>
+		</ValidatableForm>
 	}
 
 	@autobind
