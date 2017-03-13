@@ -11,6 +11,6 @@ const iconCss = {
 export default function HopscotchLauncher(props) {
 	return <Button bsStyle="link" onClick={props.onClick}>
 		New to ANET? Take a guided tour
-		<img src={TOUR_ICON} className="tour-icon" alt="Take a tour of ANET" style={iconCss} />
+		<img src={TOUR_ICON} className="tour-icon" role="presentation" style={iconCss} />
 	</Button>
 }
