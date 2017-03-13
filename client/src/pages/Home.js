@@ -91,7 +91,7 @@ export default class Home extends HopscotchPage {
 			title: currentUser.position.organization.shortName + "'s upcoming engagements",
 			query: {
 				authorOrgId: currentUser.position.organization.id,
-				createdAtStart: start
+				engagementDateStart: start
 			}
 		}
 	}
@@ -99,7 +99,7 @@ export default class Home extends HopscotchPage {
 	allUpcoming() {
 		return {
 			title: "All upcoming engagements",
-			query: { createdAtStart: moment().endOf('day').valueOf() }
+			query: { engagementDateStart: moment().endOf('day').valueOf() }
 		}
 	}
 

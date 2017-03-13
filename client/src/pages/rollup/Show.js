@@ -199,7 +199,7 @@ export default class RollupShow extends Page {
 
 		// Only admins can email the Rollup out.
 		let currentUser = this.context.app.state.currentUser
-		let canEdit = currentUser && currentUser.isAdmin()
+		let canEdit = currentUser && currentUser.isSuperUser()
 
 		return (
 			<div>
