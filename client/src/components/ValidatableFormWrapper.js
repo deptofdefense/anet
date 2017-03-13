@@ -24,7 +24,7 @@ export default class ValidatableFormWrapper extends Component {
 
 	@autobind
 	RequiredField(props) {
-		const onError = () => this.setState({formErrors: {...this.state.formErrors, [props.id]: true}})
+		const onError = () => props.canSubmitWithError ? null : this.setState({formErrors: {...this.state.formErrors, [props.id]: true}})
 		const onValid = () => this.setState({formErrors: {...this.state.formErrors, [props.id]: false}})
 
 		return <Form.Field {...Object.without(props, 'required', 'humanName')} 

@@ -84,7 +84,11 @@ export default class FormField extends Component {
 			...childProps
 		} = this.props
 
-		childProps = Object.without(childProps, 'getter', 'horizontal', 'onError', 'onValid', 'humanName', 'maxCharacters')
+		childProps = Object.without(childProps, 'getter', 'horizontal', 
+			'onError', 'onValid', 'humanName', 'maxCharacters', 'canSubmitWithError')
+		if (this.props) {
+			childProps = Object.without(childProps, 'required')
+		}
 
 		let defaultValue = this.getDefaultValue(this.props, this.context)
 

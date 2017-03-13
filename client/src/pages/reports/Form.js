@@ -90,6 +90,8 @@ export default class ReportForm extends ValidatableFormWrapper {
 
 		const {ValidatableForm, RequiredField} = this
 
+		const SuggestedField = props => <RequiredField canSubmitWithError={true} {...props} />
+
 		return <div className="report-form">
 			<div className="pull-right">
 				{this.props.startHopscotch && <HopscotchLauncher onClick={this.props.startHopscotch} />}
@@ -104,9 +106,10 @@ export default class ReportForm extends ValidatableFormWrapper {
 					</Button>
 				}>
 
-					<RequiredField id="intent" label="Meeting goal (purpose)" placeholder="What happened?" data-focus componentClass="textarea" maxCharacters={250}>
+					<SuggestedField id="intent" label="Meeting goal (purpose)" 
+						placeholder="What happened?" data-focus componentClass="textarea" maxCharacters={250}>
 						<Form.Field.ExtraCol>{250 - report.intent.length} characters remaining</Form.Field.ExtraCol>
-					</RequiredField>
+					</SuggestedField>
 
 					<Form.Field id="engagementDate" addon={CALENDAR_ICON}>
 						<DatePicker showTodayButton placeholder="When did it happen?" dateFormat="DD/MM/YYYY" />
@@ -219,14 +222,14 @@ export default class ReportForm extends ValidatableFormWrapper {
 
 				<Fieldset title="Meeting discussion">
 					{!isCancelled &&
-						<RequiredField id="keyOutcomes" componentClass="textarea" maxCharacters={250} humanName="Key outcome description">
+						<SuggestedField id="keyOutcomes" componentClass="textarea" maxCharacters={250} humanName="Key outcome description">
 							<Form.Field.ExtraCol><small>{250 - report.keyOutcomes.length} characters remaining</small></Form.Field.ExtraCol>
-						</RequiredField>
+						</SuggestedField>
 					}
 
-					<RequiredField id="nextSteps" componentClass="textarea" maxCharacters={250} humanName="Next steps description">
+					<SuggestedField id="nextSteps" componentClass="textarea" maxCharacters={250} humanName="Next steps description">
 						<Form.Field.ExtraCol><small>{250 - report.nextSteps.length} characters remaining</small></Form.Field.ExtraCol>
-					</RequiredField>
+					</SuggestedField>
 
 					<Button className="center-block toggle-section-button" onClick={this.toggleReportText} id="toggleReportDetails" >
 						{this.state.showReportText ? 'Hide' : 'Add'} detailed comments
