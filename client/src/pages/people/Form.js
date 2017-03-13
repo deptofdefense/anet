@@ -32,8 +32,9 @@ export default class PersonForm extends ValidatableFormWrapper {
 
 	constructor(props) {
 		super(props)
-
-		Object.assign(this.state, {error: null})
+		this.state = {
+			error: null
+		}
 	}
 
 	render() {

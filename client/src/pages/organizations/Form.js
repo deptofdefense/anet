@@ -2,6 +2,7 @@ import React, {Component, PropTypes} from 'react'
 import {Button, Table} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
+import ValidatableFormWrapper from 'components/ValidatableFormWrapper'
 import Fieldset from 'components/Fieldset'
 import Form from 'components/Form'
 import ButtonToggleGroup from 'components/ButtonToggleGroup'
@@ -13,7 +14,7 @@ import Messages from 'components/Messages'
 import API from 'api'
 import {Position, Organization} from 'models'
 
-export default class OrganizationForm extends Component {
+export default class OrganizationForm extends ValidatableFormWrapper {
 	static propTypes = {
 		organization: PropTypes.object,
 		edit: PropTypes.bool,
