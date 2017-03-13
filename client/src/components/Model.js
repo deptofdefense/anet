@@ -1,12 +1,5 @@
+import encodeQuery from 'querystring/encode'
 import utils from 'utils'
-
-function buildQueryString(query) {
-	let params = []
-	Object.forEach(query, (key, value) => {
-		params.push(`${key}=${encodeURIComponent(value)}`)
-	})
-	return params.join('&')
-}
 
 export default class Model {
 	static schema = {}
@@ -51,7 +44,7 @@ export default class Model {
 		let url = ['', resourceName, id].join('/')
 
 		if (query) {
-			url += '?' + buildQueryString(query)
+			url += '?' + encodeQuery(query)
 		}
 
 		return url
@@ -62,7 +55,7 @@ export default class Model {
 		let url = ['', resourceName, 'new'].join('/')
 
 		if (query) {
-			url += '?' + buildQueryString(query)
+			url += '?' + encodeQuery(query)
 		}
 
 		return url
@@ -72,7 +65,7 @@ export default class Model {
 		let url = this.pathFor(instance) + '/edit'
 
 		if (query) {
-			url += '?' + buildQueryString(query)
+			url += '?' + encodeQuery(query)
 		}
 
 		return url
