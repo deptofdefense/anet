@@ -91,7 +91,7 @@ export default class Home extends HopscotchPage {
 			title: currentUser.position.organization.shortName + "'s upcoming engagements",
 			query: {
 				authorOrgId: currentUser.position.organization.id,
-				createdAtStart: start
+				engagementDateStart: start
 			}
 		}
 	}
