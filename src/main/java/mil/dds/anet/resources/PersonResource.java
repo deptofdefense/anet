@@ -242,4 +242,54 @@ public class PersonResource implements IGraphQLResource {
 		return user;
 	}
 	
+	@POST
+	@Timed
+	@Path("/merge")
+	@RolesAllowed("ADMINISTRATOR")
+	public Response mergePeople(@Auth Person user, 
+			@QueryParam("winner") int winnerId, 
+			@QueryParam("loser") int loserId, 
+			@QueryParam("copyPosition") @DefaultValue("false") Boolean copyPosition) {
+		
+		if (loserId == winnerId) { return Response.status(Status.NOT_ACCEPTABLE).build(); } 
+		Person winner = dao.getById(winnerId);
+		Person loser = dao.getById(loserId);
+		
+		if (winner == null || loser == null) { 
+			return Response.status(Status.NOT_FOUND).build();
+		}
+		
+		if (winner.getRole().equals(loser.getRole()) == false) { 
+			return Response.status(Status.NOT_ACCEPTABLE).build();
+		}
+		if (winner.getPosition() != null && copyPosition) { 
+			return Response.status(Status.NOT_ACCEPTABLE).build();
+		}
+		
+		loser.loadPosition();
+		winner.loadPosition();
+		
+		//Remove the loser from their position.
+		Position loserPosition = loser.getPosition();
+		if (loserPosition != null) { 
+			AnetObjectEngine.getInstance().getPositionDao()
+				.removePersonFromPosition(loserPosition);
+		}
+		
+		dao.mergePeople(winner, loser, copyPosition);
+		
+		if (loserPosition != null && copyPosition) { 
+			AnetObjectEngine.getInstance().getPositionDao()
+				.setPersonInPosition(winner, loserPosition);
+		} else if (winner.getPosition() != null) { 
+			//We need to always re-put the winner back into their position
+			// because when we removed the loser, and then updated the peoplePositions table
+			// it now has a record saying the winner has no position. 
+			AnetObjectEngine.getInstance().getPositionDao()
+				.setPersonInPosition(winner, winner.getPosition());
+		}
+		
+		return Response.ok().build();
+	}
+	
 }

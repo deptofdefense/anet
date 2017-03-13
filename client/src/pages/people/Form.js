@@ -14,7 +14,7 @@ import _some from 'lodash.some'
 import _values from 'lodash.values'
 
 import API from 'api'
-import {Person} from 'models'
+import {Person, Position} from 'models'
 
 import CALENDAR_ICON from 'resources/calendar.png'
 
@@ -25,6 +25,10 @@ export default class PersonForm extends Component {
 		showPositionAssignment: PropTypes.bool,
 		legendText: PropTypes.string,
 		saveText: PropTypes.string,
+	}
+
+	static contextTypes = {
+		app: PropTypes.object
 	}
 
 	constructor(props) {
@@ -40,6 +44,20 @@ export default class PersonForm extends Component {
 		let {person, edit, showPositionAssignment} = this.props
 		const isAdvisor = person.role === 'ADVISOR'
 		const legendText = this.props.legendText || (edit ? `Edit ${person.name}` : 'Create a new person')
+		let currentUser = this.context.app.state.currentUser
+
+		let positionSearchTypes = null
+		if (person.role === 'ADVISOR') {
+			positionSearchTypes = ['ADVISOR']
+			if (currentUser.isSuperUser()) { //Only super users can put people in super user billets
+				positionSearchTypes.push('SUPER_USER')
+			}
+			if (currentUser.isAdmin()) { //only admins can put people in admin billets.
+				positionSearchTypes.push('ADMINISTRATOR')
+			}
+		} else if (person.role === 'PRINCIPAL') {
+			positionSearchTypes = ['PRINCIPAL']
+		}
 
 		return <Form formFor={person} onChange={this.onChange} onSubmit={this.onSubmit} horizontal
 					submitText={this.props.saveText || 'Save person'}
@@ -183,11 +201,12 @@ export default class PersonForm extends Component {
 					<Form.Field id="position" >
 						<Autocomplete valueKey="name"
 							placeholder="Select a position for this person"
-							url="/api/positions/search"
+							objectType={Position}
+							fields={'id, name, code'}
 							template={pos =>
 								<span>{[pos.name, pos.code].join(' - ')}</span>
 							}
-							queryParams={{type: person.role}} />
+							queryParams={{type: positionSearchTypes}} />
 					</Form.Field>
 					<span>You can optionally assign this person to a position now</span>
 				</fieldset>

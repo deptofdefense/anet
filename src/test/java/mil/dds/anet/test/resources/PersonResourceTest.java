@@ -22,6 +22,7 @@ import mil.dds.anet.beans.lists.AbstractAnetBeanList.PersonList;
 import mil.dds.anet.beans.search.ISearchQuery.SortOrder;
 import mil.dds.anet.beans.search.PersonSearchQuery;
 import mil.dds.anet.beans.search.PersonSearchQuery.PersonSearchSortBy;
+import mil.dds.anet.test.beans.OrganizationTest;
 
 public class PersonResourceTest extends AbstractResourceTest {
 
@@ -196,6 +197,73 @@ public class PersonResourceTest extends AbstractResourceTest {
 		assertThat(pageTwo.getList().size()).isEqualTo(2);
 		assertThat(results.getList()).containsAll(pageTwo.getList());
 		assertThat(pageOne.getList()).doesNotContainAnyElementsOf(pageTwo.getList());
+		
+	}
+	
+	@Test
+	public void mergePeopleTest() { 
+		final Person admin = getArthurDmin();
+
+		//Create a person
+		Person loser = new Person();
+		loser.setRole(Role.ADVISOR);
+		loser.setName("Loser for Merging");
+		loser = httpQuery("/api/people/new", admin).post(Entity.json(loser), Person.class);
+		
+		//Create a Position
+		Position test = new Position();
+		test.setName("A Test Position created by mergePeopleTest");
+		test.setType(PositionType.ADVISOR);
+		test.setStatus(PositionStatus.ACTIVE);
+		
+		//Assign to an AO
+		Organization ao = httpQuery("/api/organizations/new", admin)
+				.post(Entity.json(OrganizationTest.getTestAO()), Organization.class);
+		test.setOrganization(Organization.createWithId(ao.getId()));
+
+		Position created = httpQuery("/api/positions/new", admin).post(Entity.json(test), Position.class);
+		assertThat(created.getName()).isEqualTo(test.getName());
+		
+		//Assign the loser into the position
+		Response resp = httpQuery(String.format("/api/positions/%d/person", created.getId()), admin).post(Entity.json(loser));
+		assertThat(resp.getStatus()).isEqualTo(200);
+		
+		//Create a second person
+		Person winner = new Person();
+		winner.setRole(Role.ADVISOR);
+		winner.setName("Winner for Merging");
+		winner = httpQuery("/api/people/new", admin).post(Entity.json(winner), Person.class);
+		
+		resp = httpQuery(String.format("/api/people/merge?winner=%d&loser=%d", winner.getId(), loser.getId()), admin).post(null);
+		assertThat(resp.getStatus()).isEqualTo(200);
+		
+		//Assert that loser is gone. 
+		resp = httpQuery("/api/people/" + loser.getId(), admin).get();
+		assertThat(resp.getStatus()).isEqualTo(404);
+		
+		//Assert that the position is empty. 
+		Person curr = httpQuery(String.format("/api/positions/%d/person", created.getId()), admin).get(Person.class);
+		assertThat(curr).isNull();
+		
+		//Re-create loser and put into the position. 
+		loser = new Person();
+		loser.setRole(Role.ADVISOR);
+		loser.setName("Loser for Merging");
+		loser = httpQuery("/api/people/new", admin).post(Entity.json(loser), Person.class);
+		resp = httpQuery(String.format("/api/positions/%d/person", created.getId()), admin).post(Entity.json(loser));
+		assertThat(resp.getStatus()).isEqualTo(200);
+		
+		resp = httpQuery(String.format("/api/people/merge?winner=%d&loser=%d&copyPosition=true", winner.getId(), loser.getId()), admin).post(null);
+		assertThat(resp.getStatus()).isEqualTo(200);
+		
+		//Assert that loser is gone. 
+		resp = httpQuery("/api/people/" + loser.getId(), admin).get();
+		assertThat(resp.getStatus()).isEqualTo(404);
+		
+		//Assert that the winner is in the position. 
+		curr = httpQuery(String.format("/api/positions/%d/person", created.getId()), admin).get(Person.class);
+		assertThat(curr).isEqualTo(winner);
+		
 		
 	}
 }

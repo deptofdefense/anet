@@ -22,6 +22,7 @@ class Nav extends Component {
 		let currentUser = appData.currentUser
 		let organizations = appData.organizations || []
 		let path = this.context.app.props.location.pathname
+		let inAdmin = path.indexOf('/admin') === 0
 		let inOrg = path.indexOf('/organizations') === 0
 		if (inOrg) { path = '/organizations/' + this.context.app.props.params.id }
 
@@ -67,6 +68,11 @@ class Nav extends Component {
 					<Link to="/admin">
 						<NavItem>Admin</NavItem>
 					</Link>
+				}
+				{currentUser.isAdmin() && inAdmin &&
+					<SubNav>
+						<Link to={"/admin/mergePeople"}><NavItem>Merge People</NavItem></Link>
+					</SubNav>
 				}
 			</BSNav>
 		)

@@ -7,6 +7,8 @@ import org.joda.time.DateTime;
 import org.skife.jdbi.v2.GeneratedKeys;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.Query;
+import org.skife.jdbi.v2.TransactionCallback;
+import org.skife.jdbi.v2.TransactionStatus;
 
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Organization;
@@ -168,6 +170,50 @@ public class PersonDao implements IAnetDao<Person> {
 				.bind("authorId", author.getId())
 				.map(new PersonMapper())
 				.list();
+	}
+
+	public boolean mergePeople(Person winner, Person loser, Boolean copyPosition) {
+		dbHandle.inTransaction(new TransactionCallback<Void>() {
+			public Void inTransaction(Handle conn, TransactionStatus status) throws Exception {
+				//update report attendence
+				dbHandle.createStatement("UPDATE reportPeople SET personId = :winnerId WHERE personId = :loserId")
+					.bind("winnerId", winner.getId())
+					.bind("loserId", loser.getId())
+					.execute();
+				
+				// update approvals this person might have done
+				dbHandle.createStatement("UPDATE approvalActions SET personId = :winnerId WHERE personId = :loserId")
+					.bind("winnerId", winner.getId())
+					.bind("loserId", loser.getId())
+					.execute();
+				
+				// report author update
+				dbHandle.createStatement("UPDATE reports SET authorId = :winnerId WHERE authorId = :loserId")
+					.bind("winnerId", winner.getId())
+					.bind("loserId", loser.getId())
+					.execute();
+			
+				// comment author update
+				dbHandle.createStatement("UPDATE comments SET authorId = :winnerId WHERE authorId = :loserId")
+					.bind("winnerId", winner.getId())
+					.bind("loserId", loser.getId())
+					.execute();
+				
+				// update position history
+				dbHandle.createStatement("UPDATE peoplePositions SET personId = :winnerId WHERE personId = :loserId")
+					.bind("winnerId", winner.getId())
+					.bind("loserId", loser.getId())
+					.execute();
+		
+				//delete the person!
+				dbHandle.createStatement("DELETE FROM people WHERE id = :loserId")
+					.bind("loserId", loser.getId())
+					.execute();
+				
+				return null;
+			}
+		});
+		return true;	
 	}
 	
 }
