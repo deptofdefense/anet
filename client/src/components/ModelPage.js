@@ -5,11 +5,15 @@ import _get from 'lodash.get'
 
 export default WrappedPage => {
     return class ModelPage extends React.Component {
+        static pageProps = {}
+
         constructor() {
             super()
             this.state = {}
 
             const modelPageThis = this
+
+            Object.assign(ModelPage.pageProps, WrappedPage.pageProps)
 
             const origLoadData = WrappedPage.prototype.loadData
             WrappedPage.prototype.loadData = function(props) {
@@ -19,7 +23,7 @@ export default WrappedPage => {
                     promise.catch(err => {
                         if (err.status === 404 || 
                                 (err.status === 500 && _get(err, ['errors', 0]) === 'Invalid Syntax')) {
-                            ModelPage.pageProps = {fluidContainer: true, useNavigation: false}
+                            Object.assign(ModelPage.pageProps, {fluidContainer: true, useNavigation: false})
                             modelPageThis.setState({notFound: true})
                         }
                     })
