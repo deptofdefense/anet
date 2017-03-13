@@ -8,10 +8,9 @@ export default class OrganizationApprovals extends Component {
 		let org = this.props.organization
 		let approvalSteps = org.approvalSteps
 
-		return (
+		return <div>
+			<h2 className="legend">Approval process</h2>
 			<fieldset>
-				<legend>Approval process</legend>
-
 				{approvalSteps && approvalSteps.map((step, idx) =>
 					<div key={'step_' + idx}>
 						<fieldset>
@@ -37,6 +36,6 @@ export default class OrganizationApprovals extends Component {
 					</div>
 				)}
 			</fieldset>
-		)
+		</div>
 	}
 }

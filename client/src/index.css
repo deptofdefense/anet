@@ -28,25 +28,47 @@ fieldset {
 	border: 1px solid #e0e0e0;
 	padding: 1.25em;
 	margin: 0;
-	margin-bottom: 7rem;
-	position: relative;
+	margin-bottom: 3rem;
 	width: 100%;
 }
 
-fieldset legend {
-	position: absolute;
-	top: -35px;
-	left: 3px;
-	font-size: 2.5rem;
+.legend {
+	float: left;
+	width: 100%;
 	color: #363636;
 	border: none;
+	font-weight: normal;
 }
 
-fieldset legend small {
-	position: absolute;
-	top: 16px;
-	right: 4px;
+h1.legend {
+	font-size: 2.3rem;
+	font-weight: bold;
+}
+
+h2.legend {
+	font-size: 2rem;
+}
+
+h3.legend {
+	font-size: 1.5rem;
+}
+
+.legend small {
+	float: right;
 	font-size: 1.2rem;
+	margin: 1rem 0.5rem 0 0;
+}
+
+.legend small .btn {
+	margin-top: -2rem;
+}
+
+.legend small .btn + .btn {
+	margin-left: 1rem;
+}
+
+body:not(:-moz-handler-blocked) fieldset {
+    display: table-cell;
 }
 
 fieldset .pagination {
@@ -450,10 +472,6 @@ table hr.attendee-divider {
 	padding-left: 1rem;
 }
 
-.report-form fieldset:not(:first-child) legend {
-	font-size: 2rem;
-}
-
 .report-form fieldset:last-child {
 	margin-bottom: 10px;
 }
@@ -511,21 +529,4 @@ table hr.attendee-divider {
 		and 7+7 = 14, so we need 4 more px here to make it 18 in total.
 	*/
 	margin-bottom: 4px;
-}
-
-.orgLaydownToggleInactive {
-	position: relative;
-}
-
-h2.form-header {
-	font-size: 2.5rem;
-	color: #363636;
-	font-weight: normal;
-	margin-left: 3px;
-	margin-bottom: 5px;
-	word-break: break-all;
-}
-
-.report-show h2.form-header {
-	margin-bottom: 10px;
 }

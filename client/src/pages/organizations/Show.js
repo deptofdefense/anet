@@ -92,22 +92,22 @@ class OrganizationShow extends Page {
 
 				<Messages error={this.state.error} success={this.state.success} />
 
-				<Form static formFor={org} horizontal>
+				<Form formFor={org} static horizontal>
+					<h1 className="legend">
+						{org.shortName}
+
+						<small>
+							{isAdmin && <Link className="btn btn-default btn-sm" to={{pathname: Organization.pathForNew(), query: {parentOrgId: org.id}}}>
+								Create sub-organization
+							</Link>}
+
+							{isSuperUser && <Link className="btn btn-primary btn-sm" to={Organization.pathForEdit(org)}>
+								Edit
+							</Link>}
+						</small>
+					</h1>
+
 					<fieldset>
-						<legend>
-							{org.shortName}
-
-							<small>
-								{isAdmin && <Link className="btn btn-default btn-sm" to={{pathname: Organization.pathForNew(), query: {parentOrgId: org.id}}}>
-									Create sub-organization
-								</Link>}
-
-								{isSuperUser && <Link className="btn btn-primary btn-sm" to={Organization.pathForEdit(org)}>
-									Edit
-								</Link>}
-							</small>
-						</legend>
-
 						<Form.Field id="longName" label="Description"/>
 
 						<Form.Field id="type">
@@ -147,8 +147,8 @@ class OrganizationShow extends Page {
 					<OrganizationLaydown organization={org} />
 					<OrganizationApprovals organization={org} />
 
+					<h2 className="legend">Reports from {org.shortName}</h2>
 					<fieldset>
-						<legend>Reports from {org.shortName}</legend>
 						<ReportCollection organization={org} />
 					</fieldset>
 				</Form>

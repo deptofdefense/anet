@@ -15,29 +15,30 @@ export default class OrganizationPoams extends Component {
 
 		let poams = org.poams
 
-		return <fieldset>
-			<legend>
+		return <div>
+			<h2 className="legend">
 				PoAMs / Pillars
 				<small><Link className="btn btn-default btn-sm" to={Poam.pathForNew()}>Create PoAM</Link></small>
-			</legend>
-
-			<Table>
-				<thead>
-					<tr>
-						<th>Name</th>
-						<th>Description</th>
-					</tr>
-				</thead>
-
-				<tbody>
-					{Poam.map(poams, (poam, idx) =>
-						<tr key={poam.id} id={`poam_${idx}`} >
-							<td><LinkTo poam={poam} >{poam.shortName}</LinkTo></td>
-							<td>{poam.longName}</td>
+			</h2>
+			<fieldset>
+				<Table>
+					<thead>
+						<tr>
+							<th>Name</th>
+							<th>Description</th>
 						</tr>
-					)}
-				</tbody>
-			</Table>
-		</fieldset>
+					</thead>
+
+					<tbody>
+						{Poam.map(poams, (poam, idx) =>
+							<tr key={poam.id} id={`poam_${idx}`} >
+								<td><LinkTo poam={poam} >{poam.shortName}</LinkTo></td>
+								<td>{poam.longName}</td>
+							</tr>
+						)}
+					</tbody>
+				</Table>
+			</fieldset>
+		</div>
 	}
 }

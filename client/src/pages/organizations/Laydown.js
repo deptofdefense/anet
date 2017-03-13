@@ -33,26 +33,25 @@ export default class OrganizationLaydown extends Component {
 
 		return (
 			<div>
+				<h2 className="legend">
+					Supported positions
+
+					<small>
+						{numInactivePos > 0 && <Button bsSize="sm" onClick={this.toggleShowInactive}>
+							{(showInactivePositions ? "Hide " : "Show ") + numInactivePos + " inactive position(s)"}
+						</Button>}
+
+						<Link className="btn btn-default btn-sm" to={{pathname: Position.pathForNew(), query: {organizationId: org.id}}}>
+							Create position
+						</Link>
+					</small>
+				</h2>
 				<fieldset>
-					<legend>
-						Supported positions
-
-						<small>
-							{numInactivePos > 0 && <Button bsSize="sm" onClick={this.toggleShowInactive}>
-								{(showInactivePositions ? "Hide " : "Show ") + numInactivePos + " inactive position(s)"}
-							</Button>}
-
-							<Link className="btn btn-default btn-sm" to={{pathname: Position.pathForNew(), query: {organizationId: org.id}}}>
-								Create position
-							</Link>
-						</small>
-					</legend>
-
 					{this.renderPositionTable(supportedPositions)}
 				</fieldset>
 
+				<h2 className="legend">Vacant positions</h2>
 				<fieldset>
-					<legend className="form-header" >Vacant positions</legend>
 					{this.renderPositionTable(positionsNeedingAttention)}
 				</fieldset>
 			</div>
