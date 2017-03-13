@@ -3,17 +3,18 @@ import Page from 'components/Page'
 import ModelPage from 'components/ModelPage'
 import {Link} from 'react-router'
 import {Table, DropdownButton, MenuItem} from 'react-bootstrap'
+import moment from 'moment'
 import utils from 'utils'
+import autobind from 'autobind-decorator'
 
-import API from 'api'
+import Fieldset from 'components/Fieldset'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
 import Messages , {setMessages} from 'components/Messages'
-import autobind from 'autobind-decorator'
-import {browserHistory as History} from 'react-router'
+import History from 'components/History'
 import LinkTo from 'components/LinkTo'
-import moment from 'moment'
 
+import API from 'api'
 import {Person, Position, Organization} from 'models'
 
 class PositionShow extends Page {
@@ -75,10 +76,8 @@ class PositionShow extends Page {
 					</div>
 				}
 
-
-				<h2 className="form-header">{position.name}</h2>
 				<Form static formFor={position} horizontal>
-					<fieldset>
+					<Fieldset title={position.name}>
 						<Form.Field id="code" />
 
 						<Form.Field id="type">
@@ -103,11 +102,9 @@ class PositionShow extends Page {
 							</Link>
 						</Form.Field>}
 
-					</fieldset>
+					</Fieldset>
 
-					<fieldset>
-						<legend>Assigned {assignedRole}</legend>
-
+					<Fieldset title={`Assigned ${assignedRole}`}>
 						<Table>
 							<thead>
 								<tr>
@@ -116,16 +113,14 @@ class PositionShow extends Page {
 								</tr>
 							</thead>
 							<tbody>
-							{Position.map(position.associatedPositions, (pos, idx) =>
-								this.renderAssociatedPositionRow(pos, idx)
-							)}
+								{Position.map(position.associatedPositions, (pos, idx) =>
+									this.renderAssociatedPositionRow(pos, idx)
+								)}
 							</tbody>
 						</Table>
-					</fieldset>
+					</Fieldset>
 
-					<fieldset>
-						<legend>Previous Position Holders</legend>
-
+					<Fieldset title="Previous position holders">
 						<Table>
 							<thead>
 								<tr>
@@ -145,7 +140,7 @@ class PositionShow extends Page {
 								)}
 							</tbody>
 						</Table>
-					</fieldset>
+					</Fieldset>
 				</Form>
 			</div>
 		)

@@ -40,17 +40,8 @@ fieldset {
 	font-weight: normal;
 }
 
-h1.legend {
-	font-size: 2.3rem;
-	font-weight: bold;
-}
-
 h2.legend {
 	font-size: 2rem;
-}
-
-h3.legend {
-	font-size: 1.5rem;
 }
 
 .legend small {

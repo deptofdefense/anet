@@ -5,11 +5,12 @@ import autobind from 'autobind-decorator'
 import moment from 'moment'
 import utils from 'utils'
 
-import {Report, Person, Poam} from 'models'
+import Fieldset from 'components/Fieldset'
 import Form from 'components/Form'
 import Messages from 'components/Messages'
 
 import API from 'api'
+import {Report, Person, Poam} from 'models'
 
 export default class ReportMinimal extends Page {
 	static contextTypes = {
@@ -96,13 +97,13 @@ export default class ReportMinimal extends Page {
 				<Messages error={this.state.error} success={this.state.success} />
 
 				{report.isRejected() &&
-					<fieldset style={{textAlign: 'center' }}>
+					<Fieldset style={{textAlign: 'center' }}>
 						<h4 className="text-danger">This report was REJECTED. </h4>
-					</fieldset>
+					</Fieldset>
 				}
 
 				{report.isDraft() &&
-					<fieldset style={{textAlign: 'center'}}>
+					<Fieldset style={{textAlign: 'center'}}>
 						<h4 className="text-danger">This report is in DRAFT state and hasn't been submitted.</h4>
 						<p>You can review the draft below to make sure all the details are correct.</p>
 						<div style={{textAlign: 'left'}}>
@@ -110,20 +111,18 @@ export default class ReportMinimal extends Page {
 								this.renderValidationErrors(errors)
 							}
 						</div>
-					</fieldset>
+					</Fieldset>
 				}
 
 				{report.isPending() &&
-					<fieldset style={{textAlign: 'center'}}>
+					<Fieldset style={{textAlign: 'center'}}>
 						<h4 className="text-danger">This report is PENDING approvals.</h4>
 						<p>It won't be available in the ANET database until your <a href="#approvals">approval organization</a> marks it as approved.</p>
-					</fieldset>
+					</Fieldset>
 				}
 
 				<Form static formFor={report} horizontal>
-					<h2 className="form-header">Report #{report.id}</h2>
-					<fieldset className="show-report-overview">
-
+					<Fieldset title={`Report #${report.id}`} className="show-report-overview">
 						<Form.Field id="intent" label="Summary" >
 							<p><strong>Meeting goal:</strong> {report.intent}</p>
 							{report.keyOutcomes && <p><span><strong>Key outcomes:</strong> {report.keyOutcomes}&nbsp;</span></p>}
@@ -156,11 +155,9 @@ export default class ReportMinimal extends Page {
 						<Form.Field id="principalOrg" label="Principal Org">
 							<span>{report.principalOrg && report.principalOrg.shortName }</span>
 						</Form.Field>
-					</fieldset>
+					</Fieldset>
 
-					<fieldset>
-						<legend>Meeting attendees</legend>
-
+					<Fieldset title="Meeting attendees">
 						<Table condensed className="borderless">
 							<thead>
 								<tr>
@@ -180,11 +177,9 @@ export default class ReportMinimal extends Page {
 								)}
 							</tbody>
 						</Table>
-					</fieldset>
+					</Fieldset>
 
-					<fieldset>
-						<legend>Plan of Action and Milestones / Pillars</legend>
-
+					<Fieldset title="Plan of Action and Milestones / Pillars">
 						<Table>
 							<thead>
 								<tr>
@@ -202,18 +197,15 @@ export default class ReportMinimal extends Page {
 								)}
 							</tbody>
 						</Table>
-					</fieldset>
+					</Fieldset>
 
-					<fieldset>
-						<legend>Meeting discussion</legend>
+					<Fieldset title="Meeting discussion">
 						<div dangerouslySetInnerHTML={{__html: report.reportText}} />
-					</fieldset>
+					</Fieldset>
 
-					{report.isPending() && this.renderApprovals() }
+					{report.isPending() && this.renderApprovals()}
 
-					<fieldset>
-						<legend>Comments</legend>
-
+					<Fieldset title="Comments">
 						{report.comments.map(comment => {
 							let createdAt = moment(comment.createAt)
 							return (
@@ -226,7 +218,7 @@ export default class ReportMinimal extends Page {
 						})}
 
 						{!report.comments.length && 'There are no comments yet.'}
-					</fieldset>
+					</Fieldset>
 				</Form>
 			</div>
 		)
@@ -235,13 +227,13 @@ export default class ReportMinimal extends Page {
 	@autobind
 	renderApprovals(canApprove) {
 		let report = this.state.report
-		return <fieldset>
+		return <Fieldset>
 			<a name="approvals" />
 			<legend>Approvals</legend>
 			{report.approvalStatus.map(action =>
 				this.renderApprovalAction(action)
 			)}
-		</fieldset>
+		</Fieldset>
 	}
 
 	@autobind

@@ -1,6 +1,7 @@
 import React, {PropTypes} from 'react'
 import autobind from 'autobind-decorator'
 
+import Fieldset from 'components/Fieldset'
 import NavigationWarning from 'components/NavigationWarning'
 import History from 'components/History'
 import Form from 'components/Form'
@@ -42,13 +43,13 @@ export default class LocationNew extends React.Component {
 
 				<Form formFor={location} onChange={this.onChange} onSubmit={this.onSubmit} horizontal submitText="Create location">
 					{this.state.error && <fieldset><p>There was a problem saving this location</p><p>{this.state.error}</p></fieldset>}
-					<h2 className="form-header">Create a new Location</h2>
-					<fieldset>
+
+					<Fieldset title="Create a new Location">
 						<Form.Field id="name" />
 						<Form.Field type="static" id="location">
 							{(Math.round(location.lat * 1000)) / 1000}, {(Math.round(location.lng * 1000)) / 1000}
 						</Form.Field>
-					</fieldset>
+					</Fieldset>
 
 					<h3>Drag the marker below to set the location</h3>
 					<Leaflet markers={markers} />

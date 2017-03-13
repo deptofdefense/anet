@@ -1,10 +1,10 @@
 import React from 'react'
 import Page from 'components/Page'
+import {DropdownButton, MenuItem, Modal, Alert, Button} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 import moment from 'moment'
 
-import {DropdownButton, MenuItem, Modal, Alert, Button} from 'react-bootstrap'
-
+import Fieldset from 'components/Fieldset'
 import Breadcrumbs from 'components/Breadcrumbs'
 import ReportCollection from 'components/ReportCollection'
 import CalendarButton from 'components/CalendarButton'
@@ -222,15 +222,13 @@ export default class RollupShow extends Page {
 					Daily Rollup - {this.dateLongStr}
 				</h1>
 
-				<h2 className="form-header">Summary</h2>
-				<fieldset>
+				<Fieldset title="Summary">
 					<svg ref={el => this.graph = el} style={graphCss} />
-				</fieldset>
+				</Fieldset>
 
-				<h2 className="form-header">Reports - {this.dateLongStr}</h2>
-				<fieldset>
+				<Fieldset title={`Reports - ${this.dateLongStr}`}>
 					<ReportCollection paginatedReports={this.state.reports} />
-				</fieldset>
+				</Fieldset>
 
 				{this.renderEmailModal()}
 			</div>

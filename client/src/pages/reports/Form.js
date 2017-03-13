@@ -2,6 +2,7 @@ import React, {Component, PropTypes} from 'react'
 import {Checkbox, Table, Button, Collapse, HelpBlock} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
+import Fieldset from 'components/Fieldset'
 import Form from 'components/Form'
 import TextEditor from 'components/TextEditor'
 import Autocomplete from 'components/Autocomplete'
@@ -111,17 +112,12 @@ export default class ReportForm extends Component {
 		</b></HelpBlock>
 
 		return <div className="report-form">
-			<SubmitButtons className="top-submit-buttons">
-				<h2 className="form-header">
-					{this.props.title}
-				</h2>
-			</SubmitButtons>
+			<SubmitButtons className="top-submit-buttons" />
 
 			<Form formFor={report} horizontal onChange={this.onChange}
 				submitDisabled={hasErrors} submitText={false}>
 				<div>
-					<fieldset>
-
+					<Fieldset title={this.props.title}>
 						<Form.Field id="intent" label="Meeting goal (purpose)" placeholder="What happened?" data-focus componentClass="textarea" maxCharacters={250}>
 							<Form.Field.ExtraCol>{250 - report.intent.length} characters remaining</Form.Field.ExtraCol>
 						</Form.Field>
@@ -171,11 +167,9 @@ export default class ReportForm extends Component {
 								<option value="CANCELLED_DUE_TO_THREAT">Cancelled due to Threat</option>
 							</Form.Field>
 						}
-					</fieldset>
+					</Fieldset>
 
-					<fieldset>
-						<legend>Meeting Attendance</legend>
-
+					<Fieldset title="Meeting attendance">
 						<Form.Field id="attendees" validationState={errors.attendees}>
 							<Autocomplete objectType={Person}
 								onChange={this.addAttendee}
@@ -227,7 +221,7 @@ export default class ReportForm extends Component {
 								</Form.Field.ExtraCol>
 							}
 						</Form.Field>
-					</fieldset>
+					</Fieldset>
 
 					{!isCancelled &&
 						<PoamsSelector poams={report.poams}
@@ -238,9 +232,7 @@ export default class ReportForm extends Component {
 							optional={true} />
 					}
 
-					<fieldset>
-						<legend>Meeting Discussion</legend>
-
+					<Fieldset title="Meeting discussion">
 						{!isCancelled &&
 							<Form.Field id="keyOutcomes" componentClass="textarea" maxCharacters={250}>
 								<Form.Field.ExtraCol><small>{250 - report.keyOutcomes.length} characters remaining</small></Form.Field.ExtraCol>
@@ -262,7 +254,7 @@ export default class ReportForm extends Component {
 								</Form.Field>
 							</div>
 						</Collapse>
-					</fieldset>
+					</Fieldset>
 				</div>
 
 				<SubmitButtons />
