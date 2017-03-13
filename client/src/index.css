@@ -206,28 +206,6 @@ a.home-tile {
 	background: #dae3ee;
 }
 
-.report-new .persistent-tour-launcher {
-	padding-right: 100px;
-}
-
-.persistent-tour-launcher {
-	width: 40%;
-	float: right;
-	position: relative;
-	top: -5px;
-	left: -2px;
-}
-
-.persistent-tour-launcher div {
-	display: inline;
-}
-
-.persistent-tour-launcher .tour-icon {
-	top: 5px;
-	position: relative;
-	margin-left: 10px;
-}
-
 .person-icon {
 	margin-right: 4px;
 }
