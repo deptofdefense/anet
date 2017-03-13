@@ -222,7 +222,7 @@ export default class RollupShow extends Page {
 					Daily Rollup - {this.dateLongStr}
 				</h1>
 
-				<h2 className="form-header">Summary of Report Input</h2>
+				<h2 className="form-header">Summary</h2>
 				<fieldset>
 					<svg ref={el => this.graph = el} style={graphCss} />
 				</fieldset>
