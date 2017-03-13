@@ -147,25 +147,20 @@ class ReportShow extends Page {
 					</Fieldset>
 				}
 
-				{/* This is similar to how the report/new page has a title and buttons on the same line.
-					We may wish to consolidate the two approaches.
-				*/}
-				<div className="pull-right">
-					<DropdownButton bsStyle="primary" title="Actions" id="actions"
-						className="pull-right" onSelect={this.actionSelect}>
-						{canEdit && <MenuItem eventKey="edit">Edit report</MenuItem>}
-						{canSubmit && errors.length === 0 && <MenuItem eventKey="submit">Submit</MenuItem>}
-						{canEmail && <MenuItem eventKey="email" onClick={this.toggleEmailModal}>Email report</MenuItem>}
-
-						{canDelete && <MenuItem divider />}
-						{canDelete && <MenuItem eventKey="delete" >Delete report</MenuItem> }
-					</DropdownButton>
-				</div>
-
 				{this.renderEmailModal()}
 
 				<Form static formFor={report} horizontal>
-					<Fieldset title={`Report #${report.id}`} className="show-report-overview">
+					<Fieldset title={`Report #${report.id}`} className="show-report-overview" action={
+						<DropdownButton bsStyle="primary" title="Actions" id="actions"
+							className="pull-right" onSelect={this.actionSelect}>
+							{canEdit && <MenuItem eventKey="edit">Edit report</MenuItem>}
+							{canSubmit && errors.length === 0 && <MenuItem eventKey="submit">Submit</MenuItem>}
+							{canEmail && <MenuItem eventKey="email" onClick={this.toggleEmailModal}>Email report</MenuItem>}
+
+							{canDelete && <MenuItem divider />}
+							{canDelete && <MenuItem eventKey="delete" >Delete report</MenuItem> }
+						</DropdownButton>
+					}>
 
 						<Form.Field id="intent" label="Summary" >
 							<p><strong>Meeting goal:</strong> {report.intent}</p>
@@ -349,7 +344,7 @@ class ReportShow extends Page {
 				<img src={person.iconUrl()} alt={person.role} height={20} width={20} className="person-icon" />
 				<LinkTo person={person} />
 			</td>
-				<td><LinkTo position={person.position} /></td>
+			<td><LinkTo position={person.position} /></td>
 		</tr>
 	}
 
