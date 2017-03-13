@@ -1,4 +1,4 @@
-import React, {Component, PropTypes} from 'react'
+import React, {PropTypes} from 'react'
 import {Button, Table} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
@@ -30,8 +30,9 @@ export default class OrganizationForm extends ValidatableFormWrapper {
 	render() {
 		let {organization, edit} = this.props
 		let {approvalSteps} = organization
+		const {ValidatableForm, RequiredField} = this
 
-		return <Form formFor={organization}
+		return <ValidatableForm formFor={organization}
 			onChange={this.onChange}
 			onSubmit={this.onSubmit}
 			submitText="Save organization"
@@ -54,8 +55,8 @@ export default class OrganizationForm extends ValidatableFormWrapper {
 						queryParams={{type: organization.type}} />
 				</Form.Field>
 
-				<Form.Field id="shortName" label="Name" placeholder="e.g. EF1.1" />
-				<Form.Field id="longName" label="Description" placeholder="e.g. Force Sustainment" />
+				<RequiredField id="shortName" label="Name" placeholder="e.g. EF1.1" humanName="Name" />
+				<RequiredField id="longName" label="Description" placeholder="e.g. Force Sustainment" humanName="Description" />
 			</Fieldset>
 
 			{organization.type === 'ADVISOR_ORG' && <div>
@@ -71,7 +72,7 @@ export default class OrganizationForm extends ValidatableFormWrapper {
 					)}
 				</Fieldset>
 			</div>}
-		</Form>
+		</ValidatableForm>
 	}
 
 	renderApprovalStep(step, index) {

@@ -4,26 +4,25 @@ import autobind from 'autobind-decorator'
 
 import _some from 'lodash.some'
 import _values from 'lodash.values'
+import _get from 'lodash.get'
 
 export default class ValidatableFormWrapper extends Component {
     @autobind
     ValidatableForm(props) {
-        return <Form {...props} submitDisabled={this.isSubmitDisabled()} />
+		const isSubmitDisabled = () => {
+			return _some(_values(this.state.formErrors))
+		}
+        return <Form {...props} submitDisabled={isSubmitDisabled()} />
     }
 
 	@autobind
-	onFieldEnterErrorState(fieldName) {
-		this.setState({formErrors: {[fieldName]: true}})
-	}
+	RequiredField(props) {
+		const onError = () => this.setState({formErrors: {[props.id]: true}})
+		const onValid = () => this.setState({formErrors: {[props.id]: false}})
 
-	@autobind
-	onFieldExitErrorState(fieldName) {
-		this.setState({formErrors: {[fieldName]: false}})
+		return <Form.Field {...Object.without(props, 'required')} 
+			onError={onError}
+			onValid={onValid}
+			required={_get(props, 'required', true)} />
 	}
-
-	@autobind
-	isSubmitDisabled() {
-		return _some(_values(this.state.formErrors))
-	}
-
 }

@@ -56,20 +56,16 @@ export default class PersonForm extends ValidatableFormWrapper {
 			positionSearchTypes = ['PRINCIPAL']
 		}
 
-		const {ValidatableForm} = this
+		const {ValidatableForm, RequiredField} = this
 
 		return <ValidatableForm formFor={person} onChange={this.onChange} onSubmit={this.onSubmit} horizontal
-			submitText={this.props.saveText || 'Save person'}
-			submitDisabled={this.isSubmitDisabled()}>
+			submitText={this.props.saveText || 'Save person'}>
 
 			<Messages error={this.state.error} />
 
 			<Fieldset title={legendText}>
-				<Form.Field id="name"
-					required
-					humanName="Name"
-					onError={() => this.onFieldEnterErrorState('name')}
-					onValid={() => this.onFieldExitErrorState('name')} />
+				<RequiredField id="name"
+					humanName="Name" />
 
 				{edit ?
 					<Form.Field type="static" id="role" />
@@ -89,17 +85,13 @@ export default class PersonForm extends ValidatableFormWrapper {
 			</Fieldset>
 
 			<Fieldset title="Additional information">
-				<Form.Field id="emailAddress" label="Email" required={isAdvisor}
+				<RequiredField id="emailAddress" label="Email" required={isAdvisor}
 					humanName="Valid email address"
-					type="email"
-					onError={() => this.onFieldEnterErrorState('emailAddress')}
-					onValid={() => this.onFieldExitErrorState('emailAddress')} />
+					type="email" />
 				<Form.Field id="phoneNumber" label="Phone Number" />
-				<Form.Field id="rank"  componentClass="select"
+				<RequiredField id="rank"  componentClass="select"
 					required={isAdvisor}
-					humanName="Rank"
-					onError={() => this.onFieldEnterErrorState('rank')}
-					onValid={() => this.onFieldExitErrorState('rank')}>
+					humanName="Rank">
 
 					<option />
 					<option value="OR-1">OR-1</option>
@@ -123,23 +115,19 @@ export default class PersonForm extends ValidatableFormWrapper {
 					<option value="OF-10">OF-10</option>
 					<option value="CIV">CIV</option>
 					<option value="CTR">CTR</option>
-				</Form.Field>
+				</RequiredField>
 
-				<Form.Field id="gender" componentClass="select"
+				<RequiredField id="gender" componentClass="select"
 					required={isAdvisor}
-					humanName="Gender"
-					onError={() => this.onFieldEnterErrorState('gender')}
-					onValid={() => this.onFieldExitErrorState('gender')}>
+					humanName="Gender">
 					<option />
 					<option value="MALE" >Male</option>
 					<option value="FEMALE" >Female</option>
-				</Form.Field>
+				</RequiredField>
 
-				<Form.Field id="country" componentClass="select"
+				<RequiredField id="country" componentClass="select"
 					required={isAdvisor}
-					humanName="Country"
-					onError={() => this.onFieldEnterErrorState('country')}
-					onValid={() => this.onFieldExitErrorState('country')}>
+					humanName="Country">
 					<option />
 					<option>Afghanistan</option>
 					<option>Albania</option>
@@ -181,7 +169,7 @@ export default class PersonForm extends ValidatableFormWrapper {
 					<option>United States of America</option>
 					<option>United Kingdom</option>
 					<option>Ukraine</option>
-				</Form.Field>
+				</RequiredField>
 
 				<Form.Field id="endOfTourDate" addon={CALENDAR_ICON}>
 					<DatePicker placeholder="End of Tour Date" dateFormat="DD/MM/YYYY" />

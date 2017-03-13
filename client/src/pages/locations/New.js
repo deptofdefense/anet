@@ -34,7 +34,7 @@ export default class LocationNew extends ValidatableFormWrapper {
 	render() {
 		let location = this.state.location
 		let markers = this.state.markers
-		const {ValidatableForm} = this
+		const {ValidatableForm, RequiredField} = this
 
 		return (
 			<div>
@@ -47,10 +47,7 @@ export default class LocationNew extends ValidatableFormWrapper {
 					{this.state.error && <fieldset><p>There was a problem saving this location</p><p>{this.state.error}</p></fieldset>}
 
 					<Fieldset title="Create a new Location">
-						<Form.Field id="name" required={true} humanName="Name" 
-							onError={() => this.onFieldEnterErrorState('name')}
-							onValid={() => this.onFieldExitErrorState('name')}
-						/>
+						<RequiredField id="name" humanName="Name" />
 						<Form.Field type="static" id="location">
 							{(Math.round(location.lat * 1000)) / 1000}, {(Math.round(location.lng * 1000)) / 1000}
 						</Form.Field>
