@@ -281,7 +281,7 @@ class ReportShow extends Page {
 						</fieldset>
 					}
 
-					<fieldset>
+					<fieldset className="report-sub-form">
 						<legend>Comments</legend>
 
 						{report.comments.map(comment => {
@@ -295,14 +295,14 @@ class ReportShow extends Page {
 							)
 						})}
 
-						{!report.comments.length && "There are no comments yet."}
+						{!report.comments.length && <p>There are no comments yet.</p>}
 
-						<Form formFor={this.state.newComment} horizontal onSubmit={this.submitComment} onChange={this.onChange} submitText={false}>
-							<Form.Field id="text" placeholder="Type a comment here" label="">
-								<Form.Field.ExtraCol>
-									<Button bsStyle="primary" type="submit">Save comment</Button>
-								</Form.Field.ExtraCol>
-							</Form.Field>
+						<Form formFor={this.state.newComment} horizontal onSubmit={this.submitComment} submitText={false}>
+							<Form.Field id="text" placeholder="Type a comment here" label="Add a comment" componentClass="textarea" />
+
+							<div className="right-button">
+								<Button bsStyle="primary" type="submit">Save comment</Button>
+							</div>
 						</Form>
 					</fieldset>
 
@@ -314,7 +314,7 @@ class ReportShow extends Page {
 
 	@autobind
 	renderApprovalForm() {
-		return <fieldset className="report-approval">
+		return <fieldset className="report-sub-form">
 			<legend>Report approval</legend>
 
 			<h5>You can approve, reject, or edit this report</h5>
@@ -322,9 +322,8 @@ class ReportShow extends Page {
 			<Form.Field
 				id="approvalComment"
 				componentClass="textarea"
-				label="Leave a comment"
+				label="Approval comment"
 				placeholder="Type a comment here; required for a rejection"
-				horizontal={false}
 				getter={this.getApprovalComment}
 				onChange={this.onChangeComment}
 			/>
