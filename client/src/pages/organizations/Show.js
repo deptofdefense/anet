@@ -144,7 +144,7 @@ class OrganizationShow extends Page {
 					<OrganizationApprovals organization={org} />
 
 					<Fieldset title={`Reports from ${org.shortName}`}>
-						<ReportCollection organization={org} />
+						<ReportCollection reports={org.reports && org.reports.list} />
 					</Fieldset>
 				</Form>
 			</div>
