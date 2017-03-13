@@ -2,6 +2,7 @@ import React, {Component, PropTypes} from 'react'
 import {Table, Button} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
+import ValidatableFormWrapper from 'components/ValidatableFormWrapper'
 import Fieldset from 'components/Fieldset'
 import Form from 'components/Form'
 import Messages from 'components/Messages'
@@ -14,7 +15,7 @@ import {Position, Organization, Person} from 'models'
 
 import REMOVE_ICON from 'resources/delete.png'
 
-export default class PositionForm extends Component {
+export default class PositionForm extends ValidatableFormWrapper {
 	static propTypes = {
 		position: PropTypes.object.isRequired,
 		edit: PropTypes.bool,
@@ -47,8 +48,10 @@ export default class PositionForm extends Component {
 			personSearchQuery.role = 'PRINCIPAL'
 		}
 
+		const {ValidatableForm, RequiredField} = this
+
 		return (
-			<Form
+			<ValidatableForm
 				formFor={position}
 				onChange={this.onChange}
 				onSubmit={this.onSubmit}
@@ -84,13 +87,11 @@ export default class PositionForm extends Component {
 						/>
 					</Form.Field>
 
-					{position.type === 'PRINCIPAL' ?
-						<Form.Field id="code" label="Tashkil Code" placeholder="Postion ID or Number" />
-						:
-						<Form.Field id="code" label="Billet Code" placeholder="Postion ID or Number" />
-					}
+					<RequiredField id="code" 
+						label={position.type === 'PRINCIPAL' ? 'Tashkil Code' : 'Billet Code'} 
+						placeholder="Postion ID or Number" />
 
-					<Form.Field id="name" label="Position Name" placeholder="Name/Description of Position"/>
+					<RequiredField id="name" label="Position Name" placeholder="Name/Description of Position"/>
 
 					<Form.Field id="person">
 						<Autocomplete valueKey="name"
@@ -172,7 +173,7 @@ export default class PositionForm extends Component {
 						<Autocomplete valueKey="name" placeholder="Start typing to find a location where this Position will operate from..." url="/api/locations/search" />
 					</Form.Field>
 				</Fieldset>
-			</Form>
+			</ValidatableForm>
 		)
 	}
 
