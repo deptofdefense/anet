@@ -64,8 +64,7 @@ export default class PersonForm extends ValidatableFormWrapper {
 			<Messages error={this.state.error} />
 
 			<Fieldset title={legendText}>
-				<RequiredField id="name"
-					humanName="Name" />
+				<RequiredField id="name" />
 
 				{edit ?
 					<Form.Field type="static" id="role" />
@@ -90,8 +89,7 @@ export default class PersonForm extends ValidatableFormWrapper {
 					type="email" />
 				<Form.Field id="phoneNumber" label="Phone Number" />
 				<RequiredField id="rank"  componentClass="select"
-					required={isAdvisor}
-					humanName="Rank">
+					required={isAdvisor}>
 
 					<option />
 					<option value="OR-1">OR-1</option>
@@ -118,16 +116,14 @@ export default class PersonForm extends ValidatableFormWrapper {
 				</RequiredField>
 
 				<RequiredField id="gender" componentClass="select"
-					required={isAdvisor}
-					humanName="Gender">
+					required={isAdvisor}>
 					<option />
 					<option value="MALE" >Male</option>
 					<option value="FEMALE" >Female</option>
 				</RequiredField>
 
 				<RequiredField id="country" componentClass="select"
-					required={isAdvisor}
-					humanName="Country">
+					required={isAdvisor}>
 					<option />
 					<option>Afghanistan</option>
 					<option>Albania</option>

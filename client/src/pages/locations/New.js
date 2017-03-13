@@ -47,7 +47,7 @@ export default class LocationNew extends ValidatableFormWrapper {
 					{this.state.error && <fieldset><p>There was a problem saving this location</p><p>{this.state.error}</p></fieldset>}
 
 					<Fieldset title="Create a new Location">
-						<RequiredField id="name" humanName="Name" />
+						<RequiredField id="name" />
 						<Form.Field type="static" id="location">
 							{(Math.round(location.lat * 1000)) / 1000}, {(Math.round(location.lng * 1000)) / 1000}
 						</Form.Field>
