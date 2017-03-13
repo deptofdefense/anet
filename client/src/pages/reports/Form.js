@@ -90,11 +90,6 @@ export default class ReportForm extends ValidatableFormWrapper {
 
 		const {ValidatableForm, RequiredField} = this
 
-		const SuggestedField = props => <RequiredField 
-			canSubmitWithError={true} 
-			validateBeforeUserTouches={this.props.edit} 
-			{...props} />
-
 		return <div className="report-form">
 			<div className="pull-right">
 				{this.props.startHopscotch && <HopscotchLauncher onClick={this.props.startHopscotch} />}
@@ -109,10 +104,12 @@ export default class ReportForm extends ValidatableFormWrapper {
 					</Button>
 				}>
 
-					<SuggestedField id="intent" label="Meeting goal (purpose)" 
+					<RequiredField id="intent" label="Meeting goal (purpose)" 
+						canSubmitWithError={true} 
+						validateBeforeUserTouches={this.props.edit} 
 						placeholder="What happened?" data-focus componentClass="textarea" maxCharacters={250}>
 						<Form.Field.ExtraCol>{250 - report.intent.length} characters remaining</Form.Field.ExtraCol>
-					</SuggestedField>
+					</RequiredField>
 
 					<Form.Field id="engagementDate" addon={CALENDAR_ICON}>
 						<DatePicker showTodayButton placeholder="When did it happen?" dateFormat="DD/MM/YYYY" />
@@ -225,14 +222,18 @@ export default class ReportForm extends ValidatableFormWrapper {
 
 				<Fieldset title="Meeting discussion">
 					{!isCancelled &&
-						<SuggestedField id="keyOutcomes" componentClass="textarea" maxCharacters={250} humanName="Key outcome description">
+						<RequiredField id="keyOutcomes" componentClass="textarea" maxCharacters={250} humanName="Key outcome description"
+							canSubmitWithError={true} 
+							validateBeforeUserTouches={this.props.edit}>
 							<Form.Field.ExtraCol><small>{250 - report.keyOutcomes.length} characters remaining</small></Form.Field.ExtraCol>
-						</SuggestedField>
+						</RequiredField>
 					}
 
-					<SuggestedField id="nextSteps" componentClass="textarea" maxCharacters={250} humanName="Next steps description">
+					<RequiredField id="nextSteps" componentClass="textarea" maxCharacters={250} humanName="Next steps description"
+							canSubmitWithError={true} 
+							validateBeforeUserTouches={this.props.edit}>
 						<Form.Field.ExtraCol><small>{250 - report.nextSteps.length} characters remaining</small></Form.Field.ExtraCol>
-					</SuggestedField>
+					</RequiredField>
 
 					<Button className="center-block toggle-section-button" onClick={this.toggleReportText} id="toggleReportDetails" >
 						{this.state.showReportText ? 'Hide' : 'Add'} detailed comments
