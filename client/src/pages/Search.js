@@ -181,7 +181,7 @@ export default class Search extends Page {
 				<Breadcrumbs items={[['Searching for ' + queryString, '/search']]} />
 
 				<ContentForNav>
-					<div>
+					<div className="nav-fixed">
 						<div><Button onClick={History.goBack} bsStyle="link">&lt; Return to previous page</Button></div>
 
 						<Nav stacked bsStyle="pills" activeKey={queryType} onSelect={this.onSelectQueryType}>

@@ -27,7 +27,7 @@ class Nav extends Component {
 		if (inOrg) { path = '/organizations/' + this.context.app.props.params.id }
 
 		return (
-			<BSNav bsStyle="pills" stacked id="leftNav">
+			<BSNav bsStyle="pills" stacked id="leftNav" className="nav-fixed">
 				<Link to="/">
 					<NavItem>Home</NavItem>
 				</Link>
