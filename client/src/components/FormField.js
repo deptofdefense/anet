@@ -85,7 +85,10 @@ export default class FormField extends Component {
 			...childProps
 		} = this.props
 
-		childProps = Object.without(childProps, 'getter', 'horizontal', 'onError', 'onValid', 'humanName', 'maxCharacters')
+		childProps = Object.without(
+			childProps, 
+			'getter', 'horizontal', 'onError', 'onValid', 'humanName', 'maxCharacters', 'validateBeforeUserTouches'
+		)
 		if (canSubmitWithError) {
 			childProps = Object.without(childProps, 'required')
 		}
@@ -232,7 +235,17 @@ export default class FormField extends Component {
 		return props.value || this.getValue(props, context) || ''
 	}
 
+	componentWillMount() {
+		if (this.props.validateBeforeUserTouches) {
+			this.setState({userHasTouchedField: true})
+		}
+	}
+
 	componentWillReceiveProps(nextProps) {
+		if (nextProps.validateBeforeUserTouches) {
+			this.setState({userHasTouchedField: true})
+		}
+
 		if (nextProps.required !== this.props.required) {
 			this.updateValidationState(nextProps)
 		}

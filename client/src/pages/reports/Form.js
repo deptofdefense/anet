@@ -90,7 +90,10 @@ export default class ReportForm extends ValidatableFormWrapper {
 
 		const {ValidatableForm, RequiredField} = this
 
-		const SuggestedField = props => <RequiredField canSubmitWithError={true} {...props} />
+		const SuggestedField = props => <RequiredField 
+			canSubmitWithError={true} 
+			validateBeforeUserTouches={this.props.edit} 
+			{...props} />
 
 		return <div className="report-form">
 			<div className="pull-right">
