@@ -58,10 +58,6 @@ h2.legend {
 	margin-left: 1rem;
 }
 
-body:not(:-moz-handler-blocked) fieldset {
-    display: table-cell;
-}
-
 fieldset .pagination {
 	margin: 0;
 }
