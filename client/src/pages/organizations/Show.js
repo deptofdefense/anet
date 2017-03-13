@@ -2,12 +2,12 @@ import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 import ModelPage from 'components/ModelPage'
 import {ListGroup, ListGroupItem} from 'react-bootstrap'
-import {Link} from 'react-router'
 
 import Breadcrumbs from 'components/Breadcrumbs'
+import Fieldset from 'components/Fieldset'
 import Form from 'components/Form'
 import LinkTo from 'components/LinkTo'
-import Messages , {setMessages} from 'components/Messages'
+import Messages, {setMessages} from 'components/Messages'
 import ReportCollection from 'components/ReportCollection'
 
 import OrganizationPoams from 'pages/organizations/Poams'
@@ -93,21 +93,16 @@ class OrganizationShow extends Page {
 				<Messages error={this.state.error} success={this.state.success} />
 
 				<Form formFor={org} static horizontal>
-					<h1 className="legend">
-						{org.shortName}
+					<Fieldset title={org.shortName} action={<div>
+						{isAdmin && <LinkTo organization={Organization.pathForNew({parentOrgId: org.id})} button>
+							Create sub-organization
+						</LinkTo>}
 
-						<small>
-							{isAdmin && <Link className="btn btn-default btn-sm" to={{pathname: Organization.pathForNew(), query: {parentOrgId: org.id}}}>
-								Create sub-organization
-							</Link>}
+						{isSuperUser && <LinkTo organization={org} edit button="primary">
+							Edit
+						</LinkTo>}
+					</div>}>
 
-							{isSuperUser && <Link className="btn btn-primary btn-sm" to={Organization.pathForEdit(org)}>
-								Edit
-							</Link>}
-						</small>
-					</h1>
-
-					<fieldset>
 						<Form.Field id="longName" label="Description"/>
 
 						<Form.Field id="type">
@@ -134,6 +129,7 @@ class OrganizationShow extends Page {
 								{superUsers.length === 0 && <p><i>No Super Users!</i></p>}
 							</Form.Field>
 						}
+
 						{org.childrenOrgs && org.childrenOrgs.length > 0 && <Form.Field id="childrenOrgs" label="Sub-Orgs">
 							<ListGroup>
 								{org.childrenOrgs.map(org =>
@@ -141,16 +137,15 @@ class OrganizationShow extends Page {
 								)}
 							</ListGroup>
 						</Form.Field>}
-					</fieldset>
+					</Fieldset>
 
 					<OrganizationPoams organization={org} />
 					<OrganizationLaydown organization={org} />
 					<OrganizationApprovals organization={org} />
 
-					<h2 className="legend">Reports from {org.shortName}</h2>
-					<fieldset>
+					<Fieldset title={`Reports from ${org.shortName}`}>
 						<ReportCollection organization={org} />
-					</fieldset>
+					</Fieldset>
 				</Form>
 			</div>
 		)

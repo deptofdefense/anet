@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {Table} from 'react-bootstrap'
-import {Link} from 'react-router'
 
+import Fieldset from 'components/Fieldset'
 import LinkTo from 'components/LinkTo'
 
 import {Poam} from 'models'
@@ -15,30 +15,24 @@ export default class OrganizationPoams extends Component {
 
 		let poams = org.poams
 
-		return <div>
-			<h2 className="legend">
-				PoAMs / Pillars
-				<small><Link className="btn btn-default btn-sm" to={Poam.pathForNew()}>Create PoAM</Link></small>
-			</h2>
-			<fieldset>
-				<Table>
-					<thead>
-						<tr>
-							<th>Name</th>
-							<th>Description</th>
-						</tr>
-					</thead>
+		return <Fieldset title="PoAMs / Pillars" action={<LinkTo poam={Poam.pathForNew()} button>Create PoAM</LinkTo>}>
+			<Table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+					</tr>
+				</thead>
 
-					<tbody>
-						{Poam.map(poams, (poam, idx) =>
-							<tr key={poam.id} id={`poam_${idx}`} >
-								<td><LinkTo poam={poam} >{poam.shortName}</LinkTo></td>
-								<td>{poam.longName}</td>
-							</tr>
-						)}
-					</tbody>
-				</Table>
-			</fieldset>
-		</div>
+				<tbody>
+					{Poam.map(poams, (poam, idx) =>
+						<tr key={poam.id} id={`poam_${idx}`} >
+							<td><LinkTo poam={poam} >{poam.shortName}</LinkTo></td>
+							<td>{poam.longName}</td>
+						</tr>
+					)}
+				</tbody>
+			</Table>
+		</Fieldset>
 	}
 }

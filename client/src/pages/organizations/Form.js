@@ -2,16 +2,16 @@ import React, {Component, PropTypes} from 'react'
 import {Button, Table} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
+import Fieldset from 'components/Fieldset'
 import Form from 'components/Form'
 import ButtonToggleGroup from 'components/ButtonToggleGroup'
 import Autocomplete from 'components/Autocomplete'
 import PoamsSelector from 'components/PoamsSelector'
 import History from 'components/History'
-import {Position} from 'models'
 import Messages from 'components/Messages'
 
 import API from 'api'
-import Organization from 'models/Organization'
+import {Position, Organization} from 'models'
 
 export default class OrganizationForm extends Component {
 	static propTypes = {
@@ -37,8 +37,8 @@ export default class OrganizationForm extends Component {
 				   horizontal>
 
 			<Messages error={this.state.error} />
-			<h2 className="form-header">{edit ? 'Editing ' + organization.shortName : 'Create a new Organization'}</h2>
-			<fieldset>
+
+			<Fieldset title={edit ? `Editing ${organization.shortName}` : "Create a new Organization"}>
 				<Form.Field id="type">
 					<ButtonToggleGroup>
 						<Button id="advisorOrgButton" value="ADVISOR_ORG">Advisor Organization</Button>
@@ -55,13 +55,12 @@ export default class OrganizationForm extends Component {
 
 				<Form.Field id="shortName" label="Name" placeholder="e.g. EF1.1" />
 				<Form.Field id="longName" label="Description" placeholder="e.g. Force Sustainment" />
-			</fieldset>
+			</Fieldset>
 
 			{organization.type === 'ADVISOR_ORG' && <div>
 				<PoamsSelector poams={organization.poams} onChange={this.onChange} />
 
-				<h2 className="form-header" >Approval Process</h2>
-				<fieldset>
+				<Fieldset title="Approval process">
 					<Button className="pull-right" onClick={this.addApprovalStep} bsStyle="primary" id="addApprovalStepButton" >
 						Add an Approval Step
 					</Button>
@@ -69,7 +68,7 @@ export default class OrganizationForm extends Component {
 					{approvalSteps && approvalSteps.map((step, index) =>
 						this.renderApprovalStep(step, index)
 					)}
-				</fieldset>
+				</Fieldset>
 			</div>}
 		</Form>
 	}
@@ -77,52 +76,49 @@ export default class OrganizationForm extends Component {
 	renderApprovalStep(step, index) {
 		let approvers = step.approvers
 
-		return <div key={index}>
-			<h2 className="form-header">Step {index + 1}</h2>
-			<fieldset>
-				<Button className="pull-right" onClick={this.removeApprovalStep.bind(this, index)}>
-					X
-				</Button>
+		return <Fieldset title={`Step ${index + 1}`} key={index}>
+			<Button className="pull-right" onClick={this.removeApprovalStep.bind(this, index)}>
+				X
+			</Button>
 
-				<Form.Field id="name"
-					value={step.name}
-					onChange={(event) => this.setStepName(index, event)} />
+			<Form.Field id="name"
+				value={step.name}
+				onChange={(event) => this.setStepName(index, event)} />
 
-				<Form.Field id="addApprover" label="Add an Approver" value={approvers}>
-					<Autocomplete valueKey="name"
-						placeholder="Search for the approvers position"
-						objectType={Position}
-						fields={'id, name, code, type, person { id, name, rank}'}
-						template={pos =>
-							<span>{pos.name} - {pos.code} ({(pos.person) ? pos.person.name : <i>empty</i>})</span>
-						}
-						queryParams={{type: ['ADVISOR', 'SUPER_USER', 'ADMINISTRATOR'], matchPersonName: true}}
-						onChange={this.addApprover.bind(this, index)}
-						clearOnSelect={true} />
+			<Form.Field id="addApprover" label="Add an approver" value={approvers}>
+				<Autocomplete valueKey="name"
+					placeholder="Search for the approver's position"
+					objectType={Position}
+					fields="id, name, code, type, person { id, name, rank }"
+					template={pos =>
+						<span>{pos.name} - {pos.code} ({pos.person ? pos.person.name : <i>empty</i>})</span>
+					}
+					queryParams={{type: ['ADVISOR', 'SUPER_USER', 'ADMINISTRATOR'], matchPersonName: true}}
+					onChange={this.addApprover.bind(this, index)}
+					clearOnSelect={true} />
 
-					<Table striped>
-						<thead>
-							<tr>
-								<th></th>
-								<th>Name</th>
-								<th>Position</th>
+				<Table striped>
+					<thead>
+						<tr>
+							<th></th>
+							<th>Name</th>
+							<th>Position</th>
+						</tr>
+					</thead>
+					<tbody>
+						{approvers.map((approver, approverIndex) =>
+							<tr key={approver.id} id={`step_${index}_approver_${approverIndex}`} >
+								<td onClick={this.removeApprover.bind(this, approver, index)}>
+									<span style={{cursor: 'pointer'}}>⛔️</span>
+								</td>
+								<td>{approver.person && approver.person.name}</td>
+								<td >{approver.name}</td>
 							</tr>
-						</thead>
-						<tbody>
-							{approvers.map((approver, approverIndex) =>
-								<tr key={approver.id} id={`step_${index}_approver_${approverIndex}`} >
-									<td onClick={this.removeApprover.bind(this, approver, index)}>
-										<span style={{cursor: 'pointer'}}>⛔️</span>
-									</td>
-									<td>{approver.person && approver.person.name}</td>
-									<td >{approver.name}</td>
-								</tr>
-							)}
-						</tbody>
-					</Table>
-				</Form.Field>
-			</fieldset>
-		</div>
+						)}
+					</tbody>
+				</Table>
+			</Form.Field>
+		</Fieldset>
 	}
 
 	@autobind

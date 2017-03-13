@@ -1,16 +1,13 @@
 import React, {PropTypes, Component} from 'react'
 import {Table, Button} from 'react-bootstrap'
-import {Link} from 'react-router'
+import autobind from 'autobind-decorator'
+
+import Fieldset from 'components/Fieldset'
 import LinkTo from 'components/LinkTo'
 
 import {Position, Person} from 'models'
-import autobind from 'autobind-decorator'
 
 export default class OrganizationLaydown extends Component {
-	static contextTypes = {
-		app: PropTypes.object.isRequired,
-	}
-
 	static propTypes = {
 		organization: PropTypes.object.isRequired
 	}
@@ -31,31 +28,24 @@ export default class OrganizationLaydown extends Component {
 		let positionsNeedingAttention = org.positions.filter(position => !position.person )
 		let supportedPositions = org.positions.filter(position => positionsNeedingAttention.indexOf(position) === -1)
 
-		return (
-			<div>
-				<h2 className="legend">
-					Supported positions
+		return <div>
+			<Fieldset title="Supported positions" action={<div>
+				{numInactivePos > 0 && <Button bsSize="sm" onClick={this.toggleShowInactive}>
+					{(showInactivePositions ? "Hide " : "Show ") + numInactivePos + " inactive position(s)"}
+				</Button>}
 
-					<small>
-						{numInactivePos > 0 && <Button bsSize="sm" onClick={this.toggleShowInactive}>
-							{(showInactivePositions ? "Hide " : "Show ") + numInactivePos + " inactive position(s)"}
-						</Button>}
+				<LinkTo position={Position.pathForNew({organizationId: org.id})} button>
+					Create position
+				</LinkTo>
+			</div>}>
 
-						<Link className="btn btn-default btn-sm" to={{pathname: Position.pathForNew(), query: {organizationId: org.id}}}>
-							Create position
-						</Link>
-					</small>
-				</h2>
-				<fieldset>
-					{this.renderPositionTable(supportedPositions)}
-				</fieldset>
+				{this.renderPositionTable(supportedPositions)}
+			</Fieldset>
 
-				<h2 className="legend">Vacant positions</h2>
-				<fieldset>
-					{this.renderPositionTable(positionsNeedingAttention)}
-				</fieldset>
-			</div>
-		)
+			<Fieldset title="Vacant positions">
+				{this.renderPositionTable(positionsNeedingAttention)}
+			</Fieldset>
+		</div>
 	}
 
 	renderPositionTable(positions) {

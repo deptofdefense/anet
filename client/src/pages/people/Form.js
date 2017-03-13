@@ -1,14 +1,15 @@
 import React, {Component, PropTypes} from 'react'
+import {Button} from 'react-bootstrap'
 import DatePicker from 'react-bootstrap-date-picker'
 import autobind from 'autobind-decorator'
 
 import Form from 'components/Form'
+import Fieldset from 'components/Fieldset'
 import Messages from 'components/Messages'
 import TextEditor from 'components/TextEditor'
 import Autocomplete from 'components/Autocomplete'
 import History from 'components/History'
 import ButtonToggleGroup from 'components/ButtonToggleGroup'
-import {Button} from 'react-bootstrap'
 
 import _some from 'lodash.some'
 import _values from 'lodash.values'
@@ -60,13 +61,12 @@ export default class PersonForm extends Component {
 		}
 
 		return <Form formFor={person} onChange={this.onChange} onSubmit={this.onSubmit} horizontal
-					submitText={this.props.saveText || 'Save person'}
-					submitDisabled={this.isSubmitDisabled()}>
+			submitText={this.props.saveText || 'Save person'}
+			submitDisabled={this.isSubmitDisabled()}>
 
 			<Messages error={this.state.error} />
 
-			<h2 className="form-header">{legendText}</h2>
-			<fieldset>
+			<Fieldset title={legendText}>
 				<Form.Field id="name"
 					required
 					humanName="Name"
@@ -88,10 +88,9 @@ export default class PersonForm extends Component {
 						<Button id="statusInactiveButton" value="INACTIVE">Inactive</Button>
 					</ButtonToggleGroup>
 				</Form.Field>
-			</fieldset>
+			</Fieldset>
 
-			<fieldset>
-				<legend>Additional Information</legend>
+			<Fieldset title="Additional information">
 				<Form.Field id="emailAddress" label="Email" required={isAdvisor}
 					humanName="Valid email address"
 					type="email"
@@ -193,11 +192,10 @@ export default class PersonForm extends Component {
 				<Form.Field id="biography">
 					<TextEditor label="" value={person.biography} />
 				</Form.Field>
-			</fieldset>
+			</Fieldset>
 
 			{showPositionAssignment &&
-				<fieldset>
-					<legend>Position</legend>
+				<Fieldset title="Position">
 					<Form.Field id="position" >
 						<Autocomplete valueKey="name"
 							placeholder="Select a position for this person"
@@ -209,7 +207,7 @@ export default class PersonForm extends Component {
 							queryParams={{type: positionSearchTypes}} />
 					</Form.Field>
 					<span>You can optionally assign this person to a position now</span>
-				</fieldset>
+				</Fieldset>
 			}
 		</Form>
 	}
