@@ -1,7 +1,7 @@
 import React from 'react'
 import {Button} from 'react-bootstrap'
 
-import TOUR_ICON from 'resources/tour-icon2.png'
+import TOUR_ICON from 'resources/tour-icon.png'
 
 const iconCss = {
 	width: '20px',
