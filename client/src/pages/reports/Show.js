@@ -201,8 +201,6 @@ class ReportShow extends Page {
 						</Form.Field>
 					</fieldset>
 
-					{canApprove && this.renderApprovalForm()}
-
 					<fieldset>
 						<legend>Meeting attendees</legend>
 
@@ -276,7 +274,7 @@ class ReportShow extends Page {
 								<Button type="submit" bsStyle="primary" bsSize="large"
 									onClick={this.submitDraft}
 									disabled={errors && errors.length > 0}
-									id="submitReportButton" >
+									id="submitReportButton">
 									Submit report
 								</Button>
 							</Col>
@@ -297,7 +295,7 @@ class ReportShow extends Page {
 							)
 						})}
 
-						{!report.comments.length && 'There are no comments yet.'}
+						{!report.comments.length && "There are no comments yet."}
 
 						<Form formFor={this.state.newComment} horizontal onSubmit={this.submitComment} onChange={this.onChange} submitText={false}>
 							<Form.Field id="text" placeholder="Type a comment here" label="">
@@ -307,6 +305,8 @@ class ReportShow extends Page {
 							</Form.Field>
 						</Form>
 					</fieldset>
+
+					{canApprove && this.renderApprovalForm()}
 				</Form>
 			</div>
 		)
