@@ -72,8 +72,8 @@ export default class OrganizationLaydown extends Component {
 				<tr>
 					<th>{posNameHeader}</th>
 					<th>{posPersonHeader}</th>
-					<th>{otherNameHeader}</th>
 					<th>{otherPersonHeader}</th>
+					<th>{otherNameHeader}</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -122,8 +122,8 @@ export default class OrganizationLaydown extends Component {
 		return <tr key={key}>
 			{positionNameCol}
 			{positionPersonCol}
-			{otherNameCol}
 			{otherPersonCol}
+			{otherNameCol}
 		</tr>
 	}
 
