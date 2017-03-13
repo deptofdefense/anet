@@ -9,6 +9,11 @@ import _values from 'lodash.values'
 import _get from 'lodash.get'
 
 export default class ValidatableFormWrapper extends Component {
+	constructor() {
+		super()
+		this.state = {}
+	}
+
     @autobind
     ValidatableForm(props) {
 		const isSubmitDisabled = () => {
