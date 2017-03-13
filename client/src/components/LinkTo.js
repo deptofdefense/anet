@@ -16,10 +16,23 @@ export default class LinkTo extends Component {
 			PropTypes.string,
 			PropTypes.func,
 		]),
+
+		edit: PropTypes.bool,
+
+		// Configures this link to look like a button. Set it to true to make it a button,
+		// or pass a string to set a button type
+		button: PropTypes.oneOfType([
+			PropTypes.bool,
+			PropTypes.string,
+		])
 	}
 
 	render() {
-		let {componentClass, children, ...componentProps} = this.props
+		let {componentClass, children, edit, button, className, ...componentProps} = this.props
+
+		if (button) {
+			componentProps.className = [className, 'btn', `btn-${button === true ? 'default' : button}`].join(' ')
+		}
 
 		let modelName = Object.keys(componentProps).find(key => MODEL_NAMES.indexOf(key) !== -1)
 		if (!modelName) {
@@ -32,7 +45,11 @@ export default class LinkTo extends Component {
 			return null
 
 		let modelClass = Models[modelName]
-		let to = modelClass.pathFor(modelInstance)
+		let to = modelInstance
+		if (typeof to !== 'string') {
+			to = edit ? modelClass.pathForEdit(modelInstance) : modelClass.pathFor(modelInstance)
+		}
+
 		componentProps = Object.without(componentProps, modelName)
 
 		let Component = componentClass || Link
@@ -45,4 +62,5 @@ export default class LinkTo extends Component {
 MODEL_NAMES.forEach(key => LinkTo.propTypes[key] = PropTypes.oneOfType([
 	PropTypes.instanceOf(Models[key]),
 	PropTypes.object,
+	PropTypes.string,
 ]))
