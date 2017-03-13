@@ -1,3 +1,4 @@
+import encodeQuery from 'querystring/encode'
 import utils from 'utils'
 
 export default class Model {
@@ -29,7 +30,7 @@ export default class Model {
 		)
 	}
 
-	static pathFor(instance) {
+	static pathFor(instance, query) {
 		if (!instance)
 			return console.error(`You didn't pass anything to ${this.name}.pathFor. If you want a new route, you can pass null.`)
 
@@ -40,16 +41,34 @@ export default class Model {
 
 		let resourceName = utils.resourceize(this.resourceName)
 		let id = instance.id
-		return ['', resourceName, id].join('/')
+		let url = ['', resourceName, id].join('/')
+
+		if (query) {
+			url += '?' + encodeQuery(query)
+		}
+
+		return url
 	}
 
-	static pathForNew() {
+	static pathForNew(query) {
 		let resourceName = utils.resourceize(this.resourceName)
-		return ['', resourceName, 'new'].join('/')
+		let url = ['', resourceName, 'new'].join('/')
+
+		if (query) {
+			url += '?' + encodeQuery(query)
+		}
+
+		return url
 	}
 
-	static pathForEdit(instance) {
-		return this.pathFor(instance) + '/edit'
+	static pathForEdit(instance, query) {
+		let url = this.pathFor(instance) + '/edit'
+
+		if (query) {
+			url += '?' + encodeQuery(query)
+		}
+
+		return url
 	}
 
 	static isEqual(a, b) {
@@ -81,8 +100,8 @@ export default class Model {
 		return this
 	}
 
-	toPath() {
-		return (this.id) ? this.constructor.pathFor(this) : this.constructor.pathForNew()
+	toPath(query) {
+		return this.id ? this.constructor.pathFor(this, query) : this.constructor.pathForNew(query)
 	}
 
 	toString() {

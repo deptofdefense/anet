@@ -2,6 +2,7 @@ import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 import autobind from 'autobind-decorator'
 
+import Fieldset from 'components/Fieldset'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
 
@@ -37,12 +38,11 @@ export default class AdminIndex extends Page {
 				<Breadcrumbs items={[['Admin settings', '/admin']]} />
 
 				<Form formFor={settings} horizontal submitText="Save settings" onChange={this.onChange} onSubmit={this.onSubmit}>
-					<h2 className="form-header">Site Settings</h2>
-					<fieldset>
+					<Fieldset title="Site settings">
 						{Object.map(settings, (key, value) =>
 							<Form.Field id={key} key={key} />
 						)}
-					</fieldset>
+					</Fieldset>
 				</Form>
 			</div>
 		)

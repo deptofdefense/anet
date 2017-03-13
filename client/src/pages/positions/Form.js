@@ -2,6 +2,7 @@ import React, {Component, PropTypes} from 'react'
 import {Table, Button} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
+import Fieldset from 'components/Fieldset'
 import Form from 'components/Form'
 import Messages from 'components/Messages'
 import Autocomplete from 'components/Autocomplete'
@@ -57,9 +58,7 @@ export default class PositionForm extends Component {
 
 				<Messages error={error} success={success} />
 
-				<h2 className="form-header">{edit ? "Edit Position" : "Create a new Position"}</h2>
-				<fieldset>
-
+				<Fieldset title={edit ? "Edit Position" : "Create a new Position"}>
 					<Form.Field id="type" disabled={this.props.edit}>
 						<ButtonToggleGroup>
 							<Button id="typeAdvisorButton" value="ADVISOR">NATO (Billet)</Button>
@@ -113,11 +112,9 @@ export default class PositionForm extends Component {
 						</Form.Field>
 					}
 
-				</fieldset>
+				</Fieldset>
 
-				<fieldset>
-					<legend>Assigned {position.type === 'PRINCIPAL' ? 'advisor' : 'advisee'}</legend>
-
+				<Fieldset title={`Assigned ${position.type === 'PRINCIPAL' ? 'advisor' : 'advisee'}`}>
 					{position.type === 'PRINCIPAL' ?
 						<p className="help-text">Who is this person advised by?</p>
 						:
@@ -168,14 +165,13 @@ export default class PositionForm extends Component {
 							</tbody>
 						</Table>
 					</Form.Field>
-				</fieldset>
+				</Fieldset>
 
-				<fieldset>
-					<legend>Additional information</legend>
+				<Fieldset title="Additional information">
 					<Form.Field id="location">
 						<Autocomplete valueKey="name" placeholder="Start typing to find a location where this Position will operate from..." url="/api/locations/search" />
 					</Form.Field>
-				</fieldset>
+				</Fieldset>
 			</Form>
 		)
 	}

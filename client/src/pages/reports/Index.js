@@ -1,6 +1,7 @@
 import React from 'react'
 import Page from 'components/Page'
 
+import Fieldset from 'components/Fieldset'
 import Breadcrumbs from 'components/Breadcrumbs'
 import ReportTable from 'components/ReportTable'
 
@@ -29,11 +30,10 @@ export default class ReportsIndex extends Page {
 		return (
 			<div>
 				<Breadcrumbs items={[['My reports', '/reports']]} />
-				<fieldset>
-					<legend>All reports</legend>
 
+				<Fieldset title="All reports">
 					<ReportTable reports={this.state.reports} showAuthors={true} showStatus={true}/>
-				</fieldset>
+				</Fieldset>
 			</div>
 		)
 	}

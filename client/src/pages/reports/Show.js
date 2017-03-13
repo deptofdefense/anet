@@ -6,7 +6,7 @@ import autobind from 'autobind-decorator'
 import moment from 'moment'
 import utils from 'utils'
 
-import {Report, Person, Poam, Comment} from 'models'
+import Fieldset from 'components/Fieldset'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
 import Messages from 'components/Messages'
@@ -14,6 +14,7 @@ import LinkTo from 'components/LinkTo'
 import History from 'components/History'
 
 import API from 'api'
+import {Report, Person, Poam, Comment} from 'models'
 
 class ReportShow extends Page {
 	static contextTypes = {
@@ -121,14 +122,14 @@ class ReportShow extends Page {
 				<Messages error={this.state.error} success={this.state.success} />
 
 				{report.isRejected() &&
-					<fieldset style={{textAlign: 'center' }}>
+					<Fieldset style={{textAlign: 'center' }}>
 						<h4 className="text-danger">This report was REJECTED. </h4>
 						<p>You can review the comments below, fix the report and re-submit</p>
-					</fieldset>
+					</Fieldset>
 				}
 
 				{report.isDraft() &&
-					<fieldset style={{textAlign: 'center'}}>
+					<Fieldset style={{textAlign: 'center'}}>
 						<h4 className="text-danger">This report is in DRAFT state and hasn't been submitted.</h4>
 						<p>You can review the draft below to make sure all the details are correct.</p>
 						<div style={{textAlign: 'left'}}>
@@ -136,36 +137,30 @@ class ReportShow extends Page {
 								this.renderValidationErrors(errors)
 							}
 						</div>
-					</fieldset>
+					</Fieldset>
 				}
 
 				{report.isPending() &&
-					<fieldset style={{textAlign: 'center'}}>
+					<Fieldset style={{textAlign: 'center'}}>
 						<h4 className="text-danger">This report is PENDING approvals.</h4>
 						<p>It won't be available in the ANET database until your <a href="#approvals">approval organization</a> marks it as approved.</p>
-					</fieldset>
+					</Fieldset>
 				}
-
-				{/* This is similar to how the report/new page has a title and buttons on the same line.
-					We may wish to consolidate the two approaches.
-				*/}
-				<div className="pull-right">
-					<DropdownButton bsStyle="primary" title="Actions" id="actions"
-						className="pull-right" onSelect={this.actionSelect}>
-						{canEdit && <MenuItem eventKey="edit">Edit report</MenuItem>}
-						{canSubmit && errors.length === 0 && <MenuItem eventKey="submit">Submit</MenuItem>}
-						{canEmail && <MenuItem eventKey="email" onClick={this.toggleEmailModal}>Email report</MenuItem>}
-
-						{canDelete && <MenuItem divider />}
-						{canDelete && <MenuItem eventKey="delete" >Delete report</MenuItem> }
-					</DropdownButton>
-				</div>
 
 				{this.renderEmailModal()}
 
-				<h2 className="form-header">Report #{report.id}</h2>
 				<Form static formFor={report} horizontal>
-					<fieldset className="show-report-overview">
+					<Fieldset title={`Report #${report.id}`} className="show-report-overview" action={
+						<DropdownButton bsStyle="primary" title="Actions" id="actions"
+							className="pull-right" onSelect={this.actionSelect}>
+							{canEdit && <MenuItem eventKey="edit">Edit report</MenuItem>}
+							{canSubmit && errors.length === 0 && <MenuItem eventKey="submit">Submit</MenuItem>}
+							{canEmail && <MenuItem eventKey="email" onClick={this.toggleEmailModal}>Email report</MenuItem>}
+
+							{canDelete && <MenuItem divider />}
+							{canDelete && <MenuItem eventKey="delete" >Delete report</MenuItem> }
+						</DropdownButton>
+					}>
 
 						<Form.Field id="intent" label="Summary" >
 							<p><strong>Meeting goal:</strong> {report.intent}</p>
@@ -199,11 +194,9 @@ class ReportShow extends Page {
 						<Form.Field id="principalOrg" label="Principal Org">
 							<LinkTo organization={report.principalOrg} />
 						</Form.Field>
-					</fieldset>
+					</Fieldset>
 
-					<fieldset>
-						<legend>Meeting attendees</legend>
-
+					<Fieldset title="Meeting attendees">
 						<Table condensed className="borderless">
 							<thead>
 								<tr>
@@ -223,11 +216,9 @@ class ReportShow extends Page {
 								)}
 							</tbody>
 						</Table>
-					</fieldset>
+					</Fieldset>
 
-					<fieldset>
-						<legend>Plan of Action and Milestones / Pillars</legend>
-
+					<Fieldset title="Plan of Action and Milestones / Pillars">
 						<Table>
 							<thead>
 								<tr>
@@ -245,19 +236,18 @@ class ReportShow extends Page {
 								)}
 							</tbody>
 						</Table>
-					</fieldset>
+					</Fieldset>
 
 					{report.reportText &&
-						<fieldset>
-							<legend>Meeting discussion</legend>
+						<Fieldset title="Meeting discussion">
 							<div dangerouslySetInnerHTML={{__html: report.reportText}} />
-						</fieldset>
+						</Fieldset>
 					}
 
 					{report.isPending() && this.renderApprovals()}
 
 					{canSubmit &&
-						<fieldset>
+						<Fieldset>
 							<Col md={9}>
 								{(errors && errors.length > 0) ?
 									this.renderValidationErrors(errors)
@@ -278,12 +268,10 @@ class ReportShow extends Page {
 									Submit report
 								</Button>
 							</Col>
-						</fieldset>
+						</Fieldset>
 					}
 
-					<fieldset className="report-sub-form">
-						<legend>Comments</legend>
-
+					<Fieldset className="report-sub-form" title="Comments">
 						{report.comments.map(comment => {
 							let createdAt = moment(comment.createAt)
 							return (
@@ -304,7 +292,7 @@ class ReportShow extends Page {
 								<Button bsStyle="primary" type="submit">Save comment</Button>
 							</div>
 						</Form>
-					</fieldset>
+					</Fieldset>
 
 					{canApprove && this.renderApprovalForm()}
 				</Form>
@@ -314,9 +302,7 @@ class ReportShow extends Page {
 
 	@autobind
 	renderApprovalForm() {
-		return <fieldset className="report-sub-form">
-			<legend>Report approval</legend>
-
+		return <Fieldset className="report-sub-form" title="Report approval">
 			<h5>You can approve, reject, or edit this report</h5>
 
 			<Form.Field
@@ -333,19 +319,19 @@ class ReportShow extends Page {
 				<Button onClick={this.actionSelect.bind(this, 'edit')}>Edit report</Button>
 				<Button bsStyle="primary" onClick={this.approveReport}><strong>Approve</strong></Button>
 			</div>
-		</fieldset>
+		</Fieldset>
 	}
 
 	@autobind
 	renderApprovals(canApprove) {
 		let report = this.state.report
-		return <fieldset>
+		return <Fieldset>
 			<a name="approvals" />
 			<legend>Approvals</legend>
 			{report.approvalStatus.map(action =>
 				this.renderApprovalAction(action)
 			)}
-		</fieldset>
+		</Fieldset>
 	}
 
 	@autobind
@@ -358,7 +344,7 @@ class ReportShow extends Page {
 				<img src={person.iconUrl()} alt={person.role} height={20} width={20} className="person-icon" />
 				<LinkTo person={person} />
 			</td>
-				<td><LinkTo position={person.position} /></td>
+			<td><LinkTo position={person.position} /></td>
 		</tr>
 	}
 

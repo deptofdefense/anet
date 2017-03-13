@@ -1,6 +1,7 @@
 import React, {Component, PropTypes} from 'react'
 import autobind from 'autobind-decorator'
 
+import Fieldset from 'components/Fieldset'
 import Autocomplete from 'components/Autocomplete'
 import Form from 'components/Form'
 import {Table, Button, HelpBlock} from 'react-bootstrap'
@@ -19,11 +20,9 @@ export default class PoamsSelector extends Component {
 	}
 
 	render() {
-		let {poams, shortcuts, validationState} = this.props
+		let {poams, shortcuts, validationState, optional} = this.props
 
-		return <fieldset>
-			<legend>Plans of Action and Milestones / Pillars {this.props.optional && <small>(Optional)</small>}</legend>
-
+		return <Fieldset title="Plans of Action and Milestones / Pillars" action={optional && "(Optional)"}>
 			<Form.Field id="poams" label="PoAMs" validationState={validationState} >
 				<Autocomplete
 					url="/api/poams/search"
@@ -34,10 +33,12 @@ export default class PoamsSelector extends Component {
 					onChange={this.addPoam}
 					onErrorChange={this.props.onErrorChange}
 					clearOnSelect={true} />
+
 				{validationState && <HelpBlock>
 					<img src={WARNING_ICON} role="presentation" height="20px" />
 					PoAM not found in Database
 				</HelpBlock>}
+
 				<Table hover striped>
 					<thead>
 						<tr>
@@ -65,17 +66,17 @@ export default class PoamsSelector extends Component {
 
 				{ shortcuts && shortcuts.length > 0 && this.renderShortcuts() }
 			</Form.Field>
-		</fieldset>
+		</Fieldset>
 	}
 
 	renderShortcuts() {
 		let shortcuts = this.props.shortcuts || []
 		return <Form.Field.ExtraCol className="shortcut-list">
 			<h5>Shortcuts</h5>
-				{shortcuts.map(poam =>
-					<Button key={poam.id} bsStyle="link" onClick={this.addPoam.bind(this, poam)}>Add "{poam.longName}"</Button>
-				)}
-			</Form.Field.ExtraCol>
+			{shortcuts.map(poam =>
+				<Button key={poam.id} bsStyle="link" onClick={this.addPoam.bind(this, poam)}>Add "{poam.longName}"</Button>
+			)}
+		</Form.Field.ExtraCol>
 	}
 
 	@autobind

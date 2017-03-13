@@ -1,15 +1,13 @@
 import React, {PropTypes, Component} from 'react'
 import {Table, Button} from 'react-bootstrap'
+import autobind from 'autobind-decorator'
+
+import Fieldset from 'components/Fieldset'
 import LinkTo from 'components/LinkTo'
 
 import {Position, Person} from 'models'
-import autobind from 'autobind-decorator'
 
 export default class OrganizationLaydown extends Component {
-	static contextTypes = {
-		app: PropTypes.object.isRequired,
-	}
-
 	static propTypes = {
 		organization: PropTypes.object.isRequired
 	}
@@ -30,27 +28,24 @@ export default class OrganizationLaydown extends Component {
 		let positionsNeedingAttention = org.positions.filter(position => !position.person )
 		let supportedPositions = org.positions.filter(position => positionsNeedingAttention.indexOf(position) === -1)
 
-		return (
-			<div>
-			<h2 className="form-header">
-				Supported positions
-				<div className="pull-right orgLaydownToggleInactive">
-					<Button bsStyle="link" onClick={this.toggleShowInactive}>
-						{(showInactivePositions ? "Hide " : "Show ") + numInactivePos + " Inactive Position(s)"}
-					</Button>
-				</div>
-			</h2>
+		return <div>
+			<Fieldset title="Supported positions" action={<div>
+				{numInactivePos > 0 && <Button bsSize="sm" onClick={this.toggleShowInactive}>
+					{(showInactivePositions ? "Hide " : "Show ") + numInactivePos + " inactive position(s)"}
+				</Button>}
 
-			<fieldset>
+				<LinkTo position={Position.pathForNew({organizationId: org.id})} button>
+					Create position
+				</LinkTo>
+			</div>}>
+
 				{this.renderPositionTable(supportedPositions)}
-			</fieldset>
+			</Fieldset>
 
-			<h2 className="form-header" >Vacant Positions</h2>
-			<fieldset>
+			<Fieldset title="Vacant positions">
 				{this.renderPositionTable(positionsNeedingAttention)}
-			</fieldset>
+			</Fieldset>
 		</div>
-		)
 	}
 
 	renderPositionTable(positions) {

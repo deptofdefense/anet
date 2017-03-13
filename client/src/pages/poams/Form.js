@@ -1,6 +1,7 @@
 import React, {Component, PropTypes} from 'react'
 import autobind from 'autobind-decorator'
 
+import Fieldset from 'components/Fieldset'
 import Autocomplete from 'components/Autocomplete'
 import Form from 'components/Form'
 import History from 'components/History'
@@ -26,8 +27,7 @@ export default class PoamForm extends Component {
 				horizontal
 			>
 
-				<h2 className="form-header">{edit ? "Edit PoAM " + poam.shortName : "Create a new PoAM"}</h2>
-				<fieldset>
+				<Fieldset title={edit ? `Edit PoAM ${poam.shortName}` : "Create a new PoAM"}>
 					<Form.Field id="shortName" label="PoAM number" />
 					<Form.Field id="longName" label="PoAM description" />
 					<Form.Field id="responsibleOrg" label="Responsible organization">
@@ -35,7 +35,7 @@ export default class PoamForm extends Component {
 							placeholder="Select a responsible organization for this poam"
 							url="/api/organizations/search" />
 					</Form.Field>
-				</fieldset>
+				</Fieldset>
 			</Form>
 		)
 	}

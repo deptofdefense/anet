@@ -2,16 +2,18 @@ import React from 'react'
 import Page from 'components/Page'
 import ModelPage from 'components/ModelPage'
 
-import API from 'api'
-import {Location} from 'models'
+import Fieldset from 'components/Fieldset'
 import Breadcrumbs from 'components/Breadcrumbs'
-import Form from 'components/Form'
 import Messages, {setMessages} from 'components/Messages'
 import Leaflet from 'components/Leaflet'
 
+import API from 'api'
+import {Location} from 'models'
+import Form from 'components/Form'
+
 class LocationShow extends Page {
 	static modelName = 'Location'
-	
+
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -43,16 +45,13 @@ class LocationShow extends Page {
 
 				<Messages success={this.state.success} error={this.state.error} />
 
-				<h2 className="form-header">{loc.name}</h2>
 				<Form static formFor={loc} horizontal>
-					<fieldset>
-
+					<Fieldset title={loc.name}>
 						<Form.Field id="latlng" value={latlng} label="Lat/Lon" />
-					</fieldset>
+					</Fieldset>
 
 					<Leaflet markers={markers}/>
-
-			</Form>
+				</Form>
 			</div>
 		)
 	}

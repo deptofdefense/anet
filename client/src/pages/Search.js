@@ -3,6 +3,7 @@ import Page from 'components/Page'
 import {Alert, Table, Modal, Button, Nav, NavItem, Badge} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
+import Fieldset from 'components/Fieldset'
 import {ContentForNav} from 'components/Nav'
 import History from 'components/History'
 import Breadcrumbs from 'components/Breadcrumbs'
@@ -232,60 +233,42 @@ export default class Search extends Page {
 				}
 
 				{numReports > 0 && (queryType === 'everything' || queryType === 'reports') &&
-					<div>
-					<h2 className="form-header">Reports</h2>
-					<fieldset>
+					<Fieldset title="Reports">
 						<div className="pull-right">
 							{this.props.location.query.text && <Button onClick={this.showSaveModal} id="saveSearchButton" >Save search</Button>}
 						</div>
 						<ReportCollection paginatedReports={results.reports} goToPage={this.goToReportsPage} />
-					</fieldset>
-					</div>
+					</Fieldset>
 				}
 
 				{numPeople > 0 && (queryType === 'everything' || queryType === 'people') &&
-					<div>
-						<h2 className="form-header">People</h2>
-						<fieldset>
-							{this.renderPeople()}
-						</fieldset>
-					</div>
+					<Fieldset title="People">
+						{this.renderPeople()}
+					</Fieldset>
 				}
 
 				{numOrganizations > 0 && (queryType === 'everything' || queryType === 'organizations') &&
-					<div>
-						<h2 className="form-header">Organizations</h2>
-						<fieldset>
-							{this.renderOrgs()}
-						</fieldset>
-					</div>
+					<Fieldset title="Organizations">
+						{this.renderOrgs()}
+					</Fieldset>
 				}
 
 				{numPositions > 0 && (queryType === 'everything' || queryType === 'positions') &&
-					<div>
-						<h2 className="form-header">Positions</h2>
-						<fieldset>
-							{this.renderPositions()}
-						</fieldset>
-					</div>
+					<Fieldset title="Positions">
+						{this.renderPositions()}
+					</Fieldset>
 				}
 
 				{numLocations > 0 && (queryType === 'everything' || queryType === 'locations') &&
-					<div>
-						<h2 className="form-header">Locations</h2>
-						<fieldset>
-							{this.renderLocations()}
-						</fieldset>
-					</div>
+					<Fieldset title="Locations">
+						{this.renderLocations()}
+					</Fieldset>
 				}
 
 				{numPoams > 0 && (queryType === 'everything' || queryType === 'poams') &&
-					<div>
-						<h2 className="form-header">Poams</h2>
-						<fieldset>
-							{this.renderPoams()}
-						</fieldset>
-					</div>
+					<Fieldset title="PoAMs">
+						{this.renderPoams()}
+					</Fieldset>
 				}
 
 				{this.renderSaveModal()}

@@ -12,7 +12,7 @@ import {Organization} from 'models'
 
 class OrganizationEdit extends Page {
 	static pageProps = {
-		useNavigation: false
+		useNavigation: false,
 	}
 
 	static modelName = 'Organization'
@@ -37,7 +37,7 @@ class OrganizationEdit extends Page {
 			}
 		`).then(data => {
 			this.setState({
-				organization: new Organization(data.organization), 
+				organization: new Organization(data.organization),
 				originalOrganization: new Organization(data.organization)
 			})
 		})
@@ -48,7 +48,7 @@ class OrganizationEdit extends Page {
 
 		return (
 			<div>
-				<NavigationWarning original={this.state.originalOrganization} current={organization} /> 
+				<NavigationWarning original={this.state.originalOrganization} current={organization} />
 
 				<Breadcrumbs items={[[`Edit ${organization.shortName}`, Organization.pathForEdit(organization)]]} />
 				<Messages error={this.state.error} success={this.state.success} />

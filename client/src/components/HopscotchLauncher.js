@@ -1,11 +1,16 @@
 import React from 'react'
 import {Button} from 'react-bootstrap'
-import tourIcon from 'resources/tour-icon.svg'
-import ReactSVG from 'react-svg'
+
+import TOUR_ICON from 'resources/tour-icon.png'
+
+const iconCss = {
+	width: '20px',
+	marginLeft: '8px',
+}
 
 export default function HopscotchLauncher(props) {
-    return <Button bsStyle="link" className="persistent-tour-launcher" onClick={props.onClick}>
-        New to ANET? Take a guided tour
-        <ReactSVG path={tourIcon} className="tour-icon" />
-    </Button>
+	return <Button bsStyle="link" onClick={props.onClick}>
+		New to ANET? Take a guided tour
+		<img src={TOUR_ICON} className="tour-icon" role="presentation" style={iconCss} />
+	</Button>
 }

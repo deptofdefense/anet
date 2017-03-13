@@ -3,6 +3,7 @@ import Page from 'components/Page'
 import ModelPage from 'components/ModelPage'
 import {DropdownButton, MenuItem} from 'react-bootstrap'
 
+import Fieldset from 'components/Fieldset'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
 import LinkTo from 'components/LinkTo'
@@ -67,13 +68,12 @@ class PoamShow extends Page {
 					</div>
 				}
 
-				<h2 className="form-header">PoAM {poam.shortName}</h2>
 				<Form static formFor={poam} horizontal>
-					<fieldset>
+					<Fieldset title={`PoAM ${poam.shortName}`}>
 						<Form.Field id="shortName" label="PoAM number" />
 						<Form.Field id="longName" label="PoAM description" />
 						{poam.responsibleOrg && poam.responsibleOrg.id && this.renderOrg()}
-					</fieldset>
+					</Fieldset>
 				</Form>
 			</div>
 		)

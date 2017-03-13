@@ -1,19 +1,20 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 import ModelPage from 'components/ModelPage'
-import {Table, DropdownButton, MenuItem, FormGroup, Col, ControlLabel} from 'react-bootstrap'
+import {Table, FormGroup, Col, ControlLabel} from 'react-bootstrap'
 import moment from 'moment'
 import autobind from 'autobind-decorator'
 
+import Fieldset from 'components/Fieldset'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
 import ReportTable from 'components/ReportTable'
 import LinkTo from 'components/LinkTo'
 import History from 'components/History'
+import Messages, {setMessages} from 'components/Messages'
 
 import API from 'api'
 import {Person} from 'models'
-import Messages , {setMessages} from 'components/Messages'
 
 class PersonShow extends Page {
 	static contextTypes = {
@@ -93,17 +94,11 @@ class PersonShow extends Page {
 				<Breadcrumbs items={[[person.name, Person.pathFor(person)]]} />
 				<Messages error={this.state.error} success={this.state.success} />
 
-				{canEdit &&
-					<div className="pull-right">
-						<DropdownButton bsStyle="primary" title="Actions" id="actions" className="pull-right" onSelect={this.actionSelect}>
-							{canEdit && <MenuItem eventKey="edit" >Edit {person.name}</MenuItem>}
-						</DropdownButton>
-					</div>
-				}
-
-				<h2 className="form-header">{person.rank} {person.name}</h2>
 				<Form static formFor={person} horizontal>
-					<fieldset>
+					<Fieldset title={`${person.rank} ${person.name}`} action={
+						canEdit && <LinkTo person={person} edit button="primary">Edit</LinkTo>
+					}>
+
 						<Form.Field id="rank" />
 
 						<Form.Field id="role">
@@ -121,27 +116,23 @@ class PersonShow extends Page {
 						<Form.Field label="Biography" id="biography" >
 							<div dangerouslySetInnerHTML={{__html: person.biography}} />
 						</Form.Field>
-					</fieldset>
+					</Fieldset>
 
-					<fieldset>
-						<legend>Position</legend>
-
+					<Fieldset title="Position">
 						{position && position.id &&
 							this.renderPosition(position)
 						}
-					</fieldset>
+					</Fieldset>
 
 					{person.isAdvisor() &&
-						<fieldset>
-							<legend>Reports authored</legend>
+						<Fieldset title="Reports authored">
 							<ReportTable reports={person.authoredReports.list || []} showAuthors={false} />
-						</fieldset>
+						</Fieldset>
 					}
 
-					<fieldset>
-						<legend>Reports this person is listed as an attendee of</legend>
+					<Fieldset title={`Reports attended by ${person.name}`}>
 						<ReportTable reports={person.attendedReports.list || []} showAuthors={true} />
-					</fieldset>
+					</Fieldset>
 				</Form>
 			</div>
 		)

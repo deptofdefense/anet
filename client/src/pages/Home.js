@@ -1,13 +1,15 @@
 import React, {PropTypes} from 'react'
-import HopscotchPage from 'components/HopscotchPage'
 import {Grid, Row, Col, FormControl, FormGroup, ControlLabel, Button} from 'react-bootstrap'
-import SavedSearchTable from 'components/SavedSearchTable'
 import {Link} from 'react-router'
 import moment from 'moment'
-import Messages from 'components/Messages'
-import HopscotchLauncher from 'components/HopscotchLauncher'
 
+import Fieldset from 'components/Fieldset'
+import Messages from 'components/Messages'
+import HopscotchPage from 'components/HopscotchPage'
+import HopscotchLauncher from 'components/HopscotchLauncher'
 import Breadcrumbs from 'components/Breadcrumbs'
+import SavedSearchTable from 'components/SavedSearchTable'
+
 import API from 'api'
 import autobind from 'autobind-decorator'
 
@@ -157,9 +159,7 @@ export default class Home extends HopscotchPage {
 				<Messages error={this.state.error} success={this.state.success} />
 
 				{this.state.showGettingStartedPanel === 'true' &&
-					<div>
-					<h2 className="form-header">Getting Started</h2>
-					<fieldset className="home-tile-row">
+					<Fieldset title="Getting started" className="home-tile-row">
 						<Grid fluid className="getting-started-grid">
 							<span className="close-getting-started" onClick={this.onDismissGettingStarted}>Close ✕</span>
 							<Row>
@@ -176,31 +176,27 @@ export default class Home extends HopscotchPage {
 								</Col>
 							</Row>
 						</Grid>
-					</fieldset>
-					</div>
+					</Fieldset>
 				}
-				<h2 className="form-header">
-					My ANET Snapshot
-					{ this.state.showGettingStartedPanel !== 'true' &&
-						<div className="pull-right" ><HopscotchLauncher onClick={this.startWelcomeTour} /></div>
-					}
-				</h2>
-				<fieldset className="home-tile-row">
+
+				<Fieldset className="home-tile-row" title="My ANET snapshot" action={
+					this.state.showGettingStartedPanel !== 'true' && <HopscotchLauncher onClick={this.startWelcomeTour} />
+				}>
+
 					<Grid fluid>
 						<Row>
 							{queries.map((query, index) =>{
 								query.query.type = "reports"
-								return <Link to={{pathname: '/search', query: query.query, }} className="col-md-3 home-tile" key={index}>
-									<h1>{this.state.tileCounts[index]}</h1>
-									{query.title}
-								</Link>
+									return <Link to={{pathname: '/search', query: query.query, }} className="col-md-3 home-tile" key={index}>
+										<h1>{this.state.tileCounts[index]}</h1>
+										{query.title}
+									</Link>
 							})}
 						</Row>
 					</Grid>
-				</fieldset>
+				</Fieldset>
 
-				<fieldset>
-					<legend>Saved searches</legend>
+				<Fieldset title="Saved searches">
 					<FormGroup controlId="savedSearchSelect">
 						<ControlLabel>Select a saved search</ControlLabel>
 						<FormControl componentClass="select" onChange={this.onSaveSearchSelect}>
@@ -220,7 +216,7 @@ export default class Home extends HopscotchPage {
 							<SavedSearchTable search={this.state.selectedSearch} />
 						</div>
 					}
-				</fieldset>
+				</Fieldset>
 			</div>
 		)
 	}
