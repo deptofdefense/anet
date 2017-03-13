@@ -1,6 +1,7 @@
-import React, {Component, PropTypes} from 'react'
+import React, {PropTypes} from 'react'
 import autobind from 'autobind-decorator'
 
+import ValidatableFormWrapper from 'components/ValidatableFormWrapper'
 import Fieldset from 'components/Fieldset'
 import Autocomplete from 'components/Autocomplete'
 import Form from 'components/Form'
@@ -9,7 +10,7 @@ import History from 'components/History'
 import API from 'api'
 import {Poam} from 'models'
 
-export default class PoamForm extends Component {
+export default class PoamForm extends ValidatableFormWrapper {
 	static propTypes = {
 		poam: PropTypes.object.isRequired,
 		edit: PropTypes.bool,
@@ -17,26 +18,26 @@ export default class PoamForm extends Component {
 
 	render() {
 		let {poam, edit} = this.props
+		const {ValidatableForm, RequiredField} = this
 
 		return (
-			<Form
+			<ValidatableForm
 				formFor={poam}
 				onChange={this.onChange}
 				onSubmit={this.onSubmit}
 				submitText="Save PoAM"
-				horizontal
-			>
+				horizontal>
 
 				<Fieldset title={edit ? `Edit PoAM ${poam.shortName}` : "Create a new PoAM"}>
-					<Form.Field id="shortName" label="PoAM number" />
-					<Form.Field id="longName" label="PoAM description" />
+					<RequiredField id="shortName" label="PoAM number" />
+					<RequiredField id="longName" label="PoAM description" />
 					<Form.Field id="responsibleOrg" label="Responsible organization">
 						<Autocomplete valueKey="shortName"
 							placeholder="Select a responsible organization for this poam"
 							url="/api/organizations/search" />
 					</Form.Field>
 				</Fieldset>
-			</Form>
+			</ValidatableForm>
 		)
 	}
 

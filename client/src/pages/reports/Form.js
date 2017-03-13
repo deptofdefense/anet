@@ -1,4 +1,4 @@
-import React, {Component, PropTypes} from 'react'
+import React, {PropTypes} from 'react'
 import {Checkbox, Table, Button, Collapse, HelpBlock} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
@@ -12,6 +12,7 @@ import PoamsSelector from 'components/PoamsSelector'
 import LinkTo from 'components/LinkTo'
 import History from 'components/History'
 import HopscotchLauncher from 'components/HopscotchLauncher'
+import ValidatableFormWrapper from 'components/ValidatableFormWrapper'
 
 import API from 'api'
 import {Report, Person} from 'models'
@@ -24,7 +25,7 @@ import NEGATIVE_ICON from 'resources/thumbs_down.png'
 import REMOVE_ICON from 'resources/delete.png'
 import WARNING_ICON from 'resources/warning.png'
 
-export default class ReportForm extends Component {
+export default class ReportForm extends ValidatableFormWrapper {
 	static propTypes = {
 		report: PropTypes.instanceOf(Report).isRequired,
 		edit: PropTypes.bool
@@ -87,12 +88,14 @@ export default class ReportForm extends Component {
 			Location not found in database
 		</b></HelpBlock>
 
+		const {ValidatableForm, RequiredField} = this
+
 		return <div className="report-form">
 			<div className="pull-right">
 				{this.props.startHopscotch && <HopscotchLauncher onClick={this.props.startHopscotch} />}
 			</div>
 
-			<Form formFor={report} horizontal onSubmit={this.onSubmit} onChange={this.onChange}
+			<ValidatableForm formFor={report} horizontal onSubmit={this.onSubmit} onChange={this.onChange}
 				submitDisabled={hasErrors} submitText="Preview and submit">
 
 				<Fieldset title={this.props.title} action={
@@ -101,9 +104,12 @@ export default class ReportForm extends Component {
 					</Button>
 				}>
 
-					<Form.Field id="intent" label="Meeting goal (purpose)" placeholder="What happened?" data-focus componentClass="textarea" maxCharacters={250}>
+					<RequiredField id="intent" label="Meeting goal (purpose)" 
+						canSubmitWithError={true} 
+						validateBeforeUserTouches={this.props.edit} 
+						placeholder="What happened?" data-focus componentClass="textarea" maxCharacters={250}>
 						<Form.Field.ExtraCol>{250 - report.intent.length} characters remaining</Form.Field.ExtraCol>
-					</Form.Field>
+					</RequiredField>
 
 					<Form.Field id="engagementDate" addon={CALENDAR_ICON}>
 						<DatePicker showTodayButton placeholder="When did it happen?" dateFormat="DD/MM/YYYY" />
@@ -216,14 +222,18 @@ export default class ReportForm extends Component {
 
 				<Fieldset title="Meeting discussion">
 					{!isCancelled &&
-						<Form.Field id="keyOutcomes" componentClass="textarea" maxCharacters={250}>
+						<RequiredField id="keyOutcomes" componentClass="textarea" maxCharacters={250} humanName="Key outcome description"
+							canSubmitWithError={true} 
+							validateBeforeUserTouches={this.props.edit}>
 							<Form.Field.ExtraCol><small>{250 - report.keyOutcomes.length} characters remaining</small></Form.Field.ExtraCol>
-						</Form.Field>
+						</RequiredField>
 					}
 
-					<Form.Field id="nextSteps" componentClass="textarea" maxCharacters={250}>
+					<RequiredField id="nextSteps" componentClass="textarea" maxCharacters={250} humanName="Next steps description"
+							canSubmitWithError={true} 
+							validateBeforeUserTouches={this.props.edit}>
 						<Form.Field.ExtraCol><small>{250 - report.nextSteps.length} characters remaining</small></Form.Field.ExtraCol>
-					</Form.Field>
+					</RequiredField>
 
 					<Button className="center-block toggle-section-button" onClick={this.toggleReportText} id="toggleReportDetails" >
 						{this.state.showReportText ? 'Hide' : 'Add'} detailed comments
@@ -237,7 +247,7 @@ export default class ReportForm extends Component {
 						</div>
 					</Collapse>
 				</Fieldset>
-			</Form>
+			</ValidatableForm>
 		</div>
 	}
 

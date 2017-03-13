@@ -1,7 +1,8 @@
-import React, {Component, PropTypes} from 'react'
+import React, {PropTypes} from 'react'
 import {Button, Table} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
+import ValidatableFormWrapper from 'components/ValidatableFormWrapper'
 import Fieldset from 'components/Fieldset'
 import Form from 'components/Form'
 import ButtonToggleGroup from 'components/ButtonToggleGroup'
@@ -13,7 +14,7 @@ import Messages from 'components/Messages'
 import API from 'api'
 import {Position, Organization} from 'models'
 
-export default class OrganizationForm extends Component {
+export default class OrganizationForm extends ValidatableFormWrapper {
 	static propTypes = {
 		organization: PropTypes.object,
 		edit: PropTypes.bool,
@@ -29,8 +30,9 @@ export default class OrganizationForm extends Component {
 	render() {
 		let {organization, edit} = this.props
 		let {approvalSteps} = organization
+		const {ValidatableForm, RequiredField} = this
 
-		return <Form formFor={organization}
+		return <ValidatableForm formFor={organization}
 			onChange={this.onChange}
 			onSubmit={this.onSubmit}
 			submitText="Save organization"
@@ -53,8 +55,8 @@ export default class OrganizationForm extends Component {
 						queryParams={{type: organization.type}} />
 				</Form.Field>
 
-				<Form.Field id="shortName" label="Name" placeholder="e.g. EF1.1" />
-				<Form.Field id="longName" label="Description" placeholder="e.g. Force Sustainment" />
+				<RequiredField id="shortName" label="Name" placeholder="e.g. EF1.1" />
+				<RequiredField id="longName" label="Description" placeholder="e.g. Force Sustainment" />
 			</Fieldset>
 
 			{organization.type === 'ADVISOR_ORG' && <div>
@@ -70,7 +72,7 @@ export default class OrganizationForm extends Component {
 					)}
 				</Fieldset>
 			</div>}
-		</Form>
+		</ValidatableForm>
 	}
 
 	renderApprovalStep(step, index) {

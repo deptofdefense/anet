@@ -1,8 +1,9 @@
-import React, {Component, PropTypes} from 'react'
+import React, {PropTypes} from 'react'
 import {Button} from 'react-bootstrap'
 import DatePicker from 'react-bootstrap-date-picker'
 import autobind from 'autobind-decorator'
 
+import ValidatableFormWrapper from 'components/ValidatableFormWrapper'
 import Form from 'components/Form'
 import Fieldset from 'components/Fieldset'
 import Messages from 'components/Messages'
@@ -11,15 +12,12 @@ import Autocomplete from 'components/Autocomplete'
 import History from 'components/History'
 import ButtonToggleGroup from 'components/ButtonToggleGroup'
 
-import _some from 'lodash.some'
-import _values from 'lodash.values'
-
 import API from 'api'
 import {Person, Position} from 'models'
 
 import CALENDAR_ICON from 'resources/calendar.png'
 
-export default class PersonForm extends Component {
+export default class PersonForm extends ValidatableFormWrapper {
 	static propTypes = {
 		person: PropTypes.object.isRequired,
 		edit: PropTypes.bool,
@@ -34,10 +32,8 @@ export default class PersonForm extends Component {
 
 	constructor(props) {
 		super(props)
-
 		this.state = {
-			error: null,
-			formErrors: {}
+			error: null
 		}
 	}
 
@@ -60,18 +56,15 @@ export default class PersonForm extends Component {
 			positionSearchTypes = ['PRINCIPAL']
 		}
 
-		return <Form formFor={person} onChange={this.onChange} onSubmit={this.onSubmit} horizontal
-			submitText={this.props.saveText || 'Save person'}
-			submitDisabled={this.isSubmitDisabled()}>
+		const {ValidatableForm, RequiredField} = this
+
+		return <ValidatableForm formFor={person} onChange={this.onChange} onSubmit={this.onSubmit} horizontal
+			submitText={this.props.saveText || 'Save person'}>
 
 			<Messages error={this.state.error} />
 
 			<Fieldset title={legendText}>
-				<Form.Field id="name"
-					required
-					humanName="Name"
-					onError={() => this.onFieldEnterErrorState('name')}
-					onValid={() => this.onFieldExitErrorState('name')} />
+				<RequiredField id="name" />
 
 				{edit ?
 					<Form.Field type="static" id="role" />
@@ -91,17 +84,12 @@ export default class PersonForm extends Component {
 			</Fieldset>
 
 			<Fieldset title="Additional information">
-				<Form.Field id="emailAddress" label="Email" required={isAdvisor}
+				<RequiredField id="emailAddress" label="Email" required={isAdvisor}
 					humanName="Valid email address"
-					type="email"
-					onError={() => this.onFieldEnterErrorState('emailAddress')}
-					onValid={() => this.onFieldExitErrorState('emailAddress')} />
+					type="email" />
 				<Form.Field id="phoneNumber" label="Phone Number" />
-				<Form.Field id="rank"  componentClass="select"
-					required={isAdvisor}
-					humanName="Rank"
-					onError={() => this.onFieldEnterErrorState('rank')}
-					onValid={() => this.onFieldExitErrorState('rank')}>
+				<RequiredField id="rank"  componentClass="select"
+					required={isAdvisor}>
 
 					<option />
 					<option value="OR-1">OR-1</option>
@@ -125,23 +113,17 @@ export default class PersonForm extends Component {
 					<option value="OF-10">OF-10</option>
 					<option value="CIV">CIV</option>
 					<option value="CTR">CTR</option>
-				</Form.Field>
+				</RequiredField>
 
-				<Form.Field id="gender" componentClass="select"
-					required={isAdvisor}
-					humanName="Gender"
-					onError={() => this.onFieldEnterErrorState('gender')}
-					onValid={() => this.onFieldExitErrorState('gender')}>
+				<RequiredField id="gender" componentClass="select"
+					required={isAdvisor}>
 					<option />
 					<option value="MALE" >Male</option>
 					<option value="FEMALE" >Female</option>
-				</Form.Field>
+				</RequiredField>
 
-				<Form.Field id="country" componentClass="select"
-					required={isAdvisor}
-					humanName="Country"
-					onError={() => this.onFieldEnterErrorState('country')}
-					onValid={() => this.onFieldExitErrorState('country')}>
+				<RequiredField id="country" componentClass="select"
+					required={isAdvisor}>
 					<option />
 					<option>Afghanistan</option>
 					<option>Albania</option>
@@ -183,7 +165,7 @@ export default class PersonForm extends Component {
 					<option>United States of America</option>
 					<option>United Kingdom</option>
 					<option>Ukraine</option>
-				</Form.Field>
+				</RequiredField>
 
 				<Form.Field id="endOfTourDate" addon={CALENDAR_ICON}>
 					<DatePicker placeholder="End of Tour Date" dateFormat="DD/MM/YYYY" />
@@ -209,27 +191,12 @@ export default class PersonForm extends Component {
 					<span>You can optionally assign this person to a position now</span>
 				</Fieldset>
 			}
-		</Form>
+		</ValidatableForm>
 	}
 
 	@autobind
 	onChange() {
 		this.forceUpdate()
-	}
-
-	@autobind
-	onFieldEnterErrorState(fieldName) {
-		this.setState({formErrors: {[fieldName]: true}})
-	}
-
-	@autobind
-	onFieldExitErrorState(fieldName) {
-		this.setState({formErrors: {[fieldName]: false}})
-	}
-
-	@autobind
-	isSubmitDisabled() {
-		return _some(_values(this.state.formErrors))
 	}
 
 	@autobind
