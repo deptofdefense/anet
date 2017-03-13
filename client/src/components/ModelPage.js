@@ -20,13 +20,24 @@ export default WrappedPage => {
                 origLoadData.call(this, props)
                 let promise = API.inProgress
                 if (promise && promise instanceof Promise) {
-                    promise.catch(err => {
-                        if (err.status === 404 || 
-                                (err.status === 500 && _get(err, ['errors', 0]) === 'Invalid Syntax')) {
-                            Object.assign(ModelPage.pageProps, {fluidContainer: true, useNavigation: false})
-                            modelPageThis.setState({notFound: true})
+
+                    function onRequestNot404() {
+                        Object.assign(ModelPage.pageProps, WrappedPage.pageProps)
+                        modelPageThis.setState({notFound: false})
+                    }
+
+                    promise.then(
+                        onRequestNot404,
+                        err => {
+                            if (err.status === 404 || 
+                                    (err.status === 500 && _get(err, ['errors', 0]) === 'Invalid Syntax')) {
+                                Object.assign(ModelPage.pageProps, {fluidContainer: true, useNavigation: false})
+                                modelPageThis.setState({notFound: true})
+                            } else {
+                                onRequestNot404()
+                            }
                         }
-                    })
+                    )
                 }
             }
         }
