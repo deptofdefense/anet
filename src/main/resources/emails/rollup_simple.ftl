@@ -68,7 +68,7 @@ a {
 <#list topLevelOrgs as topOrg>
 	<#assign orgReports = reportsByOrg?api.get(topOrg.id) >
 	<#list orgReports >
-		<h2>${topOrg.shortName} - ${topOrg.longName}</h2>
+		<h2>${topOrg.shortName} - ${(topOrg.longName)!}</h2>
 		<#items as report>
 			(${counter}) <#assign counter = counter + 1>
 			<@renderReport report />
