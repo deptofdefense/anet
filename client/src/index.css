@@ -266,20 +266,20 @@ a.home-tile {
 	width: 35%;
 }
 
-.report-approval .form-group {
+.report-sub-form .form-group {
 	margin: 24px;
 }
 
-.report-approval textarea {
+.report-sub-form textarea {
 	width: 100%;
 }
 
-.report-approval .right-button {
+.report-sub-form .right-button {
 	float: right;
 	margin-right: 24px;
 }
 
-.report-approval button {
+.report-sub-form button {
 	margin-left: 24px;
 }
 
@@ -462,7 +462,7 @@ table hr.attendee-divider {
 
 .report-form .button-row {
 	/* This matches the form fieldset's margin-bottom. */
-	margin-bottom: 7rem; 
+	margin-bottom: 7rem;
 }
 
 .report-form .button-row button:nth-last-child(-n+2) {
@@ -474,13 +474,13 @@ table hr.attendee-divider {
 }
 
 .report-form .button-row .save-for-later {
-	margin-right: 30px; 
+	margin-right: 30px;
 	background-color: #8ca6c7;
 	border-color: #8ca6c7;
 }
 
 .report-form .button-row .cancel {
-	width: 15%; 
+	width: 15%;
 }
 
 .report-form .top-submit-buttons .button-row {
@@ -500,7 +500,7 @@ table hr.attendee-divider {
 	margin-bottom: 4px;
 }
 
-.orgLaydownToggleInactive { 
+.orgLaydownToggleInactive {
 	position: relative;
 }
 
