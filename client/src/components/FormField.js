@@ -81,12 +81,12 @@ export default class FormField extends Component {
 			addon,
 			children,
 			postInputGroupChildren,
+			canSubmitWithError,
 			...childProps
 		} = this.props
 
-		childProps = Object.without(childProps, 'getter', 'horizontal', 
-			'onError', 'onValid', 'humanName', 'maxCharacters', 'canSubmitWithError')
-		if (this.props) {
+		childProps = Object.without(childProps, 'getter', 'horizontal', 'onError', 'onValid', 'humanName', 'maxCharacters')
+		if (canSubmitWithError) {
 			childProps = Object.without(childProps, 'required')
 		}
 
@@ -100,7 +100,9 @@ export default class FormField extends Component {
 		}
 
 		const validationState = this.props.validationState ||
-			(this.state.isValid === false || this.isMissingRequiredField(this.props)) ? 'error' : null
+			(this.state.isValid === false || this.isMissingRequiredField(this.props)) ? 
+				(canSubmitWithError ? 'warning' : 'error') 
+				: null
 
 		let horizontal = this.context.form && this.context.form.props.horizontal
 		if (typeof this.props.horizontal !== 'undefined') {
@@ -149,7 +151,7 @@ export default class FormField extends Component {
 
 			children = <div>
 				{formControl}
-				<HelpBlock className={validationState === 'error' ? '' : 'hidden'} >
+				<HelpBlock className={validationState === 'error' || validationState === 'warning' ? '' : 'hidden'} >
 					{this.props.humanName} is required
 				</HelpBlock>
 			</div>
