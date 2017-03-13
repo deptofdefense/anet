@@ -99,7 +99,7 @@ export default class Home extends HopscotchPage {
 	allUpcoming() {
 		return {
 			title: "All upcoming engagements",
-			query: { createdAtStart: moment().endOf('day').valueOf() }
+			query: { engagementDateStart: moment().endOf('day').valueOf() }
 		}
 	}
 
