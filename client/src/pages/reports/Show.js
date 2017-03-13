@@ -329,7 +329,7 @@ class ReportShow extends Page {
 				onChange={this.onChangeComment}
 			/>
 
-			<Button bsStyle="danger" onClick={this.rejectReport}>Reject with comment</Button>
+			<Button bsStyle="warning" onClick={this.rejectReport}>Reject with comment</Button>
 			<div className="right-button">
 				<Button onClick={this.actionSelect.bind(this, 'edit')}>Edit report</Button>
 				<Button bsStyle="primary" onClick={this.approveReport}><strong>Approve</strong></Button>
