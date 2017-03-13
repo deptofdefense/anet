@@ -24,13 +24,11 @@ export default WrappedPage => {
 
             const origLoadData = WrappedPage.prototype.loadData
             WrappedPage.prototype.loadData = function(props) {
-                debugger
                 origLoadData.call(this, props)
                 let promise = API.inProgress
                 if (promise && promise instanceof Promise) {
 
                     function onRequestNot404() {
-                        debugger
                         Object.assign(ModelPage.pageProps, {fluidContainer: false, useNavigation: true}, WrappedPage.pageProps)
                         modelPageThis.setState({notFound: false})
                         modelPageThis.context.app.forceUpdate()
