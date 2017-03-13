@@ -1,9 +1,9 @@
 package mil.dds.anet.database;
 
 import java.sql.SQLException;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
@@ -25,6 +25,7 @@ import mil.dds.anet.beans.Position.PositionType;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.PositionList;
 import mil.dds.anet.beans.search.PositionSearchQuery;
 import mil.dds.anet.database.mappers.PersonMapper;
+import mil.dds.anet.database.mappers.PersonPositionHistoryMapper;
 import mil.dds.anet.database.mappers.PositionMapper;
 import mil.dds.anet.utils.DaoUtils;
 
@@ -334,42 +335,22 @@ public class PositionDao implements IAnetDao<Position> {
 	}
 
 	public List<PersonPositionHistory> getPositionHistory(Position position) {
-		List<Map<String, Object>> results = dbHandle.createQuery("/* getPositionHistory */ SELECT * FROM peoplePositions "
-				+ "WHERE positionId = :positionId ORDER BY createdAt ASC")
+		PersonPositionHistoryMapper mapper = new PersonPositionHistoryMapper(position);
+		List<PersonPositionHistory> results = dbHandle.createQuery("/* getPositionHistory */ SELECT peoplePositions.personId AS personId, "
+				+ "peoplePositions.createdAt AS pph_createdAt, " 
+				+ PersonDao.PERSON_FIELDS + " FROM peoplePositions "
+				+ "LEFT JOIN people ON peoplePositions.personId = people.id "
+				+ "WHERE positionId = :positionId ORDER BY peoplePositions.createdAt ASC")
 			.bind("positionId", DaoUtils.getId(position))
+			.map(mapper)
 			.list();
 		
-		//Each row is a change of the person/position relationship for this person
-		//If the personId is null that means that the previous person was removed from this entry
-		//Otherwise the person with that ID was placed in this position, and the previous person removed.
+		results.add(mapper.getCurrentPerson());
 		
-		List<PersonPositionHistory> history = new LinkedList<PersonPositionHistory>();
-		if (results.size() == 0) { return history; }
-		PersonPositionHistory curr = new PersonPositionHistory();
-		curr.setPosition(position);
-		for (Map<String,Object> row : results) { 
-			Integer personId = (Integer) row.get("personId");
-			DateTime createdAt = new DateTime(row.get("positions_createdAt"));
-
-			if (DaoUtils.getId(curr.getPerson()) != null) {
-				curr.setEndTime(createdAt);
-				history.add(curr);
-				curr = new PersonPositionHistory();
-				curr.setPosition(position);
-				if (personId != null) { 
-					curr.setPerson(Person.createWithId(personId));
-					curr.setStartTime(createdAt);
-				}
-			} else {
-				curr.setPerson(Person.createWithId(personId));
-				curr.setStartTime(createdAt);
-			}
-			
-		}
-		if (DaoUtils.getId(curr.getPerson()) != null) { 
-			history.add(curr);
-		}
-		return history;
+		//Remove all null entries. 
+		results = results.stream().filter(pph -> pph != null).collect(Collectors.toList());
+		return results;
+		
 	}
 
 	public Boolean getIsApprover(Position position) {

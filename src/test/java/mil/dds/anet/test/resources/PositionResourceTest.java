@@ -112,6 +112,20 @@ public class PositionResourceTest extends AbstractResourceTest {
 		assertThat(prev).isNotNull();
 		assertThat(prev.getId()).isEqualTo(jack.getId());
 		
+		returned = httpQuery(String.format("/api/positions/%d",created.getId()), jack).get(Position.class);
+		List<PersonPositionHistory> history = returned.loadPreviousPeople();
+		assertThat(history.size()).isEqualTo(2);
+		assertThat(history.get(0).getPosition().getId()).isEqualTo(returned.getId());
+		assertThat(history.get(0).getPerson()).isEqualTo(jack);
+		assertThat(history.get(0).getStartTime()).isNotNull();
+		assertThat(history.get(0).getEndTime()).isNotNull();
+		assertThat(history.get(0).getStartTime()).isLessThan(history.get(0).getEndTime());
+		
+		assertThat(history.get(1).getPerson()).isEqualTo(steve);
+		assertThat(history.get(1).getEndTime()).isNotNull();
+		assertThat(history.get(1).getStartTime()).isLessThan(history.get(1).getEndTime());
+		
+		
 		//Create a principal
 		OrganizationList orgs = httpQuery("/api/organizations/search?text=Ministry&type=PRINCIPAL_ORG", admin)
 				.get(OrganizationList.class);

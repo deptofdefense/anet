@@ -6,6 +6,9 @@ import java.sql.SQLException;
 
 public class MapperUtils {
 
+	/* Utilitiy function to check for NULL values in the column
+	 * Because .getInt returns 0 if the column is null.  Boooo 
+	 */
 	public static Integer getInteger(ResultSet rs, String columnName) throws SQLException {
 		Object res = rs.getObject(columnName);
 		if (res == null) { 
