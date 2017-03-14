@@ -104,11 +104,11 @@ class OrganizationShow extends Page {
 						</LinkTo>}
 					</div>}>
 
-						<Form.Field id="longName" label="Description"/>
-
 						<Form.Field id="type">
 							{org.type && org.type.split('_')[0]}
 						</Form.Field>
+
+						<Form.Field id="longName" label="Description"/>
 
 						{org.parentOrg && org.parentOrg.id &&
 							<Form.Field id="parentOrg" label="Parent organization">

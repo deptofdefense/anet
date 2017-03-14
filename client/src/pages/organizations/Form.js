@@ -60,8 +60,6 @@ export default class OrganizationForm extends ValidatableFormWrapper {
 			</Fieldset>
 
 			{organization.type === 'ADVISOR_ORG' && <div>
-				<PoamsSelector poams={organization.poams} onChange={this.onChange} />
-
 				<Fieldset title="Approval process">
 					<Button className="pull-right" onClick={this.addApprovalStep} bsStyle="primary" id="addApprovalStepButton" >
 						Add an Approval Step
@@ -71,6 +69,8 @@ export default class OrganizationForm extends ValidatableFormWrapper {
 						this.renderApprovalStep(step, index)
 					)}
 				</Fieldset>
+
+				<PoamsSelector poams={organization.poams} onChange={this.onChange} />
 			</div>}
 		</ValidatableForm>
 	}
