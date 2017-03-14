@@ -145,7 +145,8 @@ fieldset.collapsable legend div.collapsableToggle {
 }
 
 .dropdown-menu {
-	overflow-y: scroll;
+	overflow-y: auto;
+	max-height: 400px;
 }
 
 .header .logo img, .header input, .header button {
