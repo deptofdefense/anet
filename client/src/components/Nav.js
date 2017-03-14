@@ -2,6 +2,7 @@ import React, {Component, PropTypes} from 'react'
 import {Nav as BSNav, NavItem, NavDropdown, MenuItem} from 'react-bootstrap'
 import {IndexLinkContainer as Link} from 'react-router-bootstrap'
 import {Injectable, Injector} from 'react-injectables'
+import {Scrollspy} from 'react-scrollspy'
 
 import LinkTo from 'components/LinkTo'
 
@@ -46,7 +47,7 @@ class Nav extends Component {
 				</NavDropdown>
 
 				{inOrg &&
-					<SubNav>
+					<SubNav componentClass={Scrollspy} items={['info', 'laydown', 'approvals', 'poams', 'reports']} className="nav" currentClassName="active">
 						<NavItem href="#info">Info</NavItem>
 						<NavItem href="#laydown">Laydown</NavItem>
 						<NavItem href="#approvals">Approvals</NavItem>
@@ -80,14 +81,12 @@ class Nav extends Component {
 	}
 }
 
-class SubNav extends Component {
-	render() {
-		return <li>
-			<BSNav>
-				{this.props.children}
-			</BSNav>
-		</li>
-	}
+function SubNav(props) {
+	let {componentClass, ...childProps} = props
+	let Component = componentClass || BSNav
+	return <li>
+		<Component {...childProps} />
+	</li>
 }
 
 let InjectableNav = null
