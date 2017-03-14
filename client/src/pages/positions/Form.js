@@ -87,7 +87,7 @@ export default class PositionForm extends ValidatableFormWrapper {
 						/>
 					</Form.Field>
 
-					<RequiredField id="code" 
+					<Form.Field id="code" 
 						label={position.type === 'PRINCIPAL' ? 'Tashkil Code' : 'Billet Code'} 
 						placeholder="Postion ID or Number" />
 
