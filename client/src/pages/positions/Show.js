@@ -2,16 +2,14 @@ import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 import ModelPage from 'components/ModelPage'
 import {Link} from 'react-router'
-import {Table, DropdownButton, MenuItem} from 'react-bootstrap'
+import {Table} from 'react-bootstrap'
 import moment from 'moment'
 import utils from 'utils'
-import autobind from 'autobind-decorator'
 
 import Fieldset from 'components/Fieldset'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
 import Messages , {setMessages} from 'components/Messages'
-import History from 'components/History'
 import LinkTo from 'components/LinkTo'
 
 import API from 'api'
@@ -68,16 +66,10 @@ class PositionShow extends Page {
 				<Breadcrumbs items={[[position.name || 'Position', Position.pathFor(position)]]} />
 				<Messages success={this.state.success} error={this.state.error} />
 
-				{canEdit &&
-					<div className="pull-right">
-						<DropdownButton bsStyle="primary" title="Actions" id="actions" onSelect={this.actionSelect}>
-							<MenuItem eventKey="edit" >Edit Position</MenuItem>
-						</DropdownButton>
-					</div>
-				}
-
 				<Form static formFor={position} horizontal>
-					<Fieldset title={position.name}>
+					<Fieldset title={position.name} action={
+						canEdit && <LinkTo position={position} edit button="primary">Edit</LinkTo>
+					}>
 						<Form.Field id="code" />
 
 						<Form.Field id="type">
@@ -156,17 +148,6 @@ class PositionShow extends Page {
 			<td><Link to={Position.pathFor(pos)}>{pos.name}</Link></td>
 		</tr>
 	}
-
-	@autobind
-	actionSelect(eventKey, event) {
-		let position = this.state.position
-		if (eventKey === 'edit') {
-			History.push(Position.pathForEdit(position))
-		} else {
-			console.error('Unimplemented Action: ' + eventKey)
-		}
-	}
-
 }
 
 export default ModelPage(PositionShow)
