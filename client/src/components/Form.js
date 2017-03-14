@@ -49,8 +49,7 @@ export default class Form extends Component {
 		bsProps = Object.without(bsProps, 'formFor', 'static')
 
 		if (this.props.static) {
-			submitText = false
-			bsProps.componentClass = "div"
+			bsProps.componentClass = 'div'
 		}
 
 		if (!submitOnEnter) {
@@ -65,28 +64,29 @@ export default class Form extends Component {
 		return (
 			<BSForm {...bsProps} ref="container">
 				{children}
+				{!this.props.static && 
+					<div className="form-bottom-submit submit-buttons">
+						<div>
+							<Button onClick={this.onCancel}>Cancel</Button>
+						</div>
 
-				<div className="form-bottom-submit submit-buttons">
-					<div>
-						<Button onClick={this.onCancel}>Cancel</Button>
+						{showDelete &&
+							<div>
+								<Button bsStyle="warning" onClick={onDelete}>
+									{deleteText}
+								</Button>
+							</div>
+						}
+
+						{showSubmit &&
+							<div>
+								<Button bsStyle="primary" bsSize="large" type="submit" disabled={submitDisabled} id="formBottomSubmit">
+									{submitText}
+								</Button>
+							</div>
+						}
 					</div>
-
-					{showDelete &&
-						<div>
-							<Button bsStyle="warning" onClick={onDelete}>
-								{deleteText}
-							</Button>
-						</div>
-					}
-
-					{showSubmit &&
-						<div>
-							<Button bsStyle="primary" bsSize="large" type="submit" disabled={submitDisabled} id="formBottomSubmit">
-								{submitText}
-							</Button>
-						</div>
-					}
-				</div>
+				}
 			</BSForm>
 		)
 	}
