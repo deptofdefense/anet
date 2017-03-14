@@ -95,7 +95,7 @@ public class PoamResource implements IGraphQLResource {
 	
 	@POST
 	@Path("/new")
-	@RolesAllowed("SUPER_USER")
+	@RolesAllowed("ADMINISTRATOR")
 	public Poam createNewPoam(@Auth Person user, Poam p) {
 		p = dao.insert(p);
 		AnetAuditLogger.log("Poam {} created by {}", p, user);
@@ -107,6 +107,12 @@ public class PoamResource implements IGraphQLResource {
 	@Path("/update")
 	@RolesAllowed("SUPER_USER")
 	public Response updatePoam(@Auth Person user, Poam p) { 
+		//Admins can edit all Poams, SuperUsers can edit poams within their EF. 
+		if (AuthUtils.isAdmin(user) == false) { 
+			Poam existing = dao.getById(p.getId());
+			AuthUtils.assertSuperUserForOrg(user, existing.getResponsibleOrg());
+		}
+		
 		int numRows = dao.update(p);
 		if (numRows == 0) { 
 			throw new WebApplicationException("Couldn't process update", Status.NOT_FOUND);
