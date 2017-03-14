@@ -67,11 +67,11 @@ export default class PersonForm extends ValidatableFormWrapper {
 				<RequiredField id="name" />
 
 				{edit ?
-					<Form.Field type="static" id="role" />
+					<Form.Field type="static" id="role" value={person.getHumanNameOfRole()} />
 					:
 					<Form.Field id="role" componentClass="select">
-						<option value="ADVISOR">NATO Member</option>
-						<option value="PRINCIPAL">Principal</option>
+						<option value="ADVISOR">{Person.humanNameOfRole('ADVISOR')}</option>
+						<option value="PRINCIPAL">{Person.humanNameOfRole('PRINCIPAL')}</option>
 					</Form.Field>
 				}
 

@@ -107,7 +107,7 @@ class PersonShow extends Page {
 						<Form.Field id="rank" />
 
 						<Form.Field id="role">
-							{person.isAdvisor() ? "NATO Member" : "Principal"}
+							{person.getHumanNameOfRole()}
 						</Form.Field>
 
 						<Form.Field id="status" />

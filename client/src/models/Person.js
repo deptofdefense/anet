@@ -20,6 +20,21 @@ export default class Person extends Model {
 		position: {},
 	}
 
+	static humanNameOfRole(role) {
+		if (role === 'ADVISOR') {
+			return 'NATO Member'
+		}
+		if (role === 'PRINCIPAL') {
+			return 'Principal'
+		}
+
+		throw new Error(`Unrecognized role: ${role}`)
+	}
+
+	getHumanNameOfRole() {
+		return Person.humanNameOfRole(this.role)
+	}
+
 	isAdvisor() {
 		return this.role === 'ADVISOR'
 	}
