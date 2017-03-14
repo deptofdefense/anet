@@ -89,8 +89,6 @@ export default class OrganizationLaydown extends Component {
 						:
 					this.renderPositionRow(position, null, 0)
 				)}
-
-				{positions.length === 0 && <tr><td><em>This organization doesn't have any positions</em></td></tr>}
 			</tbody>
 		</Table>
 	}
