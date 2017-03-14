@@ -1,5 +1,6 @@
 import React, {Component, PropTypes} from 'react'
 import {Link} from 'react-router'
+import decodeQuery from 'querystring/decode'
 import utils from 'utils'
 
 import * as Models from 'models'
@@ -46,7 +47,12 @@ export default class LinkTo extends Component {
 
 		let modelClass = Models[modelName]
 		let to = modelInstance
-		if (typeof to !== 'string') {
+		if (typeof to === 'string') {
+			if (to.indexOf('?')) {
+				let components = to.split('?')
+				to = {pathname: components[0], query: decodeQuery(components[1])}
+			}
+		} else {
 			to = edit ? modelClass.pathForEdit(modelInstance) : modelClass.pathFor(modelInstance)
 		}
 
