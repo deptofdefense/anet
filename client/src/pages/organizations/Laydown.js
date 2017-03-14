@@ -47,10 +47,12 @@ export default class OrganizationLaydown extends Component {
 			</div>}>
 
 				{this.renderPositionTable(supportedPositions)}
+				{supportedPositions.length === 0 && <em>There are no occupied positions</em>}
 			</Fieldset>
 
 			<Fieldset title="Vacant positions">
 				{this.renderPositionTable(positionsNeedingAttention)}
+				{positionsNeedingAttention.length === 0 && <em>There are no vacant positions</em>}
 			</Fieldset>
 		</div>
 	}
