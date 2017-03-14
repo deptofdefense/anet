@@ -7,9 +7,9 @@ export default class Fieldset extends Component {
 	}
 
 	render() {
-		let {title, action, ...props} = this.props
+		let {id, title, action, ...props} = this.props
 
-		return <div>
+		return <div id={id}>
 			<h2 className="legend">
 				{title}
 				{action && <small>{action}</small>}
