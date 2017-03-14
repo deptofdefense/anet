@@ -112,7 +112,7 @@ class PersonShow extends Page {
 						</Form.Field>
 						<Form.Field id="country" />
 						<Form.Field id="gender" />
-						<Form.Field label="End of Tour Date" id="endOfTourDate" value={moment(person.endOfTourDate).format('D MMM YYYY')} />
+						<Form.Field label="End of tour" id="endOfTourDate" value={moment(person.endOfTourDate).format('D MMM YYYY')} />
 						<Form.Field label="Biography" id="biography" >
 							<div dangerouslySetInnerHTML={{__html: person.biography}} />
 						</Form.Field>
@@ -154,14 +154,14 @@ class PersonShow extends Page {
 			<Form.Field id="organization" label="Organization">
 				<LinkTo organization={position.organization} />
 			</Form.Field>
-			<Form.Field id="position" label="Current Position">
+			<Form.Field id="position" label="Current position">
 				<LinkTo position={position} />
 			</Form.Field>
 
 			<FormGroup controlId="counterparts" >
 				<Col sm={2} componentClass={ControlLabel}>{assocTitle}</Col>
-				<Col sm={7} >
-					<Table striped>
+				<Col sm={9} >
+					<Table>
 						<thead>
 							<tr><th>Name</th><th>Position</th><th>Organization</th></tr>
 						</thead>
