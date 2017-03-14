@@ -17,14 +17,14 @@ a {
 }
 
 
-.tallyTable tr th { 
+.tallyTable tr th {
 	background-color:#cccccc;
 	border-bottom: 1px solid black;
 	border-right: 1px solid black;
 	padding:4px;
 }
 
-.tallyTable tr td { 
+.tallyTable tr td {
 	border-bottom: 1px solid black;
 	border-right: 1px solid black;
 	padding:2px;
@@ -66,15 +66,15 @@ a {
 <#assign counter = 1>
 
 <#list topLevelOrgs as topOrg>
-	<#assign orgReports = reportsByOrg?api.get(topOrg.id) >
-	<#list orgReports >
+	<#assign orgReports = reportsByOrg?api.get(topOrg.id)>
+	<#list orgReports>
 		<h2>${topOrg.shortName} - ${(topOrg.longName)!}</h2>
 		<#items as report>
-			(${counter}) <#assign counter = counter + 1>
+			${counter}. Report #${report.id} <#assign counter = counter + 1>
 			<@renderReport report />
 			<#sep><hr /></#sep>
 		</#items>
-		<hr>
+		<hr />
 	</#list>
 </#list>
 
