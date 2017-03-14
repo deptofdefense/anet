@@ -62,6 +62,7 @@ public class DailyRollupEmail extends AnetEmailAction {
 		topLevelOrgs.stream().forEach(o -> reportsByOrg.put(o.getId(), new LinkedList<Report>()));
 
 		Map<String, Integer> cancelledByOrgAndReason = new HashMap<String, Integer>();
+		Map<String, Integer> cancelledByReason = new HashMap<String, Integer>();
 
 		for (Report r : reports) {
 			Organization principalOrg = r.loadPrincipalOrg();
@@ -71,8 +72,16 @@ public class DailyRollupEmail extends AnetEmailAction {
 				reportsByOrg.get(orgIdToTopOrg.get(principalOrg.getId()).getId()).add(r);
 
 				if (r.getCancelledReason() != null) {
-					String key = principalOrg.getId() + "-" + r.getCancelledReason().ordinal();
-					Integer currentValue = cancelledByOrgAndReason.get(key);
+					String reason = "" + r.getCancelledReason().ordinal();
+
+					Integer currentValue = cancelledByReason.get(reason);
+					if (currentValue == null) {
+						currentValue = 0;
+					}
+					cancelledByReason.put(reason, currentValue + 1);
+
+					String key = principalOrg.getId() + "-" + reason;
+					currentValue = cancelledByOrgAndReason.get(key);
 					if (currentValue == null) {
 						currentValue = 0;
 					}
@@ -87,6 +96,7 @@ public class DailyRollupEmail extends AnetEmailAction {
 		context.put("reportsByOrg", reportsByOrg);
 		context.put("otherReports", otherReports);
 		context.put("cancelledByOrgAndReason", cancelledByOrgAndReason);
+		context.put("cancelledByReason", cancelledByReason);
 		context.put("title", getSubject());
 		context.put(SHOW_REPORT_TEXT_FLAG, false);
 		return context;
