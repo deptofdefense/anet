@@ -12,6 +12,7 @@ import ReportTable from 'components/ReportTable'
 import LinkTo from 'components/LinkTo'
 import History from 'components/History'
 import Messages, {setMessages} from 'components/Messages'
+import NoPositionWarning from 'components/NoPositionWarning'
 
 import API from 'api'
 import {Person} from 'models'
@@ -124,6 +125,7 @@ class PersonShow extends Page {
 					</Fieldset>
 
 					<Fieldset title="Position">
+						<NoPositionWarning position={position} />
 						{position && position.id &&
 							this.renderPosition(position)
 						}

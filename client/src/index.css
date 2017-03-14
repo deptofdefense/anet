@@ -512,3 +512,7 @@ table hr.attendee-divider {
 	*/
 	margin-bottom: -11px;
 }
+
+.no-position-warning {
+	text-align: center;
+}
