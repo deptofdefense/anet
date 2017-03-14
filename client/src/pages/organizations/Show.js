@@ -95,7 +95,7 @@ class OrganizationShow extends Page {
 
 				<Form formFor={org} static horizontal>
 					<Fieldset id="info" title={org.shortName} action={<div>
-						{isAdmin && <LinkTo organization={Organization.pathForNew()} button>
+						{isAdmin && <LinkTo organization={Organization.pathForNew({parentOrgId: org.id})} button>
 							Create sub-organization
 						</LinkTo>}
 
