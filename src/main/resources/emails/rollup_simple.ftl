@@ -49,16 +49,38 @@ a {
 	<tr>
 		<th>Organization</th>
 		<th># of Reports</th>
+		<th>Cancelled by Advisor</th>
+		<th>Cancelled by Principal</th>
+		<th>Cancelled due to Transportation</th>
+		<th>Cancelled due to Force Protection</th>
+		<th>Cancelled due to Routes</th>
+		<th>Cancelled due to Threat</th>
 	</tr>
 	<#list topLevelOrgs as topOrg>
-		<#assign numReports = reportsByOrg?api.get(topOrg.id)?size >
-		<#if numReports gt 0>
+		<#assign orgReports = reportsByOrg?api.get(topOrg.id)>
+		<#if orgReports?size gt 0>
 			<tr>
 				<td>${topOrg.shortName}</td>
-				<td>${numReports}</td>
+				<td>${orgReports?size}</td>
+				<td>${(cancelledByOrgAndReason?api.get(topOrg.id + "-0"))!"0"}</td>
+				<td>${(cancelledByOrgAndReason?api.get(topOrg.id + "-1"))!"0"}</td>
+				<td>${(cancelledByOrgAndReason?api.get(topOrg.id + "-2"))!"0"}</td>
+				<td>${(cancelledByOrgAndReason?api.get(topOrg.id + "-3"))!"0"}</td>
+				<td>${(cancelledByOrgAndReason?api.get(topOrg.id + "-4"))!"0"}</td>
+				<td>${(cancelledByOrgAndReason?api.get(topOrg.id + "-5"))!"0"}</td>
 			</tr>
 		</#if>
 	</#list>
+	<tr>
+		<td><b>Total</b></td>
+		<td><b>${reports?size}</b></td>
+		<td><b>${(cancelledByReason?api.get("0"))!"0"}</b></td>
+		<td><b>${(cancelledByReason?api.get("1"))!"0"}</b></td>
+		<td><b>${(cancelledByReason?api.get("2"))!"0"}</b></td>
+		<td><b>${(cancelledByReason?api.get("3"))!"0"}</b></td>
+		<td><b>${(cancelledByReason?api.get("4"))!"0"}</b></td>
+		<td><b>${(cancelledByReason?api.get("5"))!"0"}</b></td>
+	</tr>
 </table>
 
 <hr />
@@ -71,7 +93,7 @@ a {
 		<h2>${topOrg.shortName} - ${(topOrg.longName)!}</h2>
 		<#items as report>
 		<#if ! (report.cancelledReason??)>
-			${counter}. Report #${report.id} <#assign counter = counter + 1>
+			${counter}. Report #${report.id?c} <#assign counter = counter + 1>
 			<@renderReport report />
 			<#sep><hr /></#sep>
 		</#if>
@@ -83,7 +105,7 @@ a {
 
 <h2>Other Reports</h2>
 <#list otherReports as report>
-	(${counter}) <#assign counter = counter + 1>
+	${counter}. Report #${report.id?c} <#assign counter = counter + 1>
 	<@renderReport report />
 	<#sep><hr /></#sep>
 </#list>

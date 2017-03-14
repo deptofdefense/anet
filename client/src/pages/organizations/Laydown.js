@@ -41,7 +41,7 @@ export default class OrganizationLaydown extends Component {
 					{(showInactivePositions ? "Hide " : "Show ") + numInactivePos + " inactive position(s)"}
 				</Button>}
 
-				{currentUser.isSuperUser() && <LinkTo position={Position.pathForNew({organizationId: org.id})} button>
+				{currentUser.isSuperUser() && <LinkTo position={Position.pathForNew()} button>
 					Create position
 				</LinkTo>}
 			</div>}>

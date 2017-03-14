@@ -1,7 +1,7 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 import ModelPage from 'components/ModelPage'
-import {Alert, Table, Button, Col, DropdownButton, MenuItem, Modal, Checkbox} from 'react-bootstrap'
+import {Alert, Table, Button, Col, Modal, Checkbox} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 import moment from 'moment'
 import utils from 'utils'
@@ -150,16 +150,11 @@ class ReportShow extends Page {
 				{this.renderEmailModal()}
 
 				<Form static formFor={report} horizontal>
-					<Fieldset title={`Report #${report.id}`} className="show-report-overview" action={
-						<DropdownButton bsStyle="primary" title="Actions" id="actions"
-							className="pull-right" onSelect={this.actionSelect}>
-							{canEdit && <MenuItem eventKey="edit">Edit report</MenuItem>}
-							{canSubmit && errors.length === 0 && <MenuItem eventKey="submit">Submit</MenuItem>}
-							{canEmail && <MenuItem eventKey="email" onClick={this.toggleEmailModal}>Email report</MenuItem>}
-
-							{canDelete && <MenuItem divider />}
-							{canDelete && <MenuItem eventKey="delete" >Delete report</MenuItem> }
-						</DropdownButton>
+					<Fieldset title={`Report #${report.id}`} className="show-report-overview" action={<div>
+						{canEmail && <Button onClick={this.toggleEmailModal}>Email report</Button>}
+						{canEdit && <LinkTo report={report} edit button="primary">Edit</LinkTo>}
+						{canSubmit && errors.length === 0 && <Button bsStyle="primary" onClick={this.submitDraft}>Submit</Button>}
+					</div>
 					}>
 
 						<Form.Field id="intent" label="Summary" >
@@ -316,7 +311,7 @@ class ReportShow extends Page {
 
 			<Button bsStyle="warning" onClick={this.rejectReport}>Reject with comment</Button>
 			<div className="right-button">
-				<Button onClick={this.actionSelect.bind(this, 'edit')}>Edit report</Button>
+				<LinkTo report={this.state.report} edit button>Edit report</LinkTo>
 				<Button bsStyle="primary" onClick={this.approveReport}><strong>Approve</strong></Button>
 			</div>
 		</Fieldset>
@@ -490,22 +485,6 @@ class ReportShow extends Page {
 	handleError(response) {
 		this.setState({error: response})
 		window.scrollTo(0, 0)
-	}
-
-	@autobind
-	actionSelect(eventKey, event) {
-		if (eventKey === 'edit') {
-			History.push(Report.pathForEdit(this.state.report))
-		} else if (eventKey === 'submit' ) {
-			this.submitDraft()
-		} else if (eventKey === 'email' ) {
-		} else if (eventKey === 'delete') {
-			if (confirm('Are you sure you want to delete this report?')) {
-				this.deleteReport()
-			}
-		} else {
-			console.log('Unimplemented Action: ' + eventKey)
-		}
 	}
 
 	@autobind
