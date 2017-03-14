@@ -9,7 +9,7 @@ export default class Fieldset extends Component {
 	render() {
 		let {id, title, action, ...props} = this.props
 
-		return <div id={id}>
+		return <div id={id} data-jumptarget={id}>
 			<h2 className="legend">
 				{title}
 				{action && <small>{action}</small>}

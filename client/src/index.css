@@ -4,7 +4,7 @@ body {
 }
 
 /* this makes jump links work correctly with the header overlaying content */
-*[id]:before {
+*[data-jumptarget]:before {
   display: block;
   content: " ";
   margin-top: -152px;
