@@ -42,6 +42,8 @@ export default class OrganizationPoams extends Component {
 					)}
 				</tbody>
 			</Table>
+
+			{poams.length === 0 && <em>This organization doesn't have any PoAMs</em>}
 		</Fieldset>
 	}
 }

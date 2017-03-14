@@ -44,7 +44,7 @@ export default class ReportCollection extends Component {
 		}
 
 		if (!reports || !reports.length) {
-			return <div>No Reports Found</div>
+			return <em>No reports found</em>
 		}
 
 		return <div className="report-collection">

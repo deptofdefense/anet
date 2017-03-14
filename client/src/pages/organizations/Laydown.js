@@ -81,12 +81,14 @@ export default class OrganizationLaydown extends Component {
 			<tbody>
 				{Position.map(positions, position =>
 					position.associatedPositions.length ?
-						Position.map(position.associatedPositions, (other, idx) =>
-							this.renderPositionRow(position, other, idx)
-						)
+					Position.map(position.associatedPositions, (other, idx) =>
+						this.renderPositionRow(position, other, idx)
+					)
 						:
-						this.renderPositionRow(position, null, 0)
+					this.renderPositionRow(position, null, 0)
 				)}
+
+				{positions.length === 0 && <tr><td><em>This organization doesn't have any positions</em></td></tr>}
 			</tbody>
 		</Table>
 	}
