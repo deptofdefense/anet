@@ -51,12 +51,14 @@ export default class Autocomplete extends Component {
 		this.fetchSuggestionsDebounced = _debounce(this.fetchSuggestions, 200)
 
 		let value = this.componentWillReceiveProps(props)
+		let stringValue = this.getStringValue(value)
 
 		this.state = {
 			suggestions: [],
 			noSuggestions: false,
 			value: value,
-			stringValue: this.getStringValue(value),
+			stringValue,
+			originalStringValue: stringValue,
 		}
 	}
 
@@ -68,11 +70,9 @@ export default class Autocomplete extends Component {
 		}
 
 		//Ensure that we update the stringValue if we get an updated value
-		let state = this.state
-		if (state) {
-			let newValue = this.getStringValue(value)
-			state.stringValue = newValue
-			this.setState(state)
+		if (this.state) {
+			let stringValue = this.getStringValue(value)
+			this.setState({stringValue, originalStringValue: stringValue})
 		}
 
 		return value
@@ -221,11 +221,15 @@ export default class Autocomplete extends Component {
 	@autobind
 	onInputBlur(event) {
 		if (this.currentSelected) { return }
-		//If the user clicks off this Autocomplete with a value left in the Input Box
-		//Send that up to the parent.  The user probably thinks they just 'set' this value
-		// so we should oblige!
+		// If the user clicks off this Autocomplete with a value left in the Input Box
+		// Send that up to the parent. The user probably thinks they just 'set' this value
+		// so we should oblige, _unless_ the value is the original string value that was
+		// passed in. In this case, they probably tabbed past the field, so we should
+		// do nothing.
 		let val = this.state.stringValue
 		if (val) {
+			if (val === this.state.originalStringValue) { return }
+
 			this.setState({value: val, stringValue: val})
 			if (this.props.onErrorChange) {
 				this.props.onErrorChange(true, val)
