@@ -110,13 +110,13 @@ class OrganizationShow extends Page {
 						</Form.Field>
 
 						{org.parentOrg && org.parentOrg.id &&
-							<Form.Field id="parentOrg" label="Parent">
+							<Form.Field id="parentOrg" label="Parent organization">
 								<LinkTo organization={org.parentOrg} />
 							</Form.Field>
 						}
 
 						{org.type === 'ADVISOR_ORG' &&
-							<Form.Field id="superUsers" label="Super Users">
+							<Form.Field id="superUsers" label="Super users">
 								{superUsers.map(position =>
 									<p key={position.id}>
 										{position.person ?
@@ -126,11 +126,11 @@ class OrganizationShow extends Page {
 										}
 									</p>
 								)}
-								{superUsers.length === 0 && <p><i>No Super Users!</i></p>}
+								{superUsers.length === 0 && <p><i>No super users</i></p>}
 							</Form.Field>
 						}
 
-						{org.childrenOrgs && org.childrenOrgs.length > 0 && <Form.Field id="childrenOrgs" label="Sub-Orgs">
+						{org.childrenOrgs && org.childrenOrgs.length > 0 && <Form.Field id="childrenOrgs" label="Sub organizations">
 							<ListGroup>
 								{org.childrenOrgs.map(org =>
 									<ListGroupItem key={org.id} ><LinkTo organization={org} /></ListGroupItem>
