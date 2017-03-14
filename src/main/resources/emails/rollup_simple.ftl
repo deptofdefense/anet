@@ -91,7 +91,7 @@ a {
 		<h2>${topOrg.shortName} - ${(topOrg.longName)!}</h2>
 		<#items as report>
 		<#if ! (report.cancelledReason??)>
-			${counter}. Report #${report.id} <#assign counter = counter + 1>
+			${counter}. Report #${report.id?c} <#assign counter = counter + 1>
 			<@renderReport report />
 			<#sep><hr /></#sep>
 		</#if>
@@ -103,7 +103,7 @@ a {
 
 <h2>Other Reports</h2>
 <#list otherReports as report>
-	(${counter}) <#assign counter = counter + 1>
+	${counter}. Report #${report.id?c} <#assign counter = counter + 1>
 	<@renderReport report />
 	<#sep><hr /></#sep>
 </#list>
