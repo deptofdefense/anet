@@ -57,17 +57,19 @@ a {
 		<th>Cancelled due to Threat</th>
 	</tr>
 	<#list topLevelOrgs as topOrg>
-		<#assign orgReports = reportsByOrg?api.get(topOrg.id) >
-		<tr>
-			<td>${topOrg.shortName}</td>
-			<td>${orgReports?size}</td>
-			<td>${(cancelledByOrgAndReason?api.get(topOrg.id + "-0"))!"0"}</td>
-			<td>${(cancelledByOrgAndReason?api.get(topOrg.id + "-1"))!"0"}</td>
-			<td>${(cancelledByOrgAndReason?api.get(topOrg.id + "-2"))!"0"}</td>
-			<td>${(cancelledByOrgAndReason?api.get(topOrg.id + "-3"))!"0"}</td>
-			<td>${(cancelledByOrgAndReason?api.get(topOrg.id + "-4"))!"0"}</td>
-			<td>${(cancelledByOrgAndReason?api.get(topOrg.id + "-5"))!"0"}</td>
-		</tr>
+		<#assign orgReports = reportsByOrg?api.get(topOrg.id)>
+		<#if orgReports?size gt 0>
+			<tr>
+				<td>${topOrg.shortName}</td>
+				<td>${orgReports?size}</td>
+				<td>${(cancelledByOrgAndReason?api.get(topOrg.id + "-0"))!"0"}</td>
+				<td>${(cancelledByOrgAndReason?api.get(topOrg.id + "-1"))!"0"}</td>
+				<td>${(cancelledByOrgAndReason?api.get(topOrg.id + "-2"))!"0"}</td>
+				<td>${(cancelledByOrgAndReason?api.get(topOrg.id + "-3"))!"0"}</td>
+				<td>${(cancelledByOrgAndReason?api.get(topOrg.id + "-4"))!"0"}</td>
+				<td>${(cancelledByOrgAndReason?api.get(topOrg.id + "-5"))!"0"}</td>
+			</tr>
+		</#if>
 	</#list>
 	<tr>
 		<td><b>Total</b></td>
