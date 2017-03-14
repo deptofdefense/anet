@@ -87,8 +87,8 @@ export default class PositionForm extends ValidatableFormWrapper {
 						/>
 					</Form.Field>
 
-					<Form.Field id="code" 
-						label={position.type === 'PRINCIPAL' ? 'Tashkil Code' : 'Billet Code'} 
+					<Form.Field id="code"
+						label={position.type === 'PRINCIPAL' ? 'Tashkil Code' : 'Billet Code'}
 						placeholder="Postion ID or Number" />
 
 					<RequiredField id="name" label="Position Name" placeholder="Name/Description of Position"/>
@@ -116,11 +116,9 @@ export default class PositionForm extends ValidatableFormWrapper {
 				</Fieldset>
 
 				<Fieldset title={`Assigned ${position.type === 'PRINCIPAL' ? 'advisor' : 'advisee'}`}>
-					{position.type === 'PRINCIPAL' ?
-						<p className="help-text">Who is this person advised by?</p>
-						:
-						<p className="help-text">Who does this person advise?</p>
-					}
+					<p className="help-text">
+						{position.type === 'PRINCIPAL' ? "Who is this person advised by?" : "Who does this person advise?"}
+					</p>
 
 					<Form.Field id="associatedPositions">
 						<Autocomplete

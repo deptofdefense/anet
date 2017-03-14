@@ -76,7 +76,13 @@ fieldset .negative-bottom {
 }
 
 fieldset .help-text {
-	margin: 0 0 2rem 5rem;
+	font-size: 12px;
+	font-weight: bold;
+	color: #888;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	text-align: center;
+	margin-bottom: 24px;
 }
 
 fieldset.collapsable {
