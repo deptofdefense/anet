@@ -11,7 +11,6 @@ import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
 import Messages from 'components/Messages'
 import LinkTo from 'components/LinkTo'
-import History from 'components/History'
 
 import API from 'api'
 import {Report, Person, Poam, Comment} from 'models'
@@ -107,9 +106,6 @@ class ReportShow extends Page {
 
 		//Anbody can email a report as long as it's not in draft.
 		let canEmail = !report.isDraft()
-
-		//Only the author can delete a report, and only in DRAFT.
-		let canDelete = report.isDraft() && (currentUser.id === report.author.id)
 
 		let errors = report.isDraft() && report.validateForSubmit()
 
@@ -535,16 +531,6 @@ class ReportShow extends Page {
 	closeApproversModal(step) {
 		step.showModal = false
 		this.setState(this.state)
-	}
-
-	@autobind
-	deleteReport() {
-		API.send(`/api/reports/${this.state.report.id}/delete`, {}, {method: 'DELETE'}).then(data => {
-			History.push('/', {success: 'Report deleted'})
-		}, data => {
-			this.setState({success:null})
-			this.handleError(data)
-		})
 	}
 }
 

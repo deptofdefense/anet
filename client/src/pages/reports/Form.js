@@ -78,7 +78,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 	}
 
 	render() {
-		let {report} = this.props
+		let {report, onDelete} = this.props
 		let {recents, errors, isCancelled} = this.state
 
 		let hasErrors = Object.keys(errors).length > 0
@@ -96,6 +96,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 			</div>
 
 			<ValidatableForm formFor={report} horizontal onSubmit={this.onSubmit} onChange={this.onChange}
+				onDelete={onDelete} deleteText="Delete this report"
 				submitDisabled={hasErrors} submitText="Preview and submit">
 
 				<Fieldset title={this.props.title} action={
@@ -104,9 +105,9 @@ export default class ReportForm extends ValidatableFormWrapper {
 					</Button>
 				}>
 
-					<RequiredField id="intent" label="Meeting goal (purpose)" 
-						canSubmitWithError={true} 
-						validateBeforeUserTouches={this.props.edit} 
+					<RequiredField id="intent" label="Meeting goal (purpose)"
+						canSubmitWithError={true}
+						validateBeforeUserTouches={this.props.edit}
 						placeholder="What happened?" data-focus componentClass="textarea" maxCharacters={250}>
 						<Form.Field.ExtraCol>{250 - report.intent.length} characters remaining</Form.Field.ExtraCol>
 					</RequiredField>
@@ -223,14 +224,14 @@ export default class ReportForm extends ValidatableFormWrapper {
 				<Fieldset title="Meeting discussion">
 					{!isCancelled &&
 						<RequiredField id="keyOutcomes" componentClass="textarea" maxCharacters={250} humanName="Key outcome description"
-							canSubmitWithError={true} 
+							canSubmitWithError={true}
 							validateBeforeUserTouches={this.props.edit}>
 							<Form.Field.ExtraCol><small>{250 - report.keyOutcomes.length} characters remaining</small></Form.Field.ExtraCol>
 						</RequiredField>
 					}
 
 					<RequiredField id="nextSteps" componentClass="textarea" maxCharacters={250} humanName="Next steps description"
-							canSubmitWithError={true} 
+							canSubmitWithError={true}
 							validateBeforeUserTouches={this.props.edit}>
 						<Form.Field.ExtraCol><small>{250 - report.nextSteps.length} characters remaining</small></Form.Field.ExtraCol>
 					</RequiredField>
