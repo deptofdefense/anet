@@ -276,15 +276,14 @@ a.home-tile {
 }
 
 .form-bottom-submit {
-	margin: 5rem 0 0 0;
+	height: 50px;
 }
-
+.form-bottom-submit>div {
+	height: 100%;
+}
 .form-bottom-submit .btn {
 	font-size: 2.3rem;
-	width: 35%;
-	display: block;
-	margin: 0 auto;
-	margin-bottom: 40px;
+	height: 100%;
 }
 
 .report-sub-form .form-group {
@@ -473,9 +472,6 @@ table hr.attendee-divider {
 .report-form .submit-buttons > div:last-child {
 	margin-left: 10px;
 }
-.report-form .submit-buttons h2 {
-	margin-bottom: 0px;
-}
 
 .report-form .button-row {
 	/* This matches the form fieldset's margin-bottom. */
@@ -502,6 +498,33 @@ table hr.attendee-divider {
 
 .report-form .top-submit-buttons .button-row {
 	margin-bottom: 10px;
+}
+
+.report-form .report-details {
+	width: 90%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.report-form textarea {
+	/* Without this, users can make the textarea arbitrarily wide,
+		causing it to overlap with other elements and break the layout. */
+	max-width: 546px;
+
+	/* The spec calls for the textareas to be 5 lines tall. Thus, we use:
+		line-height * font-size * 5 = textarea min-height
+		14 * 1.42857143 * 5 = 100 */
+	min-height: 100px;
+}
+
+.attendee-divider {
+	color: #5B616B;
+	border-top: dashed;
+	border-width: 2px;
+}
+
+.report-form .attendee-divider-row:hover {
+	background-color: transparent;
 }
 
 .show-report-overview label.col-sm-2 {

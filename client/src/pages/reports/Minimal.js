@@ -171,7 +171,7 @@ export default class ReportMinimal extends Page {
 								{Person.map(report.attendees.filter(p => p.role === "ADVISOR"), person =>
 									this.renderAttendeeRow(person)
 								)}
-								<tr><td colSpan={3}><hr className="attendeeDivider" /></td></tr>
+								<tr><td colSpan={3}><hr className="attendee-divider" /></td></tr>
 								{Person.map(report.attendees.filter(p => p.role === "PRINCIPAL"), person =>
 									this.renderAttendeeRow(person)
 								)}

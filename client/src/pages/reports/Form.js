@@ -19,9 +19,6 @@ import {Report, Person} from 'models'
 
 import CALENDAR_ICON from 'resources/calendar.png'
 import LOCATION_ICON from 'resources/locations.png'
-import POSITIVE_ICON from 'resources/thumbs_up.png'
-import NEUTRAL_ICON from 'resources/neutral.png'
-import NEGATIVE_ICON from 'resources/thumbs_down.png'
 import REMOVE_ICON from 'resources/delete.png'
 import WARNING_ICON from 'resources/warning.png'
 
@@ -135,15 +132,17 @@ export default class ReportForm extends ValidatableFormWrapper {
 					{!isCancelled &&
 						<Form.Field id="atmosphere">
 							<ButtonToggleGroup>
-								<Button value="POSITIVE" id="positiveAtmos" ><img src={POSITIVE_ICON} height={25} alt="positive" /></Button>
-								<Button value="NEUTRAL" id="neutralAtmos" ><img src={NEUTRAL_ICON} height={25} alt="neutral" /></Button>
-								<Button value="NEGATIVE" id="negativeAtmos" ><img src={NEGATIVE_ICON} height={25} alt="negative" /></Button>
+								<Button value="POSITIVE" id="positiveAtmos">Positive</Button>
+								<Button value="NEUTRAL" id="neutralAtmos">Neutral</Button>
+								<Button value="NEGATIVE" id="negativeAtmos">Negative</Button>
 							</ButtonToggleGroup>
 						</Form.Field>
 					}
 
-					{!isCancelled && report.atmosphere && report.atmosphere !== 'POSITIVE' &&
-						<Form.Field id="atmosphereDetails" placeholder={`Why was this engagement ${report.atmosphere}?`} />
+					{!isCancelled && report.atmosphere &&
+						<RequiredField id="atmosphereDetails" 
+							placeholder={`Why was this engagement ${report.atmosphere.toLowerCase()}?`} 
+							required={report.atmosphere !== 'POSITIVE'} />
 					}
 
 					{isCancelled &&
@@ -194,7 +193,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 								{Person.map(report.attendees.filter(p => p.role === "ADVISOR"), (person, idx) =>
 									this.renderAttendeeRow(person, idx)
 								)}
-								<tr><td colSpan={5}><hr className="attendee-divider" /></td></tr>
+								<tr className="attendee-divider-row"><td colSpan={5}><hr className="attendee-divider" /></td></tr>
 								{Person.map(report.attendees.filter(p => p.role === "PRINCIPAL"), (person, idx) =>
 									this.renderAttendeeRow(person, idx)
 								)}
@@ -241,7 +240,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 					</Button>
 
 					<Collapse in={this.state.showReportText}>
-						<div>
+						<div className="report-details">
 							<Form.Field id="reportText" label="" horizontal={false} className="reportTextField" >
 								<TextEditor label="Report Details" id="reportTextEditor" />
 							</Form.Field>
@@ -372,11 +371,6 @@ export default class ReportForm extends ValidatableFormWrapper {
 		}
 
 		return errors
-	}
-
-	@autobind
-	onCancel() {
-		History.goBack()
 	}
 
 	@autobind

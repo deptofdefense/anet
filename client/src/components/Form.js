@@ -2,6 +2,7 @@ import React, {Component, PropTypes} from 'react'
 import ReactDOM from 'react-dom'
 import {Form as BSForm, Button} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
+import History from 'components/History'
 
 import FormField from 'components/FormField'
 
@@ -65,17 +66,25 @@ export default class Form extends Component {
 			<BSForm {...bsProps} ref="container">
 				{children}
 
-				<div className="form-bottom-submit">
-					{showSubmit &&
-						<Button bsStyle="primary" bsSize="large" type="submit" disabled={submitDisabled} id="formBottomSubmit">
-							{submitText}
-						</Button>
-					}
+				<div className="form-bottom-submit submit-buttons">
+					<div>
+						<Button onClick={this.onCancel}>Cancel</Button>
+					</div>
 
 					{showDelete &&
-						<Button bsStyle="warning" onClick={onDelete}>
-							{deleteText}
-						</Button>
+						<div>
+							<Button bsStyle="warning" onClick={onDelete}>
+								{deleteText}
+							</Button>
+						</div>
+					}
+
+					{showSubmit &&
+						<div>
+							<Button bsStyle="primary" bsSize="large" type="submit" disabled={submitDisabled} id="formBottomSubmit">
+								{submitText}
+							</Button>
+						</div>
 					}
 				</div>
 			</BSForm>
@@ -95,6 +104,11 @@ export default class Form extends Component {
 		event.preventDefault()
 
 		this.props.onSubmit && this.props.onSubmit(event)
+	}
+
+	@autobind
+	onCancel() {
+		History.goBack({skipPageLeaveWarning: true})
 	}
 }
 
