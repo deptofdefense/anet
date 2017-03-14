@@ -272,13 +272,15 @@ a.home-tile {
 }
 
 .form-bottom-submit {
-	text-align: center;
-	margin: 5rem 0 40px 0;
+	margin: 5rem 0 0 0;
 }
 
 .form-bottom-submit .btn {
 	font-size: 2.3rem;
 	width: 35%;
+	display: block;
+	margin: 0 auto;
+	margin-bottom: 40px;
 }
 
 .report-sub-form .form-group {

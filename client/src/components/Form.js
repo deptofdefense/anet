@@ -12,14 +12,17 @@ export default class Form extends Component {
 		submitText: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
 		submitOnEnter: PropTypes.bool,
 		submitDisabled: PropTypes.bool,
-		onSubmit: PropTypes.func,
+		deleteText: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
 		onChange: PropTypes.func,
+		onSubmit: PropTypes.func,
+		onDelete: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
 	})
 
 	static defaultProps = {
 		static: false,
-		submitText: 'Save',
 		submitOnEnter: false,
+		submitText: "Save",
+		deleteText: "Delete",
 	}
 
 	static childContextTypes = {
@@ -41,7 +44,7 @@ export default class Form extends Component {
 	}
 
 	render() {
-		let {children, submitText, submitOnEnter, submitDisabled, ...bsProps} = this.props
+		let {children, submitText, submitOnEnter, submitDisabled, deleteText, onDelete, ...bsProps} = this.props
 		bsProps = Object.without(bsProps, 'formFor', 'static')
 
 		if (this.props.static) {
@@ -56,17 +59,25 @@ export default class Form extends Component {
 		let showSubmit = bsProps.onSubmit && submitText !== false
 		bsProps.onSubmit = this.onSubmit
 
+		let showDelete = onDelete && deleteText !== false
+
 		return (
 			<BSForm {...bsProps} ref="container">
 				{children}
 
-				{showSubmit &&
-					<div className="form-bottom-submit">
+				<div className="form-bottom-submit">
+					{showSubmit &&
 						<Button bsStyle="primary" bsSize="large" type="submit" disabled={submitDisabled} id="formBottomSubmit">
 							{submitText}
 						</Button>
-					</div>
-				}
+					}
+
+					{showDelete &&
+						<Button bsStyle="warning" onClick={onDelete}>
+							{deleteText}
+						</Button>
+					}
+				</div>
 			</BSForm>
 		)
 	}
