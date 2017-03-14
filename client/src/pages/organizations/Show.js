@@ -39,6 +39,7 @@ class OrganizationShow extends Page {
 		if (nextProps.params.action !== this.state.action) {
 			this.setState({action: nextProps.params.action})
 		}
+
 		if (+nextProps.params.id !== this.state.organization.id) {
 			this.loadData(nextProps)
 		}
@@ -84,7 +85,7 @@ class OrganizationShow extends Page {
 		let isSuperUser = (currentUser) ? currentUser.isSuperUserForOrg(org) : false
 		let isAdmin = (currentUser) ? currentUser.isAdmin() : false
 
-		let superUsers = org.positions.filter(pos => (pos.type === 'SUPER_USER' || pos.type === 'ADMINISTRATOR'))
+		let superUsers = org.positions.filter(pos => pos.status === 'ACTIVE' && pos.person.status === 'ACTIVE' && (pos.type === 'SUPER_USER' || pos.type === 'ADMINISTRATOR'))
 
 		return (
 			<div>
