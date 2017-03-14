@@ -150,16 +150,11 @@ class ReportShow extends Page {
 				{this.renderEmailModal()}
 
 				<Form static formFor={report} horizontal>
-					<Fieldset title={`Report #${report.id}`} className="show-report-overview" action={
-						<DropdownButton bsStyle="primary" title="Actions" id="actions"
-							className="pull-right" onSelect={this.actionSelect}>
-							{canEdit && <MenuItem eventKey="edit">Edit report</MenuItem>}
-							{canSubmit && errors.length === 0 && <MenuItem eventKey="submit">Submit</MenuItem>}
-							{canEmail && <MenuItem eventKey="email" onClick={this.toggleEmailModal}>Email report</MenuItem>}
-
-							{canDelete && <MenuItem divider />}
-							{canDelete && <MenuItem eventKey="delete" >Delete report</MenuItem> }
-						</DropdownButton>
+					<Fieldset title={`Report #${report.id}`} className="show-report-overview" action={<div>
+						{canEmail && <Button onClick={this.toggleEmailModal}>Email report</Button>}
+						{canEdit && <LinkTo report={report} edit button="primary">Edit</LinkTo>}
+						{canSubmit && errors.length === 0 && <Button bsStyle="primary" onClick={this.submitDraft}>Submit</Button>}
+					</div>
 					}>
 
 						<Form.Field id="intent" label="Summary" >
@@ -490,22 +485,6 @@ class ReportShow extends Page {
 	handleError(response) {
 		this.setState({error: response})
 		window.scrollTo(0, 0)
-	}
-
-	@autobind
-	actionSelect(eventKey, event) {
-		if (eventKey === 'edit') {
-			History.push(Report.pathForEdit(this.state.report))
-		} else if (eventKey === 'submit' ) {
-			this.submitDraft()
-		} else if (eventKey === 'email' ) {
-		} else if (eventKey === 'delete') {
-			if (confirm('Are you sure you want to delete this report?')) {
-				this.deleteReport()
-			}
-		} else {
-			console.log('Unimplemented Action: ' + eventKey)
-		}
 	}
 
 	@autobind
