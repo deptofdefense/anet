@@ -28,15 +28,10 @@ export default class OnboardingShow extends Page {
 		return (
             <div className="onboarding-new">
 			    <h1>Welcome to ANET</h1>
-                <p>ANET is an information system for reporting on TAA engagements, and learning about past engagements and people.</p>
-                <p>Let's create a new account for your as an <span className="role">{currentUser.role}</span>. We'll get your basic information that will allow your supervisor to approve your account.</p>
+                <p>ANET is a training system for reporting TAA engagements, and learning about past engagements and people.</p>
+                <p>Let's create a new account for you. We'll grab your basic information and help your super user get you set up. If you had an account in ANET 1 and are seeing this page, let your super user know that you'll need to get your old account merged with the one you're about to create.</p>
                 <div className="create-account-button-wrapper">
                     <Button bsStyle="primary" onClick={() => this.onCreateAccountClick(currentUser)}>Create your account</Button>
-                </div>
-                <div className="help">
-                    <p>Concerned or stuck?</p>
-                    <p>Contact the ANET help desk team at CJ7 TREXS.</p>
-                    <p>555-555-5555555</p>
                 </div>
 			</div>
 		)
