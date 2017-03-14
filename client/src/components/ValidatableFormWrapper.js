@@ -19,7 +19,11 @@ export default class ValidatableFormWrapper extends Component {
 		const isSubmitDisabled = () => {
 			return !props.canSubmitWithError && _some(_values(this.state.formErrors))
 		}
-        return <Form {...props} submitDisabled={isSubmitDisabled()} />
+		const onSubmit = () => {
+			this.setState({afterSubmit: true})
+			props.onSubmit && props.onSubmit()
+		}
+        return <Form {...props} submitDisabled={isSubmitDisabled()} onSubmit={onSubmit} />
     }
 
 	@autobind
@@ -27,7 +31,8 @@ export default class ValidatableFormWrapper extends Component {
 		const onError = () => this.setState({formErrors: {...this.state.formErrors, [props.id]: true}})
 		const onValid = () => this.setState({formErrors: {...this.state.formErrors, [props.id]: false}})
 
-		return <Form.Field {...Object.without(props, 'required', 'humanName')} 
+		return <Form.Field {...Object.without(props, 'required', 'humanName', 'validateBeforeUserTouches')} 
+			validateBeforeUserTouches={this.state.afterSubmit || props.validateBeforeUserTouches}
 			onError={onError}
 			onValid={onValid}
 			humanName={props.humanName || props.label || utils.sentenceCase(props.id)}

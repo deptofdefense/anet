@@ -36,6 +36,10 @@ export default class LocationNew extends ValidatableFormWrapper {
 		let markers = this.state.markers
 		const {ValidatableForm, RequiredField} = this
 
+		function Coordinate(props) {
+			return <span>{Math.round(props.coord * 1000) / 1000}</span>
+		}
+
 		return (
 			<div>
 				<NavigationWarning original={new Location()} current={location} />
@@ -49,7 +53,7 @@ export default class LocationNew extends ValidatableFormWrapper {
 					<Fieldset title="Create a new Location">
 						<RequiredField id="name" />
 						<Form.Field type="static" id="location">
-							{(Math.round(location.lat * 1000)) / 1000}, {(Math.round(location.lng * 1000)) / 1000}
+							<Coordinate coord={location.lat} />, <Coordinate coord={location.lng} />
 						</Form.Field>
 					</Fieldset>
 
