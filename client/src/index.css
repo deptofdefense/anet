@@ -144,6 +144,10 @@ fieldset.collapsable legend div.collapsableToggle {
 	display: none;
 }
 
+.dropdown-menu {
+	overflow-y: scroll;
+}
+
 .header .logo img, .header input, .header button {
 	height: 38px;
 }
