@@ -1,7 +1,7 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 import ModelPage from 'components/ModelPage'
-import {Alert, Table, Button, Col, DropdownButton, MenuItem, Modal, Checkbox} from 'react-bootstrap'
+import {Alert, Table, Button, Col, Modal, Checkbox} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 import moment from 'moment'
 import utils from 'utils'
@@ -311,7 +311,7 @@ class ReportShow extends Page {
 
 			<Button bsStyle="warning" onClick={this.rejectReport}>Reject with comment</Button>
 			<div className="right-button">
-				<Button onClick={this.actionSelect.bind(this, 'edit')}>Edit report</Button>
+				<LinkTo report={this.state.report} edit button>Edit report</LinkTo>
 				<Button bsStyle="primary" onClick={this.approveReport}><strong>Approve</strong></Button>
 			</div>
 		</Fieldset>
