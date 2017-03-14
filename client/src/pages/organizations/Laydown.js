@@ -12,6 +12,10 @@ export default class OrganizationLaydown extends Component {
 		organization: PropTypes.object.isRequired
 	}
 
+	static contextTypes = {
+		app: PropTypes.object.isRequired,
+	}
+
 	constructor(props) {
 		super(props)
 
@@ -21,6 +25,9 @@ export default class OrganizationLaydown extends Component {
 	}
 
 	render() {
+		let appData = this.context.app.state
+		let currentUser = appData.currentUser
+
 		let org = this.props.organization
 		let showInactivePositions = this.state.showInactivePositions
 		let numInactivePos = org.positions.filter(p => p.status === 'INACTIVE').length
@@ -34,9 +41,9 @@ export default class OrganizationLaydown extends Component {
 					{(showInactivePositions ? "Hide " : "Show ") + numInactivePos + " inactive position(s)"}
 				</Button>}
 
-				<LinkTo position={Position.pathForNew({organizationId: org.id})} button>
+				{currentUser.isSuperUser() && <LinkTo position={Position.pathForNew({organizationId: org.id})} button>
 					Create position
-				</LinkTo>
+				</LinkTo>}
 			</div>}>
 
 				{this.renderPositionTable(supportedPositions)}

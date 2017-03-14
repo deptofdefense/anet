@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {Component, PropTypes} from 'react'
 import {Table} from 'react-bootstrap'
 
 import Fieldset from 'components/Fieldset'
@@ -7,7 +7,14 @@ import LinkTo from 'components/LinkTo'
 import {Poam} from 'models'
 
 export default class OrganizationPoams extends Component {
+	static contextTypes = {
+		app: PropTypes.object.isRequired,
+	}
+
 	render() {
+		let appData = this.context.app.state
+		let currentUser = appData.currentUser
+
 		let org = this.props.organization
 		if (org.type !== 'ADVISOR_ORG') {
 			return <div></div>
@@ -15,7 +22,9 @@ export default class OrganizationPoams extends Component {
 
 		let poams = org.poams
 
-		return <Fieldset id="poams" title="PoAMs / Pillars" action={<LinkTo poam={Poam.pathForNew()} button>Create PoAM</LinkTo>}>
+		return <Fieldset id="poams" title="PoAMs / Pillars" action={
+			currentUser.isSuperUser() && <LinkTo poam={Poam.pathForNew()} button>Create PoAM</LinkTo>
+		}>
 			<Table>
 				<thead>
 					<tr>
