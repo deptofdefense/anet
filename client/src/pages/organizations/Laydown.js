@@ -37,7 +37,7 @@ export default class OrganizationLaydown extends Component {
 
 		return <div id="laydown" data-jumptarget>
 			<Fieldset title="Supported positions" action={<div>
-				{numInactivePos > 0 && <Button bsSize="sm" onClick={this.toggleShowInactive}>
+				{numInactivePos > 0 && <Button onClick={this.toggleShowInactive}>
 					{(showInactivePositions ? "Hide " : "Show ") + numInactivePos + " inactive position(s)"}
 				</Button>}
 
