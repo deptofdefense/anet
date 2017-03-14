@@ -28,9 +28,9 @@ export default class PoamNew extends Page {
 	}
 
 	fetchData(props) {
-		if (props.location.query.responsibleOrg) {
+		if (props.location.query.responsibleOrgId) {
 			API.query(/* GraphQL */`
-				organization(id: ${props.location.query.responsibleOrg}) {
+				organization(id: ${props.location.query.responsibleOrgId}) {
 					id, shortName, longName, type
 				}
 			`).then(data => {
