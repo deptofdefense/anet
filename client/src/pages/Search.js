@@ -179,6 +179,10 @@ export default class Search extends Page {
 
 		return (
 			<div>
+				{this.props.location.query.text && <div className="pull-right">
+					<Button onClick={this.showSaveModal} id="saveSearchButton">Save search</Button>
+				</div>}
+
 				<Breadcrumbs items={[['Searching for ' + queryString, '/search']]} />
 
 				<ContentForNav>
@@ -234,9 +238,6 @@ export default class Search extends Page {
 
 				{numReports > 0 && (queryType === 'everything' || queryType === 'reports') &&
 					<Fieldset title="Reports">
-						<div className="pull-right">
-							{this.props.location.query.text && <Button onClick={this.showSaveModal} id="saveSearchButton" >Save search</Button>}
-						</div>
 						<ReportCollection paginatedReports={results.reports} goToPage={this.goToReportsPage} />
 					</Fieldset>
 				}
