@@ -497,10 +497,10 @@ table hr.attendee-divider {
 	width: 130px;
 }
 
-.show-report-overview .form-group {
-	/* The design calls for 18px of separation between the form rows.
+.form-control-static {
+	/* The design calls for 18px of separation between static form rows.
 		The form row already has padding-top: 7px and padding-bottom: 7px,
-		and 7+7 = 14, so we need 4 more px here to make it 18 in total.
+		and the form control has margin-bottom: 15px. 15 + x = 18 - (7 + 7); x = -11
 	*/
-	margin-bottom: 4px;
+	margin-bottom: -11px;
 }
