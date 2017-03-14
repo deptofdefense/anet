@@ -47,7 +47,13 @@ class Nav extends Component {
 				</NavDropdown>
 
 				{inOrg &&
-					<SubNav componentClass={Scrollspy} items={['info', 'laydown', 'approvals', 'poams', 'reports']} className="nav" currentClassName="active">
+					<SubNav
+						componentClass={Scrollspy}
+						className="nav"
+						items={['info', 'laydown', 'approvals', 'poams', 'reports']}
+						currentClassName="active"
+						offset={-152}
+					>
 						<NavItem href="#info">Info</NavItem>
 						<NavItem href="#laydown">Laydown</NavItem>
 						<NavItem href="#approvals">Approvals</NavItem>
