@@ -257,6 +257,8 @@ export default class FormField extends Component {
 			return
 		}
 
+		this.setState({isValid: !this.isMissingRequiredField(props)})
+
 		if (this.isMissingRequiredField(props) || this.state.isValid === false) {
 			props.onError()
 		} else if (props.onValid && !this.isMissingRequiredField(props) && this.state.isValid !== false) {
