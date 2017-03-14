@@ -49,15 +49,25 @@ a {
 	<tr>
 		<th>Organization</th>
 		<th># of Reports</th>
+		<th>Cancelled by Advisor</th>
+		<th>Cancelled by Principal</th>
+		<th>Cancelled due to Transportation</th>
+		<th>Cancelled due to Force Protection</th>
+		<th>Cancelled due to Routes</th>
+		<th>Cancelled due to Threat</th>
 	</tr>
 	<#list topLevelOrgs as topOrg>
-		<#assign numReports = reportsByOrg?api.get(topOrg.id)?size >
-		<#if numReports gt 0>
-			<tr>
-				<td>${topOrg.shortName}</td>
-				<td>${numReports}</td>
-			</tr>
-		</#if>
+		<#assign reports = reportsByOrg?api.get(topOrg.id) >
+		<tr>
+			<td>${topOrg.shortName}</td>
+			<td>${reports?size}</td>
+			<td>${(cancelledByOrgAndReason?api.get(topOrg.id + "-0"))!"0"}</td>
+			<td>${(cancelledByOrgAndReason?api.get(topOrg.id + "-1"))!"0"}</td>
+			<td>${(cancelledByOrgAndReason?api.get(topOrg.id + "-2"))!"0"}</td>
+			<td>${(cancelledByOrgAndReason?api.get(topOrg.id + "-3"))!"0"}</td>
+			<td>${(cancelledByOrgAndReason?api.get(topOrg.id + "-4"))!"0"}</td>
+			<td>${(cancelledByOrgAndReason?api.get(topOrg.id + "-5"))!"0"}</td>
+		</tr>
 	</#list>
 </table>
 
