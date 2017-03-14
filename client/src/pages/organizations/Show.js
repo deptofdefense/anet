@@ -93,7 +93,7 @@ class OrganizationShow extends Page {
 				<Messages error={this.state.error} success={this.state.success} />
 
 				<Form formFor={org} static horizontal>
-					<Fieldset title={org.shortName} action={<div>
+					<Fieldset id="info" title={org.shortName} action={<div>
 						{isAdmin && <LinkTo organization={Organization.pathForNew({parentOrgId: org.id})} button>
 							Create sub-organization
 						</LinkTo>}
@@ -139,11 +139,11 @@ class OrganizationShow extends Page {
 						</Form.Field>}
 					</Fieldset>
 
-					<OrganizationPoams organization={org} />
 					<OrganizationLaydown organization={org} />
 					<OrganizationApprovals organization={org} />
+					<OrganizationPoams organization={org} />
 
-					<Fieldset title={`Reports from ${org.shortName}`}>
+					<Fieldset id="reports" title={`Reports from ${org.shortName}`}>
 						<ReportCollection reports={org.reports && org.reports.list} />
 					</Fieldset>
 				</Form>

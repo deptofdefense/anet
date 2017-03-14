@@ -29,7 +29,7 @@ export default class OrganizationLaydown extends Component {
 		let supportedPositions = org.positions.filter(position => positionsNeedingAttention.indexOf(position) === -1)
 
 		return <div>
-			<Fieldset title="Supported positions" action={<div>
+			<Fieldset id="laydown" title="Supported positions" action={<div>
 				{numInactivePos > 0 && <Button bsSize="sm" onClick={this.toggleShowInactive}>
 					{(showInactivePositions ? "Hide " : "Show ") + numInactivePos + " inactive position(s)"}
 				</Button>}

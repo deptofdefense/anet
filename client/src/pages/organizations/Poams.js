@@ -15,7 +15,7 @@ export default class OrganizationPoams extends Component {
 
 		let poams = org.poams
 
-		return <Fieldset title="PoAMs / Pillars" action={<LinkTo poam={Poam.pathForNew()} button>Create PoAM</LinkTo>}>
+		return <Fieldset id="poams" title="PoAMs / Pillars" action={<LinkTo poam={Poam.pathForNew()} button>Create PoAM</LinkTo>}>
 			<Table>
 				<thead>
 					<tr>

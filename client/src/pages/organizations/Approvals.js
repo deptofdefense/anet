@@ -9,7 +9,7 @@ export default class OrganizationApprovals extends Component {
 		let org = this.props.organization
 		let approvalSteps = org.approvalSteps
 
-		return <Fieldset title="Approval process">
+		return <Fieldset id="approvals" title="Approval process">
 			{approvalSteps && approvalSteps.map((step, idx) =>
 				<div key={'step_' + idx}>
 					<Fieldset title={`Step ${idx + 1}: ${step.name}`}>
