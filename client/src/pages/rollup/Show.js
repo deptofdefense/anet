@@ -1,6 +1,6 @@
 import React from 'react'
 import Page from 'components/Page'
-import {DropdownButton, MenuItem, Modal, Alert, Button} from 'react-bootstrap'
+import {Modal, Alert, Button} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 import moment from 'moment'
 
@@ -28,7 +28,8 @@ const barColors = {
 }
 
 const calendarButtonCss = {
-	marginRight: '20px',
+	marginLeft: '20px',
+	marginTop: '-8px',
 }
 
 export default class RollupShow extends Page {
@@ -38,10 +39,6 @@ export default class RollupShow extends Page {
 
 	static defaultProps = {
 		date: moment(),
-	}
-
-	static contextTypes = {
-		app: React.PropTypes.object.isRequired,
 	}
 
 	get dateStr() { return this.state.date.format('DD MMM YYYY') }
@@ -195,53 +192,31 @@ export default class RollupShow extends Page {
 	}
 
 	render() {
-		// let reports = this.state.reports.list
-
-		// Only admins can email the Rollup out.
-		let currentUser = this.context.app.state.currentUser
-		let canEdit = currentUser && currentUser.isSuperUser()
-
 		return (
 			<div>
 				<Breadcrumbs items={[['Rollup', ''],[this.dateStr, 'rollup/' +this.dateStr]]} />
 
-				<div className="pull-right">
-					<CalendarButton onChange={this.changeRollupDate} value={this.state.date.toISOString()} style={calendarButtonCss} />
-
-					{canEdit &&
-						<DropdownButton bsStyle="primary" title="Actions" id="actions" className="pull-right" onSelect={this.actionSelect}>
-							<MenuItem eventKey="email">Email rollup</MenuItem>
-							<MenuItem eventKey="print">Print</MenuItem>
-							<MenuItem href={`/api/reports/rollup?startDate=${this.rollupStart.valueOf()}&endDate=${this.rollupEnd.valueOf()}`}>View Rollup Email</MenuItem>
-							<MenuItem href={`/api/reports/rollup?startDate=${this.rollupStart.valueOf()}&endDate=${this.rollupEnd.valueOf()}&showText=true`}>View Long Rollup Email</MenuItem>
-						</DropdownButton>
-					}
-				</div>
-
-				<h1>
-					Daily Rollup - {this.dateLongStr}
-				</h1>
-
-				<Fieldset title="Summary">
+				<Fieldset title={
+					<span>
+						Daily Rollup - {this.dateLongStr}
+						<CalendarButton onChange={this.changeRollupDate} value={this.state.date.toISOString()} style={calendarButtonCss} />
+					</span>
+				} action={
+					<div>
+						<Button href={`/api/reports/rollup?startDate=${this.rollupStart.valueOf()}&endDate=${this.rollupEnd.valueOf()}`}>Print</Button>
+						<Button onClick={this.toggleEmailModal} bsStyle="primary">Email rollup</Button>
+					</div>
+				}>
 					<svg ref={el => this.graph = el} style={graphCss} />
 				</Fieldset>
 
-				<Fieldset title={`Reports - ${this.dateLongStr}`}>
+				<Fieldset title="Reports">
 					<ReportCollection paginatedReports={this.state.reports} />
 				</Fieldset>
 
 				{this.renderEmailModal()}
 			</div>
 		)
-	}
-
-	@autobind
-	actionSelect(eventKey, event) {
-		if (eventKey === 'email') {
-			this.toggleEmailModal()
-		} else {
-			console.log('Unimplemented Action: ' + eventKey)
-		}
 	}
 
 	@autobind
