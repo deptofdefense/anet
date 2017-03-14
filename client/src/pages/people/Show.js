@@ -84,10 +84,15 @@ class PersonShow extends Page {
 		let {person} = this.state
 		let position = person.position
 
-		//User can always edit themselves, or Super Users/Admins.
+		//User can always edit themselves
+		//Admins can always edit anybody
+		//SuperUsers can edit people in their org, their descendant orgs, or un-positioned people.
 		let currentUser = this.context.app.state.currentUser
 		let canEdit = currentUser && (currentUser.id === person.id ||
-			currentUser.isSuperUser())
+			currentUser.isAdmin() ||
+			(person.position && currentUser.isSuperUserForOrg(person.position.organization)) ||
+			(!person.position && currentUser.isSuperUser()) ||
+			(person.role === 'PRINCIPAL' && currentUser.isSuperUser()))
 
 		return (
 			<div>

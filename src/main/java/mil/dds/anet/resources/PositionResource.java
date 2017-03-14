@@ -123,7 +123,8 @@ public class PositionResource implements IGraphQLResource {
 	public Response updatePosition(@Auth Person user, Position pos) {
 		AuthUtils.assertSuperUserForOrg(user, pos.getOrganization());
 		if (pos.getType() == PositionType.ADMINISTRATOR) { AuthUtils.assertAdministrator(user); } 
-		
+		if (pos.getOrganization() == null) { throw new WebApplicationException("A Position must belong to an organization", Status.BAD_REQUEST); }
+
 		int numRows = dao.update(pos);
 
 		if (pos.getPerson() != null || pos.getAssociatedPositions() != null) {
