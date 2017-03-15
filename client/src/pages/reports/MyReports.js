@@ -17,7 +17,7 @@ export default class MyReports extends Page {
 			person(f:me) {
 				authoredReports(pageNum:0, pageSize:10) { 
                     list {
-                        id, intent, engagementDate, keyOutcomes, nextSteps
+                        id, intent, engagementDate, keyOutcomes, nextSteps, atmosphere
                         primaryAdvisor { id, name } ,
                         primaryPrincipal {id, name },
                         advisorOrg { id, shortName, longName }
@@ -40,7 +40,7 @@ export default class MyReports extends Page {
 function ReportSection(props) {
     return <div>
         <h2>{props.title}</h2>
-        <ReportCollection reports={props.reports} />
+        {props.reports && <ReportCollection reports={props.reports} />}
     </div>
 
 }
