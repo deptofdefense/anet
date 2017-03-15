@@ -9,6 +9,7 @@ import Breadcrumbs from 'components/Breadcrumbs'
 import ReportCollection from 'components/ReportCollection'
 import CalendarButton from 'components/CalendarButton'
 import Form from 'components/Form'
+import History from 'components/History'
 
 import API from 'api'
 import {Report} from 'models'
@@ -37,10 +38,6 @@ export default class RollupShow extends Page {
 		date: React.PropTypes.object,
 	}
 
-	static defaultProps = {
-		date: moment(),
-	}
-
 	get dateStr() { return this.state.date.format('DD MMM YYYY') }
 	get dateLongStr() { return this.state.date.format('DD MMMM YYYY') }
 	get rollupStart() { return moment(this.state.date).subtract(1, 'days').startOf('day').hour(19) } //7pm yesterday
@@ -48,8 +45,9 @@ export default class RollupShow extends Page {
 
 	constructor(props) {
 		super(props)
+
 		this.state = {
-			date: props.date,
+			date: moment(+props.date || +props.location.query.date),
 			reports: {list: []},
 			graphData: {},
 			showEmailModal: false,
@@ -221,7 +219,10 @@ export default class RollupShow extends Page {
 
 	@autobind
 	changeRollupDate(newDate) {
-		this.setState({date: moment(newDate)}, () => {
+		let date = moment(newDate)
+		History.replace({pathname: 'rollup', query: {date: date.valueOf()}})
+
+		this.setState({date: date}, () => {
 			this.loadData()
 		})
 	}
