@@ -60,10 +60,10 @@ export default class MyReports extends Page {
     }
 
     @autobind
-    queryReportPage(reportGroupName, $state, $pageNum) {
+    queryReportPage(reportGroupName, $state, pageNum) {
         API.query(/* GraphQL */`
 			person(f:me) {
-				authoredReports(pageNum: $pageNum, pageSize: 10, state: [$state]) { 
+				authoredReports(pageNum: $pageNum, pageSize: 10, state: [RELEASED]) { 
                     pageNum, pageSize, totalCount, list {
                         id, intent, engagementDate, keyOutcomes, nextSteps, atmosphere
                         primaryAdvisor { id, name } ,
@@ -74,14 +74,14 @@ export default class MyReports extends Page {
                     }
                 }
 			}
-		`, {$state, $pageNum}).then(data => 
+		`, {pageNum}, '($pageNum: Int)').then(data => 
             this.setState({
                 reports: {
+                    ...this.state.reports,
                     [reportGroupName]: ({
                         list: Report.fromArray(data.person.authoredReports.list), 
                         ...data.person.authoredReports
-                    }),
-                    ...this.state.reports
+                    })
                 }
             })
         )
