@@ -27,9 +27,11 @@ class PositionShow extends Page {
 		this.state = {
 			position: new Position( {
 				id: props.params.id,
-				previousPeople: []
+				previousPeople: [],
+				associatedPositions: [],
 			}),
 		}
+
 		setMessages(props,this.state)
 	}
 
@@ -116,6 +118,10 @@ class PositionShow extends Page {
 								)}
 							</tbody>
 						</Table>
+
+						{position.associatedPositions.length === 0 &&
+							<em>{position.name} has no associated {assignedRole}</em>
+						}
 					</Fieldset>
 
 					<Fieldset title="Previous position holders">
