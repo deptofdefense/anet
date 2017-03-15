@@ -51,7 +51,7 @@ class PositionShow extends Page {
 
 	render() {
 		let position = this.state.position
-		let assignedRole = (position.type === 'ADVISOR') ? 'Afghan Principals' : 'Advisors'
+		let assignedRole = (position.type === 'ADVISOR') ? 'Afghan principals' : 'advisors'
 
 		let currentUser = this.context.app.state.currentUser
 		let canEdit = currentUser && (
@@ -89,10 +89,13 @@ class PositionShow extends Page {
 						</Form.Field>
 					</Fieldset>
 
-					<Fieldset title="Current assigned person" className={(!position.person || !position.person.id) && 'warning'}>
+					<Fieldset title="Current assigned person" className={(!position.person || !position.person.id) && 'warning'} style={{textAlign: 'center'}}>
 						{position.person && position.person.id
-							? <LinkTo person={position.person} />
-							: <div style={{textAlign: 'center'}}>
+							? <div>
+								<h4><LinkTo person={position.person}>{position.person.rank} {position.person.name}</LinkTo></h4>
+								<p><LinkTo position={position} edit button>Change assigned person</LinkTo></p>
+							</div>
+							: <div>
 								<p><em>{position.name} is currently empty.</em></p>
 								{currentUser.isSuperUser() && <p><LinkTo position={position} edit button>Assign person</LinkTo></p>}
 							</div>
