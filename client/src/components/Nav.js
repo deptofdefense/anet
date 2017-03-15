@@ -25,6 +25,7 @@ class Nav extends Component {
 		let path = this.context.app.props.location.pathname
 		let inAdmin = path.indexOf('/admin') === 0
 		let inOrg = path.indexOf('/organizations') === 0
+		let inMyReports = path.indexOf('/reports/mine') === 0
 		if (inOrg) { path = '/organizations/' + this.context.app.props.params.id }
 
 		return (
@@ -36,6 +37,21 @@ class Nav extends Component {
 				{currentUser && <Link to={{pathname: '/reports/mine'}}>
 					<NavItem>My Reports</NavItem>
 				</Link>
+				}
+
+				{inMyReports && 
+					<SubNav
+						componentClass={Scrollspy}
+						className="nav"
+						items={['draft-reports', 'pending-approval', 'published-reports']}
+						currentClassName="active"
+						offset={-152}
+					>
+						<NavItem href="#draft-reports">Draft reports</NavItem>
+						<NavItem href="#pending-approval">Pending approval</NavItem>
+						<NavItem href="#published-reports">Published reports</NavItem>
+					</SubNav>
+
 				}
 
 				<NavDropdown title="EFs / AOs" id="organizations" active={inOrg}>

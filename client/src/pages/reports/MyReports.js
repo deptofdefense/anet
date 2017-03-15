@@ -97,23 +97,23 @@ export default class MyReports extends Page {
     render() {
         const ReportSection = props => {
             let content = <p>Loading...</p>
-            const reportGroup = _get(props, ['reports', props.reportGroupName]),
+            const reportGroup = _get(this.state, ['reports', props.reportGroupName]),
                 goToPage = pageNum => this.queryReportPage(props.reportGroupName, props.reportGroupState, pageNum)
 
             if (reportGroup) {
                 content = <ReportCollection paginatedReports={reportGroup} goToPage={goToPage} />
             }
 
-            return <Fieldset title={props.title}>
+            return <Fieldset title={props.title} id={props.id}>
                 {content}
             </Fieldset>
         }
 
         return <div>
             <Breadcrumbs items={[['My Reports', window.location.pathname]]} />
-            <ReportSection title="Draft Reports" reports={this.state.reports} reportGroupName='draft' reportGroupState='DRAFT' />
-            <ReportSection title="Pending Approval" reports={this.state.reports} reportGroupName='pending' reportGroupState='PENDING' />
-            <ReportSection title="Published Reports" reports={this.state.reports} reportGroupName='released' reportGroupState='RELEASED' />
+            <ReportSection title="Draft Reports" reportGroupName='draft' reportGroupState='DRAFT' id='draft-reports' />
+            <ReportSection title="Pending Approval" reportGroupName='pending' reportGroupState='PENDING' id='pending-approval' />
+            <ReportSection title="Published Reports" reportGroupName='released' reportGroupState='RELEASED' id='published-reports' />
         </div>
     }
 }
