@@ -5,10 +5,11 @@ body {
 	color: #000000;
 	font-size: 11px
 }
-h1 {
-	font-size: 20px
-}
 h2 {
+	font-size: 22px;
+	text-decoration: underline;
+}
+h3 {
 	font-size: 16px;
 }
 
@@ -40,46 +41,53 @@ a {
 
 <#if comment??>
 	<div>
-		<h2 style="color: #981B1E;">Daily Rollup Notes:</h2>
+		<h3 style="color: #981B1E;">Daily Rollup Notes:</h3>
 		<p>${comment}</p>
 	</div>
 </#if>
 
+
+<#assign byPrincipal = reports?api.getByGrouping("PRINCIPAL_ORG")>
+
 <table class="tallyTable" cellspacing=0 >
 	<tr>
-		<th>Organization</th>
-		<th># of Reports</th>
-		<th>Cancelled by Advisor</th>
-		<th>Cancelled by Principal</th>
-		<th>Cancelled due to Transportation</th>
-		<th>Cancelled due to Force Protection</th>
-		<th>Cancelled due to Routes</th>
-		<th>Cancelled due to Threat</th>
+		<th rowspan=2>Organization</th>
+		<th rowspan=2># of Reports</th>
+		<th colspan=6>Cancelled Reasons</th>
 	</tr>
-	<#list topLevelOrgs as topOrg>
-		<#assign orgReports = reportsByOrg?api.get(topOrg.id)>
+	<tr>
+		<th>By Advisor</th>
+		<th>By Principal</th>
+		<th>Transportation</th>
+		<th>Force Protection</th>
+		<th>Routes</th>
+		<th>Threat</th>
+	</tr>
+	<#list byPrincipal as org>
+		<#assign orgReports = org.all >
 		<#if orgReports?size gt 0>
 			<tr>
-				<td>${topOrg.shortName}</td>
-				<td>${orgReports?size}</td>
-				<td>${(cancelledByOrgAndReason?api.get(topOrg.id + "-0"))!"0"}</td>
-				<td>${(cancelledByOrgAndReason?api.get(topOrg.id + "-1"))!"0"}</td>
-				<td>${(cancelledByOrgAndReason?api.get(topOrg.id + "-2"))!"0"}</td>
-				<td>${(cancelledByOrgAndReason?api.get(topOrg.id + "-3"))!"0"}</td>
-				<td>${(cancelledByOrgAndReason?api.get(topOrg.id + "-4"))!"0"}</td>
-				<td>${(cancelledByOrgAndReason?api.get(topOrg.id + "-5"))!"0"}</td>
+				<td>${org.name}</td>
+				<td>${org.nonCancelled?size}</td>
+				<td>${org?api.getCountByCancelledReason("CANCELLED_BY_ADVISOR")}</td>
+				<td>${org?api.getCountByCancelledReason("CANCELLED_BY_PRINCIPAL")}</td>
+				<td>${org?api.getCountByCancelledReason("CANCELLED_DUE_TO_TRANSPORTATION")}</td>
+				<td>${org?api.getCountByCancelledReason("CANCELLED_DUE_TO_FORCE_PROTECTION")}</td>
+				<td>${org?api.getCountByCancelledReason("CANCELLED_DUE_TO_ROUTES")}</td>
+				<td>${org?api.getCountByCancelledReason("CANCELLED_DUE_TO_THREAT")}</td>
 			</tr>
 		</#if>
 	</#list>
+	<#assign allReports = reports.nonCancelled >
 	<tr>
 		<td><b>Total</b></td>
-		<td><b>${reports?size}</b></td>
-		<td><b>${(cancelledByReason?api.get("0"))!"0"}</b></td>
-		<td><b>${(cancelledByReason?api.get("1"))!"0"}</b></td>
-		<td><b>${(cancelledByReason?api.get("2"))!"0"}</b></td>
-		<td><b>${(cancelledByReason?api.get("3"))!"0"}</b></td>
-		<td><b>${(cancelledByReason?api.get("4"))!"0"}</b></td>
-		<td><b>${(cancelledByReason?api.get("5"))!"0"}</b></td>
+		<td><b>${allReports?size}</b></td>
+		<td><b>${reports?api.getCountByCancelledReason("CANCELLED_BY_ADVISOR")}</b></td>
+		<td><b>${reports?api.getCountByCancelledReason("CANCELLED_BY_PRINCIPAL")}</b></td>
+		<td><b>${reports?api.getCountByCancelledReason("CANCELLED_DUE_TO_TRANSPORTATION")}</b></td>
+		<td><b>${reports?api.getCountByCancelledReason("CANCELLED_DUE_TO_FORCE_PROTECTION")}</b></td>
+		<td><b>${reports?api.getCountByCancelledReason("CANCELLED_DUE_TO_ROUTES")}</b></td>
+		<td><b>${reports?api.getCountByCancelledReason("CANCELLED_DUE_TO_THREAT")}</b></td>
 	</tr>
 </table>
 
@@ -87,27 +95,24 @@ a {
 
 <#assign counter = 1>
 
-<#list topLevelOrgs as topOrg>
-	<#assign orgReports = reportsByOrg?api.get(topOrg.id)>
-	<#list orgReports>
-		<h2>${topOrg.shortName} - ${(topOrg.longName)!}</h2>
-		<#items as report>
-		<#if ! (report.cancelledReason??)>
-			${counter}. Report #${report.id?c} <#assign counter = counter + 1>
-			<@renderReport report />
-			<#sep><hr /></#sep>
-		</#if>
-		</#items>
-		<hr />
-	</#list>
-</#list>
-
-
-<h2>Other Reports</h2>
-<#list otherReports as report>
-	${counter}. Report #${report.id?c} <#assign counter = counter + 1>
-	<@renderReport report />
-	<#sep><hr /></#sep>
+<#list byPrincipal as principal >
+	<#if principal.nonCancelled?size gt 0>
+		<h2>${principal.name}</h2>
+		<#assign byAdvisor = principal?api.getByGrouping("ADVISOR_ORG") >
+		<#list byAdvisor as advisor >
+			<#if advisor.nonCancelled?size gt 0>
+				<h3>${advisor.name}</h3>
+				<#list advisor.nonCancelled as report>
+					<#if ! (report.cancelledReason??)>
+						${counter}. Report #${report.id?c} <#assign counter = counter + 1>
+						<@renderReport report />
+						<#sep><hr /></#sep>
+					</#if>
+				</#list>
+				<#sep><hr /></#sep>
+			</#if>
+		</#list>
+	</#if>
 </#list>
 
 <#macro renderReport report>
