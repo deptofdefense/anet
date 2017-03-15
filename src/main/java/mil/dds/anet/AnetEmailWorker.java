@@ -218,6 +218,11 @@ public class AnetEmailWorker implements Runnable {
 			this.toAddresses = toAddresses;
 		}
 		
+		public void addToAddress(String toAddress) { 
+			if (toAddresses == null) { toAddresses = new LinkedList<String>(); } 
+			toAddresses.add(toAddress);
+		}
+		
 		public DateTime getCreatedAt() {
 			return createdAt;
 		}

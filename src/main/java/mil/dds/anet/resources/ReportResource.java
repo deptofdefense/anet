@@ -30,6 +30,7 @@ import org.joda.time.DateTime;
 
 import com.codahale.metrics.annotation.Timed;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapperBuilder;
@@ -401,7 +402,7 @@ public class ReportResource implements IGraphQLResource {
 		AnetEmail email = new AnetEmail();
 		ReportReleasedEmail action = new ReportReleasedEmail();
 		action.setReport(r);
-		email.setToAddresses(ImmutableList.of(r.loadAuthor().getEmailAddress()));
+		email.addToAddress(r.loadAuthor().getEmailAddress());
 		email.setAction(action);
 		AnetEmailWorker.sendEmailAsync(email);
 	}
