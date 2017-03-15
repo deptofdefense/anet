@@ -1,5 +1,6 @@
 import React, {PropTypes} from 'react'
-import HopscotchPage from 'components/HopscotchPage'
+import withHopscotch from 'components/withHopscotch'
+import Page from 'components/Page'
 import autobind from 'autobind-decorator'
 
 import ReportForm from './Form'
@@ -10,7 +11,7 @@ import HopscotchLauncher from 'components/HopscotchLauncher'
 
 import {Report} from 'models'
 
-export default class ReportNew extends HopscotchPage {
+export default withHopscotch(class ReportNew extends Page {
 	static pageProps = {
 		useNavigation: false
 	}
@@ -30,14 +31,14 @@ export default class ReportNew extends HopscotchPage {
 
 	componentDidMount() {
 		super.componentDidMount()
-		if (this.hopscotch.getState() === `${this.hopscotchTour.id}:3`) {
+		if (this.props.hopscotch.getState() === `${this.props.hopscotchTour.id}:3`) {
 			this.startTour()
 		}
 	}
 
 	@autobind
 	startTour() {
-		this.hopscotch.startTour(this.hopscotchTour, 4)
+		this.props.hopscotch.startTour(this.props.hopscotchTour, 4)
 	}
 
 	componentWillUpdate() {
@@ -74,4 +75,4 @@ export default class ReportNew extends HopscotchPage {
 			</div>
 		)
 	}
-}
+})
