@@ -87,13 +87,16 @@ class PositionShow extends Page {
 						<Form.Field id="location" label="Location">
 							{position.location && <LinkTo location={position.location}>{position.location.name}</LinkTo>}
 						</Form.Field>
+					</Fieldset>
 
-						{position.person && <Form.Field id="person" label="Current Assigned Person" value={position.person && position.person.name} >
-							<Link to={Person.pathFor(position.person)}>
-								{position.person.rank} {position.person.name}
-							</Link>
-						</Form.Field>}
-
+					<Fieldset title="Current assigned person">
+						{position.person && position.person.id
+							? <LinkTo person={position.person} />
+							: <div style={{textAlign: 'center'}}>
+								<p><em>{position.name} is currently empty.</em></p>
+								{currentUser.isSuperUser() && <p><LinkTo position={position} edit button>Assign person</LinkTo></p>}
+							</div>
+						}
 					</Fieldset>
 
 					<Fieldset title={`Assigned ${assignedRole}`}>
