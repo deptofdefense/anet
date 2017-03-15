@@ -455,11 +455,18 @@ table hr.attendee-divider {
 	align-items: flex-end;
 	margin: 5rem 0 5rem 0;
 }
+
 .submit-buttons > div:first-child {
 	flex-grow: 2;
 }
+
 .submit-buttons > div:last-child {
 	margin-left: 10px;
+}
+
+.submit-buttons .btn-primary {
+	font-weight: bold;
+	height: 38px;
 }
 
 .report-form .report-details {
