@@ -8,11 +8,14 @@ import Form from 'components/Form'
 import ButtonToggleGroup from 'components/ButtonToggleGroup'
 import Autocomplete from 'components/Autocomplete'
 import PoamsSelector from 'components/PoamsSelector'
+import LinkTo from 'components/LinkTo'
 import History from 'components/History'
 import Messages from 'components/Messages'
 
 import API from 'api'
 import {Position, Organization} from 'models'
+
+import REMOVE_ICON from 'resources/delete.png'
 
 export default class OrganizationForm extends ValidatableFormWrapper {
 	static propTypes = {
@@ -102,19 +105,19 @@ export default class OrganizationForm extends ValidatableFormWrapper {
 				<Table striped>
 					<thead>
 						<tr>
-							<th></th>
 							<th>Name</th>
 							<th>Position</th>
+							<th></th>
 						</tr>
 					</thead>
 					<tbody>
 						{approvers.map((approver, approverIndex) =>
 							<tr key={approver.id} id={`step_${index}_approver_${approverIndex}`} >
+								<td><LinkTo person={approver.person} /></td>
+								<td><LinkTo position={approver} /></td>
 								<td onClick={this.removeApprover.bind(this, approver, index)}>
-									<span style={{cursor: 'pointer'}}>⛔️</span>
+									<span style={{cursor: 'pointer'}}><img src={REMOVE_ICON} height={14} alt="Remove approver" /></span>
 								</td>
-								<td>{approver.person && approver.person.name}</td>
-								<td >{approver.name}</td>
 							</tr>
 						)}
 					</tbody>
