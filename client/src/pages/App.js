@@ -93,7 +93,7 @@ export default class App extends Page {
 
 				<Header minimalHeader={pageProps.minimalHeader} />
 
-				{currentUser && currentUser.position && !currentUser.position.id && <NoPositionBanner />}
+				{currentUser && currentUser.position && currentUser.position.id === 0 && <NoPositionBanner />}
 
 				<Grid componentClass="section" bsClass={pageProps.fluidContainer ? 'container-fluid' : 'container'}>
 					{pageProps.useNavigation === false
