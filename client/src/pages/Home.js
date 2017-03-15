@@ -5,7 +5,8 @@ import moment from 'moment'
 
 import Fieldset from 'components/Fieldset'
 import Messages from 'components/Messages'
-import HopscotchPage from 'components/HopscotchPage'
+import withHopscotch from 'components/withHopscotch'
+import Page from 'components/Page'
 import HopscotchLauncher from 'components/HopscotchLauncher'
 import Breadcrumbs from 'components/Breadcrumbs'
 import SavedSearchTable from 'components/SavedSearchTable'
@@ -13,7 +14,7 @@ import SavedSearchTable from 'components/SavedSearchTable'
 import API from 'api'
 import autobind from 'autobind-decorator'
 
-export default class Home extends HopscotchPage {
+export default withHopscotch(class Home extends Page {
 	static contextTypes = {
 		app: PropTypes.object.isRequired,
 	}
@@ -256,7 +257,7 @@ export default class Home extends HopscotchPage {
 
 	@autobind
 	startWelcomeTour() {
-		this.hopscotch.endTour()
-		this.hopscotch.startTour(this.hopscotchTour)
+		this.props.hopscotch.endTour()
+		this.props.hopscotch.startTour(this.props.hopscotchTour)
 	}
-}
+})
