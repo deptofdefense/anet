@@ -25,7 +25,9 @@ export default class LinkTo extends Component {
 		button: PropTypes.oneOfType([
 			PropTypes.bool,
 			PropTypes.string,
-		])
+		]),
+
+		target: PropTypes.string,
 	}
 
 	render() {

@@ -113,8 +113,8 @@ export default class OrganizationForm extends ValidatableFormWrapper {
 					<tbody>
 						{approvers.map((approver, approverIndex) =>
 							<tr key={approver.id} id={`step_${index}_approver_${approverIndex}`} >
-								<td><LinkTo person={approver.person} /></td>
-								<td><LinkTo position={approver} /></td>
+								<td><LinkTo person={approver.person} target="_blank" /></td>
+								<td><LinkTo position={approver} target="_blank" /></td>
 								<td onClick={this.removeApprover.bind(this, approver, index)}>
 									<span style={{cursor: 'pointer'}}><img src={REMOVE_ICON} height={14} alt="Remove approver" /></span>
 								</td>
