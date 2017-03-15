@@ -22,7 +22,10 @@ export default class Page extends Component {
 	constructor() {
 		super()
 
-		this.state = {notFound: false}
+		this.state = {
+			notFound: false,
+			invalidRequest: false,
+		}
 
 		this.renderPage = this.render
 		this.render = Page.prototype.render
@@ -37,7 +40,7 @@ export default class Page extends Component {
 	}
 
 	loadData(props) {
-		this.setState({notFound: false})
+		this.setState({notFound: false, invalidRequest: false})
 
 		if (this.fetchData) {
 			document.body.classList.add('loading')
@@ -67,6 +70,8 @@ export default class Page extends Component {
 		if (response) {
 			if (response.status === 404 || (response.status === 500 && _get(response, ['errors', 0]) === 'Invalid Syntax')) {
 				this.setState({notFound: true})
+			} else if (response.status === 500) {
+				this.setState({invalidRequest: true})
 			}
 		}
 
@@ -78,6 +83,8 @@ export default class Page extends Component {
 			let modelName = this.constructor.modelName
 			let text = modelName ? `${modelName} #${this.props.params.id}` : `Page`
 			return <NotFound text={`${text} not found.`} />
+		} else if (this.state.invalidRequest) {
+			return <NotFound text="There was an error processing this request. Please contact an administrator." />
 		}
 
 		return this.renderPage()
