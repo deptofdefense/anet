@@ -1,0 +1,22 @@
+$DB_NAME = ""
+$DB_USERNAME = "sa"
+$DB_PASSWORD = ""
+$outdir = "backups"
+
+mkdir $outdir
+
+bcp dbo.adminSettings OUT $outdir/adminSettings.bak -N  -d $DB_NAME -U $DB_USERNAME -P "$DB_PASSWORD"
+bcp dbo.approvalActions OUT $outdir/approvalActions.bak -N  -d $DB_NAME -U $DB_USERNAME -P "$DB_PASSWORD"
+bcp dbo.approvalSteps OUT $outdir/approvalSteps.bak -N  -d $DB_NAME -U $DB_USERNAME -P "$DB_PASSWORD"
+bcp dbo.approvers OUT $outdir/approvers.bak -N  -d $DB_NAME -U $DB_USERNAME -P "$DB_PASSWORD"
+bcp dbo.locations OUT $outdir/locations.bak -N  -d $DB_NAME -U $DB_USERNAME -P "$DB_PASSWORD"
+bcp dbo.organizations OUT $outdir/organizations.bak -N  -d $DB_NAME -U $DB_USERNAME -P "$DB_PASSWORD"
+bcp dbo.people OUT $outdir/people.bak -N  -d $DB_NAME -U $DB_USERNAME -P "$DB_PASSWORD"
+bcp dbo.peoplePositions OUT $outdir/peoplePositions.bak -N  -d $DB_NAME -U $DB_USERNAME -P "$DB_PASSWORD"
+bcp dbo.poams OUT $outdir/poams.bak -N  -d $DB_NAME -U $DB_USERNAME -P "$DB_PASSWORD"
+bcp dbo.positionRelationships OUT $outdir/positionRelationships.bak -N  -d $DB_NAME -U $DB_USERNAME -P "$DB_PASSWORD"
+bcp dbo.positions OUT $outdir/positions.bak -N  -d $DB_NAME -U $DB_USERNAME -P "$DB_PASSWORD"
+bcp dbo.reportPeople OUT $outdir/reportPeople.bak -N  -d $DB_NAME -U $DB_USERNAME -P "$DB_PASSWORD"
+bcp dbo.reportPoams OUT $outdir/reportPoams.bak -N  -d $DB_NAME -U $DB_USERNAME -P "$DB_PASSWORD"
+bcp dbo.reports OUT $outdir/reports.bak -N  -d $DB_NAME -U $DB_USERNAME -P "$DB_PASSWORD"
+bcp dbo.savedSearches OUT $outdir/savedSearches.bak -N  -d $DB_NAME -U $DB_USERNAME -P "$DB_PASSWORD"
