@@ -1,5 +1,39 @@
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
+
+const NPROGRESS_CONTAINER = '.header'
+
+if (process.env.NODE_ENV !== 'test') {
+	NProgress.configure({
+		parent: NPROGRESS_CONTAINER
+	})
+}
+
+let activeRequestCount = 0
+
+function onRequestStart() {
+	activeRequestCount++
+	if (activeRequestCount === 1) {
+		if (document.querySelector(NPROGRESS_CONTAINER)) {
+			NProgress.start()
+		}
+		document.body.classList.add('loading')
+
+	}
+}
+
+function onRequestEnd() {
+	activeRequestCount--
+	if (!activeRequestCount) {
+		NProgress.done()
+		document.body.classList.remove('loading')
+
+	}
+}
+
 const API = {
 	fetch(url, params) {
+		onRequestStart()
 		params = params || {}
 		params.credentials = 'same-origin'
 
@@ -36,8 +70,11 @@ const API = {
 
 						return response
 					})
+					
+		promise.then(onRequestEnd, onRequestEnd)
 
 		API.inProgress = promise
+		NProgress.set(0.5)
 		return promise
 	},
 
