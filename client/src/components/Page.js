@@ -22,7 +22,9 @@ export default class Page extends Component {
 	constructor() {
 		super()
 
-		this.pageRender = this.render
+		this.state = {notFound: false}
+
+		this.renderPage = this.render
 		this.render = Page.prototype.render
 	}
 
@@ -35,6 +37,8 @@ export default class Page extends Component {
 	}
 
 	loadData(props) {
+		this.setState({notFound: false})
+
 		if (this.fetchData) {
 			document.body.classList.add('loading')
 
@@ -45,7 +49,6 @@ export default class Page extends Component {
 			if (promise && promise instanceof Promise) {
 				NProgress.set(0.5)
 				promise.then(this.doneLoading, this.doneLoading)
-				promise.catch(this.doneLoading)
 			} else {
 				this.doneLoading()
 			}
@@ -71,12 +74,13 @@ export default class Page extends Component {
 	}
 
 	render() {
-		const modelName = this.constructor.modelName || 'Entry'
 		if (this.state.notFound) {
-			return <NotFound text={`${modelName} with ID ${this.props.params.id} not found.`} />
+			let modelName = this.constructor.modelName
+			let text = modelName ? `${modelName} #${this.props.params.id}` : `Page`
+			return <NotFound text={`${text} not found.`} />
 		}
 
-		return this.pageRender()
+		return this.renderPage()
 	}
 
 	componentWillReceiveProps(props, nextContext) {
