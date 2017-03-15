@@ -11,7 +11,6 @@ import ButtonToggleGroup from 'components/ButtonToggleGroup'
 import PoamsSelector from 'components/PoamsSelector'
 import LinkTo from 'components/LinkTo'
 import History from 'components/History'
-import HopscotchLauncher from 'components/HopscotchLauncher'
 import ValidatableFormWrapper from 'components/ValidatableFormWrapper'
 
 import API from 'api'
@@ -88,10 +87,6 @@ export default class ReportForm extends ValidatableFormWrapper {
 		const {ValidatableForm, RequiredField} = this
 
 		return <div className="report-form">
-			<div className="pull-right">
-				{this.props.startHopscotch && <HopscotchLauncher onClick={this.props.startHopscotch} />}
-			</div>
-
 			<ValidatableForm formFor={report} horizontal onSubmit={this.onSubmit} onChange={this.onChange}
 				onDelete={onDelete} deleteText="Delete this report"
 				submitDisabled={hasErrors} submitText="Preview and submit">

@@ -1,12 +1,14 @@
 import React, {PropTypes} from 'react'
 import HopscotchPage from 'components/HopscotchPage'
+import autobind from 'autobind-decorator'
 
 import ReportForm from './Form'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Messages from 'components/Messages'
 import NavigationWarning from 'components/NavigationWarning'
+import HopscotchLauncher from 'components/HopscotchLauncher'
+
 import {Report} from 'models'
-import autobind from 'autobind-decorator'
 
 export default class ReportNew extends HopscotchPage {
 	static pageProps = {
@@ -60,11 +62,15 @@ export default class ReportNew extends HopscotchPage {
 	render() {
 		return (
 			<div className="report-new">
+				<div className="pull-right">
+					<HopscotchLauncher onClick={this.startTour} />
+				</div>
+
 				<Breadcrumbs items={[['Submit a report', Report.pathForNew()]]} />
 				<Messages error={this.state.error} />
 
 				<NavigationWarning original={this.state.originalReport} current={this.state.report} />
-				<ReportForm report={this.state.report} title="Create a new Report" startHopscotch={this.startTour} />
+				<ReportForm report={this.state.report} title="Create a new Report" />
 			</div>
 		)
 	}
