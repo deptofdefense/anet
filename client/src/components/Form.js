@@ -64,11 +64,13 @@ export default class Form extends Component {
 		return (
 			<BSForm {...bsProps} ref="container">
 				{children}
-				{!this.props.static &&
+				{!this.props.static && (showSubmit || showDelete) &&
 					<div className="submit-buttons">
-						<div>
-							<Button onClick={this.onCancel}>Cancel</Button>
-						</div>
+						{showSubmit &&
+							<div>
+								<Button onClick={this.onCancel}>Cancel</Button>
+							</div>
+						}
 
 						{showDelete &&
 							<div>
