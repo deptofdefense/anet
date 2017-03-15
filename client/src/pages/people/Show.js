@@ -3,14 +3,12 @@ import Page from 'components/Page'
 import ModelPage from 'components/ModelPage'
 import {Table, FormGroup, Col, ControlLabel} from 'react-bootstrap'
 import moment from 'moment'
-import autobind from 'autobind-decorator'
 
 import Fieldset from 'components/Fieldset'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
 import ReportTable from 'components/ReportTable'
 import LinkTo from 'components/LinkTo'
-import History from 'components/History'
 import Messages, {setMessages} from 'components/Messages'
 
 import API from 'api'
@@ -186,7 +184,7 @@ class PersonShow extends Page {
 		} else {
 			return <div style={{textAlign: 'center'}}>
 				<p><em>{person.name} is not assigned to a position.</em></p>
-				<p><LinkTo person={person} edit button>Assign position</LinkTo></p>
+				{currentUser.isSuperUser() && <p><LinkTo person={person} edit button>Assign position</LinkTo></p>}
 			</div>
 		}
 	}
