@@ -30,7 +30,6 @@ import org.joda.time.DateTime;
 
 import com.codahale.metrics.annotation.Timed;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapperBuilder;
@@ -504,14 +503,14 @@ public class ReportResource implements IGraphQLResource {
 	@POST
 	@Timed
 	@Path("/{id}/email")
-	public Response emailReport(@Auth Person user, @PathParam("id") int reportId, @QueryParam("comment") String comment, AnetEmail email) { 
+	public Response emailReport(@Auth Person user, @PathParam("id") int reportId, AnetEmail email) { 
 		Report r = dao.getById(reportId);
 		if (r == null) { return Response.status(Status.NOT_FOUND).build(); }
 		
 		ReportEmail action = new ReportEmail();
 		action.setReport(Report.createWithId(reportId));
 		action.setSender(user);
-		action.setComment(comment);
+		action.setComment(email.getComment());
 		email.setAction(action);
 		AnetEmailWorker.sendEmailAsync(email);
 		return Response.ok().build();
@@ -565,11 +564,11 @@ public class ReportResource implements IGraphQLResource {
 	@POST
 	@Timed
 	@Path("/rollup/email")
-	public Response emailRollup(@Auth Person user, @QueryParam("startDate") Long start, @QueryParam("endDate") Long end, @QueryParam("comment") String comment, AnetEmail email) {
+	public Response emailRollup(@Auth Person user, @QueryParam("startDate") Long start, @QueryParam("endDate") Long end, AnetEmail email) {
 		DailyRollupEmail action = new DailyRollupEmail();
 		action.setStartDate(new DateTime(start));
 		action.setEndDate(new DateTime(end));
-		action.setComment(comment);
+		action.setComment(email.getComment());
 
 		email.setAction(action);
 		AnetEmailWorker.sendEmailAsync(email);

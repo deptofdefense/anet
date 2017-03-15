@@ -193,6 +193,7 @@ public class AnetEmailWorker implements Runnable {
 		AnetEmailAction action;
 		List<String> toAddresses;
 		DateTime createdAt;
+		String comment;
 		
 		public Integer getId() {
 			return id;
@@ -229,6 +230,14 @@ public class AnetEmailWorker implements Runnable {
 		
 		public void setCreatedAt(DateTime createdAt) {
 			this.createdAt = createdAt;
+		}
+
+		public String getComment() {
+			return comment;
+		}
+
+		public void setComment(String comment) {
+			this.comment = comment;
 		}
 	}
 	

@@ -55,6 +55,7 @@ public class DailyRollupEmail extends AnetEmailAction {
 		context.put("reports", allReports);
 		context.put("cancelledReasons", ReportCancelledReason.values());
 		context.put("title", getSubject());
+		context.put("comment", comment);
 		context.put(SHOW_REPORT_TEXT_FLAG, false);
 		return context;
 	}

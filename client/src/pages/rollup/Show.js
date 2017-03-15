@@ -267,8 +267,9 @@ export default class RollupShow extends Page {
 
 		email = {
 			toAddresses: email.to.replace(/\s/g, '').split(/[,;]/),
+			comment: email.comment
 		}
-		API.send(`/api/reports/rollup/email?startDate=${this.rollupStart.valueOf()}&endDate=${this.rollupEnd.valueOf()}&comment=${email.comment}`, email).then (() =>
+		API.send(`/api/reports/rollup/email?startDate=${this.rollupStart.valueOf()}&endDate=${this.rollupEnd.valueOf()}`, email).then (() =>
 			this.setState({
 				success: 'Email successfully sent',
 				showEmailModal: false,

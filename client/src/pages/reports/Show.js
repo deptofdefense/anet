@@ -380,8 +380,7 @@ class ReportShow extends Page {
 
 		email = {
 			toAddresses: email.to.replace(/\s/g, '').split(/[,;]/),
-			context: {comment: email.comment },
-			subject: 'Sharing an email from ANET'
+			comment: email.comment
 		}
 		API.send(`/api/reports/${this.state.report.id}/email`, email).then (() =>
 			this.setState({

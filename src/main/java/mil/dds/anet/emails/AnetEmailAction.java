@@ -24,5 +24,4 @@ public abstract class AnetEmailAction {
 	public void setSubject(String subject) {
 		this.subject = subject;
 	}
-	
 }
