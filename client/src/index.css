@@ -473,6 +473,11 @@ table hr.attendee-divider {
 	padding-left: 1rem;
 }
 
+.report-draft {
+	border-left: 1.5rem solid #f3a537;
+	padding-left: 1rem;
+}
+
 .report-form fieldset:last-child {
 	margin-bottom: 10px;
 }
