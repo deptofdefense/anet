@@ -31,7 +31,7 @@ export default {
             placement: 'left',
             fixedElement: true,
             multipage: true,
-            onNext: () => History.push(Report.pathForNew())
+            onNext: () => History.push(Report.pathForNew(), {continuingHopscotchTour: true})
         },
         {
             title: 'Meeting goal(s)',
