@@ -112,6 +112,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 						postInputGroupChildren={errors.location && invalidInputWarningMessage}>
 						<Autocomplete valueKey="name" placeholder="Start typing to search for the location where this happened..." url="/api/locations/search" />
 						<Form.Field.ExtraCol className="shortcut-list">
+							<h5>Recent locations</h5>
 							{recents.locations && recents.locations.length > 0 &&
 								<Button bsStyle="link"  onClick={this.setLocation.bind(this,recents.locations[0])} >Add {recents.locations[0].name}</Button>
 							}
@@ -199,7 +200,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 
 						{recents.persons.length > 0 &&
 							<Form.Field.ExtraCol className="shortcut-list">
-								<h5>Shortcuts</h5>
+								<h5>Recent attendees</h5>
 								{Person.map(recents.persons, person =>
 									<Button key={person.id} bsStyle="link" onClick={this.addAttendee.bind(this, person)}>Add {person.name}</Button>
 								)}

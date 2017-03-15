@@ -135,6 +135,10 @@ fieldset.danger {
 	margin-top: -4px;
 }
 
+.shortcut-list h5 {
+	margin: 3px 0 4px 0;
+}
+
 .shortcut-list .btn-link {
 	text-align: left;
 	white-space: initial;
