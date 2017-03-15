@@ -60,10 +60,17 @@ export default class MyReports extends Page {
     }
 
     @autobind
-    queryReportPage(reportGroupName, $state, pageNum) {
+    queryReportPage(reportGroupName, state, pageNum) {
+        // TODO it would be better not to use string interpolation here for the graphql query,
+        // but I kept getting an error when I tried to pull $state out into a variable.
+        // I was passing state as a string with variable definition ($state: ReportState), 
+        // and I got the following error:
+        //
+        //      {"errors":["Validation error of type VariableTypeMismatch: Variable type doesn't match"]}
+        //
         API.query(/* GraphQL */`
 			person(f:me) {
-				authoredReports(pageNum: $pageNum, pageSize: 10, state: [RELEASED]) { 
+				authoredReports(pageNum: $pageNum, pageSize: 10, state: [${state}]) { 
                     pageNum, pageSize, totalCount, list {
                         id, intent, engagementDate, keyOutcomes, nextSteps, atmosphere
                         primaryAdvisor { id, name } ,
