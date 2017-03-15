@@ -1,14 +1,12 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 import ModelPage from 'components/ModelPage'
-import {DropdownButton, MenuItem} from 'react-bootstrap'
 
 import Fieldset from 'components/Fieldset'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
 import LinkTo from 'components/LinkTo'
 import autobind from 'autobind-decorator'
-import History from 'components/History'
 
 import API from 'api'
 import {Poam} from 'models'
@@ -60,16 +58,8 @@ class PoamShow extends Page {
 				<Breadcrumbs items={[[`PoAM ${poam.shortName}`, Poam.pathFor(poam)]]} />
 				<Messages success={this.state.success} error={this.state.error} />
 
-				{canEdit &&
-					<div className="pull-right">
-						<DropdownButton bsStyle="primary" title="Actions" id="actions" className="pull-right" onSelect={this.actionSelect}>
-							{canEdit && <MenuItem eventKey="edit">Edit PoAM</MenuItem>}
-						</DropdownButton>
-					</div>
-				}
-
 				<Form static formFor={poam} horizontal>
-					<Fieldset title={`PoAM ${poam.shortName}`}>
+					<Fieldset title={`PoAM ${poam.shortName}`} action={canEdit && <LinkTo poam={poam} edit button="primary">Edit</LinkTo>}>
 						<Form.Field id="shortName" label="PoAM number" />
 						<Form.Field id="longName" label="PoAM description" />
 						{poam.responsibleOrg && poam.responsibleOrg.id && this.renderOrg()}
@@ -89,15 +79,6 @@ class PoamShow extends Page {
 				</LinkTo>
 			</Form.Field>
 		)
-	}
-
-	@autobind
-	actionSelect(eventKey, event) {
-		if (eventKey === 'edit') {
-			History.push(Poam.pathForEdit(this.state.poam))
-		} else {
-			console.log('Unimplemented Action: ' + eventKey)
-		}
 	}
 }
 
