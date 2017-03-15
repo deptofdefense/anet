@@ -5,6 +5,7 @@ import ReportCollection from 'components/ReportCollection'
 import API from 'api'
 import _get from 'lodash.get'
 import Report from 'models/Report'
+import Fieldset from 'components/Fieldset'
 
 export default class MyReports extends Page {
     constructor() {
@@ -38,9 +39,8 @@ export default class MyReports extends Page {
 }
 
 function ReportSection(props) {
-    return <div>
-        <h2>{props.title}</h2>
+    return <Fieldset title={props.title}>
         {props.reports && <ReportCollection reports={props.reports} />}
-    </div>
+    </Fieldset>
 
 }
