@@ -47,7 +47,7 @@ export default class RollupShow extends Page {
 		super(props)
 
 		this.state = {
-			date: moment(+props.date || +props.location.query.date),
+			date: moment(+props.date || +props.location.query.date || undefined),
 			reports: {list: []},
 			graphData: {},
 			showEmailModal: false,
