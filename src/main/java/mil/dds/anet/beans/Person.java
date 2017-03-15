@@ -1,6 +1,7 @@
 package mil.dds.anet.beans;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -9,6 +10,7 @@ import org.joda.time.DateTime;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import mil.dds.anet.AnetObjectEngine;
+import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.ReportList;
 import mil.dds.anet.beans.search.ReportSearchQuery;
 import mil.dds.anet.graphql.GraphQLFetcher;
@@ -161,9 +163,18 @@ public class Person extends AbstractAnetBean implements Principal {
 	
 	@GraphQLFetcher("authoredReports")
 	public ReportList loadAuthoredReports(@GraphQLParam("pageNum") Integer pageNum, @GraphQLParam("pageSize") Integer pageSize) { 
+		return this.loadAuthoredReports(pageNum, pageSize, null);
+	}
+	
+	@GraphQLFetcher("authoredReports")
+	public ReportList loadAuthoredReports(@GraphQLParam("pageNum") Integer pageNum, @GraphQLParam("pageSize") Integer pageSize, 
+			@GraphQLParam("state") List<ReportState> state) { 
 		ReportSearchQuery query = new ReportSearchQuery();
 		query.setPageNum(pageNum);
 		query.setPageSize(pageSize);
+		if (state != null) {
+			query.setState(state);
+		}
 		query.setAuthorId(id);
 		return AnetObjectEngine.getInstance().getReportDao().search(query);
 	}
