@@ -156,10 +156,14 @@ export default class Home extends HopscotchPage {
 
 		return (
 			<div>
+				{this.state.showGettingStartedPanel !== 'true' && <div className="pull-right">
+					<HopscotchLauncher onClick={this.startWelcomeTour} />
+				</div>}
+
 				<Breadcrumbs />
 				<Messages error={this.state.error} success={this.state.success} />
 
-				<NoPositionWarning 
+				<NoPositionWarning
 					position={this.context.app.state.currentUser && this.context.app.state.currentUser.position} />
 
 				{this.state.showGettingStartedPanel === 'true' &&
@@ -183,9 +187,7 @@ export default class Home extends HopscotchPage {
 					</Fieldset>
 				}
 
-				<Fieldset className="home-tile-row" title="My ANET snapshot" action={
-					this.state.showGettingStartedPanel !== 'true' && <HopscotchLauncher onClick={this.startWelcomeTour} />
-				}>
+				<Fieldset className="home-tile-row" title="My ANET snapshot">
 
 					<Grid fluid>
 						<Row>
