@@ -33,7 +33,7 @@ class Nav extends Component {
 					<NavItem>Home</NavItem>
 				</Link>
 
-				{currentUser && <Link to={{pathname: '/search', query: {type: 'reports', authorId: currentUser.id}}}>
+				{currentUser && <Link to={{pathname: '/reports/mine'}}>
 					<NavItem>My Reports</NavItem>
 				</Link>
 				}
