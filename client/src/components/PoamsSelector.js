@@ -58,11 +58,11 @@ export default class PoamsSelector extends Component {
 					</tbody>
 				</Table>
 
-				{poams.length === 0 && <p style={{textAlign: 'center'}}>
+				{poams.length === 0 && <p style={{textAlign: 'center'}}><em>
 					No PoAMs selected
 					{this.props.optional && ' (this is fine if no PoAMs were discussed)'}
 					.
-				</p>}
+				</em></p>}
 
 				{ shortcuts && shortcuts.length > 0 && this.renderShortcuts() }
 			</Form.Field>
