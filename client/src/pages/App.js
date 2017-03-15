@@ -5,6 +5,7 @@ import {Grid, Row, Col} from 'react-bootstrap'
 import SecurityBanner from 'components/SecurityBanner'
 import Header from 'components/Header'
 import Nav from 'components/Nav'
+import NoPositionBanner from 'components/NoPositionBanner'
 
 import API from 'api'
 import {Person, Organization} from 'models'
@@ -84,12 +85,15 @@ export default class App extends Page {
 
 	render() {
 		let pageProps = this.props.children.type.pageProps || {}
+		let currentUser = this.state.currentUser
 
 		return (
 			<div className="anet">
 				<SecurityBanner location={this.props.location} />
 
 				<Header minimalHeader={pageProps.minimalHeader} />
+
+				{currentUser && currentUser.position && !currentUser.position.id && <NoPositionBanner />}
 
 				<Grid componentClass="section" bsClass={pageProps.fluidContainer ? 'container-fluid' : 'container'}>
 					{pageProps.useNavigation === false

@@ -3,6 +3,10 @@ body {
 	margin-top: 152px;
 }
 
+body.no-position {
+	margin-top: 178px;
+}
+
 /* this makes jump links work correctly with the header overlaying content */
 *[data-jumptarget]:before {
   display: block;
@@ -158,6 +162,17 @@ fieldset.collapsable legend div.collapsableToggle {
 
 .header .row > div * {
 	margin: 0;
+}
+
+.banner {
+	color: #fff;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	font-size: 18px;
+	text-align: center;
+	z-index: 10;
 }
 
 .nprogress-custom-parent .bar {

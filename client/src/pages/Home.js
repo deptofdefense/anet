@@ -9,7 +9,6 @@ import HopscotchPage from 'components/HopscotchPage'
 import HopscotchLauncher from 'components/HopscotchLauncher'
 import Breadcrumbs from 'components/Breadcrumbs'
 import SavedSearchTable from 'components/SavedSearchTable'
-import NoPositionWarning from 'components/NoPositionWarning'
 
 import API from 'api'
 import autobind from 'autobind-decorator'
@@ -162,9 +161,6 @@ export default class Home extends HopscotchPage {
 
 				<Breadcrumbs />
 				<Messages error={this.state.error} success={this.state.success} />
-
-				<NoPositionWarning
-					position={this.context.app.state.currentUser && this.context.app.state.currentUser.position} />
 
 				{this.state.showGettingStartedPanel === 'true' &&
 					<Fieldset title="Getting started" className="home-tile-row">
