@@ -14,7 +14,7 @@ import History from 'components/History'
 import Messages, {setMessages} from 'components/Messages'
 
 import API from 'api'
-import {Person} from 'models'
+import {Person, Position} from 'models'
 
 class PersonShow extends Page {
 	static contextTypes = {
@@ -123,9 +123,10 @@ class PersonShow extends Page {
 						</Form.Field>
 					</Fieldset>
 
-					<Fieldset title="Position">
-						{position && position.id &&
-							this.renderPosition(position)
+					<Fieldset title="Current position">
+						{position && position.id
+							? this.renderPosition(position)
+							: this.renderPositionBlankSlate(person)
 						}
 					</Fieldset>
 
@@ -143,46 +144,51 @@ class PersonShow extends Page {
 		)
 	}
 
-	@autobind
-	actionSelect(eventKey, event) {
-		if (eventKey === 'edit') {
-			History.push(Person.pathForEdit(this.state.person))
-		} else {
-			console.log('Unimplemented Action: ' + eventKey)
-		}
-	}
-
-	@autobind
 	renderPosition(position) {
 		let assocTitle = position.type === 'PRINCIPAL' ? 'Is advised by' : 'Advises'
 		return <div>
 			<Form.Field id="organization" label="Organization">
 				<LinkTo organization={position.organization} />
 			</Form.Field>
-			<Form.Field id="position" label="Current position">
+			<Form.Field id="position" label="Position">
 				<LinkTo position={position} />
 			</Form.Field>
 
-			<FormGroup controlId="counterparts" >
+			<FormGroup controlId="counterparts">
 				<Col sm={2} componentClass={ControlLabel}>{assocTitle}</Col>
-				<Col sm={9} >
+				<Col sm={9}>
 					<Table>
 						<thead>
 							<tr><th>Name</th><th>Position</th><th>Organization</th></tr>
 						</thead>
 						<tbody>
-							{position.associatedPositions.map( assocPos =>
+							{Position.map(position.associatedPositions, assocPos =>
 								<tr key={assocPos.id}>
-									<td>{assocPos.person && <LinkTo person={assocPos.person} /> }</td>
+									<td>{assocPos.person && <LinkTo person={assocPos.person} />}</td>
 									<td><LinkTo position={assocPos} /></td>
 									<td><LinkTo organization={assocPos.organization} /></td>
 								</tr>
 							)}
 						</tbody>
 					</Table>
+
+					{position.associatedPositions.length === 0 && <em>{position.name} has no counterparts assigned</em>}
 				</Col>
 			</FormGroup>
 		</div>
+	}
+
+	renderPositionBlankSlate(person) {
+		let currentUser = this.context.app.state.currentUser
+
+		if (Person.isEqual(currentUser, person)) {
+			return <em>You are not assigned to a position. Contact your super user to be added.</em>
+		} else {
+			return <div style={{textAlign: 'center'}}>
+				<p><em>{person.name} is not assigned to a position.</em></p>
+				<p><LinkTo person={person} edit button>Assign position</LinkTo></p>
+			</div>
+		}
 	}
 }
 
