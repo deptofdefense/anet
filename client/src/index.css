@@ -275,17 +275,6 @@ a.home-tile {
 	}
 }
 
-.form-bottom-submit {
-	height: 50px;
-}
-.form-bottom-submit>div {
-	height: 100%;
-}
-.form-bottom-submit .btn {
-	font-size: 2.3rem;
-	height: 100%;
-}
-
 .report-sub-form .form-group {
 	margin: 24px;
 }
@@ -464,7 +453,7 @@ table hr.attendee-divider {
 .submit-buttons {
 	display: flex;
 	align-items: flex-end;
-	margin-bottom: 5px;
+	margin: 5rem 0 5rem 0;
 }
 .submit-buttons > div:first-child {
 	flex-grow: 2;
