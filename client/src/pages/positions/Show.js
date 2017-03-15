@@ -51,7 +51,7 @@ class PositionShow extends Page {
 
 	render() {
 		let position = this.state.position
-		let assignedRole = (position.type === 'ADVISOR') ? 'Afghan principals' : 'advisors'
+		let assignedRole = position.type === 'PRINCIPAL' ? 'advisors' : 'Afghan principals'
 
 		let currentUser = this.context.app.state.currentUser
 		let canEdit = currentUser && (
