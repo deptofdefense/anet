@@ -140,8 +140,8 @@ export default class ReportForm extends ValidatableFormWrapper {
 					}
 
 					{!isCancelled && report.atmosphere &&
-						<RequiredField id="atmosphereDetails" 
-							placeholder={`Why was this engagement ${report.atmosphere.toLowerCase()}?`} 
+						<RequiredField id="atmosphereDetails"
+							placeholder={`Why was this engagement ${report.atmosphere.toLowerCase()}?`}
 							required={report.atmosphere !== 'POSITIVE'} />
 					}
 
@@ -179,7 +179,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 							Person not found in ANET Database.
 						</HelpBlock>}
 
-						<Table hover condensed id="attendeesTable" className="borderless">
+						<Table condensed id="attendeesTable" className="borderless">
 							<thead>
 								<tr>
 									<th style={{textAlign: 'center'}}>Primary</th>
@@ -193,7 +193,9 @@ export default class ReportForm extends ValidatableFormWrapper {
 								{Person.map(report.attendees.filter(p => p.role === "ADVISOR"), (person, idx) =>
 									this.renderAttendeeRow(person, idx)
 								)}
-								<tr className="attendee-divider-row"><td colSpan={5}><hr className="attendee-divider" /></td></tr>
+
+								<tr className="attendee-divider-row"><td colSpan={5}><hr /></td></tr>
+
 								{Person.map(report.attendees.filter(p => p.role === "PRINCIPAL"), (person, idx) =>
 									this.renderAttendeeRow(person, idx)
 								)}
@@ -225,14 +227,14 @@ export default class ReportForm extends ValidatableFormWrapper {
 						<RequiredField id="keyOutcomes" componentClass="textarea" maxCharacters={250} humanName="Key outcome description"
 							canSubmitWithError={true}
 							validateBeforeUserTouches={this.props.edit}>
-							<Form.Field.ExtraCol><small>{250 - report.keyOutcomes.length} characters remaining</small></Form.Field.ExtraCol>
+							<Form.Field.ExtraCol>{250 - report.keyOutcomes.length} characters remaining</Form.Field.ExtraCol>
 						</RequiredField>
 					}
 
 					<RequiredField id="nextSteps" componentClass="textarea" maxCharacters={250} humanName="Next steps description"
-							canSubmitWithError={true}
-							validateBeforeUserTouches={this.props.edit}>
-						<Form.Field.ExtraCol><small>{250 - report.nextSteps.length} characters remaining</small></Form.Field.ExtraCol>
+						canSubmitWithError={true}
+						validateBeforeUserTouches={this.props.edit}>
+						<Form.Field.ExtraCol>{250 - report.nextSteps.length} characters remaining</Form.Field.ExtraCol>
 					</RequiredField>
 
 					<Button className="center-block toggle-section-button" onClick={this.toggleReportText} id="toggleReportDetails" >

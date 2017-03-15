@@ -120,7 +120,6 @@ fieldset.collapsable legend div.collapsableToggle {
 }
 
 .shortcut-list {
-	padding: 0;
 	margin-top: -4px;
 }
 
@@ -274,17 +273,6 @@ a.home-tile {
 	.nav-fixed {
 		width: 212px;
 	}
-}
-
-.form-bottom-submit {
-	height: 50px;
-}
-.form-bottom-submit>div {
-	height: 100%;
-}
-.form-bottom-submit .btn {
-	font-size: 2.3rem;
-	height: 100%;
 }
 
 .report-sub-form .form-group {
@@ -465,7 +453,7 @@ table hr.attendee-divider {
 .submit-buttons {
 	display: flex;
 	align-items: flex-end;
-	margin-bottom: 5px;
+	margin: 5rem 0 5rem 0;
 }
 .submit-buttons > div:first-child {
 	flex-grow: 2;
@@ -484,21 +472,17 @@ table hr.attendee-divider {
 	/* Without this, users can make the textarea arbitrarily wide,
 		causing it to overlap with other elements and break the layout. */
 	max-width: 546px;
-
-	/* The spec calls for the textareas to be 5 lines tall. Thus, we use:
-		line-height * font-size * 5 = textarea min-height
-		14 * 1.42857143 * 5 = 100 */
-	min-height: 100px;
 }
 
-.attendee-divider {
+.attendee-divider-row td {
+	padding: 0 !important;
+}
+
+.attendee-divider-row hr {
 	color: #5B616B;
 	border-top: dashed;
 	border-width: 2px;
-}
-
-.report-form .attendee-divider-row:hover {
-	background-color: transparent;
+	margin: 0;
 }
 
 .show-report-overview label.col-sm-2 {
