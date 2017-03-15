@@ -121,7 +121,7 @@ class PersonShow extends Page {
 						</Form.Field>
 					</Fieldset>
 
-					<Fieldset title="Current position">
+					<Fieldset title="Current position" className={(!position || !position.id) && 'warning'}>
 						{position && position.id
 							? this.renderPosition(position)
 							: this.renderPositionBlankSlate(person)

@@ -13,7 +13,7 @@ import Messages , {setMessages} from 'components/Messages'
 import LinkTo from 'components/LinkTo'
 
 import API from 'api'
-import {Person, Position, Organization} from 'models'
+import {Position, Organization} from 'models'
 
 class PositionShow extends Page {
 	static contextTypes = {
@@ -89,7 +89,7 @@ class PositionShow extends Page {
 						</Form.Field>
 					</Fieldset>
 
-					<Fieldset title="Current assigned person">
+					<Fieldset title="Current assigned person" className={(!position.person || !position.person.id) && 'warning'}>
 						{position.person && position.person.id
 							? <LinkTo person={position.person} />
 							: <div style={{textAlign: 'center'}}>

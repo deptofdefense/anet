@@ -101,6 +101,14 @@ fieldset.collapsable legend div.collapsableToggle {
 	margin-right: 5px;
 }
 
+fieldset.warning {
+	border: 2px solid orange;
+}
+
+fieldset.danger {
+	border: 2px solid red;
+}
+
 .input-group {
 	width: 100%;
 }
