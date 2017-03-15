@@ -94,7 +94,7 @@ export default class Form extends Component {
 	}
 
 	preventEnterKey(event) {
-		if (event.key === 'Enter') {
+		if (event.key === 'Enter' && event.target.nodeName !== 'TEXTAREA') {
 			event.preventDefault()
 			event.stopPropagation()
 		}
