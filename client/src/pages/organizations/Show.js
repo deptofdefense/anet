@@ -2,7 +2,6 @@ import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 import ModelPage from 'components/ModelPage'
 import {ListGroup, ListGroupItem} from 'react-bootstrap'
-import autobind from 'autobind-decorator'
 
 import Breadcrumbs from 'components/Breadcrumbs'
 import Fieldset from 'components/Fieldset'

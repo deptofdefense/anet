@@ -1,6 +1,5 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
-import autobind from 'autobind-decorator'
 
 import Breadcrumbs from 'components/Breadcrumbs'
 import Messages from 'components/Messages'
@@ -8,7 +7,7 @@ import NavigationWarning from 'components/NavigationWarning'
 
 import ReportForm from './Form'
 
-import GuidedTour, {autostartTour} from 'components/GuidedTour'
+import GuidedTour from 'components/GuidedTour'
 import {reportTour} from 'pages/HopscotchTour'
 
 import {Report} from 'models'
