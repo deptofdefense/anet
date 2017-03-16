@@ -29,7 +29,7 @@ export default class MergePeople extends Page {
 		let {winner, loser, copyPosition, error, success} = this.state
 		let errors = this.validate()
 
-		let personFields = `id, name, emailAddress, domainUsername, createdAt, role,
+		let personFields = `id, name, emailAddress, domainUsername, createdAt, role, status,
 			position { id, name, organization { id, shortName, longName }},
 			authoredReports(pageNum:0,pageSize:1) { totalCount }
 			attendedReports(pageNum:0,pageSize:1) { totalCount }`
@@ -150,7 +150,9 @@ export default class MergePeople extends Page {
 	@autobind
 	showPersonDetails(person) {
 		return <Form static formFor={person} >
+			<Form.Field id="id" />
 			<Form.Field id="name" />
+			<Form.Field id="status" />
 			<Form.Field id="role" />
 			<Form.Field id="rank" />
 			<Form.Field id="emailAddress" />
