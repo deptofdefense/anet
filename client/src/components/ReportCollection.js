@@ -43,17 +43,13 @@ export default class ReportCollection extends Component {
 			reports = this.props.reports
 		}
 
-		if (!reports || !reports.length) {
-			return <em>No reports found</em>
-		}
-
 		return <div className="report-collection">
 			<header>
-				<ButtonToggleGroup value={this.state.viewFormat} onChange={this.changeViewFormat}>
+				{reports.length > 0 && <ButtonToggleGroup value={this.state.viewFormat} onChange={this.changeViewFormat}>
 					<Button value={FORMAT_SUMMARY}>Summary</Button>
 					<Button value={FORMAT_TABLE}>Table</Button>
 					<Button value={FORMAT_MAP}>Map</Button>
-				</ButtonToggleGroup>
+				</ButtonToggleGroup>}
 
 				{numPages > 1 &&
 					<Pagination
@@ -69,9 +65,11 @@ export default class ReportCollection extends Component {
 				}
 			</header>
 
-			{this.state.viewFormat === FORMAT_TABLE && this.renderTable(reports)}
-			{this.state.viewFormat === FORMAT_SUMMARY && this.renderSummary(reports)}
-			{this.state.viewFormat === FORMAT_MAP && this.renderMap(reports)}
+			{reports.length > 0 ? <div>
+				{this.state.viewFormat === FORMAT_TABLE && this.renderTable(reports)}
+				{this.state.viewFormat === FORMAT_SUMMARY && this.renderSummary(reports)}
+				{this.state.viewFormat === FORMAT_MAP && this.renderMap(reports)}
+			</div> : <em>No reports found</em>}
 		</div>
 	}
 
