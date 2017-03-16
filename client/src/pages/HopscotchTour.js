@@ -196,6 +196,18 @@ let superUserTour = function(currentUser) { return {
 			placement: 'top',
 		},
 		{
+			title: 'Edit your organization',
+			content: 'If you need to make changes to any of the data we just went over, click the "Edit" button.',
+			target: 'editButton',
+			placement: 'left',
+		},
+		{
+			title: 'Take a guided tour',
+			content: 'If you want to go through this page\'s tour at some point in the future, you can always click on this button to get the tour. Clicking this button on another page will take you through the quick tour for that page.',
+			target: '.persistent-tour-launcher',
+			placement: 'left',
+		},
+		{
 			title: 'Create',
 			content: 'Those are the main areas you\'ll need to check as a super user. When reviewing your updating your organization\'s information, you might need to create new people or positions. New members of your team will automatically create new accounts when they log in for the first time, unless they are moving to ANET 2 from ANET 1. In those cases, they should already have an account. If you do need to create a new report, person, position, or location, click on this "Create" button and select what you need from the menu. Each of those pages will have their own, quick tours which will explain what you need to do to fill out those pages.',
 			target: 'createButton',

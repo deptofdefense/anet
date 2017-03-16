@@ -118,7 +118,7 @@ class OrganizationShow extends Page {
 							Create sub-organization
 						</LinkTo>}
 
-						{isSuperUser && <LinkTo organization={org} edit button="primary">
+						{isSuperUser && <LinkTo organization={org} edit button="primary" id="editButton">
 							Edit
 						</LinkTo>}
 					</div>}>
