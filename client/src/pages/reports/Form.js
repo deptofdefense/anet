@@ -153,7 +153,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 					}
 				</Fieldset>
 
-				<Fieldset title="Meeting attendance">
+				<Fieldset title={!isCancelled ? "Meeting attendance" : "Planned attendance"}>
 					<Form.Field id="attendees" validationState={errors.attendees}>
 						<Autocomplete objectType={Person}
 							onChange={this.addAttendee}
@@ -218,7 +218,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 						optional={true} />
 				}
 
-				<Fieldset title="Meeting discussion">
+				<Fieldset title={!isCancelled ? "Meeting discussion" : "Next steps and details"}>
 					{!isCancelled &&
 						<RequiredField id="keyOutcomes" componentClass="textarea" maxCharacters={250} humanName="Key outcome description"
 							canSubmitWithError={true}
