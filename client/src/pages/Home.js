@@ -1,20 +1,21 @@
 import React, {PropTypes} from 'react'
-import {Grid, Row, Col, FormControl, FormGroup, ControlLabel, Button} from 'react-bootstrap'
+import Page from 'components/Page'
+import {Grid, Row, FormControl, FormGroup, ControlLabel, Button} from 'react-bootstrap'
 import {Link} from 'react-router'
 import moment from 'moment'
+import autobind from 'autobind-decorator'
 
 import Fieldset from 'components/Fieldset'
 import Messages from 'components/Messages'
-import withHopscotch from 'components/withHopscotch'
-import Page from 'components/Page'
-import HopscotchLauncher from 'components/HopscotchLauncher'
+import GuidedTour from 'components/GuidedTour'
 import Breadcrumbs from 'components/Breadcrumbs'
 import SavedSearchTable from 'components/SavedSearchTable'
 
 import API from 'api'
-import autobind from 'autobind-decorator'
 
-export default withHopscotch(class Home extends Page {
+import {userTour, superUserTour} from 'pages/HopscotchTour'
+
+export default class Home extends Page {
 	static contextTypes = {
 		app: PropTypes.object.isRequired,
 	}
@@ -25,12 +26,6 @@ export default withHopscotch(class Home extends Page {
 			tileCounts: [],
 			savedSearches: [],
 			selectedSearch: null,
-		}
-	}
-
-	componentDidMount() {
-		if (window.localStorage.showGettingStartedPanel === 'true') {
-			this.props.hopscotch.startTour(this.props.hopscotchTour)
 		}
 	}
 
@@ -158,12 +153,17 @@ export default withHopscotch(class Home extends Page {
 
 	render() {
 		let queries = this.getQueriesForUser()
+		let currentUser = this.context.app.state.currentUser
 
 		return (
 			<div>
-				{this.state.showGettingStartedPanel !== 'true' && <div className="pull-right">
-					<HopscotchLauncher onClick={this.startWelcomeTour} />
-				</div>}
+				<div className="pull-right">
+					<GuidedTour
+						tour={currentUser.isSuperUser() ? superUserTour : userTour}
+						autostart={localStorage.showFirstTimeTour === 'true' && localStorage.hasSeenHomeTour !== 'true'}
+						onEnd={() => localStorage.hasSeenHomeTour = 'true'}
+					/>
+				</div>
 
 				<Breadcrumbs />
 				<Messages error={this.state.error} success={this.state.success} />
@@ -230,4 +230,4 @@ export default withHopscotch(class Home extends Page {
 				})
 		}
 	}
-})
+}
