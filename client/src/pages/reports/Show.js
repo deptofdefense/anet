@@ -315,9 +315,7 @@ export default class ReportShow extends Page {
 	@autobind
 	renderApprovals(canApprove) {
 		let report = this.state.report
-		return <Fieldset>
-			<a name="approvals" />
-			<legend>Approvals</legend>
+		return <Fieldset id="approvals" title="Approvals">
 			{report.approvalStatus.map(action =>
 				this.renderApprovalAction(action)
 			)}
