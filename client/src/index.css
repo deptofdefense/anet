@@ -145,7 +145,37 @@ fieldset.danger {
 	padding: 0;
 }
 
-.btn.btn-link {
+.btn-default, .pagination > li > a {
+	color: #555;
+	background-color: #f9f9f9;
+	border-color: #ccc;
+}
+
+.pagination > li.active > a {
+	color: #fff;
+	background-color: #999;
+	border-color: #999;
+}
+
+.nav-pills > li.active > a{
+	color: #333;
+	background-color: #e9e9e9;
+	border: 1px solid #ccc;
+}
+
+.nav-pills .badge {
+	color: #333;
+	background: #fff;
+	border: 1px solid #ccc;
+}
+
+.nav-pills > li.active .badge {
+	color: #fff;
+	background: #999;
+	border: none;
+}
+
+.btn-link {
 	overflow: visible;
 	width: 100%;
 }
