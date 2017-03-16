@@ -345,8 +345,8 @@ a.home-tile {
 
 .report-summary .people-separator {
 	margin-left: 5px;
-	color: #999999;
-	font-size: 1.1rem;
+	color: #555;
+	font-size: 1.4rem;
 }
 
 .not-found section.container {
