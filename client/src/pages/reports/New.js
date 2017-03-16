@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react'
-import withHopscotch from 'components/withHopscotch'
 import Page from 'components/Page'
+import withHopscotch from 'components/withHopscotch'
 import autobind from 'autobind-decorator'
 
 import ReportForm from './Form'
@@ -31,7 +31,7 @@ export default withHopscotch(class ReportNew extends Page {
 
 	componentDidMount() {
 		super.componentDidMount()
-		if (this.props.hopscotch.getState() === `${this.props.hopscotchTour.id}:3`) {
+		if (this.props.hopscotch.getState() === `${this.props.hopscotchTour.id}:5`) {
 			this.startTour()
 		}
 	}

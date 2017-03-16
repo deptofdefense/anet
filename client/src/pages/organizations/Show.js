@@ -1,7 +1,9 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
+import withHopscotch from 'components/withHopscotch'
 import ModelPage from 'components/ModelPage'
 import {ListGroup, ListGroupItem} from 'react-bootstrap'
+import autobind from 'autobind-decorator'
 
 import Breadcrumbs from 'components/Breadcrumbs'
 import Fieldset from 'components/Fieldset'
@@ -9,10 +11,11 @@ import Form from 'components/Form'
 import LinkTo from 'components/LinkTo'
 import Messages, {setMessages} from 'components/Messages'
 import ReportCollection from 'components/ReportCollection'
+import HopscotchLauncher from 'components/HopscotchLauncher'
 
-import OrganizationPoams from 'pages/organizations/Poams'
-import OrganizationLaydown from 'pages/organizations/Laydown'
-import OrganizationApprovals from 'pages/organizations/Approvals'
+import OrganizationPoams from './Poams'
+import OrganizationLaydown from './Laydown'
+import OrganizationApprovals from './Approvals'
 
 import API from 'api'
 import {Organization} from 'models'
@@ -43,6 +46,18 @@ class OrganizationShow extends Page {
 		if (+nextProps.params.id !== this.state.organization.id) {
 			this.loadData(nextProps)
 		}
+	}
+
+	componentDidMount() {
+		super.componentDidMount()
+		if (this.props.hopscotch.getState() === `${this.props.hopscotchTour.id}:5`) {
+			this.startTour()
+		}
+	}
+
+	@autobind
+	startTour() {
+		this.props.hopscotch.startTour(this.props.hopscotchTour, 6)
 	}
 
 	fetchData(props) {
@@ -82,13 +97,17 @@ class OrganizationShow extends Page {
 		let org = this.state.organization
 
 		let currentUser = this.context.app.state.currentUser
-		let isSuperUser = (currentUser) ? currentUser.isSuperUserForOrg(org) : false
-		let isAdmin = (currentUser) ? currentUser.isAdmin() : false
+		let isSuperUser = currentUser && currentUser.isSuperUserForOrg(org)
+		let isAdmin = currentUser && currentUser.isAdmin()
 
 		let superUsers = org.positions.filter(pos => pos.status === 'ACTIVE' && (!pos.person || pos.person.status === 'ACTIVE') && (pos.type === 'SUPER_USER' || pos.type === 'ADMINISTRATOR'))
 
 		return (
 			<div>
+				<div className="pull-right">
+					<HopscotchLauncher onClick={this.startTour} />
+				</div>
+
 				<Breadcrumbs items={[[org.shortName || 'Organization', Organization.pathFor(org)]]} />
 
 				<Messages error={this.state.error} success={this.state.success} />
@@ -153,4 +172,4 @@ class OrganizationShow extends Page {
 	}
 }
 
-export default ModelPage(OrganizationShow)
+export default withHopscotch(ModelPage(OrganizationShow))
