@@ -189,7 +189,7 @@ export default class RollupShow extends Page {
 	render() {
 		return (
 			<div>
-				<Breadcrumbs items={[['Rollup', ''],[this.dateStr, 'rollup/' +this.dateStr]]} />
+				<Breadcrumbs items={[[`Rollup for ${this.dateStr}`, 'rollup/']]} />
 
 				<Fieldset title={
 					<span>
