@@ -234,13 +234,13 @@ export default class ReportForm extends ValidatableFormWrapper {
 					</RequiredField>
 
 					<Button className="center-block toggle-section-button" onClick={this.toggleReportText} id="toggleReportDetails" >
-						{this.state.showReportText ? 'Hide' : 'Add'} detailed comments
+						{this.state.showReportText ? 'Hide' : 'Add'} report details
 					</Button>
 
 					<Collapse in={this.state.showReportText}>
 						<div className="report-details">
 							<Form.Field id="reportText" label="" horizontal={false} className="reportTextField" >
-								<TextEditor label="Report Details" id="reportTextEditor" />
+								<TextEditor label="Report details" id="reportTextEditor" />
 							</Form.Field>
 						</div>
 					</Collapse>
