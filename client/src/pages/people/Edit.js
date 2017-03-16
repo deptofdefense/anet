@@ -1,6 +1,5 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
-import ModelPage from 'components/ModelPage'
 import moment from 'moment'
 
 import PersonForm from './Form'
@@ -10,9 +9,9 @@ import NavigationWarning from 'components/NavigationWarning'
 import API from 'api'
 import {Person} from 'models'
 
-class PersonEdit extends Page {
+export default class PersonEdit extends Page {
 	static contextTypes = {
-		app: PropTypes.object.isRequired,
+		currentUser: PropTypes.object.isRequired,
 	}
 
 	static pageProps = {
@@ -50,7 +49,7 @@ class PersonEdit extends Page {
 	render() {
 		let {person, originalPerson} = this.state
 
-		let currentUser = this.context.app.state.currentUser
+		let currentUser = this.context.currentUser
 		let canEditPosition = currentUser && currentUser.isSuperUser()
 
 		const legendText = person.status === 'NEW_USER' ? 'Create your account' : `Edit ${person.name}`
@@ -58,16 +57,14 @@ class PersonEdit extends Page {
 
 		return (
 			<div>
-				{person.status !== 'NEW_USER' && 
+				{person.status !== 'NEW_USER' &&
 					<Breadcrumbs items={[[`Edit ${person.name}`, Person.pathForEdit(person)]]} />
 				}
 
 				<NavigationWarning original={originalPerson} current={person} />
-				<PersonForm person={person} edit showPositionAssignment={canEditPosition} 
+				<PersonForm person={person} edit showPositionAssignment={canEditPosition}
 					legendText={legendText} saveText={saveText} />
 			</div>
 		)
 	}
 }
-
-export default ModelPage(PersonEdit)

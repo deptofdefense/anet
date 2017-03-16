@@ -27,7 +27,7 @@ export default class PersonForm extends ValidatableFormWrapper {
 	}
 
 	static contextTypes = {
-		app: PropTypes.object
+		currentUser: PropTypes.object
 	}
 
 	constructor(props) {
@@ -41,7 +41,7 @@ export default class PersonForm extends ValidatableFormWrapper {
 		let {person, edit, showPositionAssignment} = this.props
 		const isAdvisor = person.role === 'ADVISOR'
 		const legendText = this.props.legendText || (edit ? `Edit ${person.name}` : 'Create a new person')
-		let currentUser = this.context.app.state.currentUser
+		let currentUser = this.context.currentUser
 
 		let positionSearchTypes = null
 		if (person.role === 'ADVISOR') {

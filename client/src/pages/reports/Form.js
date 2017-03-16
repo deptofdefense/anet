@@ -1,12 +1,12 @@
 import React, {PropTypes} from 'react'
 import {Checkbox, Table, Button, Collapse, HelpBlock} from 'react-bootstrap'
+import DatePicker from 'react-bootstrap-date-picker'
 import autobind from 'autobind-decorator'
 
 import Fieldset from 'components/Fieldset'
 import Form from 'components/Form'
 import TextEditor from 'components/TextEditor'
 import Autocomplete from 'components/Autocomplete'
-import DatePicker from 'react-bootstrap-date-picker'
 import ButtonToggleGroup from 'components/ButtonToggleGroup'
 import PoamsSelector from 'components/PoamsSelector'
 import LinkTo from 'components/LinkTo'

@@ -13,7 +13,7 @@ export default class OrganizationLaydown extends Component {
 	}
 
 	static contextTypes = {
-		app: PropTypes.object.isRequired,
+		currentUser: PropTypes.object.isRequired,
 	}
 
 	constructor(props) {
@@ -25,8 +25,7 @@ export default class OrganizationLaydown extends Component {
 	}
 
 	render() {
-		let appData = this.context.app.state
-		let currentUser = appData.currentUser
+		let currentUser = this.context.currentUser
 
 		let org = this.props.organization
 		let showInactivePositions = this.state.showInactivePositions

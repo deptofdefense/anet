@@ -1,24 +1,26 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
-import ModelPage from 'components/ModelPage'
+import autobind from 'autobind-decorator'
 
 import Fieldset from 'components/Fieldset'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
 import LinkTo from 'components/LinkTo'
-import autobind from 'autobind-decorator'
+import Messages, {setMessages} from 'components/Messages'
 
 import API from 'api'
 import {Poam} from 'models'
-import Messages, {setMessages} from 'components/Messages'
 
-class PoamShow extends Page {
+export default class PoamShow extends Page {
 	static contextTypes = {
-		app: PropTypes.object.isRequired,
+		currentUser: PropTypes.object.isRequired,
 	}
+
 	static modelName = 'PoAM'
+
 	constructor(props) {
 		super(props)
+
 		this.state = {
 			poam: new Poam({
 				id: props.params.id,
@@ -27,6 +29,7 @@ class PoamShow extends Page {
 				responsibleOrg: props.params.responsibleOrg
 			}),
 		}
+
 		setMessages(props,this.state)
 	}
 
@@ -49,9 +52,9 @@ class PoamShow extends Page {
 	render() {
 		let {poam} = this.state
 		// Admins can edit poams, or super users if this poam is assigned to their org.
-		let currentUser = this.context.app.state.currentUser
-		let canEdit = (currentUser && currentUser.isAdmin()) ||
-			(currentUser && poam.responsibleOrg && currentUser.isSuperUserForOrg(poam.responsibleOrg))
+		let currentUser = this.context.currentUser
+		let canEdit = currentUser.isAdmin() ||
+			(poam.responsibleOrg && currentUser.isSuperUserForOrg(poam.responsibleOrg))
 
 		return (
 			<div>
@@ -81,5 +84,3 @@ class PoamShow extends Page {
 		)
 	}
 }
-
-export default ModelPage(PoamShow)

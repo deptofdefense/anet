@@ -1,9 +1,10 @@
 import React from 'react'
 import Page from 'components/Page'
 
-import PositionForm from './Form'
 import Breadcrumbs from 'components/Breadcrumbs'
 import NavigationWarning from 'components/NavigationWarning'
+
+import PositionForm from './Form'
 
 import API from 'api'
 import {Position, Organization} from 'models'

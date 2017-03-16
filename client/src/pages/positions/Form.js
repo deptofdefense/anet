@@ -22,8 +22,9 @@ export default class PositionForm extends ValidatableFormWrapper {
 		error: PropTypes.object,
 		success: PropTypes.object,
 	}
+
 	static contextTypes = {
-		app: PropTypes.object
+		currentUser: PropTypes.object.isRequired,
 	}
 
 	render() {
@@ -32,7 +33,7 @@ export default class PositionForm extends ValidatableFormWrapper {
 		error = this.props.error || (this.state && this.state.error)
 
 		let relationshipPositionType = position.type === 'PRINCIPAL' ? ['ADVISOR', 'SUPER_USER', 'ADMINISTRATOR'] : ['PRINCIPAL']
-		let currentUser = this.context.app.state.currentUser
+		let currentUser = this.context.currentUser
 
 		let orgSearchQuery = {}
 		let personSearchQuery = {}

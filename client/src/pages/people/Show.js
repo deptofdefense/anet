@@ -1,6 +1,5 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
-import ModelPage from 'components/ModelPage'
 import {Table, FormGroup, Col, ControlLabel} from 'react-bootstrap'
 import moment from 'moment'
 
@@ -14,9 +13,9 @@ import Messages, {setMessages} from 'components/Messages'
 import API from 'api'
 import {Person, Position} from 'models'
 
-class PersonShow extends Page {
+export default class PersonShow extends Page {
 	static contextTypes = {
-		app: PropTypes.object.isRequired,
+		currentUser: PropTypes.object.isRequired,
 	}
 
 	static modelName = 'User'
@@ -85,12 +84,12 @@ class PersonShow extends Page {
 		//User can always edit themselves
 		//Admins can always edit anybody
 		//SuperUsers can edit people in their org, their descendant orgs, or un-positioned people.
-		let currentUser = this.context.app.state.currentUser
-		let canEdit = currentUser && (currentUser.id === person.id ||
+		let currentUser = this.context.currentUser
+		let canEdit = Person.isEqual(currentUser, person) ||
 			currentUser.isAdmin() ||
-			(person.position && currentUser.isSuperUserForOrg(person.position.organization)) ||
-			(!person.position && currentUser.isSuperUser()) ||
-			(person.role === 'PRINCIPAL' && currentUser.isSuperUser()))
+			(position && currentUser.isSuperUserForOrg(position.organization)) ||
+			(!position && currentUser.isSuperUser()) ||
+			(person.role === 'PRINCIPAL' && currentUser.isSuperUser())
 
 		return (
 			<div>
@@ -177,7 +176,7 @@ class PersonShow extends Page {
 	}
 
 	renderPositionBlankSlate(person) {
-		let currentUser = this.context.app.state.currentUser
+		let currentUser = this.context.currentUser
 
 		if (Person.isEqual(currentUser, person)) {
 			return <em>You are not assigned to a position. Contact your super user to be added.</em>
@@ -189,5 +188,3 @@ class PersonShow extends Page {
 		}
 	}
 }
-
-export default ModelPage(PersonShow)

@@ -20,7 +20,7 @@ export default class GuidedTour extends Component {
 	}
 
 	static contextTypes = {
-		app: PropTypes.object.isRequired,
+		currentUser: PropTypes.object.isRequired,
 	}
 
 	componentDidMount() {
@@ -31,7 +31,7 @@ export default class GuidedTour extends Component {
 	}
 
 	componentDidUpdate() {
-		if (!this.runningTour && this.props.autostart && this.context.app.state.currentUser.id) {
+		if (!this.runningTour && this.props.autostart && this.context.currentUser.id) {
 			this.startTour()
 		}
 	}
@@ -56,7 +56,7 @@ export default class GuidedTour extends Component {
 	}
 
 	startTour(stepId) {
-		let currentUser = this.context.app.state.currentUser
+		let currentUser = this.context.currentUser
 		let tour = this.props.tour(currentUser)
 
 		hopscotch.startTour(tour, stepId)

@@ -14,11 +14,11 @@ import {Report} from 'models'
 
 export default class ReportNew extends Page {
 	static pageProps = {
-		useNavigation: false
+		useNavigation: false,
 	}
 
 	static contextTypes = {
-		app: PropTypes.object,
+		currentUser: PropTypes.object.isRequired,
 	}
 
 	constructor(props, context) {
@@ -39,7 +39,7 @@ export default class ReportNew extends Page {
 	}
 
 	addCurrentUserAsAttendee() {
-		let newAttendee = this.context.app.state.currentUser
+		let newAttendee = this.context.currentUser
 
 		const addedAttendeeToReport = this.state.report.addAttendee(newAttendee)
 		const addedAttendeeToOriginalReport = this.state.originalReport.addAttendee(newAttendee)

@@ -1,6 +1,5 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
-import ModelPage from 'components/ModelPage'
 import {ListGroup, ListGroupItem} from 'react-bootstrap'
 
 import Breadcrumbs from 'components/Breadcrumbs'
@@ -20,9 +19,9 @@ import OrganizationApprovals from './Approvals'
 import API from 'api'
 import {Organization} from 'models'
 
-class OrganizationShow extends Page {
+export default class OrganizationShow extends Page {
 	static contextTypes = {
-		app: PropTypes.object.isRequired,
+		currentUser: PropTypes.object.isRequired,
 	}
 
 	static modelName = 'Organization'
@@ -84,7 +83,7 @@ class OrganizationShow extends Page {
 	render() {
 		let org = this.state.organization
 
-		let currentUser = this.context.app.state.currentUser
+		let currentUser = this.context.currentUser
 		let isSuperUser = currentUser && currentUser.isSuperUserForOrg(org)
 		let isAdmin = currentUser && currentUser.isAdmin()
 
@@ -163,5 +162,3 @@ class OrganizationShow extends Page {
 		)
 	}
 }
-
-export default ModelPage(OrganizationShow)

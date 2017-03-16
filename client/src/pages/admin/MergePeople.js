@@ -1,4 +1,4 @@
-import React, {PropTypes} from 'react'
+import React from 'react'
 import Page from 'components/Page'
 import autobind from 'autobind-decorator'
 
@@ -16,10 +16,6 @@ import {Person} from 'models'
 import API from 'api'
 
 export default class MergePeople extends Page {
-	static contextTypes = {
-		app: PropTypes.object,
-	}
-
 	constructor(props) {
 		super(props)
 		this.state = {

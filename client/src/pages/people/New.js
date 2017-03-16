@@ -1,4 +1,4 @@
-import React, {PropTypes} from 'react'
+import React from 'react'
 import Page from 'components/Page'
 
 import PersonForm from './Form'
@@ -8,10 +8,6 @@ import NavigationWarning from 'components/NavigationWarning'
 import {Person} from 'models'
 
 export default class PersonNew extends Page {
-	static contextTypes = {
-		router: PropTypes.object.isRequired
-	}
-
 	static pageProps = {
 		useNavigation: false
 	}

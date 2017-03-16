@@ -1,6 +1,5 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
-import ModelPage from 'components/ModelPage'
 import {Link} from 'react-router'
 import {Table} from 'react-bootstrap'
 import moment from 'moment'
@@ -9,21 +8,22 @@ import utils from 'utils'
 import Fieldset from 'components/Fieldset'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
-import Messages , {setMessages} from 'components/Messages'
 import LinkTo from 'components/LinkTo'
+import Messages, {setMessages} from 'components/Messages'
 
 import API from 'api'
 import {Position, Organization} from 'models'
 
-class PositionShow extends Page {
+export default class PositionShow extends Page {
 	static contextTypes = {
-		app: PropTypes.object.isRequired,
+		currentUser: PropTypes.object.isRequired,
 	}
 
 	static modelName = 'Position'
 
 	constructor(props) {
 		super(props)
+
 		this.state = {
 			position: new Position( {
 				id: props.params.id,
@@ -32,7 +32,7 @@ class PositionShow extends Page {
 			}),
 		}
 
-		setMessages(props,this.state)
+		setMessages(props, this.state)
 	}
 
 	fetchData(props) {
@@ -55,14 +55,15 @@ class PositionShow extends Page {
 		let position = this.state.position
 		let assignedRole = position.type === 'PRINCIPAL' ? 'advisors' : 'Afghan principals'
 
-		let currentUser = this.context.app.state.currentUser
-		let canEdit = currentUser && (
+		let currentUser = this.context.currentUser
+		let canEdit =
 			//Super Users can edit any Principal
 			(currentUser.isSuperUser() && position.type === 'PRINCIPAL') ||
 			//Admins can edit anybody
 			(currentUser.isAdmin()) ||
 			//Super users can edit positions within their own organization
-			(position.organization && position.organization.id && currentUser.isSuperUserForOrg(position.organization)))
+			(position.organization && position.organization.id && currentUser.isSuperUserForOrg(position.organization))
+
 		return (
 			<div>
 				<Breadcrumbs items={[[position.name || 'Position', Position.pathFor(position)]]} />
@@ -161,5 +162,3 @@ class PositionShow extends Page {
 		</tr>
 	}
 }
-
-export default ModelPage(PositionShow)
