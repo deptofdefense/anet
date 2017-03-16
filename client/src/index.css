@@ -164,6 +164,14 @@ fieldset.danger {
 	max-height: 400px;
 }
 
+.dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
+	background-color: #e0e0e0;
+}
+
+.nav > li > a:hover, .nav > li > a:focus {
+	background-color: #e0e0e0;
+}
+
 .header .logo img, .header input, .header button {
 	height: 38px;
 }
