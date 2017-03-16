@@ -90,12 +90,9 @@ let superUserTour = function(currentUser) { return {
 			placement: 'right',
 			fixedElement: true,
 			multipage: true,
-			onNext: () => History.push(Organization.pathFor(currentUser.position.organization), {continuingHopscotchTour: true})
+			onNext: () => History.push(Organization.pathFor(currentUser.position.organization))
 		},
-		{
-			title: '',
-			content: ''
-		}
+		{}
 	]
 }}
 

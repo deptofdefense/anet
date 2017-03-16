@@ -7,13 +7,13 @@ import autobind from 'autobind-decorator'
 
 import Fieldset from 'components/Fieldset'
 import Messages from 'components/Messages'
-import GuidedTour from 'components/GuidedTour'
 import Breadcrumbs from 'components/Breadcrumbs'
 import SavedSearchTable from 'components/SavedSearchTable'
 
-import API from 'api'
-
+import GuidedTour from 'components/GuidedTour'
 import {userTour, superUserTour} from 'pages/HopscotchTour'
+
+import API from 'api'
 
 export default class Home extends Page {
 	static contextTypes = {
@@ -160,7 +160,7 @@ export default class Home extends Page {
 				<div className="pull-right">
 					<GuidedTour
 						tour={currentUser.isSuperUser() ? superUserTour : userTour}
-						autostart={localStorage.showFirstTimeTour === 'true' && localStorage.hasSeenHomeTour !== 'true'}
+						autostart={localStorage.newUser === 'true' && localStorage.hasSeenHomeTour !== 'true'}
 						onEnd={() => localStorage.hasSeenHomeTour = 'true'}
 					/>
 				</div>

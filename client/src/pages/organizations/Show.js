@@ -1,6 +1,5 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
-import withHopscotch from 'components/withHopscotch'
 import ModelPage from 'components/ModelPage'
 import {ListGroup, ListGroupItem} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
@@ -11,7 +10,9 @@ import Form from 'components/Form'
 import LinkTo from 'components/LinkTo'
 import Messages, {setMessages} from 'components/Messages'
 import ReportCollection from 'components/ReportCollection'
-import HopscotchLauncher from 'components/HopscotchLauncher'
+
+import GuidedTour from 'components/GuidedTour'
+import {orgTour} from 'pages/HopscotchTour'
 
 import OrganizationPoams from './Poams'
 import OrganizationLaydown from './Laydown'
@@ -46,18 +47,6 @@ class OrganizationShow extends Page {
 		if (+nextProps.params.id !== this.state.organization.id) {
 			this.loadData(nextProps)
 		}
-	}
-
-	componentDidMount() {
-		super.componentDidMount()
-		if (this.props.hopscotch.getState() === `${this.props.hopscotchTour.id}:5`) {
-			this.startTour()
-		}
-	}
-
-	@autobind
-	startTour() {
-		this.props.hopscotch.startTour(this.props.hopscotchTour, 6)
 	}
 
 	fetchData(props) {
@@ -104,9 +93,13 @@ class OrganizationShow extends Page {
 
 		return (
 			<div>
-				<div className="pull-right">
-					<HopscotchLauncher onClick={this.startTour} />
-				</div>
+				{currentUser.isSuperUser() && <div className="pull-right">
+					<GuidedTour
+						tour={orgTour}
+						autostart={localStorage.newUser === 'true' && localStorage.hasSeenOrgTour !== 'true'}
+						onEnd={() => localStorage.hasSeenOrgTour = 'true'}
+					/>
+				</div>}
 
 				<Breadcrumbs items={[[org.shortName || 'Organization', Organization.pathFor(org)]]} />
 
@@ -172,4 +165,4 @@ class OrganizationShow extends Page {
 	}
 }
 
-export default withHopscotch(ModelPage(OrganizationShow))
+export default ModelPage(OrganizationShow)
