@@ -23,7 +23,7 @@ export default class OrganizationPoams extends Component {
 		let poams = org.poams
 
 		return <Fieldset id="poams" title="PoAMs / Pillars" action={
-			currentUser.isAdmin() && <LinkTo poam={Poam.pathForNew({responsibleOrgId: org.id})} button>Create PoAM</LinkTo>
+			currentUser.isSuperUser() && <LinkTo poam={Poam.pathForNew({responsibleOrgId: org.id})} button>Create PoAM</LinkTo>
 		}>
 			<Table>
 				<thead>
