@@ -33,7 +33,7 @@ export default function withHopscotch(WrappedPage) {
 		render() {
 			let {currentUser} = this.context.app.state
 			let tour = currentUser.isSuperUser() ? superUserTour : userTour
-			return <WrappedPage {...this.props} hopscotch={hopscotch} hopscotchTour={tour} />
+			return <WrappedPage {...this.props} hopscotch={hopscotch} hopscotchTour={tour(currentUser)} />
 		}
 	})
 

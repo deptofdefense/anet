@@ -1,7 +1,7 @@
 import History from 'components/History'
-import Report from 'models/Report'
+import {Report, Organization} from 'models'
 
-let userTour = {
+let userTour = function(currentUser) { return {
 	id: 'global',
 	steps: [
 		{
@@ -113,9 +113,9 @@ let userTour = {
 			placement: 'bottom',
 		},
 	]
-}
+}}
 
-let superUserTour = {
+let superUserTour = function(currentUser) { return {
 	id: 'global',
 	steps: [
 		{
@@ -155,6 +155,9 @@ let superUserTour = {
 			content: 'You can navigate to your organization from this dropdown list. Find your organization from this list to start the tour that will walk you through how to set up and update your organization as a super user.',
 			target: 'organizations',
 			placement: 'right',
+			fixedElement: true,
+			multipage: true,
+			onNext: () => History.push(Organization.pathFor(currentUser.position.organization), {continuingHopscotchTour: true})
 		},
 		{
 			title: 'New Report',
@@ -233,6 +236,6 @@ let superUserTour = {
 			placement: 'bottom',
 		},
 	]
-}
+}}
 
 export {userTour, superUserTour}
