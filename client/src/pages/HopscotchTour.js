@@ -52,7 +52,7 @@ let superUserTour = function(currentUser) { return {
 	steps: [
 		{
 			title: 'Welcome',
-			content: 'Welcome to ANET! As a super user, there are a few things you\'ll need to do make sure your organization is ready to use ANET 2, and to keep it up to date from now on. This guided tour will show you how to do things like find reports you need to approve and update your organization\'s positions, billet codes, and people. It will also show you how to set up approval chains for your organization, create new people and positions, and link Afghan principals to your organization\'s advisors. First we\'ll look around the home page, then we\'ll look through your organization\'s page.',
+			content: 'Welcome to ANET! This guided tour will show you as a super user how to do things like find reports you need to approve and update your organization\'s positions, billet codes, and people. It will also show you how to set up approval chains for your organization, create new people and positions, and link Afghan principals to your organization\'s advisors.',
 			target: '.persistent-tour-launcher',
 			placement: 'bottom',
 		},
@@ -82,6 +82,13 @@ let superUserTour = function(currentUser) { return {
 			content: 'This area shows you how many reports need your approval, the number of your reports have been drafted but not submitted, your organization\'s submitted reports in the last 7 days, as well as upcoming engagements in your organization.',
 			target: '.home-tile-row',
 			placement: 'bottom',
+		},
+		{
+			title: 'Create',
+			content: 'If you need to create a new report, person, position, or location, click on this "Create" button and select what you need from the menu.',
+			target: 'createButton',
+			placement: 'left',
+			fixedElement: true,
 		},
 		{
 			title: 'EFs / AOs',
@@ -225,13 +232,6 @@ let orgTour = function(currentUser) { return {
 			content: 'If you want to go through this page\'s tour at some point in the future, you can always click on this button to get the tour. Clicking this button on another page will take you through the quick tour for that page.',
 			target: '.persistent-tour-launcher',
 			placement: 'left',
-		},
-		{
-			title: 'Create',
-			content: 'Those are the main areas you\'ll need to check as a super user. When reviewing your updating your organization\'s information, you might need to create new people or positions. New members of your team will automatically create new accounts when they log in for the first time, unless they are moving to ANET 2 from ANET 1. In those cases, they should already have an account. If you do need to create a new report, person, position, or location, click on this "Create" button and select what you need from the menu. Each of those pages will have their own, quick tours which will explain what you need to do to fill out those pages.',
-			target: 'createButton',
-			placement: 'left',
-			fixedElement: true,
 		},
 	]
 }}
