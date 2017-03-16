@@ -12,6 +12,10 @@ const iconCss = {
 	marginLeft: '8px',
 }
 
+const HOPSCOTCH_CONFIG = {
+	bubbleWidth: 400,
+}
+
 export default class GuidedTour extends Component {
 	static propTypes = {
 		tour: PropTypes.func.isRequired,
@@ -58,6 +62,10 @@ export default class GuidedTour extends Component {
 	startTour(stepId) {
 		let currentUser = this.context.currentUser
 		let tour = this.props.tour(currentUser)
+
+		// I don't know why hopscotch requires itself to be reconfigured
+		// EVERY TIME you start a tour, but it does. so this does that.
+		hopscotch.configure(HOPSCOTCH_CONFIG)
 
 		hopscotch.startTour(tour, stepId)
 

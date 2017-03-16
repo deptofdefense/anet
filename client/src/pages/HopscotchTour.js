@@ -8,7 +8,7 @@ let userTour = (currentUser) => { return {
 			title: 'Welcome',
 			content: 'Welcome to ANET! This tour will quickly show you where to find information in ANET 2, and how to draft a report.',
 			target: '.persistent-tour-launcher',
-			placement: 'bottom',
+			placement: 'left',
 		},
 		{
 			title: 'Home',
@@ -54,7 +54,7 @@ let superUserTour = (currentUser) => { return {
 			title: 'Welcome',
 			content: 'Welcome to ANET! This guided tour will show you as a super user how to do things like find reports you need to approve and update your organization\'s positions, billet codes, and people. It will also show you how to set up approval chains for your organization, create new people and positions, and link Afghan principals to your organization\'s advisors.',
 			target: '.persistent-tour-launcher',
-			placement: 'bottom',
+			placement: 'left',
 		},
 		{
 			title: 'Home',
