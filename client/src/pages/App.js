@@ -22,11 +22,13 @@ export default class App extends Page {
 
 	static childContextTypes = {
 		app: PropTypes.object,
+		currentUser: PropTypes.instanceOf(Person),
 	}
 
 	getChildContext() {
 		return {
 			app: this,
+			currentUser: this.state.currentUser,
 		}
 	}
 
@@ -34,7 +36,7 @@ export default class App extends Page {
 		super(props)
 
 		this.state = {
-			currentUser: {},
+			currentUser: new Person(),
 			settings: {},
 			organizations: [],
 		}
