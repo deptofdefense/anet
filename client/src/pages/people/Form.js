@@ -220,7 +220,7 @@ export default class PersonForm extends ValidatableFormWrapper {
 				}
 
 				if (isFirstTimeUser) {
-					window.localStorage.showGettingStartedPanel = 'true'
+					localStorage.newUser = 'true'
 					History.push('/', {skipPageLeaveWarning: true})
 				} else {
 					if (response.id) {

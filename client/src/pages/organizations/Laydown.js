@@ -36,7 +36,7 @@ export default class OrganizationLaydown extends Component {
 		let supportedPositions = org.positions.filter(position => positionsNeedingAttention.indexOf(position) === -1)
 
 		return <div id="laydown" data-jumptarget>
-			<Fieldset title="Supported positions" action={<div>
+			<Fieldset id="supportedPositions" title="Supported positions" action={<div>
 				{numInactivePos > 0 && <Button onClick={this.toggleShowInactive}>
 					{(showInactivePositions ? "Hide " : "Show ") + numInactivePos + " inactive position(s)"}
 				</Button>}
@@ -50,7 +50,7 @@ export default class OrganizationLaydown extends Component {
 				{supportedPositions.length === 0 && <em>There are no occupied positions</em>}
 			</Fieldset>
 
-			<Fieldset title="Vacant positions">
+			<Fieldset id="vacantPositions" title="Vacant positions">
 				{this.renderPositionTable(positionsNeedingAttention)}
 				{positionsNeedingAttention.length === 0 && <em>There are no vacant positions</em>}
 			</Fieldset>

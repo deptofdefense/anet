@@ -10,9 +10,12 @@ import LinkTo from 'components/LinkTo'
 import Messages, {setMessages} from 'components/Messages'
 import ReportCollection from 'components/ReportCollection'
 
-import OrganizationPoams from 'pages/organizations/Poams'
-import OrganizationLaydown from 'pages/organizations/Laydown'
-import OrganizationApprovals from 'pages/organizations/Approvals'
+import GuidedTour from 'components/GuidedTour'
+import {orgTour} from 'pages/HopscotchTour'
+
+import OrganizationPoams from './Poams'
+import OrganizationLaydown from './Laydown'
+import OrganizationApprovals from './Approvals'
 
 import API from 'api'
 import {Organization} from 'models'
@@ -82,13 +85,21 @@ class OrganizationShow extends Page {
 		let org = this.state.organization
 
 		let currentUser = this.context.app.state.currentUser
-		let isSuperUser = (currentUser) ? currentUser.isSuperUserForOrg(org) : false
-		let isAdmin = (currentUser) ? currentUser.isAdmin() : false
+		let isSuperUser = currentUser && currentUser.isSuperUserForOrg(org)
+		let isAdmin = currentUser && currentUser.isAdmin()
 
 		let superUsers = org.positions.filter(pos => pos.status === 'ACTIVE' && (!pos.person || pos.person.status === 'ACTIVE') && (pos.type === 'SUPER_USER' || pos.type === 'ADMINISTRATOR'))
 
 		return (
 			<div>
+				{currentUser.isSuperUser() && <div className="pull-right">
+					<GuidedTour
+						tour={orgTour}
+						autostart={localStorage.newUser === 'true' && localStorage.hasSeenOrgTour !== 'true'}
+						onEnd={() => localStorage.hasSeenOrgTour = 'true'}
+					/>
+				</div>}
+
 				<Breadcrumbs items={[[org.shortName || 'Organization', Organization.pathFor(org)]]} />
 
 				<Messages error={this.state.error} success={this.state.success} />
@@ -99,7 +110,7 @@ class OrganizationShow extends Page {
 							Create sub-organization
 						</LinkTo>}
 
-						{isSuperUser && <LinkTo organization={org} edit button="primary">
+						{isSuperUser && <LinkTo organization={org} edit button="primary" id="editButton">
 							Edit
 						</LinkTo>}
 					</div>}>

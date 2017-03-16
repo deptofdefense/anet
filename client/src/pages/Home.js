@@ -1,20 +1,21 @@
 import React, {PropTypes} from 'react'
-import {Grid, Row, Col, FormControl, FormGroup, ControlLabel, Button} from 'react-bootstrap'
+import Page from 'components/Page'
+import {Grid, Row, FormControl, FormGroup, ControlLabel, Button} from 'react-bootstrap'
 import {Link} from 'react-router'
 import moment from 'moment'
+import autobind from 'autobind-decorator'
 
 import Fieldset from 'components/Fieldset'
 import Messages from 'components/Messages'
-import withHopscotch from 'components/withHopscotch'
-import Page from 'components/Page'
-import HopscotchLauncher from 'components/HopscotchLauncher'
 import Breadcrumbs from 'components/Breadcrumbs'
 import SavedSearchTable from 'components/SavedSearchTable'
 
-import API from 'api'
-import autobind from 'autobind-decorator'
+import GuidedTour from 'components/GuidedTour'
+import {userTour, superUserTour} from 'pages/HopscotchTour'
 
-export default withHopscotch(class Home extends Page {
+import API from 'api'
+
+export default class Home extends Page {
 	static contextTypes = {
 		app: PropTypes.object.isRequired,
 	}
@@ -25,7 +26,6 @@ export default withHopscotch(class Home extends Page {
 			tileCounts: [],
 			savedSearches: [],
 			selectedSearch: null,
-			showGettingStartedPanel: window.localStorage.showGettingStartedPanel
 		}
 	}
 
@@ -153,39 +153,22 @@ export default withHopscotch(class Home extends Page {
 
 	render() {
 		let queries = this.getQueriesForUser()
+		let currentUser = this.context.app.state.currentUser
 
 		return (
 			<div>
-				{this.state.showGettingStartedPanel !== 'true' && <div className="pull-right">
-					<HopscotchLauncher onClick={this.startWelcomeTour} />
-				</div>}
+				<div className="pull-right">
+					<GuidedTour
+						tour={currentUser.isSuperUser() ? superUserTour : userTour}
+						autostart={localStorage.newUser === 'true' && localStorage.hasSeenHomeTour !== 'true'}
+						onEnd={() => localStorage.hasSeenHomeTour = 'true'}
+					/>
+				</div>
 
 				<Breadcrumbs />
 				<Messages error={this.state.error} success={this.state.success} />
 
-				{this.state.showGettingStartedPanel === 'true' &&
-					<Fieldset title="Getting started" className="home-tile-row">
-						<Grid fluid className="getting-started-grid">
-							<span className="close-getting-started" onClick={this.onDismissGettingStarted}>Close ✕</span>
-							<Row>
-								<h3>Welcome to ANET!</h3>
-							</Row>
-							<Row>
-								<Col xs={12}>
-									<p>Get started with a self-guided tour.</p>
-								</Col>
-							</Row>
-							<Row>
-								<Col xs={12}>
-									<Button bsStyle="primary" onClick={this.startWelcomeTour}>Take the tour</Button>
-								</Col>
-							</Row>
-						</Grid>
-					</Fieldset>
-				}
-
 				<Fieldset className="home-tile-row" title="My ANET snapshot">
-
 					<Grid fluid>
 						<Row>
 							{queries.map((query, index) =>{
@@ -247,17 +230,4 @@ export default withHopscotch(class Home extends Page {
 				})
 		}
 	}
-
-
-	@autobind
-	onDismissGettingStarted() {
-		window.localStorage.showGettingStartedPanel = 'false'
-		this.setState({showGettingStartedPanel: 'false'})
-	}
-
-	@autobind
-	startWelcomeTour() {
-		this.props.hopscotch.endTour()
-		this.props.hopscotch.startTour(this.props.hopscotchTour)
-	}
-})
+}
