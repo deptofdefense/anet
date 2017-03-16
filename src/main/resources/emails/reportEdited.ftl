@@ -17,6 +17,8 @@ a {
 }
 </style>
 <body>
+<p style="color:red; font-size:12px; font-weight: bold;" align="center"><i>Classification: ${SECURITY_BANNER_TEXT}</i></p>
+
 Hello ${report.author.name},
 
 <p>${editor.name} edited your report "${report.intent}". To review the changes, <a href="${serverUrl}/reports/${report.id?c}">click here</a>.</p>
