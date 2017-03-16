@@ -29,6 +29,7 @@ let userTour = function(currentUser) { return {
 			content: 'Use this menu to move between areas for a specific section.',
 			target: 'leftNav',
 			placement: 'right',
+			fixedElement: true,
 		},
 		{
 			title: 'My ANET snapshot',
@@ -41,6 +42,7 @@ let userTour = function(currentUser) { return {
 			content: 'Create a report by clicking on this button.',
 			target: 'createButton',
 			placement: 'left',
+			fixedElement: true,
 		}
 	]
 }}
@@ -73,6 +75,7 @@ let superUserTour = function(currentUser) { return {
 			content: 'Use this menu to move between areas for a specific section.',
 			target: 'leftNav',
 			placement: 'right',
+			fixedElement: true,
 		},
 		{
 			title: 'My ANET snapshot',
@@ -164,7 +167,7 @@ let reportTour = function(currentUser) { return {
 			title: 'Start this tour again',
 			content: 'Click this button to restart the tour.',
 			target: '.persistent-tour-launcher',
-			placement: 'bottom',
+			placement: 'left',
 		},
 	]
 }}
@@ -225,6 +228,7 @@ let orgTour = function(currentUser) { return {
 			content: 'Those are the main areas you\'ll need to check as a super user. When reviewing your updating your organization\'s information, you might need to create new people or positions. New members of your team will automatically create new accounts when they log in for the first time, unless they are moving to ANET 2 from ANET 1. In those cases, they should already have an account. If you do need to create a new report, person, position, or location, click on this "Create" button and select what you need from the menu. Each of those pages will have their own, quick tours which will explain what you need to do to fill out those pages.',
 			target: 'createButton',
 			placement: 'left',
+			fixedElement: true,
 		},
 	]
 }}
