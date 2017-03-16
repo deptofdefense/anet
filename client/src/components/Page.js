@@ -39,13 +39,13 @@ export default class Page extends Component {
 		}
 	}
 
-	loadData(props) {
+	loadData(props, context) {
 		this.setState({notFound: false, invalidRequest: false})
 
 		if (this.fetchData) {
 			document.body.classList.add('loading')
 
-			this.fetchData(props || this.props)
+			this.fetchData(props || this.props, context || this.context)
 
 			let promise = API.inProgress
 
@@ -90,11 +90,11 @@ export default class Page extends Component {
 		return this.renderPage()
 	}
 
-	componentWillReceiveProps(props, nextContext) {
-		if (props !== this.props) {
-			this.loadData(props)
+	componentWillReceiveProps(nextProps, nextContext) {
+		if (nextProps !== this.props) {
+			this.loadData(nextProps, nextContext)
 		} else if (this.context && (this.context !== nextContext)) {
-			this.loadData(props)
+			this.loadData(nextProps, nextContext)
 		}
 	}
 

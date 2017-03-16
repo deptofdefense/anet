@@ -106,8 +106,7 @@ export default class Home extends Page {
 		}
 	}
 
-	getQueriesForUser() {
-		let {currentUser} = this.context
+	getQueriesForUser(currentUser) {
 		if (currentUser.isAdmin()) {
 			return this.adminQueries(currentUser)
 		} else if (currentUser.position && currentUser.position.isApprover) {
@@ -117,14 +116,14 @@ export default class Home extends Page {
 		}
 	}
 
-	fetchData() {
+	fetchData(props, context) {
 		//If we don't have the currentUser yet (ie page is still loading, don't run these queries)
-		let {currentUser} = this.context
+		let {currentUser} = context
 		if (!currentUser || !currentUser._loaded) { return }
 
 		//queries will contain the four queries that will show up on the home tiles
 		//Based on the users role. They are all report searches
-		let queries = this.getQueriesForUser()
+		let queries = this.getQueriesForUser(currentUser)
 		//Run those four queries
 		let graphQL = /* GraphQL */`
 			tileOne: reportList(f:search, query:$queryOne) { totalCount},
@@ -152,8 +151,8 @@ export default class Home extends Page {
 	}
 
 	render() {
-		let queries = this.getQueriesForUser()
 		let {currentUser} = this.context
+		let queries = this.getQueriesForUser(currentUser)
 
 		return (
 			<div>
