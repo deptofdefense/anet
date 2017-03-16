@@ -31,7 +31,7 @@ public class DailyRollupEmail extends AnetEmailAction {
 	String comment;
 
 	public DailyRollupEmail() {
-		templateName = "/emails/rollup_simple.ftl";
+		templateName = "/emails/rollup.ftl";
 	}
 
 	@Override
@@ -50,7 +50,7 @@ public class DailyRollupEmail extends AnetEmailAction {
 		List<Report> reports = AnetObjectEngine.getInstance().getReportDao().search(query).getList();
 
 		ReportGrouping allReports = new ReportGrouping(reports);
-		
+
 		Map<String,Object> context = new HashMap<String,Object>();
 		context.put("reports", allReports);
 		context.put("cancelledReasons", ReportCancelledReason.values());
@@ -60,60 +60,60 @@ public class DailyRollupEmail extends AnetEmailAction {
 		return context;
 	}
 
-	public static class ReportGrouping { 
-		String name; 
+	public static class ReportGrouping {
+		String name;
 		List<Report> reports;
-		
-		public ReportGrouping() { 
+
+		public ReportGrouping() {
 			this.reports = new LinkedList<Report>();
 		}
-		
-		public ReportGrouping(List<Report> reports) { 
+
+		public ReportGrouping(List<Report> reports) {
 			this.reports = reports;
 		}
-		
-		public List<Report> getAll() { 
-			return reports; 
+
+		public List<Report> getAll() {
+			return reports;
 		}
-		
-		public List<Report> getNonCancelled() { 
+
+		public List<Report> getNonCancelled() {
 			return reports.stream().filter(r -> r.getCancelledReason() == null)
 					.collect(Collectors.toList());
 		}
-		
-		public void addReport(Report r) { 
+
+		public void addReport(Report r) {
 			reports.add(r);
 		}
-		
-		public String getName() { 
-			return name; 
+
+		public String getName() {
+			return name;
 		}
-		
-		public void setName(String name) { 
+
+		public void setName(String name) {
 			this.name = name;
 		}
 
-		public List<ReportGrouping> getByGrouping(String orgType) { 
+		public List<ReportGrouping> getByGrouping(String orgType) {
 			return getByGrouping(OrganizationType.valueOf(orgType));
 		}
-		
-		public List<ReportGrouping> getByGrouping(OrganizationType orgType) { 
+
+		public List<ReportGrouping> getByGrouping(OrganizationType orgType) {
 			Map<Integer, ReportGrouping> orgIdToReports = new HashMap<Integer,ReportGrouping>();
 			Map<Integer, Organization> orgIdToTopOrg = buildTopLevelOrgHash(orgType);
-			for (Report r : reports) { 
+			for (Report r : reports) {
 				Organization reportOrg = (orgType == OrganizationType.ADVISOR_ORG) ? r.loadAdvisorOrg() : r.loadPrincipalOrg();
-				int topOrgId; 
+				int topOrgId;
 				String topOrgName;
 				if (reportOrg == null) {
 					topOrgId = -1;
 					topOrgName = "Other";
-				} else { 
+				} else {
 					Organization topOrg = orgIdToTopOrg.get(reportOrg.getId());
 					topOrgId = topOrg.getId();
 					topOrgName = topOrg.getShortName();
-				} 
+				}
 				ReportGrouping group = orgIdToReports.get(topOrgId);
-				if (group == null) { 
+				if (group == null) {
 					group = new ReportGrouping();
 					group.setName(topOrgName);
 					orgIdToReports.put(topOrgId, group);
@@ -125,21 +125,21 @@ public class DailyRollupEmail extends AnetEmailAction {
 					.collect(Collectors.toList());
 
 		}
-		
-		public long getCountByCancelledReason(ReportCancelledReason reason) { 
+
+		public long getCountByCancelledReason(ReportCancelledReason reason) {
 			return reports.stream().filter(r -> reason.equals(r.getCancelledReason())).count();
 		}
-		
-		public long getCountByCancelledReason(String reason) { 
+
+		public long getCountByCancelledReason(String reason) {
 			return getCountByCancelledReason(ReportCancelledReason.valueOf(reason));
 		}
-		
+
 		private Map<Integer,Organization> buildTopLevelOrgHash(OrganizationType orgType) {
 			OrganizationSearchQuery orgQuery = new OrganizationSearchQuery();
 			orgQuery.setPageSize(Integer.MAX_VALUE);
 			orgQuery.setType(orgType);
 			List<Organization> orgs = AnetObjectEngine.getInstance().getOrganizationDao().search(orgQuery).getList();
-			
+
 			Map<Integer,Organization> result = new HashMap<Integer,Organization>();
 			Map<Integer,Organization> orgMap = new HashMap<Integer,Organization>();
 
@@ -161,7 +161,7 @@ public class DailyRollupEmail extends AnetEmailAction {
 		}
 
 	}
-	
+
 	public DateTime getStartDate() {
 		return startDate;
 	}
