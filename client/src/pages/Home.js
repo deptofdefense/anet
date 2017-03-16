@@ -25,7 +25,12 @@ export default withHopscotch(class Home extends Page {
 			tileCounts: [],
 			savedSearches: [],
 			selectedSearch: null,
-			showGettingStartedPanel: window.localStorage.showGettingStartedPanel
+		}
+	}
+
+	componentDidMount() {
+		if (window.localStorage.showGettingStartedPanel === 'true') {
+			this.props.hopscotch.startTour(this.props.hopscotchTour)
 		}
 	}
 
@@ -163,29 +168,7 @@ export default withHopscotch(class Home extends Page {
 				<Breadcrumbs />
 				<Messages error={this.state.error} success={this.state.success} />
 
-				{this.state.showGettingStartedPanel === 'true' &&
-					<Fieldset title="Getting started" className="home-tile-row">
-						<Grid fluid className="getting-started-grid">
-							<span className="close-getting-started" onClick={this.onDismissGettingStarted}>Close ✕</span>
-							<Row>
-								<h3>Welcome to ANET!</h3>
-							</Row>
-							<Row>
-								<Col xs={12}>
-									<p>Get started with a self-guided tour.</p>
-								</Col>
-							</Row>
-							<Row>
-								<Col xs={12}>
-									<Button bsStyle="primary" onClick={this.startWelcomeTour}>Take the tour</Button>
-								</Col>
-							</Row>
-						</Grid>
-					</Fieldset>
-				}
-
 				<Fieldset className="home-tile-row" title="My ANET snapshot">
-
 					<Grid fluid>
 						<Row>
 							{queries.map((query, index) =>{
@@ -246,18 +229,5 @@ export default withHopscotch(class Home extends Page {
 					this.setState({success:null, error: data})
 				})
 		}
-	}
-
-
-	@autobind
-	onDismissGettingStarted() {
-		window.localStorage.showGettingStartedPanel = 'false'
-		this.setState({showGettingStartedPanel: 'false'})
-	}
-
-	@autobind
-	startWelcomeTour() {
-		this.props.hopscotch.endTour()
-		this.props.hopscotch.startTour(this.props.hopscotchTour)
 	}
 })
