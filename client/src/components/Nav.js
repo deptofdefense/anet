@@ -33,10 +33,9 @@ class Nav extends Component {
 					<NavItem>Home</NavItem>
 				</Link>
 
-				{currentUser && <Link to={{pathname: '/search', query: {type: 'reports', authorId: currentUser.id}}}>
-					<NavItem>My Reports</NavItem>
-				</Link>
-				}
+				{currentUser.id && <Link to={{pathname: '/search', query: {type: 'reports', authorId: currentUser.id}}}>
+					<NavItem>My reports</NavItem>
+				</Link>}
 
 				<NavDropdown title="EFs / AOs" id="organizations" active={inOrg}>
 					{Organization.map(organizations, org =>
@@ -63,7 +62,7 @@ class Nav extends Component {
 				}
 
 				<Link to="/rollup">
-					<NavItem>Daily Rollup</NavItem>
+					<NavItem>Daily rollup</NavItem>
 				</Link>
 
 				{process.env.NODE_ENV === 'development' &&
@@ -79,7 +78,7 @@ class Nav extends Component {
 				}
 				{currentUser.isAdmin() && inAdmin &&
 					<SubNav>
-						<Link to={"/admin/mergePeople"}><NavItem>Merge People</NavItem></Link>
+						<Link to={"/admin/mergePeople"}><NavItem>Merge people</NavItem></Link>
 					</SubNav>
 				}
 			</BSNav>

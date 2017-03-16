@@ -43,7 +43,7 @@ export default class CreateButton extends Component {
 			let modelClass = modelClasses[0]
 			return (
 				<Button bsStyle="primary" onClick={this.onSelect.bind(this, modelClass)} id="createButton">
-					New {modelClass.displayName || modelClass.resourceName}
+					New {(modelClass.displayName || modelClass.resourceName).toLowerCase()}
 				</Button>
 			)
 		}
