@@ -11,6 +11,9 @@ import Form from 'components/Form'
 import LinkTo from 'components/LinkTo'
 import Messages, {setMessages} from 'components/Messages'
 
+import GuidedTour from 'components/GuidedTour'
+import {positionTour} from 'pages/HopscotchTour'
+
 import API from 'api'
 import {Position, Organization} from 'models'
 
@@ -66,6 +69,14 @@ export default class PositionShow extends Page {
 
 		return (
 			<div>
+				<div className="pull-right">
+					<GuidedTour
+						tour={positionTour}
+						autostart={localStorage.newUser === 'true' && localStorage.hasSeenPositionTour !== 'true'}
+						onEnd={() => localStorage.hasSeenPositionTour = 'true'}
+					/>
+				</div>
+
 				<Breadcrumbs items={[[position.name || 'Position', Position.pathFor(position)]]} />
 				<Messages success={this.state.success} error={this.state.error} />
 
@@ -92,7 +103,7 @@ export default class PositionShow extends Page {
 						</Form.Field>
 					</Fieldset>
 
-					<Fieldset title="Current assigned person" className={(!position.person || !position.person.id) && 'warning'} style={{textAlign: 'center'}}>
+					<Fieldset title="Current assigned person" id="assigned-advisor" className={(!position.person || !position.person.id) && 'warning'} style={{textAlign: 'center'}}>
 						{position.person && position.person.id
 							? <div>
 								<h4><LinkTo person={position.person}>{position.person.rank} {position.person.name}</LinkTo></h4>
@@ -105,7 +116,7 @@ export default class PositionShow extends Page {
 						}
 					</Fieldset>
 
-					<Fieldset title={`Assigned ${assignedRole}`}>
+					<Fieldset title={`Assigned ${assignedRole}`} id="assigned-principal">
 						<Table>
 							<thead>
 								<tr>
@@ -125,7 +136,7 @@ export default class PositionShow extends Page {
 						}
 					</Fieldset>
 
-					<Fieldset title="Previous position holders">
+					<Fieldset title="Previous position holders" id="previous-people">
 						<Table>
 							<thead>
 								<tr>

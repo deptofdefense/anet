@@ -1,7 +1,7 @@
 import History from 'components/History'
 import {Organization} from 'models'
 
-let userTour = function(currentUser) { return {
+let userTour = (currentUser) => { return {
 	id: 'home',
 	steps: [
 		{
@@ -47,7 +47,7 @@ let userTour = function(currentUser) { return {
 	]
 }}
 
-let superUserTour = function(currentUser) { return {
+let superUserTour = (currentUser) => { return {
 	id: 'home',
 	steps: [
 		{
@@ -103,7 +103,7 @@ let superUserTour = function(currentUser) { return {
 	]
 }}
 
-let reportTour = function(currentUser) { return {
+let reportTour = (currentUser) => { return {
 	id: 'report',
 	steps: [
 		{
@@ -182,7 +182,7 @@ let reportTour = function(currentUser) { return {
 	]
 }}
 
-let orgTour = function(currentUser) { return {
+let orgTour = (currentUser) => { return {
 	id: 'org',
 	steps: [
 		{
@@ -236,4 +236,52 @@ let orgTour = function(currentUser) { return {
 	]
 }}
 
-export {userTour, superUserTour, reportTour, orgTour}
+let positionTour = (currentUser) => { return {
+	id: 'positions',
+	steps: [
+		{
+			title: "Positions",
+			content: "This page gives you a more detailed look at the billet or tashkil position you clicked on to get here. In this first section on the page, you can quickly review the detailed information, such as the position's billet or tashkil code, status, and organization.",
+			target: '.persistent-tour-launcher',
+			placement: 'left',
+		},
+		{
+			title: "Type of user",
+			content: "If you're looking at a billet position, you can see what kind of permissions this user has. There are three options: user, super user, and administrator. Super users can make people either users or super users. Users are able to take basic actions, like submitting reports, using search, and reviewing the daily rollup. Super users are able to edit positions, people, and PoAMs in their organization, as well as locations. This section isn't visible if you're looking at a tashkil position.",
+			target: '#type',
+			placement: 'bottom',
+		},
+		{
+			title: "Active/inactive status",
+			content: "Positions can be either active or inactive. Changing the status to \"Inactive\" means that your organization no longer supports that position / function. This is different than the position being vacant. A vacant position is one that does not have a person assigned to it. Positions will move to the \"Vacant\" section of your organization's page automatically when no one is assigned to it.",
+			target: '#status',
+			placement: 'bottom',
+		},
+		{
+			title: "Current assigned person",
+			content: "This section shows you who is currently assigned to this position. For billet positions, you'll see the NATO member in this position. For taskhil positions, you'll see the current Afghan principal in that position. You can click the \"Change assigned person\" button to quickly change who is in this position. You can come here to add a new person to this position as NATO members leave and arrive to theater, or as Afghan principals change jobs. If you are viewing a vacant position - one without an assigned person - you will see the option to assign someone to this position, rather than change who is currently assigned.",
+			target: '#assigned-advisor h2',
+			placement: 'top',
+		},
+		{
+			title: "Assigned Afghan principal",
+			content: "If you're looking a billet position responsible for advising Afghan principals, those people and their tashkils will display here. You can add assigned principals by selecting the \"edit\" button of this page. If this position isn't responsible for advising people, it's okay for this section to be empty. If you're looking at a tashkil position, you'll see the NATO members assigned to advise this principal. You can add or remove assigned advisors by editing this page.",
+			target: '#assigned-principal h2',
+			placement: 'top',
+		},
+		{
+			title: "Previous position holders",
+			content: "The previous position holders section will show you other people who have previously held this position.",
+			target: '#previous-people h2',
+			placement: 'top',
+		},
+		{
+			title: 'Take a guided tour',
+			content: 'If you want to go through this page\'s tour at some point in the future, you can always click on this button to get the tour. Clicking this button on another page will take you through the quick tour for that page.',
+			target: '.persistent-tour-launcher',
+			placement: 'left',
+		},
+	]
+}}
+
+export {userTour, superUserTour, reportTour, orgTour, positionTour}
