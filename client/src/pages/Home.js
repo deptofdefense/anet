@@ -17,7 +17,7 @@ import API from 'api'
 
 export default class Home extends Page {
 	static contextTypes = {
-		app: PropTypes.object.isRequired,
+		currentUser: PropTypes.object.isRequired,
 	}
 
 	constructor(props) {
@@ -107,19 +107,19 @@ export default class Home extends Page {
 	}
 
 	getQueriesForUser() {
-		let user = this.context.app.state.currentUser
-		if (user.isAdmin()) {
-			return this.adminQueries(user)
-		} else if (user.position && user.position.isApprover) {
-			return this.approverQueries(user)
+		let {currentUser} = this.context
+		if (currentUser.isAdmin()) {
+			return this.adminQueries(currentUser)
+		} else if (currentUser.position && currentUser.position.isApprover) {
+			return this.approverQueries(currentUser)
 		} else {
-			return this.advisorQueries(user)
+			return this.advisorQueries(currentUser)
 		}
 	}
 
 	fetchData() {
 		//If we don't have the currentUser yet (ie page is still loading, don't run these queries)
-		let currentUser = this.context.app.state.currentUser
+		let {currentUser} = this.context
 		if (!currentUser || !currentUser._loaded) { return }
 
 		//queries will contain the four queries that will show up on the home tiles
@@ -153,7 +153,7 @@ export default class Home extends Page {
 
 	render() {
 		let queries = this.getQueriesForUser()
-		let currentUser = this.context.app.state.currentUser
+		let {currentUser} = this.context
 
 		return (
 			<div>

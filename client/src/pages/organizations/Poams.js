@@ -8,12 +8,11 @@ import {Poam} from 'models'
 
 export default class OrganizationPoams extends Component {
 	static contextTypes = {
-		app: PropTypes.object.isRequired,
+		currentUser: PropTypes.object.isRequired,
 	}
 
 	render() {
-		let appData = this.context.app.state
-		let currentUser = appData.currentUser
+		let currentUser = this.context.currentUser
 
 		let org = this.props.organization
 		if (org.type !== 'ADVISOR_ORG') {

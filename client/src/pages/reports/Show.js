@@ -1,6 +1,5 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
-import ModelPage from 'components/ModelPage'
 import {Alert, Table, Button, Col, Modal, Checkbox} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 import moment from 'moment'
@@ -13,11 +12,11 @@ import Messages from 'components/Messages'
 import LinkTo from 'components/LinkTo'
 
 import API from 'api'
-import {Report, Person, Poam, Comment} from 'models'
+import {Report, Person, Poam, Comment, Position} from 'models'
 
-class ReportShow extends Page {
+export default class ReportShow extends Page {
 	static contextTypes = {
-		app: PropTypes.object,
+		currentUser: PropTypes.object.isRequired,
 	}
 
 	static modelName = 'Report'
@@ -92,24 +91,24 @@ class ReportShow extends Page {
 
 	render() {
 		let {report} = this.state
-		let {currentUser} = this.context.app.state
+		let {currentUser} = this.context
 
 		let canApprove = report.isPending() && currentUser.position &&
-			report.approvalStep.approvers.find(member => member.id === currentUser.position.id)
+			report.approvalStep.approvers.find(member => Position.isEqual(member, currentUser.position))
 		//Authors can edit in draft mode, rejected mode, or Pending Mode
-		let canEdit = (report.isDraft() || report.isPending() || report.isRejected()) && (currentUser.id === report.author.id)
+		let canEdit = (report.isDraft() || report.isPending() || report.isRejected()) && Person.isEqual(currentUser, report.author)
 		//Approvers can edit.
 		canEdit = canEdit || canApprove
 
 		//Only the author can submit when report is in Draft or rejected
-		let canSubmit = (report.isDraft() || report.isRejected()) && (currentUser.id === report.author.id)
+		let canSubmit = (report.isDraft() || report.isRejected()) && Person.isEqual(currentUser, report.author)
 
 		//Anbody can email a report as long as it's not in draft.
 		let canEmail = !report.isDraft()
 
 		let errors = report.isDraft() && report.validateForSubmit()
 
-		let isCancelled = (report.cancelledReason) ? true : false
+		let isCancelled = report.cancelledReason ? true : false
 
 		return (
 			<div className="report-show">
@@ -532,5 +531,3 @@ class ReportShow extends Page {
 		this.setState(this.state)
 	}
 }
-
-export default ModelPage(ReportShow)

@@ -1,18 +1,18 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
-import ModelPage from 'components/ModelPage'
 import moment from 'moment'
 import autobind from 'autobind-decorator'
 
-import ReportForm from './Form'
 import Breadcrumbs from 'components/Breadcrumbs'
 import NavigationWarning from 'components/NavigationWarning'
 import History from 'components/History'
 
+import ReportForm from './Form'
+
 import API from 'api'
 import {Report, Person} from 'models'
 
-class ReportEdit extends Page {
+export default class ReportEdit extends Page {
 	static pageProps = {
 		useNavigation: false
 	}
@@ -20,7 +20,7 @@ class ReportEdit extends Page {
 	static modelName = 'Report'
 
 	static contextTypes = {
-		app: PropTypes.object,
+		currentUser: PropTypes.object,
 	}
 
 	constructor(props) {
@@ -57,7 +57,7 @@ class ReportEdit extends Page {
 
 	render() {
 		let {report} = this.state
-		let {currentUser} = this.context.app.state
+		let {currentUser} = this.context
 
 		//Only the author can delete a report, and only in DRAFT.
 		let canDelete = report.isDraft() && Person.isEqual(currentUser, report.author)
@@ -86,5 +86,3 @@ class ReportEdit extends Page {
 		})
 	}
 }
-
-export default ModelPage(ReportEdit)
