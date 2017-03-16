@@ -10,6 +10,9 @@ import ReportTable from 'components/ReportTable'
 import LinkTo from 'components/LinkTo'
 import Messages, {setMessages} from 'components/Messages'
 
+import GuidedTour from 'components/GuidedTour'
+import {personTour} from 'pages/HopscotchTour'
+
 import API from 'api'
 import {Person, Position} from 'models'
 
@@ -93,6 +96,14 @@ export default class PersonShow extends Page {
 
 		return (
 			<div>
+				<div className="pull-right">
+					<GuidedTour
+						tour={personTour}
+						autostart={localStorage.newUser === 'true' && localStorage.hasSeenPersonTour !== 'true'}
+						onEnd={() => localStorage.hasSeenPersonTour = 'true'}
+					/>
+				</div>
+
 				<Breadcrumbs items={[[person.name, Person.pathFor(person)]]} />
 				<Messages error={this.state.error} success={this.state.success} />
 
@@ -120,7 +131,7 @@ export default class PersonShow extends Page {
 						</Form.Field>
 					</Fieldset>
 
-					<Fieldset title="Current position" className={(!position || !position.id) && 'warning'}>
+					<Fieldset title="Current position" id="current-position" className={(!position || !position.id) && 'warning'}>
 						{position && position.id
 							? this.renderPosition(position)
 							: this.renderPositionBlankSlate(person)
@@ -128,12 +139,12 @@ export default class PersonShow extends Page {
 					</Fieldset>
 
 					{person.isAdvisor() &&
-						<Fieldset title="Reports authored">
+						<Fieldset title="Reports authored" id="reports-authored">
 							<ReportTable reports={person.authoredReports.list || []} showAuthors={false} />
 						</Fieldset>
 					}
 
-					<Fieldset title={`Reports attended by ${person.name}`}>
+					<Fieldset title={`Reports attended by ${person.name}`} id="reports-attended">
 						<ReportTable reports={person.attendedReports.list || []} showAuthors={true} />
 					</Fieldset>
 				</Form>

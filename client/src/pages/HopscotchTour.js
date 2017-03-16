@@ -237,7 +237,7 @@ let orgTour = (currentUser) => { return {
 }}
 
 let positionTour = (currentUser) => { return {
-	id: 'positions',
+	id: 'position',
 	steps: [
 		{
 			title: "Positions",
@@ -284,4 +284,40 @@ let positionTour = (currentUser) => { return {
 	]
 }}
 
-export {userTour, superUserTour, reportTour, orgTour, positionTour}
+let personTour = (currentUser) => { return {
+	id: 'person',
+	steps: [
+		{
+			title: "Information about this person",
+			content: "This page shows you the detailed information for this person. In this top section, you can see their basic information, like which country their from, if their \"Active\", contact information if available, and more. If a NATO member is \"Active\" it means that they are still working in theater. For Afghan principals, it means they are still with the Afghan government. A super user or administrator should change them to \"Inactive\" when that is no longer the case. This will keep them from being added to reports as attendees.",
+			target: '#phoneNumber',
+			placement: 'bottom',
+		},
+		{
+			title: "Current assigned position",
+			content: "This section tells you which position this person is currently in. If you need to remove them from this position, or assign them to a different position, you can do so from here.",
+			target: '#current-position h2',
+			placement: 'top',
+		},
+		{
+			title: "Authored reports",
+			content: "If this person has authored any reports, you'll be able to see them displayed here. If you're looking at an Afghan principal's page, you won't see this section.",
+			target: '#reports-authored h2',
+			placement: 'top',
+		},
+		{
+			title: "Reports attended by this person",
+			content: "If this person has been mentioned as an attendee of reports, those reports will display here.",
+			target: '#reports-attended h2',
+			placement: 'top',
+		},
+		{
+			title: 'Take a guided tour',
+			content: 'If you want to go through this page\'s tour at some point in the future, you can always click on this button to get the tour. Clicking this button on another page will take you through the quick tour for that page.',
+			target: '.persistent-tour-launcher',
+			placement: 'left',
+		},
+	]
+}}
+
+export {userTour, superUserTour, reportTour, orgTour, positionTour, personTour}
