@@ -23,9 +23,32 @@ class Nav extends Component {
 		let currentUser = appData.currentUser
 		let organizations = appData.organizations || []
 		let path = this.context.app.props.location.pathname
+
 		let inAdmin = path.indexOf('/admin') === 0
 		let inOrg = path.indexOf('/organizations') === 0
-		if (inOrg) { path = '/organizations/' + this.context.app.props.params.id }
+
+		let orgId, myOrgId
+		if (inOrg) {
+			orgId = +this.context.app.props.params.id
+			myOrgId = currentUser.position.organization && +currentUser.position.organization.id
+			path = `/organizations/${orgId}`
+		}
+
+		let orgSubNav = (
+			<SubNav
+				componentClass={Scrollspy}
+				className="nav"
+				items={['info', 'laydown', 'approvals', 'poams', 'reports']}
+				currentClassName="active"
+				offset={-152}
+			>
+				<NavItem href="#info">Info</NavItem>
+				<NavItem href="#laydown">Laydown</NavItem>
+				<NavItem href="#approvals">Approvals</NavItem>
+				<NavItem href="#poams">PoAMs</NavItem>
+				<NavItem href="#reports">Reports</NavItem>
+			</SubNav>
+		)
 
 		return (
 			<BSNav bsStyle="pills" stacked id="leftNav" className="nav-fixed">
@@ -33,12 +56,17 @@ class Nav extends Component {
 					<NavItem>Home</NavItem>
 				</Link>
 
-				{currentUser && <Link to={{pathname: '/search', query: {type: 'reports', authorId: currentUser.id}}}>
-					<NavItem>My Reports</NavItem>
-				</Link>
-				}
+				{currentUser.id && <Link to={{pathname: '/search', query: {type: 'reports', authorId: currentUser.id}}}>
+					<NavItem>My reports</NavItem>
+				</Link>}
 
-				<NavDropdown title="EFs / AOs" id="organizations" active={inOrg}>
+				{currentUser.position.organization && <Link to={Organization.pathFor(currentUser.position.organization)}>
+					<NavItem>My organization</NavItem>
+				</Link>}
+
+				{inOrg && orgId === myOrgId && orgSubNav}
+
+				<NavDropdown title="All EFs / AOs" id="organizations" active={inOrg && orgId !== myOrgId}>
 					{Organization.map(organizations, org =>
 						<LinkTo organization={org} componentClass={Link} key={org.id}>
 							<MenuItem>{org.shortName}</MenuItem>
@@ -46,24 +74,10 @@ class Nav extends Component {
 					)}
 				</NavDropdown>
 
-				{inOrg &&
-					<SubNav
-						componentClass={Scrollspy}
-						className="nav"
-						items={['info', 'laydown', 'approvals', 'poams', 'reports']}
-						currentClassName="active"
-						offset={-152}
-					>
-						<NavItem href="#info">Info</NavItem>
-						<NavItem href="#laydown">Laydown</NavItem>
-						<NavItem href="#approvals">Approvals</NavItem>
-						<NavItem href="#poams">PoAMs</NavItem>
-						<NavItem href="#reports">Reports</NavItem>
-					</SubNav>
-				}
+				{inOrg && orgId !== myOrgId && orgSubNav}
 
 				<Link to="/rollup">
-					<NavItem>Daily Rollup</NavItem>
+					<NavItem>Daily rollup</NavItem>
 				</Link>
 
 				{process.env.NODE_ENV === 'development' &&
@@ -79,7 +93,7 @@ class Nav extends Component {
 				}
 				{currentUser.isAdmin() && inAdmin &&
 					<SubNav>
-						<Link to={"/admin/mergePeople"}><NavItem>Merge People</NavItem></Link>
+						<Link to={"/admin/mergePeople"}><NavItem>Merge people</NavItem></Link>
 					</SubNav>
 				}
 			</BSNav>
