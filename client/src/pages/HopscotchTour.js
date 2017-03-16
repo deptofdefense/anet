@@ -1,8 +1,8 @@
 import History from 'components/History'
-import {Report, Organization} from 'models'
+import {Organization} from 'models'
 
 let userTour = function(currentUser) { return {
-	id: 'global',
+	id: 'home',
 	steps: [
 		{
 			title: 'Welcome',
@@ -41,10 +41,64 @@ let userTour = function(currentUser) { return {
 			content: 'Create a report by clicking on this button.',
 			target: 'createButton',
 			placement: 'left',
+		}
+	]
+}}
+
+let superUserTour = function(currentUser) { return {
+	id: 'home',
+	steps: [
+		{
+			title: 'Welcome',
+			content: 'Welcome to ANET! As a super user, there are a few things you\'ll need to do make sure your organization is ready to use ANET 2, and to keep it up to date from now on. This guided tour will show you how to do things like find reports you need to approve and update your organization\'s positions, billet codes, and people. It will also show you how to set up approval chains for your organization, create new people and positions, and link Afghan principals to your organization\'s advisors. First we\'ll look around the home page, then we\'ll look through your organization\'s page.',
+			target: '.persistent-tour-launcher',
+			placement: 'bottom',
+		},
+		{
+			title: 'Home',
+			content: 'Click on the logo to get back to your homepage, from wherever you are.',
+			target: '.logo img',
+			placement: 'right',
+			fixedElement: true
+		},
+		{
+			title: 'Search',
+			content: 'Search for reports, people, or organizations. You\'ll be able to save your searches.',
+			target: 'searchBarInput',
+			placement: 'bottom',
+			fixedElement: true
+		},
+		{
+			title: 'Left navigation',
+			content: 'Use this menu to move between areas for a specific section.',
+			target: 'leftNav',
+			placement: 'right',
+		},
+		{
+			title: 'My ANET snapshot',
+			content: 'This area shows you how many reports need your approval, the number of your reports have been drafted but not submitted, your organization\'s submitted reports in the last 7 days, as well as upcoming engagements in your organization.',
+			target: '.home-tile-row',
+			placement: 'bottom',
+		},
+		{
+			title: 'EFs / AOs',
+			content: 'You can navigate to your organization from this dropdown list. Find your organization from this list to start the tour that will walk you through how to set up and update your organization as a super user.',
+			target: 'organizations',
+			placement: 'right',
 			fixedElement: true,
 			multipage: true,
-			onNext: () => History.push(Report.pathForNew(), {continuingHopscotchTour: true})
+			onNext: () => History.push(Organization.pathFor(currentUser.position.organization), {continuingHopscotchTour: true})
 		},
+		{
+			title: '',
+			content: ''
+		}
+	]
+}}
+
+let reportTour = function(currentUser) { return {
+	id: 'report',
+	steps: [
 		{
 			title: 'Meeting goal(s)',
 			content: "Use this section to tell readers why you met with your principal. Were you working on a specific goal or problem with them? This will be part of your report's summary, so use this space to tell readers the high-level purpose of your engagement.",
@@ -115,50 +169,9 @@ let userTour = function(currentUser) { return {
 	]
 }}
 
-let superUserTour = function(currentUser) { return {
-	id: 'global',
+let orgTour = function(currentUser) { return {
+	id: 'org',
 	steps: [
-		{
-			title: 'Welcome',
-			content: 'Welcome to ANET! As a super user, there are a few things you\'ll need to do make sure your organization is ready to use ANET 2, and to keep it up to date from now on. This guided tour will show you how to do things like find reports you need to approve and update your organization\'s positions, billet codes, and people. It will also show you how to set up approval chains for your organization, create new people and positions, and link Afghan principals to your organization\'s advisors. First we\'ll look around the home page, then we\'ll look through your organization\'s page.',
-			target: '.persistent-tour-launcher',
-			placement: 'bottom',
-		},
-		{
-			title: 'Home',
-			content: 'Click on the logo to get back to your homepage, from wherever you are.',
-			target: '.logo img',
-			placement: 'right',
-			fixedElement: true
-		},
-		{
-			title: 'Search',
-			content: 'Search for reports, people, or organizations. You\'ll be able to save your searches.',
-			target: 'searchBarInput',
-			placement: 'bottom',
-			fixedElement: true
-		},
-		{
-			title: 'Left navigation',
-			content: 'Use this menu to move between areas for a specific section.',
-			target: 'leftNav',
-			placement: 'right',
-		},
-		{
-			title: 'My ANET snapshot',
-			content: 'This area shows you how many reports need your approval, the number of your reports have been drafted but not submitted, your organization\'s submitted reports in the last 7 days, as well as upcoming engagements in your organization.',
-			target: '.home-tile-row',
-			placement: 'bottom',
-		},
-		{
-			title: 'EFs / AOs',
-			content: 'You can navigate to your organization from this dropdown list. Find your organization from this list to start the tour that will walk you through how to set up and update your organization as a super user.',
-			target: 'organizations',
-			placement: 'right',
-			fixedElement: true,
-			multipage: true,
-			onNext: () => History.push(Organization.pathFor(currentUser.position.organization), {continuingHopscotchTour: true})
-		},
 		{
 			title: 'Your organization\'s information',
 			content: 'In this section of the page, you will find general information about your organization. This includes a description of your organization, a list of who the super users are, and sub-organizations. If you\'re a super user for a parent EF or organization -- such as EF 1 rather than EF 1.1 -- you can make changes to your organization and any sub-organization. If you\'re a super user in a sub-organization, you can only make changes within that sub-organization.',
@@ -216,4 +229,4 @@ let superUserTour = function(currentUser) { return {
 	]
 }}
 
-export {userTour, superUserTour}
+export {userTour, superUserTour, reportTour, orgTour}
