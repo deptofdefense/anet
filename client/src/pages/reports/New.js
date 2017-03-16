@@ -1,17 +1,19 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
-import withHopscotch from 'components/withHopscotch'
 import autobind from 'autobind-decorator'
 
-import ReportForm from './Form'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Messages from 'components/Messages'
 import NavigationWarning from 'components/NavigationWarning'
-import HopscotchLauncher from 'components/HopscotchLauncher'
+
+import ReportForm from './Form'
+
+import GuidedTour, {autostartTour} from 'components/GuidedTour'
+import {reportTour} from 'pages/HopscotchTour'
 
 import {Report} from 'models'
 
-export default withHopscotch(class ReportNew extends Page {
+export default class ReportNew extends Page {
 	static pageProps = {
 		useNavigation: false
 	}
@@ -27,18 +29,6 @@ export default withHopscotch(class ReportNew extends Page {
 			report: new Report(),
 			originalReport: new Report(),
 		}
-	}
-
-	componentDidMount() {
-		super.componentDidMount()
-		if (this.props.hopscotch.getState() === `${this.props.hopscotchTour.id}:5`) {
-			this.startTour()
-		}
-	}
-
-	@autobind
-	startTour() {
-		this.props.hopscotch.startTour(this.props.hopscotchTour, 6)
 	}
 
 	componentWillUpdate() {
@@ -64,7 +54,11 @@ export default withHopscotch(class ReportNew extends Page {
 		return (
 			<div className="report-new">
 				<div className="pull-right">
-					<HopscotchLauncher onClick={this.startTour} />
+					<GuidedTour
+						tour={reportTour}
+						autostart={localStorage.newUser === 'true' && localStorage.hasSeenReportTour !== 'true'}
+						onEnd={() => localStorage.hasSeenReportTour = 'true'}
+					/>
 				</div>
 
 				<Breadcrumbs items={[['Submit a report', Report.pathForNew()]]} />
@@ -75,4 +69,4 @@ export default withHopscotch(class ReportNew extends Page {
 			</div>
 		)
 	}
-})
+}
