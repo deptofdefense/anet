@@ -349,11 +349,15 @@ a.home-tile {
 	font-size: 1.1rem;
 }
 
-.not-found section.container {
-	width: 100%;
-	max-width: none;
-	padding: 0;
-	margin: 0;
+.not-found {
+	height: 100%;
+}
+
+.not-found body {
+	background-image: url(resources/mountains.png);
+	background-repeat: no-repeat;
+	background-position: center bottom;
+	background-size: contain;
 }
 
 .not-found .not-found-text {
@@ -365,10 +369,6 @@ a.home-tile {
 	position: absolute;
 	right: 0;
 	top: -90px;
-}
-
-.not-found #leftNav {
-	display: none;
 }
 
 .onboarding-new {
