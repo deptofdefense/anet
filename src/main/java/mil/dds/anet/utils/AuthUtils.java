@@ -24,7 +24,8 @@ public class AuthUtils {
 		throw new WebApplicationException(UNAUTH_MESSAGE, Status.FORBIDDEN);
 	}
 	
-	public static boolean isSuperUserForOrg(final Person user, final Organization org) { 
+	public static boolean isSuperUserForOrg(final Person user, final Organization org) {
+		if (org == null) { return false; } 
 		Position position = user.loadPosition();
 		if (position == null) { return false; } 
 		if (position.getType() == PositionType.ADMINISTRATOR) { return true; }
