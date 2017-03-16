@@ -38,7 +38,7 @@ export default withHopscotch(class ReportNew extends Page {
 
 	@autobind
 	startTour() {
-		this.props.hopscotch.startTour(this.props.hopscotchTour, 4)
+		this.props.hopscotch.startTour(this.props.hopscotchTour, 6)
 	}
 
 	componentWillUpdate() {
