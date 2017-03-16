@@ -49,6 +49,7 @@ export default class RollupShow extends Page {
 		this.state = {
 			date: moment(+props.date || +props.location.query.date || undefined),
 			reports: {list: []},
+			reportsPageNum: 0,
 			graphData: {},
 			showEmailModal: false,
 			email: {},
@@ -75,7 +76,8 @@ export default class RollupShow extends Page {
 			releasedAtEnd: this.rollupEnd.valueOf(),
 			engagementDateStart: moment(this.rollupStart).subtract(14, 'days').valueOf(),
 			sortBy: "ENGAGEMENT_DATE",
-			sortOrder: "DESC"
+			sortOrder: "DESC",
+			pageNum: this.state.reportsPageNum,
 		}
 		API.query(/* GraphQL */`
 			reportList(f:search, query:$rollupQuery) {
@@ -105,12 +107,6 @@ export default class RollupShow extends Page {
 			}
 		`, {rollupQuery}, '($rollupQuery: ReportSearchQuery)')
 		.then(data => {
-			data.reportList.list = Report.fromArray(data.reportList.list)
-			if (data.reportList.pageSize == null) {
-				data.reportList.pageSize = 1
-				data.reportList.pageNum = 1
-				data.reportList.totalCount = data.reportList.list.length
-			}
 			this.setState({reports: data.reportList})
 		})
 
@@ -209,12 +205,18 @@ export default class RollupShow extends Page {
 				</Fieldset>
 
 				<Fieldset title="Reports">
-					<ReportCollection paginatedReports={this.state.reports} />
+					<ReportCollection paginatedReports={this.state.reports} goToPage={this.goToReportsPage} />
 				</Fieldset>
 
 				{this.renderEmailModal()}
 			</div>
 		)
+	}
+
+	@autobind
+	goToReportsPage(newPageNum) {
+		this.state.reportsPageNum = newPageNum
+		this.loadData()
 	}
 
 	@autobind
@@ -244,6 +246,7 @@ export default class RollupShow extends Page {
 					<Form.Field id="to" />
 					<Form.Field componentClass="textarea" id="comment" />
 				</Modal.Body>
+
 				<Modal.Footer>
 					<Button bsStyle="primary" onClick={this.emailRollup}>Send email</Button>
 				</Modal.Footer>
@@ -269,6 +272,7 @@ export default class RollupShow extends Page {
 			toAddresses: email.to.replace(/\s/g, '').split(/[,;]/),
 			comment: email.comment
 		}
+
 		API.send(`/api/reports/rollup/email?startDate=${this.rollupStart.valueOf()}&endDate=${this.rollupEnd.valueOf()}`, email).then (() =>
 			this.setState({
 				success: 'Email successfully sent',
