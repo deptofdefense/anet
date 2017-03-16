@@ -121,6 +121,8 @@ export default class RollupShow extends Page {
 			return
 		}
 
+		this.graph.innerHTML = ''
+
 		// Set up the data
 		const step1 = d3.nest()
 			.key((entry) => (entry.org && entry.org.shortName) || "Unknown")
