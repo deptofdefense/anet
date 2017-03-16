@@ -45,7 +45,7 @@ export default class ReportCollection extends Component {
 
 		return <div className="report-collection">
 			<header>
-				{reports.length > 0 && <ButtonToggleGroup value={this.state.viewFormat} onChange={this.changeViewFormat}>
+				{reports && reports.length > 0 && <ButtonToggleGroup value={this.state.viewFormat} onChange={this.changeViewFormat}>
 					<Button value={FORMAT_SUMMARY}>Summary</Button>
 					<Button value={FORMAT_TABLE}>Table</Button>
 					<Button value={FORMAT_MAP}>Map</Button>
@@ -65,7 +65,7 @@ export default class ReportCollection extends Component {
 				}
 			</header>
 
-			{reports.length > 0 ? <div>
+			{reports && reports.length > 0 ? <div>
 				{this.state.viewFormat === FORMAT_TABLE && this.renderTable(reports)}
 				{this.state.viewFormat === FORMAT_SUMMARY && this.renderSummary(reports)}
 				{this.state.viewFormat === FORMAT_MAP && this.renderMap(reports)}
