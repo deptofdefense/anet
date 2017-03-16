@@ -161,6 +161,12 @@ let reportTour = function(currentUser) { return {
 			placement: 'right',
 		},
 		{
+			title: 'Preview and submit',
+			content: "Pressing this button will save the report as a draft and take you to the preview page. You will have a chance to review your report before you send it for approval and then to the SFAC.",
+			target: '#formBottomSubmit',
+			placement: 'left',
+		},
+		{
 			title: 'Start this tour again',
 			content: 'Click this button to restart the tour.',
 			target: '.persistent-tour-launcher',
