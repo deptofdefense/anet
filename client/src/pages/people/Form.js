@@ -75,12 +75,16 @@ export default class PersonForm extends ValidatableFormWrapper {
 					</Form.Field>
 				}
 
-				<Form.Field id="status" >
-					<ButtonToggleGroup>
-						<Button id="statusActiveButton" value="ACTIVE">Active</Button>
-						<Button id="statusInactiveButton" value="INACTIVE">Inactive</Button>
-					</ButtonToggleGroup>
-				</Form.Field>
+				{person.status === 'NEW_USER' ?
+					<Form.Field type="static" id="status" value="New User" />
+					:
+					<Form.Field id="status" >
+						<ButtonToggleGroup>
+							<Button id="statusActiveButton" value="ACTIVE">Active</Button>
+							<Button id="statusInactiveButton" value="INACTIVE">Inactive</Button>
+						</ButtonToggleGroup>
+					</Form.Field>
+				}
 			</Fieldset>
 
 			<Fieldset title="Additional information">
