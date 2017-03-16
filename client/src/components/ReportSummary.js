@@ -1,5 +1,5 @@
 import React, {Component, PropTypes} from 'react'
-import {Button, Grid, Row, Col, Label} from 'react-bootstrap'
+import {Grid, Row, Col, Label} from 'react-bootstrap'
 import utils from 'utils'
 
 import LinkTo from 'components/LinkTo'
@@ -34,7 +34,7 @@ export default class ReportSummary extends Component {
 
 			<Row>
 				<Col md={12}>
-					{report.engagementDate && 
+					{report.engagementDate &&
 						<Label bsStyle="default" className="engagement-date">
 							{moment(report.engagementDate).format('D MMM YYYY')}
 						</Label>
@@ -62,7 +62,7 @@ export default class ReportSummary extends Component {
 
 			<Row>
 				<Col md={12}>
-					{report.atmosphere && <span><strong>Atmospherics:</strong> {utils.sentenceCase(report.atmosphere)} 
+					{report.atmosphere && <span><strong>Atmospherics:</strong> {utils.sentenceCase(report.atmosphere)}
 						{report.atmosphereDetails && ` – ${report.atmosphereDetails}`}</span> }
 				</Col>
 			</Row>
@@ -84,9 +84,7 @@ export default class ReportSummary extends Component {
 
 			<Row>
 				<Col mdOffset={9} md={3}>
-					<LinkTo report={report} className="read-full">
-						<Button bsStyle="primary">Read Report</Button>
-					</LinkTo>
+					<LinkTo report={report} button className="pull-right">Read report</LinkTo>
 				</Col>
 			</Row>
 		</Grid>

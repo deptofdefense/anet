@@ -12,7 +12,6 @@ import Form from 'components/Form'
 import History from 'components/History'
 
 import API from 'api'
-import {Report} from 'models'
 
 var d3 = null/* required later */
 
