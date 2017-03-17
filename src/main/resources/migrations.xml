@@ -614,6 +614,12 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="30" author="hpitelka" dbms="mssql" >
+		<sql dbms="mssql">
+			CREATE UNIQUE NONCLUSTERED INDEX UniqueCurrentPersonInPosition ON positions (currentPersonId) WHERE currentPersonId IS NOT NULL;
+		</sql>
+	</changeSet>
+
 <!-- Temp putting this here until we can fix production data. 
 	<changeSet id="29" author="hpitelka" dbms="mssql" >
 		<sql dbms="mssql">
