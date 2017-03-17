@@ -20,7 +20,7 @@ export default class MyReports extends Page {
 			person(f:me) {
 				pending: authoredReports(pageNum:0, pageSize:10, state: [PENDING_APPROVAL]) { 
                     pageNum, pageSize, totalCount, list {
-                        id, intent, engagementDate, keyOutcomes, nextSteps, atmosphere, state, createdAt
+                        id, intent, engagementDate, keyOutcomes, nextSteps, atmosphere, state, updatedAt
                         primaryAdvisor { id, name } ,
                         primaryPrincipal {id, name },
                         advisorOrg { id, shortName, longName }
@@ -30,7 +30,7 @@ export default class MyReports extends Page {
                 },
 				draft: authoredReports(pageNum:0, pageSize:10, state: [DRAFT]) { 
                     pageNum, pageSize, totalCount, list {
-                        id, intent, engagementDate, keyOutcomes, nextSteps, atmosphere, state, createdAt
+                        id, intent, engagementDate, keyOutcomes, nextSteps, atmosphere, state, updatedAt
                         primaryAdvisor { id, name } ,
                         primaryPrincipal {id, name },
                         advisorOrg { id, shortName, longName }
@@ -40,7 +40,7 @@ export default class MyReports extends Page {
                 },
 				released: authoredReports(pageNum:0, pageSize:10, state: [RELEASED]) { 
                     pageNum, pageSize, totalCount, list {
-                        id, intent, engagementDate, keyOutcomes, nextSteps, atmosphere, state, createdAt
+                        id, intent, engagementDate, keyOutcomes, nextSteps, atmosphere, state, updatedAt
                         primaryAdvisor { id, name } ,
                         primaryPrincipal {id, name },
                         advisorOrg { id, shortName, longName }
@@ -71,7 +71,7 @@ export default class MyReports extends Page {
 			person(f:me) {
 				authoredReports(pageNum: $pageNum, pageSize: 10, state: [${state}]) { 
                     pageNum, pageSize, totalCount, list {
-                        id, intent, engagementDate, keyOutcomes, nextSteps, atmosphere, state, createdAt
+                        id, intent, engagementDate, keyOutcomes, nextSteps, atmosphere, state, updatedAt
                         primaryAdvisor { id, name } ,
                         primaryPrincipal {id, name },
                         advisorOrg { id, shortName, longName }
