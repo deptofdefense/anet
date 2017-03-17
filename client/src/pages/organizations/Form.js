@@ -60,7 +60,7 @@ export default class OrganizationForm extends ValidatableFormWrapper {
 				</Form.Field>
 
 				<RequiredField id="shortName" label="Name" placeholder="e.g. EF1.1" />
-				<RequiredField id="longName" label="Description" placeholder="e.g. Force Sustainment" />
+				<Form.Field id="longName" label="Description" placeholder="e.g. Force Sustainment" />
 			</Fieldset>
 
 			{organization.isAdvisorOrg() && <div>
