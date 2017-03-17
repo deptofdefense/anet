@@ -85,6 +85,8 @@ export default class Autocomplete extends Component {
 		inputProps.onBlur = this.onInputBlur
 
 		return <div>
+			<img src={SEARCH_ICON} className="form-control-icon" role="presentation" />
+
 			<Autosuggest
 				suggestions={this.state.noSuggestions ? [{}] : this.state.suggestions}
 				onSuggestionsFetchRequested={this.fetchSuggestionsDebounced}
@@ -96,8 +98,6 @@ export default class Autocomplete extends Component {
 				renderSuggestion={this.renderSuggestion}
 				focusInputOnSuggestionClick={false}
 			/>
-
-			<img src={SEARCH_ICON} className="form-control-icon" role="presentation" />
 		</div>
 	}
 
