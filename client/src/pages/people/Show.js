@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
-import {Table, FormGroup, Col, ControlLabel} from 'react-bootstrap'
+import {Table, FormGroup, Col, ControlLabel, Button} from 'react-bootstrap'
 import moment from 'moment'
 
 import Fieldset from 'components/Fieldset'
@@ -9,12 +9,14 @@ import Form from 'components/Form'
 import ReportTable from 'components/ReportTable'
 import LinkTo from 'components/LinkTo'
 import Messages, {setMessages} from 'components/Messages'
+import AssignPositionModal from 'components/AssignPositionModal'
 
 import GuidedTour from 'components/GuidedTour'
 import {personTour} from 'pages/HopscotchTour'
 
 import API from 'api'
 import {Person, Position} from 'models'
+import autobind from 'autobind-decorator'
 
 export default class PersonShow extends Page {
 	static contextTypes = {
@@ -31,6 +33,7 @@ export default class PersonShow extends Page {
 				authoredReports: [],
 				attendedReports: [],
 			}),
+			showAssignPositionModal: false,
 		}
 		setMessages(props,this.state)
 	}
@@ -131,10 +134,20 @@ export default class PersonShow extends Page {
 						</Form.Field>
 					</Fieldset>
 
-					<Fieldset title="Current position" id="current-position" className={(!position || !position.id) && 'warning'}>
+
+
+					<Fieldset title="Current position" id="current-position" className={(!position || !position.id) && 'warning'} action={currentUser.isSuperUser() && <div><Button onClick={this.showAssignPositionModal}>Edit</Button></div>}>
 						{position && position.id
 							? this.renderPosition(position)
 							: this.renderPositionBlankSlate(person)
+						}
+						{currentUser.isSuperUser() &&
+							<AssignPositionModal
+								showModal={this.state.showAssignPositionModal}
+								person={person}
+								onCancel={this.hideAssignPositionModal.bind(this, false)}
+								onSuccess={this.hideAssignPositionModal.bind(this, true)}
+							/>
 						}
 					</Fieldset>
 
@@ -190,12 +203,27 @@ export default class PersonShow extends Page {
 		let currentUser = this.context.currentUser
 
 		if (Person.isEqual(currentUser, person)) {
-			return <em>You are not assigned to a position. Contact your super user to be added.</em>
+			return <em>You are not assigned to a position. Contact your organization's super user to be added.</em>
 		} else {
 			return <div style={{textAlign: 'center'}}>
 				<p><em>{person.name} is not assigned to a position.</em></p>
-				{currentUser.isSuperUser() && <p><LinkTo person={person} edit button>Assign position</LinkTo></p>}
+				{currentUser.isSuperUser() &&
+					<p><Button onClick={this.showAssignPositionModal}>Assign position</Button></p>
+				}
 			</div>
+		}
+	}
+
+	@autobind
+	showAssignPositionModal() {
+		this.setState({showAssignPositionModal: true})
+	}
+
+	@autobind
+	hideAssignPositionModal(success) {
+		this.setState({showAssignPositionModal: false})
+		if (success) {
+			this.fetchData(this.props)
 		}
 	}
 }
