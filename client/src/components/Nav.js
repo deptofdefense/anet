@@ -28,10 +28,11 @@ class Nav extends Component {
 		let inOrg = path.indexOf('/organizations') === 0
 		let inMyReports = path.indexOf('/reports/mine') === 0
 
+		let myOrg = currentUser.position.organization
 		let orgId, myOrgId
 		if (inOrg) {
 			orgId = +this.context.app.props.params.id
-			myOrgId = currentUser.position.organization && +currentUser.position.organization.id
+			myOrgId = myOrg && +myOrg.id
 			path = `/organizations/${orgId}`
 		}
 
@@ -75,8 +76,8 @@ class Nav extends Component {
 					</SubNav>
 				}
 
-				{currentUser.position.organization && <Link to={Organization.pathFor(currentUser.position.organization)}>
-					<NavItem id="my-organization">My organization</NavItem>
+				{myOrg && <Link to={Organization.pathFor(myOrg)}>
+					<NavItem id="my-organization">My organization <br /><small>{myOrg.shortName}</small></NavItem>
 				</Link>}
 
 				{inOrg && orgId === myOrgId && orgSubNav}
