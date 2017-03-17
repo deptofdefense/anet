@@ -60,7 +60,7 @@ export default class PersonForm extends ValidatableFormWrapper {
 					</Form.Field>
 				}
 
-				{person.status === 'NEW_USER' ?
+				{person.isNewUser() ?
 					<Form.Field type="static" id="status" value="New User" />
 					:
 					<Form.Field id="status" >
@@ -176,7 +176,7 @@ export default class PersonForm extends ValidatableFormWrapper {
 	onSubmit(event) {
 		let {person, edit} = this.props
 		let isFirstTimeUser = false
-		if (person.status === 'NEW_USER') {
+		if (person.isNewUser()) {
 			isFirstTimeUser = true
 			person.status = 'ACTIVE'
 		}
