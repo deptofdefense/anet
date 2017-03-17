@@ -84,7 +84,7 @@ export default class MergePeople extends Page {
 					<Row>
 						<Col md={12} >
 							{errors.length === 0 && loser.position && !winner.position &&
-								<Checkbox value={copyPosition}>
+								<Checkbox value={copyPosition} onChange={this.toggleCopyPosition} >
 									Set position on winner to {loser.position.name}
 								</Checkbox>
 							}
@@ -125,6 +125,11 @@ export default class MergePeople extends Page {
 	@autobind
 	selectWinner(winner) {
 		this.setState({winner: winner})
+	}
+
+	@autobind
+	toggleCopyPosition() {
+		this.setState({copyPosition: !this.state.copyPosition})
 	}
 
 	@autobind
