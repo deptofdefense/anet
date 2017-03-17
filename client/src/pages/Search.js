@@ -26,7 +26,7 @@ import ORGANIZATIONS_ICON from 'resources/organizations.png'
 const QUERY_STRINGS = {
 	reports: {
 		pendingApprovalOf: 'reports pending your approval',
-		authorOrgId: 'reports recently authored by your organization',
+		advisorOrgId: 'reports recently authored by your organization',
 		authorId: 'reports you recently authored',
 	},
 	organizations: 'Organizations TODO',

@@ -1,7 +1,7 @@
 import React from 'react'
 import Page from 'components/Page'
-import ModelPage from 'components/ModelPage'
 
+import Form from 'components/Form'
 import Fieldset from 'components/Fieldset'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Messages, {setMessages} from 'components/Messages'
@@ -9,9 +9,8 @@ import Leaflet from 'components/Leaflet'
 
 import API from 'api'
 import {Location} from 'models'
-import Form from 'components/Form'
 
-class LocationShow extends Page {
+export default class LocationShow extends Page {
 	static modelName = 'Location'
 
 	constructor(props) {
@@ -56,5 +55,3 @@ class LocationShow extends Page {
 		)
 	}
 }
-
-export default ModelPage(LocationShow)

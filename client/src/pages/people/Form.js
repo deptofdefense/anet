@@ -8,12 +8,11 @@ import Form from 'components/Form'
 import Fieldset from 'components/Fieldset'
 import Messages from 'components/Messages'
 import TextEditor from 'components/TextEditor'
-import Autocomplete from 'components/Autocomplete'
 import History from 'components/History'
 import ButtonToggleGroup from 'components/ButtonToggleGroup'
 
 import API from 'api'
-import {Person, Position} from 'models'
+import {Person} from 'models'
 
 import CALENDAR_ICON from 'resources/calendar.png'
 
@@ -21,13 +20,12 @@ export default class PersonForm extends ValidatableFormWrapper {
 	static propTypes = {
 		person: PropTypes.object.isRequired,
 		edit: PropTypes.bool,
-		showPositionAssignment: PropTypes.bool,
 		legendText: PropTypes.string,
 		saveText: PropTypes.string,
 	}
 
 	static contextTypes = {
-		app: PropTypes.object
+		currentUser: PropTypes.object
 	}
 
 	constructor(props) {
@@ -38,23 +36,10 @@ export default class PersonForm extends ValidatableFormWrapper {
 	}
 
 	render() {
-		let {person, edit, showPositionAssignment} = this.props
+		let {person, edit} = this.props
 		const isAdvisor = person.role === 'ADVISOR'
 		const legendText = this.props.legendText || (edit ? `Edit ${person.name}` : 'Create a new person')
-		let currentUser = this.context.app.state.currentUser
-
-		let positionSearchTypes = null
-		if (person.role === 'ADVISOR') {
-			positionSearchTypes = ['ADVISOR']
-			if (currentUser.isSuperUser()) { //Only super users can put people in super user billets
-				positionSearchTypes.push('SUPER_USER')
-			}
-			if (currentUser.isAdmin()) { //only admins can put people in admin billets.
-				positionSearchTypes.push('ADMINISTRATOR')
-			}
-		} else if (person.role === 'PRINCIPAL') {
-			positionSearchTypes = ['PRINCIPAL']
-		}
+		let currentUser = this.context.currentUser
 
 		const {ValidatableForm, RequiredField} = this
 
@@ -75,12 +60,16 @@ export default class PersonForm extends ValidatableFormWrapper {
 					</Form.Field>
 				}
 
-				<Form.Field id="status" >
-					<ButtonToggleGroup>
-						<Button id="statusActiveButton" value="ACTIVE">Active</Button>
-						<Button id="statusInactiveButton" value="INACTIVE">Inactive</Button>
-					</ButtonToggleGroup>
-				</Form.Field>
+				{person.isNewUser() ?
+					<Form.Field type="static" id="status" value="New User" />
+					:
+					<Form.Field id="status" >
+						<ButtonToggleGroup>
+							<Button id="statusActiveButton" value="ACTIVE">Active</Button>
+							<Button id="statusInactiveButton" value="INACTIVE">Inactive</Button>
+						</ButtonToggleGroup>
+					</Form.Field>
+				}
 			</Fieldset>
 
 			<Fieldset title="Additional information">
@@ -175,22 +164,6 @@ export default class PersonForm extends ValidatableFormWrapper {
 					<TextEditor label="" value={person.biography} />
 				</Form.Field>
 			</Fieldset>
-
-			{showPositionAssignment &&
-				<Fieldset title="Position">
-					<Form.Field id="position" >
-						<Autocomplete valueKey="name"
-							placeholder="Select a position for this person"
-							objectType={Position}
-							fields={'id, name, code'}
-							template={pos =>
-								<span>{[pos.name, pos.code].join(' - ')}</span>
-							}
-							queryParams={{type: positionSearchTypes}} />
-					</Form.Field>
-					<span>You can optionally assign this person to a position now</span>
-				</Fieldset>
-			}
 		</ValidatableForm>
 	}
 
@@ -203,7 +176,7 @@ export default class PersonForm extends ValidatableFormWrapper {
 	onSubmit(event) {
 		let {person, edit} = this.props
 		let isFirstTimeUser = false
-		if (person.status === 'NEW_USER') {
+		if (person.isNewUser()) {
 			isFirstTimeUser = true
 			person.status = 'ACTIVE'
 		}
@@ -216,7 +189,8 @@ export default class PersonForm extends ValidatableFormWrapper {
 				}
 
 				if (isFirstTimeUser) {
-					window.localStorage.showGettingStartedPanel = 'true'
+					localStorage.clear()
+					localStorage.newUser = 'true'
 					History.push('/', {skipPageLeaveWarning: true})
 				} else {
 					if (response.id) {

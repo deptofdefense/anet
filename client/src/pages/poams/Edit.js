@@ -1,19 +1,20 @@
 import React from 'react'
 import Page from 'components/Page'
-import ModelPage from 'components/ModelPage'
 
-import PoamForm from './Form'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Messages from 'components/Messages'
 import NavigationWarning from 'components/NavigationWarning'
 
+import PoamForm from './Form'
+
 import API from 'api'
 import {Poam} from 'models'
 
-class PoamEdit extends Page {
+export default class PoamEdit extends Page {
 	static pageProps = {
 		useNavigation: false
 	}
+
 	static modelName = 'PoAM'
 
 	constructor(props) {
@@ -53,5 +54,3 @@ class PoamEdit extends Page {
 		)
 	}
 }
-
-export default ModelPage(PoamEdit)

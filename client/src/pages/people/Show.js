@@ -1,7 +1,6 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
-import ModelPage from 'components/ModelPage'
-import {Table, FormGroup, Col, ControlLabel} from 'react-bootstrap'
+import {Table, FormGroup, Col, ControlLabel, Button} from 'react-bootstrap'
 import moment from 'moment'
 
 import Fieldset from 'components/Fieldset'
@@ -10,13 +9,18 @@ import Form from 'components/Form'
 import ReportTable from 'components/ReportTable'
 import LinkTo from 'components/LinkTo'
 import Messages, {setMessages} from 'components/Messages'
+import AssignPositionModal from 'components/AssignPositionModal'
+
+import GuidedTour from 'components/GuidedTour'
+import {personTour} from 'pages/HopscotchTour'
 
 import API from 'api'
 import {Person, Position} from 'models'
+import autobind from 'autobind-decorator'
 
-class PersonShow extends Page {
+export default class PersonShow extends Page {
 	static contextTypes = {
-		app: PropTypes.object.isRequired,
+		currentUser: PropTypes.object.isRequired,
 	}
 
 	static modelName = 'User'
@@ -29,6 +33,7 @@ class PersonShow extends Page {
 				authoredReports: [],
 				attendedReports: [],
 			}),
+			showAssignPositionModal: false,
 		}
 		setMessages(props,this.state)
 	}
@@ -85,15 +90,23 @@ class PersonShow extends Page {
 		//User can always edit themselves
 		//Admins can always edit anybody
 		//SuperUsers can edit people in their org, their descendant orgs, or un-positioned people.
-		let currentUser = this.context.app.state.currentUser
-		let canEdit = currentUser && (currentUser.id === person.id ||
+		let currentUser = this.context.currentUser
+		let canEdit = Person.isEqual(currentUser, person) ||
 			currentUser.isAdmin() ||
-			(person.position && currentUser.isSuperUserForOrg(person.position.organization)) ||
-			(!person.position && currentUser.isSuperUser()) ||
-			(person.role === 'PRINCIPAL' && currentUser.isSuperUser()))
+			(position && currentUser.isSuperUserForOrg(position.organization)) ||
+			(!position && currentUser.isSuperUser()) ||
+			(person.role === 'PRINCIPAL' && currentUser.isSuperUser())
 
 		return (
 			<div>
+				<div className="pull-right">
+					<GuidedTour
+						tour={personTour}
+						autostart={localStorage.newUser === 'true' && localStorage.hasSeenPersonTour !== 'true'}
+						onEnd={() => localStorage.hasSeenPersonTour = 'true'}
+					/>
+				</div>
+
 				<Breadcrumbs items={[[person.name, Person.pathFor(person)]]} />
 				<Messages error={this.state.error} success={this.state.success} />
 
@@ -121,20 +134,30 @@ class PersonShow extends Page {
 						</Form.Field>
 					</Fieldset>
 
-					<Fieldset title="Current position" className={(!position || !position.id) && 'warning'}>
+
+
+					<Fieldset title="Current position" id="current-position" className={(!position || !position.id) && 'warning'} action={currentUser.isSuperUser() && <div><Button onClick={this.showAssignPositionModal}>Edit</Button></div>}>
 						{position && position.id
 							? this.renderPosition(position)
 							: this.renderPositionBlankSlate(person)
 						}
+						{currentUser.isSuperUser() &&
+							<AssignPositionModal
+								showModal={this.state.showAssignPositionModal}
+								person={person}
+								onCancel={this.hideAssignPositionModal.bind(this, false)}
+								onSuccess={this.hideAssignPositionModal.bind(this, true)}
+							/>
+						}
 					</Fieldset>
 
 					{person.isAdvisor() &&
-						<Fieldset title="Reports authored">
+						<Fieldset title="Reports authored" id="reports-authored">
 							<ReportTable reports={person.authoredReports.list || []} showAuthors={false} />
 						</Fieldset>
 					}
 
-					<Fieldset title={`Reports attended by ${person.name}`}>
+					<Fieldset title={`Reports attended by ${person.name}`} id="reports-attended">
 						<ReportTable reports={person.attendedReports.list || []} showAuthors={true} />
 					</Fieldset>
 				</Form>
@@ -177,17 +200,30 @@ class PersonShow extends Page {
 	}
 
 	renderPositionBlankSlate(person) {
-		let currentUser = this.context.app.state.currentUser
+		let currentUser = this.context.currentUser
 
 		if (Person.isEqual(currentUser, person)) {
-			return <em>You are not assigned to a position. Contact your super user to be added.</em>
+			return <em>You are not assigned to a position. Contact your organization's super user to be added.</em>
 		} else {
 			return <div style={{textAlign: 'center'}}>
 				<p><em>{person.name} is not assigned to a position.</em></p>
-				{currentUser.isSuperUser() && <p><LinkTo person={person} edit button>Assign position</LinkTo></p>}
+				{currentUser.isSuperUser() &&
+					<p><Button onClick={this.showAssignPositionModal}>Assign position</Button></p>
+				}
 			</div>
 		}
 	}
-}
 
-export default ModelPage(PersonShow)
+	@autobind
+	showAssignPositionModal() {
+		this.setState({showAssignPositionModal: true})
+	}
+
+	@autobind
+	hideAssignPositionModal(success) {
+		this.setState({showAssignPositionModal: false})
+		if (success) {
+			this.fetchData(this.props)
+		}
+	}
+}

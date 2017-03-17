@@ -352,7 +352,7 @@ public class ReportResource implements IGraphQLResource {
 		}
 		if (r.getApprovalStep() == null) {
 			log.info("Report ID {} does not currently need an approval", r.getId());
-			throw new WebApplicationException("No approval step found", Status.NOT_FOUND);
+			throw new WebApplicationException("This report is not pending approval", Status.BAD_REQUEST);
 		}
 		ApprovalStep step = r.loadApprovalStep();
 
@@ -417,7 +417,12 @@ public class ReportResource implements IGraphQLResource {
 	@Path("/{id}/reject")
 	public Report rejectReport(@Auth Person approver, @PathParam("id") int id, Comment reason) {
 		Report r = dao.getById(id);
+		if (r == null) { throw new WebApplicationException(Status.NOT_FOUND); } 
 		ApprovalStep step = r.loadApprovalStep();
+		if (step == null) {
+			log.info("Report ID {} does not currently need an approval", r.getId());
+			throw new WebApplicationException("This report is not pending approval", Status.BAD_REQUEST); 
+		} 
 
 		//Verify that this user can reject for this step.
 		boolean canApprove = engine.canUserApproveStep(approver.getId(), step.getId());

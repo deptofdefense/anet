@@ -17,6 +17,8 @@ a {
 }
 </style>
 <body>
+<p style="color:red; font-size:12px; font-weight: bold;" align="center"><i>Classification: ${SECURITY_BANNER_TEXT}</i></p>
+
 Dear ${approvalStepName},
 <br><br>
 <div>${report.author.name}'s report, <i>${report.intent}</i>, is ready for your review. You can <a href="${serverUrl}/reports/${report.id?c}" />review the report using this link</a>.</div>

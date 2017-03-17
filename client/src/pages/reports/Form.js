@@ -1,12 +1,12 @@
 import React, {PropTypes} from 'react'
 import {Checkbox, Table, Button, Collapse, HelpBlock} from 'react-bootstrap'
+import DatePicker from 'react-bootstrap-date-picker'
 import autobind from 'autobind-decorator'
 
 import Fieldset from 'components/Fieldset'
 import Form from 'components/Form'
 import TextEditor from 'components/TextEditor'
 import Autocomplete from 'components/Autocomplete'
-import DatePicker from 'react-bootstrap-date-picker'
 import ButtonToggleGroup from 'components/ButtonToggleGroup'
 import PoamsSelector from 'components/PoamsSelector'
 import LinkTo from 'components/LinkTo'
@@ -153,7 +153,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 					}
 				</Fieldset>
 
-				<Fieldset title="Meeting attendance">
+				<Fieldset title={!isCancelled ? "Meeting attendance" : "Planned attendance"}>
 					<Form.Field id="attendees" validationState={errors.attendees}>
 						<Autocomplete objectType={Person}
 							onChange={this.addAttendee}
@@ -218,7 +218,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 						optional={true} />
 				}
 
-				<Fieldset title="Meeting discussion">
+				<Fieldset title={!isCancelled ? "Meeting discussion" : "Next steps and details"}>
 					{!isCancelled &&
 						<RequiredField id="keyOutcomes" componentClass="textarea" maxCharacters={250} humanName="Key outcome description"
 							canSubmitWithError={true}
@@ -234,13 +234,13 @@ export default class ReportForm extends ValidatableFormWrapper {
 					</RequiredField>
 
 					<Button className="center-block toggle-section-button" onClick={this.toggleReportText} id="toggleReportDetails" >
-						{this.state.showReportText ? 'Hide' : 'Add'} detailed comments
+						{this.state.showReportText ? 'Hide' : 'Add'} report details
 					</Button>
 
 					<Collapse in={this.state.showReportText}>
 						<div className="report-details">
 							<Form.Field id="reportText" label="" horizontal={false} className="reportTextField" >
-								<TextEditor label="Report Details" id="reportTextEditor" />
+								<TextEditor label="Report details" id="reportTextEditor" />
 							</Form.Field>
 						</div>
 					</Collapse>

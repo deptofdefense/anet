@@ -1,4 +1,4 @@
-import React, {PropTypes} from 'react'
+import React from 'react'
 import Page from 'components/Page'
 import {Alert, Table, Button, Modal, Checkbox} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
@@ -13,17 +13,16 @@ import API from 'api'
 import {Report, Person, Poam} from 'models'
 
 export default class ReportMinimal extends Page {
-	static contextTypes = {
-		app: PropTypes.object,
-	}
 	static pageProps = {
 		useNavigation: false,
 		minimalHeader: true
 	}
+
 	static modelName = 'Report'
 
 	constructor(props) {
 		super(props)
+
 		this.state = {
 			report: new Report({id: props.params.id}),
 		}

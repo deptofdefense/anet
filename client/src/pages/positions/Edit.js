@@ -1,15 +1,15 @@
 import React from 'react'
 import Page from 'components/Page'
-import ModelPage from 'components/ModelPage'
 
-import PositionForm from './Form'
 import Breadcrumbs from 'components/Breadcrumbs'
 import NavigationWarning from 'components/NavigationWarning'
+
+import PositionForm from './Form'
 
 import API from 'api'
 import {Position} from 'models'
 
-class PositionEdit extends Page {
+export default class PositionEdit extends Page {
 	static pageProps = {
 		useNavigation: false
 	}
@@ -63,5 +63,3 @@ class PositionEdit extends Page {
 		)
 	}
 }
-
-export default ModelPage(PositionEdit)

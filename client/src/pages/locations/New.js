@@ -1,4 +1,4 @@
-import React, {PropTypes} from 'react'
+import React from 'react'
 import autobind from 'autobind-decorator'
 
 import Fieldset from 'components/Fieldset'
@@ -14,10 +14,6 @@ import API from 'api'
 import {Location} from 'models'
 
 export default class LocationNew extends ValidatableFormWrapper {
-	static contextTypes = {
-		router: PropTypes.object.isRequired
-	}
-
 	static pageProps = {
 		useNavigation: false
 	}

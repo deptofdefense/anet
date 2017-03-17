@@ -23,12 +23,10 @@ export default class Position extends Model {
 	}
 
 	iconUrl() {
-		if (this.type === 'ADVISOR') {
-			return RS_ICON
-		} else if (this.type === 'PRINCIPAL') {
+		if (this.type === 'PRINCIPAL') {
 			return AFG_ICON
 		}
 
-		return ''
+		return RS_ICON
 	}
 }

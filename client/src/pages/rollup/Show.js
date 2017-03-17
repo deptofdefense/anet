@@ -12,7 +12,6 @@ import Form from 'components/Form'
 import History from 'components/History'
 
 import API from 'api'
-import {Report} from 'models'
 
 var d3 = null/* required later */
 
@@ -49,6 +48,7 @@ export default class RollupShow extends Page {
 		this.state = {
 			date: moment(+props.date || +props.location.query.date || undefined),
 			reports: {list: []},
+			reportsPageNum: 0,
 			graphData: {},
 			showEmailModal: false,
 			email: {},
@@ -75,9 +75,13 @@ export default class RollupShow extends Page {
 			releasedAtEnd: this.rollupEnd.valueOf(),
 			engagementDateStart: moment(this.rollupStart).subtract(14, 'days').valueOf(),
 			sortBy: "ENGAGEMENT_DATE",
-			sortOrder: "DESC"
+			sortOrder: "DESC",
+			pageNum: this.state.reportsPageNum,
 		}
-		API.query(/* GraphQL */`
+
+		let graphQuery = API.fetch(`/api/reports/rollupGraph?startDate=${rollupQuery.releasedAtStart}&endDate=${rollupQuery.releasedAtEnd}`)
+
+		let reportQuery = API.query(/* GraphQL */`
 			reportList(f:search, query:$rollupQuery) {
 				pageNum, pageSize, totalCount, list {
 					id, state, intent, engagementDate, intent, keyOutcomes, nextSteps, cancelledReason, atmosphere, atmosphereDetails
@@ -104,19 +108,12 @@ export default class RollupShow extends Page {
 				}
 			}
 		`, {rollupQuery}, '($rollupQuery: ReportSearchQuery)')
-		.then(data => {
-			data.reportList.list = Report.fromArray(data.reportList.list)
-			if (data.reportList.pageSize == null) {
-				data.reportList.pageSize = 1
-				data.reportList.pageNum = 1
-				data.reportList.totalCount = data.reportList.list.length
-			}
-			this.setState({reports: data.reportList})
-		})
 
-		API.fetch(`/api/reports/rollupGraph?startDate=${this.rollupStart.valueOf()}&endDate=${this.rollupEnd.valueOf()}`
-		).then(data => {
-			this.setState({graphData: data})
+		Promise.all([reportQuery, graphQuery]).then(values => {
+			this.setState({
+				reports: values[0].reportList,
+				graphData: values[1]
+			})
 		})
 	}
 
@@ -132,8 +129,10 @@ export default class RollupShow extends Page {
 			.rollup(entry => entry[0])
 			.entries(graphData)
 
-		var svg = d3.select(this.graph),
-			margin = {top: 20, right: 20, bottom: 20, left: 20},
+		var svg = d3.select(this.graph)
+		svg.selectAll('*').remove()
+
+		var	margin = {top: 20, right: 20, bottom: 20, left: 20},
 			width = this.graph.clientWidth - margin.left - margin.right,
 			height = this.graph.clientHeight - margin.top - margin.bottom,
 			padding = 22,
@@ -192,7 +191,7 @@ export default class RollupShow extends Page {
 	render() {
 		return (
 			<div>
-				<Breadcrumbs items={[['Rollup', ''],[this.dateStr, 'rollup/' +this.dateStr]]} />
+				<Breadcrumbs items={[[`Rollup for ${this.dateStr}`, 'rollup/']]} />
 
 				<Fieldset title={
 					<span>
@@ -209,12 +208,18 @@ export default class RollupShow extends Page {
 				</Fieldset>
 
 				<Fieldset title="Reports">
-					<ReportCollection paginatedReports={this.state.reports} />
+					<ReportCollection paginatedReports={this.state.reports} goToPage={this.goToReportsPage} />
 				</Fieldset>
 
 				{this.renderEmailModal()}
 			</div>
 		)
+	}
+
+	@autobind
+	goToReportsPage(newPageNum) {
+		this.state.reportsPageNum = newPageNum
+		this.loadData()
 	}
 
 	@autobind
@@ -244,6 +249,7 @@ export default class RollupShow extends Page {
 					<Form.Field id="to" />
 					<Form.Field componentClass="textarea" id="comment" />
 				</Modal.Body>
+
 				<Modal.Footer>
 					<Button bsStyle="primary" onClick={this.emailRollup}>Send email</Button>
 				</Modal.Footer>
@@ -269,6 +275,7 @@ export default class RollupShow extends Page {
 			toAddresses: email.to.replace(/\s/g, '').split(/[,;]/),
 			comment: email.comment
 		}
+
 		API.send(`/api/reports/rollup/email?startDate=${this.rollupStart.valueOf()}&endDate=${this.rollupEnd.valueOf()}`, email).then (() =>
 			this.setState({
 				success: 'Email successfully sent',

@@ -1,23 +1,24 @@
 import React, {PropTypes} from 'react'
-import withHopscotch from 'components/withHopscotch'
 import Page from 'components/Page'
-import autobind from 'autobind-decorator'
 
-import ReportForm from './Form'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Messages from 'components/Messages'
 import NavigationWarning from 'components/NavigationWarning'
-import HopscotchLauncher from 'components/HopscotchLauncher'
+
+import ReportForm from './Form'
+
+import GuidedTour from 'components/GuidedTour'
+import {reportTour} from 'pages/HopscotchTour'
 
 import {Report} from 'models'
 
-export default withHopscotch(class ReportNew extends Page {
+export default class ReportNew extends Page {
 	static pageProps = {
-		useNavigation: false
+		useNavigation: false,
 	}
 
 	static contextTypes = {
-		app: PropTypes.object,
+		currentUser: PropTypes.object.isRequired,
 	}
 
 	constructor(props, context) {
@@ -29,18 +30,6 @@ export default withHopscotch(class ReportNew extends Page {
 		}
 	}
 
-	componentDidMount() {
-		super.componentDidMount()
-		if (this.props.hopscotch.getState() === `${this.props.hopscotchTour.id}:3`) {
-			this.startTour()
-		}
-	}
-
-	@autobind
-	startTour() {
-		this.props.hopscotch.startTour(this.props.hopscotchTour, 4)
-	}
-
 	componentWillUpdate() {
 		this.addCurrentUserAsAttendee()
 	}
@@ -50,7 +39,7 @@ export default withHopscotch(class ReportNew extends Page {
 	}
 
 	addCurrentUserAsAttendee() {
-		let newAttendee = this.context.app.state.currentUser
+		let newAttendee = this.context.currentUser
 
 		const addedAttendeeToReport = this.state.report.addAttendee(newAttendee)
 		const addedAttendeeToOriginalReport = this.state.originalReport.addAttendee(newAttendee)
@@ -64,7 +53,11 @@ export default withHopscotch(class ReportNew extends Page {
 		return (
 			<div className="report-new">
 				<div className="pull-right">
-					<HopscotchLauncher onClick={this.startTour} />
+					<GuidedTour
+						tour={reportTour}
+						autostart={localStorage.newUser === 'true' && localStorage.hasSeenReportTour !== 'true'}
+						onEnd={() => localStorage.hasSeenReportTour = 'true'}
+					/>
 				</div>
 
 				<Breadcrumbs items={[['Submit a report', Report.pathForNew()]]} />
@@ -75,4 +68,4 @@ export default withHopscotch(class ReportNew extends Page {
 			</div>
 		)
 	}
-})
+}

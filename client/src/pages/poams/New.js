@@ -1,4 +1,4 @@
-import React, {PropTypes} from 'react'
+import React from 'react'
 import Page from 'components/Page'
 
 import PoamForm from './Form'
@@ -10,10 +10,6 @@ import API from 'api'
 import {Poam,Organization} from 'models'
 
 export default class PoamNew extends Page {
-	static contextTypes = {
-		router: PropTypes.object.isRequired
-	}
-
 	static pageProps = {
 		useNavigation: false
 	}

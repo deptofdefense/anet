@@ -20,11 +20,11 @@ const ADMIN_ACTIONS = [
 
 export default class CreateButton extends Component {
 	static contextTypes = {
-		app: PropTypes.object,
+		currentUser: PropTypes.object,
 	}
 
 	render() {
-		const currentUser = this.context.app.state.currentUser
+		const currentUser = this.context.currentUser
 
 		const modelClasses = DEFAULT_ACTIONS.concat(
 			currentUser.isSuperUser() && SUPER_USER_ACTIONS,
@@ -43,7 +43,7 @@ export default class CreateButton extends Component {
 			let modelClass = modelClasses[0]
 			return (
 				<Button bsStyle="primary" onClick={this.onSelect.bind(this, modelClass)} id="createButton">
-					New {modelClass.displayName || modelClass.resourceName}
+					New {(modelClass.displayName || modelClass.resourceName).toLowerCase()}
 				</Button>
 			)
 		}

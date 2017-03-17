@@ -22,8 +22,9 @@ export default class PositionForm extends ValidatableFormWrapper {
 		error: PropTypes.object,
 		success: PropTypes.object,
 	}
+
 	static contextTypes = {
-		app: PropTypes.object
+		currentUser: PropTypes.object.isRequired,
 	}
 
 	render() {
@@ -32,20 +33,17 @@ export default class PositionForm extends ValidatableFormWrapper {
 		error = this.props.error || (this.state && this.state.error)
 
 		let relationshipPositionType = position.type === 'PRINCIPAL' ? ['ADVISOR', 'SUPER_USER', 'ADMINISTRATOR'] : ['PRINCIPAL']
-		let currentUser = this.context.app.state.currentUser
+		let currentUser = this.context.currentUser
 
 		let orgSearchQuery = {}
-		let personSearchQuery = {}
 		if (position.type === 'ADVISOR' || position.type === 'SUPER_USER' || position.type === 'ADMINISTRATOR') {
 			orgSearchQuery.type = 'ADVISOR_ORG'
-			personSearchQuery.role = 'ADVISOR'
 			if (currentUser && currentUser.position && currentUser.position.type === 'SUPER_USER') {
 				orgSearchQuery.parentOrgId = currentUser.position.organization.id
 				orgSearchQuery.parentOrgRecursively = true
 			}
 		} else if (position.type === 'PRINCIPAL') {
 			orgSearchQuery.type = 'PRINCIPAL_ORG'
-			personSearchQuery.role = 'PRINCIPAL'
 		}
 
 		const {ValidatableForm, RequiredField} = this
@@ -92,14 +90,6 @@ export default class PositionForm extends ValidatableFormWrapper {
 						placeholder="Postion ID or Number" />
 
 					<RequiredField id="name" label="Position Name" placeholder="Name/Description of Position"/>
-
-					<Form.Field id="person">
-						<Autocomplete valueKey="name"
-							placeholder="Select the person in this position"
-							url="/api/people/search"
-							queryParams={personSearchQuery}
-						/>
-					</Form.Field>
 
 					{position.type !== 'PRINCIPAL' &&
 						<Form.Field id="permissions">

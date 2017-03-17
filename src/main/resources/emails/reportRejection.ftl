@@ -17,6 +17,8 @@ a {
 }
 </style>
 <body>
+<p style="color:red; font-size:12px; font-weight: bold;" align="center"><i>Classification: ${SECURITY_BANNER_TEXT}</i></p>
+
 Hi, ${report.author.name},
 
 <p>Your report "<i>${report.intent}</i>" has been rejected by ${rejector.name}. The following comment was provided:</p>

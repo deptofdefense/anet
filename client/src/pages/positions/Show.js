@@ -1,38 +1,44 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
-import ModelPage from 'components/ModelPage'
 import {Link} from 'react-router'
-import {Table} from 'react-bootstrap'
+import {Table, Button} from 'react-bootstrap'
 import moment from 'moment'
 import utils from 'utils'
 
 import Fieldset from 'components/Fieldset'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
-import Messages , {setMessages} from 'components/Messages'
 import LinkTo from 'components/LinkTo'
+import Messages, {setMessages} from 'components/Messages'
+import AssignPersonModal from 'components/AssignPersonModal'
+
+import GuidedTour from 'components/GuidedTour'
+import {positionTour} from 'pages/HopscotchTour'
 
 import API from 'api'
 import {Position, Organization} from 'models'
+import autobind from 'autobind-decorator'
 
-class PositionShow extends Page {
+export default class PositionShow extends Page {
 	static contextTypes = {
-		app: PropTypes.object.isRequired,
+		currentUser: PropTypes.object.isRequired,
 	}
 
 	static modelName = 'Position'
 
 	constructor(props) {
 		super(props)
+
 		this.state = {
 			position: new Position( {
 				id: props.params.id,
 				previousPeople: [],
 				associatedPositions: [],
+				showAssignPersonModal: false,
 			}),
 		}
 
-		setMessages(props,this.state)
+		setMessages(props, this.state)
 	}
 
 	fetchData(props) {
@@ -55,16 +61,25 @@ class PositionShow extends Page {
 		let position = this.state.position
 		let assignedRole = position.type === 'PRINCIPAL' ? 'advisors' : 'Afghan principals'
 
-		let currentUser = this.context.app.state.currentUser
-		let canEdit = currentUser && (
+		let currentUser = this.context.currentUser
+		let canEdit =
 			//Super Users can edit any Principal
 			(currentUser.isSuperUser() && position.type === 'PRINCIPAL') ||
 			//Admins can edit anybody
 			(currentUser.isAdmin()) ||
 			//Super users can edit positions within their own organization
-			(position.organization && position.organization.id && currentUser.isSuperUserForOrg(position.organization)))
+			(position.organization && position.organization.id && currentUser.isSuperUserForOrg(position.organization))
+
 		return (
 			<div>
+				<div className="pull-right">
+					<GuidedTour
+						tour={positionTour}
+						autostart={localStorage.newUser === 'true' && localStorage.hasSeenPositionTour !== 'true'}
+						onEnd={() => localStorage.hasSeenPositionTour = 'true'}
+					/>
+				</div>
+
 				<Breadcrumbs items={[[position.name || 'Position', Position.pathFor(position)]]} />
 				<Messages success={this.state.success} error={this.state.error} />
 
@@ -91,20 +106,29 @@ class PositionShow extends Page {
 						</Form.Field>
 					</Fieldset>
 
-					<Fieldset title="Current assigned person" className={(!position.person || !position.person.id) && 'warning'} style={{textAlign: 'center'}}>
+					<Fieldset title="Current assigned person"
+						id="assigned-advisor"
+						className={(!position.person || !position.person.id) && 'warning'}
+						style={{textAlign: 'center'}}
+						action={canEdit && <Button onClick={this.showAssignPersonModal}>Change assigned person</Button>} >
 						{position.person && position.person.id
 							? <div>
 								<h4><LinkTo person={position.person}>{position.person.rank} {position.person.name}</LinkTo></h4>
-								<p><LinkTo position={position} edit button>Change assigned person</LinkTo></p>
+								<p></p>
 							</div>
 							: <div>
 								<p><em>{position.name} is currently empty.</em></p>
-								{currentUser.isSuperUser() && <p><LinkTo position={position} edit button>Assign person</LinkTo></p>}
 							</div>
 						}
+						<AssignPersonModal
+							position={position}
+							showModal={this.state.showAssignPersonModal}
+							onCancel={this.hideAssignPersonModal.bind(this, false)}
+							onSuccess={this.hideAssignPersonModal.bind(this, true)}
+						/>
 					</Fieldset>
 
-					<Fieldset title={`Assigned ${assignedRole}`}>
+					<Fieldset title={`Assigned ${assignedRole}`} id="assigned-principal">
 						<Table>
 							<thead>
 								<tr>
@@ -124,7 +148,7 @@ class PositionShow extends Page {
 						}
 					</Fieldset>
 
-					<Fieldset title="Previous position holders">
+					<Fieldset title="Previous position holders" id="previous-people">
 						<Table>
 							<thead>
 								<tr>
@@ -160,6 +184,17 @@ class PositionShow extends Page {
 			<td><Link to={Position.pathFor(pos)}>{pos.name}</Link></td>
 		</tr>
 	}
-}
 
-export default ModelPage(PositionShow)
+	@autobind
+	showAssignPersonModal() {
+		this.setState({showAssignPersonModal: true})
+	}
+
+	@autobind
+	hideAssignPersonModal(success) {
+		this.setState({showAssignPersonModal: false})
+		if (success) {
+			this.fetchData(this.props)
+		}
+	}
+}

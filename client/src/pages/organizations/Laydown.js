@@ -13,7 +13,7 @@ export default class OrganizationLaydown extends Component {
 	}
 
 	static contextTypes = {
-		app: PropTypes.object.isRequired,
+		currentUser: PropTypes.object.isRequired,
 	}
 
 	constructor(props) {
@@ -25,10 +25,10 @@ export default class OrganizationLaydown extends Component {
 	}
 
 	render() {
-		let appData = this.context.app.state
-		let currentUser = appData.currentUser
-
+		let currentUser = this.context.currentUser
 		let org = this.props.organization
+		let isSuperUser = currentUser && currentUser.isSuperUserForOrg(org)
+
 		let showInactivePositions = this.state.showInactivePositions
 		let numInactivePos = org.positions.filter(p => p.status === 'INACTIVE').length
 
@@ -36,12 +36,12 @@ export default class OrganizationLaydown extends Component {
 		let supportedPositions = org.positions.filter(position => positionsNeedingAttention.indexOf(position) === -1)
 
 		return <div id="laydown" data-jumptarget>
-			<Fieldset title="Supported positions" action={<div>
+			<Fieldset id="supportedPositions" title="Supported positions" action={<div>
 				{numInactivePos > 0 && <Button onClick={this.toggleShowInactive}>
 					{(showInactivePositions ? "Hide " : "Show ") + numInactivePos + " inactive position(s)"}
 				</Button>}
 
-				{currentUser.isSuperUser() && <LinkTo position={Position.pathForNew({organizationId: org.id})} button>
+				{isSuperUser && <LinkTo position={Position.pathForNew({organizationId: org.id})} button>
 					Create position
 				</LinkTo>}
 			</div>}>
@@ -50,7 +50,7 @@ export default class OrganizationLaydown extends Component {
 				{supportedPositions.length === 0 && <em>There are no occupied positions</em>}
 			</Fieldset>
 
-			<Fieldset title="Vacant positions">
+			<Fieldset id="vacantPositions" title="Vacant positions">
 				{this.renderPositionTable(positionsNeedingAttention)}
 				{positionsNeedingAttention.length === 0 && <em>There are no vacant positions</em>}
 			</Fieldset>

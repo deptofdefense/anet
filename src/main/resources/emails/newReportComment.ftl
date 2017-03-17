@@ -17,6 +17,8 @@ a {
 }
 </style>
 <body>
+<p style="color:red; font-size:12px; font-weight: bold;" align="center"><i>Classification: ${SECURITY_BANNER_TEXT}</i></p>
+
 Hi, ${report.author.name},
 
 <p>The following comment was added to your "${report.intent}" report by ${comment.author.rank!} ${comment.author.name}:</p>

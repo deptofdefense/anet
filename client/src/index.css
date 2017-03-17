@@ -164,6 +164,14 @@ fieldset.danger {
 	max-height: 400px;
 }
 
+.dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
+	background-color: #e0e0e0;
+}
+
+.nav > li > a:hover, .nav > li > a:focus {
+	background-color: #e0e0e0;
+}
+
 .header .logo img, .header input, .header button {
 	height: 38px;
 }
@@ -333,10 +341,6 @@ a.home-tile {
 	margin-top: 3px;
 }
 
-.report-summary .read-full {
-	float: right;
-}
-
 .report-summary .engagement-date {
 	margin-right: 10px;
 	padding-left: 10px;
@@ -345,19 +349,15 @@ a.home-tile {
 
 .report-summary .people-separator {
 	margin-left: 5px;
-	color: #999999;
-	font-size: 1.1rem;
+	color: #555;
+	font-size: 1.4rem;
 }
 
-.not-found {
-	height: 100%;
-}
-
-.not-found body {
-	background-image: url(resources/mountains.png);
-	background-repeat: no-repeat;
-	background-position: center bottom;
-	background-size: contain;
+.not-found section.container {
+	width: 100%;
+	max-width: none;
+	padding: 0;
+	margin: 0;
 }
 
 .not-found .not-found-text {
@@ -369,6 +369,10 @@ a.home-tile {
 	position: absolute;
 	right: 0;
 	top: -90px;
+}
+
+.not-found #leftNav {
+	display: none;
 }
 
 .onboarding-new {
