@@ -18,6 +18,7 @@ import mil.dds.anet.database.PersonDao;
 import mil.dds.anet.database.mappers.PersonMapper;
 import mil.dds.anet.search.IPersonSearcher;
 import mil.dds.anet.utils.DaoUtils;
+import mil.dds.anet.utils.Utils;
 
 public class MssqlPersonSearcher implements IPersonSearcher {
 
@@ -41,9 +42,8 @@ public class MssqlPersonSearcher implements IPersonSearcher {
 		
 		String text = query.getText();
 		if (text != null && text.trim().length() > 0) { 
-			text = "\"" + text + "*\"";
 			whereClauses.add("CONTAINS ((name, emailAddress, biography), :text)");
-			sqlArgs.put("text", text);
+			sqlArgs.put("text", Utils.getSqlServerFullTextQuery(query.getText()));
 		}
 		
 		if (query.getRole() != null) { 

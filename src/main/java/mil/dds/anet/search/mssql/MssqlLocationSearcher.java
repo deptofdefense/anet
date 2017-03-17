@@ -8,6 +8,7 @@ import mil.dds.anet.beans.lists.AbstractAnetBeanList.LocationList;
 import mil.dds.anet.beans.search.LocationSearchQuery;
 import mil.dds.anet.database.mappers.LocationMapper;
 import mil.dds.anet.search.ILocationSearcher;
+import mil.dds.anet.utils.Utils;
 
 public class MssqlLocationSearcher implements ILocationSearcher {
 
@@ -23,7 +24,7 @@ public class MssqlLocationSearcher implements ILocationSearcher {
 		Query<Location> sqlQuery = dbHandle.createQuery("/* MssqlLocationSearch */ SELECT *, count(*) over() as totalCount "
 				+ "FROM locations WHERE CONTAINS (name, :name) "
 				+ "ORDER BY name ASC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY")
-			.bind("name", "\"" + query.getText() + "*\"")
+			.bind("name", Utils.getSqlServerFullTextQuery(query.getText()))
 			.bind("offset", query.getPageSize() * query.getPageNum())
 			.bind("limit", query.getPageSize())
 			.map(new LocationMapper());

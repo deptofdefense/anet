@@ -18,6 +18,7 @@ import mil.dds.anet.database.PositionDao;
 import mil.dds.anet.database.mappers.PositionMapper;
 import mil.dds.anet.search.IPositionSearcher;
 import mil.dds.anet.utils.DaoUtils;
+import mil.dds.anet.utils.Utils;
 
 public class MssqlPositionSearcher implements IPositionSearcher {
 	
@@ -41,13 +42,12 @@ public class MssqlPositionSearcher implements IPositionSearcher {
 		
 		String text = query.getText();
 		if (text != null && text.trim().length() > 0) {
-			text = "\"" + text + "*\"";
 			if (query.getMatchPersonName() != null && query.getMatchPersonName()) { 
 				whereClauses.add("(CONTAINS((positions.name, positions.code), :text) OR (CONTAINS(people.name, :text)))");
 			} else { 
 				whereClauses.add("CONTAINS((name, code), :text)");
 			}
-			sqlArgs.put("text", text);
+			sqlArgs.put("text", Utils.getSqlServerFullTextQuery(text));
 		}
 		
 		if (query.getType() != null) { 

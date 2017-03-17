@@ -131,7 +131,7 @@ export default class Autocomplete extends Component {
 	@autobind
 	fetchSuggestions(value) {
 		if (this.props.url) {
-			let url = this.props.url + '?text=' + value.value
+			let url = this.props.url + '?text=' + value.value + "*"
 
 			let queryParams = this.props.queryParams || {}
 			if (!queryParams.pageSize) {
@@ -159,7 +159,7 @@ export default class Autocomplete extends Component {
 					+ 'list { ' + this.props.fields + '}'
 					+ '}'
 			let variableDef = '($query: ' + resourceName + 'SearchQuery)'
-			let queryVars = {text: value.value, pageSize: 25}
+			let queryVars = {text: value.value + "*", pageSize: 25}
 			if (this.props.queryParams) {
 				Object.assign(queryVars, this.props.queryParams)
 			}
