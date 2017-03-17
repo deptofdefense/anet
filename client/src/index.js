@@ -22,6 +22,7 @@ import ReportNew from './pages/reports/New'
 import ReportShow from './pages/reports/Show'
 import ReportEdit from './pages/reports/Edit'
 import ReportMinimal from './pages/reports/Minimal'
+import MyReports from './pages/reports/MyReports'
 
 import PersonShow from './pages/people/Show'
 import PersonNew from './pages/people/New'
@@ -62,6 +63,7 @@ ReactDOM.render((
 					<Route path="new" component={ReportNew} />
 					<Route path=":id/edit" component={ReportEdit} />
 					<Route path=":id/min" component={ReportMinimal} />
+					<Route path="mine" component={MyReports} />
 					<Route path=":id" component={ReportShow} />
 				</Route>
 

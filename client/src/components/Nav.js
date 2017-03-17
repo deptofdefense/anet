@@ -26,6 +26,7 @@ class Nav extends Component {
 
 		let inAdmin = path.indexOf('/admin') === 0
 		let inOrg = path.indexOf('/organizations') === 0
+		let inMyReports = path.indexOf('/reports/mine') === 0
 
 		let myOrg = currentUser.position.organization
 		let orgId, myOrgId
@@ -57,9 +58,23 @@ class Nav extends Component {
 					<NavItem>Home</NavItem>
 				</Link>
 
-				{currentUser.id && <Link to={{pathname: '/search', query: {type: 'reports', authorId: currentUser.id}}}>
-					<NavItem>My reports</NavItem>
+				 {currentUser.id && <Link to={{pathname: '/reports/mine'}}>
+						<NavItem>My Reports</NavItem>
 				</Link>}
+
+				{inMyReports && 
+					<SubNav
+						componentClass={Scrollspy}
+						className="nav"
+						items={['draft-reports', 'pending-approval', 'published-reports']}
+						currentClassName="active"
+						offset={-152}
+					>
+						<NavItem href="#draft-reports">Draft reports</NavItem>
+						<NavItem href="#pending-approval">Pending approval</NavItem>
+						<NavItem href="#published-reports">Published reports</NavItem>
+					</SubNav>
+				}
 
 				{myOrg && <Link to={Organization.pathFor(myOrg)}>
 					<NavItem id="my-organization">My organization <br /><small>{myOrg.shortName}</small></NavItem>

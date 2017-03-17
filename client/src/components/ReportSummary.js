@@ -17,7 +17,7 @@ export default class ReportSummary extends Component {
 
 		function PersonComponent({person}) {
 			if (!person) {
-				return null
+				return <span style={{marginLeft: '5px'}}>Unspecified</span>
 			}
 			return <LinkTo person={person}>
 				{person.rank} {person.name}
@@ -25,6 +25,21 @@ export default class ReportSummary extends Component {
 		}
 
 		return <Grid fluid className="report-summary">
+			{report.state === 'DRAFT' && 
+				<p className="report-draft">
+					<strong>Draft{report.updatedAt && ':'}</strong> 
+					{ 
+						/* If the parent does not fetch report.updatedAt, we will not display this
+							so we do not get a broken view. It would be better to go through and 
+							find all the places where report is passed in and ensure that the graphql
+							query includes updatedAt, but I don't have time for that now.
+						*/
+						report.updatedAt &&
+							<span> last saved at {moment(report.updatedAt).format('D MMMM, YYYY @ HHmm')}</span>
+					}
+				</p>
+			}
+
 			{report.cancelledReason &&
 				<p className="report-cancelled">
 					<strong>Cancelled: </strong>
