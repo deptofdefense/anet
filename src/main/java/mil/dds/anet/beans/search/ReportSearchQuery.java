@@ -19,8 +19,8 @@ public class ReportSearchQuery implements ISearchQuery {
 	DateTime releasedAtStart;
 	DateTime releasedAtEnd;
 	Integer attendeeId;
-	Integer authorOrgId;
-	boolean includeAuthorOrgChildren;
+	Integer advisorOrgId;
+	boolean includeAdvisorOrgChildren;
 	Integer principalOrgId;
 	boolean includePrincipalOrgChildren;
 	Integer locationId;
@@ -112,20 +112,20 @@ public class ReportSearchQuery implements ISearchQuery {
 		this.attendeeId = attendeeId;
 	}
 
-	public Integer getAuthorOrgId() {
-		return authorOrgId;
+	public Integer getAdvisorOrgId() {
+		return advisorOrgId;
 	}
 
-	public void setAuthorOrgId(Integer authorOrgId) {
-		this.authorOrgId = authorOrgId;
+	public void setAdvisorOrgId(Integer advisorOrgId) {
+		this.advisorOrgId = advisorOrgId;
 	}
 
-	public boolean isIncludeAuthorOrgChildren() {
-		return includeAuthorOrgChildren;
+	public boolean isIncludeAdvisorOrgChildren() {
+		return includeAdvisorOrgChildren;
 	}
 
-	public void setIncludeAuthorOrgChildren(boolean includeAuthorOrgChildren) {
-		this.includeAuthorOrgChildren = includeAuthorOrgChildren;
+	public void setIncludeAdvisorOrgChildren(boolean includeAdvisorOrgChildren) {
+		this.includeAdvisorOrgChildren = includeAdvisorOrgChildren;
 	}
 
 	public Integer getPrincipalOrgId() {

@@ -80,7 +80,7 @@ export default class Home extends Page {
 		return {
 			title: currentUser.position.organization.shortName + "'s reports in the last 7 days",
 			query: {
-				authorOrgId: currentUser.position.organization.id,
+				advisorOrgId: currentUser.position.organization.id,
 				createdAtStart: lastWeek,
 				state: ["RELEASED", "CANCELLED", "PENDING_APPROVAL"]
 			}
@@ -93,7 +93,7 @@ export default class Home extends Page {
 		return {
 			title: currentUser.position.organization.shortName + "'s upcoming engagements",
 			query: {
-				authorOrgId: currentUser.position.organization.id,
+				advisorOrgId: currentUser.position.organization.id,
 				engagementDateStart: start
 			}
 		}

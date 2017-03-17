@@ -20,9 +20,10 @@ export default class OrganizationPoams extends Component {
 		}
 
 		let poams = org.poams
+		let isSuperUser = currentUser && currentUser.isSuperUserForOrg(org)
 
 		return <Fieldset id="poams" title="PoAMs / Pillars" action={
-			currentUser.isSuperUser() && <LinkTo poam={Poam.pathForNew({responsibleOrgId: org.id})} button>Create PoAM</LinkTo>
+			isSuperUser && <LinkTo poam={Poam.pathForNew({responsibleOrgId: org.id})} button>Create PoAM</LinkTo>
 		}>
 			<Table>
 				<thead>

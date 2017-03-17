@@ -87,34 +87,32 @@ public class MssqlReportSearcher implements IReportSearcher {
 			args.put("poamId", query.getPoamId());
 		}
 		
-		if (query.getAuthorOrgId() != null) { 
-			//TODO: this is known to be wrong when the author has moved positions or when the author is not from the Advisor Organization
-			// need to coordinate with the team on if the later happens and if it's worth either
-			// a) storing the advisorOrg and principalOrg on the report table
-			// b) running an indexing job that stores this somewhere else and takes the time to do the past math. 
-			//    (is it even possible? ie: does a position get removed from an organization
-			//     and then the fact that it was connected then lost forever?)
-			if (query.isIncludeAuthorOrgChildren()) { 
+		if (query.getAdvisorOrgId() != null) { 
+			if (query.isIncludeAdvisorOrgChildren()) { 
 				commonTableExpression = "WITH parent_orgs(id) AS ( "
-						+ "SELECT id FROM organizations WHERE id = :authorOrgId "
+						+ "SELECT id FROM organizations WHERE id = :advisorOrgId "
 					+ "UNION ALL "
 						+ "SELECT o.id from parent_orgs po, organizations o WHERE o.parentOrgId = po.id "
 					+ ")";
-				whereClauses.add("reports.authorId IN "
-					+ "(SELECT currentPersonId FROM positions WHERE organizationId IN (SELECT id from parent_orgs))");
-				args.put("authorOrgId", query.getAuthorOrgId());
+				whereClauses.add("reports.advisorOrganizationId IN (SELECT id from parent_orgs)");
 			} else { 
-				whereClauses.add("reports.authorId in (select currentPersonId from positions where organizationId = :authorOrgId)");
-				args.put("authorOrgId", query.getAuthorOrgId());
+				whereClauses.add("reports.advisorOrganizationId = :advisorOrgId");
 			}
+			args.put("advisorOrgId", query.getAdvisorOrgId());
 		}
 		
 		if (query.getPrincipalOrgId() != null) { 
 			if (query.isIncludePrincipalOrgChildren()) { 
-				//TODO
+				commonTableExpression = "WITH parent_orgs(id) AS ( "
+						+ "SELECT id FROM organizations WHERE id = :principalOrgId "
+					+ "UNION ALL "
+						+ "SELECT o.id from parent_orgs po, organizations o WHERE o.parentOrgId = po.id "
+					+ ")";
+				whereClauses.add("reports.principalOrganizationId IN (SELECT id from parent_orgs)");
 			} else { 
-				//TODO
+				whereClauses.add("reports.principalOrganizationId = :principalOrgId");
 			}
+			args.put("principalOrgId", query.getAdvisorOrgId());
 		}
 		
 		if (query.getLocationId() != null) { 

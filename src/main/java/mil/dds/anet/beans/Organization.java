@@ -163,7 +163,7 @@ public class Organization extends AbstractAnetBean {
 		query.setPageNum(pageNum);
 		query.setPageSize(pageSize);
 		if (this.getType() == OrganizationType.ADVISOR_ORG) { 
-			query.setAuthorOrgId(id);
+			query.setAdvisorOrgId(id);
 		} else { 
 			query.setPrincipalOrgId(id);
 		}

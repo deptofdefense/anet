@@ -553,8 +553,8 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		assertThat(ef11.getShortName()).isEqualToIgnoringCase("EF1.1");
 
 		query.setPoamId(null);
-		query.setAuthorOrgId(ef11.getId());
-		query.setIncludeAuthorOrgChildren(false);
+		query.setAdvisorOrgId(ef11.getId());
+		query.setIncludeAdvisorOrgChildren(false);
 		searchResults = httpQuery("/api/reports/search", jack).post(Entity.json(query), ReportList.class);
 		assertThat(searchResults.getList()).isNotEmpty();
 		assertThat(searchResults.getList().stream().filter(r ->
@@ -568,8 +568,8 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		assertThat(ef1.getShortName()).isEqualToIgnoringCase("EF1");
 
 		query.setPoamId(null);
-		query.setAuthorOrgId(ef1.getId());
-		query.setIncludeAuthorOrgChildren(true);
+		query.setAdvisorOrgId(ef1.getId());
+		query.setIncludeAdvisorOrgChildren(true);
 		searchResults = httpQuery("/api/reports/search", jack).post(Entity.json(query), ReportList.class);
 		assertThat(searchResults.getList()).isNotEmpty();
 		//#TODO: figure out how to verify the results?
@@ -579,7 +579,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		assertThat(locs.size() == 0);
 		Location cabot = locs.get(0);
 
-		query.setAuthorOrgId(null);
+		query.setAdvisorOrgId(null);
 		query.setLocationId(cabot.getId());
 		searchResults = httpQuery("/api/reports/search", jack).post(Entity.json(query), ReportList.class);
 		assertThat(searchResults.getList()).isNotEmpty();
@@ -599,9 +599,25 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		assertThat(searchResults.getList()).isNotEmpty();
 		assertThat(searchResults.getTotalCount()).isGreaterThan(numCancelled);
 		
+		orgs = httpQuery("/api/organizations/search?type=PRINCIPAL_ORG&text=Defense", jack).get(OrganizationList.class);
+		assertThat(orgs.getList().size()).isGreaterThan(0);
+		Organization mod = orgs.getList().stream().filter(o -> o.getShortName().equalsIgnoreCase("MoD")).findFirst().get();
+		assertThat(ef1.getShortName()).isEqualToIgnoringCase("MoD");
+		
 		//Search by Principal Organization
+		query.setPrincipalOrgId(mod.getId());
+		searchResults = httpQuery("/api/reports/search", jack).post(Entity.json(query), ReportList.class);
+		assertThat(searchResults.getList()).isNotEmpty();
+		//TODO: figure out how to verify the results? 
 
 		//Search by Principal Parent Organization
+		query.setPrincipalOrgId(mod.getId());
+		query.setIncludePrincipalOrgChildren(true);
+		searchResults = httpQuery("/api/reports/search", jack).post(Entity.json(query), ReportList.class);
+		assertThat(searchResults.getList()).isNotEmpty();
+		assertThat(searchResults.getList().stream().filter(r ->
+				r.loadAuthor().loadPosition().loadOrganization().getId().equals(mod.getId())
+			)).hasSameSizeAs(searchResults.getList());
 		
 		query = new ReportSearchQuery();
 		query.setText("spreadsheet");
