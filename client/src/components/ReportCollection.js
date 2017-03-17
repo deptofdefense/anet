@@ -6,6 +6,7 @@ import ReportSummary from 'components/ReportSummary'
 import ReportTable from 'components/ReportTable'
 import ButtonToggleGroup from 'components/ButtonToggleGroup'
 import Leaflet from 'components/Leaflet'
+import _get from 'lodash.get'
 
 const FORMAT_SUMMARY = 'summary'
 const FORMAT_TABLE = 'table'
@@ -43,33 +44,39 @@ export default class ReportCollection extends Component {
 			reports = this.props.reports
 		}
 
+		let reportsExist = _get(reports, 'length', 0) > 0
+
 		return <div className="report-collection">
-			<header>
-				{reports && reports.length > 0 && <ButtonToggleGroup value={this.state.viewFormat} onChange={this.changeViewFormat}>
-					<Button value={FORMAT_SUMMARY}>Summary</Button>
-					<Button value={FORMAT_TABLE}>Table</Button>
-					<Button value={FORMAT_MAP}>Map</Button>
-				</ButtonToggleGroup>}
+			{ reportsExist ? 
+				<div>
+					<header>
+						<ButtonToggleGroup value={this.state.viewFormat} onChange={this.changeViewFormat}>
+							<Button value={FORMAT_SUMMARY}>Summary</Button>
+							<Button value={FORMAT_TABLE}>Table</Button>
+							<Button value={FORMAT_MAP}>Map</Button>
+						</ButtonToggleGroup>
 
-				{numPages > 1 &&
-					<Pagination
-						className="pull-right"
-						prev
-						next
-						items={numPages}
-						ellipsis
-						maxButtons={6}
-						activePage={pageNum}
-						onSelect={(value) => {this.props.goToPage(value - 1)}}
-					/>
-				}
-			</header>
+						{numPages > 1 &&
+							<Pagination
+								className="pull-right"
+								prev
+								next
+								items={numPages}
+								ellipsis
+								maxButtons={6}
+								activePage={pageNum}
+								onSelect={(value) => {this.props.goToPage(value - 1)}}
+							/>
+						}
+					</header>
 
-			{reports && reports.length > 0 ? <div>
-				{this.state.viewFormat === FORMAT_TABLE && this.renderTable(reports)}
-				{this.state.viewFormat === FORMAT_SUMMARY && this.renderSummary(reports)}
-				{this.state.viewFormat === FORMAT_MAP && this.renderMap(reports)}
-			</div> : <em>No reports found</em>}
+					<div>
+						{this.state.viewFormat === FORMAT_TABLE && this.renderTable(reports)}
+						{this.state.viewFormat === FORMAT_SUMMARY && this.renderSummary(reports)}
+						{this.state.viewFormat === FORMAT_MAP && this.renderMap(reports)}
+					</div>
+				</div> : <em>No reports found</em>
+			}
 		</div>
 	}
 
