@@ -55,6 +55,13 @@ export default class RollupShow extends Page {
 		}
 	}
 
+	componentWillReceiveProps(newProps) {
+		let newDate = moment(+newProps.location.query.date || undefined)
+		if (!this.state.date.isSame(newDate)) {
+			this.setState({date: newDate}, () => this.loadData())
+		}
+	}
+
 	componentDidMount() {
 		super.componentDidMount()
 
@@ -226,10 +233,6 @@ export default class RollupShow extends Page {
 	changeRollupDate(newDate) {
 		let date = moment(newDate)
 		History.replace({pathname: 'rollup', query: {date: date.valueOf()}})
-
-		this.setState({date: date}, () => {
-			this.loadData()
-		})
 	}
 
 	@autobind
