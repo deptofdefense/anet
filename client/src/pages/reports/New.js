@@ -18,7 +18,7 @@ export default class ReportNew extends Page {
 	}
 
 	static contextTypes = {
-		currentUser: PropTypes.object.isRequired,
+		app: PropTypes.object.isRequired,
 	}
 
 	constructor(props, context) {
@@ -39,7 +39,7 @@ export default class ReportNew extends Page {
 	}
 
 	addCurrentUserAsAttendee() {
-		let newAttendee = this.context.currentUser
+		let newAttendee = this.context.app.state.currentUser
 
 		const addedAttendeeToReport = this.state.report.addAttendee(newAttendee)
 		const addedAttendeeToOriginalReport = this.state.originalReport.addAttendee(newAttendee)

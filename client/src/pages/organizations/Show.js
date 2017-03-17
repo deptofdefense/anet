@@ -77,7 +77,7 @@ export default class OrganizationShow extends Page {
 					id, name, approvers { id, name, person { id, name}}
 				},
 			}
-		`).then(data => this.setState({organization: data.organization}))
+		`).then(data => this.setState({organization: new Organization(data.organization)}))
 	}
 
 	render() {
@@ -115,7 +115,7 @@ export default class OrganizationShow extends Page {
 					</div>}>
 
 						<Form.Field id="type">
-							{org.type && org.type.split('_')[0]}
+							{org.humanNameOfType()}
 						</Form.Field>
 
 						<Form.Field id="longName" label="Description"/>
@@ -126,7 +126,7 @@ export default class OrganizationShow extends Page {
 							</Form.Field>
 						}
 
-						{org.type === 'ADVISOR_ORG' &&
+						{org.isAdvisorOrg() &&
 							<Form.Field id="superUsers" label="Super users">
 								{superUsers.map(position =>
 									<p key={position.id}>

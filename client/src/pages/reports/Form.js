@@ -111,16 +111,16 @@ export default class ReportForm extends ValidatableFormWrapper {
 					<Form.Field id="location" addon={LOCATION_ICON} validationState={errors.location}
 						postInputGroupChildren={errors.location && invalidInputWarningMessage}>
 						<Autocomplete valueKey="name" placeholder="Start typing to search for the location where this happened..." url="/api/locations/search" />
-						<Form.Field.ExtraCol className="shortcut-list">
-							<h5>Recent locations</h5>
-							{recents.locations && recents.locations.length > 0 &&
-								<Button bsStyle="link"  onClick={this.setLocation.bind(this,recents.locations[0])} >Add {recents.locations[0].name}</Button>
-							}
-						</Form.Field.ExtraCol>
+						{recents.locations && recents.locations.length > 0 &&
+							<Form.Field.ExtraCol className="shortcut-list">
+								<h5>Recent locations</h5>
+								<Button bsStyle="link"  onClick={this.setLocation.bind(this, recents.locations[0])}>Add {recents.locations[0].name}</Button>
+							</Form.Field.ExtraCol>
+						}
 					</Form.Field>
 
 					<Form.Field id="isCancelled" value={isCancelled} label="">
-						<Checkbox inline onChange={this.toggleCancelled} checked={isCancelled} >
+						<Checkbox inline onChange={this.toggleCancelled} checked={isCancelled}>
 							This engagement was cancelled
 						</Checkbox>
 					</Form.Field>

@@ -76,7 +76,7 @@ class Nav extends Component {
 				}
 
 				{currentUser.position.organization && <Link to={Organization.pathFor(currentUser.position.organization)}>
-					<NavItem>My Organization</NavItem>
+					<NavItem id="my-organization">My organization</NavItem>
 				</Link>}
 
 				{inOrg && orgId === myOrgId && orgSubNav}
@@ -106,7 +106,8 @@ class Nav extends Component {
 						<NavItem>Admin</NavItem>
 					</Link>
 				}
-				{currentUser.isAdmin() && inAdmin &&
+
+				{inAdmin &&
 					<SubNav>
 						<Link to={"/admin/mergePeople"}><NavItem>Merge people</NavItem></Link>
 					</SubNav>
@@ -118,6 +119,8 @@ class Nav extends Component {
 
 function SubNav(props) {
 	let {componentClass, ...childProps} = props
+	childProps = Object.without(childProps, 'active')
+
 	let Component = componentClass || BSNav
 	return <li>
 		<Component {...childProps} />

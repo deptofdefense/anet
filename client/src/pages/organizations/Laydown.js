@@ -60,7 +60,7 @@ export default class OrganizationLaydown extends Component {
 	renderPositionTable(positions) {
 		let org = this.props.organization
 		let posNameHeader, posPersonHeader, otherNameHeader, otherPersonHeader
-		if (org.type === 'ADVISOR_ORG') {
+		if (org.isAdvisorOrg()) {
 			posNameHeader = 'Billet'
 			posPersonHeader = 'Advisor'
 			otherNameHeader = 'TASHKIL'

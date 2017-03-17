@@ -36,14 +36,14 @@ export default class PositionForm extends ValidatableFormWrapper {
 		let currentUser = this.context.currentUser
 
 		let orgSearchQuery = {}
-		if (position.type === 'ADVISOR' || position.type === 'SUPER_USER' || position.type === 'ADMINISTRATOR') {
+		if (position.isPrincipal()) {
+			orgSearchQuery.type = 'PRINCIPAL_ORG'
+		} else {
 			orgSearchQuery.type = 'ADVISOR_ORG'
 			if (currentUser && currentUser.position && currentUser.position.type === 'SUPER_USER') {
 				orgSearchQuery.parentOrgId = currentUser.position.organization.id
 				orgSearchQuery.parentOrgRecursively = true
 			}
-		} else if (position.type === 'PRINCIPAL') {
-			orgSearchQuery.type = 'PRINCIPAL_ORG'
 		}
 
 		const {ValidatableForm, RequiredField} = this

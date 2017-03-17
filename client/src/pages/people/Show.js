@@ -118,7 +118,7 @@ export default class PersonShow extends Page {
 						<Form.Field id="rank" />
 
 						<Form.Field id="role">
-							{person.getHumanNameOfRole()}
+							{person.humanNameOfRole()}
 						</Form.Field>
 
 						<Form.Field id="status" />

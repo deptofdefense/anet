@@ -24,10 +24,6 @@ export default class PersonForm extends ValidatableFormWrapper {
 		saveText: PropTypes.string,
 	}
 
-	static contextTypes = {
-		currentUser: PropTypes.object
-	}
-
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -39,7 +35,6 @@ export default class PersonForm extends ValidatableFormWrapper {
 		let {person, edit} = this.props
 		const isAdvisor = person.role === 'ADVISOR'
 		const legendText = this.props.legendText || (edit ? `Edit ${person.name}` : 'Create a new person')
-		let currentUser = this.context.currentUser
 
 		const {ValidatableForm, RequiredField} = this
 
@@ -52,7 +47,7 @@ export default class PersonForm extends ValidatableFormWrapper {
 				<RequiredField id="name" />
 
 				{edit ?
-					<Form.Field type="static" id="role" value={person.getHumanNameOfRole()} />
+					<Form.Field type="static" id="role" value={person.humanNameOfRole()} />
 					:
 					<Form.Field id="role" componentClass="select">
 						<option value="ADVISOR">{Person.humanNameOfRole('ADVISOR')}</option>

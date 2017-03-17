@@ -263,7 +263,7 @@ export default class ReportShow extends Page {
 
 					<Fieldset className="report-sub-form" title="Comments">
 						{report.comments.map(comment => {
-							let createdAt = moment(comment.createAt)
+							let createdAt = moment(comment.createdAt)
 							return (
 								<p key={comment.id}>
 									<LinkTo person={comment.author} />

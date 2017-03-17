@@ -17,6 +17,7 @@ import mil.dds.anet.database.PersonDao;
 import mil.dds.anet.database.mappers.PersonMapper;
 import mil.dds.anet.search.IPersonSearcher;
 import mil.dds.anet.utils.DaoUtils;
+import mil.dds.anet.utils.Utils;
 
 public class SqlitePersonSearcher implements IPersonSearcher {
 
@@ -39,7 +40,7 @@ public class SqlitePersonSearcher implements IPersonSearcher {
 		String text = query.getText();
 		if (text != null && text.trim().length() > 0) { 
 			whereClauses.add("(name LIKE '%' || :text || '%' OR emailAddress LIKE '%' || :text || '%' OR biography LIKE '%' || :text || '%')");
-			sqlArgs.put("text", text);
+			sqlArgs.put("text", Utils.getSqliteFullTextQuery(text));
 		}
 		
 		if (query.getRole() != null) { 

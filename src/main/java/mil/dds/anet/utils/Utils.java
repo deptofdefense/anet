@@ -70,4 +70,12 @@ public class Utils {
 		}
 		return cleanText;
 	}
+	
+	
+	/**
+	 * Just remove the * 
+	 */
+	public static String getSqliteFullTextQuery(String text) { 
+		return text.trim().replaceAll("\\p{Punct}", "");
+	}
 }
