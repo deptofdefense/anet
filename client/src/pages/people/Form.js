@@ -49,16 +49,18 @@ export default class PersonForm extends ValidatableFormWrapper {
 				{edit ?
 					<Form.Field type="static" id="role" value={person.humanNameOfRole()} />
 					:
-					<Form.Field id="role" componentClass="select">
-						<option value="ADVISOR">{Person.humanNameOfRole('ADVISOR')}</option>
-						<option value="PRINCIPAL">{Person.humanNameOfRole('PRINCIPAL')}</option>
+					<Form.Field id="role">
+						<ButtonToggleGroup>
+							<Button id="roleAdvisorButton" value="ADVISOR">NATO member</Button>
+							<Button id="rolePrincipalButton" value="PRINCIPAL">Afghan principal</Button>
+						</ButtonToggleGroup>
 					</Form.Field>
 				}
 
 				{person.isNewUser() ?
 					<Form.Field type="static" id="status" value="New User" />
 					:
-					<Form.Field id="status" >
+					<Form.Field id="status">
 						<ButtonToggleGroup>
 							<Button id="statusActiveButton" value="ACTIVE">Active</Button>
 							<Button id="statusInactiveButton" value="INACTIVE">Inactive</Button>
