@@ -128,7 +128,7 @@ export default class PersonShow extends Page {
 						</Form.Field>
 						<Form.Field id="country" />
 						<Form.Field id="gender" />
-						<Form.Field label="End of tour" id="endOfTourDate" value={moment(person.endOfTourDate).format('D MMM YYYY')} />
+						<Form.Field label="End of tour" id="endOfTourDate" value={person.endOfTourDate && moment(person.endOfTourDate).format('D MMM YYYY')} />
 						<Form.Field label="Biography" id="biography" >
 							<div dangerouslySetInnerHTML={{__html: person.biography}} />
 						</Form.Field>
