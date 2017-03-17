@@ -20,6 +20,7 @@ import mil.dds.anet.database.ReportDao;
 import mil.dds.anet.database.mappers.ReportMapper;
 import mil.dds.anet.search.IReportSearcher;
 import mil.dds.anet.utils.DaoUtils;
+import mil.dds.anet.utils.Utils;
 
 public class MssqlReportSearcher implements IReportSearcher {
 	
@@ -45,9 +46,9 @@ public class MssqlReportSearcher implements IReportSearcher {
 		
 		String text = query.getText();
 		if (text != null && text.trim().length() > 0) {
-			text = "\"" + text + "*\"";
+			String cleanText = Utils.getSqlServerFullTextQuery(text);
 			whereClauses.add("CONTAINS ((text, intent, keyOutcomes, nextSteps), :text)");
-			args.put("text", text);
+			args.put("text", cleanText);
 		}
 		
 		if (query.getEngagementDateStart() != null) { 
@@ -112,7 +113,7 @@ public class MssqlReportSearcher implements IReportSearcher {
 			} else { 
 				whereClauses.add("reports.principalOrganizationId = :principalOrgId");
 			}
-			args.put("principalOrgId", query.getAdvisorOrgId());
+			args.put("principalOrgId", query.getPrincipalOrgId());
 		}
 		
 		if (query.getLocationId() != null) { 

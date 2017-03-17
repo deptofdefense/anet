@@ -8,6 +8,8 @@ import javax.ws.rs.core.Response;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
+import com.google.common.collect.ImmutableList;
+
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.util.Duration;
 import mil.dds.anet.beans.Organization;
@@ -142,8 +144,15 @@ public class PersonResourceTest extends AbstractResourceTest {
 		searchResults = httpQuery("/api/people/search", jack).post(Entity.json(query), PersonList.class);
 		assertThat(searchResults.getList()).isNotEmpty();
 
+		query.setOrgId(null);
+		query.setStatus(ImmutableList.of(PersonStatus.INACTIVE));
+		searchResults = httpQuery("/api/people/search", jack).post(Entity.json(query), PersonList.class);
+		assertThat(searchResults.getList()).isNotEmpty();
+		assertThat(searchResults.getList().stream().filter(p -> p.getStatus()== PersonStatus.INACTIVE).count()).isEqualTo(searchResults.getList().size());
+		
 		//Search with children orgs
 		org = orgs.getList().stream().filter(o -> o.getShortName().equalsIgnoreCase("EF1")).findFirst().get();
+		query.setStatus(null);
 		query.setOrgId(org.getId());
 		//First don't include child orgs and then increase the scope and verify results increase.
 		final PersonList parentOnlyResults = httpQuery("/api/people/search", jack).post(Entity.json(query), PersonList.class);

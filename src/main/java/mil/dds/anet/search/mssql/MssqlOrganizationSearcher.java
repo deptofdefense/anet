@@ -16,6 +16,7 @@ import mil.dds.anet.database.OrganizationDao;
 import mil.dds.anet.database.mappers.OrganizationMapper;
 import mil.dds.anet.search.IOrganizationSearcher;
 import mil.dds.anet.utils.DaoUtils;
+import mil.dds.anet.utils.Utils;
 
 public class MssqlOrganizationSearcher implements IOrganizationSearcher {
 
@@ -36,7 +37,7 @@ public class MssqlOrganizationSearcher implements IOrganizationSearcher {
 		String text = query.getText();
 		if (text != null && text.trim().length() > 0) {
 			whereClauses.add("(CONTAINS((shortName, longName), :text) OR  shortName LIKE :likeQuery)");
-			sqlArgs.put("text", "\"" + text + "*\"");
+			sqlArgs.put("text", Utils.getSqlServerFullTextQuery(text));
 			sqlArgs.put("likeQuery", text + "%");
 		}
 		

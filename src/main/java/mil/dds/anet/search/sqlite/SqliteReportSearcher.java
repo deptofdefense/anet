@@ -94,9 +94,9 @@ public class SqliteReportSearcher implements IReportSearcher {
 					+ "UNION ALL "
 						+ "SELECT o.id from parent_orgs po, organizations o WHERE o.parentOrgId = po.id "
 					+ ") ";
-				whereClauses.add("reports.advisorOrganizationId IN SELECT id from parent_orgs)");
+				whereClauses.add("reports.advisorOrganizationId IN (SELECT id from parent_orgs)");
 			} else { 
-				whereClauses.add("reports.advisorOrganizationId = :advisorOrgId)");
+				whereClauses.add("reports.advisorOrganizationId = :advisorOrgId");
 			}
 			args.put("advisorOrgId", query.getAdvisorOrgId());
 		}

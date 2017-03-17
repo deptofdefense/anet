@@ -620,6 +620,12 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="31" author="hpitelka" dbms="mssql" >
+		<sql dbms="mssql">
+			ALTER FULLTEXT CATALOG anet_ft_catalog REBUILD WITH ACCENT_SENSITIVITY = OFF
+		</sql>
+	</changeSet>
+
 <!-- Temp putting this here until we can fix production data. 
 	<changeSet id="29" author="hpitelka" dbms="mssql" >
 		<sql dbms="mssql">

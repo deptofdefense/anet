@@ -54,4 +54,20 @@ public class Utils {
 			return value; 
 		}
 	}
+
+	
+	/**
+	 * Converts a text search query into a SQL Server Full Text query. 
+	 * If the text ends with a * then we do a prefix match on the string
+	 * else we do an inflectional match. 
+	 */
+	public static String getSqlServerFullTextQuery(String text) {
+		String cleanText = text.trim().replaceAll("\\p{Punct}", "");
+		if (text.endsWith("*")) { 
+			cleanText = "\"" + cleanText + "*\"";
+		} else { 
+			cleanText = "FORMSOF(INFLECTIONAL, \"" + cleanText + "\")";
+		}
+		return cleanText;
+	}
 }

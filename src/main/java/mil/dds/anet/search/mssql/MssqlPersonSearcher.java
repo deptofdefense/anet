@@ -18,6 +18,7 @@ import mil.dds.anet.database.PersonDao;
 import mil.dds.anet.database.mappers.PersonMapper;
 import mil.dds.anet.search.IPersonSearcher;
 import mil.dds.anet.utils.DaoUtils;
+import mil.dds.anet.utils.Utils;
 
 public class MssqlPersonSearcher implements IPersonSearcher {
 
@@ -41,9 +42,8 @@ public class MssqlPersonSearcher implements IPersonSearcher {
 		
 		String text = query.getText();
 		if (text != null && text.trim().length() > 0) { 
-			text = "\"" + text + "*\"";
 			whereClauses.add("CONTAINS ((name, emailAddress, biography), :text)");
-			sqlArgs.put("text", text);
+			sqlArgs.put("text", Utils.getSqlServerFullTextQuery(query.getText()));
 		}
 		
 		if (query.getRole() != null) { 
@@ -51,9 +51,18 @@ public class MssqlPersonSearcher implements IPersonSearcher {
 			sqlArgs.put("role", DaoUtils.getEnumId(query.getRole()));
 		}
 		
-		if (query.getStatus() != null) { 
-			whereClauses.add(" people.status = :status ");
-			sqlArgs.put("status", DaoUtils.getEnumId(query.getStatus()));
+		if (query.getStatus() != null && query.getStatus().size() > 0) {
+			if (query.getStatus().size() == 1) { 
+				whereClauses.add("people.status = :status");
+				sqlArgs.put("status", DaoUtils.getEnumId(query.getStatus().get(0)));
+			} else {
+				List<String> argNames = new LinkedList<String>();
+				for (int i=0;i<query.getStatus().size();i++) { 
+					argNames.add(":status" + i);
+					sqlArgs.put("status" + i, DaoUtils.getEnumId(query.getStatus().get(i)));
+				}
+				whereClauses.add("people.status IN (" + Joiner.on(", ").join(argNames) + ")");
+			}
 		}
 		
 		if (query.getCountry() != null && query.getCountry().trim().length() > 0) { 

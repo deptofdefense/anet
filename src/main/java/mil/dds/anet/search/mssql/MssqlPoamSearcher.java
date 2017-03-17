@@ -14,6 +14,7 @@ import mil.dds.anet.beans.lists.AbstractAnetBeanList.PoamList;
 import mil.dds.anet.beans.search.PoamSearchQuery;
 import mil.dds.anet.database.mappers.PoamMapper;
 import mil.dds.anet.search.IPoamSearcher;
+import mil.dds.anet.utils.Utils;
 
 public class MssqlPoamSearcher implements IPoamSearcher {
 
@@ -31,7 +32,7 @@ public class MssqlPoamSearcher implements IPoamSearcher {
 		String text = query.getText();
 		if (text != null && text.trim().length() > 0) { 
 			whereClauses.add("(CONTAINS((longName), :text) OR shortName LIKE :likeQuery)");
-			args.put("text", "\"" + text + "*\"");
+			args.put("text", Utils.getSqlServerFullTextQuery(text));
 			args.put("likeQuery", text + "%");
 		}
 		
