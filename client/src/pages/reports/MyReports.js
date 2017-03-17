@@ -67,9 +67,6 @@ export default class MyReports extends Page {
         // and I got the following error:
         //
         //      {"errors":["Validation error of type VariableTypeMismatch: Variable type doesn't match"]}
-        //
-        // TODO Do not make an API request each time the user clicks on the button, but 
-        // instead cache values we already know about.
         API.query(/* GraphQL */`
 			person(f:me) {
 				authoredReports(pageNum: $pageNum, pageSize: 10, state: [${state}]) { 
