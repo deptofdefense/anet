@@ -35,6 +35,10 @@ export default class Person extends Model {
 		return Person.humanNameOfRole(this.role)
 	}
 
+	isNewUser() {
+		return this.status === 'NEW_USER'
+	}
+
 	isAdvisor() {
 		return this.role === 'ADVISOR'
 	}
