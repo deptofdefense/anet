@@ -19,7 +19,7 @@ let userTour = (currentUser) => { return {
 		},
 		{
 			title: 'Search',
-			content: 'Search for reports, people, or organizations. You\'ll be able to save your searches.',
+			content: 'Search for reports, people, or organizations. You can save searches to your homepage.',
 			target: 'searchBarInput',
 			placement: 'bottom',
 			fixedElement: true
@@ -52,7 +52,7 @@ let superUserTour = (currentUser) => { return {
 	steps: [
 		{
 			title: 'Welcome',
-			content: 'Welcome to ANET! This guided tour will show you as a super user how to do things like find reports you need to approve and update your organization\'s positions, billet codes, and people. It will also show you how to set up approval chains for your organization, create new people and positions, and link Afghan principals to your organization\'s advisors.',
+			content: 'Welcome to ANET! This guided tour shows super users how to find reports you need to approve and keep your organization up to date.',
 			target: '.persistent-tour-launcher',
 			placement: 'left',
 		},
@@ -79,7 +79,7 @@ let superUserTour = (currentUser) => { return {
 		},
 		{
 			title: 'My ANET snapshot',
-			content: 'This area shows you how many reports need your approval, the number of your reports have been drafted but not submitted, your organization\'s submitted reports in the last 7 days, as well as upcoming engagements in your organization.',
+			content: 'This area shows you the reports that need your approval as well as your organization\'s draft reports, reports submitted in the last 7 days, and upcoming engagements.',
 			target: '.home-tile-row',
 			placement: 'bottom',
 		},
@@ -91,9 +91,9 @@ let superUserTour = (currentUser) => { return {
 			fixedElement: true,
 		},
 		{
-			title: 'EFs / AOs',
-			content: 'You can navigate to your organization from this dropdown list. Find your organization from this list to start the tour that will walk you through how to set up and update your organization as a super user.',
-			target: 'organizations',
+			title: 'My Organization',
+			content: 'You can navigate to your organization by clicking on the "My Organization" link. Click "next" to continue this tour on your organization\'s page.',
+			target: 'my-organizations',
 			placement: 'right',
 			fixedElement: true,
 			multipage: true,
@@ -114,28 +114,34 @@ let reportTour = (currentUser) => { return {
 		},
 		{
 			title: 'Engagement date',
-			content: 'When did this engagement happen, or when will it take place? Simply select it from the calendar.',
+			content: 'When did this engagement happen, or when will it take place? Choosing a date in the future will create an upcoming engagement. Simply select the date from the calendar.',
 			target: '#engagementDate',
 			placement: 'right',
 		},
 		{
 			title: 'Engagement location',
 			content:
-				'Start typing the location of where the engagement took place. Select one of the options available, or ask your Super User to add it.',
+				'Start typing the location of where the engagement took place. Select one of the options available, or ask your super user to add it.',
 			target: '#location',
 			placement: 'right',
 		},
 		{
 			title: 'Atmospherics',
-			content: 'Select whether it went well or not.',
+			content: 'Select the atmosphere of your meeting. This information is used in threat assessments. Highlight specific issues or concerns in the details section below.',
 			target: '#neutralAtmos',
 			placement: 'bottom',
 		},
 		{
 			title: 'Attendee(s)',
-			content: 'Start typing the name of everyone who was at the meeting. Select one of the options available or ask your Super User to add it.',
+			content: 'Start typing the name of everyone who was at the meeting. Select one of the options available or ask your super user to add it.',
 			target: '#attendees',
 			placement: 'right',
+		},
+			{
+			title: 'Shortcuts',
+			content: "If you've written reports in the past, your recent selections of attendees, PoAMs, and locations will display to the right in a section called \"Shortcuts\". You can click on one of the shortcuts to quickly add it to your report.",
+			target: '#attendees',
+			placement: 'bottom',
 		},
 		{
 			title: 'Primary advisor and principal',
@@ -145,7 +151,7 @@ let reportTour = (currentUser) => { return {
 		},
 		{
 			title: 'PoAMs',
-			content: 'Select the PoAMs that apply to this engagement. These are not required.',
+			content: 'Search for the PoAMs that apply to this engagement. These are not required.',
 			target: '#poams',
 			placement: 'right',
 		},
@@ -187,31 +193,31 @@ let orgTour = (currentUser) => { return {
 	steps: [
 		{
 			title: 'Your organization\'s information',
-			content: 'In this section of the page, you will find general information about your organization. This includes a description of your organization, a list of who the super users are, and sub-organizations. If you\'re a super user for a parent EF or organization -- such as EF 1 rather than EF 1.1 -- you can make changes to your organization and any sub-organization. If you\'re a super user in a sub-organization, you can only make changes within that sub-organization.',
+			content: 'This section shows your organization\'s super users and sub-organizations. Keep in mind that super users in a sub-organization can only update information for that sub-organization.',  
 			target: 'info',
 			placement: 'bottom',
 		},
 		{
 			title: 'Supported positions',
-			content: 'The "Support Positions" section shows the positions in your organization that currently have people assigned to them. The billet column tells you the position name of the position. The billet\'s code is at the end of the position name. If any of the information here looks wrong, click on the position name. You\'ll see a detailed view of that position, and will have the option to make changes. You can also take a guided tour of that page when you\'re on it.',
+			content: 'This section shows positions in your organization that currently have people assigned to them. The billet column tells you the name of the position and shows the billet code at the end. To update this information, click on the position and select the "Edit" option.',
 			target: '#supportedPositions h2',
 			placement: 'top',
 		},
 		{
 			title: 'Vacant positions',
-			content: 'This section of the page will show you positions in your organizations that currently do not have anyone assigned to them. To assign someone to the position, or to mark the position inactive, you can click on the position name, and select the "Edit" button near the top-right of that page.',
+			content: 'Here you\'ll find positions that don\'t have anyone assigned to them. To assign someone to the position, or to mark the position inactive, click on the position.',
 			target: '#vacantPositions h2',
 			placement: 'top',
 		},
 		{
 			title: 'Approval process',
-			content: 'Here, you can review the approval process for reports authored in your organization. If there\'s no approval chain set up, scroll to the top of the page and click the "Edit" button. You\'ll be able to add and name as many approval steps as you\'d like. There are a couple of important things to keep in mind when you\'re setting up approval chains. The first is that we recommend having more than one approver in each step. That means that more than one person can approve reports at that step. The second thing to keep in mind is that when a report has been approved by someone at each step in your approval chain, it will automatically go into that day\'s daily rollup. Lastly, you can add any one to your approval chain, they do not need to be a super user.',
+			content: 'Set up or update the approval process for reports authored in your organization by clicking "Edit" on the top of the page. We recommend having more than one approver in each step so that either person can approve the report. When a report has gone through every step in your approval chain, it will automatically go into that day\'s daily rollup. You can add any one to your approval chain, they do not need to be a super user.',
 			target: '#approvals h2',
 			placement: 'top',
 		},
 		{
 			title: 'PoAMs',
-			content: 'The PoAMs or Pillars that your organization is responsible for will be displayed in this section. If you need to make changes, or if PoAMs change, please contact an administrator to update them.',
+			content: 'The PoAMs or Pillars that your organization is responsible for will be displayed in this section. If you need to make changes, or if PoAMs change, you can update that information in your organization or sub-organization.',
 			target: '#poams h2',
 			placement: 'top',
 		},
@@ -241,31 +247,31 @@ let positionTour = (currentUser) => { return {
 	steps: [
 		{
 			title: "Positions",
-			content: "This page gives you a more detailed look at the billet or tashkil position you clicked on to get here. In this first section on the page, you can quickly review the detailed information, such as the position's billet or tashkil code, status, and organization.",
+			content: "This section allows you to quickly review this position\'s detailed information, such as the position's billet or tashkil code, status, and organization.",
 			target: '.persistent-tour-launcher',
 			placement: 'left',
 		},
 		{
 			title: "Type of user",
-			content: "If you're looking at a billet position, you can see what kind of permissions this user has. There are three options: user, super user, and administrator. Super users can make people either users or super users. Users are able to take basic actions, like submitting reports, using search, and reviewing the daily rollup. Super users are able to edit positions, people, and PoAMs in their organization, as well as locations. This section isn't visible if you're looking at a tashkil position.",
+			content: "There are three types of users: user, super user, and administrator. Super users can make people either users or super users. Users are able to take basic actions, like submitting reports, using search, and reviewing the daily rollup. Super users are able to edit positions, people, and PoAMs in their organization, as well as locations. This section isn't visible if you're looking at a tashkil position.",
 			target: '#type',
 			placement: 'bottom',
 		},
 		{
 			title: "Active/inactive status",
-			content: "Positions can be either active or inactive. Changing the status to \"Inactive\" means that your organization no longer supports that position / function. This is different than the position being vacant. A vacant position is one that does not have a person assigned to it. Positions will move to the \"Vacant\" section of your organization's page automatically when no one is assigned to it.",
+			content: "Positions can be either active or inactive. Changing the status to \"Inactive\" means that your organization no longer supports that position / function. This is different than a vacant position, which is one that does not have a person assigned to it. Positions will move to the \"Vacant\" section of your organization's page automatically when no one is assigned to it.",
 			target: '#status',
 			placement: 'bottom',
 		},
 		{
 			title: "Current assigned person",
-			content: "This section shows you who is currently assigned to this position. For billet positions, you'll see the NATO member in this position. For taskhil positions, you'll see the current Afghan principal in that position. You can click the \"Change assigned person\" button to quickly change who is in this position. You can come here to add a new person to this position as NATO members leave and arrive to theater, or as Afghan principals change jobs. If you are viewing a vacant position - one without an assigned person - you will see the option to assign someone to this position, rather than change who is currently assigned.",
+			content: "This section shows you who is currently assigned to this position. For billet positions, you'll see the NATO member in this position. For taskhil positions, you'll see the current Afghan principal in that position. You can click the \"Change assigned person\" button to quickly change who is in this position.",
 			target: '#assigned-advisor h2',
 			placement: 'top',
 		},
 		{
 			title: "Assigned Afghan principal",
-			content: "If you're looking a billet position responsible for advising Afghan principals, those people and their tashkils will display here. You can add assigned principals by selecting the \"edit\" button of this page. If this position isn't responsible for advising people, it's okay for this section to be empty. If you're looking at a tashkil position, you'll see the NATO members assigned to advise this principal. You can add or remove assigned advisors by editing this page.",
+			content: "If you're looking at a NATO billet position, you'll see the people this position is responisble for advising. If you're looking at a tashkil position, you'll see the advisors advising that Afghan tashkil here. You can update this information by editing this page.",
 			target: '#assigned-principal h2',
 			placement: 'top',
 		},
@@ -289,7 +295,7 @@ let personTour = (currentUser) => { return {
 	steps: [
 		{
 			title: "Information about this person",
-			content: "This page shows you the detailed information for this person. In this top section, you can see their basic information, like which country their from, if their \"Active\", contact information if available, and more. If a NATO member is \"Active\" it means that they are still working in theater. For Afghan principals, it means they are still with the Afghan government. A super user or administrator should change them to \"Inactive\" when that is no longer the case. This will keep them from being added to reports as attendees.",
+			content: "You can review this person's basic information, including their contact information, and see if they are \"Active\". A super user should change a person to \"Inactive\" when they are no longer in a job with NATO or the Afghan government. Setting them as inactive keeps them from being added to reports as attendees.",
 			target: '#phoneNumber',
 			placement: 'bottom',
 		},
