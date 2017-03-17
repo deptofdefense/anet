@@ -95,8 +95,12 @@ public class PoamResource implements IGraphQLResource {
 	
 	@POST
 	@Path("/new")
-	@RolesAllowed("ADMINISTRATOR")
+	@RolesAllowed("SUPER_USER")
 	public Poam createNewPoam(@Auth Person user, Poam p) {
+		if (AuthUtils.isAdmin(user) == false) { 
+			//Super Users can only create poams within their organization. 
+			AuthUtils.assertSuperUserForOrg(user, p.getResponsibleOrg());
+		}
 		p = dao.insert(p);
 		AnetAuditLogger.log("Poam {} created by {}", p, user);
 		return p;
