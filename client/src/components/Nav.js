@@ -91,7 +91,8 @@ class Nav extends Component {
 						<NavItem>Admin</NavItem>
 					</Link>
 				}
-				{currentUser.isAdmin() && inAdmin &&
+
+				{inAdmin &&
 					<SubNav>
 						<Link to={"/admin/mergePeople"}><NavItem>Merge people</NavItem></Link>
 					</SubNav>
@@ -103,6 +104,8 @@ class Nav extends Component {
 
 function SubNav(props) {
 	let {componentClass, ...childProps} = props
+	childProps = Object.without(childProps, 'active')
+
 	let Component = componentClass || BSNav
 	return <li>
 		<Component {...childProps} />
