@@ -121,16 +121,16 @@ export default class RollupShow extends Page {
 			return
 		}
 
-		this.graph.innerHTML = ''
-
 		// Set up the data
 		const step1 = d3.nest()
 			.key((entry) => (entry.org && entry.org.shortName) || "Unknown")
 			.rollup(entry => entry[0])
 			.entries(graphData)
 
-		var svg = d3.select(this.graph),
-			margin = {top: 20, right: 20, bottom: 20, left: 20},
+		var svg = d3.select(this.graph)
+		svg.selectAll('*').remove()
+
+		var	margin = {top: 20, right: 20, bottom: 20, left: 20},
 			width = this.graph.clientWidth - margin.left - margin.right,
 			height = this.graph.clientHeight - margin.top - margin.bottom,
 			padding = 22,
