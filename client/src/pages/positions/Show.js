@@ -3,7 +3,6 @@ import Page from 'components/Page'
 import {Link} from 'react-router'
 import {Table, Button} from 'react-bootstrap'
 import moment from 'moment'
-import utils from 'utils'
 
 import Fieldset from 'components/Fieldset'
 import Breadcrumbs from 'components/Breadcrumbs'
@@ -90,7 +89,7 @@ export default class PositionShow extends Page {
 						<Form.Field id="code" />
 
 						<Form.Field id="type">
-							{position.type === "PRINCIPAL" ? "Principal" : `NATO ${utils.sentenceCase(position.type)}`}
+							{position.humanNameOfType()}
 						</Form.Field>
 
 						<Form.Field id="status" />

@@ -31,7 +31,7 @@ export default class AssignPositionModal extends Component {
 
 	render() {
 		let {person} = this.props
-		let newPosition = this.state.position
+		let newPosition = new Position(this.state.position)
 		let currentUser = this.context.currentUser
 
 		let positionSearchQuery = {}
@@ -98,7 +98,7 @@ export default class AssignPositionModal extends Component {
 											{newPosition.organization.shortName}
 										</td>
 										<td>
-											{newPosition.type}
+											{newPosition.humanNameOfType()}
 										</td>
 										<td>
 											{newPosition.person ?

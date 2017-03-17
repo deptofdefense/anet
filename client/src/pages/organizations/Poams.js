@@ -15,7 +15,7 @@ export default class OrganizationPoams extends Component {
 		let currentUser = this.context.currentUser
 
 		let org = this.props.organization
-		if (org.type !== 'ADVISOR_ORG') {
+		if (!org.isAdvisorOrg()) {
 			return <div></div>
 		}
 

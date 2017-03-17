@@ -22,16 +22,16 @@ export default class Person extends Model {
 
 	static humanNameOfRole(role) {
 		if (role === 'ADVISOR') {
-			return 'NATO Member'
+			return 'NATO member'
 		}
 		if (role === 'PRINCIPAL') {
-			return 'Principal'
+			return 'Afghan principal'
 		}
 
 		throw new Error(`Unrecognized role: ${role}`)
 	}
 
-	getHumanNameOfRole() {
+	humanNameOfRole() {
 		return Person.humanNameOfRole(this.role)
 	}
 

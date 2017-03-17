@@ -30,10 +30,10 @@ export default class AssignPersonModal extends Component {
 		let newPerson = this.state.person
 
 		let personSearchQuery = {}
-		if (position.type === 'ADVISOR' || position.type === 'SUPER_USER' || position.type === 'ADMINISTRATOR') {
-			personSearchQuery.role = 'ADVISOR'
-		} else if (position.type === 'PRINCIPAL') {
+		if (position.type === 'PRINCIPAL') {
 			personSearchQuery.role = 'PRINCIPAL'
+		} else  {
+			personSearchQuery.role = 'ADVISOR'
 		}
 
 		return (

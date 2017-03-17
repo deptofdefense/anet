@@ -19,8 +19,15 @@ export default class Organization extends Model {
 		return this.type === 'ADVISOR_ORG'
 	}
 
+	humanNameOfType() {
+		if (this.type === 'PRINCIPAL_ORG') {
+			return "Afghan organization"
+		} else {
+			return "NATO organization"
+		}
+	}
+
 	toString() {
 		return this.shortName || this.longName
 	}
-
 }
