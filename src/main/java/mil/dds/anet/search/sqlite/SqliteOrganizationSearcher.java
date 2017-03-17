@@ -15,6 +15,7 @@ import mil.dds.anet.database.OrganizationDao;
 import mil.dds.anet.database.mappers.OrganizationMapper;
 import mil.dds.anet.search.IOrganizationSearcher;
 import mil.dds.anet.utils.DaoUtils;
+import mil.dds.anet.utils.Utils;
 
 public class SqliteOrganizationSearcher implements IOrganizationSearcher {
 
@@ -33,7 +34,7 @@ public class SqliteOrganizationSearcher implements IOrganizationSearcher {
 		String text = query.getText();
 		if (text != null && text.trim().length() > 0) { 
 			whereClauses.add("(shortName LIKE '%' || :text || '%' OR longName LIKE '%' || :text || '%' )");
-			sqlArgs.put("text", text);
+			sqlArgs.put("text", Utils.getSqliteFullTextQuery(text));
 		}
 		
 		if (query.getType() != null) { 

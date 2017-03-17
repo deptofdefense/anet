@@ -20,6 +20,7 @@ import mil.dds.anet.database.ReportDao;
 import mil.dds.anet.database.mappers.ReportMapper;
 import mil.dds.anet.search.IReportSearcher;
 import mil.dds.anet.utils.DaoUtils;
+import mil.dds.anet.utils.Utils;
 
 public class SqliteReportSearcher implements IReportSearcher {
 
@@ -45,7 +46,7 @@ public class SqliteReportSearcher implements IReportSearcher {
 					+ "keyOutcomes LIKE '%' || :text || '%' OR "
 					+ "nextSteps LIKE '%' || :text || '%'"
 					+ ")");
-			args.put("text", text);
+			args.put("text", Utils.getSqliteFullTextQuery(text));
 		}
 		
 		DateTimeFormatter sqlitePattern = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");

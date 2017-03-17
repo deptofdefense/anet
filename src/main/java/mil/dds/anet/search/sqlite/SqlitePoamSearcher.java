@@ -12,6 +12,7 @@ import mil.dds.anet.beans.lists.AbstractAnetBeanList.PoamList;
 import mil.dds.anet.beans.search.PoamSearchQuery;
 import mil.dds.anet.database.mappers.PoamMapper;
 import mil.dds.anet.search.IPoamSearcher;
+import mil.dds.anet.utils.Utils;
 
 public class SqlitePoamSearcher implements IPoamSearcher {
 
@@ -29,7 +30,7 @@ public class SqlitePoamSearcher implements IPoamSearcher {
 		String text = query.getText();
 		if (text != null && text.trim().length() > 0) { 
 			whereClauses.add("(longName LIKE '%' || :text || '%' OR shortName LIKE '%' || :text || '%')");
-			args.put("text", text);
+			args.put("text", Utils.getSqliteFullTextQuery(text));
 		}
 		
 		if (query.getResponsibleOrgId() != null) { 

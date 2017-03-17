@@ -6,6 +6,7 @@ import mil.dds.anet.beans.lists.AbstractAnetBeanList.LocationList;
 import mil.dds.anet.beans.search.LocationSearchQuery;
 import mil.dds.anet.database.mappers.LocationMapper;
 import mil.dds.anet.search.ILocationSearcher;
+import mil.dds.anet.utils.Utils;
 
 public class SqliteLocationSearcher implements ILocationSearcher {
 
@@ -21,7 +22,7 @@ public class SqliteLocationSearcher implements ILocationSearcher {
 		result.setList(dbHandle.createQuery("/* SqliteLocationSearch */ SELECT * FROM locations "
 				+ "WHERE name LIKE '%' || :name || '%' "
 				+ "ORDER BY name ASC LIMIT :limit OFFSET :offset")
-			.bind("name", query.getText())
+			.bind("name", Utils.getSqliteFullTextQuery(query.getText()))
 			.bind("offset", query.getPageSize() * query.getPageNum())
 			.bind("limit", query.getPageSize())
 			.map(new LocationMapper())

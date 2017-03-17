@@ -16,6 +16,7 @@ import mil.dds.anet.database.PositionDao;
 import mil.dds.anet.database.mappers.PositionMapper;
 import mil.dds.anet.search.IPositionSearcher;
 import mil.dds.anet.utils.DaoUtils;
+import mil.dds.anet.utils.Utils;
 
 public class SqlitePositionSearcher implements IPositionSearcher {
 	
@@ -47,7 +48,7 @@ public class SqlitePositionSearcher implements IPositionSearcher {
 			}
 			
 			
-			sqlArgs.put("text", text);
+			sqlArgs.put("text", Utils.getSqliteFullTextQuery(text));
 		}
 		
 		if (query.getType() != null) { 
