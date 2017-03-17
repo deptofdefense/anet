@@ -1,5 +1,7 @@
 package mil.dds.anet.beans.search;
 
+import java.util.List;
+
 import mil.dds.anet.beans.Person.PersonStatus;
 import mil.dds.anet.beans.Person.Role;
 
@@ -10,7 +12,7 @@ public class PersonSearchQuery implements ISearchQuery {
 	String text;
 	Integer orgId;
 	Role role;
-	PersonStatus status;
+	List<PersonStatus> status;
 	Boolean includeChildOrgs;
 	String country;
 	Integer locationId;
@@ -50,11 +52,11 @@ public class PersonSearchQuery implements ISearchQuery {
 		this.role = role;
 	}
 
-	public PersonStatus getStatus() {
+	public List<PersonStatus> getStatus() {
 		return status;
 	}
 
-	public void setStatus(PersonStatus status) {
+	public void setStatus(List<PersonStatus> status) {
 		this.status = status;
 	}
 

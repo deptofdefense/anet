@@ -113,7 +113,7 @@ public class MssqlReportSearcher implements IReportSearcher {
 			} else { 
 				whereClauses.add("reports.principalOrganizationId = :principalOrgId");
 			}
-			args.put("principalOrgId", query.getAdvisorOrgId());
+			args.put("principalOrgId", query.getPrincipalOrgId());
 		}
 		
 		if (query.getLocationId() != null) { 

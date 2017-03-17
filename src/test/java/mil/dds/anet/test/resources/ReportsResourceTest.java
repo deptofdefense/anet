@@ -558,7 +558,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		searchResults = httpQuery("/api/reports/search", jack).post(Entity.json(query), ReportList.class);
 		assertThat(searchResults.getList()).isNotEmpty();
 		assertThat(searchResults.getList().stream().filter(r ->
-				r.loadAuthor().loadPosition().loadOrganization().getId().equals(ef11.getId())
+				r.loadAdvisorOrg().getId().equals(ef11.getId())
 			)).hasSameSizeAs(searchResults.getList());
 
 		//Search by parent organization
@@ -602,9 +602,10 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		orgs = httpQuery("/api/organizations/search?type=PRINCIPAL_ORG&text=Defense", jack).get(OrganizationList.class);
 		assertThat(orgs.getList().size()).isGreaterThan(0);
 		Organization mod = orgs.getList().stream().filter(o -> o.getShortName().equalsIgnoreCase("MoD")).findFirst().get();
-		assertThat(ef1.getShortName()).isEqualToIgnoringCase("MoD");
+		assertThat(mod.getShortName()).isEqualToIgnoringCase("MoD");
 		
 		//Search by Principal Organization
+		query.setState(null);
 		query.setPrincipalOrgId(mod.getId());
 		searchResults = httpQuery("/api/reports/search", jack).post(Entity.json(query), ReportList.class);
 		assertThat(searchResults.getList()).isNotEmpty();
@@ -616,7 +617,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		searchResults = httpQuery("/api/reports/search", jack).post(Entity.json(query), ReportList.class);
 		assertThat(searchResults.getList()).isNotEmpty();
 		assertThat(searchResults.getList().stream().filter(r ->
-				r.loadAuthor().loadPosition().loadOrganization().getId().equals(mod.getId())
+				r.loadPrincipalOrg().getId().equals(mod.getId())
 			)).hasSameSizeAs(searchResults.getList());
 		
 		query = new ReportSearchQuery();
