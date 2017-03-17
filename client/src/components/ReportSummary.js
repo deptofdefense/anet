@@ -17,7 +17,7 @@ export default class ReportSummary extends Component {
 
 		function PersonComponent({person}) {
 			if (!person) {
-				return null
+				return <span style={{'margin-left': '5px'}}>Unspecified</span>
 			}
 			return <LinkTo person={person}>
 				{person.rank} {person.name}
