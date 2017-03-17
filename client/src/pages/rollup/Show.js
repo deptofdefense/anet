@@ -207,7 +207,7 @@ export default class RollupShow extends Page {
 					</span>
 				} action={
 					<div>
-						<Button href={`/api/reports/rollup?startDate=${this.rollupStart.valueOf()}&endDate=${this.rollupEnd.valueOf()}`}>Print</Button>
+						<Button href={this.emailPreviewUrl()} target="rollup">Print</Button>
 						<Button onClick={this.toggleEmailModal} bsStyle="primary">Email rollup</Button>
 					</div>
 				}>
@@ -254,6 +254,7 @@ export default class RollupShow extends Page {
 				</Modal.Body>
 
 				<Modal.Footer>
+					<a href={this.emailPreviewUrl()} target="rollup" className="btn">Preview</a>
 					<Button bsStyle="primary" onClick={this.emailRollup}>Send email</Button>
 				</Modal.Footer>
 			</Form>
@@ -263,6 +264,10 @@ export default class RollupShow extends Page {
 	@autobind
 	toggleEmailModal() {
 		this.setState({showEmailModal: !this.state.showEmailModal})
+	}
+
+	emailPreviewUrl() {
+		return `/api/reports/rollup?startDate=${this.rollupStart.valueOf()}&endDate=${this.rollupEnd.valueOf()}`
 	}
 
 	@autobind
