@@ -116,9 +116,9 @@ export default class MyReports extends Page {
 
         return <div>
             <Breadcrumbs items={[['My Reports', window.location.pathname]]} />
-            <ReportSection title="Draft Reports" reportGroupName='draft' reportGroupState='DRAFT' id='draft-reports' />
-            <ReportSection title="Pending Approval" reportGroupName='pending' reportGroupState='PENDING' id='pending-approval' />
-            <ReportSection title="Published Reports" reportGroupName='released' reportGroupState='RELEASED' id='published-reports' />
+            {ReportSection({title: 'Draft Reports', reportGroupName: 'draft', reportGroupState: 'DRAFT', id: 'draft-reports'})}
+            {ReportSection({title:"Pending Approval", reportGroupName:'pending', reportGroupState: 'PENDING', id: 'pending-approval'})}
+            {ReportSection({title: "Published Reports", reportGroupName:'released', reportGroupState: 'RELEASED', id: 'published-reports'})}
         </div>
     }
 }
