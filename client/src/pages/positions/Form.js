@@ -36,17 +36,14 @@ export default class PositionForm extends ValidatableFormWrapper {
 		let currentUser = this.context.currentUser
 
 		let orgSearchQuery = {}
-		let personSearchQuery = {}
 		if (position.type === 'ADVISOR' || position.type === 'SUPER_USER' || position.type === 'ADMINISTRATOR') {
 			orgSearchQuery.type = 'ADVISOR_ORG'
-			personSearchQuery.role = 'ADVISOR'
 			if (currentUser && currentUser.position && currentUser.position.type === 'SUPER_USER') {
 				orgSearchQuery.parentOrgId = currentUser.position.organization.id
 				orgSearchQuery.parentOrgRecursively = true
 			}
 		} else if (position.type === 'PRINCIPAL') {
 			orgSearchQuery.type = 'PRINCIPAL_ORG'
-			personSearchQuery.role = 'PRINCIPAL'
 		}
 
 		const {ValidatableForm, RequiredField} = this
@@ -93,14 +90,6 @@ export default class PositionForm extends ValidatableFormWrapper {
 						placeholder="Postion ID or Number" />
 
 					<RequiredField id="name" label="Position Name" placeholder="Name/Description of Position"/>
-
-					<Form.Field id="person">
-						<Autocomplete valueKey="name"
-							placeholder="Select the person in this position"
-							url="/api/people/search"
-							queryParams={personSearchQuery}
-						/>
-					</Form.Field>
 
 					{position.type !== 'PRINCIPAL' &&
 						<Form.Field id="permissions">

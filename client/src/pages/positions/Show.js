@@ -1,7 +1,7 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 import {Link} from 'react-router'
-import {Table} from 'react-bootstrap'
+import {Table, Button} from 'react-bootstrap'
 import moment from 'moment'
 import utils from 'utils'
 
@@ -10,12 +10,14 @@ import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
 import LinkTo from 'components/LinkTo'
 import Messages, {setMessages} from 'components/Messages'
+import AssignPersonModal from 'components/AssignPersonModal'
 
 import GuidedTour from 'components/GuidedTour'
 import {positionTour} from 'pages/HopscotchTour'
 
 import API from 'api'
 import {Position, Organization} from 'models'
+import autobind from 'autobind-decorator'
 
 export default class PositionShow extends Page {
 	static contextTypes = {
@@ -32,6 +34,7 @@ export default class PositionShow extends Page {
 				id: props.params.id,
 				previousPeople: [],
 				associatedPositions: [],
+				showAssignPersonModal: false,
 			}),
 		}
 
@@ -103,17 +106,26 @@ export default class PositionShow extends Page {
 						</Form.Field>
 					</Fieldset>
 
-					<Fieldset title="Current assigned person" id="assigned-advisor" className={(!position.person || !position.person.id) && 'warning'} style={{textAlign: 'center'}}>
+					<Fieldset title="Current assigned person"
+						id="assigned-advisor"
+						className={(!position.person || !position.person.id) && 'warning'}
+						style={{textAlign: 'center'}}
+						action={canEdit && <Button onClick={this.showAssignPersonModal}>Change assigned person</Button>} >
 						{position.person && position.person.id
 							? <div>
 								<h4><LinkTo person={position.person}>{position.person.rank} {position.person.name}</LinkTo></h4>
-								<p><LinkTo position={position} edit button>Change assigned person</LinkTo></p>
+								<p></p>
 							</div>
 							: <div>
 								<p><em>{position.name} is currently empty.</em></p>
-								{currentUser.isSuperUser() && <p><LinkTo position={position} edit button>Assign person</LinkTo></p>}
 							</div>
 						}
+						<AssignPersonModal
+							position={position}
+							showModal={this.state.showAssignPersonModal}
+							onCancel={this.hideAssignPersonModal.bind(this, false)}
+							onSuccess={this.hideAssignPersonModal.bind(this, true)}
+						/>
 					</Fieldset>
 
 					<Fieldset title={`Assigned ${assignedRole}`} id="assigned-principal">
@@ -171,5 +183,18 @@ export default class PositionShow extends Page {
 			<td>{personName}</td>
 			<td><Link to={Position.pathFor(pos)}>{pos.name}</Link></td>
 		</tr>
+	}
+
+	@autobind
+	showAssignPersonModal() {
+		this.setState({showAssignPersonModal: true})
+	}
+
+	@autobind
+	hideAssignPersonModal(success) {
+		this.setState({showAssignPersonModal: false})
+		if (success) {
+			this.fetchData(this.props)
+		}
 	}
 }
