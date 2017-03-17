@@ -91,8 +91,8 @@ let superUserTour = (currentUser) => { return {
 			fixedElement: true,
 		},
 		{
-			title: 'My Organization',
-			content: 'You can navigate to your organization by clicking on the "My Organization" link. Click "next" to continue this tour on your organization\'s page.',
+			title: 'My organization',
+			content: 'You can navigate to your organization by clicking on the "My organization" link. Click "next" to continue this tour on your organization\'s page.',
 			target: 'my-organizations',
 			placement: 'right',
 			fixedElement: true,
