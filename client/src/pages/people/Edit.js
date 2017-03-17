@@ -52,12 +52,12 @@ export default class PersonEdit extends Page {
 		let currentUser = this.context.currentUser
 		let canEditPosition = currentUser && currentUser.isSuperUser()
 
-		const legendText = person.status === 'NEW_USER' ? 'Create your account' : `Edit ${person.name}`
-		const saveText = person.status === 'NEW_USER' ? 'Create profile' : null
+		const legendText = person.isNewUser() ? 'Create your account' : `Edit ${person.name}`
+		const saveText = person.isNewUser() ? 'Create profile' : null
 
 		return (
 			<div>
-				{person.status !== 'NEW_USER' &&
+				{!person.isNewUser() &&
 					<Breadcrumbs items={[[`Edit ${person.name}`, Person.pathForEdit(person)]]} />
 				}
 

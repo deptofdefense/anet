@@ -78,7 +78,10 @@ export default class RollupShow extends Page {
 			sortOrder: "DESC",
 			pageNum: this.state.reportsPageNum,
 		}
-		API.query(/* GraphQL */`
+
+		let graphQuery = API.fetch(`/api/reports/rollupGraph?startDate=${rollupQuery.releasedAtStart}&endDate=${rollupQuery.releasedAtEnd}`)
+
+		let reportQuery = API.query(/* GraphQL */`
 			reportList(f:search, query:$rollupQuery) {
 				pageNum, pageSize, totalCount, list {
 					id, state, intent, engagementDate, intent, keyOutcomes, nextSteps, cancelledReason, atmosphere, atmosphereDetails
@@ -105,13 +108,12 @@ export default class RollupShow extends Page {
 				}
 			}
 		`, {rollupQuery}, '($rollupQuery: ReportSearchQuery)')
-		.then(data => {
-			this.setState({reports: data.reportList})
-		})
 
-		API.fetch(`/api/reports/rollupGraph?startDate=${this.rollupStart.valueOf()}&endDate=${this.rollupEnd.valueOf()}`
-		).then(data => {
-			this.setState({graphData: data})
+		Promise.all([reportQuery, graphQuery]).then(values => {
+			this.setState({
+				reports: values[0].reportList,
+				graphData: values[1]
+			})
 		})
 	}
 
@@ -121,16 +123,16 @@ export default class RollupShow extends Page {
 			return
 		}
 
-		this.graph.innerHTML = ''
-
 		// Set up the data
 		const step1 = d3.nest()
 			.key((entry) => (entry.org && entry.org.shortName) || "Unknown")
 			.rollup(entry => entry[0])
 			.entries(graphData)
 
-		var svg = d3.select(this.graph),
-			margin = {top: 20, right: 20, bottom: 20, left: 20},
+		var svg = d3.select(this.graph)
+		svg.selectAll('*').remove()
+
+		var	margin = {top: 20, right: 20, bottom: 20, left: 20},
 			width = this.graph.clientWidth - margin.left - margin.right,
 			height = this.graph.clientHeight - margin.top - margin.bottom,
 			padding = 22,
