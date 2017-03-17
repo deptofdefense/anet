@@ -15,6 +15,12 @@ export default class MyReports extends Page {
         this.state = {}
     }
 
+    componentWillReceiveProps(nextProps) {
+		if (!this.state.reports) {
+			this.loadData(nextProps)
+		}
+	}
+
     fetchData() {
         API.query(/* GraphQL */`
 			person(f:me) {
