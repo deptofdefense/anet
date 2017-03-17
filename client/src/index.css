@@ -364,15 +364,12 @@ a.home-tile {
 	text-align: center;
 }
 
-.not-found .planet {
-	width: 250px;
-	position: absolute;
-	right: 0;
-	top: -90px;
+.not-found .col-sm-3 {
+	display: none;
 }
 
-.not-found #leftNav {
-	display: none;
+.not-found .col-sm-9 {
+	width: 100%;
 }
 
 .onboarding-new {
