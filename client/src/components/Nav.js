@@ -61,7 +61,7 @@ class Nav extends Component {
 				</Link>}
 
 				{currentUser.position.organization && <Link to={Organization.pathFor(currentUser.position.organization)}>
-					<NavItem>My organization</NavItem>
+					<NavItem id="my-organization">My organization</NavItem>
 				</Link>}
 
 				{inOrg && orgId === myOrgId && orgSubNav}
