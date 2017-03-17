@@ -241,7 +241,7 @@ export default class RollupShow extends Page {
 		return <Modal show={this.state.showEmailModal} onHide={this.toggleEmailModal}>
 			<Form formFor={email} onChange={this.onChange} submitText={false} >
 				<Modal.Header closeButton>
-					<Modal.Title>Email rollup</Modal.Title>
+					<Modal.Title>Email rollup - {this.dateStr}</Modal.Title>
 				</Modal.Header>
 
 				<Modal.Body>
