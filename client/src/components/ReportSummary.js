@@ -29,10 +29,10 @@ export default class ReportSummary extends Component {
 				<p className="report-draft">
 					<strong>Draft{report.updatedAt && ':'}</strong> 
 					{ 
-						/* If the parent does not fetch report.createdAt, we will not display this
+						/* If the parent does not fetch report.updatedAt, we will not display this
 							so we do not get a broken view. It would be better to go through and 
 							find all the places where report is passed in and ensure that the graphql
-							query includes createdAt, but I don't have time for that now.
+							query includes updatedAt, but I don't have time for that now.
 						*/
 						report.updatedAt &&
 							<span> last saved at {moment(report.updatedAt).format('D MMMM, YYYY @ HHmm')}</span>
