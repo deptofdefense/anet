@@ -55,14 +55,15 @@ export default class OrganizationForm extends ValidatableFormWrapper {
 					<Autocomplete valueKey="shortName"
 						placeholder="Start typing to search for a higher level organization..."
 						url="/api/organizations/search"
-						queryParams={{type: organization.type}} />
+						queryParams={{type: organization.type}}
+					/>
 				</Form.Field>
 
 				<RequiredField id="shortName" label="Name" placeholder="e.g. EF1.1" />
 				<RequiredField id="longName" label="Description" placeholder="e.g. Force Sustainment" />
 			</Fieldset>
 
-			{organization.type === 'ADVISOR_ORG' && <div>
+			{organization.isAdvisorOrg() && <div>
 				<Fieldset title="Approval process">
 					<Button className="pull-right" onClick={this.addApprovalStep} bsStyle="primary" id="addApprovalStepButton" >
 						Add an Approval Step

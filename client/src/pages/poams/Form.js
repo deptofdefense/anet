@@ -16,10 +16,23 @@ export default class PoamForm extends ValidatableFormWrapper {
 		edit: PropTypes.bool,
 	}
 
+	static contextTypes = {
+		currentUser: PropTypes.object.isRequired,
+	}
+
 	render() {
 		let {poam, edit} = this.props
-		const {ValidatableForm, RequiredField} = this
+		let {currentUser} = this.context
 
+		let orgSearchQuery = {}
+		orgSearchQuery.type = 'ADVISOR_ORG'
+		if (currentUser && currentUser.position && currentUser.position.type === 'SUPER_USER') {
+			orgSearchQuery.parentOrgId = currentUser.position.organization.id
+			orgSearchQuery.parentOrgRecursively = true
+		}
+
+
+		const {ValidatableForm, RequiredField} = this
 		return (
 			<ValidatableForm
 				formFor={poam}
@@ -33,8 +46,10 @@ export default class PoamForm extends ValidatableFormWrapper {
 					<RequiredField id="longName" label="PoAM description" />
 					<Form.Field id="responsibleOrg" label="Responsible organization">
 						<Autocomplete valueKey="shortName"
-							placeholder="Select a responsible organization for this poam"
-							url="/api/organizations/search" />
+							placeholder="Select a responsible organization for this PoAM"
+							url="/api/organizations/search"
+							queryParams={orgSearchQuery}
+						/>
 					</Form.Field>
 				</Fieldset>
 			</ValidatableForm>

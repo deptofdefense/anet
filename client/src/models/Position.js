@@ -27,6 +27,10 @@ export default class Position extends Model {
 		}
 	}
 
+	isPrincipal() {
+		return this.type === 'PRINCIPAL'
+	}
+
 	toString() {
 		return this.code || this.name
 	}
