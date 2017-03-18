@@ -54,7 +54,7 @@ import OnboardingShow from './pages/onboarding/Show'
 
 ReactDOM.render((
 	<InjectablesProvider>
-		<Router history={browserHistory}>
+		<Router history={browserHistory} onUpdate={jumpToTop}>
 			<Route path="/" component={App} getIndexRoute={getIndexRoute}>
 				<Route path="search" component={Search} />
 
@@ -123,4 +123,8 @@ function getIndexRoute(_, cb) {
 	`).then(
 		({person}) => cb(null, <Route component={person.status === 'NEW_USER' ? OnboardingShow : Home} />)
 	)
+}
+
+function jumpToTop() {
+	window.scrollTo(0,0)
 }
