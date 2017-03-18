@@ -7,7 +7,7 @@ import './utils'
 
 import React from 'react'
 import ReactDOM from 'react-dom'
-import {Router, Route, IndexRoute, browserHistory} from 'react-router'
+import {Router, Route, browserHistory} from 'react-router'
 import {InjectablesProvider} from 'react-injectables'
 
 import API from 'api'
@@ -17,7 +17,6 @@ import Home from './pages/Home'
 import Search from './pages/Search'
 import PageMissing from './pages/PageMissing'
 
-import ReportsIndex from './pages/reports/Index'
 import ReportNew from './pages/reports/New'
 import ReportShow from './pages/reports/Show'
 import ReportEdit from './pages/reports/Edit'
@@ -59,7 +58,6 @@ ReactDOM.render((
 				<Route path="search" component={Search} />
 
 				<Route path="reports">
-					<IndexRoute component={ReportsIndex} />
 					<Route path="new" component={ReportNew} />
 					<Route path=":id/edit" component={ReportEdit} />
 					<Route path=":id/min" component={ReportMinimal} />
