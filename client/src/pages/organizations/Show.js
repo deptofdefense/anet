@@ -87,7 +87,7 @@ export default class OrganizationShow extends Page {
 		let isSuperUser = currentUser && currentUser.isSuperUserForOrg(org)
 		let isAdmin = currentUser && currentUser.isAdmin()
 
-		let superUsers = org.positions.filter(pos => pos.status === 'ACTIVE' && (!pos.person || pos.person.status === 'ACTIVE') && (pos.type === 'SUPER_USER' || pos.type === 'ADMINISTRATOR'))
+		let superUsers = org.positions.filter(pos => pos.status !== 'INACTIVE' && (!pos.person || pos.person.status !== 'INACTIVE') && (pos.type === 'SUPER_USER' || pos.type === 'ADMINISTRATOR'))
 
 		return (
 			<div>
