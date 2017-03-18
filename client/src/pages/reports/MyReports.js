@@ -24,9 +24,9 @@ export default class MyReports extends Page {
     fetchData() {
         API.query(/* GraphQL */`
 			person(f:me) {
-				pending: authoredReports(pageNum:0, pageSize:10, state: [PENDING_APPROVAL]) { 
+				pending: authoredReports(pageNum:0, pageSize:10, state: [PENDING_APPROVAL]) {
                     pageNum, pageSize, totalCount, list {
-                        id, intent, engagementDate, keyOutcomes, nextSteps, atmosphere, state, updatedAt
+                        id, intent, engagementDate, keyOutcomes, nextSteps, atmosphere, state, updatedAt, cancelledReason
                         primaryAdvisor { id, name } ,
                         primaryPrincipal {id, name },
                         advisorOrg { id, shortName, longName }
@@ -34,9 +34,9 @@ export default class MyReports extends Page {
                         location { id, name, lat, lng }
                     }
                 },
-				draft: authoredReports(pageNum:0, pageSize:10, state: [DRAFT]) { 
+				draft: authoredReports(pageNum:0, pageSize:10, state: [DRAFT]) {
                     pageNum, pageSize, totalCount, list {
-                        id, intent, engagementDate, keyOutcomes, nextSteps, atmosphere, state, updatedAt
+                        id, intent, engagementDate, keyOutcomes, nextSteps, atmosphere, state, updatedAt, cancelledReason
                         primaryAdvisor { id, name } ,
                         primaryPrincipal {id, name },
                         advisorOrg { id, shortName, longName }
@@ -44,9 +44,9 @@ export default class MyReports extends Page {
                         location { id, name, lat, lng }
                     }
                 },
-				released: authoredReports(pageNum:0, pageSize:10, state: [RELEASED]) { 
+				released: authoredReports(pageNum:0, pageSize:10, state: [RELEASED]) {
                     pageNum, pageSize, totalCount, list {
-                        id, intent, engagementDate, keyOutcomes, nextSteps, atmosphere, state, updatedAt
+                        id, intent, engagementDate, keyOutcomes, nextSteps, atmosphere, state, updatedAt, cancelledReason
                         primaryAdvisor { id, name } ,
                         primaryPrincipal {id, name },
                         advisorOrg { id, shortName, longName }
@@ -55,12 +55,12 @@ export default class MyReports extends Page {
                     }
                 },
 			}
-		`).then(data => 
+		`).then(data =>
             this.setState({
                 reports: _mapValues(
-                    data.person, 
+                    data.person,
                     reportByStatus => ({list: Report.fromArray(reportByStatus.list), ...reportByStatus})
-                ) 
+                )
             })
         )
     }
@@ -69,13 +69,13 @@ export default class MyReports extends Page {
     queryReportPage(reportGroupName, state, pageNum) {
         // TODO it would be better not to use string interpolation here for the graphql query,
         // but I kept getting an error when I tried to pull $state out into a variable.
-        // I was passing state as a string with variable definition ($state: ReportState), 
+        // I was passing state as a string with variable definition ($state: ReportState),
         // and I got the following error:
         //
         //      {"errors":["Validation error of type VariableTypeMismatch: Variable type doesn't match"]}
         API.query(/* GraphQL */`
 			person(f:me) {
-				authoredReports(pageNum: $pageNum, pageSize: 10, state: [${state}]) { 
+				authoredReports(pageNum: $pageNum, pageSize: 10, state: [${state}]) {
                     pageNum, pageSize, totalCount, list {
                         id, intent, engagementDate, keyOutcomes, nextSteps, atmosphere, state, updatedAt
                         primaryAdvisor { id, name } ,
@@ -86,12 +86,12 @@ export default class MyReports extends Page {
                     }
                 }
 			}
-		`, {pageNum}, '($pageNum: Int)').then(data => 
+		`, {pageNum}, '($pageNum: Int)').then(data =>
             this.setState({
                 reports: {
                     ...this.state.reports,
                     [reportGroupName]: ({
-                        list: Report.fromArray(data.person.authoredReports.list), 
+                        list: Report.fromArray(data.person.authoredReports.list),
                         ...data.person.authoredReports
                     })
                 }
