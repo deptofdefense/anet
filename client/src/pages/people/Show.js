@@ -85,10 +85,15 @@ export default class PersonShow extends Page {
 		//Admins can always edit anybody
 		//SuperUsers can edit people in their org, their descendant orgs, or un-positioned people.
 		let currentUser = this.context.currentUser
+		let hasPosition = position && position.id
 		let canEdit = Person.isEqual(currentUser, person) ||
 			currentUser.isAdmin() ||
-			(position && currentUser.isSuperUserForOrg(position.organization)) ||
-			(!position && currentUser.isSuperUser()) ||
+			(hasPosition && currentUser.isSuperUserForOrg(position.organization)) ||
+			(!hasPosition && currentUser.isSuperUser()) ||
+			(person.role === 'PRINCIPAL' && currentUser.isSuperUser())
+		let canChangePosition = currentUser.isAdmin() ||
+			(!hasPosition && currentUser.isSuperUser()) ||
+			(hasPosition && currentUser.isSuperUserForOrg(position.organization)) ||
 			(person.role === 'PRINCIPAL' && currentUser.isSuperUser())
 
 		return (
@@ -132,12 +137,12 @@ export default class PersonShow extends Page {
 
 
 
-					<Fieldset title="Current position" id="current-position" className={(!position || !position.id) && 'warning'} action={currentUser.isSuperUser() && <div><Button onClick={this.showAssignPositionModal}>Edit</Button></div>}>
+					<Fieldset title="Current position" id="current-position" className={(!position || !position.id) && 'warning'} action={canChangePosition && <div><Button onClick={this.showAssignPositionModal}>Edit</Button></div>}>
 						{position && position.id
 							? this.renderPosition(position)
 							: this.renderPositionBlankSlate(person)
 						}
-						{currentUser.isSuperUser() &&
+						{canChangePosition &&
 							<AssignPositionModal
 								showModal={this.state.showAssignPositionModal}
 								person={person}
@@ -197,13 +202,15 @@ export default class PersonShow extends Page {
 
 	renderPositionBlankSlate(person) {
 		let currentUser = this.context.currentUser
+		//when the person is not in a position, any super user can assign them.
+		let canChangePosition = currentUser.isSuperUser()
 
 		if (Person.isEqual(currentUser, person)) {
 			return <em>You are not assigned to a position. Contact your organization's super user to be added.</em>
 		} else {
 			return <div style={{textAlign: 'center'}}>
 				<p><em>{person.name} is not assigned to a position.</em></p>
-				{currentUser.isSuperUser() &&
+				{canChangePosition &&
 					<p><Button onClick={this.showAssignPositionModal}>Assign position</Button></p>
 				}
 			</div>
