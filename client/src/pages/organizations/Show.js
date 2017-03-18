@@ -122,7 +122,7 @@ export default class OrganizationShow extends Page {
 
 						{org.parentOrg && org.parentOrg.id &&
 							<Form.Field id="parentOrg" label="Parent organization">
-								<LinkTo organization={org.parentOrg} />
+								<LinkTo organization={org.parentOrg} >{org.parentOrg.shortName} {org.parentOrg.longName}</LinkTo>
 							</Form.Field>
 						}
 
@@ -144,7 +144,9 @@ export default class OrganizationShow extends Page {
 						{org.childrenOrgs && org.childrenOrgs.length > 0 && <Form.Field id="childrenOrgs" label="Sub organizations">
 							<ListGroup>
 								{org.childrenOrgs.map(org =>
-									<ListGroupItem key={org.id} ><LinkTo organization={org} /></ListGroupItem>
+									<ListGroupItem key={org.id} >
+										<LinkTo organization={org} >{org.shortName} {org.longName}</LinkTo>
+									</ListGroupItem>
 								)}
 							</ListGroup>
 						</Form.Field>}
