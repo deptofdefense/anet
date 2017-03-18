@@ -80,6 +80,14 @@ server:
   adminConnectors:
     - type: http
       port: 8081
+  requestLog:
+    appenders: 
+      - type: file
+        currentLogFilename: ./logs/access.log
+        archivedLogFilenamePattern: ./logs/access-%d.log.zip
+        archivedFileCount: 5
+      - type: console
+        target: stdout
 
 # Configuration for the Freemarker templating library
 views:
@@ -122,3 +130,8 @@ logging:
     - type: console
       threshold: TRACE
       target: stdout
+    - type: file
+      threshold: INFO
+      currentLogFilename: ./logs/anet.log
+      archivedLogFilenamePattern: ./logs/anet-%d.log.zip
+      archivedFileCount: 2

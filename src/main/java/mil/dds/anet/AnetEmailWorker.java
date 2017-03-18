@@ -104,10 +104,11 @@ public class AnetEmailWorker implements Runnable {
 			List<Integer> sentEmails = new LinkedList<Integer>();
 			for (AnetEmail email : emails) { 
 				try {
-					logger.error("Sending email to {} re: {}",email.getToAddresses(), email.getAction().getSubject());
+					logger.info("Sending email to {} re: {}",email.getToAddresses(), email.getAction().getSubject());
 					sendEmail(email);
 					sentEmails.add(email.getId());
 				} catch (Exception e) { 
+					logger.error("Error sending email", e);
 					e.printStackTrace();
 				}
 			}
