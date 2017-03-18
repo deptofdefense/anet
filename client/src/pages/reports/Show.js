@@ -148,7 +148,7 @@ export default class ReportShow extends Page {
 					<Fieldset title={`Report #${report.id}`} className="show-report-overview" action={<div>
 						{canEmail && <Button onClick={this.toggleEmailModal}>Email report</Button>}
 						{canEdit && <LinkTo report={report} edit button="primary">Edit</LinkTo>}
-						{canSubmit && errors.length === 0 && <Button bsStyle="primary" onClick={this.submitDraft}>Submit</Button>}
+						{canSubmit && errors.length === 0 && <Button bsStyle="primary" onClick={this.submitDraft}>Submit report</Button>}
 					</div>
 					}>
 
