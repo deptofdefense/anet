@@ -7,10 +7,8 @@ import './utils'
 
 import React from 'react'
 import ReactDOM from 'react-dom'
-import {Router, Route, browserHistory} from 'react-router'
+import {Router, Route, IndexRoute, browserHistory} from 'react-router'
 import {InjectablesProvider} from 'react-injectables'
-
-import API from 'api'
 
 import App from './pages/App'
 import Home from './pages/Home'
@@ -50,11 +48,13 @@ import MergePeople from './pages/admin/MergePeople'
 import GraphiQL from './pages/GraphiQL'
 
 import OnboardingShow from './pages/onboarding/Show'
+import OnboardingEdit from './pages/onboarding/Edit'
 
 ReactDOM.render((
 	<InjectablesProvider>
 		<Router history={browserHistory} onUpdate={jumpToTop}>
-			<Route path="/" component={App} getIndexRoute={getIndexRoute}>
+			<Route path="/" component={App}>
+				<IndexRoute component={Home} />
 				<Route path="search" component={Search} />
 
 				<Route path="reports">
@@ -101,27 +101,16 @@ ReactDOM.render((
 				<Route path="admin/mergePeople" component={MergePeople} />
 				<Route path="admin" component={AdminIndex} />
 
-				<Route path="onboarding" component={OnboardingShow} />
+				<Route path="onboarding">
+					<IndexRoute component={OnboardingShow} />
+					<Route path="edit" component={OnboardingEdit} />
+				</Route>
+
 				<Route path="*" component={PageMissing} />
 			</Route>
 		</Router>
 	</InjectablesProvider>
 ), document.getElementById('root'))
-
-/**
- * react-router allows us to dynamically determine what the path '/' resolves to.
- * We would like to choose that for the user based on whether this is their first
- * time to the app.
- */
-function getIndexRoute(_, cb) {
-	API.query(/* GraphQL */`
-		person(f:me) {
-			status
-		}
-	`).then(
-		({person}) => cb(null, <Route component={person.status === 'NEW_USER' ? OnboardingShow : Home} />)
-	)
-}
 
 function jumpToTop() {
 	window.scrollTo(0,0)
