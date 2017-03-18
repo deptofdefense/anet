@@ -34,7 +34,7 @@ export default class SavedSearchTable extends Component {
 		API.query(/*GraphQL */`
 			reports: reportList(f:search, query: $query) {
 				pageNum, pageSize, totalCount, list {
-					id, intent, engagementDate, keyOutcomes, nextSteps
+					id, intent, engagementDate, keyOutcomes, nextSteps, state, cancelledReason
 					primaryAdvisor { id, name, role, position { organization { id, shortName}}},
 					primaryPrincipal { id, name, role, position { organization { id, shortName}}},
 					author{ id, name},

@@ -36,8 +36,8 @@ export default class ReportEdit extends Page {
 		API.query(/* GraphQL */`
 			report(id:${props.params.id}) {
 				id, intent, engagementDate, atmosphere, atmosphereDetails, state
-				author { id, name },
 				keyOutcomes, reportText, nextSteps, cancelledReason,
+				author { id, name },
 				location { id, name },
 				attendees {
 					id, name, role, primary

@@ -64,7 +64,7 @@ export default class OrganizationShow extends Page {
 				},
 				reports(pageNum:0, pageSize:25) {
 					list {
-						id, intent, engagementDate, keyOutcomes, nextSteps
+						id, intent, engagementDate, keyOutcomes, nextSteps, state, cancelledReason
 						author { id, name },
 						primaryAdvisor { id, name } ,
 						primaryPrincipal {id, name },

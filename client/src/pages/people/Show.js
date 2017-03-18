@@ -57,15 +57,9 @@ export default class PersonShow extends Page {
 					}
 				},
 				authoredReports(pageNum:0,pageSize:10) { list {
-					id,
-					engagementDate,
+					id, engagementDate, intent, updatedAt, state, cancelledReason
 					advisorOrg { id, shortName }
-					intent,
-					updatedAt,
-					author {
-						id,
-						name
-					}
+					author { id, name }
 				}},
 				attendedReports(pageNum:0, pageSize:10) { list {
 					id,
