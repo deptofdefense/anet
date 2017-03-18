@@ -14,24 +14,32 @@ export default class ValidatableFormWrapper extends Component {
 		this.state = {}
 	}
 
-    @autobind
-    ValidatableForm(props) {
+	@autobind
+	ValidatableForm(props) {
 		const isSubmitDisabled = () => {
-			return !props.canSubmitWithError && _some(_values(this.state.formErrors))
+			const formErrors = _values(this.state.formErrors)
+			// see notes below about three levels of error states. here we just check that
+			// it's actually an error that we want to block.
+			return !props.canSubmitWithError && formErrors.some(value => value >= 2)
 		}
+
 		const onSubmit = () => {
 			this.setState({afterSubmit: true})
 			props.onSubmit && props.onSubmit()
 		}
-        return <Form {...props} submitDisabled={isSubmitDisabled()} onSubmit={onSubmit} />
-    }
+
+		return <Form {...props} submitDisabled={isSubmitDisabled()} onSubmit={onSubmit} />
+	}
 
 	@autobind
 	RequiredField(props) {
-		const onError = () => this.setState({formErrors: {...this.state.formErrors, [props.id]: true}})
-		const onValid = () => this.setState({formErrors: {...this.state.formErrors, [props.id]: false}})
+		const {canSubmitWithError} = props
+		// individual form fields can be marked as submittable even with errors, so we have three levels of error state:
+		// 0: no error, 1: warning, 2: error that should prevent submit
+		const onError = () => this.setState({formErrors: {...this.state.formErrors, [props.id]: canSubmitWithError ? 1 : 2}})
+		const onValid = () => this.setState({formErrors: {...this.state.formErrors, [props.id]: 0}})
 
-		return <Form.Field {...Object.without(props, 'required', 'humanName', 'validateBeforeUserTouches')} 
+		return <Form.Field {...Object.without(props, 'required', 'humanName', 'validateBeforeUserTouches')}
 			validateBeforeUserTouches={this.state.afterSubmit || props.validateBeforeUserTouches}
 			onError={onError}
 			onValid={onValid}

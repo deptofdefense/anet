@@ -47,7 +47,7 @@ export default class ReportCollection extends Component {
 		let reportsExist = _get(reports, 'length', 0) > 0
 
 		return <div className="report-collection">
-			{ reportsExist ? 
+			{reportsExist ?
 				<div>
 					<header>
 						<ButtonToggleGroup value={this.state.viewFormat} onChange={this.changeViewFormat}>
@@ -75,7 +75,9 @@ export default class ReportCollection extends Component {
 						{this.state.viewFormat === FORMAT_SUMMARY && this.renderSummary(reports)}
 						{this.state.viewFormat === FORMAT_MAP && this.renderMap(reports)}
 					</div>
-				</div> : <em>No reports found</em>
+				</div>
+				:
+				<em>No reports found</em>
 			}
 		</div>
 	}
