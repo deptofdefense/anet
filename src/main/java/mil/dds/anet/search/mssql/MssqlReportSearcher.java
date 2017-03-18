@@ -47,8 +47,9 @@ public class MssqlReportSearcher implements IReportSearcher {
 		String text = query.getText();
 		if (text != null && text.trim().length() > 0) {
 			String cleanText = Utils.getSqlServerFullTextQuery(text);
-			whereClauses.add("CONTAINS ((text, intent, keyOutcomes, nextSteps), :text)");
-			args.put("text", cleanText);
+			whereClauses.add("(CONTAINS ((text, intent, keyOutcomes, nextSteps), :containsQuery) OR FREETEXT((text, intent, keyOutcomes, nextSteps), :freetextQuery))");
+			args.put("containsQuery", cleanText);
+			args.put("freetextQuery", query.getText());
 		}
 		
 		if (query.getEngagementDateStart() != null) { 

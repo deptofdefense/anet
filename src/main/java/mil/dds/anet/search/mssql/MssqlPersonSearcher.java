@@ -42,8 +42,9 @@ public class MssqlPersonSearcher implements IPersonSearcher {
 		
 		String text = query.getText();
 		if (text != null && text.trim().length() > 0) { 
-			whereClauses.add("CONTAINS ((name, emailAddress, biography), :text)");
-			sqlArgs.put("text", Utils.getSqlServerFullTextQuery(query.getText()));
+			whereClauses.add("(CONTAINS ((name, emailAddress, biography), :containsQuery) OR FREETEXT((name, biography), :freetextQuery))");
+			sqlArgs.put("containsQuery", Utils.getSqlServerFullTextQuery(query.getText()));
+			sqlArgs.put("freetextQuery", query.getText());
 		}
 		
 		if (query.getRole() != null) { 
