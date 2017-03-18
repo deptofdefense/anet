@@ -32,6 +32,7 @@ import mil.dds.anet.graphql.GraphQLParam;
 import mil.dds.anet.graphql.IGraphQLResource;
 import mil.dds.anet.utils.AnetAuditLogger;
 import mil.dds.anet.utils.AuthUtils;
+import mil.dds.anet.utils.DaoUtils;
 import mil.dds.anet.utils.ResponseUtils;
 import mil.dds.anet.utils.Utils;
 
@@ -95,7 +96,9 @@ public class PositionResource implements IGraphQLResource {
 			throw new WebApplicationException("Position Name must not be null", Status.BAD_REQUEST);
 		}
 		if (p.getType() == null) { throw new WebApplicationException("Position type must be defined", Status.BAD_REQUEST); }
-		if (p.getOrganization() == null) { throw new WebApplicationException("A Position must belong to an organization", Status.BAD_REQUEST); }
+		if (p.getOrganization() == null || p.getOrganization().getId() == null) { 
+			throw new WebApplicationException("A Position must belong to an organization", Status.BAD_REQUEST); 
+		}
 		if (p.getType() == PositionType.ADMINISTRATOR) { AuthUtils.assertAdministrator(user); } 
 		
 		AuthUtils.assertSuperUserForOrg(user, p.getOrganization());
@@ -121,9 +124,11 @@ public class PositionResource implements IGraphQLResource {
 	@Path("/update")
 	@RolesAllowed("SUPER_USER")
 	public Response updatePosition(@Auth Person user, Position pos) {
-		AuthUtils.assertSuperUserForOrg(user, pos.getOrganization());
 		if (pos.getType() == PositionType.ADMINISTRATOR) { AuthUtils.assertAdministrator(user); } 
-		if (pos.getOrganization() == null) { throw new WebApplicationException("A Position must belong to an organization", Status.BAD_REQUEST); }
+		if (DaoUtils.getId(pos.getOrganization()) == null) { 
+			throw new WebApplicationException("A Position must belong to an organization", Status.BAD_REQUEST); 
+		}
+		AuthUtils.assertSuperUserForOrg(user, pos.getOrganization());
 
 		int numRows = dao.update(pos);
 
