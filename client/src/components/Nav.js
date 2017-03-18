@@ -58,11 +58,11 @@ class Nav extends Component {
 					<NavItem>Home</NavItem>
 				</Link>
 
-				 {currentUser.id && <Link to={{pathname: '/reports/mine'}}>
-						<NavItem>My Reports</NavItem>
+				{currentUser.id && <Link to={{pathname: '/reports/mine'}}>
+					<NavItem>My reports</NavItem>
 				</Link>}
 
-				{inMyReports && 
+				{inMyReports &&
 					<SubNav
 						componentClass={Scrollspy}
 						className="nav"
