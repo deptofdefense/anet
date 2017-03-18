@@ -62,7 +62,7 @@ public class Utils {
 	 * else we do an inflectional match. 
 	 */
 	public static String getSqlServerFullTextQuery(String text) {
-		String cleanText = text.trim().replaceAll("\\p{Punct}", "");
+		String cleanText = text.trim().replaceAll("[\"*]", "");
 		if (text.endsWith("*")) { 
 			cleanText = "\"" + cleanText + "*\"";
 		} else { 
