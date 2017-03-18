@@ -57,15 +57,9 @@ export default class PersonShow extends Page {
 					}
 				},
 				authoredReports(pageNum:0,pageSize:10) { list {
-					id,
-					engagementDate,
+					id, engagementDate, intent, updatedAt, state, cancelledReason
 					advisorOrg { id, shortName }
-					intent,
-					updatedAt,
-					author {
-						id,
-						name
-					}
+					author { id, name }
 				}},
 				attendedReports(pageNum:0, pageSize:10) { list {
 					id,
@@ -117,18 +111,20 @@ export default class PersonShow extends Page {
 
 						<Form.Field id="rank" />
 
-						<Form.Field id="role">
-							{person.humanNameOfRole()}
-						</Form.Field>
+						<Form.Field id="role">{person.humanNameOfRole()}</Form.Field>
 
-						<Form.Field id="status" />
+						<Form.Field id="status">{person.humanNameOfStatus()}</Form.Field>
+
 						<Form.Field label="Phone" id="phoneNumber" />
 						<Form.Field label="Email" id="emailAddress">
 							<a href={`mailto:${person.emailAddress}`}>{person.emailAddress}</a>
 						</Form.Field>
+
 						<Form.Field id="country" />
 						<Form.Field id="gender" />
+
 						<Form.Field label="End of tour" id="endOfTourDate" value={person.endOfTourDate && moment(person.endOfTourDate).format('D MMM YYYY')} />
+
 						<Form.Field label="Biography" id="biography" >
 							<div dangerouslySetInnerHTML={{__html: person.biography}} />
 						</Form.Field>

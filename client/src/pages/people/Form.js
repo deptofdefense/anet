@@ -58,7 +58,7 @@ export default class PersonForm extends ValidatableFormWrapper {
 				}
 
 				{person.isNewUser() ?
-					<Form.Field type="static" id="status" value="New User" />
+					<Form.Field type="static" id="status" value="New user" />
 					:
 					<Form.Field id="status">
 						<ButtonToggleGroup>

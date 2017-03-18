@@ -1,4 +1,5 @@
 import Model from 'components/Model'
+import utils from 'utils'
 
 import RS_ICON from 'resources/rs_small.png'
 import AFG_ICON from 'resources/afg_small.png'
@@ -28,11 +29,16 @@ export default class Person extends Model {
 			return 'Afghan principal'
 		}
 
+
 		throw new Error(`Unrecognized role: ${role}`)
 	}
 
 	humanNameOfRole() {
 		return Person.humanNameOfRole(this.role)
+	}
+
+	humanNameOfStatus() {
+		return utils.sentenceCase(this.status)
 	}
 
 	isNewUser() {
