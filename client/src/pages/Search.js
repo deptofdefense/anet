@@ -183,7 +183,7 @@ export default class Search extends Page {
 					<Button onClick={this.showSaveModal} id="saveSearchButton">Save search</Button>
 				</div>}
 
-				<Breadcrumbs items={[['Searching for ' + queryString, '/search']]} />
+				<Breadcrumbs items={[['Search results', '']]} />
 
 				<ContentForNav>
 					<div className="nav-fixed">
