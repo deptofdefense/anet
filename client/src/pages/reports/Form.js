@@ -71,6 +71,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 		if (report.cancelledReason) {
 			this.setState({isCancelled: true})
 		}
+		this.setState({showReportText: !!report.reportText})
 	}
 
 	render() {
