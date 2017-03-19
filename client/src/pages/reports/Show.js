@@ -112,7 +112,7 @@ export default class ReportShow extends Page {
 
 		return (
 			<div className="report-show">
-				<Breadcrumbs items={[['Reports', '/reports'], ['Report #' + report.id, Report.pathFor(report)]]} />
+				<Breadcrumbs items={[['Report #' + report.id, Report.pathFor(report)]]} />
 
 				<Messages error={this.state.error} success={this.state.success} />
 

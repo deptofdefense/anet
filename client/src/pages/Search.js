@@ -166,7 +166,7 @@ export default class Search extends Page {
 		let numLocations = results.locations ? results.locations.totalCount : 0
 		let numOrganizations = results.organizations ? results.organizations.totalCount : 0
 
-		let numResults = numReports + numPeople + numPositions + numLocations + numOrganizations
+		let numResults = numReports + numPeople + numPositions + numLocations + numOrganizations + numPoams
 		let noResults = numResults === 0
 
 		let query = this.props.location.query
@@ -183,7 +183,7 @@ export default class Search extends Page {
 					<Button onClick={this.showSaveModal} id="saveSearchButton">Save search</Button>
 				</div>}
 
-				<Breadcrumbs items={[['Searching for ' + queryString, '/search']]} />
+				<Breadcrumbs items={[['Search results', '']]} />
 
 				<ContentForNav>
 					<div className="nav-fixed">
