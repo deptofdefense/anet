@@ -60,7 +60,7 @@ export default class ReportEdit extends Page {
 		let {currentUser} = this.context
 
 		//Only the author can delete a report, and only in DRAFT.
-		let canDelete = report.isDraft() && Person.isEqual(currentUser, report.author)
+		let canDelete = (report.isDraft() || report.isRejected()) && Person.isEqual(currentUser, report.author)
 
 		return (
 			<div className="report-edit">

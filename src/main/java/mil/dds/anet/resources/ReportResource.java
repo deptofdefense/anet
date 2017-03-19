@@ -67,6 +67,7 @@ import mil.dds.anet.graphql.GraphQLFetcher;
 import mil.dds.anet.graphql.GraphQLParam;
 import mil.dds.anet.graphql.IGraphQLResource;
 import mil.dds.anet.utils.AnetAuditLogger;
+import mil.dds.anet.utils.AuthUtils;
 import mil.dds.anet.utils.ResponseUtils;
 import mil.dds.anet.utils.Utils;
 
@@ -522,18 +523,28 @@ public class ReportResource implements IGraphQLResource {
 	}
 
 	/*
-	 * Delete a draft report. Only the author can delete a report, and only a report in DRAFT state. 
+	 * Delete a draft report. Authors can delete DRAFT, REJECTED reports. Admins can delete CANCELLED, RELEASED reports. 
 	 */
 	@DELETE
 	@Timed
 	@Path("/{id}/delete")
 	public Response deleteReport(@Auth Person user, @PathParam("id") int reportId) { 
 		Report report = dao.getById(reportId);
-		if (Objects.equals(report.getAuthor().getId(), user.getId()) == false) { 
-			throw new WebApplicationException("Only the author may delete a report", Status.FORBIDDEN);
-		}
-		if (report.getState() != ReportState.DRAFT) { 
-			throw new WebApplicationException("You can only delete a report in DRAFT state", Status.FORBIDDEN);
+		switch (report.getState()) { 
+		case DRAFT:
+		case REJECTED:
+			//only the author may delete these reports
+			if (Objects.equals(report.getAuthor().getId(), user.getId()) == false) { 
+				throw new WebApplicationException("Only the author may delete a report", Status.FORBIDDEN);
+			}
+			break;
+		case PENDING_APPROVAL:
+			//nobody may delete this report!
+			throw new WebApplicationException("You cannot delete a report pending approvals", Status.FORBIDDEN);
+		case CANCELLED:
+		case RELEASED:
+			//Only admins can delete these. 
+			AuthUtils.assertAdministrator(user);
 		}
 		
 		dao.deleteReport(report);
