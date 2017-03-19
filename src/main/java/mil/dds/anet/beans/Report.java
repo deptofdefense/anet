@@ -17,6 +17,7 @@ import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.database.AdminDao.AdminSettingKeys;
 import mil.dds.anet.graphql.GraphQLFetcher;
 import mil.dds.anet.graphql.GraphQLIgnore;
+import mil.dds.anet.utils.DaoUtils;
 import mil.dds.anet.views.AbstractAnetBean;
 
 public class Report extends AbstractAnetBean {
@@ -349,8 +350,8 @@ public class Report extends AbstractAnetBean {
 			}
 			ApprovalAction last = actions.get(0);
 			List<ApprovalAction> compacted = new LinkedList<ApprovalAction>();
-			for (ApprovalAction action : actions) { 
-				if (action.getStep().getId().equals(last.getStep().getId()) == false) { 
+			for (ApprovalAction action : actions) {
+				if (action.getStep() != null && last.getStep() != null && action.getStep().getId().equals(last.getStep().getId()) == false) { 
 					compacted.add(last);
 				}
 				last = action;
@@ -383,7 +384,7 @@ public class Report extends AbstractAnetBean {
 		for (ApprovalStep step : steps) { 
 			//If there is an Action for this step, grab the last one (date wise)
 			Optional<ApprovalAction> existing = actions.stream().filter(a -> 
-					a.getStep().getId().equals(step.getId())
+					Objects.equals(step.getId(), DaoUtils.getId(a.getStep()))
 				).max(new Comparator<ApprovalAction>() {
 					public int compare(ApprovalAction a, ApprovalAction b) {
 						return a.getCreatedAt().compareTo(b.getCreatedAt());

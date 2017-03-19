@@ -313,7 +313,15 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		
 		List<Location> recentLocations = httpQuery("/api/locations/recents", author).get(LocationList.class).getList();
 		assertThat(recentLocations).contains(loc);
-
+		
+		//Go and delete the entire approval chain! 
+		advisorOrg.setApprovalSteps(ImmutableList.of());
+		resp = httpQuery("/api/organizations/update", admin).post(Entity.json(advisorOrg));
+		assertThat(resp.getStatus()).isEqualTo(200);
+		
+		Organization updatedOrg = httpQuery("/api/organizations/" + advisorOrg.getId(), admin).get(Organization.class);
+		assertThat(updatedOrg).isNotNull();
+		assertThat(updatedOrg.loadApprovalSteps()).hasSize(0);
 	}
 
 	@Test
