@@ -133,9 +133,9 @@ public class PositionResource implements IGraphQLResource {
 		int numRows = dao.update(pos);
 
 		if (pos.getPerson() != null || pos.getAssociatedPositions() != null) {
+			Position current = dao.getById(pos.getId());
 			//Run the diff and see if anything changed and update.
 
-			Position current = dao.getById(pos.getId());
 			if (pos.getPerson() != null) { 
 				if (current != null && pos.getPerson().getId() == null) { 
 					//Intentionally remove the person
@@ -147,8 +147,8 @@ public class PositionResource implements IGraphQLResource {
 
 			if (pos.getAssociatedPositions() != null) {
 				Utils.addRemoveElementsById(current.loadAssociatedPositions(), pos.getAssociatedPositions(),
-						newPosition -> dao.associatePosition(newPosition, pos),
-						oldPositionId -> dao.deletePositionAssociation(pos, Position.createWithId(oldPositionId)));
+						newPosition -> { System.out.println("adding " + newPosition);; dao.associatePosition(newPosition, pos); } ,
+						oldPositionId -> { System.out.println("deleting " + oldPositionId); dao.deletePositionAssociation(pos, Position.createWithId(oldPositionId));});
 			}
 		}
 

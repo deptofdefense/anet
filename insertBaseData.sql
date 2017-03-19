@@ -299,8 +299,8 @@ INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES
 	((SELECT id from positions where name = 'Chief of Police'), (SELECT id from people where emailAddress = 'hunter+roger@dds.mil'), CURRENT_TIMESTAMP);
 UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'hunter+roger@dds.mil') WHERE name = 'Chief of Police';
 INSERT INTO positionRelationships (positionId_a, positionId_b, createdAt, updatedAt, deleted) VALUES
-	((SELECT id from positions WHERE name ='Chief of Police'),
-	(SELECT id FROM positions WHERE name='EF2.1 Advisor B'),
+	((SELECT id FROM positions WHERE name='EF2.1 Advisor B'),
+	(SELECT id from positions WHERE name ='Chief of Police'),
 	CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0);
 
 -- But Christopf in a Tashkil
@@ -308,8 +308,8 @@ INSERT INTO peoplePositions (positionId, personId, createdAt) VALUES
 	((SELECT id from positions where name = 'Planning Captain'), (SELECT id from people where emailAddress = 'hunter+christopf@dds.mil'), CURRENT_TIMESTAMP);
 UPDATE positions SET currentPersonId = (SELECT id from people where emailAddress = 'hunter+christopf@dds.mil') WHERE name = 'Planning Captain';
 INSERT INTO positionRelationships (positionId_a, positionId_b, createdAt, updatedAt, deleted) VALUES
-	((SELECT id from positions WHERE name ='Planning Captain'),
-	(SELECT id FROM positions WHERE name='EF2.2 Advisor D'),
+	((SELECT id FROM positions WHERE name='EF2.2 Advisor D'),
+	(SELECT id from positions WHERE name ='Planning Captain'),
 	CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0);
 
 

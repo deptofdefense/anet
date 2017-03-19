@@ -10,6 +10,7 @@ import Form from 'components/Form'
 import LinkTo from 'components/LinkTo'
 import Messages, {setMessages} from 'components/Messages'
 import AssignPersonModal from 'components/AssignPersonModal'
+import EditAssociatedPositionsModal from 'components/EditAssociatedPositionsModal'
 
 import GuidedTour from 'components/GuidedTour'
 import {positionTour} from 'pages/HopscotchTour'
@@ -34,6 +35,7 @@ export default class PositionShow extends Page {
 				previousPeople: [],
 				associatedPositions: [],
 				showAssignPersonModal: false,
+				showAssociatedPositionModal: false,
 			}),
 		}
 
@@ -127,7 +129,9 @@ export default class PositionShow extends Page {
 						/>
 					</Fieldset>
 
-					<Fieldset title={`Assigned ${assignedRole}`} id="assigned-principal">
+					<Fieldset title={`Assigned ${assignedRole}`}
+						id="assigned-principal"
+						action={canEdit && <Button onClick={this.showAssociatedPositionModal}>Changed assigned {assignedRole}</Button>}>
 						<Table>
 							<thead>
 								<tr>
@@ -145,6 +149,13 @@ export default class PositionShow extends Page {
 						{position.associatedPositions.length === 0 &&
 							<em>{position.name} has no associated {assignedRole}</em>
 						}
+
+						<EditAssociatedPositionsModal
+							position={position}
+							showModal={this.state.showAssociatedPositionModal}
+							onCancel={this.hideAssociatedPositionsModal.bind(this, false)}
+							onSuccess={this.hideAssociatedPositionsModal.bind(this, true)}
+						/>
 					</Fieldset>
 
 					<Fieldset title="Previous position holders" id="previous-people">
@@ -192,6 +203,19 @@ export default class PositionShow extends Page {
 	@autobind
 	hideAssignPersonModal(success) {
 		this.setState({showAssignPersonModal: false})
+		if (success) {
+			this.fetchData(this.props)
+		}
+	}
+
+	@autobind
+	showAssociatedPositionModal() {
+		this.setState({showAssociatedPositionModal: true})
+	}
+
+	@autobind
+	hideAssociatedPositionsModal(success) {
+		this.setState({showAssociatedPositionModal: false})
 		if (success) {
 			this.fetchData(this.props)
 		}

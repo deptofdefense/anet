@@ -10,6 +10,7 @@ import ReportTable from 'components/ReportTable'
 import LinkTo from 'components/LinkTo'
 import Messages, {setMessages} from 'components/Messages'
 import AssignPositionModal from 'components/AssignPositionModal'
+import EditAssociatedPositionsModal from 'components/EditAssociatedPositionsModal'
 
 import GuidedTour from 'components/GuidedTour'
 import {personTour} from 'pages/HopscotchTour'
@@ -34,6 +35,7 @@ export default class PersonShow extends Page {
 				attendedReports: [],
 			}),
 			showAssignPositionModal: false,
+			showAssociatedPositionsModal: false,
 		}
 		setMessages(props,this.state)
 	}
@@ -80,6 +82,7 @@ export default class PersonShow extends Page {
 	render() {
 		let {person} = this.state
 		let position = person.position
+		let assignedRole = position.type === 'PRINCIPAL' ? 'advisors' : 'Afghan principals'
 
 		//User can always edit themselves
 		//Admins can always edit anybody
@@ -137,7 +140,8 @@ export default class PersonShow extends Page {
 
 
 
-					<Fieldset title="Current position" id="current-position" className={(!position || !position.id) && 'warning'} action={canChangePosition && <div><Button onClick={this.showAssignPositionModal}>Edit</Button></div>}>
+					<Fieldset title="Position" >
+						<Fieldset title="Current Position" id="current-position" className={(!position || !position.id) && 'warning'} action={canChangePosition && <div><Button onClick={this.showAssignPositionModal}>Edit Position</Button></div>}>
 						{position && position.id
 							? this.renderPosition(position)
 							: this.renderPositionBlankSlate(person)
@@ -149,6 +153,21 @@ export default class PersonShow extends Page {
 								onCancel={this.hideAssignPositionModal.bind(this, false)}
 								onSuccess={this.hideAssignPositionModal.bind(this, true)}
 							/>
+						}
+						</Fieldset>
+
+						{position && position.id &&
+							<Fieldset title={`Assigned ${assignedRole}`} action={canChangePosition && <Button onClick={this.showAssociatedPositionsModal}>Edit assigned {assignedRole}</Button>}>
+								{this.renderCounterparts(position)}
+								{canChangePosition &&
+									<EditAssociatedPositionsModal
+										position={position}
+										showModal={this.state.showAssociatedPositionsModal}
+										onCancel={this.hideAssociatedPositionsModal.bind(this, false)}
+										onSuccess={this.hideAssociatedPositionsModal.bind(this, true)}
+									/>
+								}
+							</Fieldset>
 						}
 					</Fieldset>
 
@@ -167,37 +186,38 @@ export default class PersonShow extends Page {
 	}
 
 	renderPosition(position) {
-		let assocTitle = position.type === 'PRINCIPAL' ? 'Is advised by' : 'Advises'
 		return <div>
-			<Form.Field id="organization" label="Organization">
-				<LinkTo organization={position.organization} />
-			</Form.Field>
-			<Form.Field id="position" label="Position">
-				<LinkTo position={position} />
-			</Form.Field>
+				<Form.Field id="organization" label="Organization">
+					<LinkTo organization={position.organization} />
+				</Form.Field>
+				<Form.Field id="position" label="Position">
+					<LinkTo position={position} />
+				</Form.Field>
+			</div>
+	}
 
-			<FormGroup controlId="counterparts">
-				<Col sm={2} componentClass={ControlLabel}>{assocTitle}</Col>
-				<Col sm={9}>
-					<Table>
-						<thead>
-							<tr><th>Name</th><th>Position</th><th>Organization</th></tr>
-						</thead>
-						<tbody>
-							{Position.map(position.associatedPositions, assocPos =>
-								<tr key={assocPos.id}>
-									<td>{assocPos.person && <LinkTo person={assocPos.person} />}</td>
-									<td><LinkTo position={assocPos} /></td>
-									<td><LinkTo organization={assocPos.organization} /></td>
-								</tr>
-							)}
-						</tbody>
-					</Table>
-
-					{position.associatedPositions.length === 0 && <em>{position.name} has no counterparts assigned</em>}
-				</Col>
-			</FormGroup>
-		</div>
+	renderCounterparts(position) {
+		let assocTitle = position.type === 'PRINCIPAL' ? 'Is advised by' : 'Advises'
+		return <FormGroup controlId="counterparts">
+			<Col sm={2} componentClass={ControlLabel}>{assocTitle}</Col>
+			<Col sm={9}>
+				<Table>
+					<thead>
+						<tr><th>Name</th><th>Position</th><th>Organization</th></tr>
+					</thead>
+					<tbody>
+						{Position.map(position.associatedPositions, assocPos =>
+							<tr key={assocPos.id}>
+								<td>{assocPos.person && <LinkTo person={assocPos.person} />}</td>
+								<td><LinkTo position={assocPos} /></td>
+								<td><LinkTo organization={assocPos.organization} /></td>
+							</tr>
+						)}
+					</tbody>
+				</Table>
+				{position.associatedPositions.length === 0 && <em>{position.name} has no counterparts assigned</em>}
+			</Col>
+		</FormGroup>
 	}
 
 	renderPositionBlankSlate(person) {
@@ -225,6 +245,19 @@ export default class PersonShow extends Page {
 	@autobind
 	hideAssignPositionModal(success) {
 		this.setState({showAssignPositionModal: false})
+		if (success) {
+			this.fetchData(this.props)
+		}
+	}
+
+	@autobind
+	showAssociatedPositionsModal() {
+		this.setState({showAssociatedPositionsModal: true})
+	}
+
+	@autobind
+	hideAssociatedPositionsModal(success) {
+		this.setState({showAssociatedPositionsModal: false})
 		if (success) {
 			this.fetchData(this.props)
 		}

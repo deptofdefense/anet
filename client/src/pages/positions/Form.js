@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react'
-import {Table, Button} from 'react-bootstrap'
+import {Button} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
 import ValidatableFormWrapper from 'components/ValidatableFormWrapper'
@@ -11,9 +11,8 @@ import ButtonToggleGroup from 'components/ButtonToggleGroup'
 import History from 'components/History'
 
 import API from 'api'
-import {Position, Organization, Person} from 'models'
+import {Position, Organization} from 'models'
 
-import REMOVE_ICON from 'resources/delete.png'
 
 export default class PositionForm extends ValidatableFormWrapper {
 	static propTypes = {
@@ -32,7 +31,6 @@ export default class PositionForm extends ValidatableFormWrapper {
 
 		error = this.props.error || (this.state && this.state.error)
 
-		let relationshipPositionType = position.type === 'PRINCIPAL' ? ['ADVISOR', 'SUPER_USER', 'ADMINISTRATOR'] : ['PRINCIPAL']
 		let currentUser = this.context.currentUser
 
 		let orgSearchQuery = {}
@@ -105,57 +103,6 @@ export default class PositionForm extends ValidatableFormWrapper {
 
 				</Fieldset>
 
-				<Fieldset title={`Assigned ${position.type === 'PRINCIPAL' ? 'advisor' : 'advisee'}`}>
-					<p className="help-text">
-						{position.type === 'PRINCIPAL' ? "Who is this person advised by?" : "Who does this person advise?"}
-					</p>
-
-					<Form.Field id="associatedPositions">
-						<Autocomplete
-							placeholder={'Start typing to search for ' + (position.type === 'PRINCIPAL' ? 'an advisor' : 'a principal') + ' position...'}
-							objectType={Position}
-							fields={'id, name, code, type, person { id, name, rank }'}
-							template={pos =>
-								<span>{pos.name} - {pos.code} ({(pos.person) ? pos.person.name : <i>empty</i>})</span>
-							}
-							onChange={this.addPositionRelationship}
-							clearOnSelect={true}
-							queryParams={{type: relationshipPositionType, matchPersonName: true}} />
-
-						<Table hover striped>
-							<thead>
-								<tr>
-									<th></th>
-									<th>Name</th>
-									<th>Position</th>
-									<th>Org</th>
-									<th></th>
-								</tr>
-							</thead>
-							<tbody>
-								{Position.map(position.associatedPositions, relPos => {
-									let person = new Person(relPos.person)
-									return (
-										<tr key={relPos.id}>
-											<td>
-												{person && <img src={person.iconUrl()} alt={person.role} height={20} className="person-icon" />}
-											</td>
-
-											<td>{person && person.name}</td>
-											<td>{relPos.name}</td>
-											<td>{relPos.organization && relPos.organization.shortName}</td>
-
-											<td onClick={this.removePositionRelationship.bind(this, relPos)}>
-												<span style={{cursor: 'pointer'}}><img src={REMOVE_ICON} height={14} alt="Unassign person" /></span>
-											</td>
-										</tr>
-									)
-								})}
-							</tbody>
-						</Table>
-					</Form.Field>
-				</Fieldset>
-
 				<Fieldset title="Additional information">
 					<Form.Field id="location">
 						<Autocomplete valueKey="name" placeholder="Start typing to find a location where this Position will operate from..." url="/api/locations/search" />
@@ -165,31 +112,6 @@ export default class PositionForm extends ValidatableFormWrapper {
 		)
 	}
 
-	@autobind
-	addPositionRelationship(newRelatedPos)  {
-		let position = this.props.position
-		let rels = position.associatedPositions
-
-		if (!rels.find(relPos => relPos.id === newRelatedPos.id)) {
-			let newRels = rels.slice()
-			newRels.push(new Position(newRelatedPos))
-
-			position.associatedPositions = newRels
-			this.onChange()
-		}
-	}
-
-	@autobind
-	removePositionRelationship(relToDelete) {
-		let position = this.props.position
-		let rels = position.associatedPositions
-		let index = rels.findIndex(rel => rel.id === relToDelete.id)
-
-		if (index !== -1) {
-			rels.splice(index, 1)
-			this.onChange()
-		}
-	}
 
 	@autobind
 	onChange() {
