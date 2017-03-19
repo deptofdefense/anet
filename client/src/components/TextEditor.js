@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 
 import AlloyEditor from 'alloyeditor/dist/alloy-editor/alloy-editor-no-react'
-import 'alloyeditor/dist/alloy-editor/assets/alloy-editor-ocean.css'
+import 'alloyeditor/dist/alloy-editor/assets/alloy-editor-atlas.css'
 
 export default class TextEditor extends Component {
 	componentDidMount() {
