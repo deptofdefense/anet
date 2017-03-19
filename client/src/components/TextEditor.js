@@ -13,23 +13,19 @@ const ALLOY_CONFIG = {
 }
 
 export default class TextEditor extends Component {
-	componentDidMount() {
-		this.editor = AlloyEditor.editable(this.container, ALLOY_CONFIG)
-
-		this.componentWillReceiveProps(this.props)
-	}
-
 	componentWillUnmount() {
-		this.editor.destroy()
+		this.editor && this.editor.destroy()
 	}
 
 	componentWillReceiveProps(newProps) {
 		this.container.innerHTML = newProps.value
+
+		if (newProps.value && !this.editor) {
+			this.editor = AlloyEditor.editable(this.container, ALLOY_CONFIG)
+		}
 	}
 
 	render() {
-		return <div>
-			<div className="text-editor" ref={(el) => { this.container = el }} />
-		</div>
+		return <div className="text-editor" ref={(el) => { this.container = el }} />
 	}
 }
