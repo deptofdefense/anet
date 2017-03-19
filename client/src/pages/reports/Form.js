@@ -239,11 +239,9 @@ export default class ReportForm extends ValidatableFormWrapper {
 					</Button>
 
 					<Collapse in={this.state.showReportText}>
-						<div className="report-details">
-							<Form.Field id="reportText" label="" horizontal={false} className="reportTextField" >
-								<TextEditor label="Report details" id="reportTextEditor" />
-							</Form.Field>
-						</div>
+						<Form.Field id="reportText" className="reportTextField">
+							<TextEditor label="Report details" />
+						</Form.Field>
 					</Collapse>
 				</Fieldset>
 			</ValidatableForm>

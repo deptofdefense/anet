@@ -542,6 +542,18 @@ table hr.attendee-divider {
 	text-align: center;
 }
 
-hr.assignModalSplit { 
+hr.assignModalSplit {
 	border-bottom: 1px solid #555;
+}
+
+.text-editor {
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	margin-top: 4px;
+	padding: 4px;
+	outline: none;
+}
+
+.text-editor:focus {
+	outline: none;
 }
