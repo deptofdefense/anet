@@ -101,7 +101,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 					<RequiredField id="intent" label="Meeting goal (purpose)"
 						canSubmitWithError={true}
 						validateBeforeUserTouches={this.props.edit}
-						placeholder="What happened?" data-focus componentClass="textarea" maxCharacters={250}>
+						placeholder="What happened?" data-focus componentClass={TextEditor} maxCharacters={250}>
 						<Form.Field.ExtraCol>{250 - report.intent.length} characters remaining</Form.Field.ExtraCol>
 					</RequiredField>
 
@@ -221,14 +221,14 @@ export default class ReportForm extends ValidatableFormWrapper {
 
 				<Fieldset title={!isCancelled ? "Meeting discussion" : "Next steps and details"}>
 					{!isCancelled &&
-						<RequiredField id="keyOutcomes" componentClass="textarea" maxCharacters={250} humanName="Key outcome description"
+						<RequiredField id="keyOutcomes" componentClass={TextEditor} maxCharacters={250} humanName="Key outcome description"
 							canSubmitWithError={true}
 							validateBeforeUserTouches={this.props.edit}>
 							<Form.Field.ExtraCol>{250 - report.keyOutcomes.length} characters remaining</Form.Field.ExtraCol>
 						</RequiredField>
 					}
 
-					<RequiredField id="nextSteps" componentClass="textarea" maxCharacters={250} humanName="Next steps description"
+					<RequiredField id="nextSteps" componentClass={TextEditor} maxCharacters={250} humanName="Next steps description"
 						canSubmitWithError={true}
 						validateBeforeUserTouches={this.props.edit}>
 						<Form.Field.ExtraCol>{250 - report.nextSteps.length} characters remaining</Form.Field.ExtraCol>
@@ -239,9 +239,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 					</Button>
 
 					<Collapse in={this.state.showReportText}>
-						<Form.Field id="reportText" className="reportTextField">
-							<TextEditor label="Report details" />
-						</Form.Field>
+						<Form.Field id="reportText" componentClass={TextEditor} />
 					</Collapse>
 				</Fieldset>
 			</ValidatableForm>
