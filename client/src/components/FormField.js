@@ -57,6 +57,7 @@ export default class FormField extends Component {
 		componentClass: PropTypes.oneOfType([
 			PropTypes.string,
 			PropTypes.object,
+			PropTypes.func,
 		]),
 
 		// If you don't want autobinding behavior, you can override them here
@@ -86,7 +87,7 @@ export default class FormField extends Component {
 		} = this.props
 
 		childProps = Object.without(
-			childProps, 
+			childProps,
 			'getter', 'horizontal', 'onError', 'onValid', 'humanName', 'maxCharacters', 'validateBeforeUserTouches'
 		)
 		if (canSubmitWithError) {
@@ -103,8 +104,8 @@ export default class FormField extends Component {
 		}
 
 		const validationState = this.props.validationState ||
-			(this.state.isValid === false || this.isMissingRequiredField(this.props)) ? 
-				(canSubmitWithError ? 'warning' : 'error') 
+			(this.state.isValid === false || this.isMissingRequiredField(this.props)) ?
+				(canSubmitWithError ? 'warning' : 'error')
 				: null
 
 		let horizontal = this.context.form && this.context.form.props.horizontal
