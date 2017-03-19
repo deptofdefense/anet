@@ -6,6 +6,7 @@ import SecurityBanner from 'components/SecurityBanner'
 import Header from 'components/Header'
 import Nav from 'components/Nav'
 import NoPositionBanner from 'components/NoPositionBanner'
+import History from 'components/History'
 
 import API from 'api'
 import {Person, Organization} from 'models'
@@ -63,14 +64,19 @@ export default class App extends Page {
 			adminSettings(f:getAll) {
 				key, value
 			}
+
 			organizationList(f:getTopLevelOrgs, type: ADVISOR_ORG) {
 				list { id, shortName }
 			}
 		`).then(data => {
 			data.person._loaded = true
-			this.setState(this.processData(data))
+			this.setState(this.processData(data), () => {
+				// if this is a new user, redirect to the create profile page
+				if (this.state.currentUser.isNewUser()) {
+					History.replace('/onboarding')
+				}
+			})
 		})
-
 	}
 
 	processData(data) {

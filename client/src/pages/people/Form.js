@@ -24,6 +24,10 @@ export default class PersonForm extends ValidatableFormWrapper {
 		saveText: PropTypes.string,
 	}
 
+	static contextTypes = {
+		app: PropTypes.object.isRequired,
+	}
+
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -188,6 +192,7 @@ export default class PersonForm extends ValidatableFormWrapper {
 				if (isFirstTimeUser) {
 					localStorage.clear()
 					localStorage.newUser = 'true'
+					this.context.app.loadData()
 					History.push('/', {skipPageLeaveWarning: true})
 				} else {
 					if (response.id) {
