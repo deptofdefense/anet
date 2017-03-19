@@ -3,7 +3,6 @@ import Page from 'components/Page'
 
 import PoamForm from './Form'
 import Breadcrumbs from 'components/Breadcrumbs'
-import Messages from 'components/Messages'
 import NavigationWarning from 'components/NavigationWarning'
 
 import API from 'api'
@@ -45,7 +44,6 @@ export default class PoamNew extends Page {
 			<div>
 				<Breadcrumbs items={[['Create new PoAM', Poam.pathForNew()]]} />
 
-				<Messages error={this.state.error} success={this.state.success} />
 
 				<NavigationWarning original={this.state.originalPoam} current={poam} />
 				<PoamForm poam={poam} />

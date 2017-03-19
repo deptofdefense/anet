@@ -6,6 +6,7 @@ import Fieldset from 'components/Fieldset'
 import Autocomplete from 'components/Autocomplete'
 import Form from 'components/Form'
 import History from 'components/History'
+import Messages from'components/Messages'
 
 import API from 'api'
 import {Poam} from 'models'
@@ -34,25 +35,29 @@ export default class PoamForm extends ValidatableFormWrapper {
 
 		const {ValidatableForm, RequiredField} = this
 		return (
-			<ValidatableForm
-				formFor={poam}
-				onChange={this.onChange}
-				onSubmit={this.onSubmit}
-				submitText="Save PoAM"
-				horizontal>
+			<div>
+				<Messages error={this.state.error} success={this.state.success} />
 
-				<Fieldset title={edit ? `Edit PoAM ${poam.shortName}` : "Create a new PoAM"}>
-					<RequiredField id="shortName" label="PoAM number" />
-					<RequiredField id="longName" label="PoAM description" />
-					<Form.Field id="responsibleOrg" label="Responsible organization">
-						<Autocomplete valueKey="shortName"
-							placeholder="Select a responsible organization for this PoAM"
-							url="/api/organizations/search"
-							queryParams={orgSearchQuery}
-						/>
-					</Form.Field>
-				</Fieldset>
-			</ValidatableForm>
+				<ValidatableForm
+					formFor={poam}
+					onChange={this.onChange}
+					onSubmit={this.onSubmit}
+					submitText="Save PoAM"
+					horizontal>
+
+					<Fieldset title={edit ? `Edit PoAM ${poam.shortName}` : "Create a new PoAM"}>
+						<RequiredField id="shortName" label="PoAM number" />
+						<RequiredField id="longName" label="PoAM description" />
+						<Form.Field id="responsibleOrg" label="Responsible organization">
+							<Autocomplete valueKey="shortName"
+								placeholder="Select a responsible organization for this PoAM"
+								url="/api/organizations/search"
+								queryParams={orgSearchQuery}
+							/>
+						</Form.Field>
+					</Fieldset>
+				</ValidatableForm>
+			</div>
 		)
 	}
 
