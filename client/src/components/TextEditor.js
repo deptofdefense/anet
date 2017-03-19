@@ -18,10 +18,15 @@ export default class TextEditor extends Component {
 	}
 
 	componentWillReceiveProps(newProps) {
-		this.container.innerHTML = newProps.value
+		if (newProps.value != this.container.innerHTML) {
+			this.container.innerHTML = newProps.value
+		}
 
 		if (newProps.value && !this.editor) {
 			this.editor = AlloyEditor.editable(this.container, ALLOY_CONFIG)
+			this.editor.get('nativeEditor').on('change', () => {
+				this.props.onChange(this.container.innerHTML)
+			})
 		}
 	}
 
