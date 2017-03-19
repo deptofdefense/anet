@@ -47,7 +47,7 @@ export default class AssignPersonModal extends Component {
 							<Button bsStyle="danger" onClick={this.remove}>
 								Remove {position.person.name} from {position.name}
 							</Button>
-							<hr />
+							<hr className="assignModalSplit" />
 						</div>
 					}
 					<Grid fluid>
