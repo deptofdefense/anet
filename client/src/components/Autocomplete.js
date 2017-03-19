@@ -84,7 +84,7 @@ export default class Autocomplete extends Component {
 		inputProps.onChange = this.onInputChange
 		inputProps.onBlur = this.onInputBlur
 
-		return <div>
+		return <div style={{position: 'relative'}}>
 			<img src={SEARCH_ICON} className="form-control-icon" role="presentation" />
 
 			<Autosuggest

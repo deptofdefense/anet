@@ -116,18 +116,14 @@ fieldset.danger {
 .form-control-icon {
 	position: absolute;
 	top: 4px;
-	left: 2rem;
+	left: 0.5rem;
 	height: 26px;
 	z-index: 5;
 	opacity: 0.5;
 }
 
-.input-group .form-control-icon {
-	left: 0.5rem;
-}
-
 .react-autosuggest__container input {
-	padding-left: 3rem;
+	padding-left: 3.2rem;
 }
 
 .react-autosuggest__suggestions-list {
