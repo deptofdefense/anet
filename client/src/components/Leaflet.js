@@ -93,12 +93,16 @@ export default class Leaflet extends Component {
 		let markersToAdd = nextProps.markers.filter(m =>
 			existingMarkers.findIndex(el => el.options.id === m.id) === -1
 		)
-		this.updateMarkerLayer(markersToAdd)
+		let markersToRemove = existingMarkers.filter(m =>
+			nextProps.markers.findIndex(el => m.options.id === el.id) === -1
+		)
+		this.updateMarkerLayer(markersToAdd, markersToRemove)
 	}
 
 	@autobind
-	updateMarkerLayer(markers) {
-		markers = markers || []
+	updateMarkerLayer(markersToAdd, markersToRemove) {
+		let markers = markersToAdd || []
+		markersToRemove = markersToRemove || []
 
 		let newMarkers = []
 		let markerLayer = this.state.markerLayer
@@ -111,6 +115,10 @@ export default class Leaflet extends Component {
 			}
 			newMarkers.push(marker)
 			markerLayer.addLayer(marker)
+		})
+
+		markersToRemove.forEach(m => {
+			markerLayer.removeLayer(m)
 		})
 
 

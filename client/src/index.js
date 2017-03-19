@@ -34,6 +34,7 @@ import OrganizationNew from './pages/organizations/New'
 import OrganizationEdit from './pages/organizations/Edit'
 
 import LocationShow from './pages/locations/Show'
+import LocationEdit from './pages/locations/Edit'
 import LocationNew from './pages/locations/New'
 
 import PositionShow from './pages/positions/Show'
@@ -79,6 +80,7 @@ ReactDOM.render((
 
 				<Route path="locations">
 					<Route path="new" component={LocationNew} />
+					<Route path=":id/edit" component={LocationEdit} />
 					<Route path=":id" component={LocationShow} />
 				</Route>
 
