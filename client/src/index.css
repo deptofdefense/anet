@@ -542,6 +542,41 @@ table hr.attendee-divider {
 	text-align: center;
 }
 
-hr.assignModalSplit { 
+hr.assignModalSplit {
 	border-bottom: 1px solid #555;
+}
+
+.help-page .help-text {
+	font-size: 2rem;
+}
+
+.help-page h4 {
+	margin-top: 5rem;
+}
+
+.text-editor {
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	margin-top: 4px;
+	padding: 4px;
+	outline: none;
+}
+
+.text-editor:focus {
+	outline: none;
+}
+
+.ae-ui .ae-button {
+	width: 20px !important;
+	height: 20px !important;
+	outline: none;
+}
+
+.ae-ui .ae-toolbar-add .ae-button-add .ae-icon-add {
+	font-size: 14px !important;
+	line-height: 14px !important;
+}
+
+.ae-toolbar, .ae-toolbar-styles {
+	z-index: 10 !important;
 }

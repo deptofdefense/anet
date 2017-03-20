@@ -270,7 +270,7 @@ INSERT INTO locations (name, createdAt, updatedAt) VALUES ('MoI Office Building 
 INSERT INTO organizations (shortName, longName, type, createdAt, updatedAt) VALUES ('MoD', 'Ministry of Defense', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO organizations (shortName, longName, type, createdAt, updatedAt) VALUES ('MoI', 'Ministry of Interior', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
-INSERT INTO organizations (shortName, longName, type, parentOrgId, createdAt, updatedAt) VALUES ('MOD-F', 'Ministry of Defense Finances', 1, 
+INSERT INTO organizations (shortName, longName, type, parentOrgId, createdAt, updatedAt) VALUES ('MOD-F', 'Ministry of Defense Finances', 1,
 	(SELECT id from organizations where shortName = 'MoD'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 INSERT INTO positions (name, code, type, status, currentPersonId, organizationId, createdAt, updatedAt)
@@ -481,4 +481,5 @@ INSERT INTO adminSettings ([key], value) VALUES ('SECURITY_BANNER_TEXT', 'DEMO U
 INSERT INTO adminSettings ([key], value) VALUES ('SECURITY_BANNER_COLOR', 'green');
 INSERT INTO adminSettings ([key], value) VALUES ('DEFAULT_APPROVAL_ORGANIZATION', (select CAST(id AS varchar) from organizations where shortName='ANET Administrators'));
 INSERT INTO adminSettings ([key], value) VALUES ('MAP_LAYERS', '[{"name":"OSM","default" : true, "url":"http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", "type":"osm"}]');
-
+INSERT INTO adminSettings ([key], value) VALUES ('HELP_LINK_URL', 'http://google.com');
+INSERT INTO adminSettings ([key], value) VALUES ('CONTACT_EMAIL', 'team-anet@dds.mil');

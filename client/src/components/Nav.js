@@ -113,6 +113,10 @@ class Nav extends Component {
 						<Link to={"/admin/mergePeople"}><NavItem>Merge people</NavItem></Link>
 					</SubNav>
 				}
+
+				<Link to="/help">
+					<NavItem>Help</NavItem>
+				</Link>
 			</BSNav>
 		)
 	}
