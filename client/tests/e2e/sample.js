@@ -14,11 +14,11 @@ test.beforeEach(t => {
 
     t.context.get = async pathname => {
         await t.context.driver.get(`http://localhost:3000${pathname}`)
-        // await new Promise(resolve => setTimeout(resolve, 5000))
-        // await t.context.driver.wait(webdriver.until.alertIsPresent())
+        // await new Promise(resolve => setTimeout(resolve, 10000))
+        await t.context.driver.wait(webdriver.until.alertIsPresent())
         // try {
-        //     let alert = await t.context.driver.switchTo().alert()
-        //     await alert.authenticateAs('erin', 'erin')
+            let alert = await t.context.driver.switchTo().alert()
+            await alert.authenticateAs('erin', 'erin')
         // } catch (e) {
         //     if (e.code !== 27) {
         //         throw e
