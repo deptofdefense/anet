@@ -193,7 +193,7 @@ let orgTour = (currentUser) => { return {
 	steps: [
 		{
 			title: 'Your organization\'s information',
-			content: 'This section shows your organization\'s super users and sub-organizations. Keep in mind that super users in a sub-organization can only update information for that sub-organization.',  
+			content: 'This section shows your organization\'s super users and sub-organizations. Keep in mind that super users in a sub-organization can only update information for that sub-organization.',
 			target: 'info',
 			placement: 'bottom',
 		},
@@ -247,7 +247,7 @@ let positionTour = (currentUser) => { return {
 	steps: [
 		{
 			title: "Positions",
-			content: "This section allows you to quickly review this position\'s detailed information, such as the position's billet or tashkil code, status, and organization.",
+			content: "This section allows you to quickly review this position's detailed information, such as the position's billet or tashkil code, status, and organization.",
 			target: '.persistent-tour-launcher',
 			placement: 'left',
 		},
