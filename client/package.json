@@ -40,7 +40,6 @@
     "html-loader": "^0.4.4",
     "html-webpack-plugin": "2.24.0",
     "http-proxy-middleware": "0.17.2",
-    "intern": "^3.4.2",
     "jest": "16.0.2",
     "json-loader": "0.5.4",
     "object-assign": "4.1.0",
