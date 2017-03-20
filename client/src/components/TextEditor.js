@@ -5,7 +5,9 @@ import AlloyEditor from 'alloyeditor/dist/alloy-editor/alloy-editor-no-react'
 import 'alloyeditor/dist/alloy-editor/assets/alloy-editor-atlas.css'
 
 // this just removes a number of features we don't want from the Alloy toolbar
-AlloyEditor.Selections[3].buttons.splice(4, 2)
+let buttons = AlloyEditor.Selections[3].buttons
+buttons.splice(4, 2)
+buttons.splice(0, 1)
 
 const ALLOY_CONFIG = {
 	toolbars: {
