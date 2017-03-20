@@ -1,12 +1,20 @@
+import querystring from 'querystring'
+
+const query = querystring.parse(window.location.search.slice(1))
+
 const API = {
-	fetch(url, params) {
+	fetch(pathName, params) {
 		params = params || {}
 		params.credentials = 'same-origin'
 
 		params.headers = params.headers || {}
 		params.headers.Accept = 'application/json'
 
-		let promise = window.fetch(url, params)
+		if (query.user && query.pass) {
+			params.headers.Authorization = 'Basic ' + new Buffer(`${query.user}:${query.pass}`).toString('base64')
+		}
+
+		let promise = window.fetch(pathName, params)
 					.then(response => {
 						let isOk = response.ok
 

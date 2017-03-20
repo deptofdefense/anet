@@ -1,29 +1,18 @@
 let test = require('ava'),
     webdriver = require('selenium-webdriver'),
-    geckodriver = require('geckodriver'),
     By = webdriver.By
+
+require('chromedriver')
 
 webdriver.promise.USE_PROMISE_MANAGER = false
 
-test.before(() => geckodriver.start())
-
 test.beforeEach(t => {
     t.context.driver = new webdriver.Builder()
-        .forBrowser('firefox')
+        .forBrowser('chrome')
         .build()
 
     t.context.get = async pathname => {
-        await t.context.driver.get(`http://localhost:3000${pathname}`)
-        // await new Promise(resolve => setTimeout(resolve, 10000))
-        await t.context.driver.wait(webdriver.until.alertIsPresent())
-        // try {
-            let alert = await t.context.driver.switchTo().alert()
-            await alert.authenticateAs('erin', 'erin')
-        // } catch (e) {
-        //     if (e.code !== 27) {
-        //         throw e
-        //     }
-        // }
+        await t.context.driver.get(`http://localhost:3000${pathname}?user=erin&pass=erin`)
     }
 })
 
@@ -33,11 +22,16 @@ test.afterEach.always(async t => {
     }
 })
 
-test.after.always(() => geckodriver.stop())
+// test.after.always(() => geckodriver.stop())
 
 test('My ANET snapshot', async t => {
     t.plan(1)
     await t.context.get('/')
+    await pause()
     let reportsPendingMyApproval = await t.context.driver.findElement(By.css('.home-tile:first-child h1')).getText()
     t.is(reportsPendingMyApproval, '0')
 })
+
+async function pause() {
+    await new Promise(() => null)
+}
