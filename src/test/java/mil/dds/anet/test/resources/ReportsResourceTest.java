@@ -638,6 +638,12 @@ public class ReportsResourceTest extends AbstractResourceTest {
 			assertThat(res.getEngagementDate()).isGreaterThan(prev);
 			prev = res.getEngagementDate();
 		}
+		
+		//Search for report text with stopwords
+		query = new ReportSearchQuery();
+		query.setText("Hospital usage of Drugs");
+		searchResults = httpQuery("/api/reports/search", jack).post(Entity.json(query), ReportList.class);
+		assertThat(searchResults.getList().stream().filter(r -> r.getIntent().contains("Hospital usage of Drugs")).count()).isGreaterThan(0);
 	}
 
 	@Test
