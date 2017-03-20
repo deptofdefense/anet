@@ -103,6 +103,7 @@
     "lint": "eslint src tests/e2e/*.js",
     "lint-fix": "eslint src --fix",
     "test": "npm run lint && npm run e2e-test",
+    "chromedriver": "chromedriver --port=9515 --url-base=wd/hub",
     "e2e-test": "ava tests/e2e/*.js"
   },
   "jest": {
