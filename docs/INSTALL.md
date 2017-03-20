@@ -81,19 +81,26 @@ It is recommended that you enable SSL support on ANET.  To do so, follow the Dro
 
 # How to configure imagery.
 
-ANET uses Leaflet as a map viewer.  You can use any tile sources that work with ANET. In a development environment, or anywhere with access to the internet, you can configure ANET to use OSM tiles by setting the `MAP_LAYERS` Admin Setting to 
+ANET uses Leaflet as a map viewer.  You can use any tile sources that work with Leaflet in ANET. In a development environment, or anywhere with access to the internet, you can configure ANET to use OSM tiles by setting the `MAP_LAYERS` Admin Setting to 
 
 ```
 [{"name":"OSM","default" : true, "url":"http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", "type":"osm"}]
 ```
 
-For offline deployments of ANET, you can configure a local imagery cache with any downloaded tile set.  Your offline imagery set should be in the form of `{z}/{x}/{y}.png` or similar.  If you download tiles from OpenStreetMaps, this is the format you'll get them in. 
+For offline deployments of ANET, you can configure a local imagery cache with a downloaded tile set.  Your offline imagery set should be in the form of `{z}/{x}/{y}.png` or similar.  If you download tiles from OpenStreetMaps, this is the format you'll get them in. 
 
 1. In the ANET home directory (the same directory as `bin`, `lib` and `docs`) create a directory called `maps`. Inside that, create a directory called `imagery`. 
 1. Copy your imagery set into the `imagery` directory.  You should end up with a file structure that looks like `maps/imagery/{0,1,2,...}/{0,1,2...}/{0,1,2,3...}.png`
-1. Edit the `bin/anet.bat` file. Find the line that sets the `CLASSPATH` variable. (It's really long and lists a bunch of .jar files).  Right after that line, add the line: 
+1. Edit the `bin/anet.bat` (Windows), or `bin/anet` (Linux/Mac) file. Find the line that sets the `CLASSPATH` variable. (It's really long and lists a bunch of .jar files).  Right after that line, add the line: 
+
+Windows (bin/anet.bat):
 ```
 set CLASSPATH=%APP_HOME%\maps\;%CLASSPATH%
+
+```
+Linux/Mac (bin/anet): 
+```
+CLASSPATH=$APP_HOME/maps/:$CLASSPATH
 ```
 
 This will put the imagery folder on the server's classpath.  ANET looks for a folder called imagery and will serve those tiles up on the `/imagery` path. 
@@ -101,3 +108,5 @@ This will put the imagery folder on the server's classpath.  ANET looks for a fo
 ```
 [{"name":"OSM","default" : true, "url":"http://<your-anet-server-url>/imagery/{z}/{x}/{y}.png", "type":"osm"}]
 ```
+
+Maps should now magically work!  You can test this by going to the url `http://<your-anet-server>/imagery/0/0/0.png` and hopefully seeing a tile appear. 
