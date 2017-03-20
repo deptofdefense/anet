@@ -102,7 +102,7 @@
     "build": "node scripts/build.js",
     "lint": "eslint src tests/e2e/*.js",
     "lint-fix": "eslint src --fix",
-    "test": "npm run lint && node scripts/test.js --env=jsdom && npm run e2e-test",
+    "test": "npm run lint && npm run e2e-test",
     "e2e-test": "ava tests/e2e/*.js"
   },
   "jest": {
