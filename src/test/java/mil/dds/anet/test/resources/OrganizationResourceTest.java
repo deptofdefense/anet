@@ -157,6 +157,26 @@ public class OrganizationResourceTest extends AbstractResourceTest {
 		query.setType(OrganizationType.PRINCIPAL_ORG);
 		results = httpQuery("/api/organizations/search", jack).post(Entity.json(query), OrganizationList.class).getList();
 		assertThat(results).isNotEmpty();
+		
+		//Autocomplete puts the star in, verify that works. 
+		query.setText("EF 2*");
+		query.setType(null);
+		results = httpQuery("/api/organizations/search", jack).post(Entity.json(query), OrganizationList.class).getList();
+		assertThat(results.stream().filter(o -> o.getShortName().equals("EF 2")).count()).isEqualTo(1);
+		
+		query.setText("EF 2.2*");
+		results = httpQuery("/api/organizations/search", jack).post(Entity.json(query), OrganizationList.class).getList();
+		assertThat(results.stream().filter(o -> o.getShortName().equals("EF 2.2")).count()).isEqualTo(1);
+		
+		query.setText("MOD-F");
+		results = httpQuery("/api/organizations/search", jack).post(Entity.json(query), OrganizationList.class).getList();
+		assertThat(results.stream().filter(o -> o.getShortName().equals("MOD-F")).count()).isEqualTo(1);
+		
+		query.setText("MOD-F*");
+		results = httpQuery("/api/organizations/search", jack).post(Entity.json(query), OrganizationList.class).getList();
+		assertThat(results.stream().filter(o -> o.getShortName().equals("MOD-F")).count()).isEqualTo(1);
+		
+		
 	}
 	
 	@Test

@@ -60,7 +60,7 @@ export default class EditAssociatedPositionsModal extends Component {
 					<Autocomplete
 						placeholder={'Start typing to search for ' + (position.type === 'PRINCIPAL' ? 'an advisor' : 'a principal') + ' position...'}
 						objectType={Position}
-						fields={'id, name, code, type, person { id, name, rank }'}
+						fields={'id, name, code, type, person { id, name, rank }, organization { id, shortName, longName}'}
 						template={pos =>
 							<span>{pos.name} - {pos.code} ({(pos.person) ? pos.person.name : <i>empty</i>})</span>
 						}

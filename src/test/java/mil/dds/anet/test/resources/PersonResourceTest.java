@@ -186,6 +186,28 @@ public class PersonResourceTest extends AbstractResourceTest {
 			if (prevName != null) { assertThat(p.getName().compareToIgnoreCase(prevName)).isLessThanOrEqualTo(0); } 
 			prevName = p.getName();
 		}
+		
+		//Search for a person with the name "A Divisor"
+		query = new PersonSearchQuery();
+		query.setText("A Divisor");
+		query.setRole(Role.ADVISOR);
+		searchResults = httpQuery("/api/people/search", jack).post(Entity.json(query), PersonList.class);
+		long matchCount = searchResults.getList().stream().filter(p -> p.getName().equals("A Divisor")).count();
+		assertThat(matchCount).isEqualTo(1);
+		
+		//Search for same person from an autocomplete box. 
+		query.setText("A Divisor*");
+		searchResults = httpQuery("/api/people/search", jack).post(Entity.json(query), PersonList.class);
+		matchCount = searchResults.getList().stream().filter(p -> p.getName().equals("A Divisor")).count();
+		assertThat(matchCount).isEqualTo(1);
+		
+		
+		//Search by email Address
+		query.setText("hunter+arthur@dds.mil");
+		searchResults = httpQuery("/api/people/search", jack).post(Entity.json(query), PersonList.class);
+		matchCount = searchResults.getList().stream().filter(p -> p.getEmailAddress().equals("hunter+arthur@dds.mil")).count();
+		assertThat(matchCount).isEqualTo(1);
+		//TODO: should we enforce that this query returns ONLY arthur?  I think not since we're using the plus addressing for testing.. 
 
 	}
 	

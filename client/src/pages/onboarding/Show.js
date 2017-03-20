@@ -21,7 +21,7 @@ export default class OnboardingShow extends Page {
 			<div className="onboarding-new">
 				<h1>Welcome to ANET</h1>
 				<p>ANET is a training system for reporting TAA engagements, and learning about past engagements and people.</p>
-				<p>Let's create a new account for you. We'll grab your basic information and help your super user get you set up. If you had an account in ANET 1 and are seeing this page, let your super user know that you'll need to get your old account merged with the one you're about to create.</p>
+				<p>Let's create a new account for you. We'll grab your basic information and help your super user get you set up.</p>
 				<div className="create-account-button-wrapper">
 					<Button bsStyle="primary" onClick={this.onCreateAccountClick}>Create your account</Button>
 				</div>

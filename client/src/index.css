@@ -546,6 +546,14 @@ hr.assignModalSplit {
 	border-bottom: 1px solid #555;
 }
 
+.help-page .help-text {
+	font-size: 2rem;
+}
+
+.help-page h4 {
+	margin-top: 5rem;
+}
+
 .text-editor {
 	border: 1px solid #ccc;
 	border-radius: 5px;

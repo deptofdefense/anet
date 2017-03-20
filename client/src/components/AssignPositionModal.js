@@ -36,18 +36,19 @@ export default class AssignPositionModal extends Component {
 
 		let positionSearchQuery = {}
 		if (person.role === 'ADVISOR') {
-			positionSearchQuery.types = ['ADVISOR']
+			positionSearchQuery.type = ['ADVISOR']
 			if (currentUser.isAdmin()) { //only admins can put people in admin billets.
-				positionSearchQuery.types.push('ADMINISTRATOR')
+				positionSearchQuery.type.push('ADMINISTRATOR')
+				positionSearchQuery.type.push('SUPER_USER')
 			} else if (currentUser.isSuperUser()) {
 				//Only super users can put people in super user billets
 				//And they are limited to their organization.
-				positionSearchQuery.types.push('SUPER_USER')
+				positionSearchQuery.type.push('SUPER_USER')
 				positionSearchQuery.organizationId = currentUser.position.organization.id
 				positionSearchQuery.includeChildrenOrgs = true
 			}
 		} else if (person.role === 'PRINCIPAL') {
-			positionSearchQuery.types = ['PRINCIPAL']
+			positionSearchQuery.type = ['PRINCIPAL']
 		}
 
 		return (

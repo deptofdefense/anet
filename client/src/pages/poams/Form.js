@@ -69,6 +69,9 @@ export default class PoamForm extends ValidatableFormWrapper {
 	@autobind
 	onSubmit(event) {
 		let {poam, edit} = this.props
+		if (poam.responsibleOrg && poam.responsibleOrg.id) {
+			poam.responsibleOrg = {id: poam.responsibleOrg.id}
+		}
 
 		let url = `/api/poams/${edit ? 'update' : 'new'}`
 		API.send(url, poam, {disableSubmits: true})

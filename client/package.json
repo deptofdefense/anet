@@ -67,7 +67,7 @@
     "draft-js-export-html": "^0.5.2",
     "graphiql": "^0.8.0",
     "graphql": "^0.8.2",
-    "hopscotch": "^0.2.7",
+    "hopscotch": "nickjs/hopscotch",
     "immutability-helper": "kolodny/immutability-helper",
     "leaflet": "^1.0.2",
     "locale-compare-polyfill": "0.0.2",
