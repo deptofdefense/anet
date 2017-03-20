@@ -2,6 +2,13 @@ import React, {Component, PropTypes} from 'react'
 
 import Fieldset from 'components/Fieldset'
 
+import TOUR_SCREENSHOT from 'resources/tour-screenshot.png'
+
+const screenshotCss = {
+	width: "100%",
+	boxShadow: "0px 0px 10px #aaa",
+}
+
 export default class Help extends Component {
 	state = {
 		superUsers: []
@@ -22,6 +29,7 @@ export default class Help extends Component {
 
 				<h4>1. Use the guided tours</h4>
 				<p>If you're stuck on a page and you don't know what to do, look for the <strong>"Take a tour"</strong> link near the top of the page.</p>
+				<img src={TOUR_SCREENSHOT} alt={"Screenshot of \"Guided Tour\" link"} style={screenshotCss} />
 
 				<h4>2. Email your super user</h4>
 				<p>Your organization's super users are able to modify a lot of data in the system regarding how your organization, position, principal, and profile are set up.</p>
