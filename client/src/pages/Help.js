@@ -1,6 +1,9 @@
-import React, {Component, PropTypes} from 'react'
+import React, {PropTypes} from 'react'
+import Page from 'components/Page'
 
 import Fieldset from 'components/Fieldset'
+
+import API from 'api'
 
 import TOUR_SCREENSHOT from 'resources/tour-screenshot.png'
 
@@ -9,13 +12,31 @@ const screenshotCss = {
 	boxShadow: "0px 0px 10px #aaa",
 }
 
-export default class Help extends Component {
+export default class Help extends Page {
 	state = {
 		superUsers: []
 	}
 
 	static contextTypes = {
 		app: PropTypes.object.isRequired,
+	}
+
+	fetchData() {
+		let {currentUser} = this.context.app.state
+		if (!currentUser.id) { return }
+
+		let orgId = currentUser.position.organization.id
+		API.query(/* GraphQL */`
+			positionList(f:search,query:{type:[SUPER_USER,ADMINISTRATOR],organizationId:${orgId}}) {
+				list {
+					person { rank, name, emailAddress }
+				}
+			}
+		`).then(data => {
+			this.setState({
+				superUsers: data.positionList.list.map(person => person.person)
+			})
+		})
 	}
 
 	render() {
@@ -35,11 +56,11 @@ export default class Help extends Component {
 				<p>Your organization's super users are able to modify a lot of data in the system regarding how your organization, position, principal, and profile are set up.</p>
 				<p>Your super users:</p>
 				<ul>
-					{this.state.superUsers.map(user => {
-						<li key={user.id}>
-							<a href={`mailto:`}>{user.name}</a>
+					{this.state.superUsers.map(user =>
+						<li key={user.email}>
+							<a href={`mailto:`}>{user.rank} {user.name} - {user.emailAddress}</a>
 						</li>
-					})}
+					)}
 					{this.state.superUsers.length === 0 && <em>No super users found</em>}
 				</ul>
 
