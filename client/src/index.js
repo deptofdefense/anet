@@ -51,6 +51,8 @@ import GraphiQL from 'pages/GraphiQL'
 import OnboardingShow from 'pages/onboarding/Show'
 import OnboardingEdit from 'pages/onboarding/Edit'
 
+import Help from 'pages/Help'
+
 ReactDOM.render((
 	<InjectablesProvider>
 		<Router history={browserHistory} onUpdate={jumpToTop}>
@@ -107,6 +109,8 @@ ReactDOM.render((
 					<IndexRoute component={OnboardingShow} />
 					<Route path="edit" component={OnboardingEdit} />
 				</Route>
+
+				<Route path="help" component={Help} />
 
 				<Route path="*" component={PageMissing} />
 			</Route>
