@@ -3,7 +3,7 @@
 # Requirements
 
 ## ChromeDriver
-Obtain ChromeDriver from [here](https://sites.google.com/a/chromium.org/chromedriver/). Run it with `chromedriver --port=9515 --url-base=wd/hub`
+Obtain ChromeDriver from [here](https://sites.google.com/a/chromium.org/chromedriver/). Run it with `chromedriver --port=9515 --url-base=wd/hub`.
 
 ## Intern
 After running a fresh `npm install` from the `/anet/client/` directory you should have intern installed.

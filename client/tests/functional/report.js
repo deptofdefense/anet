@@ -4,7 +4,7 @@ define([
 	'intern/dojo/node!leadfoot/keys',
 	'require'
 ], function (registerSuite, assert, keys, require) {
-	var url = 'http://localhost:3000';
+	var url = 'http://localhost:3003';
 
 	registerSuite({
 		name: 'Report (functional)',
