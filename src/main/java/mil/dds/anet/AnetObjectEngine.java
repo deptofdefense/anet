@@ -1,8 +1,10 @@
 package mil.dds.anet;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import org.skife.jdbi.v2.DBI;
@@ -12,6 +14,8 @@ import mil.dds.anet.beans.ApprovalStep;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Position;
+import mil.dds.anet.beans.Organization.OrganizationType;
+import mil.dds.anet.beans.search.OrganizationSearchQuery;
 import mil.dds.anet.database.AdminDao;
 import mil.dds.anet.database.AdminDao.AdminSettingKeys;
 import mil.dds.anet.database.ApprovalActionDao;
@@ -156,6 +160,36 @@ public class AnetObjectEngine {
 		return false;
 	}
 
+	/*
+	 * Helper function to build a map of organization IDs to their top level parent organization object.
+	 * @param orgType: The Organzation Type (ADVISOR_ORG, or PRINCIPAL_ORG) to look for. pass NULL to get all orgs.  
+	 */
+	public Map<Integer,Organization> buildTopLevelOrgHash(OrganizationType orgType) {
+		OrganizationSearchQuery orgQuery = new OrganizationSearchQuery();
+		orgQuery.setPageSize(Integer.MAX_VALUE);
+		orgQuery.setType(orgType);
+		List<Organization> orgs = getOrganizationDao().search(orgQuery).getList();
+
+		Map<Integer,Organization> result = new HashMap<Integer,Organization>();
+		Map<Integer,Organization> orgMap = new HashMap<Integer,Organization>();
+
+		for (Organization o : orgs) {
+			orgMap.put(o.getId(), o);
+		}
+
+		for (Organization o : orgs) {
+			int curr = o.getId();
+			Integer parentId = DaoUtils.getId(orgMap.get(o.getId()).getParentOrg());
+			while (parentId != null) {
+				curr = parentId;
+				parentId = DaoUtils.getId(orgMap.get(parentId).getParentOrg());
+			}
+			result.put(o.getId(), orgMap.get(curr));
+		}
+
+		return result;
+	}
+	
 	public static AnetObjectEngine getInstance() { 
 		return instance;
 	}

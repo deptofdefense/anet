@@ -16,10 +16,8 @@ import mil.dds.anet.beans.Organization.OrganizationType;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportCancelledReason;
 import mil.dds.anet.beans.search.ISearchQuery.SortOrder;
-import mil.dds.anet.beans.search.OrganizationSearchQuery;
 import mil.dds.anet.beans.search.ReportSearchQuery;
 import mil.dds.anet.beans.search.ReportSearchQuery.ReportSearchSortBy;
-import mil.dds.anet.utils.DaoUtils;
 
 public class DailyRollupEmail extends AnetEmailAction {
 
@@ -99,7 +97,7 @@ public class DailyRollupEmail extends AnetEmailAction {
 
 		public List<ReportGrouping> getByGrouping(OrganizationType orgType) {
 			Map<Integer, ReportGrouping> orgIdToReports = new HashMap<Integer,ReportGrouping>();
-			Map<Integer, Organization> orgIdToTopOrg = buildTopLevelOrgHash(orgType);
+			Map<Integer, Organization> orgIdToTopOrg = AnetObjectEngine.getInstance().buildTopLevelOrgHash(orgType);
 			for (Report r : reports) {
 				Organization reportOrg = (orgType == OrganizationType.ADVISOR_ORG) ? r.loadAdvisorOrg() : r.loadPrincipalOrg();
 				int topOrgId;
@@ -134,32 +132,7 @@ public class DailyRollupEmail extends AnetEmailAction {
 			return getCountByCancelledReason(ReportCancelledReason.valueOf(reason));
 		}
 
-		private Map<Integer,Organization> buildTopLevelOrgHash(OrganizationType orgType) {
-			OrganizationSearchQuery orgQuery = new OrganizationSearchQuery();
-			orgQuery.setPageSize(Integer.MAX_VALUE);
-			orgQuery.setType(orgType);
-			List<Organization> orgs = AnetObjectEngine.getInstance().getOrganizationDao().search(orgQuery).getList();
-
-			Map<Integer,Organization> result = new HashMap<Integer,Organization>();
-			Map<Integer,Organization> orgMap = new HashMap<Integer,Organization>();
-
-			for (Organization o : orgs) {
-				orgMap.put(o.getId(), o);
-			}
-
-			for (Organization o : orgs) {
-				int curr = o.getId();
-				Integer parentId = DaoUtils.getId(orgMap.get(o.getId()).getParentOrg());
-				while (parentId != null) {
-					curr = parentId;
-					parentId = DaoUtils.getId(orgMap.get(parentId).getParentOrg());
-				}
-				result.put(o.getId(), orgMap.get(curr));
-			}
-
-			return result;
-		}
-
+		
 	}
 
 	public DateTime getStartDate() {

@@ -23,7 +23,6 @@ import mil.dds.anet.beans.ReportPerson;
 import mil.dds.anet.beans.RollupGraph;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.ReportList;
 import mil.dds.anet.beans.search.ReportSearchQuery;
-import mil.dds.anet.database.mappers.OrganizationMapper;
 import mil.dds.anet.database.mappers.PoamMapper;
 import mil.dds.anet.database.mappers.ReportMapper;
 import mil.dds.anet.database.mappers.ReportPersonMapper;
@@ -105,7 +104,10 @@ public class ReportDao implements IAnetDao<Report> {
 				r.setId(DaoUtils.getGeneratedId(keys));
 
 				if (r.getAttendees() != null) {
-					for (ReportPerson p : r.getAttendees()) {
+					//Setify based on attendeeId to prevent violations of unique key constraint. 
+					Map<Integer,ReportPerson> attendeeMap = new HashMap<Integer,ReportPerson>();
+					r.getAttendees().stream().forEach(rp -> attendeeMap.put(rp.getId(), rp));
+					for (ReportPerson p : attendeeMap.values()) {
 						//TODO: batch this
 						dbHandle.createStatement("/* insertReport.attendee */ INSERT INTO reportPeople "
 								+ "(personId, reportId, isPrimary) VALUES (:personId, :reportId, :isPrimary)")
@@ -278,16 +280,8 @@ public class ReportDao implements IAnetDao<Report> {
 			.bind("startDate", start)
 			.bind("endDate", end)
 			.list();
-		
-		//Need all orgs to build the tree. 
-		List<Organization> allOrgs = dbHandle.createQuery("/* rollupGetOrgs */ "
-				+ "SELECT " + OrganizationDao.ORGANIZATION_FIELDS 
-				+ " FROM organizations WHERE type = :advisorOrgType")
-				.bind("advisorOrgType", DaoUtils.getEnumId(OrganizationType.ADVISOR_ORG))
-				.map(new OrganizationMapper())
-				.list();
-		Map<Integer, Organization> orgMap = new HashMap<Integer, Organization>();
-		allOrgs.stream().forEach(o -> orgMap.put(o.getId(), o));
+
+		Map<Integer,Organization> orgMap = AnetObjectEngine.getInstance().buildTopLevelOrgHash(OrganizationType.ADVISOR_ORG);
 		
 		Map<Integer,Map<ReportState,Integer>> rollup = new HashMap<Integer,Map<ReportState,Integer>>();
 		
@@ -295,31 +289,22 @@ public class ReportDao implements IAnetDao<Report> {
 			Integer orgId = (Integer) result.get("advisorOrganizationId");
 			Integer count = (Integer) result.get("count");
 			ReportState state = ReportState.values()[(Integer) result.get("state")];
-			
-			Map<ReportState,Integer> orgBar = rollup.get(orgId);
+		
+			Integer parentOrgId = (orgId == null) ? null : orgMap.get(orgId).getId();
+			System.out.println("Mapped " + orgId + " to " + parentOrgId);
+			Map<ReportState,Integer> orgBar = rollup.get(parentOrgId);
 			if (orgBar == null) { 
 				orgBar = new HashMap<ReportState,Integer>();
-				rollup.put(orgId,  orgBar);
+				rollup.put(parentOrgId,  orgBar);
 			}
 			orgBar.put(state,  count);
 		}
 		
 		List<RollupGraph> result = new LinkedList<RollupGraph>();
-		for (Organization org : allOrgs) { 
-			if (rollup.containsKey(org.getId())) { 
-				Map<ReportState,Integer> values = rollup.get(org.getId());
-				RollupGraph bar = new RollupGraph();
-				bar.setOrg(org);
-				bar.setReleased(Utils.orIfNull(values.get(ReportState.RELEASED), 0));
-				bar.setCancelled(Utils.orIfNull(values.get(ReportState.CANCELLED), 0));
-				result.add(bar);
-			}
-		}
-		
-		// Reports without an Advisor Organization. 
-		if (rollup.containsKey(null)) {
-			Map<ReportState,Integer> values = rollup.get(null);
+		for (Map.Entry<Integer, Map<ReportState,Integer>> entry : rollup.entrySet()) { 
+			Map<ReportState,Integer> values = entry.getValue();
 			RollupGraph bar = new RollupGraph();
+			bar.setOrg(orgMap.get(entry.getKey()));
 			bar.setReleased(Utils.orIfNull(values.get(ReportState.RELEASED), 0));
 			bar.setCancelled(Utils.orIfNull(values.get(ReportState.CANCELLED), 0));
 			result.add(bar);

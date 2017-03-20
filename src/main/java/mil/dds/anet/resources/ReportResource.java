@@ -341,7 +341,6 @@ public class ReportResource implements IGraphQLResource {
 
 	/*
 	 * Approve this report for the current step.
-	 * TODO: this should run common approval code that checks if any previous approving users can approve the future steps
 	 */
 	@POST
 	@Timed
