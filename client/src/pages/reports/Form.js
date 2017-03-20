@@ -12,6 +12,7 @@ import PoamsSelector from 'components/PoamsSelector'
 import LinkTo from 'components/LinkTo'
 import History from 'components/History'
 import ValidatableFormWrapper from 'components/ValidatableFormWrapper'
+import moment from 'moment'
 
 import API from 'api'
 import {Report, Person} from 'models'
@@ -39,7 +40,12 @@ export default class ReportForm extends ValidatableFormWrapper {
 
 			showReportText: false,
 			isCancelled: (props.report.cancelledReason ? true : false),
-			errors: {}
+			errors: {},
+
+			//State for auto-saving reports
+			reportChanged: false, //Flag to determine if we need to auto-save.
+			timeoutId: null,
+			showAutoSaveBanner: false,
 		}
 	}
 
@@ -64,7 +70,15 @@ export default class ReportForm extends ValidatableFormWrapper {
 			}
 			this.setState(newState)
 		})
+
+		let timeoutId = window.setTimeout(this.autoSave, 30000)
+		this.setState({timeoutId})
 	}
+
+	componentWillUnmount() {
+		window.clearTimeout(this.state.timeoutId)
+	}
+
 
 	componentWillReceiveProps(nextProps) {
 		let report = nextProps.report
@@ -76,7 +90,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 
 	render() {
 		let {report, onDelete} = this.props
-		let {recents, errors, isCancelled} = this.state
+		let {recents, errors, isCancelled, showAutoSaveBanner} = this.state
 
 		let hasErrors = Object.keys(errors).length > 0
 
@@ -88,6 +102,12 @@ export default class ReportForm extends ValidatableFormWrapper {
 		const {ValidatableForm, RequiredField} = this
 
 		return <div className="report-form">
+			<Collapse in={showAutoSaveBanner}>
+				<div className="banner" style={{top:132, background: '#DFF0D8', color: '#3c763d'}}>
+					Your report has been automatically saved
+				</div>
+			</Collapse>
+
 			<ValidatableForm formFor={report} horizontal onSubmit={this.onSubmit} onChange={this.onChange}
 				onDelete={onDelete} deleteText="Delete this report"
 				submitDisabled={hasErrors} submitText="Preview and submit">
@@ -355,7 +375,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 
 	@autobind
 	onChange() {
-		this.setState({errors : this.validateReport()})
+		this.setState({errors : this.validateReport(), reportChanged: true})
 		this.forceUpdate()
 	}
 
@@ -373,10 +393,10 @@ export default class ReportForm extends ValidatableFormWrapper {
 	}
 
 	@autobind
-	onSubmit(event) {
-		let {report, edit} = this.props
+	saveReport(disableSubmits) {
+		let report = new Report(this.props.report)
 		let isCancelled = this.state.isCancelled
-
+		let edit = !!report.id
 		if(report.primaryAdvisor) { report.attendees.find(a => a.id === report.primaryAdvisor.id).isPrimary = true }
 		if(report.primaryPrincipal) { report.attendees.find(a => a.id === report.primaryPrincipal.id).isPrimary = true }
 
@@ -391,19 +411,24 @@ export default class ReportForm extends ValidatableFormWrapper {
 		}
 
 		let url = `/api/reports/${edit ? 'update' : 'new'}`
-		API.send(url, report, {disableSubmits: true})
+		return API.send(url, report, {disableSubmits: disableSubmits})
+	}
+
+	@autobind
+	onSubmit(event) {
+		this.saveReport(true)
 			.then(response => {
 				if (response.id) {
-					report.id = response.id
+					this.props.report.id = response.id
 				}
 
 				// this updates the current page URL on model/new to be the edit page,
 				// so that if you press back after saving a new model, it takes you
 				// back to editing the model you just saved
-				History.replace(Report.pathForEdit(report), false)
+				History.replace(Report.pathForEdit(this.props.report), false)
 
 				// then after, we redirect you to the to page
-				History.push(Report.pathFor(report), {
+				History.push(Report.pathFor(this.props.report), {
 					success: 'Report saved successfully',
 					skipPageLeaveWarning: true
 				})
@@ -412,5 +437,33 @@ export default class ReportForm extends ValidatableFormWrapper {
 				this.setState({error: {message: response.message || response.error}})
 				window.scrollTo(0, 0)
 			})
+	}
+
+	@autobind
+	autoSave() {
+		let timeoutId = window.setTimeout(this.autoSave, 30000)
+		this.setState({timeoutId})
+
+		//If the report hasn't changed, don't save it.
+		if (this.state.reportChanged === false) { return }
+
+		this.saveReport(false)
+			.then(response => {
+				if (response.id) {
+					this.props.report.id = response.id
+				}
+
+				//Reset the reportchanged state, yes this could drop a few keystrokes that
+				// the user made while we were saving, but that's not a huge deal.
+				this.setState({autoSavedAt: moment(), reportChanged: false, showAutoSaveBanner: true})
+				window.setTimeout(this.hideAutoSaveBanner, 5000)
+			}).catch(response =>
+				this.setState({error: "There was an error autosaving your report. We'll try again in a few seconds"})
+			)
+	}
+
+	@autobind
+	hideAutoSaveBanner() {
+		this.setState({showAutoSaveBanner: false})
 	}
 }
