@@ -39,6 +39,7 @@ export default class AssignPositionModal extends Component {
 			positionSearchQuery.types = ['ADVISOR']
 			if (currentUser.isAdmin()) { //only admins can put people in admin billets.
 				positionSearchQuery.types.push('ADMINISTRATOR')
+				positionSearchQuery.types.push('SUPER_USER')
 			} else if (currentUser.isSuperUser()) {
 				//Only super users can put people in super user billets
 				//And they are limited to their organization.
