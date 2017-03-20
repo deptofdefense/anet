@@ -1,4 +1,5 @@
 import React, {Component} from 'react'
+import autobind from 'autobind-decorator'
 
 import AlloyEditor from 'alloyeditor/dist/alloy-editor/alloy-editor-no-react'
 import 'alloyeditor/dist/alloy-editor/assets/alloy-editor-atlas.css'
@@ -18,10 +19,7 @@ export default class TextEditor extends Component {
 		if (!this.editor) {
 			this.editor = AlloyEditor.editable(this.container, ALLOY_CONFIG)
 			this.nativeEditor = this.editor.get('nativeEditor')
-
-			this.nativeEditor.on('change', () => {
-				this.props.onChange(this.nativeEditor.getData())
-			})
+			this.nativeEditor.on('change', this.onChange)
 		}
 
 		this.componentWillReceiveProps(this.props)
@@ -36,6 +34,12 @@ export default class TextEditor extends Component {
 		if (html !== this.nativeEditor.getData()) {
 			this.nativeEditor.setData(html)
 		}
+	}
+
+	@autobind
+	onChange(event) {
+		const html = this.nativeEditor.getData()
+		this.props.onChange(html)
 	}
 
 	render() {
