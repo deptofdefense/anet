@@ -66,6 +66,7 @@ export default class Page extends Component {
 	doneLoading(response) {
 		NProgress.done()
 		document.body.classList.remove('loading')
+		document.body.classList.add('done-loading')
 
 		if (response) {
 			if (response.status === 404 || (response.status === 500 && _get(response, ['errors', 0]) === 'Invalid Syntax')) {
