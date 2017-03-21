@@ -17,7 +17,7 @@ import OrganizationLaydown from './Laydown'
 import OrganizationApprovals from './Approvals'
 
 import {Organization} from 'models'
-import {GraphQLPart, GraphQLQuery} from 'graphql'
+import GQL from 'graphql'
 
 export default class OrganizationShow extends Page {
 	static contextTypes = {
@@ -48,7 +48,7 @@ export default class OrganizationShow extends Page {
 	}
 
 	fetchData(props) {
-		let orgPart = (new GraphQLPart()).withQueryString(/* GraphQL */`
+		let orgPart = new GQL.Part(/* GraphQL */`
 			organization(id:${props.params.id}) {
 				id, shortName, longName, type
 				parentOrg { id, shortName, longName }
@@ -72,7 +72,7 @@ export default class OrganizationShow extends Page {
 			pageSize: 10,
 			advisorOrgId: props.params.id //TODO: this is wrong.
 		}
-		let reportsPart = (new GraphQLPart()).withQueryString(/* GraphQL */`
+		let reportsPart = new GQL.Part(/* GraphQL */`
 			reports: reportList(query:$reportQuery) {
 				list {
 					id, intent, engagementDate, keyOutcomes, nextSteps, state, cancelledReason
@@ -86,7 +86,7 @@ export default class OrganizationShow extends Page {
 			}`)
 			.addVariable("reportQuery", "ReportSearchQuery", reportQuery)
 
-		GraphQLQuery.run(orgPart, reportsPart).then(data =>
+		GQL.run(orgPart, reportsPart).then(data =>
 			this.setState({
 				organization: new Organization(data.organization),
 				reports: data.reports

@@ -1,29 +1,6 @@
 import API from 'api'
 
-export class GraphQLPart {
-
-	constructor() {
-		this.variables = []
-	}
-
-	withQueryString(queryString) {
-		this.queryString = queryString
-		return this
-	}
-
-	addVariable(varName, varType, varValue) {
-		this.variables.push({
-			name: varName,
-			type: varType,
-			value: varValue
-		})
-		return this
-	}
-
-}
-
-
-export class GraphQLQuery {
+export default class GQL {
 
 	// Pass a variable number of GraphQLPart to run
 	static run() {
@@ -44,4 +21,21 @@ export class GraphQLQuery {
 		return API.query(query, variables, variableDef)
 	}
 
+	static Part = class Part {
+
+		constructor(queryString) {
+			this.queryString = queryString
+			this.variables = []
+		}
+
+		addVariable(varName, varType, varValue) {
+			this.variables.push({
+				name: varName,
+				type: varType,
+				value: varValue
+			})
+			return this
+		}
+	}
 }
+
