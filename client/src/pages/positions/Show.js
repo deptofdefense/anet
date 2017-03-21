@@ -131,7 +131,7 @@ export default class PositionShow extends Page {
 
 					<Fieldset title={`Assigned ${assignedRole}`}
 						id="assigned-principal"
-						action={canEdit && <Button onClick={this.showAssociatedPositionModal}>Changed assigned {assignedRole}</Button>}>
+						action={canEdit && <Button onClick={this.showAssociatedPositionModal}>Change assigned {assignedRole}</Button>}>
 						<Table>
 							<thead>
 								<tr>
