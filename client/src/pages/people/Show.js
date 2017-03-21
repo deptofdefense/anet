@@ -18,6 +18,7 @@ import {personTour} from 'pages/HopscotchTour'
 import API from 'api'
 import {Person, Position} from 'models'
 import autobind from 'autobind-decorator'
+import GQL from 'graphql'
 
 export default class PersonShow extends Page {
 	static contextTypes = {
@@ -31,17 +32,62 @@ export default class PersonShow extends Page {
 		this.state = {
 			person: new Person({
 				id: props.params.id,
-				authoredReports: [],
-				attendedReports: [],
 			}),
+			authoredReports: [],
+			attendedReports: [],
 			showAssignPositionModal: false,
 			showAssociatedPositionsModal: false,
 		}
+
+		this.authoredReportsPageNum = 0
+		this.attendedReportsPageNum = 0
 		setMessages(props,this.state)
 	}
 
+	getAuthoredReportsPart(personId) {
+		let query = {
+			pageNum: this.authoredReportsPageNum,
+			pageSize: 10,
+			authorId : personId
+		}
+		let part = new GQL.Part(/* GraphQL */`
+			authoredReports: reportList(query: $authorQuery) {
+				pageNum, pageSize, totalCount, list {
+					id, engagementDate, intent, updatedAt, state, cancelledReason
+					advisorOrg { id, shortName }
+					author { id, name }
+				}
+			}`)
+			.addVariable("authorQuery", "ReportSearchQuery", query)
+		return part
+	}
+
+	getAttendedReportsPart(personId) {
+		let query = {
+			pageNum: this.attendedReportsPageNum,
+			pageSize: 10,
+			attendeeId: personId
+		}
+		let part = new GQL.Part(/* GraphQL */ `
+			attendedReports: reportList(query: $attendeeQuery) {
+				pageNum, pageSize, totalCount, list {
+					id,
+					engagementDate,
+					advisorOrg { id, shortName}
+					intent,
+					updatedAt,
+					author {
+						id,
+						name
+					}
+				}
+			}`)
+			.addVariable("attendeeQuery", "ReportSearchQuery", query)
+		return part
+	}
+
 	fetchData(props) {
-		API.query(/* GraphQL */`
+		let personPart = new GQL.Part(/* GraphQL */`
 			person(id:${props.params.id}) {
 				id,
 				name, rank, role, status, emailAddress, phoneNumber, biography, country, gender, endOfTourDate,
@@ -57,30 +103,22 @@ export default class PersonShow extends Page {
 						person { id, name, rank },
 						organization { id, shortName }
 					}
-				},
-				authoredReports(pageNum:0,pageSize:10) { list {
-					id, engagementDate, intent, updatedAt, state, cancelledReason
-					advisorOrg { id, shortName }
-					author { id, name }
-				}},
-				attendedReports(pageNum:0, pageSize:10) { list {
-					id,
-					engagementDate,
-					advisorOrg { id, shortName}
-					intent,
-					updatedAt,
-					author {
-						id,
-						name
-					}
-				}}
+				}
+			}`)
+		let authoredReportsPart = this.getAuthoredReportsPart()
+		let attendedReportsPart = this.getAttendedReportsPart()
 
-			}
-		`).then(data => this.setState({person: new Person(data.person)}))
+		GQL.run([personPart, authoredReportsPart, attendedReportsPart]).then(data =>
+			this.setState({
+				person: new Person(data.person),
+				authoredReports: data.authoredReports,
+				attendedReports: data.attendedReports
+			})
+		)
 	}
 
 	render() {
-		let {person} = this.state
+		let {person,attendedReports,authoredReports} = this.state
 		let position = person.position
 		let assignedRole = position.type === 'PRINCIPAL' ? 'advisors' : 'Afghan principals'
 
@@ -173,12 +211,18 @@ export default class PersonShow extends Page {
 
 					{person.isAdvisor() &&
 						<Fieldset title="Reports authored" id="reports-authored">
-							<ReportTable reports={person.authoredReports.list || []} showAuthors={false} />
+							<ReportTable
+								paginatedReports={authoredReports}
+								goToPage={this.goToAuthoredPage}
+								showAuthors={false} />
 						</Fieldset>
 					}
 
 					<Fieldset title={`Reports attended by ${person.name}`} id="reports-attended">
-						<ReportTable reports={person.attendedReports.list || []} showAuthors={true} />
+						<ReportCollection
+							paginatedReports={attendedReports}
+							goToPage={this.goToAttendedPage}
+							showAuthors={true} />
 					</Fieldset>
 				</Form>
 			</div>
@@ -261,5 +305,23 @@ export default class PersonShow extends Page {
 		if (success) {
 			this.fetchData(this.props)
 		}
+	}
+
+	@autobind
+	goToAuthoredPage(pageNum) {
+		this.authoredPageNum = pageNum
+		let part = this.getAuthoredReportsPart(this.state.person.id)
+		GQL.run([part]).then(data =>
+			this.setState({authoredReports: data.authoredReports})
+		)
+	}
+
+	@autobind
+	goToAttendedPage(pageNum) {
+		this.attendedPageNum = pageNum
+		let part = this.getAttendedReportsPart(this.state.person.id)
+		GQL.run([part]).then(data =>
+			this.setState({attendedReports: data.attendedReports})
+		)
 	}
 }
