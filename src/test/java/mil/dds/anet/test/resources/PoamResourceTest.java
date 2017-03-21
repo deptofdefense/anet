@@ -107,8 +107,8 @@ public class PoamResourceTest extends AbstractResourceTest {
 			.isEqualTo(searchResults.size());
 		
 		//Search for a poam by the organization
-		OrganizationList orgs = httpQuery("/api/organizations/search?text=EF2", jack).get(OrganizationList.class);
-		Organization ef2 = orgs.getList().stream().filter(o -> o.getShortName().equals("EF2")).findFirst().get();
+		OrganizationList orgs = httpQuery("/api/organizations/search?text=EF%202", jack).get(OrganizationList.class);
+		Organization ef2 = orgs.getList().stream().filter(o -> o.getShortName().equals("EF 2")).findFirst().get();
 		assertThat(ef2).isNotNull();
 		
 		query.setText(null);
@@ -126,6 +126,18 @@ public class PoamResourceTest extends AbstractResourceTest {
 		query.setCategory("Milestone");
 		searchResults = httpQuery("/api/poams/search", jack).post(Entity.json(query), PoamList.class).getList();
 		assertThat(searchResults).isNotEmpty();
+		
+		//Autocomplete
+		query = new PoamSearchQuery();
+		query.setText("1.1*");
+		searchResults = httpQuery("/api/poams/search", jack).post(Entity.json(query), PoamList.class).getList();
+		assertThat(searchResults.stream().filter(p -> p.getShortName().equals("1.1")).count()).isEqualTo(1);
+		assertThat(searchResults.stream().filter(p -> p.getShortName().equals("1.1.A")).count()).isEqualTo(1);
+		assertThat(searchResults.stream().filter(p -> p.getShortName().equals("1.1.B")).count()).isEqualTo(1);
+		
+		query.setText("1.1.A*");
+		searchResults = httpQuery("/api/poams/search", jack).post(Entity.json(query), PoamList.class).getList();
+		assertThat(searchResults.stream().filter(p -> p.getShortName().equals("1.1.A")).count()).isEqualTo(1);
 	}
 	
 	@Test

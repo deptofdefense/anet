@@ -36,9 +36,9 @@ public class MssqlOrganizationSearcher implements IOrganizationSearcher {
 		
 		String text = query.getText();
 		if (text != null && text.trim().length() > 0) {
-			whereClauses.add("(CONTAINS((shortName, longName), :text) OR  shortName LIKE :likeQuery)");
+			whereClauses.add("(CONTAINS(longName, :text) OR  shortName LIKE :likeQuery)");
 			sqlArgs.put("text", Utils.getSqlServerFullTextQuery(text));
-			sqlArgs.put("likeQuery", text + "%");
+			sqlArgs.put("likeQuery", Utils.prepForLikeQuery(text) + "%");
 		}
 		
 		if (query.getType() != null) { 

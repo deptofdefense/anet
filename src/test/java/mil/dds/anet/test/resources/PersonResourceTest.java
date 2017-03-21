@@ -135,9 +135,9 @@ public class PersonResourceTest extends AbstractResourceTest {
 		assertThat(searchResults.getTotalCount()).isGreaterThan(0);
 		assertThat(searchResults.getList().stream().filter(p -> p.getName().equals("Bob Bobtown")).findFirst()).isNotEmpty();
 
-		OrganizationList orgs = httpQuery("/api/organizations/search?text=EF1&type=ADVISOR_ORG", jack).get(OrganizationList.class);
+		OrganizationList orgs = httpQuery("/api/organizations/search?text=EF%201&type=ADVISOR_ORG", jack).get(OrganizationList.class);
 		assertThat(orgs.getList().size()).isGreaterThan(0);
-		Organization org = orgs.getList().stream().filter(o -> o.getShortName().equalsIgnoreCase("EF1.1")).findFirst().get();
+		Organization org = orgs.getList().stream().filter(o -> o.getShortName().equalsIgnoreCase("EF 1.1")).findFirst().get();
 
 		query.setText(null);
 		query.setOrgId(org.getId());
@@ -151,7 +151,7 @@ public class PersonResourceTest extends AbstractResourceTest {
 		assertThat(searchResults.getList().stream().filter(p -> p.getStatus()== PersonStatus.INACTIVE).count()).isEqualTo(searchResults.getList().size());
 		
 		//Search with children orgs
-		org = orgs.getList().stream().filter(o -> o.getShortName().equalsIgnoreCase("EF1")).findFirst().get();
+		org = orgs.getList().stream().filter(o -> o.getShortName().equalsIgnoreCase("EF 1")).findFirst().get();
 		query.setStatus(null);
 		query.setOrgId(org.getId());
 		//First don't include child orgs and then increase the scope and verify results increase.
@@ -189,16 +189,16 @@ public class PersonResourceTest extends AbstractResourceTest {
 		
 		//Search for a person with the name "A Divisor"
 		query = new PersonSearchQuery();
-		query.setText("A Divisor");
+		query.setText("A Dvisor");
 		query.setRole(Role.ADVISOR);
 		searchResults = httpQuery("/api/people/search", jack).post(Entity.json(query), PersonList.class);
-		long matchCount = searchResults.getList().stream().filter(p -> p.getName().equals("A Divisor")).count();
+		long matchCount = searchResults.getList().stream().filter(p -> p.getName().equals("A Dvisor")).count();
 		assertThat(matchCount).isEqualTo(1);
 		
 		//Search for same person from an autocomplete box. 
-		query.setText("A Divisor*");
+		query.setText("A Dvisor*");
 		searchResults = httpQuery("/api/people/search", jack).post(Entity.json(query), PersonList.class);
-		matchCount = searchResults.getList().stream().filter(p -> p.getName().equals("A Divisor")).count();
+		matchCount = searchResults.getList().stream().filter(p -> p.getName().equals("A Dvisor")).count();
 		assertThat(matchCount).isEqualTo(1);
 		
 		
