@@ -41,6 +41,7 @@ dependencies {
 	compile 'org.jvnet.com4j.typelibs:ado20:1.0'
 
 	compile files('lib/sqljdbc42.jar')
+	compile files('lib/sqljdbc_auth.dll')
 	
 	testCompile group: 'io.dropwizard', name: 'dropwizard-testing', version: '1.0.2'
 	testCompile group: 'io.dropwizard', name: 'dropwizard-client', version: '1.0.2'
@@ -53,6 +54,9 @@ proc.waitFor();
 project.version = proc.text.trim();
 
 mainClassName = "mil.dds.anet.AnetApplication"
+
+applicationDefaultJvmArgs = ["-Djava.library.path=MY_APP_HOME/lib"]
+
 
 String dbDriver = run.environment['DB_DRIVER']
 dbDriver = dbDriver ? dbDriver : "sqlite"
@@ -120,6 +124,13 @@ buildscript {
   dependencies {
     classpath "org.kordamp:markdown-gradle-plugin:1.1.0"
  }
+}
+
+startScripts {
+	doLast {
+		unixScript.text = unixScript.text.replace('MY_APP_HOME', '\$APP_HOME')
+		windowsScript.text = windowsScript.text.replace('MY_APP_HOME', '%APP_HOME%')
+	}
 }
 
 //Configure Markdown plugin
