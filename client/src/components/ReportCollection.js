@@ -21,7 +21,7 @@ export default class ReportCollection extends Component {
 			pageSize: PropTypes.number,
 			list: PropTypes.array.isRequired,
 		}),
-		goToPage: PropTypes.function,
+		goToPage: PropTypes.func,
 	}
 
 	constructor(props) {

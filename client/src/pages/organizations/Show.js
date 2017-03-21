@@ -1,6 +1,7 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 import {ListGroup, ListGroupItem} from 'react-bootstrap'
+import autobind from 'autobind-decorator'
 
 import Breadcrumbs from 'components/Breadcrumbs'
 import Fieldset from 'components/Fieldset'
@@ -57,7 +58,7 @@ export default class OrganizationShow extends Page {
 		}
 		let reportsPart = new GQL.Part(/* GraphQL */`
 			reports: reportList(query:$reportQuery) {
-				list {
+				pageNum, pageSize, totalCount, list {
 					id, intent, engagementDate, keyOutcomes, nextSteps, state, cancelledReason
 					author { id, name },
 					primaryAdvisor { id, name } ,
@@ -92,7 +93,7 @@ export default class OrganizationShow extends Page {
 			}`)
 		let reportsPart = this.getReportQueryPart(props.params.id)
 
-		GQL.run(orgPart, reportsPart).then(data =>
+		GQL.run([orgPart, reportsPart]).then(data =>
 			this.setState({
 				organization: new Organization(data.organization),
 				reports: data.reports
@@ -188,11 +189,11 @@ export default class OrganizationShow extends Page {
 		)
 	}
 
-	//0 indexed pages
+	@autobind
 	goToReportsPage(pageNum) {
 		this.reportsPageNum = pageNum
-		let reportQueryPart = this.getReportQueryPart()
-		GQL.run(reportQueryPart).then(data =>
+		let reportQueryPart = this.getReportQueryPart(this.state.organization.id)
+		GQL.run([reportQueryPart]).then(data =>
 			this.setState({reports: data.reports})
 		)
 	}
