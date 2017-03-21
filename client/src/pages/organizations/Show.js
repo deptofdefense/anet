@@ -31,9 +31,11 @@ export default class OrganizationShow extends Page {
 
 		this.state = {
 			organization: new Organization({id: props.params.id}),
+			reports: null,
 			action: props.params.action
 		}
 
+		this.reportsPageNum = 0
 		setMessages(props,this.state)
 	}
 
@@ -45,6 +47,28 @@ export default class OrganizationShow extends Page {
 		if (+nextProps.params.id !== this.state.organization.id) {
 			this.loadData(nextProps)
 		}
+	}
+
+	getReportQueryPart(orgId) {
+		let reportQuery = {
+			pageNum: this.reportsPageNum,
+			pageSize: 10,
+			advisorOrgId: orgId //TODO: this is wrong.
+		}
+		let reportsPart = new GQL.Part(/* GraphQL */`
+			reports: reportList(query:$reportQuery) {
+				list {
+					id, intent, engagementDate, keyOutcomes, nextSteps, state, cancelledReason
+					author { id, name },
+					primaryAdvisor { id, name } ,
+					primaryPrincipal {id, name },
+					advisorOrg { id, shortName, longName }
+					principalOrg { id, shortName, longName }
+					location { id, name, lat, lng }
+				}
+			}`)
+			.addVariable("reportQuery", "ReportSearchQuery", reportQuery)
+		return reportsPart
 	}
 
 	fetchData(props) {
@@ -66,25 +90,7 @@ export default class OrganizationShow extends Page {
 					id, name, approvers { id, name, person { id, name}}
 				}
 			}`)
-
-		let reportQuery = {
-			pageNum: 0,
-			pageSize: 10,
-			advisorOrgId: props.params.id //TODO: this is wrong.
-		}
-		let reportsPart = new GQL.Part(/* GraphQL */`
-			reports: reportList(query:$reportQuery) {
-				list {
-					id, intent, engagementDate, keyOutcomes, nextSteps, state, cancelledReason
-					author { id, name },
-					primaryAdvisor { id, name } ,
-					primaryPrincipal {id, name },
-					advisorOrg { id, shortName, longName }
-					principalOrg { id, shortName, longName }
-					location { id, name, lat, lng }
-				}
-			}`)
-			.addVariable("reportQuery", "ReportSearchQuery", reportQuery)
+		let reportsPart = this.getReportQueryPart(props.params.id)
 
 		GQL.run(orgPart, reportsPart).then(data =>
 			this.setState({
@@ -172,10 +178,24 @@ export default class OrganizationShow extends Page {
 					<OrganizationPoams organization={org} />
 
 					<Fieldset id="reports" title={`Reports from ${org.shortName}`}>
-						<ReportCollection reports={reports && reports.list} />
+						<ReportCollection
+							paginatedReports={reports}
+							goToPage={this.goToReportsPage}
+						/>
 					</Fieldset>
 				</Form>
 			</div>
 		)
 	}
+
+	//0 indexed pages
+	goToReportsPage(pageNum) {
+		this.reportsPageNum = pageNum
+		let reportQueryPart = this.getReportQueryPart()
+		GQL.run(reportQueryPart).then(data =>
+			this.setState({reports: data.reports})
+		)
+	}
+
+
 }
