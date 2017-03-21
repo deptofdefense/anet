@@ -17,7 +17,7 @@ class GraphQLPart {
 	}
 }
 
-GQL = {
+const GQL = {
 	// Pass a variable number of GraphQLQuery to run
 	run(parts) {
 		let query = parts.map(p => p.queryString).join(',\n')
