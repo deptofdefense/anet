@@ -8,6 +8,12 @@ import LinkTo from 'components/LinkTo'
 
 import {Organization} from 'models'
 
+const AnchorNavItem = (props) => {
+	return <NavItem onClick={(event) => {
+		event.stopPropagation()
+	}} {...props}/>
+}
+
 class Nav extends Component {
 	static contextTypes = {
 		app: PropTypes.object.isRequired,
@@ -44,11 +50,11 @@ class Nav extends Component {
 				currentClassName="active"
 				offset={-152}
 			>
-				<NavItem href="#info">Info</NavItem>
-				<NavItem href="#laydown">Laydown</NavItem>
-				<NavItem href="#approvals">Approvals</NavItem>
-				<NavItem href="#poams">PoAMs</NavItem>
-				<NavItem href="#reports">Reports</NavItem>
+				<AnchorNavItem href="#info">Info</AnchorNavItem>
+				<AnchorNavItem href="#laydown">Laydown</AnchorNavItem>
+				<AnchorNavItem href="#approvals">Approvals</AnchorNavItem>
+				<AnchorNavItem href="#poams">PoAMs</AnchorNavItem>
+				<AnchorNavItem href="#reports">Reports</AnchorNavItem>
 			</SubNav>
 		)
 
@@ -70,9 +76,9 @@ class Nav extends Component {
 						currentClassName="active"
 						offset={-152}
 					>
-						<NavItem href="#draft-reports">Draft reports</NavItem>
-						<NavItem href="#pending-approval">Pending approval</NavItem>
-						<NavItem href="#published-reports">Published reports</NavItem>
+						<AnchorNavItem href="#draft-reports">Draft reports</AnchorNavItem>
+						<AnchorNavItem href="#pending-approval">Pending approval</AnchorNavItem>
+						<AnchorNavItem href="#published-reports">Published reports</AnchorNavItem>
 					</SubNav>
 				}
 
