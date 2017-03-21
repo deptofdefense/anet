@@ -54,7 +54,7 @@ export default class OrganizationShow extends Page {
 		let reportQuery = {
 			pageNum: this.reportsPageNum,
 			pageSize: 10,
-			advisorOrgId: orgId //TODO: this is wrong.
+			orgId: orgId
 		}
 		let reportsPart = new GQL.Part(/* GraphQL */`
 			reports: reportList(query:$reportQuery) {

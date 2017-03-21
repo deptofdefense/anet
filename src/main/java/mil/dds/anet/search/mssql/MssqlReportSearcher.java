@@ -5,6 +5,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response.Status;
+
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.Query;
 
@@ -87,6 +90,23 @@ public class MssqlReportSearcher implements IReportSearcher {
 		if (query.getPoamId() != null) { 
 			whereClauses.add("reports.id IN (SELECT reportId from reportPoams where poamId = :poamId)");
 			args.put("poamId", query.getPoamId());
+		}
+		
+		if (query.getOrgId() != null) { 
+			if (query.getAdvisorOrgId() != null || query.getPrincipalOrgId() != null) { 
+				throw new WebApplicationException("Cannot combine orgId with principalOrgId or advisorOrgId parameters", Status.BAD_REQUEST);
+			}
+			if (query.isIncludeOrgChildren()) { 
+				commonTableExpression = "WITH parent_orgs(id) AS ( "
+						+ "SELECT id FROM organizations WHERE id = :orgId "
+					+ "UNION ALL "
+						+ "SELECT o.id from parent_orgs po, organizations o WHERE o.parentOrgId = po.id "
+					+ ")";
+				whereClauses.add("(reports.advisorOrganizationId IN (SELECT id from parent_orgs) OR reports.principalOrganizationId IN (SELECT id from parent_orgs))");
+			} else { 
+				whereClauses.add("(reports.advisorOrganizationId = :orgId OR reports.principalOrganizationId = :orgId)");
+			}
+			args.put("orgId", query.getOrgId());
 		}
 		
 		if (query.getAdvisorOrgId() != null) { 

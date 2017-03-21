@@ -575,19 +575,28 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		Organization ef1 = orgs.getList().stream().filter(o -> o.getShortName().equalsIgnoreCase("ef 1")).findFirst().get();
 		assertThat(ef1.getShortName()).isEqualToIgnoringCase("EF 1");
 
-		query.setPoamId(null);
 		query.setAdvisorOrgId(ef1.getId());
 		query.setIncludeAdvisorOrgChildren(true);
 		searchResults = httpQuery("/api/reports/search", jack).post(Entity.json(query), ReportList.class);
 		assertThat(searchResults.getList()).isNotEmpty();
 		//#TODO: figure out how to verify the results?
 
+		//Check search for just an org, when we don't know if it's advisor or principal. 
+		query.setOrgId(ef11.getId());
+		query.setAdvisorOrgId(null);
+		searchResults = httpQuery("/api/reports/search", jack).post(Entity.json(query), ReportList.class);
+		assertThat(searchResults.getList()).isNotEmpty();
+		assertThat(searchResults.getList().stream().filter(r ->
+				r.loadAdvisorOrg().getId().equals(ef11.getId())
+			)).hasSameSizeAs(searchResults.getList());
+		
+		
 		//Search by location
 		List<Location> locs = httpQuery("/api/locations/search?text=Cabot", jack).get(LocationList.class).getList();
 		assertThat(locs.size() == 0);
 		Location cabot = locs.get(0);
 
-		query.setAdvisorOrgId(null);
+		query = new ReportSearchQuery();
 		query.setLocationId(cabot.getId());
 		searchResults = httpQuery("/api/reports/search", jack).post(Entity.json(query), ReportList.class);
 		assertThat(searchResults.getList()).isNotEmpty();
@@ -644,6 +653,30 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		query.setText("Hospital usage of Drugs");
 		searchResults = httpQuery("/api/reports/search", jack).post(Entity.json(query), ReportList.class);
 		assertThat(searchResults.getList().stream().filter(r -> r.getIntent().contains("Hospital usage of Drugs")).count()).isGreaterThan(0);
+		
+		///find EF 2.2
+		orgs = httpQuery("/api/organizations/search?type=ADVISOR_ORG&text=ef%202.2", jack).get(OrganizationList.class);
+		assertThat(orgs.getList().size()).isGreaterThan(0);
+		Organization ef22 = orgs.getList().stream().filter(o -> o.getShortName().equalsIgnoreCase("ef 2.2")).findFirst().get();
+		assertThat(ef22.getShortName()).isEqualToIgnoringCase("EF 2.2");
+		
+		
+		//Search for a report by both principal AND advisor orgs. 
+		query = new ReportSearchQuery();
+		query.setAdvisorOrgId(mod.getId());
+		query.setPrincipalOrgId(ef22.getId());
+		searchResults = httpQuery("/api/reports/search", jack).post(Entity.json(query), ReportList.class);
+		assertThat(searchResults.getList().stream().filter(r -> 
+			r.getAdvisorOrg().getId().equals(ef22.getId()) && r.getPrincipalOrg().getId().equals(mod.getId())
+			).count()).isEqualTo(searchResults.getList().size());
+		
+		//this might fail if there are any children of ef22 or mod, but there aren't in the base data set. 
+		query.setIncludeAdvisorOrgChildren(true);
+		query.setIncludePrincipalOrgChildren(true);
+		searchResults = httpQuery("/api/reports/search", jack).post(Entity.json(query), ReportList.class);
+		assertThat(searchResults.getList().stream().filter(r -> 
+			r.getAdvisorOrg().getId().equals(ef22.getId()) && r.getPrincipalOrg().getId().equals(mod.getId())
+			).count()).isEqualTo(searchResults.getList().size());
 	}
 
 	@Test
