@@ -1,11 +1,25 @@
 import API from 'api'
 
-export default class GQL {
+class GraphQLPart {
+	constructor(queryString) {
+		this.queryString = queryString
+		this.variables = []
+	}
 
-	// Pass a variable number of GraphQLPart to run
-	static run() {
-		let parts = [...arguments]
+	addVariable(varName, varType, varValue) {
+		this.variables.push({
+			name: varName,
+			type: varType,
+			value: varValue
+		})
 
+		return this
+	}
+}
+
+GQL = {
+	// Pass a variable number of GraphQLQuery to run
+	run(parts) {
 		let query = parts.map(p => p.queryString).join(',\n')
 		let variables = {}
 		let variableDefs = []
@@ -19,23 +33,9 @@ export default class GQL {
 		let variableDef = '(' + variableDefs.join(', ') + ')'
 
 		return API.query(query, variables, variableDef)
-	}
+	},
 
-	static Part = class Part {
-
-		constructor(queryString) {
-			this.queryString = queryString
-			this.variables = []
-		}
-
-		addVariable(varName, varType, varValue) {
-			this.variables.push({
-				name: varName,
-				type: varType,
-				value: varValue
-			})
-			return this
-		}
-	}
+	Part: GraphQLPart
 }
 
+export default GQL
