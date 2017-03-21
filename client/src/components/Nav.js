@@ -8,12 +8,6 @@ import LinkTo from 'components/LinkTo'
 
 import {Organization} from 'models'
 
-const AnchorNavItem = (props) => {
-	return <NavItem onClick={(event) => {
-		event.stopPropagation()
-	}} {...props}/>
-}
-
 class Nav extends Component {
 	static contextTypes = {
 		app: PropTypes.object.isRequired,
@@ -50,11 +44,11 @@ class Nav extends Component {
 				currentClassName="active"
 				offset={-152}
 			>
-				<AnchorNavItem href="#info">Info</AnchorNavItem>
-				<AnchorNavItem href="#laydown">Laydown</AnchorNavItem>
-				<AnchorNavItem href="#approvals">Approvals</AnchorNavItem>
-				<AnchorNavItem href="#poams">PoAMs</AnchorNavItem>
-				<AnchorNavItem href="#reports">Reports</AnchorNavItem>
+				<AnchorLink scrollTo="info">Info</AnchorLink>
+				<AnchorLink scrollTo="laydown">Laydown</AnchorLink>
+				<AnchorLink scrollTo="approvals">Approvals</AnchorLink>
+				<AnchorLink scrollTo="poams">PoAMs</AnchorLink>
+				<AnchorLink scrollTo="reports">Reports</AnchorLink>
 			</SubNav>
 		)
 
@@ -76,9 +70,9 @@ class Nav extends Component {
 						currentClassName="active"
 						offset={-152}
 					>
-						<AnchorNavItem href="#draft-reports">Draft reports</AnchorNavItem>
-						<AnchorNavItem href="#pending-approval">Pending approval</AnchorNavItem>
-						<AnchorNavItem href="#published-reports">Published reports</AnchorNavItem>
+						<AnchorLink scrollTo="draft-reports">Draft reports</AnchorLink>
+						<AnchorLink scrollTo="pending-approval">Pending approval</AnchorLink>
+						<AnchorLink scrollTo="published-reports">Published reports</AnchorLink>
 					</SubNav>
 				}
 
@@ -136,6 +130,15 @@ function SubNav(props) {
 	return <li>
 		<Component {...childProps} />
 	</li>
+}
+
+const AnchorLink = function(props) {
+	const {scrollTo, ...childProps} = props
+	const onClick = function() {
+		const elem = document.getElementById(scrollTo)
+		elem && elem.scrollIntoView(true)
+	}
+	return <NavItem onClick={onClick} {...childProps} />
 }
 
 let InjectableNav = null

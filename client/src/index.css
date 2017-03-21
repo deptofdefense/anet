@@ -168,7 +168,7 @@ fieldset.danger {
 	background-color: #e0e0e0;
 }
 
-.nav > li > a:hover, .nav > li > a:focus {
+.nav > li > a:hover, .nav .open > a:focus {
 	background-color: #e0e0e0;
 }
 
