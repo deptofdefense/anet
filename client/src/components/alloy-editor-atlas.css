@@ -1,24 +1,12 @@
-@font-face {
-	font-family: 'alloyeditor-atlas';
-	src:url('fonts/alloyeditor-atlas.eot');
-	src:url('fonts/alloyeditor-atlas.eot?#iefix') format('embedded-opentype'),
-		url('fonts/alloyeditor-atlas.woff') format('woff'),
-		url('fonts/alloyeditor-atlas.ttf') format('truetype'),
-		url('fonts/alloyeditor-atlas.svg#alloyeditor-atlas') format('svg');
-	font-weight: normal;
-	font-style: normal;
-}
-
 [class*="ae-icon-"], [class*=" ae-icon-"] {
 	display: block;
-	font-family: 'alloyeditor-atlas';
 	speak: none;
-	font-size: 20px;
+	font-size: 32px;
 	font-style: normal;
 	font-weight: normal;
 	font-variant: normal;
 	text-transform: none;
-	line-height: 1.2;
+	line-height: 0;
 
 	/* Better Font Rendering =========== */
 	-webkit-font-smoothing: antialiased;
@@ -27,7 +15,7 @@
 
 
 .ae-icon-add:before {
-	content: "\";
+	content: "+";
 }
 
 .ae-icon-align-center:before {
@@ -59,11 +47,15 @@
 }
 
 .ae-icon-bold:before {
-	content: "\";
+	content: "B";
+	font-weight: bold;
 }
 
 .ae-icon-bulleted-list:before {
-	content: "\";
+	content: "\02022";
+	font-weight: bold;
+	font-size: 1.5em;
+	line-height: 1;
 }
 
 .ae-icon-camera:before {
@@ -107,7 +99,8 @@
 }
 
 .ae-icon-italic:before {
-	content: "\";
+	content: "i";
+	font-style: italic;
 }
 
 .ae-icon-link:before {
@@ -115,7 +108,7 @@
 }
 
 .ae-icon-numbered-list:before {
-	content: "\";
+	content: "1.";
 }
 
 .ae-icon-ok:before {
@@ -143,7 +136,7 @@
 }
 
 .ae-icon-separator:before {
-	content: "\";
+	content: "\02014";
 }
 
 .ae-icon-strike:before {
@@ -159,7 +152,10 @@
 }
 
 .ae-icon-table:before {
-	content: "\";
+	content: "\0229E";
+	font-size: 1.6em;
+	line-height: 0.6;
+	margin-left: 4px;
 }
 
 .ae-icon-twitter:before {
@@ -167,7 +163,8 @@
 }
 
 .ae-icon-underline:before {
-	content: "\";
+	content: "U";
+	text-decoration: underline;
 }
 
 .ae-icon-unlink:before {
@@ -251,15 +248,13 @@
       cursor: auto;
       opacity: 0.3; }
   .ae-ui .ae-toolbar .ae-button, .ae-ui [class^=ae-toolbar-] .ae-button {
-    height: 40px;
-    width: 40px; }
+    height: 20px;
+    width: 20px;
+    outline: none; }
 
 .ae-ui .ae-toolbar-add {
   border: solid 2px transparent;
   padding: 0; }
-  .ae-ui .ae-toolbar-add .ae-button {
-    height: 44px;
-    width: 44px; }
 
 .ae-ui .ae-toolbar-styles {
   box-sizing: border-box;
@@ -685,8 +680,9 @@
   .ae-ui .ae-toolbar-add .ae-button-add:hover, .ae-ui .ae-toolbar-add .ae-button-add:focus {
     color: inherit; }
   .ae-ui .ae-toolbar-add .ae-button-add .ae-icon-add {
-    font-size: 22px;
-    line-height: 22px; }
+    font-size: 32px;
+    line-height: 0;
+    margin-top: -2px; }
 
 [class*="ae-icon-"], [class*=" ae-icon-"] {
   font-size: 14px;
