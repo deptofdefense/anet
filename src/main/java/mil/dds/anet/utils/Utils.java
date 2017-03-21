@@ -76,6 +76,14 @@ public class Utils {
 	 * Just remove the * 
 	 */
 	public static String getSqliteFullTextQuery(String text) { 
-		return text.trim().replaceAll("\\p{Punct}", "");
+		return text.trim().replaceAll("[\"*]", "");
+	}
+
+	/** 
+	 * Prepares text to be used in a LIKE query in SQL. 
+	 * Removes the * at the end. 
+	 */
+	public static String prepForLikeQuery(String text) {
+		return text.trim().replaceAll("[\"*]", "");
 	}
 }

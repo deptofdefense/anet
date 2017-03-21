@@ -379,16 +379,16 @@ public class ReportsResourceTest extends AbstractResourceTest {
 
 		//Create billet for Author
 		Position billet = new Position();
-		billet.setName("EF1.1 new advisor");
+		billet.setName("EF 1.1 new advisor");
 		billet.setType(Position.PositionType.ADVISOR);
 		billet.setStatus(PositionStatus.ACTIVE);
 
 		//Put billet in EF1
-		OrganizationList results = httpQuery("/api/organizations/search?text=EF1&type=ADVISOR_ORG", nick).get(OrganizationList.class);
+		OrganizationList results = httpQuery("/api/organizations/search?text=EF%201&type=ADVISOR_ORG", nick).get(OrganizationList.class);
 		assertThat(results.getList().size()).isGreaterThan(0);
 		Organization ef1 = null;
 		for (Organization org : results.getList()) {
-			if (org.getShortName().trim().equalsIgnoreCase("ef1.1")) {
+			if (org.getShortName().trim().equalsIgnoreCase("ef 1.1")) {
 				billet.setOrganization(Organization.createWithId(org.getId()));
 				ef1 = org;
 				break;
@@ -555,10 +555,10 @@ public class ReportsResourceTest extends AbstractResourceTest {
 			)).hasSameSizeAs(searchResults.getList());
 
 		//Search by direct organization
-		OrganizationList orgs = httpQuery("/api/organizations/search?type=ADVISOR_ORG&text=EF1", jack).get(OrganizationList.class);
+		OrganizationList orgs = httpQuery("/api/organizations/search?type=ADVISOR_ORG&text=EF%201", jack).get(OrganizationList.class);
 		assertThat(orgs.getList().size()).isGreaterThan(0);
-		Organization ef11 = orgs.getList().stream().filter(o -> o.getShortName().equals("EF1.1")).findFirst().get();
-		assertThat(ef11.getShortName()).isEqualToIgnoringCase("EF1.1");
+		Organization ef11 = orgs.getList().stream().filter(o -> o.getShortName().equals("EF 1.1")).findFirst().get();
+		assertThat(ef11.getShortName()).isEqualToIgnoringCase("EF 1.1");
 
 		query.setPoamId(null);
 		query.setAdvisorOrgId(ef11.getId());
@@ -570,10 +570,10 @@ public class ReportsResourceTest extends AbstractResourceTest {
 			)).hasSameSizeAs(searchResults.getList());
 
 		//Search by parent organization
-		orgs = httpQuery("/api/organizations/search?type=ADVISOR_ORG&text=ef1", jack).get(OrganizationList.class);
+		orgs = httpQuery("/api/organizations/search?type=ADVISOR_ORG&text=ef%201", jack).get(OrganizationList.class);
 		assertThat(orgs.getList().size()).isGreaterThan(0);
-		Organization ef1 = orgs.getList().stream().filter(o -> o.getShortName().equalsIgnoreCase("ef1")).findFirst().get();
-		assertThat(ef1.getShortName()).isEqualToIgnoringCase("EF1");
+		Organization ef1 = orgs.getList().stream().filter(o -> o.getShortName().equalsIgnoreCase("ef 1")).findFirst().get();
+		assertThat(ef1.getShortName()).isEqualToIgnoringCase("EF 1");
 
 		query.setPoamId(null);
 		query.setAdvisorOrgId(ef1.getId());
@@ -617,16 +617,16 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		query.setPrincipalOrgId(mod.getId());
 		searchResults = httpQuery("/api/reports/search", jack).post(Entity.json(query), ReportList.class);
 		assertThat(searchResults.getList()).isNotEmpty();
-		//TODO: figure out how to verify the results? 
-
+		assertThat(searchResults.getList().stream().filter(r ->
+				r.loadPrincipalOrg().getId().equals(mod.getId())
+			)).hasSameSizeAs(searchResults.getList());
+		
 		//Search by Principal Parent Organization
 		query.setPrincipalOrgId(mod.getId());
 		query.setIncludePrincipalOrgChildren(true);
 		searchResults = httpQuery("/api/reports/search", jack).post(Entity.json(query), ReportList.class);
 		assertThat(searchResults.getList()).isNotEmpty();
-		assertThat(searchResults.getList().stream().filter(r ->
-				r.loadPrincipalOrg().getId().equals(mod.getId())
-			)).hasSameSizeAs(searchResults.getList());
+		//TODO: figure out how to verify the results? 
 		
 		query = new ReportSearchQuery();
 		query.setText("spreadsheet");
@@ -770,8 +770,9 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		
 		//Authur's organization should have one more report RELEASED!
 		int authurOrgId = authur.loadPosition().loadOrganization().getId();
-		int startCt = startGraph.stream().filter(rg -> rg.getOrg().getId().equals(authurOrgId)).findFirst().get().getReleased();
-		int endCt = endGraph.stream().filter(rg -> rg.getOrg().getId().equals(authurOrgId)).findFirst().get().getReleased();
+		RollupGraph adminOrg = startGraph.stream().filter(rg -> rg.getOrg() != null && rg.getOrg().getId().equals(authurOrgId)).findFirst().get();
+		int startCt = adminOrg.getReleased();
+		int endCt = endGraph.stream().filter(rg -> rg.getOrg() != null && rg.getOrg().getId().equals(authurOrgId)).findFirst().get().getReleased();
 		assertThat(startCt).isEqualTo(endCt - 1);
 	}
 }

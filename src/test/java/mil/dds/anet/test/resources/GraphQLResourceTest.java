@@ -32,6 +32,7 @@ public class GraphQLResourceTest extends AbstractResourceTest {
 	public void test() {
 		Person arthur = getArthurDmin();
 		Person jack = getJackJackson();
+		Person steve = getSteveSteveson();
 		File testDir = new File("src/test/resources/graphQLTests/");
 		testDir.getAbsolutePath();
 		assertThat(testDir.isDirectory()).isTrue();
@@ -39,7 +40,7 @@ public class GraphQLResourceTest extends AbstractResourceTest {
 		Map<String,Object> variables = new HashMap<String,Object>();
 		variables.put("personId", jack.getId().toString());
 		variables.put("positionId", jack.loadPosition().getId());
-		variables.put("orgId", jack.loadPosition().loadOrganization().getId());
+		variables.put("orgId", steve.loadPosition().loadOrganization().getId());
 		variables.put("searchQuery", "hospital");
 		variables.put("reportId", jack.loadAttendedReports(0, 20).getList().get(0).getId());
 		

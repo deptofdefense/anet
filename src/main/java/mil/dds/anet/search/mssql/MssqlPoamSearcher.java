@@ -33,7 +33,7 @@ public class MssqlPoamSearcher implements IPoamSearcher {
 		if (text != null && text.trim().length() > 0) { 
 			whereClauses.add("(CONTAINS((longName), :text) OR shortName LIKE :likeQuery)");
 			args.put("text", Utils.getSqlServerFullTextQuery(text));
-			args.put("likeQuery", text + "%");
+			args.put("likeQuery", Utils.prepForLikeQuery(text) + "%");
 		}
 		
 		if (query.getResponsibleOrgId() != null) { 
