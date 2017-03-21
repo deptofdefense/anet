@@ -35,7 +35,7 @@
 }
 
 .ae-icon-arrow:before {
-	content: "\";
+	content: "\025BE";
 }
 
 .ae-icon-audio:before {
@@ -43,7 +43,8 @@
 }
 
 .ae-icon-bin:before {
-	content: "\";
+	content: "\02717";
+	font-size: 1.5em;
 }
 
 .ae-icon-bold:before {
@@ -52,10 +53,9 @@
 }
 
 .ae-icon-bulleted-list:before {
-	content: "\02022";
-	font-weight: bold;
-	font-size: 1.5em;
-	line-height: 1;
+	content: "\02254";
+	font-size: 1.8em;
+	line-height: 0.5;
 }
 
 .ae-icon-camera:before {
@@ -63,7 +63,8 @@
 }
 
 .ae-icon-cell:before {
-	content: "\";
+	content: "\022A1";
+	font-size: 1.5em;
 }
 
 .ae-icon-close:before {
@@ -75,7 +76,11 @@
 }
 
 .ae-icon-column:before {
-	content: "\";
+	content: "\0229F";
+	display: inline-block;
+	transform: rotate(90deg);
+	font-size: 1.5em;
+	margin-top: 2px;
 }
 
 .ae-icon-embed:before {
@@ -112,7 +117,7 @@
 }
 
 .ae-icon-ok:before {
-	content: "\";
+	content: "\02713";
 }
 
 .ae-icon-outdent-block:before {
@@ -132,7 +137,8 @@
 }
 
 .ae-icon-row:before {
-	content: "\";
+	content: "\0229F";
+	font-size: 1.5em;
 }
 
 .ae-icon-separator:before {
