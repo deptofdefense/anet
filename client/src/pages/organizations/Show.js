@@ -16,8 +16,8 @@ import OrganizationPoams from './Poams'
 import OrganizationLaydown from './Laydown'
 import OrganizationApprovals from './Approvals'
 
-import API from 'api'
 import {Organization} from 'models'
+import {GraphQLPart, GraphQLQuery} from 'graphql'
 
 export default class OrganizationShow extends Page {
 	static contextTypes = {
@@ -48,7 +48,7 @@ export default class OrganizationShow extends Page {
 	}
 
 	fetchData(props) {
-		API.query(/* GraphQL */`
+		let orgPart = (new GraphQLPart()).withQueryString(/* GraphQL */`
 			organization(id:${props.params.id}) {
 				id, shortName, longName, type
 				parentOrg { id, shortName, longName }
@@ -62,26 +62,41 @@ export default class OrganizationShow extends Page {
 						person { id, name, status, rank}
 					}
 				},
-				reports(pageNum:0, pageSize:25) {
-					list {
-						id, intent, engagementDate, keyOutcomes, nextSteps, state, cancelledReason
-						author { id, name },
-						primaryAdvisor { id, name } ,
-						primaryPrincipal {id, name },
-						advisorOrg { id, shortName, longName }
-						principalOrg { id, shortName, longName }
-						location { id, name, lat, lng }
-					}
-				},
 				approvalSteps {
 					id, name, approvers { id, name, person { id, name}}
-				},
-			}
-		`).then(data => this.setState({organization: new Organization(data.organization)}))
+				}
+			}`)
+
+		let reportQuery = {
+			pageNum: 0,
+			pageSize: 10,
+			advisorOrgId: props.params.id //TODO: this is wrong.
+		}
+		let reportsPart = (new GraphQLPart()).withQueryString(/* GraphQL */`
+			reports: reportList(query:$reportQuery) {
+				list {
+					id, intent, engagementDate, keyOutcomes, nextSteps, state, cancelledReason
+					author { id, name },
+					primaryAdvisor { id, name } ,
+					primaryPrincipal {id, name },
+					advisorOrg { id, shortName, longName }
+					principalOrg { id, shortName, longName }
+					location { id, name, lat, lng }
+				}
+			}`)
+			.addVariable("reportQuery", "ReportSearchQuery", reportQuery)
+
+		GraphQLQuery.run(orgPart, reportsPart).then(data =>
+			this.setState({
+				organization: new Organization(data.organization),
+				reports: data.reports
+			})
+		)
 	}
 
 	render() {
 		let org = this.state.organization
+		let reports = this.state.reports
 
 		let currentUser = this.context.currentUser
 		let isSuperUser = currentUser && currentUser.isSuperUserForOrg(org)
@@ -157,7 +172,7 @@ export default class OrganizationShow extends Page {
 					<OrganizationPoams organization={org} />
 
 					<Fieldset id="reports" title={`Reports from ${org.shortName}`}>
-						<ReportCollection reports={org.reports && org.reports.list} />
+						<ReportCollection reports={reports && reports.list} />
 					</Fieldset>
 				</Form>
 			</div>

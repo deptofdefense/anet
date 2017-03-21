@@ -66,7 +66,7 @@ export default class Report extends Model {
 		}
 
 		if (!this.intent) {
-			errors.push("You must provide the Meeting Goal (purpose)");
+			errors.push("You must provide the Meeting Goal (purpose)")
 		}
 
 		if (!this.nextSteps) {
