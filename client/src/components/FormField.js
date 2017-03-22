@@ -303,6 +303,8 @@ export default class FormField extends Component {
 		if (form && form.props.onChange) {
 			form.props.onChange(event)
 			event && event.stopPropagation && event.stopPropagation()
+		} else {
+			this.forceUpdate()
 		}
 	}
 
