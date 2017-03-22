@@ -206,7 +206,7 @@ test('Home Page', async t => {
 })
 
 test.only('Report validation', async t => {
-    t.plan(13)
+    t.plan(15)
 
     let {assertElementText, $, assertElementNotPresent} = t.context
 
@@ -263,6 +263,14 @@ test.only('Report validation', async t => {
     let $atmosphereFormGroup = await $('.atmosphere-form-group')
     t.true(await $atmosphereFormGroup.isDisplayed(), 'Atmosphere form group should be shown by default')
 
+    let $attendanceFieldsetTitle = await $('#attendance-fieldset .title-text')
+    await assertElementText(
+        t, 
+        $attendanceFieldsetTitle, 
+        'Meeting attendance', 
+        'Meeting attendance fieldset should have correct title for an uncancelled enagement'
+    )
+
     let $cancelledCheckbox = await $('.cancelled-checkbox')
     await $cancelledCheckbox.click()
 
@@ -271,6 +279,12 @@ test.only('Report validation', async t => {
     )
     let $cancelledReason = await $('.cancelled-reason-form-group')
     t.true(await $cancelledReason.isDisplayed(), 'After cancelling the engagement, the cancellation reason should appear')
+    await assertElementText(
+        t, 
+        $attendanceFieldsetTitle, 
+        'Planned attendance', 
+        'Meeting attendance fieldset should have correct title for a cancelled enagement'
+    )
 })
 
 test('Report 404', async t => {

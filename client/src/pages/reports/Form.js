@@ -175,7 +175,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 					}
 				</Fieldset>
 
-				<Fieldset title={!isCancelled ? "Meeting attendance" : "Planned attendance"}>
+				<Fieldset title={!isCancelled ? "Meeting attendance" : "Planned attendance"} id="attendance-fieldset">
 					<Form.Field id="attendees" validationState={errors.attendees}>
 						<Autocomplete objectType={Person}
 							onChange={this.addAttendee}
