@@ -18,6 +18,7 @@
 # - Will use Basic authentication (rather than Windows Domain Auth)
 # - Will reload the GraphQL Graph on every request. 
 developmentMode: true
+redirectToHttps: false
 
 # Settings for the SMTP server to send email 
 smtp:

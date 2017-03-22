@@ -8,6 +8,8 @@ import javax.servlet.Filter;
 import javax.servlet.FilterRegistration;
 
 import org.eclipse.jetty.server.session.SessionHandler;
+import org.eclipse.jetty.servlet.FilterHolder;
+import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.skife.jdbi.v2.DBI;
 
@@ -42,6 +44,7 @@ import mil.dds.anet.resources.PositionResource;
 import mil.dds.anet.resources.ReportResource;
 import mil.dds.anet.resources.SavedSearchResource;
 import mil.dds.anet.utils.AnetDbLogger;
+import mil.dds.anet.utils.HttpsRedirectFilter;
 import mil.dds.anet.views.ViewResponseFilter;
 import waffle.servlet.NegotiateSecurityFilter;
 
@@ -88,6 +91,7 @@ public class AnetApplication extends Application<AnetConfiguration> {
 				return configuration.getViews();
 			}
 		});
+		
 	}
 
 	@Override
@@ -99,7 +103,7 @@ public class AnetApplication extends Application<AnetConfiguration> {
 
 		final AnetObjectEngine engine = new AnetObjectEngine(jdbi);
 		environment.servlets().setSessionHandler(new SessionHandler());
-
+		
 		if (configuration.isDevelopmentMode()) {
 			//In development mode just allow basic HTTP Authentication
 			environment.jersey().register(new AuthDynamicFeature(
@@ -115,6 +119,10 @@ public class AnetApplication extends Application<AnetConfiguration> {
 			nsfReg.setInitParameters(configuration.getWaffleConfig());
 			nsfReg.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
 			environment.jersey().register(new AuthDynamicFeature(new AnetAuthenticationFilter(engine)));
+		}
+		
+		if (configuration.getRedirectToHttps()) { 
+			forwardToHttps(environment.getApplicationContext());
 		}
 		
 		//If you want to use @Auth to inject a custom Principal type into your resource
@@ -156,4 +164,8 @@ public class AnetApplication extends Application<AnetConfiguration> {
 			configuration.isDevelopmentMode()));
 	}
 
+	public void forwardToHttps(ServletContextHandler handler) {
+		handler.addFilter(new FilterHolder(new HttpsRedirectFilter()), "/*",  EnumSet.of(DispatcherType.REQUEST));
+	}
+	
 }

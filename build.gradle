@@ -31,6 +31,7 @@ dependencies {
 	compile group: 'io.dropwizard', name: 'dropwizard-auth', version: '1.0.2'
 	compile group: 'io.dropwizard', name: 'dropwizard-views-freemarker', version: '1.0.2'
 	compile group: 'io.dropwizard', name: 'dropwizard-assets', version: '1.0.2'
+
 	compile 'org.xerial:sqlite-jdbc:3.14.2.1' //If using SQLite
 	compile 'javax.mail:mail:1.4.7'
 	compile 'com.github.dblock.waffle:waffle-distro:1.8.1'
