@@ -23,8 +23,19 @@ test.beforeEach(t => {
     // This method is a helper so we don't have to keep repeating the hostname.
     // Passing the authentication through the querystring is a hack so we can
     // pass the information along via window.fetch. 
-    t.context.get = async pathname => 
+    t.context.get = async pathname => {
         await t.context.driver.get(`http://localhost:3000${pathname}?user=erin&pass=erin`)
+        let $notFoundHeader = await t.context.$('.not-found-text')
+        try {
+            let halfSecondMs = 500
+            await t.context.waitUntilElementHasText($notFoundHeader, 'There was an error processing this request. Please contact an administrator.', halfSecondMs)
+            throw new Error('The API returned a 500.')
+        } catch (e) {
+            if (e.name !== 'TimeoutError') {
+                throw e
+            }
+        }
+    }
 
     // For debugging purposes.
     t.context.waitForever = async () => {
@@ -38,11 +49,13 @@ test.beforeEach(t => {
     // This helper method is necessary because we don't know when React has finished rendering the page.
     // We will wait for it to be done, with a max timeout so the test does not hang if the rendering fails.
     let fiveSecondsMs = 5000
-    t.context.waitUntilElementHasText = async ($elem, expectedText) => 
+    t.context.waitUntilElementHasText = async ($elem, expectedText, timeoutMs) => {
+        let waitTimeoutMs = timeoutMs || fiveSecondsMs
         await t.context.driver.wait(async () => {
             let text = await $elem.getText()
             return text === expectedText
-        }, fiveSecondsMs, `Element did not have text '${expectedText}' within ${fiveSecondsMs} milliseconds`)
+        }, waitTimeoutMs, `Element did not have text '${expectedText}' within ${waitTimeoutMs} milliseconds`)
+    }
 
     // A helper function to combine waiting for an element to have rendered and then asserting on its contents.
     t.context.assertElementText = async (t, $elem, expectedText, message) => {
