@@ -207,9 +207,9 @@ test('Home Page', async t => {
 })
 
 test.only('Report validation', async t => {
-    t.plan(21)
+    t.plan(31)
 
-    let {assertElementText, $, assertElementNotPresent} = t.context
+    let {assertElementText, $, $$, assertElementNotPresent} = t.context
 
     await t.context.get('/')
     let $createButton = await $('#createButton')
@@ -319,6 +319,42 @@ test.only('Report validation', async t => {
         'Planned attendance', 
         'Meeting attendance fieldset should have correct title for a cancelled enagement'
     )
+
+    let $attendeesRows = await $$('#attendeesTable tbody tr')
+    t.is($attendeesRows.length, 2, 'Attendees table starts with 2 body rows')
+
+    let [$advisorPrimaryCheckbox, $advisorName, $advisorPosition, $advisorOrg] = 
+        await $$('#attendeesTable tbody tr:first-child td')
+    
+    t.is(
+        await $advisorPrimaryCheckbox.findElement(By.css('input')).getAttribute('value'), 
+        'on', 
+        'Advisor primary attendee checkbox should be checked'
+    )
+    await assertElementText(t, $advisorName, 'Erin Erinson CIV')
+    await assertElementText(t, $advisorPosition, 'EF2.2 Advisor D')
+    await assertElementText(t, $advisorOrg, 'EF2.2')
+
+    // This is a brittle selector, because we expect to see two shortcut buttons. One will be the current user's name.
+    // Clicking on that button will have no effect, because the current user is already an attendee. The other will
+    // be a principal's name. That's the button we want. Most of the time, that button appears to be last, but sometimes
+    // it is not. If we fixed https://github.com/deptofdefense/anet/issues/527, we would not have this problem.
+    let $addAttendeeShortcutButton = await $('#attendance-fieldset .shortcut-list button:last-child')
+    await $addAttendeeShortcutButton.click()
+
+    t.is((await $$('#attendeesTable tbody tr')).length, 3, 'Clicking the shortcut button adds a row to the table')
+
+    let [$principalPrimaryCheckbox, $principalName, $principalPosition, $principalOrg] = 
+        await $$('#attendeesTable tbody tr:last-child td')
+
+    t.is(
+        await $principalPrimaryCheckbox.findElement(By.css('input')).getAttribute('value'), 
+        'on', 
+        'Principal primary attendee checkbox should be checked'
+    )
+    await assertElementText(t, $principalName, 'Christopf Topferness CIV')
+    await assertElementText(t, $principalPosition, 'Planning Captain')
+    await assertElementText(t, $principalOrg, 'MoD')
 })
 
 test('Report 404', async t => {
