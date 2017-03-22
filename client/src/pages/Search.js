@@ -261,7 +261,7 @@ export default class Search extends Page {
 	paginationFor(type) {
 		let {pageSize, pageNum, totalCount} = this.state.results[type]
 		let numPages = Math.ceil(totalCount / pageSize)
-		if (numPages === 1) { return; }
+		if (numPages === 1) { return }
 		return <header className="searchPagination" ><Pagination
 			className="pull-right"
 			prev

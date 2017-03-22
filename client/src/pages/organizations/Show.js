@@ -59,13 +59,7 @@ export default class OrganizationShow extends Page {
 		let reportsPart = new GQL.Part(/* GraphQL */`
 			reports: reportList(query:$reportQuery) {
 				pageNum, pageSize, totalCount, list {
-					id, intent, engagementDate, keyOutcomes, nextSteps, state, cancelledReason
-					author { id, name },
-					primaryAdvisor { id, name } ,
-					primaryPrincipal {id, name },
-					advisorOrg { id, shortName, longName }
-					principalOrg { id, shortName, longName }
-					location { id, name, lat, lng }
+					${ReportCollection.GQL_REPORT_FIELDS}
 				}
 			}`)
 			.addVariable("reportQuery", "ReportSearchQuery", reportQuery)
