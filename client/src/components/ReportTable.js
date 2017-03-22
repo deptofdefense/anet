@@ -21,7 +21,7 @@ export default class ReportTable extends Component {
 			<thead>
 				<tr>
 					{showAuthors && <th>Author</th>}
-					<th>Org</th>
+					<th>Organization</th>
 					<th>Summary</th>
 					{showStatus && <th>Status</th>}
 					<th>Date</th>
