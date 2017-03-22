@@ -5,6 +5,7 @@ import autobind from 'autobind-decorator'
 import moment from 'moment'
 import utils from 'utils'
 
+import History from 'components/History'
 import Fieldset from 'components/Fieldset'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
@@ -286,6 +287,13 @@ export default class ReportShow extends Page {
 
 					{canApprove && this.renderApprovalForm()}
 				</Form>
+				{currentUser.isAdmin() &&
+					<div className="submit-buttons"><div>
+					<Button bsStyle="warning" onClick={this.deleteReport} className="pull-right">
+						Delete report
+					</Button>
+					</div></div>
+				}
 			</div>
 		)
 	}
@@ -527,5 +535,19 @@ export default class ReportShow extends Page {
 	closeApproversModal(step) {
 		step.showModal = false
 		this.setState(this.state)
+	}
+
+	@autobind
+	deleteReport() {
+		if (!confirm("Are you sure you want to delete this report? This cannot be undone.")) {
+			return
+		}
+
+		API.send(`/api/reports/${this.state.report.id}/delete`, {}, {method: 'DELETE'}).then(data => {
+			History.push('/', {success: 'Report deleted'})
+		}, data => {
+			this.setState({success:null})
+			this.handleError(data)
+		})
 	}
 }

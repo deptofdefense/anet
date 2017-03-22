@@ -272,13 +272,15 @@ public class ReportDao implements IAnetDao<Report> {
 		
 	}
 
-	public List<RollupGraph> getDailyRollupGraph(DateTime start, DateTime end) {
+	public List<RollupGraph> getDailyRollupGraph(DateTime start, DateTime end, DateTime engagementDateStart) {
 		List<Map<String, Object>> results = dbHandle.createQuery("/* dailyRollupGraph */ "
 				+ "SELECT advisorOrganizationId, state, count(*) AS count "
 				+ "FROM reports WHERE releasedAt >= :startDate and releasedAt <= :endDate "
+				+ "AND engagementDate > :engagementDateStart "
 				+ "GROUP BY advisorOrganizationId, state")
 			.bind("startDate", start)
 			.bind("endDate", end)
+			.bind("engagementDateStart", engagementDateStart)
 			.list();
 
 		Map<Integer,Organization> orgMap = AnetObjectEngine.getInstance().buildTopLevelOrgHash(OrganizationType.ADVISOR_ORG);

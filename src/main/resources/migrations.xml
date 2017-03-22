@@ -626,6 +626,12 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="32" author="hpitelka" >
+		<sql>
+			INSERT INTO adminSettings ([key], value) VALUES ('DAILY_ROLLUP_MAX_REPORT_AGE_DAYS', '14');
+		</sql>
+	</changeSet>
+
 <!-- Temp putting this here until we can fix production data. 
 	<changeSet id="29" author="hpitelka" dbms="mssql" >
 		<sql dbms="mssql">

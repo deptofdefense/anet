@@ -522,32 +522,29 @@ public class ReportResource implements IGraphQLResource {
 	}
 
 	/*
-	 * Delete a draft report. Authors can delete DRAFT, REJECTED reports. Admins can delete CANCELLED, RELEASED reports. 
+	 * Delete a draft report. Authors can delete DRAFT, REJECTED reports. Admins can delete any report 
 	 */
 	@DELETE
 	@Timed
 	@Path("/{id}/delete")
 	public Response deleteReport(@Auth Person user, @PathParam("id") int reportId) { 
 		Report report = dao.getById(reportId);
-		switch (report.getState()) { 
-		case DRAFT:
-		case REJECTED:
-			//only the author may delete these reports
-			if (Objects.equals(report.getAuthor().getId(), user.getId()) == false) { 
-				throw new WebApplicationException("Only the author may delete a report", Status.FORBIDDEN);
-			}
-			break;
-		case PENDING_APPROVAL:
-			//nobody may delete this report!
-			throw new WebApplicationException("You cannot delete a report pending approvals", Status.FORBIDDEN);
-		case CANCELLED:
-		case RELEASED:
-			//Only admins can delete these. 
-			AuthUtils.assertAdministrator(user);
-		}
-		
+		assertCanDeleteReport(report, user);
+
 		dao.deleteReport(report);
 		return Response.ok().build();
+	}
+
+	private void assertCanDeleteReport(Report report, Person user) {
+		if (AuthUtils.isAdmin(user)) { return; } 
+		
+		if (report.getState() == ReportState.DRAFT || report.getState() == ReportState.REJECTED) { 
+			//only the author may delete these reports
+			if (Objects.equals(report.getAuthor().getId(), user.getId())) { 
+				return;
+			}
+		}
+		throw new WebApplicationException("You cannot delete this report", Status.FORBIDDEN);
 	}
 	
 	@GET
@@ -572,14 +569,19 @@ public class ReportResource implements IGraphQLResource {
 	@GET
 	@Timed
 	@Path("/rollupGraph")
-	public List<RollupGraph> getDailyRollupGraph(@QueryParam("startDate") Long start, @QueryParam("endDate") Long end) {
-		return dao.getDailyRollupGraph(new DateTime(start), new DateTime(end));
+	public List<RollupGraph> getDailyRollupGraph(@QueryParam("startDate") Long start, 
+			@QueryParam("endDate") Long end, 
+			@QueryParam("engagementDateStart") Long engagementDateStart) {
+		return dao.getDailyRollupGraph(new DateTime(start), new DateTime(end), new DateTime(engagementDateStart));
 	}
 
 	@POST
 	@Timed
 	@Path("/rollup/email")
-	public Response emailRollup(@Auth Person user, @QueryParam("startDate") Long start, @QueryParam("endDate") Long end, AnetEmail email) {
+	public Response emailRollup(@Auth Person user, 
+			@QueryParam("startDate") Long start, 
+			@QueryParam("endDate") Long end, 
+			AnetEmail email) {
 		DailyRollupEmail action = new DailyRollupEmail();
 		action.setStartDate(new DateTime(start));
 		action.setEndDate(new DateTime(end));

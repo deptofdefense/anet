@@ -18,6 +18,7 @@ import mil.dds.anet.beans.Report.ReportCancelledReason;
 import mil.dds.anet.beans.search.ISearchQuery.SortOrder;
 import mil.dds.anet.beans.search.ReportSearchQuery;
 import mil.dds.anet.beans.search.ReportSearchQuery.ReportSearchSortBy;
+import mil.dds.anet.database.AdminDao.AdminSettingKeys;
 
 public class DailyRollupEmail extends AnetEmailAction {
 
@@ -39,10 +40,14 @@ public class DailyRollupEmail extends AnetEmailAction {
 
 	@Override
 	public Map<String, Object> execute() {
+		String maxReportAgeStr = AnetObjectEngine.getInstance().getAdminSetting(AdminSettingKeys.DAILY_ROLLUP_MAX_REPORT_AGE_DAYS);
+		Integer maxReportAge = Integer.parseInt(maxReportAgeStr);
+		DateTime engagementDateStart = startDate.minusDays(maxReportAge);
 		ReportSearchQuery query = new ReportSearchQuery();
 		query.setPageSize(Integer.MAX_VALUE);
 		query.setReleasedAtStart(startDate);
 		query.setReleasedAtEnd(endDate);
+		query.setEngagementDateStart(engagementDateStart);
 		query.setSortBy(ReportSearchSortBy.ENGAGEMENT_DATE);
 		query.setSortOrder(SortOrder.DESC);
 		List<Report> reports = AnetObjectEngine.getInstance().getReportDao().search(query).getList();

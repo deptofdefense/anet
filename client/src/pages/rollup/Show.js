@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 import {Modal, Alert, Button} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
@@ -38,6 +38,10 @@ export default class RollupShow extends Page {
 		date: React.PropTypes.object,
 	}
 
+	static contextTypes = {
+		app: PropTypes.object.isRequired,
+	}
+
 	get dateStr() { return this.state.date.format('DD MMM YYYY') }
 	get dateLongStr() { return this.state.date.format('DD MMMM YYYY') }
 	get rollupStart() { return moment(this.state.date).subtract(1, 'days').startOf('day').hour(19) } //7pm yesterday
@@ -53,6 +57,7 @@ export default class RollupShow extends Page {
 			graphData: {},
 			showEmailModal: false,
 			email: {},
+			maxReportAge: null,
 		}
 	}
 
@@ -76,43 +81,31 @@ export default class RollupShow extends Page {
 		})
 	}
 
-	fetchData(props) {
+	fetchData(props, context) {
+		let settings = context.app.state.settings
+		let maxReportAge = settings.DAILY_ROLLUP_MAX_REPORT_AGE_DAYS
+		if (!maxReportAge) {
+			//don't run the query unless we've loaded the rollup settings.
+			return
+		}
+		this.setState({maxReportAge})
+
 		const rollupQuery = {
 			state: ['RELEASED'], //Specifically excluding cancelled engagements.
 			releasedAtStart: this.rollupStart.valueOf(),
 			releasedAtEnd: this.rollupEnd.valueOf(),
-			engagementDateStart: moment(this.rollupStart).subtract(14, 'days').valueOf(),
+			engagementDateStart: moment(this.rollupStart).subtract(maxReportAge, 'days').valueOf(),
 			sortBy: "ENGAGEMENT_DATE",
 			sortOrder: "DESC",
 			pageNum: this.state.reportsPageNum,
 		}
 
-		let graphQuery = API.fetch(`/api/reports/rollupGraph?startDate=${rollupQuery.releasedAtStart}&endDate=${rollupQuery.releasedAtEnd}`)
+		let graphQuery = API.fetch(`/api/reports/rollupGraph?startDate=${rollupQuery.releasedAtStart}&endDate=${rollupQuery.releasedAtEnd}&engagementDateStart=${rollupQuery.engagementDateStart}`)
 
 		let reportQuery = API.query(/* GraphQL */`
 			reportList(f:search, query:$rollupQuery) {
 				pageNum, pageSize, totalCount, list {
-					id, state, intent, engagementDate, intent, keyOutcomes, nextSteps, cancelledReason, atmosphere, atmosphereDetails
-					author { id, name }
-					location { id, name, lat, lng }
-					poams { id, longName }
-					comments { id }
-					primaryAdvisor {
-						id, name, rank
-						position { organization { id, shortName, longName }}
-					}
-					primaryPrincipal {
-						id, name, rank
-						position { organization { id, shortName, longName }}
-					}
-					advisorOrg {
-						id, shortName
-						parentOrg { id, shortName }
-					}
-					principalOrg {
-						id, shortName
-						parentOrg { id, shortName }
-					}
+					${ReportCollection.GQL_REPORT_FIELDS}
 				}
 			}
 		`, {rollupQuery}, '($rollupQuery: ReportSearchQuery)')
