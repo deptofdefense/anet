@@ -74,17 +74,19 @@ test('Home Page', async t => {
     // do not offer test planning.
     t.plan(5)
 
+    let {assertElementText, $, $$} = t.context
+
     await t.context.get('/')
 
     // Use a CSS selector to find an element that we care about on the page.
-    let [$reportsPending, $draftReports, $orgReports, $upcomingEngagements] = await t.context.$$('.home-tile h1')
+    let [$reportsPending, $draftReports, $orgReports, $upcomingEngagements] = await $$('.home-tile h1')
 
-    await t.context.assertElementText(t, $reportsPending, '0')
-    await t.context.assertElementText(t, $draftReports, '0')
-    await t.context.assertElementText(t, $orgReports, '2')
-    await t.context.assertElementText(t, $upcomingEngagements, '0')
+    await assertElementText(t, $reportsPending, '0')
+    await assertElementText(t, $draftReports, '0')
+    await assertElementText(t, $orgReports, '2')
+    await assertElementText(t, $upcomingEngagements, '0')
 
-    await t.context.$('.persistent-tour-launcher').click()
-    let $hopscotchTitle = await t.context.$('.hopscotch-title')
-    await t.context.assertElementText(t, $hopscotchTitle, 'Welcome')
+    await $('.persistent-tour-launcher').click()
+    let $hopscotchTitle = await $('.hopscotch-title')
+    await assertElementText(t, $hopscotchTitle, 'Welcome')
 })
