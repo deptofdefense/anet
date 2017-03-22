@@ -14,7 +14,7 @@ console.log(
     chalk.bold.cyan('These tests assume that you have just run ../insertSqlBaseData.sql on your SQLServer instance')
 )
 
-// We use the beforeEach hook to put helpers on t.context and set up test scaffolding.
+// We use the before hook to put helpers on t.context and set up test scaffolding.
 test.beforeEach(t => {
     t.context.driver = new webdriver.Builder()
         .forBrowser('chrome')
@@ -25,7 +25,19 @@ test.beforeEach(t => {
     // pass the information along via window.fetch. 
     t.context.get = async pathname => {
         await t.context.driver.get(`http://localhost:3000${pathname}?user=erin&pass=erin`)
-        let $notFoundHeader = await t.context.$('.not-found-text')
+
+        // If we have a page-wide error message, we would like to cleanly alert on that.
+        let $notFoundHeader
+        try {
+            $notFoundHeader = await t.context.$('.not-found-text')
+        } catch (e) {
+            // If we couldn't find the error message element, just bail out.
+            if (e.name === 'NoSuchElementError') {
+                return
+            }
+        }
+
+        // If we have an error message, let's see if it's the backend 500 error.
         try {
             let halfSecondMs = 500
             await t.context.waitUntilElementHasText($notFoundHeader, 'There was an error processing this request. Please contact an administrator.', halfSecondMs)
@@ -43,12 +55,42 @@ test.beforeEach(t => {
         await t.context.driver.wait(() => {})
     }
 
-    t.context.$ = cssSelector => t.context.driver.findElement(By.css(cssSelector))
-    t.context.$$ = cssSelector => t.context.driver.findElements(By.css(cssSelector))
+    let fiveSecondsMs = 5000
+    t.context.$ = async cssSelector => {
+        await t.context.driver.wait(async () => {
+                try {
+                    return t.context.driver.findElement(By.css(cssSelector))
+                } catch (e) {
+                    if (e.name === 'NoSuchElementError') {
+                        return false
+                    }
+                    throw e
+                }
+            },
+            fiveSecondsMs, 
+            `Could not find element by css selector ${cssSelector} within ${fiveSecondsMs} milliseconds`
+        )
+        return t.context.driver.findElement(By.css(cssSelector))
+    }
+    t.context.$$ =  async cssSelector => {
+        await t.context.driver.wait(async () => {
+                try {
+                    return t.context.driver.findElements(By.css(cssSelector))
+                } catch (e) {
+                    if (e.name === 'NoSuchElementError') {
+                        return false
+                    }
+                    throw e
+                }
+            },
+            fiveSecondsMs, 
+            `Could not find elements by css selector ${cssSelector} within ${fiveSecondsMs} milliseconds`
+        )
+        return t.context.driver.findElements(By.css(cssSelector))
+    }
 
     // This helper method is necessary because we don't know when React has finished rendering the page.
     // We will wait for it to be done, with a max timeout so the test does not hang if the rendering fails.
-    let fiveSecondsMs = 5000
     t.context.waitUntilElementHasText = async ($elem, expectedText, timeoutMs) => {
         let waitTimeoutMs = timeoutMs || fiveSecondsMs
         await t.context.driver.wait(async () => {
@@ -125,13 +167,15 @@ test('Home Page', async t => {
     await assertElementText(t, $orgReports, '2')
     await assertElementText(t, $upcomingEngagements, '0')
 
-    await $('.persistent-tour-launcher').click()
+    let $tourLauncher = await $('.persistent-tour-launcher')
+    await $tourLauncher.click()
     let $hopscotchTitle = await $('.hopscotch-title')
     await assertElementText(
         t, $hopscotchTitle, 'Welcome', 'Clicking the hopscotch launch button starts the hopscotch tour'
     )
 
-    await $('.hopscotch-next').click()
+    let $hopscotchNext = await $('.hopscotch-next')
+    await $hopscotchNext.click()
 
     await t.context.driver.findElement(By.linkText('My reports')).click()
     await assertElementNotPresent(t, '.hopscotch-title', 'Navigating to a new page clears the hopscotch tour')
