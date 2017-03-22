@@ -43,6 +43,20 @@ test.beforeEach(t => {
             let text = await elem.getText()
             return text === expectedText
         }, fiveSecondsMs, `Element did not have text '${expectedText}' within ${fiveSecondsMs} milliseconds`)
+
+    // A helper function to combine waiting for an element to have rendered and then asserting on its contents.
+    t.context.assertElementText = async (t, elem, expectedText) => {
+        try {
+            await t.context.waitUntilElementHasText(elem, expectedText)
+        } catch (e) {
+            // If we got a TimeoutError because the element did not have the text we expected, just swallow it here
+            // and let the assertion on blow up instead. That will produce a clearer error message.
+            if (e.name !== 'TimeoutError') {
+                throw e
+            }
+        }
+        t.is(await elem.getText(), expectedText)
+    }
 })
 
 // Shut down the browser when we are done.
@@ -65,23 +79,12 @@ test('Home Page', async t => {
     // Use a CSS selector to find an element that we care about on the page.
     let [$reportsPending, $draftReports, $orgReports, $upcomingEngagements] = await t.context.$$('.home-tile h1')
 
-    // Wait until the element has the text we want, which means that React has finished loading.
-    await t.context.waitUntilElementHasText($reportsPending, '0')
-
-    // Make an assertion about what the element should say.
-    t.is(await $reportsPending.getText(), '0')
-
-    await t.context.waitUntilElementHasText($draftReports, '0')
-    t.is(await $draftReports.getText(), '0')
-
-    await t.context.waitUntilElementHasText($orgReports, '2')
-    t.is(await $orgReports.getText(), '2')
-
-    await t.context.waitUntilElementHasText($upcomingEngagements, '0')
-    t.is(await $upcomingEngagements.getText(), '0')
+    await t.context.assertElementText(t, $reportsPending, '0')
+    await t.context.assertElementText(t, $draftReports, '0')
+    await t.context.assertElementText(t, $orgReports, '2')
+    await t.context.assertElementText(t, $upcomingEngagements, '0')
 
     await t.context.$('.persistent-tour-launcher').click()
     let $hopscotchTitle = await t.context.$('.hopscotch-title')
-    await t.context.waitUntilElementHasText($hopscotchTitle, 'Welcome')
-    t.is(await $hopscotchTitle.getText(), 'Welcome')
+    await t.context.assertElementText(t, $hopscotchTitle, 'Welcome')
 })
