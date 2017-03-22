@@ -207,7 +207,7 @@ test('Home Page', async t => {
 })
 
 test.only('Report validation', async t => {
-    t.plan(19)
+    t.plan(21)
 
     let {assertElementText, $, assertElementNotPresent} = t.context
 
@@ -216,29 +216,39 @@ test.only('Report validation', async t => {
     await $createButton.click()
     await assertElementText(t, await $('.legend .title-text'), 'Create a new Report')
 
-    let $meetingGoal = await $('.meeting-goal')
-    t.false(
-        _includes(await $meetingGoal.getAttribute('class'), 'has-warning'), 
-        'Meeting goal does not start in a warning state'
-    )
-
-    let $meetingGoalInput = await $('#intent')
-    t.is(await $meetingGoalInput.getAttribute('value'), '', 'Meeting goal field starts blank')
-    await $meetingGoalInput.click()
-
     let $searchBarInput = await $('#searchBarInput')
-    await $searchBarInput.click()
 
-    t.true(
-        _includes(await $meetingGoal.getAttribute('class'), 'has-warning'), 
-        'Meeting goal enters warning state when the user leaves the field without entering anything'
-    )
+    async function verifyFieldIsRequired($fieldGroup, $input, warningClass, fieldName) {
+        await $input.click()
+        if (fieldName.indexOf('Negative') !== -1) {
+            await t.context.waitForever()
+        }
+        await $input.clear()
+        await $searchBarInput.click()
 
-    await $meetingGoalInput.sendKeys('talk about logistics')
+
+        t.true(
+            _includes(await $fieldGroup.getAttribute('class'), warningClass), 
+            `${fieldName} enters invalid state when the user leaves the field without entering anything`
+        )
+
+        await $input.sendKeys('user input')
+        t.false(
+            _includes(await $fieldGroup.getAttribute('class'), warningClass), 
+            `After typing in ${fieldName} field, warning state goes away`
+        )
+    }
+
+    let $meetingGoal = await $('.meeting-goal')
+    let $meetingGoalInput = await $('#intent')
+
     t.false(
         _includes(await $meetingGoal.getAttribute('class'), 'has-warning'), 
-        'After typing in meeting goal field, warning state goes away'
-    )
+        `Meeting goal does not start in an invalid state`
+    )   
+    t.is(await $meetingGoalInput.getAttribute('value'), '', `Meeting goal field starts blank`)
+
+    await verifyFieldIsRequired($meetingGoal, $meetingGoalInput, 'has-warning', 'Meeting group')
 
     let $engagementDate = await $('#engagementDate')
     t.is(await $engagementDate.getAttribute('value'), '', 'Engagement date field starts blank')
@@ -281,6 +291,11 @@ test.only('Report validation', async t => {
     let $negativeAtmosphereButton = await $('#negativeAtmos')
     await $negativeAtmosphereButton.click()
     t.is((await $atmosphereDetails.getAttribute('placeholder')).trim(), 'Why was this engagement negative?')
+
+    let $atmosphereDetailsGroup = await $('.atmosphere-details')
+
+    await $neutralAtmosphereButton.click()
+    await verifyFieldIsRequired($atmosphereDetailsGroup, $atmosphereDetails, 'has-error', 'Neutral atmosphere details')
 
     let $attendanceFieldsetTitle = await $('#attendance-fieldset .title-text')
     await assertElementText(
@@ -350,3 +365,14 @@ test('Positions 404', async t => {
     await t.context.get('/positions/555')
     await assertElementText(t, await $('.not-found-text'), 'Position #555 not found.')
 })
+
+/**
+ * Notes: Technically speaking, everything should be wrapped in a wait() block to give
+ * the the browser time to run JS to update the page. In practice, this does not
+ * always seem to be necessary, since the JS can run very fast. If the tests are flaky,
+ * this would be a good thing to investigate.
+ * 
+ * Also, I suspect that we may see a bunch of stale element errors as React replaces
+ * DOM nodes. To fix this, we should use a model of passing around CSS selectors instead
+ * of element references, and always query for the element at the last possible moment.
+ */

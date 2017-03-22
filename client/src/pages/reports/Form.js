@@ -158,7 +158,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 					}
 
 					{!isCancelled && report.atmosphere &&
-						<RequiredField id="atmosphereDetails"
+						<RequiredField id="atmosphereDetails" className="atmosphere-details"
 							placeholder={`Why was this engagement ${report.atmosphere.toLowerCase()}? ${report.atmosphere === 'POSITIVE' ? "(optional)" : ""}`}
 							required={report.atmosphere !== 'POSITIVE'} />
 					}
