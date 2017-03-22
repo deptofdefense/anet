@@ -12,7 +12,8 @@ const FORMAT_SUMMARY = 'summary'
 const FORMAT_TABLE = 'table'
 const FORMAT_MAP = 'map'
 
-const GQL_REPORT_FIELDS =  `id, intent, engagementDate, keyOutcomes, nextSteps, cancelledReason,
+const GQL_REPORT_FIELDS =  /* GraphQL */`
+	id, intent, engagementDate, keyOutcomes, nextSteps, cancelledReason
 	atmosphere, atmosphereDetails, state
 	author { id, name }
 	primaryAdvisor { id, name, role, position { organization { id, shortName}}},
@@ -20,7 +21,8 @@ const GQL_REPORT_FIELDS =  `id, intent, engagementDate, keyOutcomes, nextSteps, 
 	advisorOrg { id, shortName},
 	principalOrg { id, shortName},
 	location { id, name, lat, lng},
-	poams {id, shortName, longName}`
+	poams {id, shortName, longName}
+`
 
 
 export default class ReportCollection extends Component {
