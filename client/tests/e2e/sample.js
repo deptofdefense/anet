@@ -206,7 +206,7 @@ test('Home Page', async t => {
     await assertElementNotPresent(t, '.hopscotch-title', 'Navigating to a new page clears the hopscotch tour')
 })
 
-test.only('Report validation', async t => {
+test('Report validation', async t => {
     t.plan(32)
 
     let {assertElementText, $, $$, assertElementNotPresent} = t.context
