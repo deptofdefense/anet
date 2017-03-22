@@ -10,7 +10,7 @@ const API = {
 		params.headers = params.headers || {}
 		params.headers.Accept = 'application/json'
 
-		if (query.user && query.pass) {
+		if (process.env.NODE_ENV === 'development' && query.user && query.pass) {
 			params.headers.Authorization = 'Basic ' + new Buffer(`${query.user}:${query.pass}`).toString('base64')
 		}
 
