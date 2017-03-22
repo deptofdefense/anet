@@ -16,11 +16,6 @@ import API from 'api'
 
 var d3 = null/* required later */
 
-const graphCss = {
-	width: '100%',
-	height: '300px'
-}
-
 const barColors = {
 	cancelled: '#e39394',
 	verified: '#9CBDA4',
@@ -54,7 +49,7 @@ export default class RollupShow extends Page {
 			date: moment(+props.date || +props.location.query.date || undefined),
 			reports: {list: []},
 			reportsPageNum: 0,
-			graphData: {},
+			graphData: [],
 			showEmailModal: false,
 			email: {},
 			maxReportAge: null,
@@ -113,80 +108,13 @@ export default class RollupShow extends Page {
 		Promise.all([reportQuery, graphQuery]).then(values => {
 			this.setState({
 				reports: values[0].reportList,
-				graphData: values[1]
+				graphData: values[1].sort((a, b) => a.org.shortName - b.org.shortName)
 			})
 		})
 	}
 
 	componentDidUpdate() {
-		let graphData = this.state.graphData
-		if (!graphData || !d3) {
-			return
-		}
-
-		// Set up the data
-		const step1 = d3.nest()
-			.key((entry) => (entry.org && entry.org.shortName) || "Unknown")
-			.rollup(entry => entry[0])
-			.entries(graphData)
-
-		var svg = d3.select(this.graph)
-		svg.selectAll('*').remove()
-
-		var	margin = {top: 20, right: 20, bottom: 20, left: 20},
-			width = this.graph.clientWidth - margin.left - margin.right,
-			height = this.graph.clientHeight - margin.top - margin.bottom,
-			padding = 22,
-			g = svg.append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
-
-		var x = d3.scaleBand().rangeRound([0,width])
-
-		var y = d3.scaleLinear()
-			.rangeRound([height, 0])
-
-		x.domain(step1.map(d => d.key))
-		y.domain([0,d3.max(step1.map(d => d.value.released + d.value.cancelled))])
-		d3.line()
-			.x(function(d,i) { return x(d.key) })
-			.y(function(d,i) { return y(d.value.released) })
-
-		var xAxis = d3.axisBottom()
-			.scale(x)
-		var maxValue = d3.max(y.domain())
-		var yAxis = d3.axisLeft()
-			.scale(y).ticks(Math.min(maxValue+1,10))
-
-		g.append('g')
-			.attr('transform', 'translate(0,' + height + ')')
-			.attr('fill', '#00f')
-			.call(xAxis)
-
-		g.append('g')
-			.attr('fill', '#400')
-			.call(yAxis)
-			.append('text')
-			.attr('fill', '#000')
-			.attr('transform', 'rotate(-90)')
-			.attr('y', 6)
-			.attr('dy', '0.71em')
-			.style('text-anchor', 'end')
-			.text('# of Reports')
-
-		function createBarPart(color, getYVal, getHeight) {
-			g.selectAll('.bar')
-				.data(step1)
-				.enter()
-				.append('rect')
-				.attr('class', 'line')
-				.attr('width', width / step1.length - padding)
-				.attr('x', d => x(d.key) + (width / (step1.length + padding)))
-				.attr('height', d => height - y(getHeight(d.value) || 0))
-				.attr('y', d => y(getYVal(d.value) || 0))
-				.attr('fill', () => color)
-		}
-
-		createBarPart(barColors.verified, val => val.released, val => val.released)
-		createBarPart(barColors.cancelled, val => val.released + val.cancelled, val => val.cancelled)
+		this.renderGraph()
 	}
 
 	render() {
@@ -206,7 +134,8 @@ export default class RollupShow extends Page {
 						<Button onClick={this.toggleEmailModal} bsStyle="primary">Email rollup</Button>
 					</div>
 				}>
-					<svg ref={el => this.graph = el} style={graphCss} />
+					<p className="help-text">Number of reports released today per organization</p>
+					<svg ref={el => this.graph = el} style={{width: '100%'}} />
 				</Fieldset>
 
 				<Fieldset title="Reports">
@@ -216,6 +145,74 @@ export default class RollupShow extends Page {
 				{this.renderEmailModal()}
 			</div>
 		)
+	}
+
+	renderGraph() {
+		let graphData = this.state.graphData
+		if (!graphData || !d3) {
+			return
+		}
+
+		const BAR_HEIGHT = 24
+		const BAR_PADDING = 8
+		const MARGIN = {top: 0, right: 10, bottom: 20, left: 150}
+		let width = this.graph.clientWidth - MARGIN.left - MARGIN.right
+		let height = (BAR_HEIGHT + BAR_PADDING) * graphData.length - BAR_PADDING
+
+		let maxNumberOfReports = Math.max.apply(Math, graphData.map(d => d.released + d.cancelled))
+
+		let xScale = d3.scaleLinear()
+						.domain([0, maxNumberOfReports])
+						.range([0, width])
+
+		let yScale = d3.scaleBand()
+						.domain(graphData.map(d => d.org.shortName))
+						.range([0, height])
+
+		let graph = d3.select(this.graph)
+		graph.selectAll('*').remove()
+
+		graph = graph.attr('width', width + MARGIN.left + MARGIN.right)
+					 .attr('height', height + MARGIN.top + MARGIN.bottom)
+					 .append('g')
+						.attr('transform', `translate(${MARGIN.left}, ${MARGIN.top})`)
+
+		let xAxis = d3.axisBottom(xScale).ticks(maxNumberOfReports, 'd')
+		let yAxis = d3.axisLeft(yScale)
+
+		graph.append('g').call(yAxis)
+		graph.append('g')
+				.attr('transform', `translate(0, ${height})`)
+				.call(xAxis)
+
+		let bar = graph.selectAll('.bar')
+			.data(graphData)
+			.enter().append('g')
+				.attr('transform', (d, i) => `translate(2, ${i * (BAR_HEIGHT + BAR_PADDING) - 1})`)
+				.classed('bar', true)
+
+		bar.append('rect')
+				.attr('width', d => xScale(d.released) - 2)
+				.attr('height', BAR_HEIGHT)
+				.attr('fill', barColors.verified)
+
+		bar.append('text')
+				.attr('x', d => xScale(d.released) - 12)
+				.attr('y', BAR_HEIGHT / 2)
+				.attr('dy', '.35em')
+				.text(d => d.released || '')
+
+		bar.append('rect')
+				.attr('x', d => xScale(d.released) - 2)
+				.attr('width', d => xScale(d.cancelled))
+				.attr('height', BAR_HEIGHT)
+				.attr('fill', barColors.cancelled)
+
+		bar.append('text')
+				.attr('x', width - 12)
+				.attr('y', BAR_HEIGHT / 2)
+				.attr('dy', '.35em')
+				.text(d => d.cancelled || '')
 	}
 
 	@autobind

@@ -573,3 +573,7 @@ hr.assignModalSplit {
 header.searchPagination {
 	height: 35px;
 }
+
+.bar text {
+	font-size:0.75em;
+}
