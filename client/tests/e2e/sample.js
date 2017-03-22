@@ -180,3 +180,14 @@ test('Home Page', async t => {
     await t.context.driver.findElement(By.linkText('My reports')).click()
     await assertElementNotPresent(t, '.hopscotch-title', 'Navigating to a new page clears the hopscotch tour')
 })
+
+test('Report validation', async t => {
+    t.plan(1)
+
+    let {assertElementText, assertElementNotPresent, $, $$} = t.context
+
+    await t.context.get('/')
+    let $createButton = await $('#createButton')
+    await $createButton.click()
+    await assertElementText(t, await $('.legend'), 'Create a new Report\nPreview and submit')
+})
