@@ -25,14 +25,15 @@ test.beforeEach(t => {
     // pass the information along via window.fetch. 
     t.context.get = async pathname => {
         await t.context.driver.get(`http://localhost:3000${pathname}?user=erin&pass=erin`)
+        let halfSecondMs = 500
 
-        // If we have a page-wide error message, we would like to cleanly alert on that.
+        // If we have a page-wide error message, we would like to cleanly fail the test on that.
         let $notFound
         try {
-            $notFound = await t.context.$('.not-found-text')
+            $notFound = await t.context.$('.not-found-text', halfSecondMs)
         } catch (e) {
-            // If we couldn't find the error message element, just bail out.
-            if (e.name === 'NoSuchElementError') {
+            // If we couldn't find the error message element, then we don't need to fail the test.
+            if (e.name === 'TimeoutError') {
                 return
             }
             throw e
@@ -40,7 +41,6 @@ test.beforeEach(t => {
 
         // If we have an error message, let's see if it's the backend 500 error.
         try {
-            let halfSecondMs = 500
             await t.context.waitUntilElementHasText(
                 $notFound, 
                 'There was an error processing this request. Please contact an administrator.', 
@@ -61,10 +61,12 @@ test.beforeEach(t => {
     }
 
     let fiveSecondsMs = 5000
-    t.context.$ = async cssSelector => {
+    t.context.$ = async (cssSelector, timeoutMs) => {
+        let waitTimeoutMs = timeoutMs || fiveSecondsMs
         await t.context.driver.wait(async () => {
                 try {
-                    return t.context.driver.findElement(By.css(cssSelector))
+                    let res = await t.context.driver.findElement(By.css(cssSelector))
+                    return res
                 } catch (e) {
                     if (e.name === 'NoSuchElementError') {
                         return false
@@ -72,8 +74,8 @@ test.beforeEach(t => {
                     throw e
                 }
             },
-            fiveSecondsMs, 
-            `Could not find element by css selector ${cssSelector} within ${fiveSecondsMs} milliseconds`
+            waitTimeoutMs, 
+            `Could not find element by css selector ${cssSelector} within ${waitTimeoutMs} milliseconds`
         )
         return t.context.driver.findElement(By.css(cssSelector))
     }
@@ -136,7 +138,7 @@ test.beforeEach(t => {
                     try {
                         return !(await t.context.$(cssSelector))
                     } catch (e) {
-                        if (e.name === 'NoSuchElementError') {
+                        if (e.name === 'TimeoutError') {
                             return true
                         }
                         throw e
@@ -193,7 +195,8 @@ test('Home Page', async t => {
     let $hopscotchNext = await $('.hopscotch-next')
     await $hopscotchNext.click()
 
-    await t.context.driver.findElement(By.linkText('My reports')).click()
+    let $myReportsLink = await $('#leftNav > li:nth-child(2) > a')
+    await $myReportsLink.click()
     await assertElementNotPresent(t, '.hopscotch-title', 'Navigating to a new page clears the hopscotch tour')
 })
 
@@ -215,4 +218,40 @@ test('Report 404', async t => {
 
     await t.context.get('/reports/555')
     await assertElementText(t, await $('.not-found-text'), 'Report #555 not found.')
+})
+
+test('Organization 404', async t => {
+    t.plan(1)
+
+    let {assertElementText, $} = t.context
+
+    await t.context.get('/organizations/555')
+    await assertElementText(t, await $('.not-found-text'), 'Organization #555 not found.')
+})
+
+test('People 404', async t => {
+    t.plan(1)
+
+    let {assertElementText, $} = t.context
+
+    await t.context.get('/people/555')
+    await assertElementText(t, await $('.not-found-text'), 'User #555 not found.')
+})
+
+test('PoAMs 404', async t => {
+    t.plan(1)
+
+    let {assertElementText, $} = t.context
+
+    await t.context.get('/poams/555')
+    await assertElementText(t, await $('.not-found-text'), 'PoAM #555 not found.')
+})
+
+test.only('Positions 404', async t => {
+    t.plan(1)
+
+    let {assertElementText, $} = t.context
+
+    await t.context.get('/positions/555')
+    await assertElementText(t, await $('.not-found-text'), 'Position #555 not found.')
 })
