@@ -142,13 +142,13 @@ export default class ReportForm extends ValidatableFormWrapper {
 					</Form.Field>
 
 					<Form.Field id="isCancelled" value={isCancelled} label="">
-						<Checkbox inline onChange={this.toggleCancelled} checked={isCancelled}>
+						<Checkbox inline onChange={this.toggleCancelled} checked={isCancelled} className="cancelled-checkbox">
 							This engagement was cancelled
 						</Checkbox>
 					</Form.Field>
 
 					{!isCancelled &&
-						<Form.Field id="atmosphere">
+						<Form.Field id="atmosphere" className="atmosphere-form-group">
 							<ButtonToggleGroup>
 								<Button value="POSITIVE" id="positiveAtmos">Positive</Button>
 								<Button value="NEUTRAL" id="neutralAtmos">Neutral</Button>
@@ -164,7 +164,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 					}
 
 					{isCancelled &&
-						<Form.Field id="cancelledReason" componentClass="select" >
+						<Form.Field id="cancelledReason" componentClass="select" className="cancelled-reason-form-group">
 							<option value="CANCELLED_BY_ADVISOR">Cancelled by Advisor</option>
 							<option value="CANCELLED_BY_PRINCIPAL">Cancelled by Principal</option>
 							<option value="CANCELLED_DUE_TO_TRANSPORTATION">Cancelled due to Transportation</option>

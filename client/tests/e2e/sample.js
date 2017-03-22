@@ -16,6 +16,8 @@ console.log(
     chalk.bold.cyan('These tests assume that you have just run ../insertSqlBaseData.sql on your SQLServer instance')
 )
 
+let shortWait = 500
+
 // We use the before hook to put helpers on t.context and set up test scaffolding.
 test.beforeEach(t => {
     t.context.driver = new webdriver.Builder()
@@ -27,12 +29,11 @@ test.beforeEach(t => {
     // pass the information along via window.fetch. 
     t.context.get = async pathname => {
         await t.context.driver.get(`http://localhost:3000${pathname}?user=erin&pass=erin`)
-        let halfSecondMs = 500
 
         // If we have a page-wide error message, we would like to cleanly fail the test on that.
         let $notFound
         try {
-            $notFound = await t.context.$('.not-found-text', halfSecondMs)
+            $notFound = await t.context.$('.not-found-text', shortWait)
         } catch (e) {
             // If we couldn't find the error message element, then we don't need to fail the test.
             if (e.name === 'TimeoutError') {
@@ -46,7 +47,7 @@ test.beforeEach(t => {
             await t.context.waitUntilElementHasText(
                 $notFound, 
                 'There was an error processing this request. Please contact an administrator.', 
-                halfSecondMs
+                shortWait
             )
             throw new Error('The API returned a 500.')
         } catch (e) {
@@ -134,12 +135,13 @@ test.beforeEach(t => {
         t.is(await $elem.getText(), expectedText, message)
     }
 
-    t.context.assertElementNotPresent = async (t, cssSelector, message) => {
+    t.context.assertElementNotPresent = async (t, cssSelector, message, timeoutMs) => {
+        let waitTimeoutMs = timeoutMs || fiveSecondsMs
         try {
             await t.context.driver.wait(
                 async () => {
                     try {
-                        return !(await t.context.$(cssSelector))
+                        return !(await t.context.$(cssSelector, waitTimeoutMs))
                     } catch (e) {
                         if (e.name === 'TimeoutError') {
                             return true
@@ -147,12 +149,12 @@ test.beforeEach(t => {
                         throw e
                     }
                 },
-                fiveSecondsMs, 
-                `Element was still present after ${fiveSecondsMs} milliseconds`
+                waitTimeoutMs, 
+                `Element was still present after ${waitTimeoutMs} milliseconds`
             )
         } catch (e) {
             if (e.name === 'TimeoutError') {
-                t.fail(`Element with css selector '${cssSelector}' was still present after ${fiveSecondsMs} milliseconds`)
+                t.fail(`Element with css selector '${cssSelector}' was still present after ${waitTimeoutMs} milliseconds`)
             } else {
                 throw e
             }
@@ -204,9 +206,9 @@ test('Home Page', async t => {
 })
 
 test.only('Report validation', async t => {
-    t.plan(9)
+    t.plan(13)
 
-    let {assertElementText, $} = t.context
+    let {assertElementText, $, assertElementNotPresent} = t.context
 
     await t.context.get('/')
     let $createButton = await $('#createButton')
@@ -256,6 +258,19 @@ test.only('Report validation', async t => {
     let $locationShortcutButton = await $('.location-form-group .shortcut-list button')
     await $locationShortcutButton.click()
     t.is(await $locationInput.getAttribute('value'), 'General Hospital', 'Clicking the shortcut adds a location')
+
+    await assertElementNotPresent(t, '#cancelledReason', 'Cancelled reason should not be present initially', shortWait)
+    let $atmosphereFormGroup = await $('.atmosphere-form-group')
+    t.true(await $atmosphereFormGroup.isDisplayed(), 'Atmosphere form group should be shown by default')
+
+    let $cancelledCheckbox = await $('.cancelled-checkbox')
+    await $cancelledCheckbox.click()
+
+    await assertElementNotPresent(
+        t, '.atmosphere-form-group', 'After cancelling the enagement, the atmospherics should be hidden', shortWait
+    )
+    let $cancelledReason = await $('.cancelled-reason-form-group')
+    t.true(await $cancelledReason.isDisplayed(), 'After cancelling the engagement, the cancellation reason should appear')
 })
 
 test('Report 404', async t => {
