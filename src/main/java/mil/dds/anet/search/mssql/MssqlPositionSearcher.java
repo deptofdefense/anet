@@ -26,7 +26,7 @@ public class MssqlPositionSearcher implements IPositionSearcher {
 	public PositionList runSearch(PositionSearchQuery query, Handle dbHandle) {
 		StringBuilder sql = new StringBuilder("/* MssqlPositionSearch */ SELECT " + PositionDao.POSITIONS_FIELDS
 				+ ", count(*) OVER() AS totalCount "
-				+ " FROM positions WHERE positions.id IN (SELECT positions.id FROM positions ");
+				+ " FROM positions ");
 		Map<String,Object> sqlArgs = new HashMap<String,Object>();
 		String commonTableExpression = null;
 		
@@ -117,7 +117,7 @@ public class MssqlPositionSearcher implements IPositionSearcher {
 				break;
 		}
 		
-		sql.append(" OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY )");
+		sql.append(" OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY");
 		
 		if (commonTableExpression != null) { 
 			sql.insert(0, commonTableExpression);
@@ -128,13 +128,7 @@ public class MssqlPositionSearcher implements IPositionSearcher {
 			.bind("offset", query.getPageSize() * query.getPageNum())
 			.bind("limit", query.getPageSize())
 			.map(new PositionMapper());
-		result.setList(sqlQuery.list());
-		if (result.getList().size() >  0) { 
-			result.setTotalCount((Integer) sqlQuery.getContext().getAttribute("totalCount"));
-		} else { 
-			result.setTotalCount(0);
-		}
-		return result;
+		return PositionList.fromQuery(sqlQuery, query.getPageNum(), query.getPageSize());
 	}
 	
 }

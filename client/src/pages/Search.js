@@ -1,6 +1,6 @@
 import React from 'react'
 import Page from 'components/Page'
-import {Alert, Table, Modal, Button, Nav, NavItem, Badge} from 'react-bootstrap'
+import {Alert, Table, Modal, Button, Nav, NavItem, Badge, Pagination} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
 import Fieldset from 'components/Fieldset'
@@ -13,6 +13,7 @@ import Form from 'components/Form'
 import Messages from 'components/Messages'
 
 import API from 'api'
+import GQL from 'graphql'
 import {Person, Organization, Position, Poam} from 'models'
 
 import EVERYTHING_ICON from 'resources/search-alt.png'
@@ -37,17 +38,9 @@ const SEARCH_CONFIG = {
 	reports : {
 		listName : 'reports: reportList',
 		variableType: 'ReportSearchQuery',
-		fields : `id, intent, engagementDate, keyOutcomes, nextSteps, cancelledReason,
-			atmosphere, atmosphereDetails, state
-			author { id, name }
-			primaryAdvisor { id, name, role, position { organization { id, shortName}}},
-			primaryPrincipal { id, name, role, position { organization { id, shortName}}},
-			advisorOrg { id, shortName},
-			principalOrg { id, shortName},
-			location { id, name, lat, lng},
-			poams {id, shortName, longName}`
+		fields : ReportCollection.GQL_REPORT_FIELDS
 	},
-	persons : {
+	people : {
 		listName : 'people: personList',
 		variableType: 'PersonSearchQuery',
 		fields: 'id, name, rank, emailAddress, role , position { id, name, organization { id, shortName} }'
@@ -103,55 +96,41 @@ export default class Search extends Page {
 		}
 	}
 
+
+	getSearchPart(type, query) {
+		query = Object.without(query, 'type')
+		query.pageSize = 10
+		query.pageNum = this.state.pageNum[type]
+
+		let config = SEARCH_CONFIG[type]
+		let part = new GQL.Part(/* GraphQL */`
+			${config.listName} (f:search, query:$${type}Query) {
+				pageNum, pageSize, totalCount, list { ${config.fields} }
+			}
+			`).addVariable(type + "Query", config.variableType, query)
+		return part
+	}
+
 	fetchData(props) {
 		let {type, text, ...advQuery} = props.location.query
 
 		//Any query with a field other than 'text' and 'type' is an advanced query.
 		let isAdvQuery = Object.keys(advQuery).length
+		advQuery.text = text
 
+		let parts = []
 		if (isAdvQuery) {
-			if (text) {
-				advQuery.text = text
-			}
-
-			// FIXME currently you have to pass page params in the query object
-			// instead of the query variables
-			advQuery.pageSize = 10
-			advQuery.pageNum = this.state.pageNum[type]
-
-			let config = SEARCH_CONFIG[type]
-			API.query(/* GraphQL */`
-					${config.listName} (f:search, query:$query) {
-						pageNum, pageSize, totalCount, list { ${config.fields} }
-					}
-				`,
-				{query: advQuery}, `($query: ${config.variableType})`
-			).then(data => {
-				this.setState({results: data})
-			}).catch(response =>
-				this.setState({error: response})
-			)
+			parts.push(this.getSearchPart(type, advQuery))
 		} else {
-			let graphQL = ''
-			let variables = {}
-			let variableDefs = []
 			Object.keys(SEARCH_CONFIG).forEach(key => {
-				let config = SEARCH_CONFIG[key]
-				/* GraphQL */
-				graphQL += `${config.listName} (f:search, query:$${key}Query) {
-					pageNum, pageSize, totalCount, list { ${config.fields} }
-				}`
-				variables[key + 'Query'] = {text: text, pageNum: this.state.pageNum[key], pageSize: 10}
-				variableDefs.push(`$${key}Query: ${config.variableType}`)
-			})
-
-			API.query(graphQL, variables, '(' + variableDefs.join(',') + ')')
-			.then(data =>
-				this.setState({results: data})
-			).catch(response => {
-				this.setState({error: response})
+				parts.push(this.getSearchPart(key, advQuery))
 			})
 		}
+		GQL.run(parts).then(data => {
+			this.setState({results: data})
+		}).catch(response =>
+			this.setState({error: response})
+		)
 	}
 
 	render() {
@@ -195,9 +174,9 @@ export default class Search extends Page {
 								{numResults > 0 && <Badge pullRight>{numResults}</Badge>}
 							</NavItem>
 
-							<NavItem eventKey="reports" disabled={!numReports}>
-								<img src={REPORTS_ICON} role="presentation" /> Reports
-								{numReports > 0 && <Badge pullRight>{numReports}</Badge>}
+							<NavItem eventKey="organizations" disabled={!numOrganizations}>
+								<img src={ORGANIZATIONS_ICON} role="presentation" /> Organizations
+								{numOrganizations > 0 && <Badge pullRight>{numOrganizations}</Badge>}
 							</NavItem>
 
 							<NavItem eventKey="people" disabled={!numPeople}>
@@ -220,10 +199,11 @@ export default class Search extends Page {
 								{numLocations > 0 && <Badge pullRight>{numLocations}</Badge>}
 							</NavItem>
 
-							<NavItem eventKey="organizations" disabled={!numOrganizations}>
-								<img src={ORGANIZATIONS_ICON} role="presentation" /> Organizations
-								{numOrganizations > 0 && <Badge pullRight>{numOrganizations}</Badge>}
+							<NavItem eventKey="reports" disabled={!numReports}>
+								<img src={REPORTS_ICON} role="presentation" /> Reports
+								{numReports > 0 && <Badge pullRight>{numReports}</Badge>}
 							</NavItem>
+
 						</Nav>
 					</div>
 				</ContentForNav>
@@ -236,21 +216,15 @@ export default class Search extends Page {
 					</Alert>
 				}
 
-				{numReports > 0 && (queryType === 'everything' || queryType === 'reports') &&
-					<Fieldset title="Reports">
-						<ReportCollection paginatedReports={results.reports} goToPage={this.goToReportsPage} />
+				{numOrganizations > 0 && (queryType === 'everything' || queryType === 'organizations') &&
+					<Fieldset title="Organizations">
+						{this.renderOrgs()}
 					</Fieldset>
 				}
 
 				{numPeople > 0 && (queryType === 'everything' || queryType === 'people') &&
-					<Fieldset title="People">
+					<Fieldset title="People" >
 						{this.renderPeople()}
-					</Fieldset>
-				}
-
-				{numOrganizations > 0 && (queryType === 'everything' || queryType === 'organizations') &&
-					<Fieldset title="Organizations">
-						{this.renderOrgs()}
 					</Fieldset>
 				}
 
@@ -260,15 +234,21 @@ export default class Search extends Page {
 					</Fieldset>
 				}
 
+				{numPoams > 0 && (queryType === 'everything' || queryType === 'poams') &&
+					<Fieldset title="PoAMs">
+						{this.renderPoams()}
+					</Fieldset>
+				}
+
 				{numLocations > 0 && (queryType === 'everything' || queryType === 'locations') &&
 					<Fieldset title="Locations">
 						{this.renderLocations()}
 					</Fieldset>
 				}
 
-				{numPoams > 0 && (queryType === 'everything' || queryType === 'poams') &&
-					<Fieldset title="PoAMs">
-						{this.renderPoams()}
+				{numReports > 0 && (queryType === 'everything' || queryType === 'reports') &&
+					<Fieldset title="Reports">
+						<ReportCollection paginatedReports={results.reports} goToPage={this.goToPage.bind(this, 'reports')} />
 					</Fieldset>
 				}
 
@@ -277,109 +257,155 @@ export default class Search extends Page {
 		)
 	}
 
+	@autobind
+	paginationFor(type) {
+		let {pageSize, pageNum, totalCount} = this.state.results[type]
+		let numPages = Math.ceil(totalCount / pageSize)
+		if (numPages === 1) { return }
+		return <header className="searchPagination" ><Pagination
+			className="pull-right"
+			prev
+			next
+			items={numPages}
+			ellipsis
+			maxButtons={6}
+			activePage={pageNum + 1}
+			onSelect={(value) => this.goToPage(type, value - 1)}
+		/></header>
+	}
+
+	@autobind
+	goToPage(type, pageNum) {
+		let pageNums = this.state.pageNum
+		pageNums[type] = pageNum
+
+		let query = Object.without(this.props.location.query, 'type')
+		let part = this.getSearchPart(type, query)
+		GQL.run([part]).then(data => {
+			let results = this.state.results //TODO: @nickjs this feels wrong, help!
+			results[type] = data[type]
+			this.setState({results})
+		}).catch(response =>
+			this.setState({error: response})
+		)
+	}
+
 	renderPeople() {
-		return <Table responsive hover striped>
-			<thead>
+		return <div>
+			{this.paginationFor('people')}
+			<Table responsive hover striped>
+				<thead>
 				<tr>
-					<th>Name</th>
-					<th>Position</th>
-					<th>Org</th>
-				</tr>
-			</thead>
-			<tbody>
-				{Person.map(this.state.results.people.list, person =>
-					<tr key={person.id}>
-						<td>
-							<img src={person.iconUrl()} alt={person.role} height={20} className="person-icon" />
-							<LinkTo person={person}>{person.rank} {person.name}</LinkTo>
-						</td>
-						<td>{person.position && <LinkTo position={person.position} />}</td>
-						<td>{person.position && person.position.organization && <LinkTo organization={person.position.organization} />}</td>
+						<th>Name</th>
+						<th>Position</th>
+						<th>Org</th>
 					</tr>
-				)}
-			</tbody>
-		</Table>
+				</thead>
+				<tbody>
+					{Person.map(this.state.results.people.list, person =>
+						<tr key={person.id}>
+							<td>
+								<img src={person.iconUrl()} alt={person.role} height={20} className="person-icon" />
+								<LinkTo person={person}>{person.rank} {person.name}</LinkTo>
+							</td>
+							<td>{person.position && <LinkTo position={person.position} />}</td>
+							<td>{person.position && person.position.organization && <LinkTo organization={person.position.organization} />}</td>
+						</tr>
+					)}
+				</tbody>
+			</Table>
+		</div>
 	}
 
 	renderOrgs() {
-		return <Table responsive hover striped>
-			<thead>
-				<tr>
-					<th>Name</th>
-					<th>Description</th>
-					<th>Type</th>
-				</tr>
-			</thead>
-			<tbody>
-				{Organization.map(this.state.results.organizations.list, org =>
-					<tr key={org.id}>
-						<td><LinkTo organization={org} /></td>
-						<td>{org.longName}</td>
-						<td>{org.humanNameOfType()}</td>
+		return <div>
+			{this.paginationFor('organizations')}
+			<Table responsive hover striped>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+						<th>Type</th>
 					</tr>
-				)}
-			</tbody>
-		</Table>
+				</thead>
+				<tbody>
+					{Organization.map(this.state.results.organizations.list, org =>
+						<tr key={org.id}>
+							<td><LinkTo organization={org} /></td>
+							<td>{org.longName}</td>
+							<td>{org.humanNameOfType()}</td>
+						</tr>
+					)}
+				</tbody>
+			</Table>
+		</div>
 	}
 
 	renderPositions() {
-		return <Table responsive hover striped>
-			<thead>
-				<tr>
-					<th>Name</th>
-					<th>Org</th>
-					<th>Current Occupant</th>
-				</tr>
-			</thead>
-			<tbody>
-				{Position.map(this.state.results.positions.list, pos =>
-					<tr key={pos.id}>
-						<td>
-							<img src={pos.iconUrl()} alt={pos.type} height={20} className="person-icon" />
-							<LinkTo position={pos} >{pos.code} {pos.name}</LinkTo>
-						</td>
-						<td>{pos.organization && <LinkTo organization={pos.organization} />}</td>
-						<td>{pos.person && <LinkTo person={pos.person} />}</td>
+		return <div>
+			{this.paginationFor('positions')}
+			<Table responsive hover striped>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Org</th>
+						<th>Current Occupant</th>
 					</tr>
-				)}
-			</tbody>
-		</Table>
+				</thead>
+				<tbody>
+					{Position.map(this.state.results.positions.list, pos =>
+						<tr key={pos.id}>
+							<td>
+								<img src={pos.iconUrl()} alt={pos.type} height={20} className="person-icon" />
+								<LinkTo position={pos} >{pos.code} {pos.name}</LinkTo>
+							</td>
+							<td>{pos.organization && <LinkTo organization={pos.organization} />}</td>
+							<td>{pos.person && <LinkTo person={pos.person} />}</td>
+						</tr>
+					)}
+				</tbody>
+			</Table>
+		</div>
 	}
 
 	renderLocations() {
-		return <Table responsive hover striped>
-			<thead>
-				<tr>
-					<th>Name</th>
-				</tr>
-			</thead>
-			<tbody>
-				{this.state.results.locations.list.map(loc =>
-					<tr key={loc.id}>
-						<td><LinkTo location={loc} /></td>
+		return <div>
+			{this.paginationFor('locations')}
+			<Table responsive hover striped>
+				<thead>
+					<tr>
+						<th>Name</th>
 					</tr>
-				)}
-			</tbody>
-		</Table>
-
+				</thead>
+				<tbody>
+					{this.state.results.locations.list.map(loc =>
+						<tr key={loc.id}>
+							<td><LinkTo location={loc} /></td>
+						</tr>
+					)}
+				</tbody>
+			</Table>
+		</div>
 	}
 
 	renderPoams() {
-		return <Table responsive hover striped>
-			<thead>
-				<tr>
-					<th>Name</th>
-				</tr>
-			</thead>
-			<tbody>
-				{Poam.map(this.state.results.poams.list, poam =>
-					<tr key={poam.id}>
-						<td><LinkTo poam={poam} >{poam.shortName} {poam.longName}</LinkTo></td>
+		return <div>
+			{this.paginationFor('poams')}
+			<Table responsive hover striped>
+				<thead>
+					<tr>
+						<th>Name</th>
 					</tr>
-				)}
-			</tbody>
-		</Table>
-
+				</thead>
+				<tbody>
+					{Poam.map(this.state.results.poams.list, poam =>
+						<tr key={poam.id}>
+							<td><LinkTo poam={poam} >{poam.shortName} {poam.longName}</LinkTo></td>
+						</tr>
+					)}
+				</tbody>
+			</Table>
+		</div>
 	}
 
 	renderSaveModal() {
@@ -446,10 +472,4 @@ export default class Search extends Page {
 		this.setState({queryType: type}, () => this.loadData())
 	}
 
-	@autobind
-	goToReportsPage(reportsPageNum) {
-		let pageNum = this.state.pageNum
-		pageNum.reports = reportsPageNum
-		this.loadData()
-	}
 }

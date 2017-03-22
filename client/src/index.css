@@ -569,3 +569,7 @@ hr.assignModalSplit {
 .ae-toolbar, .ae-toolbar-styles {
 	z-index: 10 !important;
 }
+
+header.searchPagination {
+	height: 35px;
+}

@@ -19,10 +19,16 @@ public class ReportSearchQuery implements ISearchQuery {
 	DateTime releasedAtStart;
 	DateTime releasedAtEnd;
 	Integer attendeeId;
+	
+	//Can use either orgId or one or both of advisorOrgId and principalOrgId
+	//only use orgId if you don't know the type of the organization. 
 	Integer advisorOrgId;
 	boolean includeAdvisorOrgChildren;
 	Integer principalOrgId;
 	boolean includePrincipalOrgChildren;
+	Integer orgId;
+	boolean includeOrgChildren;
+	
 	Integer locationId;
 	Integer poamId;
 	Integer pendingApprovalOf;
@@ -142,6 +148,22 @@ public class ReportSearchQuery implements ISearchQuery {
 
 	public void setIncludePrincipalOrgChildren(boolean includePrincipalOrgChildren) {
 		this.includePrincipalOrgChildren = includePrincipalOrgChildren;
+	}
+
+	public Integer getOrgId() {
+		return orgId;
+	}
+
+	public void setOrgId(Integer orgId) {
+		this.orgId = orgId;
+	}
+
+	public boolean isIncludeOrgChildren() {
+		return includeOrgChildren;
+	}
+
+	public void setIncludeOrgChildren(boolean includeOrgChildren) {
+		this.includeOrgChildren = includeOrgChildren;
 	}
 
 	public Integer getLocationId() {
