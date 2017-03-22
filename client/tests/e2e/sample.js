@@ -10,6 +10,10 @@ require('chromedriver')
 // Now it's a deprecated legacy feature, so we should use the simpler native Node support instead.
 webdriver.promise.USE_PROMISE_MANAGER = false
 
+console.log(
+    chalk.bold.cyan('These tests assume that you have just run ../insertSqlBaseData.sql on your SQLServer instance')
+)
+
 // We use the beforeEach hook to put helpers on t.context and set up test scaffolding.
 test.beforeEach(t => {
     t.context.driver = new webdriver.Builder()
