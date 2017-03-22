@@ -3,6 +3,7 @@ let test = require('ava'),
     By = webdriver.By,
     moment = require('moment'),
     _includes = require('lodash.includes'),
+    path = require('path'),
     chalk = require('chalk')
 
 // This gives us access to send Chrome commands.
@@ -12,9 +13,9 @@ require('chromedriver')
 // Now it's a deprecated legacy feature, so we should use the simpler native Node support instead.
 webdriver.promise.USE_PROMISE_MANAGER = false
 
-console.log(
-    chalk.bold.cyan('These tests assume that you have just run ../insertSqlBaseData.sql on your SQLServer instance')
-)
+console.log(chalk.bold.cyan(
+    `These tests assume that you have just run ${path.resolve(__dirname, '..', '..', '..', 'insertSqlBaseData.sql')} on your SQLServer instance`
+))
 
 let shortWait = 500
 
@@ -49,7 +50,7 @@ test.beforeEach(t => {
                 'There was an error processing this request. Please contact an administrator.', 
                 shortWait
             )
-            throw new Error('The API returned a 500.')
+            throw new Error('The API returned a 500. Do you need to restart the server?')
         } catch (e) {
             if (e.name !== 'TimeoutError') {
                 throw e
@@ -132,7 +133,7 @@ test.beforeEach(t => {
                 throw e
             }
         }
-        t.is(await $elem.getText(), expectedText, message)
+        t.is((await $elem.getText()).trim(), expectedText, message)
     }
 
     t.context.assertElementNotPresent = async (t, cssSelector, message, timeoutMs) => {
@@ -206,7 +207,7 @@ test('Home Page', async t => {
 })
 
 test.only('Report validation', async t => {
-    t.plan(15)
+    t.plan(19)
 
     let {assertElementText, $, assertElementNotPresent} = t.context
 
@@ -262,6 +263,24 @@ test.only('Report validation', async t => {
     await assertElementNotPresent(t, '#cancelledReason', 'Cancelled reason should not be present initially', shortWait)
     let $atmosphereFormGroup = await $('.atmosphere-form-group')
     t.true(await $atmosphereFormGroup.isDisplayed(), 'Atmosphere form group should be shown by default')
+
+    await assertElementNotPresent(
+        t, '#atmosphere-details', 'Atmosphere details should not be displayed before choosing an atmosphere', shortWait
+    )
+
+    let $positiveAtmosphereButton = await $('#positiveAtmos')
+    await $positiveAtmosphereButton.click()
+
+    let $atmosphereDetails = await $('#atmosphereDetails')
+    t.is(await $atmosphereDetails.getAttribute('placeholder'), 'Why was this engagement positive? (optional)')
+
+    let $neutralAtmosphereButton = await $('#neutralAtmos')
+    await $neutralAtmosphereButton.click()
+    t.is((await $atmosphereDetails.getAttribute('placeholder')).trim(), 'Why was this engagement neutral?')
+
+    let $negativeAtmosphereButton = await $('#negativeAtmos')
+    await $negativeAtmosphereButton.click()
+    t.is((await $atmosphereDetails.getAttribute('placeholder')).trim(), 'Why was this engagement negative?')
 
     let $attendanceFieldsetTitle = await $('#attendance-fieldset .title-text')
     await assertElementText(
