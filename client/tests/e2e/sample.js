@@ -27,20 +27,25 @@ test.beforeEach(t => {
         await t.context.driver.get(`http://localhost:3000${pathname}?user=erin&pass=erin`)
 
         // If we have a page-wide error message, we would like to cleanly alert on that.
-        let $notFoundHeader
+        let $notFound
         try {
-            $notFoundHeader = await t.context.$('.not-found-text')
+            $notFound = await t.context.$('.not-found-text')
         } catch (e) {
             // If we couldn't find the error message element, just bail out.
             if (e.name === 'NoSuchElementError') {
                 return
             }
+            throw e
         }
 
         // If we have an error message, let's see if it's the backend 500 error.
         try {
             let halfSecondMs = 500
-            await t.context.waitUntilElementHasText($notFoundHeader, 'There was an error processing this request. Please contact an administrator.', halfSecondMs)
+            await t.context.waitUntilElementHasText(
+                $notFound, 
+                'There was an error processing this request. Please contact an administrator.', 
+                halfSecondMs
+            )
             throw new Error('The API returned a 500.')
         } catch (e) {
             if (e.name !== 'TimeoutError') {
@@ -94,8 +99,19 @@ test.beforeEach(t => {
     t.context.waitUntilElementHasText = async ($elem, expectedText, timeoutMs) => {
         let waitTimeoutMs = timeoutMs || fiveSecondsMs
         await t.context.driver.wait(async () => {
-            let text = await $elem.getText()
-            return text === expectedText
+            try {
+                let text = await $elem.getText()
+                return text === expectedText
+            } catch (e) {
+                // If $elem has been removed from the DOM since it was queried for,
+                // we'll get a NoSuchElementError when trying to find its text.
+                // If the element is not in the DOM, then it certainly does not
+                // have the text we are looking for, so we'll return false.
+                if (e.name === 'StaleElementReferenceError') {
+                    return false
+                }
+                throw e
+            }
         }, waitTimeoutMs, `Element did not have text '${expectedText}' within ${waitTimeoutMs} milliseconds`)
     }
 
@@ -184,10 +200,19 @@ test('Home Page', async t => {
 test('Report validation', async t => {
     t.plan(1)
 
-    let {assertElementText, assertElementNotPresent, $, $$} = t.context
+    let {assertElementText, $} = t.context
 
     await t.context.get('/')
     let $createButton = await $('#createButton')
     await $createButton.click()
     await assertElementText(t, await $('.legend'), 'Create a new Report\nPreview and submit')
+})
+
+test('Report 404', async t => {
+    t.plan(1)
+
+    let {assertElementText, $} = t.context
+
+    await t.context.get('/reports/555')
+    await assertElementText(t, await $('.not-found-text'), 'Report #555 not found.')
 })
