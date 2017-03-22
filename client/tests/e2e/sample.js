@@ -207,7 +207,7 @@ test('Home Page', async t => {
 })
 
 test.only('Report validation', async t => {
-    t.plan(31)
+    t.plan(32)
 
     let {assertElementText, $, $$, assertElementNotPresent} = t.context
 
@@ -335,12 +335,13 @@ test.only('Report validation', async t => {
     await assertElementText(t, $advisorPosition, 'EF2.2 Advisor D')
     await assertElementText(t, $advisorOrg, 'EF2.2')
 
-    // This is a brittle selector, because we expect to see two shortcut buttons. One will be the current user's name.
+    // We expect to see two shortcut buttons. One will be the current user's name.
     // Clicking on that button will have no effect, because the current user is already an attendee. The other will
     // be a principal's name. That's the button we want. Most of the time, that button appears to be last, but sometimes
-    // it is not. If we fixed https://github.com/deptofdefense/anet/issues/527, we would not have this problem.
-    let $addAttendeeShortcutButton = await $('#attendance-fieldset .shortcut-list button:last-child')
-    await $addAttendeeShortcutButton.click()
+    // it is not. To work around this, we'll click ALL the buttons.
+    // If we fixed https://github.com/deptofdefense/anet/issues/527, we would not have this problem.
+    let $addAttendeeShortcutButtons = await $$('#attendance-fieldset .shortcut-list button')
+    await Promise.all($addAttendeeShortcutButtons.map($button => $button.click()))
 
     t.is((await $$('#attendeesTable tbody tr')).length, 3, 'Clicking the shortcut button adds a row to the table')
 
@@ -355,6 +356,13 @@ test.only('Report validation', async t => {
     await assertElementText(t, $principalName, 'Christopf Topferness CIV')
     await assertElementText(t, $principalPosition, 'Planning Captain')
     await assertElementText(t, $principalOrg, 'MoD')
+
+    // There's a lot more stuff to assert, but let's skip to the end.
+
+    let $submitButton = await $('#formBottomSubmit')
+    await $submitButton.click()
+
+    await assertElementText(t, await $('.report-draft-message h4'), "This report is in DRAFT state and hasn't been submitted.")
 })
 
 test('Report 404', async t => {
