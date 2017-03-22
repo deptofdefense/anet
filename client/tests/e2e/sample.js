@@ -1,6 +1,7 @@
 let test = require('ava'),
     webdriver = require('selenium-webdriver'),
     By = webdriver.By,
+    moment = require('moment'),
     _includes = require('lodash.includes'),
     chalk = require('chalk')
 
@@ -202,8 +203,8 @@ test('Home Page', async t => {
     await assertElementNotPresent(t, '.hopscotch-title', 'Navigating to a new page clears the hopscotch tour')
 })
 
-test('Report validation', async t => {
-    t.plan(3)
+test.only('Report validation', async t => {
+    t.plan(5)
 
     let {assertElementText, $} = t.context
 
@@ -227,6 +228,24 @@ test('Report validation', async t => {
     t.true(
         _includes(await $meetingGoal.getAttribute('class'), 'has-warning'), 
         'Meeting goal enters warning state when the user leaves the field without entering anything'
+    )
+
+    await $meetingGoalInput.sendKeys('talk about logistics')
+    t.false(
+        _includes(await $meetingGoal.getAttribute('class'), 'has-warning'), 
+        'After typing in meeting goal field, warning state goes away'
+    )
+
+    let $engagementDate = await $('#engagementDate')
+    await $engagementDate.click()
+
+    let $todayButton = await $('.u-today-button')
+    await $todayButton.click()
+
+    t.is(
+        await $engagementDate.getAttribute('value'), 
+        moment().format('DD/MM/YYYY'), 
+        'Clicking the "today" button puts the current date in the engagement field'
     )
 })
 
