@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import autobind from 'autobind-decorator'
 
 import AlloyEditor from 'alloyeditor/dist/alloy-editor/alloy-editor-no-react'
-import 'alloyeditor/dist/alloy-editor/assets/alloy-editor-atlas.css'
+import './alloy-editor-atlas.css'
 
 // this just removes a number of features we don't want from the Alloy toolbar
 let buttons = AlloyEditor.Selections[3].buttons

@@ -74,7 +74,7 @@ export default class PoamsSelector extends Component {
 		return <Form.Field.ExtraCol className="shortcut-list">
 			<h5>Recent PoAMs</h5>
 			{shortcuts.map(poam =>
-				<Button key={poam.id} bsStyle="link" onClick={this.addPoam.bind(this, poam)}>Add "{poam.longName}"</Button>
+				<Button key={poam.id} bsStyle="link" onClick={this.addPoam.bind(this, poam)}>Add "{poam.shortName} {poam.longName.substr(0,80)}{poam.longName.length > 80 ? '...' : ''}"</Button>
 			)}
 		</Form.Field.ExtraCol>
 	}

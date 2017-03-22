@@ -126,7 +126,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 					</RequiredField>
 
 					<Form.Field id="engagementDate" addon={CALENDAR_ICON}>
-						<DatePicker showTodayButton placeholder="When did it happen?" dateFormat="DD/MM/YYYY" />
+						<DatePicker showTodayButton placeholder="When did it happen?" dateFormat="DD/MM/YYYY" showClearButton={false} />
 					</Form.Field>
 
 					<Form.Field id="location" addon={LOCATION_ICON} validationState={errors.location}
