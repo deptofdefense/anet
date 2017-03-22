@@ -130,7 +130,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 						<DatePicker showTodayButton placeholder="When did it happen?" dateFormat="DD/MM/YYYY" showClearButton={false} />
 					</Form.Field>
 
-					<Form.Field id="location" addon={LOCATION_ICON} validationState={errors.location}
+					<Form.Field id="location" addon={LOCATION_ICON} validationState={errors.location} className="location-form-group"
 						postInputGroupChildren={errors.location && invalidInputWarningMessage}>
 						<Autocomplete valueKey="name" placeholder="Start typing to search for the location where this happened..." url="/api/locations/search" />
 						{recents.locations && recents.locations.length > 0 &&

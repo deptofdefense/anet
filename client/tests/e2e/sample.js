@@ -204,7 +204,7 @@ test('Home Page', async t => {
 })
 
 test.only('Report validation', async t => {
-    t.plan(5)
+    t.plan(9)
 
     let {assertElementText, $} = t.context
 
@@ -220,6 +220,7 @@ test.only('Report validation', async t => {
     )
 
     let $meetingGoalInput = await $('#intent')
+    t.is(await $meetingGoalInput.getAttribute('value'), '', 'Meeting goal field starts blank')
     await $meetingGoalInput.click()
 
     let $searchBarInput = await $('#searchBarInput')
@@ -237,6 +238,7 @@ test.only('Report validation', async t => {
     )
 
     let $engagementDate = await $('#engagementDate')
+    t.is(await $engagementDate.getAttribute('value'), '', 'Engagement date field starts blank')
     await $engagementDate.click()
 
     let $todayButton = await $('.u-today-button')
@@ -247,6 +249,13 @@ test.only('Report validation', async t => {
         moment().format('DD/MM/YYYY'), 
         'Clicking the "today" button puts the current date in the engagement field'
     )
+
+    let $locationInput = await $('#location')
+    t.is(await $locationInput.getAttribute('value'), '', 'Location field starts blank')
+
+    let $locationShortcutButton = await $('.location-form-group .shortcut-list button')
+    await $locationShortcutButton.click()
+    t.is(await $locationInput.getAttribute('value'), 'General Hospital', 'Clicking the shortcut adds a location')
 })
 
 test('Report 404', async t => {
