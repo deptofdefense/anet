@@ -13,6 +13,7 @@ import Form from 'components/Form'
 import Messages from 'components/Messages'
 
 import API from 'api'
+import GQL from 'graphql'
 import {Person, Organization, Position, Poam} from 'models'
 
 import EVERYTHING_ICON from 'resources/search-alt.png'
@@ -112,13 +113,13 @@ export default class Search extends Page {
 			advQuery.pageNum = this.state.pageNum[type]
 
 			let config = SEARCH_CONFIG[type]
-			API.query(/* GraphQL */`
-					${config.listName} (f:search, query:$query) {
-						pageNum, pageSize, totalCount, list { ${config.fields} }
-					}
-				`,
-				{query: advQuery}, `($query: ${config.variableType})`
-			).then(data => {
+			let part = new GQL.Part(/*GraphQL*/`
+				${config.listName} (f:search, query:$query) {
+					pageNum, pageSize, totalCount, list { ${config.fields} }
+				}
+				`).addVariable("query", config.variableType, advQuery)
+
+			GQL.run([part]).then(data => {
 				this.setState({results: data})
 			}).catch(response =>
 				this.setState({error: response})
@@ -187,9 +188,9 @@ export default class Search extends Page {
 								{numResults > 0 && <Badge pullRight>{numResults}</Badge>}
 							</NavItem>
 
-							<NavItem eventKey="reports" disabled={!numReports}>
-								<img src={REPORTS_ICON} role="presentation" /> Reports
-								{numReports > 0 && <Badge pullRight>{numReports}</Badge>}
+							<NavItem eventKey="organizations" disabled={!numOrganizations}>
+								<img src={ORGANIZATIONS_ICON} role="presentation" /> Organizations
+								{numOrganizations > 0 && <Badge pullRight>{numOrganizations}</Badge>}
 							</NavItem>
 
 							<NavItem eventKey="people" disabled={!numPeople}>
@@ -212,10 +213,11 @@ export default class Search extends Page {
 								{numLocations > 0 && <Badge pullRight>{numLocations}</Badge>}
 							</NavItem>
 
-							<NavItem eventKey="organizations" disabled={!numOrganizations}>
-								<img src={ORGANIZATIONS_ICON} role="presentation" /> Organizations
-								{numOrganizations > 0 && <Badge pullRight>{numOrganizations}</Badge>}
+							<NavItem eventKey="reports" disabled={!numReports}>
+								<img src={REPORTS_ICON} role="presentation" /> Reports
+								{numReports > 0 && <Badge pullRight>{numReports}</Badge>}
 							</NavItem>
+
 						</Nav>
 					</div>
 				</ContentForNav>
@@ -228,9 +230,9 @@ export default class Search extends Page {
 					</Alert>
 				}
 
-				{numReports > 0 && (queryType === 'everything' || queryType === 'reports') &&
-					<Fieldset title="Reports">
-						<ReportCollection paginatedReports={results.reports} goToPage={this.goToReportsPage} />
+				{numOrganizations > 0 && (queryType === 'everything' || queryType === 'organizations') &&
+					<Fieldset title="Organizations">
+						{this.renderOrgs()}
 					</Fieldset>
 				}
 
@@ -240,15 +242,15 @@ export default class Search extends Page {
 					</Fieldset>
 				}
 
-				{numOrganizations > 0 && (queryType === 'everything' || queryType === 'organizations') &&
-					<Fieldset title="Organizations">
-						{this.renderOrgs()}
-					</Fieldset>
-				}
-
 				{numPositions > 0 && (queryType === 'everything' || queryType === 'positions') &&
 					<Fieldset title="Positions">
 						{this.renderPositions()}
+					</Fieldset>
+				}
+
+				{numPoams > 0 && (queryType === 'everything' || queryType === 'poams') &&
+					<Fieldset title="PoAMs">
+						{this.renderPoams()}
 					</Fieldset>
 				}
 
@@ -258,9 +260,9 @@ export default class Search extends Page {
 					</Fieldset>
 				}
 
-				{numPoams > 0 && (queryType === 'everything' || queryType === 'poams') &&
-					<Fieldset title="PoAMs">
-						{this.renderPoams()}
+				{numReports > 0 && (queryType === 'everything' || queryType === 'reports') &&
+					<Fieldset title="Reports">
+						<ReportCollection paginatedReports={results.reports} goToPage={this.goToReportsPage} />
 					</Fieldset>
 				}
 
