@@ -137,5 +137,6 @@ startScripts {
 allprojects {
   markdownToHtml.sourceDir = file("docs")
   markdownToHtml.outputDir = file("$buildDir/documentation")
+  markdownToHtml.hardwraps = true
 }
 
