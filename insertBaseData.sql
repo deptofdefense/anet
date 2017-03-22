@@ -80,13 +80,29 @@ INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biograp
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('ANET Administrator', 3, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 1 Manager', 2, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 1.1 Advisor A', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 1.1 Advisor B', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 1.1 Advisor C', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 1.1 Advisor D', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 1.1 Advisor E', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 1.1 Advisor F', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 1.1 Advisor for Agriculture', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 1.1 Advisor for Mining', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 1.1 Advisor for Space Issues', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 1.1 Advisor for Interagency Advising', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 1.1 SuperUser', 2, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 2.1 Advisor B', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 2.1 Advisor for Accounting', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 2.1 Advisor for Kites', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 2.1 SuperUser', 2, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 2.2 Advisor C', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 2.2 Advisor D', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 2.2 Advisor Sewing Facilities', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 2.2 Advisor Local Kebabs', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 2.2 Super User', 2, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 2.2 Final Reviewer', 2, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 4.1 Advisor E', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 4.1 Advisor for Coffee', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 4.1 Advisor on Software Engineering', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 4.1 Advisor E', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 9 Advisor <empty>', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
@@ -158,7 +174,13 @@ INSERT INTO organizations(shortName, longName, type, createdAt, updatedAt) VALUE
 	INSERT INTO organizations(shortName, longName, type, parentOrgId, createdAt, updatedAt) VALUES ('EF 4.3', '', 0 , (SELECT id FROM organizations WHERE shortName = 'EF 4'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 	INSERT INTO organizations(shortName, longName, type, parentOrgId, createdAt, updatedAt) VALUES ('EF 4.4', '', 0 , (SELECT id FROM organizations WHERE shortName = 'EF 4'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO organizations(shortName, longName, type, createdAt, updatedAt) VALUES ('EF 5', '', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO organizations(shortName, longName, type, createdAt, updatedAt) VALUES ('EF6', '', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	INSERT INTO organizations(shortName, longName, type, parentOrgId, createdAt, updatedAt) VALUES ('EF 5.1', '', 0 , (SELECT id FROM organizations WHERE shortName = 'EF 4'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	INSERT INTO organizations(shortName, longName, type, parentOrgId, createdAt, updatedAt) VALUES ('EF 5.2', '', 0 , (SELECT id FROM organizations WHERE shortName = 'EF 5'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	INSERT INTO organizations(shortName, longName, type, parentOrgId, createdAt, updatedAt) VALUES ('EF 5.3', '', 0 , (SELECT id FROM organizations WHERE shortName = 'EF 5'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	INSERT INTO organizations(shortName, longName, type, parentOrgId, createdAt, updatedAt) VALUES ('EF 5.4', '', 0 , (SELECT id FROM organizations WHERE shortName = 'EF 5'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO organizations(shortName, longName, type, createdAt, updatedAt) VALUES ('EF 6', '', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	INSERT INTO organizations(shortName, longName, type, parentOrgId, createdAt, updatedAt) VALUES ('EF 6.1', '', 0 , (SELECT id FROM organizations WHERE shortName = 'EF 6'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	INSERT INTO organizations(shortName, longName, type, parentOrgId, createdAt, updatedAt) VALUES ('EF 6.2', '', 0 , (SELECT id FROM organizations WHERE shortName = 'EF 6'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO organizations(shortName, longName, type, createdAt, updatedAt) VALUES ('EF7', '', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO organizations(shortName, longName, type, createdAt, updatedAt) VALUES ('EF8', '', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO organizations(shortName, longName, type, createdAt, updatedAt) VALUES ('EF9', 'Gender', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
@@ -232,9 +254,34 @@ INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPo
 	VALUES ('2.B', 'This is the second Milestone in EF 2', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF 2'), (SELECT id from organizations where shortName='EF 2'));
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId, organizationId)
 	VALUES ('2.C', 'This is the third Milestone in EF 2', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF 2'), (SELECT id from organizations where shortName='EF 2'));
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId, organizationId)
+	VALUES ('2.D', 'Keep track of the petty cash drawer', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF 2'), (SELECT id from organizations where shortName='EF 2'));
 
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt) VALUES ('EF 3', 'Rule of Law', 'EF', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId, organizationId)
+	VALUES ('3.a', 'Get some Lawyers to read a book', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF 3'), (SELECT id from organizations where shortName='EF 3'));
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId, organizationId)
+	VALUES ('3.b', 'Get some Lawyers to wear a suit to court', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF 3'), (SELECT id from organizations where shortName='EF 3'));
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId, organizationId)
+	VALUES ('3.c', 'Get some Lawyers to cross-examine witnesses in a non-hostile fashion', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF 3'), (SELECT id from organizations where shortName='EF 3'));
+
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt) VALUES ('EF 4', 'Force Gen (Training)', 'EF', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId, organizationId)
+	VALUES ('4.a', 'Get a website for people to apply on', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF 4'), (SELECT id from organizations where shortName='EF 4'));
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId, organizationId)
+	VALUES ('4.b', 'Hire People', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF 4'), (SELECT id from organizations where shortName='EF 4'));
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId, organizationId)
+	VALUES ('4.b.1', 'Get an HR team', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF 4'), (SELECT id from organizations where shortName='EF 4'));
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId, organizationId)
+	VALUES ('4.b.2', 'Review resumes for hiring', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF 4'), (SELECT id from organizations where shortName='EF 4'));
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId, organizationId)
+	VALUES ('4.b.3', 'Invite people to come interview', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF 4'), (SELECT id from organizations where shortName='EF 4'));
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId, organizationId)
+	VALUES ('4.b.4', 'Interview candidates', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF 4'), (SELECT id from organizations where shortName='EF 4'));
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId, organizationId)
+	VALUES ('4.b.5', 'Extend Job Offers to successful candidates', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF 4'), (SELECT id from organizations where shortName='EF 4'));
+INSERT INTO poams (shortName, longName, category, createdAt, updatedAt, parentPoamId, organizationId)
+	VALUES ('4.c', 'Onboard new Employees', 'Milestone', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from poams where shortName = 'EF 4'), (SELECT id from organizations where shortName='EF 4'));
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt) VALUES ('EF 5', 'Force Sustainment (Logistics)', 'EF', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt) VALUES ('EF6', 'C2 Operations', 'EF', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO poams (shortName, longName, category, createdAt, updatedAt) VALUES ('EF7', 'Intelligence', 'EF', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
@@ -264,6 +311,15 @@ INSERT INTO locations (name, createdAt, updatedAt) VALUES ('Police HQ Training F
 INSERT INTO locations (name, createdAt, updatedAt) VALUES ('Kabul Hospital', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO locations (name, createdAt, updatedAt) VALUES ('MoD Army Training Base 123', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO locations (name, createdAt, updatedAt) VALUES ('MoD Location the Second', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO locations (name, createdAt, updatedAt) VALUES ('MoI Office Building ABC', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO locations (name, createdAt, updatedAt) VALUES ('MoI Training Center', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO locations (name, createdAt, updatedAt) VALUES ('MoI Adminstrative Office', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO locations (name, createdAt, updatedAt) VALUES ('MoI Senior Executive Suite', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO locations (name, createdAt, updatedAt) VALUES ('MoI Coffee Shop', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO locations (name, createdAt, updatedAt) VALUES ('MoI Herat Office', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO locations (name, createdAt, updatedAt) VALUES ('MoI Jalalabad Office', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO locations (name, createdAt, updatedAt) VALUES ('MoI Kandahar Office', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO locations (name, createdAt, updatedAt) VALUES ('MoI Mazar-i-Sharif', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO locations (name, createdAt, updatedAt) VALUES ('MoI Office Building ABC', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 
