@@ -65,7 +65,8 @@ export default class Help extends Page {
 				</ul>
 
 				<h4>3. Check out the FAQ</h4>
-				<p>Many common issues are explained in the FAQ document, especially for common super user tasks. The FAQ is available on the portal at <a href={url} target="help">{url}</a></p>
+				<p>Many common issues are explained in the FAQ document, especially for common super user tasks.</p>
+				<p><a href={url} target="help"><strong>The FAQ is available on the portal.</strong></a></p>
 
 				<h4>4. Contact ANET support</h4>
 				<p>Technical issues may be able to be resolved by the ANET administrators: <a href={`mailto:${email}`}>{email}</a></p>
