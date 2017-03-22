@@ -52,13 +52,13 @@ test.afterEach.always(async t => {
     }
 })
 
-test('My ANET snapshot', async t => {
+test('Home Page', async t => {
     // We can use t.plan() to indicate how many assertions we plan to make.
     // This provides safety in case there's a silent failure and the test
     // looks like it exited successfully, when in fact it just died. I've 
     // seen people get bit by that a done with frameworks like Mocha which
     // do not offer test planning.
-    t.plan(4)
+    t.plan(5)
 
     await t.context.get('/')
 
@@ -79,4 +79,9 @@ test('My ANET snapshot', async t => {
 
     await t.context.waitUntilElementHasText($upcomingEngagements, '0')
     t.is(await $upcomingEngagements.getText(), '0')
+
+    await t.context.$('.persistent-tour-launcher').click()
+    let $hopscotchTitle = await t.context.$('.hopscotch-title')
+    await t.context.waitUntilElementHasText($hopscotchTitle, 'Welcome')
+    t.is(await $hopscotchTitle.getText(), 'Welcome')
 })
