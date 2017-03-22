@@ -31,6 +31,7 @@ dependencies {
 	compile group: 'io.dropwizard', name: 'dropwizard-auth', version: '1.0.2'
 	compile group: 'io.dropwizard', name: 'dropwizard-views-freemarker', version: '1.0.2'
 	compile group: 'io.dropwizard', name: 'dropwizard-assets', version: '1.0.2'
+
 	compile 'org.xerial:sqlite-jdbc:3.14.2.1' //If using SQLite
 	compile 'javax.mail:mail:1.4.7'
 	compile 'com.github.dblock.waffle:waffle-distro:1.8.1'
@@ -53,6 +54,8 @@ proc.waitFor();
 project.version = proc.text.trim();
 
 mainClassName = "mil.dds.anet.AnetApplication"
+
+applicationDefaultJvmArgs = ["-Djava.library.path=MY_APP_HOME/lib"]
 
 String dbDriver = run.environment['DB_DRIVER']
 dbDriver = dbDriver ? dbDriver : "sqlite"
@@ -106,6 +109,9 @@ distributions {
 				from('anet.yml') { rename('anet.yml', 'anet.yml.template') }
 				from(markdownToHtml)
 			}
+			into('lib/') {
+				from('lib/sqljdbc_auth.dll')
+			}
 		}
 	}
 }
@@ -122,9 +128,17 @@ buildscript {
  }
 }
 
+startScripts {
+	doLast {
+		unixScript.text = unixScript.text.replace('MY_APP_HOME', '\$APP_HOME')
+		windowsScript.text = windowsScript.text.replace('MY_APP_HOME', '%APP_HOME%')
+	}
+}
+
 //Configure Markdown plugin
 allprojects {
   markdownToHtml.sourceDir = file("docs")
   markdownToHtml.outputDir = file("$buildDir/documentation")
+  markdownToHtml.hardwraps = true
 }
 

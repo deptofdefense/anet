@@ -121,12 +121,12 @@ export default class ReportForm extends ValidatableFormWrapper {
 					<RequiredField id="intent" label="Meeting goal (purpose)"
 						canSubmitWithError={true}
 						validateBeforeUserTouches={this.props.edit}
-						placeholder="What happened?" data-focus componentClass="textarea" maxCharacters={250}>
+						placeholder="What happened?" componentClass="textarea" maxCharacters={250}>
 						<Form.Field.ExtraCol>{250 - report.intent.length} characters remaining</Form.Field.ExtraCol>
 					</RequiredField>
 
 					<Form.Field id="engagementDate" addon={CALENDAR_ICON}>
-						<DatePicker showTodayButton placeholder="When did it happen?" dateFormat="DD/MM/YYYY" />
+						<DatePicker showTodayButton placeholder="When did it happen?" dateFormat="DD/MM/YYYY" showClearButton={false} />
 					</Form.Field>
 
 					<Form.Field id="location" addon={LOCATION_ICON} validationState={errors.location}
@@ -158,7 +158,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 
 					{!isCancelled && report.atmosphere &&
 						<RequiredField id="atmosphereDetails"
-							placeholder={`Why was this engagement ${report.atmosphere.toLowerCase()}?`}
+							placeholder={`Why was this engagement ${report.atmosphere.toLowerCase()}? ${report.atmosphere === 'POSITIVE' ? "(optional)" : ""}`}
 							required={report.atmosphere !== 'POSITIVE'} />
 					}
 

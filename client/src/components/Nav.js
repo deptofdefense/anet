@@ -44,11 +44,11 @@ class Nav extends Component {
 				currentClassName="active"
 				offset={-152}
 			>
-				<NavItem href="#info">Info</NavItem>
-				<NavItem href="#laydown">Laydown</NavItem>
-				<NavItem href="#approvals">Approvals</NavItem>
-				<NavItem href="#poams">PoAMs</NavItem>
-				<NavItem href="#reports">Reports</NavItem>
+				<AnchorLink scrollTo="info">Info</AnchorLink>
+				<AnchorLink scrollTo="laydown">Laydown</AnchorLink>
+				<AnchorLink scrollTo="approvals">Approvals</AnchorLink>
+				<AnchorLink scrollTo="poams">PoAMs</AnchorLink>
+				<AnchorLink scrollTo="reports">Reports</AnchorLink>
 			</SubNav>
 		)
 
@@ -70,9 +70,9 @@ class Nav extends Component {
 						currentClassName="active"
 						offset={-152}
 					>
-						<NavItem href="#draft-reports">Draft reports</NavItem>
-						<NavItem href="#pending-approval">Pending approval</NavItem>
-						<NavItem href="#published-reports">Published reports</NavItem>
+						<AnchorLink scrollTo="draft-reports">Draft reports</AnchorLink>
+						<AnchorLink scrollTo="pending-approval">Pending approval</AnchorLink>
+						<AnchorLink scrollTo="published-reports">Published reports</AnchorLink>
 					</SubNav>
 				}
 
@@ -130,6 +130,15 @@ function SubNav(props) {
 	return <li>
 		<Component {...childProps} />
 	</li>
+}
+
+const AnchorLink = function(props) {
+	const {scrollTo, ...childProps} = props
+	const onClick = function() {
+		const elem = document.getElementById(scrollTo)
+		elem && elem.scrollIntoView(true)
+	}
+	return <NavItem onClick={onClick} {...childProps} />
 }
 
 let InjectableNav = null

@@ -1,6 +1,7 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 import {ListGroup, ListGroupItem} from 'react-bootstrap'
+import autobind from 'autobind-decorator'
 
 import Breadcrumbs from 'components/Breadcrumbs'
 import Fieldset from 'components/Fieldset'
@@ -16,8 +17,8 @@ import OrganizationPoams from './Poams'
 import OrganizationLaydown from './Laydown'
 import OrganizationApprovals from './Approvals'
 
-import API from 'api'
 import {Organization} from 'models'
+import GQL from 'graphql'
 
 export default class OrganizationShow extends Page {
 	static contextTypes = {
@@ -31,9 +32,11 @@ export default class OrganizationShow extends Page {
 
 		this.state = {
 			organization: new Organization({id: props.params.id}),
+			reports: null,
 			action: props.params.action
 		}
 
+		this.reportsPageNum = 0
 		setMessages(props,this.state)
 	}
 
@@ -47,8 +50,24 @@ export default class OrganizationShow extends Page {
 		}
 	}
 
+	getReportQueryPart(orgId) {
+		let reportQuery = {
+			pageNum: this.reportsPageNum,
+			pageSize: 10,
+			orgId: orgId
+		}
+		let reportsPart = new GQL.Part(/* GraphQL */`
+			reports: reportList(query:$reportQuery) {
+				pageNum, pageSize, totalCount, list {
+					${ReportCollection.GQL_REPORT_FIELDS}
+				}
+			}`)
+			.addVariable("reportQuery", "ReportSearchQuery", reportQuery)
+		return reportsPart
+	}
+
 	fetchData(props) {
-		API.query(/* GraphQL */`
+		let orgPart = new GQL.Part(/* GraphQL */`
 			organization(id:${props.params.id}) {
 				id, shortName, longName, type
 				parentOrg { id, shortName, longName }
@@ -62,26 +81,23 @@ export default class OrganizationShow extends Page {
 						person { id, name, status, rank}
 					}
 				},
-				reports(pageNum:0, pageSize:25) {
-					list {
-						id, intent, engagementDate, keyOutcomes, nextSteps, state, cancelledReason
-						author { id, name },
-						primaryAdvisor { id, name } ,
-						primaryPrincipal {id, name },
-						advisorOrg { id, shortName, longName }
-						principalOrg { id, shortName, longName }
-						location { id, name, lat, lng }
-					}
-				},
 				approvalSteps {
 					id, name, approvers { id, name, person { id, name}}
-				},
-			}
-		`).then(data => this.setState({organization: new Organization(data.organization)}))
+				}
+			}`)
+		let reportsPart = this.getReportQueryPart(props.params.id)
+
+		GQL.run([orgPart, reportsPart]).then(data =>
+			this.setState({
+				organization: new Organization(data.organization),
+				reports: data.reports
+			})
+		)
 	}
 
 	render() {
 		let org = this.state.organization
+		let reports = this.state.reports
 
 		let currentUser = this.context.currentUser
 		let isSuperUser = currentUser && currentUser.isSuperUserForOrg(org)
@@ -157,10 +173,24 @@ export default class OrganizationShow extends Page {
 					<OrganizationPoams organization={org} />
 
 					<Fieldset id="reports" title={`Reports from ${org.shortName}`}>
-						<ReportCollection reports={org.reports && org.reports.list} />
+						<ReportCollection
+							paginatedReports={reports}
+							goToPage={this.goToReportsPage}
+						/>
 					</Fieldset>
 				</Form>
 			</div>
 		)
 	}
+
+	@autobind
+	goToReportsPage(pageNum) {
+		this.reportsPageNum = pageNum
+		let reportQueryPart = this.getReportQueryPart(this.state.organization.id)
+		GQL.run([reportQueryPart]).then(data =>
+			this.setState({reports: data.reports})
+		)
+	}
+
+
 }

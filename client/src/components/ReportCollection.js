@@ -12,6 +12,17 @@ const FORMAT_SUMMARY = 'summary'
 const FORMAT_TABLE = 'table'
 const FORMAT_MAP = 'map'
 
+const GQL_REPORT_FIELDS =  `id, intent, engagementDate, keyOutcomes, nextSteps, cancelledReason,
+	atmosphere, atmosphereDetails, state
+	author { id, name }
+	primaryAdvisor { id, name, role, position { organization { id, shortName}}},
+	primaryPrincipal { id, name, role, position { organization { id, shortName}}},
+	advisorOrg { id, shortName},
+	principalOrg { id, shortName},
+	location { id, name, lat, lng},
+	poams {id, shortName, longName}`
+
+
 export default class ReportCollection extends Component {
 	static propTypes = {
 		reports: PropTypes.array,
@@ -20,8 +31,8 @@ export default class ReportCollection extends Component {
 			pageNum: PropTypes.number,
 			pageSize: PropTypes.number,
 			list: PropTypes.array.isRequired,
-			goToPage: PropTypes.function,
 		}),
+		goToPage: PropTypes.func,
 	}
 
 	constructor(props) {
@@ -109,3 +120,5 @@ export default class ReportCollection extends Component {
 		this.setState({viewFormat: value})
 	}
 }
+
+ReportCollection.GQL_REPORT_FIELDS = GQL_REPORT_FIELDS

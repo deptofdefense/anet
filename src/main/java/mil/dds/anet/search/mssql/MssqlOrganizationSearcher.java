@@ -24,7 +24,7 @@ public class MssqlOrganizationSearcher implements IOrganizationSearcher {
 	public OrganizationList runSearch(OrganizationSearchQuery query, Handle dbHandle) {
 		StringBuilder sql = new StringBuilder("/* MssqlOrganizationSearch */ SELECT " + OrganizationDao.ORGANIZATION_FIELDS
 				+ ", count(*) OVER() AS totalCount "
-				+ "FROM organizations WHERE organizations.id IN (SELECT organizations.id FROM organizations ");
+				+ "FROM organizations ");
 		Map<String,Object> sqlArgs = new HashMap<String,Object>();
 		String commonTableExpression = null;
 		
@@ -67,7 +67,7 @@ public class MssqlOrganizationSearcher implements IOrganizationSearcher {
 		
 		sql.append(Joiner.on(" AND ").join(whereClauses));
 		
-		sql.append(" ORDER BY createdAt DESC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY)");
+		sql.append(" ORDER BY createdAt DESC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY");
 		
 		if (commonTableExpression != null) { 
 			sql.insert(0, commonTableExpression);

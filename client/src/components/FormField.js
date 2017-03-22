@@ -139,7 +139,8 @@ export default class FormField extends Component {
 				if (propTypes && !propTypes.onChange)
 					return child
 
-				return React.cloneElement(child, {value: defaultValue, onChange: child.props.onChange || this.onChange})
+				let onChange = child.props.onChange || this.onChange
+				return React.cloneElement(child, {value: defaultValue, onChange: onChange, onInput: onChange})
 			})
 
 		// otherwise render out a default FormControl input element
@@ -151,6 +152,7 @@ export default class FormField extends Component {
 				{...childProps}
 				value={defaultValue}
 				onChange={this.onChange}
+				onInput={this.onChange}
 				onBlur={this.onUserTouchedField} />
 
 			children = <div>
@@ -301,6 +303,8 @@ export default class FormField extends Component {
 		if (form && form.props.onChange) {
 			form.props.onChange(event)
 			event && event.stopPropagation && event.stopPropagation()
+		} else {
+			this.forceUpdate()
 		}
 	}
 

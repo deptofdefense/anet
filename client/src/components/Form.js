@@ -1,5 +1,4 @@
 import React, {Component, PropTypes} from 'react'
-import ReactDOM from 'react-dom'
 import {Form as BSForm, Button} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 import History from 'components/History'
@@ -36,12 +35,6 @@ export default class Form extends Component {
 			formFor: this.props.formFor,
 			form: this,
 		}
-	}
-
-	componentDidMount() {
-		let container = ReactDOM.findDOMNode(this.refs.container)
-		let focusElement = container.querySelector('[data-focus]')
-		if (focusElement) focusElement.focus()
 	}
 
 	render() {

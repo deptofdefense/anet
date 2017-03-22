@@ -2,6 +2,7 @@ package mil.dds.anet.resources;
 
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -29,7 +30,6 @@ import org.eclipse.jetty.util.log.Logger;
 import org.joda.time.DateTime;
 
 import com.codahale.metrics.annotation.Timed;
-import com.google.common.collect.ImmutableList;
 
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapperBuilder;
@@ -227,7 +227,7 @@ public class ReportResource implements IGraphQLResource {
 				action.setReport(existing);
 				action.setEditor(editor);
 				email.setAction(action);
-				email.setToAddresses(ImmutableList.of(existing.loadAuthor().getEmailAddress()));
+				email.setToAddresses(Collections.singletonList(existing.loadAuthor().getEmailAddress()));
 				AnetEmailWorker.sendEmailAsync(email);
 			}
 		}
@@ -463,7 +463,7 @@ public class ReportResource implements IGraphQLResource {
 		action.setReport(r);
 		action.setRejector(rejector);
 		action.setComment(rejectionComment);
-		email.setToAddresses(ImmutableList.of(r.loadAuthor().getEmailAddress()));
+		email.setToAddresses(Collections.singletonList(r.loadAuthor().getEmailAddress()));
 		email.setAction(action);
 		AnetEmailWorker.sendEmailAsync(email);
 	}
@@ -484,7 +484,7 @@ public class ReportResource implements IGraphQLResource {
 		NewReportCommentEmail action = new NewReportCommentEmail();
 		action.setReport(r);
 		action.setComment(comment);
-		email.setToAddresses(ImmutableList.of(r.loadAuthor().getEmailAddress()));
+		email.setToAddresses(Collections.singletonList(r.loadAuthor().getEmailAddress()));
 		email.setAction(action);
 		AnetEmailWorker.sendEmailAsync(email);
 	}

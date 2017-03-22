@@ -87,26 +87,5 @@ Documentation for Developers is kept in README.md in the github repository.
 ## The Object Model
 ## How To's
 ## ANET Configuration 
-ANET is configured primarily through the `anet.yml` file.  This file follows the Dropwizard configuration format ( http://www.dropwizard.io/1.0.6/docs/manual/core.html#configuration ).  Here is a description of the configuration options custom to ANET: 
-
-- **developmentMode**: This flag controls several options on the server that are helpful when developing
-	- Authentication: When development mode is `true`, ANET will use basic Authentication checking only that the username provided is equal to the `domainUsername` column of a valid user in the database.  In the event that there is not a matching user, but the provided password is equal to the username, ANET will simulate the first-time log in of a new user (ie a user who passes windows authentication but has never logged into ANET before). 
-		- ex: To Log in as `Jack Jackson` from the development data set, just type in a username of `jack` when prompted. 
-		- ex: To simulate a new user type in the same name for both the username and password when prompted (ie un: `hunter`, pw: `hunter` will create a new user with Domain Username of `hunter`). 
-	- GraphQL: When development mode is `true`, ANET will re-compute the GraphQL graph on every API call, this allows you to rapidly develop on changes without restarting the server. 
-- **smtp**: This section controls the configuration for how ANET sends emails. 
-	- **hostname**: The Fully Qualified Domain Name of your SMTP Server
-	- **port**: The port to connect to your SMTP server on (default: 25)
-	- **username**: If your SMTP server requires authentication, provide the username here. Otherwise leave blank.
-	- **password**: Your password to your SMTP server. 
-	- **startTLS**: Set to true if your SMTP server requires or provides TLS (Transport Level Security) encryption.
-- **emailFromAddr**: This is the email address that emails from ANET will be sent from.
-- **serverUrl**: The URL for the ANET server, ie: `"https://anet.dds.mil"`.
-- **database**: The configuration for your database. ANET supports either sqlite for development, or Microsoft SQL Server for production.  Follow the instructions here: http://www.dropwizard.io/1.0.6/docs/manual/jdbi.html for avaiable configuration options for the database connection.
-- **waffleConfig**: ANET uses the open source `waffle` library to perform Windows Authentication ( https://github.com/Waffle/waffle ).   See https://github.com/Waffle/waffle/blob/master/Docs/ServletSingleSignOnSecurityFilter.md for documentation on the available configuration options.
-
-- **server**: See the Dropwizard documentation for all the details of how to use this section.  This controls ths protocols (http/https) and ports that ANET will use for client web traffic.  Additionally if you configure SSL, you will provide the server private key in this section. The `adminConnector` section is used for performance checks and health testing, this endpoint does not need to be available to users.  
-
-- **logging**: See the Dropwizard documentation for all the details of how to use this section.  This controls the classes that you want to collect logs from and where to send them.  Set the `currentLogFilename` paramters to the location that you want the logs to appear.  
-
+ANET is configured primarily through the `anet.yml` file.  A description of the file format can be found in INSTALL.md 
 # User Permissions

@@ -16,6 +16,7 @@ import io.dropwizard.db.DataSourceFactory;
 public class AnetConfiguration extends Configuration {
 
 	private boolean developmentMode;
+	private boolean redirectToHttps = false;
 
 	private SmtpConfiguration smtp;
 	private String emailFromAddr;
@@ -47,6 +48,14 @@ public class AnetConfiguration extends Configuration {
 
 	public void setDevelopmentMode(boolean developmentMode) {
 		this.developmentMode = developmentMode;
+	}
+
+	public boolean getRedirectToHttps() {
+		return redirectToHttps;
+	}
+
+	public void setRedirectToHttps(boolean redirectToHttps) {
+		this.redirectToHttps = redirectToHttps;
 	}
 
 	@JsonProperty("views")
