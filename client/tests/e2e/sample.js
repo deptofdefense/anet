@@ -38,16 +38,16 @@ test.beforeEach(t => {
     // This helper method is necessary because we don't know when React has finished rendering the page.
     // We will wait for it to be done, with a max timeout so the test does not hang if the rendering fails.
     let fiveSecondsMs = 5000
-    t.context.waitUntilElementHasText = async (elem, expectedText) => 
+    t.context.waitUntilElementHasText = async ($elem, expectedText) => 
         await t.context.driver.wait(async () => {
-            let text = await elem.getText()
+            let text = await $elem.getText()
             return text === expectedText
         }, fiveSecondsMs, `Element did not have text '${expectedText}' within ${fiveSecondsMs} milliseconds`)
 
     // A helper function to combine waiting for an element to have rendered and then asserting on its contents.
-    t.context.assertElementText = async (t, elem, expectedText) => {
+    t.context.assertElementText = async (t, $elem, expectedText, message) => {
         try {
-            await t.context.waitUntilElementHasText(elem, expectedText)
+            await t.context.waitUntilElementHasText($elem, expectedText)
         } catch (e) {
             // If we got a TimeoutError because the element did not have the text we expected, just swallow it here
             // and let the assertion on blow up instead. That will produce a clearer error message.
@@ -55,7 +55,33 @@ test.beforeEach(t => {
                 throw e
             }
         }
-        t.is(await elem.getText(), expectedText)
+        t.is(await $elem.getText(), expectedText, message)
+    }
+
+    t.context.assertElementNotPresent = async (t, cssSelector, message) => {
+        try {
+            await t.context.driver.wait(
+                async () => {
+                    try {
+                        return !(await t.context.$(cssSelector))
+                    } catch (e) {
+                        if (e.name === 'NoSuchElementError') {
+                            return true
+                        }
+                        throw e
+                    }
+                },
+                fiveSecondsMs, 
+                `Element was still present after ${fiveSecondsMs} milliseconds`
+            )
+        } catch (e) {
+            if (e.name === 'TimeoutError') {
+                t.fail(`Element with css selector '${cssSelector}' was still present after ${fiveSecondsMs} milliseconds`)
+            } else {
+                throw e
+            }
+        }
+        t.pass(message || 'Element was not present')
     }
 })
 
@@ -72,9 +98,9 @@ test('Home Page', async t => {
     // looks like it exited successfully, when in fact it just died. I've 
     // seen people get bit by that a done with frameworks like Mocha which
     // do not offer test planning.
-    t.plan(5)
+    t.plan(6)
 
-    let {assertElementText, $, $$} = t.context
+    let {assertElementText, assertElementNotPresent, $, $$} = t.context
 
     await t.context.get('/')
 
@@ -88,5 +114,12 @@ test('Home Page', async t => {
 
     await $('.persistent-tour-launcher').click()
     let $hopscotchTitle = await $('.hopscotch-title')
-    await assertElementText(t, $hopscotchTitle, 'Welcome')
+    await assertElementText(
+        t, $hopscotchTitle, 'Welcome', 'Clicking the hopscotch launch button starts the hopscotch tour'
+    )
+
+    await $('.hopscotch-next').click()
+
+    await t.context.driver.findElement(By.linkText('My reports')).click()
+    await assertElementNotPresent(t, '.hopscotch-title', 'Navigating to a new page clears the hopscotch tour')
 })
