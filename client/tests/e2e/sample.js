@@ -1,6 +1,7 @@
 let test = require('ava'),
     webdriver = require('selenium-webdriver'),
     By = webdriver.By,
+    _includes = require('lodash.includes'),
     chalk = require('chalk')
 
 // This gives us access to send Chrome commands.
@@ -202,14 +203,31 @@ test('Home Page', async t => {
 })
 
 test('Report validation', async t => {
-    t.plan(1)
+    t.plan(3)
 
     let {assertElementText, $} = t.context
 
     await t.context.get('/')
     let $createButton = await $('#createButton')
     await $createButton.click()
-    await assertElementText(t, await $('.legend'), 'Create a new Report\nPreview and submit')
+    await assertElementText(t, await $('.legend .title-text'), 'Create a new Report')
+
+    let $meetingGoal = await $('.meeting-goal')
+    t.false(
+        _includes(await $meetingGoal.getAttribute('class'), 'has-warning'), 
+        'Meeting goal does not start in a warning state'
+    )
+
+    let $meetingGoalInput = await $('#intent')
+    await $meetingGoalInput.click()
+
+    let $searchBarInput = await $('#searchBarInput')
+    await $searchBarInput.click()
+
+    t.true(
+        _includes(await $meetingGoal.getAttribute('class'), 'has-warning'), 
+        'Meeting goal enters warning state when the user leaves the field without entering anything'
+    )
 })
 
 test('Report 404', async t => {
