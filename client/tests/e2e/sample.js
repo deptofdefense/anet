@@ -1,7 +1,6 @@
 let test = require('ava'),
     webdriver = require('selenium-webdriver'),
     By = webdriver.By,
-    $ = By.css,
     chalk = require('chalk')
 
 // This gives us access to send Chrome commands.
@@ -29,6 +28,9 @@ test.beforeEach(t => {
         await t.context.driver.wait(() => {})
     }
 
+    t.context.$ = cssSelector => t.context.driver.findElement(By.css(cssSelector))
+    t.context.$$ = cssSelector => t.context.driver.findElements(By.css(cssSelector))
+
     // This helper method is necessary because we don't know when React has finished rendering the page.
     // We will wait for it to be done, with a max timeout so the test does not hang if the rendering fails.
     let fiveSecondsMs = 5000
@@ -52,16 +54,25 @@ test('My ANET snapshot', async t => {
     // looks like it exited successfully, when in fact it just died. I've 
     // seen people get bit by that a done with frameworks like Mocha which
     // do not offer test planning.
-    t.plan(1)
+    t.plan(4)
 
     await t.context.get('/')
 
     // Use a CSS selector to find an element that we care about on the page.
-    let reportsPendingMyApprovalElem = t.context.driver.findElement($('.home-tile:first-child h1'))
+    let [$reportsPending, $draftReports, $orgReports, $upcomingEngagements] = await t.context.$$('.home-tile h1')
 
     // Wait until the element has the text we want, which means that React has finished loading.
-    await t.context.waitUntilElementHasText(reportsPendingMyApprovalElem, '0')
+    await t.context.waitUntilElementHasText($reportsPending, '0')
 
     // Make an assertion about what the element should say.
-    t.is(await reportsPendingMyApprovalElem.getText(), '0')
+    t.is(await $reportsPending.getText(), '0')
+
+    await t.context.waitUntilElementHasText($draftReports, '0')
+    t.is(await $draftReports.getText(), '0')
+
+    await t.context.waitUntilElementHasText($orgReports, '2')
+    t.is(await $orgReports.getText(), '2')
+
+    await t.context.waitUntilElementHasText($upcomingEngagements, '0')
+    t.is(await $upcomingEngagements.getText(), '0')
 })
