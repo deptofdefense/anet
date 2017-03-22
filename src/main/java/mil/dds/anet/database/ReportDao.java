@@ -299,7 +299,7 @@ public class ReportDao implements IAnetDao<Report> {
 				orgBar = new HashMap<ReportState,Integer>();
 				rollup.put(parentOrgId,  orgBar);
 			}
-			orgBar.put(state,  count);
+			orgBar.put(state,  Utils.orIfNull(orgBar.get(state), 0) + count);
 		}
 		
 		List<RollupGraph> result = new LinkedList<RollupGraph>();
