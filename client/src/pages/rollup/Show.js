@@ -95,6 +95,10 @@ export default class RollupShow extends Page {
 			pageNum: this.state.reportsPageNum,
 		}
 
+		if (this.state.focusedOrgId) {
+			rollupQuery.advisorOrgId = this.state.focusedOrgId
+		}
+
 		let graphQuery = API.fetch(`/api/reports/rollupGraph?startDate=${rollupQuery.releasedAtStart}&endDate=${rollupQuery.releasedAtEnd}&engagementDateStart=${rollupQuery.engagementDateStart}`)
 
 		let reportQuery = API.query(/* GraphQL */`
@@ -195,6 +199,7 @@ export default class RollupShow extends Page {
 				.attr('width', d => xScale(d.released) - 2)
 				.attr('height', BAR_HEIGHT)
 				.attr('fill', barColors.verified)
+				.on('click', d => this.goToOrg(d.org.id))
 
 		bar.append('text')
 				.attr('x', d => xScale(d.released) - 6)
@@ -220,6 +225,13 @@ export default class RollupShow extends Page {
 	@autobind
 	goToReportsPage(newPageNum) {
 		this.state.reportsPageNum = newPageNum
+		this.loadData()
+	}
+
+	@autobind
+	goToOrg(orgId) {
+		this.state.reportsPageNum = 0
+		this.state.focusedOrgId = orgId
 		this.loadData()
 	}
 

@@ -574,6 +574,10 @@ header.searchPagination {
 	height: 35px;
 }
 
+.bar {
+	cursor: pointer;
+}
+
 .bar text {
 	font-size:0.75em;
 }
