@@ -197,9 +197,10 @@ export default class RollupShow extends Page {
 				.attr('fill', barColors.verified)
 
 		bar.append('text')
-				.attr('x', d => xScale(d.released) - 12)
+				.attr('x', d => xScale(d.released) - 6)
 				.attr('y', BAR_HEIGHT / 2)
 				.attr('dy', '.35em')
+				.style('text-anchor', 'end')
 				.text(d => d.released || '')
 
 		bar.append('rect')
@@ -209,9 +210,10 @@ export default class RollupShow extends Page {
 				.attr('fill', barColors.cancelled)
 
 		bar.append('text')
-				.attr('x', width - 12)
+				.attr('x', d => xScale(d.released) + xScale(d.cancelled) - 6)
 				.attr('y', BAR_HEIGHT / 2)
 				.attr('dy', '.35em')
+				.style('text-anchor', 'end')
 				.text(d => d.cancelled || '')
 	}
 
