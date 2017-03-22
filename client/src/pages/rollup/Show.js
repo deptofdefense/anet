@@ -10,6 +10,7 @@ import ReportCollection from 'components/ReportCollection'
 import CalendarButton from 'components/CalendarButton'
 import Form from 'components/Form'
 import History from 'components/History'
+import Messages from 'components/Messages'
 
 import API from 'api'
 
@@ -199,6 +200,7 @@ export default class RollupShow extends Page {
 		return (
 			<div>
 				<Breadcrumbs items={[[`Rollup for ${this.dateStr}`, 'rollup/']]} />
+				<Messages error={this.state.error} success={this.state.success} />
 
 				<Fieldset title={
 					<span>
