@@ -37,15 +37,7 @@ const SEARCH_CONFIG = {
 	reports : {
 		listName : 'reports: reportList',
 		variableType: 'ReportSearchQuery',
-		fields : `id, intent, engagementDate, keyOutcomes, nextSteps, cancelledReason,
-			atmosphere, atmosphereDetails, state
-			author { id, name }
-			primaryAdvisor { id, name, role, position { organization { id, shortName}}},
-			primaryPrincipal { id, name, role, position { organization { id, shortName}}},
-			advisorOrg { id, shortName},
-			principalOrg { id, shortName},
-			location { id, name, lat, lng},
-			poams {id, shortName, longName}`
+		fields : ReportCollection.GQL_REPORT_FIELDS
 	},
 	persons : {
 		listName : 'people: personList',
