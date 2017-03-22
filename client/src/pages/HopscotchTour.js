@@ -10,6 +10,12 @@ let userTour = (currentUser) => { return {
 			target: '.persistent-tour-launcher',
 			placement: 'left',
 		},
+			{
+			title: 'My ANET snapshot',
+			content: 'This area shows you how many reports you\'ve drafted but haven\'t submitted, the number of your reports waiting for approval from your organization\'s approval chain, and your organization\'s reports published in the last 7 days and upcoming engagements.',
+			target: '.home-tile-row',
+			placement: 'bottom',
+		},
 		{
 			title: 'Home',
 			content: 'Click on the logo to get back to your homepage, from wherever you are.',
@@ -19,23 +25,10 @@ let userTour = (currentUser) => { return {
 		},
 		{
 			title: 'Search',
-			content: 'Search for reports, people, or organizations. You can save searches to your homepage.',
+			content: 'Search for reports, people, keywords, or organizations. You can save searches to your homepage.',
 			target: 'searchBarInput',
 			placement: 'bottom',
 			fixedElement: true
-		},
-		{
-			title: 'Left navigation',
-			content: 'Use this menu to move between areas for a specific section.',
-			target: 'leftNav',
-			placement: 'right',
-			fixedElement: true,
-		},
-		{
-			title: 'My ANET snapshot',
-			content: 'This area shows you how many reports you\'ve drafted but haven\'t submitted, the number of your reports waiting for approval from your organization\'s approval chain, and your organization\'s reports published in the last 7 days and upcoming engagements.',
-			target: '.home-tile-row',
-			placement: 'bottom',
 		},
 		{
 			title: 'New Report',
@@ -65,17 +58,10 @@ let superUserTour = (currentUser) => { return {
 		},
 		{
 			title: 'Search',
-			content: 'Search for reports, people, or organizations. You\'ll be able to save your searches.',
+			content: 'Search for reports, people, keywords, or organizations. You can save searches to your homepage.',
 			target: 'searchBarInput',
 			placement: 'bottom',
 			fixedElement: true
-		},
-		{
-			title: 'Left navigation',
-			content: 'Use this menu to move between areas for a specific section.',
-			target: 'leftNav',
-			placement: 'right',
-			fixedElement: true,
 		},
 		{
 			title: 'My ANET snapshot',
@@ -93,7 +79,7 @@ let superUserTour = (currentUser) => { return {
 		{
 			title: 'My organization',
 			content: 'You can navigate to your organization by clicking on the "My organization" link. Click "next" to continue this tour on your organization\'s page.',
-			target: 'my-organizations',
+			target: 'my-organization',
 			placement: 'right',
 			fixedElement: true,
 			multipage: true,
@@ -110,7 +96,7 @@ let reportTour = (currentUser) => { return {
 			title: 'Meeting goal(s)',
 			content: "Use this section to tell readers why you met with your principal. Were you working on a specific goal or problem with them? This will be part of your report's summary, so use this space to tell readers the high-level purpose of your engagement.",
 			target: 'intent',
-			placement: 'right',
+			placement: 'bottom',
 		},
 		{
 			title: 'Engagement date',
@@ -133,13 +119,13 @@ let reportTour = (currentUser) => { return {
 		},
 		{
 			title: 'Attendee(s)',
-			content: 'Start typing the name of everyone who was at the meeting. Select one of the options available or ask your super user to add it.',
+			content: 'Start typing the name of everyone who was at the meeting, including Afghan principals and NATO members. Select one of the options available or ask your super user to add it.',
 			target: '#attendees',
 			placement: 'right',
 		},
 			{
-			title: 'Shortcuts',
-			content: "If you've written reports in the past, your recent selections of attendees, PoAMs, and locations will display to the right in a section called \"Shortcuts\". You can click on one of the shortcuts to quickly add it to your report.",
+			title: 'Recents',
+			content: "If you've written reports in the past, your recent selections of attendees, PoAMs, and locations will display to the right in a section called \"Recents\". You can click on one of the shortcuts to quickly add it to your report.",
 			target: '#attendees',
 			placement: 'bottom',
 		},
@@ -151,7 +137,7 @@ let reportTour = (currentUser) => { return {
 		},
 		{
 			title: 'PoAMs',
-			content: 'Search for the PoAMs that apply to this engagement. These are not required.',
+			content: 'Search for the PoAMs that apply to this engagement. You can search for PoAMs in any organization, including your organization and its sub-organizations. PoAMs are not required.',
 			target: '#poams',
 			placement: 'right',
 		},
@@ -199,7 +185,7 @@ let orgTour = (currentUser) => { return {
 		},
 		{
 			title: 'Supported positions',
-			content: 'This section shows positions in your organization that currently have people assigned to them. The billet column tells you the name of the position and shows the billet code at the end. To update this information, click on the position and select the "Edit" option.',
+			content: 'This section shows positions in your organization that currently have people assigned to them. The billet column tells you the name and billet code of the position. To update this information, click on the position and select the "Edit" option.',
 			target: '#supportedPositions h2',
 			placement: 'top',
 		},
@@ -211,13 +197,13 @@ let orgTour = (currentUser) => { return {
 		},
 		{
 			title: 'Approval process',
-			content: 'Set up or update the approval process for reports authored in your organization by clicking "Edit" on the top of the page. We recommend having more than one approver in each step so that either person can approve the report. When a report has gone through every step in your approval chain, it will automatically go into that day\'s daily rollup. You can add any one to your approval chain, they do not need to be a super user.',
+			content: 'Set up or update the approval process for reports authored in your organization by clicking "Edit" on the top of the page. We recommend having more than one approver in each step so that either person can approve the report. When a report has gone through every step in your approval chain, it will automatically go into that day\'s daily rollup. You can add anyone to your approval chain, they do not need to be a super user. Keep in mind that you\'ll need to set up an approval chain for each sub-organization as well.',
 			target: '#approvals h2',
 			placement: 'top',
 		},
 		{
 			title: 'PoAMs',
-			content: 'The PoAMs or Pillars that your organization is responsible for will be displayed in this section. If you need to make changes, or if PoAMs change, you can update that information in your organization or sub-organization.',
+			content: 'The PoAMs or Pillars that your organization is responsible for will be displayed in this section. If you need to make changes, or if PoAMs change, you can update that information by clicking on the PoAM.',
 			target: '#poams h2',
 			placement: 'top',
 		},
@@ -229,13 +215,13 @@ let orgTour = (currentUser) => { return {
 		},
 		{
 			title: 'Edit your organization',
-			content: 'If you need to make changes to any of the data we just went over, click the "Edit" button.',
+			content: 'If you need to make changes to any of the information we just went over, click the "Edit" button.',
 			target: 'editButton',
 			placement: 'left',
 		},
 		{
 			title: 'Take a guided tour',
-			content: 'If you want to go through this page\'s tour at some point in the future, you can always click on this button to get the tour. Clicking this button on another page will take you through the quick tour for that page.',
+			content: 'Click on this button to take this page\'s tour again.',
 			target: '.persistent-tour-launcher',
 			placement: 'left',
 		},
@@ -253,7 +239,7 @@ let positionTour = (currentUser) => { return {
 		},
 		{
 			title: "Type of user",
-			content: "There are three types of users: user, super user, and administrator. Super users can make people either users or super users. Users are able to take basic actions, like submitting reports, using search, and reviewing the daily rollup. Super users are able to edit positions, people, and PoAMs in their organization, as well as locations. This section isn't visible if you're looking at a tashkil position.",
+			content: "There are three types of users: user, super user, and administrator. Super users can give other positions either user or super user privileges. Users are able to take basic actions, like submitting reports, using search, and reviewing the daily rollup. Super users are able to edit positions, people, and PoAMs in their organization, as well as locations. This section isn't visible if you're looking at a tashkil position.",
 			target: '#type',
 			placement: 'bottom',
 		},
@@ -270,8 +256,8 @@ let positionTour = (currentUser) => { return {
 			placement: 'top',
 		},
 		{
-			title: "Assigned Afghan principal",
-			content: "If you're looking at a NATO billet position, you'll see the people this position is responisble for advising. If you're looking at a tashkil position, you'll see the advisors advising that Afghan tashkil here. You can update this information by editing this page.",
+			title: "Assigned Afghan principal or Advisor",
+			content: "If you're looking at a NATO billet position, you'll see the people this position is responisble for advising. If you're looking at a tashkil position, you'll see the advisors advising that Afghan tashkil here. You can update this information by clicking the \"Change assigned advisors\" or \"Change assigned Afghan principals\" button, depending on what type of position you're looking at.",
 			target: '#assigned-principal h2',
 			placement: 'top',
 		},
@@ -283,7 +269,7 @@ let positionTour = (currentUser) => { return {
 		},
 		{
 			title: 'Take a guided tour',
-			content: 'If you want to go through this page\'s tour at some point in the future, you can always click on this button to get the tour. Clicking this button on another page will take you through the quick tour for that page.',
+			content: 'Click on this button to take this page\'s tour again.',
 			target: '.persistent-tour-launcher',
 			placement: 'left',
 		},
@@ -312,14 +298,14 @@ let personTour = (currentUser) => { return {
 			placement: 'top',
 		},
 		{
-			title: "Reports attended by this person",
+			title: "Engagements attended by this person",
 			content: "If this person has been mentioned as an attendee of reports, those reports will display here.",
 			target: '#reports-attended h2',
 			placement: 'top',
 		},
 		{
 			title: 'Take a guided tour',
-			content: 'If you want to go through this page\'s tour at some point in the future, you can always click on this button to get the tour. Clicking this button on another page will take you through the quick tour for that page.',
+			content: 'Click on this button to take this page\'s tour again.',
 			target: '.persistent-tour-launcher',
 			placement: 'left',
 		},
