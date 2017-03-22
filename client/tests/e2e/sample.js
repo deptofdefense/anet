@@ -63,10 +63,11 @@ test.beforeEach(t => {
     let fiveSecondsMs = 5000
     t.context.$ = async (cssSelector, timeoutMs) => {
         let waitTimeoutMs = timeoutMs || fiveSecondsMs
+        let $foundElem
         await t.context.driver.wait(async () => {
                 try {
-                    let res = await t.context.driver.findElement(By.css(cssSelector))
-                    return res
+                    $foundElem = await t.context.driver.findElement(By.css(cssSelector))
+                    return true
                 } catch (e) {
                     if (e.name === 'NoSuchElementError') {
                         return false
@@ -77,7 +78,7 @@ test.beforeEach(t => {
             waitTimeoutMs, 
             `Could not find element by css selector ${cssSelector} within ${waitTimeoutMs} milliseconds`
         )
-        return t.context.driver.findElement(By.css(cssSelector))
+        return $foundElem
     }
     t.context.$$ =  async cssSelector => {
         await t.context.driver.wait(async () => {
@@ -247,7 +248,7 @@ test('PoAMs 404', async t => {
     await assertElementText(t, await $('.not-found-text'), 'PoAM #555 not found.')
 })
 
-test.only('Positions 404', async t => {
+test('Positions 404', async t => {
     t.plan(1)
 
     let {assertElementText, $} = t.context
