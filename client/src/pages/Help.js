@@ -57,7 +57,7 @@ export default class Help extends Page {
 				<p>Your super users:</p>
 				<ul>
 					{this.state.superUsers.map(user =>
-						<li key={user}>
+						<li key={user.emailAddress}>
 							<a href={`mailto:${user.emailAddress}`}>{user.rank} {user.name} - {user.emailAddress}</a>
 						</li>
 					)}
