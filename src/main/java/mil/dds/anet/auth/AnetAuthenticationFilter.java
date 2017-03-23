@@ -50,6 +50,11 @@ public class AnetAuthenticationFilter implements ContainerRequestFilter, Authori
 				person = engine.getPersonDao().insert(person);
 			} else { 
 				person = matches.get(0);
+				if (person.getStatus().equals(PersonStatus.INACTIVE)) { 
+					//An Inactive person just logged in, make them active. 
+					person.setStatus(PersonStatus.ACTIVE);
+					AnetObjectEngine.getInstance().getPersonDao().update(person);
+				}
 			}
 			
 			final Person user = person;
