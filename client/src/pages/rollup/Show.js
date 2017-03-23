@@ -182,10 +182,13 @@ export default class RollupShow extends Page {
 
 				<Fieldset
 					title={`Reports ${this.state.focusedOrg ? `for ${this.state.focusedOrg.shortName}` : ''}`}
-					action={!this.state.focusedOrg && <ButtonToggleGroup value={this.state.orgType} onChange={this.changeOrgType}>
-						<Button value="ADVISOR_ORG">Advisor organizations</Button>
-						<Button value="PRINCIPAL_ORG">Principal organizations</Button>
-					</ButtonToggleGroup>}
+					action={!this.state.focusedOrg
+						? <ButtonToggleGroup value={this.state.orgType} onChange={this.changeOrgType}>
+							<Button value="ADVISOR_ORG">Advisor organizations</Button>
+							<Button value="PRINCIPAL_ORG">Principal organizations</Button>
+						</ButtonToggleGroup>
+						: <Button onClick={() => this.goToOrg()}>All organizations</Button>
+					}
 				>
 					<ReportCollection paginatedReports={this.state.reports} goToPage={this.goToReportsPage} />
 				</Fieldset>
