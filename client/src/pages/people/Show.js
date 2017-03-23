@@ -169,23 +169,29 @@ export default class PersonShow extends Page {
 
 
 					<Fieldset title="Position" >
-						<Fieldset title="Current Position" id="current-position" className={(!position || !position.id) && 'warning'} action={canChangePosition && <div><Button onClick={this.showAssignPositionModal}>Edit Position</Button></div>}>
-						{position && position.id
-							? this.renderPosition(position)
-							: this.renderPositionBlankSlate(person)
-						}
-						{canChangePosition &&
-							<AssignPositionModal
-								showModal={this.state.showAssignPositionModal}
-								person={person}
-								onCancel={this.hideAssignPositionModal.bind(this, false)}
-								onSuccess={this.hideAssignPositionModal.bind(this, true)}
-							/>
-						}
+						<Fieldset title="Current Position" id="current-position"
+							className={(!position || !position.id) && 'warning'}
+							action={position && position.id && canChangePosition &&
+								<div>
+									<LinkTo position={position} edit button="default" >Edit position details</LinkTo>
+									<Button onClick={this.showAssignPositionModal}>Change assigned position</Button>
+								</div>}>
+							{position && position.id
+								? this.renderPosition(position)
+								: this.renderPositionBlankSlate(person)
+							}
+							{canChangePosition &&
+								<AssignPositionModal
+									showModal={this.state.showAssignPositionModal}
+									person={person}
+									onCancel={this.hideAssignPositionModal.bind(this, false)}
+									onSuccess={this.hideAssignPositionModal.bind(this, true)}
+								/>
+							}
 						</Fieldset>
 
 						{position && position.id &&
-							<Fieldset title={`Assigned ${assignedRole}`} action={canChangePosition && <Button onClick={this.showAssociatedPositionsModal}>Edit assigned {assignedRole}</Button>}>
+							<Fieldset title={`Assigned ${assignedRole}`} action={canChangePosition && <Button onClick={this.showAssociatedPositionsModal}>Change assigned {assignedRole}</Button>}>
 								{this.renderCounterparts(position)}
 								{canChangePosition &&
 									<EditAssociatedPositionsModal
@@ -222,13 +228,10 @@ export default class PersonShow extends Page {
 	}
 
 	renderPosition(position) {
-		return <div>
-				<Form.Field id="organization" label="Organization">
-					<LinkTo organization={position.organization} />
-				</Form.Field>
-				<Form.Field id="position" label="Position">
-					<LinkTo position={position} />
-				</Form.Field>
+		return <div style={{textAlign: 'center'}}>
+					<h4>
+						<LinkTo position={position} />  (<LinkTo organization={position.organization} />)
+					</h4>
 			</div>
 	}
 
@@ -272,6 +275,7 @@ export default class PersonShow extends Page {
 			</div>
 		}
 	}
+
 
 	@autobind
 	showAssignPositionModal() {
