@@ -309,6 +309,13 @@ export default class RollupShow extends Page {
 				</Modal.Header>
 
 				<Modal.Body>
+					<h5>
+						{this.state.focusedOrg ?
+							`Reports for ${this.state.focusedOrg.shortName}` :
+							`All reports by ${this.state.orgType.replace('_', ' ').toLowerCase()}`
+						}
+					</h5>
+
 					{email.errors &&
 						<Alert bsStyle="danger">{email.errors}</Alert>
 					}
