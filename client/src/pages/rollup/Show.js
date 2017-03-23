@@ -107,9 +107,15 @@ export default class RollupShow extends Page {
 
 		let graphQueryUrl = `/api/reports/rollupGraph?startDate=${rollupQuery.releasedAtStart}&endDate=${rollupQuery.releasedAtEnd}`
 		if (this.state.focusedOrg) {
-			rollupQuery.advisorOrgId = this.state.focusedOrg.id
-			rollupQuery.includeAdvisorOrgChildren = true
-			graphQueryUrl += `&orgId=${this.state.focusedOrg.id}`
+			if (this.state.focusedOrg.type === 'PRINCIPAL_ORG') {
+				rollupQuery.principalOrgId = this.state.focusedOrg.id
+				rollupQuery.includePrincipalOrgChildren = true
+				graphQueryUrl += `&principalOrganizationId=${this.state.focusedOrg.id}`
+			} else {
+				rollupQuery.advisorOrgId = this.state.focusedOrg.id
+				rollupQuery.includeAdvisorOrgChildren = true
+				graphQueryUrl += `&advisorOrganizationId=${this.state.focusedOrg.id}`
+			}
 		} else if (this.state.orgType) {
 			graphQueryUrl += `&orgType=${this.state.orgType}`
 		}
