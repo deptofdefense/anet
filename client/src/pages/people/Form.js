@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react'
-import {Button} from 'react-bootstrap'
+import {Button, Alert} from 'react-bootstrap'
 import DatePicker from 'react-bootstrap-date-picker'
 import autobind from 'autobind-decorator'
 
@@ -70,6 +70,12 @@ export default class PersonForm extends ValidatableFormWrapper {
 							<Button id="statusInactiveButton" value="INACTIVE">Inactive</Button>
 						</ButtonToggleGroup>
 					</Form.Field>
+				}
+
+				{!edit && person.role === 'ADVISOR' &&
+					<Alert bsStyle="warning">
+						Creating a NATO member in ANET could result in duplicate accounts if this person logs in later. If you notice duplicate accounts, please contact an ANET administrator.
+					</Alert>
 				}
 			</Fieldset>
 
