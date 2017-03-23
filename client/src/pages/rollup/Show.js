@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
-import {Modal, Alert, Button} from 'react-bootstrap'
+import {Modal, Alert, Button, Popover, Overlay} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 import moment from 'moment'
 
@@ -59,6 +59,7 @@ export default class RollupShow extends Page {
 			showEmailModal: false,
 			email: {},
 			maxReportAge: null,
+			hoveredBar: {org: {}}
 		}
 	}
 
@@ -151,6 +152,20 @@ export default class RollupShow extends Page {
 					<p className="help-text">Number of reports released today per organization</p>
 					<svg ref={el => this.graph = el} style={{width: '100%'}} />
 
+					<Overlay
+						show={!!this.state.graphPopover}
+						placement="top"
+						container={document.body}
+						animation={false}
+						target={() => this.state.graphPopover}
+					>
+						<Popover id="graph-popover" title={this.state.hoveredBar.org.shortName}>
+							<p>Released: {this.state.hoveredBar.released}</p>
+							<p>Cancelled: {this.state.hoveredBar.cancelled}</p>
+							<p>Click to drill down</p>
+						</Popover>
+					</Overlay>
+
 					<div className="graph-legend">
 						<div style={{...legendCss, background: barColors.verified}}></div> Released reports:&nbsp;
 						<strong>{this.state.graphData.reduce((acc, org) => acc + org.released, 0)}</strong>
@@ -175,6 +190,12 @@ export default class RollupShow extends Page {
 		if (!graphData || !d3) {
 			return
 		}
+
+		if (graphData === this.renderedGraph) {
+			return
+		}
+
+		this.renderedGraph = graphData
 
 		const BAR_HEIGHT = 24
 		const BAR_PADDING = 8
@@ -214,6 +235,8 @@ export default class RollupShow extends Page {
 				.attr('transform', (d, i) => `translate(2, ${i * (BAR_HEIGHT + BAR_PADDING) - 1})`)
 				.classed('bar', true)
 				.on('click', d => this.goToOrg(d.org))
+				.on('mouseenter', d => this.setState({graphPopover: d3.event.target, hoveredBar: d}))
+				.on('mouseleave', d =>this.setState({graphPopover: null}))
 
 		bar.append('rect')
 				.attr('width', d => d.released && xScale(d.released) - 2)
@@ -249,9 +272,7 @@ export default class RollupShow extends Page {
 
 	@autobind
 	goToOrg(org) {
-		this.state.reportsPageNum = 0
-		this.state.focusedOrg = org
-		this.loadData()
+		this.setState({reportsPageNum: 0, focusedOrg: org, graphPopover: null}, () => this.loadData())
 	}
 
 	@autobind
