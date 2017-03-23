@@ -200,7 +200,7 @@ export default class RollupShow extends Page {
 				.classed('bar', true)
 
 		bar.append('rect')
-				.attr('width', d => xScale(d.released) - 2)
+				.attr('width', d => d.released && xScale(d.released) - 2)
 				.attr('height', BAR_HEIGHT)
 				.attr('fill', barColors.verified)
 				.on('click', d => this.goToOrg(d.org.id))
@@ -213,8 +213,8 @@ export default class RollupShow extends Page {
 				.text(d => d.released || '')
 
 		bar.append('rect')
-				.attr('x', d => xScale(d.released) - 2)
-				.attr('width', d => xScale(d.cancelled))
+				.attr('x', d => d.released && xScale(d.released) - 2)
+				.attr('width', d => d.cancelled && (xScale(d.cancelled) - (d.released ? 0 : 2)))
 				.attr('height', BAR_HEIGHT)
 				.attr('fill', barColors.cancelled)
 
