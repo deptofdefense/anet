@@ -24,6 +24,7 @@ public class ReportSearchQuery implements ISearchQuery {
 	//only use orgId if you don't know the type of the organization. 
 	Integer advisorOrgId;
 	Boolean includeAdvisorOrgChildren;
+	//Set principalOrgId or advisorOrgId = -1 to tell ANET to search for reports specifically with a NULL organizationId. 
 	Integer principalOrgId;
 	Boolean includePrincipalOrgChildren;
 	Integer orgId;

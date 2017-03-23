@@ -117,9 +117,12 @@ public class MssqlReportSearcher implements IReportSearcher {
 						+ "SELECT o.id from parent_orgs po, organizations o WHERE o.parentOrgId = po.id "
 					+ ")";
 				whereClauses.add("reports.advisorOrganizationId IN (SELECT id from parent_orgs)");
+			} else if (query.getAdvisorOrgId() == -1) { 
+				whereClauses.add("reports.advisorOrganizationId IS NULL");
 			} else { 
 				whereClauses.add("reports.advisorOrganizationId = :advisorOrgId");
 			}
+			
 			args.put("advisorOrgId", query.getAdvisorOrgId());
 		}
 		
@@ -131,6 +134,8 @@ public class MssqlReportSearcher implements IReportSearcher {
 						+ "SELECT o.id from parent_orgs po, organizations o WHERE o.parentOrgId = po.id "
 					+ ")";
 				whereClauses.add("reports.principalOrganizationId IN (SELECT id from parent_orgs)");
+			} else if (query.getPrincipalOrgId() == -1) { 
+				whereClauses.add("reports.principalOrganizationId IS NULL");
 			} else { 
 				whereClauses.add("reports.principalOrganizationId = :principalOrgId");
 			}
