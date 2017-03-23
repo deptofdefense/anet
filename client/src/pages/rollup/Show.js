@@ -97,10 +97,10 @@ export default class RollupShow extends Page {
 		}
 
 		let graphQueryUrl = `/api/reports/rollupGraph?startDate=${rollupQuery.releasedAtStart}&endDate=${rollupQuery.releasedAtEnd}`
-		if (this.state.focusedOrgId) {
-			rollupQuery.advisorOrgId = this.state.focusedOrgId
+		if (this.state.focusedOrg) {
+			rollupQuery.advisorOrgId = this.state.focusedOrg.id
 			rollupQuery.includeAdvisorOrgChildren = true
-			graphQueryUrl += `&orgId=${this.state.focusedOrgId}`
+			graphQueryUrl += `&orgId=${this.state.focusedOrg.id}`
 		}
 
 		let graphQuery = API.fetch(graphQueryUrl)
@@ -146,7 +146,7 @@ export default class RollupShow extends Page {
 					<svg ref={el => this.graph = el} style={{width: '100%'}} />
 				</Fieldset>
 
-				<Fieldset title={`Reports ${this.state.focusedOrgId}`}>
+				<Fieldset title={`Reports ${this.state.focusedOrg ? `for ${this.state.focusedOrg.shortName}` : ''}`}>
 					<ReportCollection paginatedReports={this.state.reports} goToPage={this.goToReportsPage} />
 				</Fieldset>
 
@@ -203,7 +203,7 @@ export default class RollupShow extends Page {
 				.attr('width', d => d.released && xScale(d.released) - 2)
 				.attr('height', BAR_HEIGHT)
 				.attr('fill', barColors.verified)
-				.on('click', d => this.goToOrg(d.org.id))
+				.on('click', d => this.goToOrg(d.org))
 
 		bar.append('text')
 				.attr('x', d => xScale(d.released) - 6)
@@ -233,9 +233,9 @@ export default class RollupShow extends Page {
 	}
 
 	@autobind
-	goToOrg(orgId) {
+	goToOrg(org) {
 		this.state.reportsPageNum = 0
-		this.state.focusedOrgId = orgId
+		this.state.focusedOrg = org
 		this.loadData()
 	}
 
