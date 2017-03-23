@@ -127,7 +127,9 @@ export default class RollupShow extends Page {
 		Promise.all([reportQuery, graphQuery]).then(values => {
 			this.setState({
 				reports: values[0].reportList,
-				graphData: values[1].sort((a, b) => a.org.shortName - b.org.shortName)
+				graphData: values[1]
+					.map(d => {d.org = d.org || {shortName: "Other"}; return d})
+					.sort((a, b) => a.org.shortName - b.org.shortName)
 			})
 		})
 	}
