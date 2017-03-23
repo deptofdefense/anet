@@ -294,7 +294,7 @@ public class ReportDao implements IAnetDao<Report> {
 		String orgColumn = orgType == OrganizationType.ADVISOR_ORG ? "advisorOrganizationId" : "principalOrganizationId";
 		List<Map<String, Object>> results = rollupQuery(start, end, orgType, null);
 
-		Map<Integer,Organization> orgMap = AnetObjectEngine.getInstance().buildTopLevelOrgHash(OrganizationType.ADVISOR_ORG);
+		Map<Integer,Organization> orgMap = AnetObjectEngine.getInstance().buildTopLevelOrgHash(orgType);
 		
 		return generateRollupGraphFromResults(results, orgMap);
 	}
