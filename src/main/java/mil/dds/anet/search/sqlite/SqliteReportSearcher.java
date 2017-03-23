@@ -27,6 +27,8 @@ import mil.dds.anet.utils.Utils;
 
 public class SqliteReportSearcher implements IReportSearcher {
 
+	public static DateTimeFormatter sqlitePattern = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+	
 	public ReportList runSearch(ReportSearchQuery query, Handle dbHandle) { 
 		StringBuffer sql = new StringBuffer();
 		sql.append("/* SqliteReportSearch */ SELECT " + ReportDao.REPORT_FIELDS + "," + PersonDao.PERSON_FIELDS);
@@ -52,7 +54,6 @@ public class SqliteReportSearcher implements IReportSearcher {
 			args.put("text", Utils.getSqliteFullTextQuery(text));
 		}
 		
-		DateTimeFormatter sqlitePattern = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
 		
 		if (query.getEngagementDateStart() != null) { 
 			whereClauses.add("reports.engagementDate >= DateTime(:startDate)");

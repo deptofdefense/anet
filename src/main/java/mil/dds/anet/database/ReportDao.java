@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
@@ -36,6 +35,7 @@ import mil.dds.anet.database.AdminDao.AdminSettingKeys;
 import mil.dds.anet.database.mappers.PoamMapper;
 import mil.dds.anet.database.mappers.ReportMapper;
 import mil.dds.anet.database.mappers.ReportPersonMapper;
+import mil.dds.anet.search.sqlite.SqliteReportSearcher;
 import mil.dds.anet.utils.DaoUtils;
 import mil.dds.anet.utils.Utils;
 
@@ -292,15 +292,7 @@ public class ReportDao implements IAnetDao<Report> {
 	/* Generates the Rollup Graph for a particular Organization Type, starting at the root of the org hierarchy */
 	public List<RollupGraph> getDailyRollupGraph(DateTime start, DateTime end, OrganizationType orgType) {
 		String orgColumn = orgType == OrganizationType.ADVISOR_ORG ? "advisorOrganizationId" : "principalOrganizationId";
-		List<Map<String, Object>> results = dbHandle.createQuery("/* dailyRollupGraph */ "
-				+ "SELECT " + orgColumn + " as orgId, state, count(*) AS count "
-				+ "FROM reports WHERE releasedAt >= :startDate and releasedAt <= :endDate "
-				+ "AND engagementDate > :engagementDateStart "
-				+ "GROUP BY " + orgColumn + ", state")
-			.bind("startDate", start)
-			.bind("endDate", end)
-			.bind("engagementDateStart", getRollupEngagmentStart(start))
-			.list();
+		List<Map<String, Object>> results = rollupQuery(start, end, orgType, null);
 
 		Map<Integer,Organization> orgMap = AnetObjectEngine.getInstance().buildTopLevelOrgHash(OrganizationType.ADVISOR_ORG);
 		
@@ -321,32 +313,57 @@ public class ReportDao implements IAnetDao<Report> {
 		}
 		OrganizationType orgType = parentOrg.get().getType();
 		
-		String orgColumn = orgType == OrganizationType.ADVISOR_ORG ? "advisorOrganizationId" : "principalOrganizationId";
-		Map<String,Object> sqlArgs = new HashMap<String,Object>();
-		List<String> sqlBind = new LinkedList<String>();
-		int orgNum = 0; 
-		for (Organization o : orgs.getList()) { 
-			sqlArgs.put("orgId" + orgNum, o.getId());
-			sqlBind.add(":orgId" + orgNum);
-			orgNum++;
-		}
-		String orgInSql = Joiner.on(',').join(sqlBind);
-		String sql = "SELECT " + orgColumn + " as orgId, state, count(*) AS count "
-			+ "FROM reports WHERE releasedAt >= :startDate and releasedAt <= :endDate "
-			+ "AND engagementDate > :engagementDateStart "
-			+ "AND " + orgColumn + " IN (" + orgInSql + ") "
-			+ "GROUP BY " + orgColumn + ", state";
+		List<Map<String,Object>> results = rollupQuery(start, end, orgType, orgs.getList());
 		
-		sqlArgs.put("startDate", start);
-		sqlArgs.put("endDate", end);
-		sqlArgs.put("engagementDateStart", getRollupEngagmentStart(start));
-		
-		List<Map<String, Object>> results = dbHandle.createQuery(sql)
-			.bindFromMap(sqlArgs)
-			.list();
 		
 		Map<Integer,Organization> orgMap = Utils.buildParentOrgMapping(orgs.getList(), parentOrgId);
 		return generateRollupGraphFromResults(results, orgMap);
+	}
+	
+	/** Helper method that builds and executes the daily rollup query
+	 * Handles both MsSql and Sqlite
+	 * Searching for just all reports and for reports in certain organizations. 
+	 */
+	private List<Map<String,Object>> rollupQuery(DateTime start, DateTime end, OrganizationType orgType, List<Organization> orgs) { 
+		String orgColumn = orgType == OrganizationType.ADVISOR_ORG ? "advisorOrganizationId" : "principalOrganizationId";
+		Map<String,Object> sqlArgs = new HashMap<String,Object>();
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT " + orgColumn + " as orgId, state, count(*) AS count ");
+		sql.append("FROM reports WHERE ");
+		
+		if (DaoUtils.isMsSql(dbHandle)) { 
+			sql.append("releasedAt >= :startDate and releasedAt <= :endDate "
+					+ "AND engagementDate > :engagementDateStart ");
+			sqlArgs.put("startDate", start);
+			sqlArgs.put("endDate", end);
+			sqlArgs.put("engagementDateStart", getRollupEngagmentStart(start));
+		} else { 
+			sql.append("releasedAt  >= DateTime(:startDate) AND releasedAt <= DateTime(:endDate) " 
+					+ "AND engagementDate > DateTime(:engagementDateStart");
+			sqlArgs.put("startDate", SqliteReportSearcher.sqlitePattern.print(start));
+			sqlArgs.put("endDate", SqliteReportSearcher.sqlitePattern.print(end));
+			sqlArgs.put("engagementDateStart", SqliteReportSearcher.sqlitePattern.print(getRollupEngagmentStart(start)));
+		}
+		
+		if (orgs != null) { 
+			List<String> sqlBind = new LinkedList<String>();
+			int orgNum = 0; 
+			for (Organization o : orgs) { 
+				sqlArgs.put("orgId" + orgNum, o.getId());
+				sqlBind.add(":orgId" + orgNum);
+				orgNum++;
+			}
+			String orgInSql = Joiner.on(',').join(sqlBind);
+			sql.append("AND " + orgColumn + " IN (" + orgInSql + ") ");
+		}
+		
+		sql.append("GROUP BY " + orgColumn + ", state");
+		
+
+		return dbHandle.createQuery(sql.toString())
+			.bindFromMap(sqlArgs)
+			.list();
 	}
 	
 	/* Given the results from the database on the number of reports grouped by organization
