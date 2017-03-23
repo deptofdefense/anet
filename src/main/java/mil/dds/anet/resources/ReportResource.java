@@ -610,12 +610,9 @@ public class ReportResource implements IGraphQLResource {
 		action.setStartDate(new DateTime(start));
 		action.setEndDate(new DateTime(end));
 		action.setComment(email.getComment());
-		if (advisorOrgId != null) { 
-			action.setFocusedOrg(advisorOrgId);
-		} else { 
-			action.setFocusedOrg(principalOrgId);
-		}
-		action.setOrgType(orgType);
+		action.setAdvisorOrganizationId(advisorOrgId);
+		action.setPrincipalOrganizationId(principalOrgId);
+		action.setChartOrgType(orgType);
 
 		email.setAction(action);
 		AnetEmailWorker.sendEmailAsync(email);
@@ -639,12 +636,9 @@ public class ReportResource implements IGraphQLResource {
 		DailyRollupEmail action = new DailyRollupEmail();
 		action.setStartDate(new DateTime(start));
 		action.setEndDate(new DateTime(end));
-		if (advisorOrgId != null) { 
-			action.setFocusedOrg(advisorOrgId);
-		} else { 
-			action.setFocusedOrg(principalOrgId);
-		}
-		action.setOrgType(orgType);
+		action.setChartOrgType(orgType);
+		action.setAdvisorOrganizationId(advisorOrgId);
+		action.setPrincipalOrganizationId(principalOrgId);
 		
 		Map<String,Object> context = action.execute();
 		context.put("serverUrl", config.getServerUrl());

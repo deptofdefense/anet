@@ -27,8 +27,9 @@ public class DailyRollupEmail extends AnetEmailAction {
 
 	DateTime startDate;
 	DateTime endDate;
-	OrganizationType orgType; // show the table based off this organization type. 
-	Integer focusedOrg; //Only show reports under this org id
+	OrganizationType chartOrgType = OrganizationType.PRINCIPAL_ORG; // show the table based off this organization type. 
+	Integer advisorOrganizationId;
+	Integer principalOrganizationId;
 	String comment;
 
 	public DailyRollupEmail() {
@@ -53,15 +54,11 @@ public class DailyRollupEmail extends AnetEmailAction {
 		query.setSortBy(ReportSearchSortBy.ENGAGEMENT_DATE);
 		query.setSortOrder(SortOrder.DESC);
 		
-		if (focusedOrg != null) { 
-			if (OrganizationType.PRINCIPAL_ORG.equals(orgType)) { 
-				query.setPrincipalOrgId(focusedOrg);
-				query.setIncludePrincipalOrgChildren(true);
-			} else { 
-				query.setAdvisorOrgId(focusedOrg);
-				query.setIncludeAdvisorOrgChildren(true);
-			}
-		}
+		query.setPrincipalOrgId(principalOrganizationId);
+		query.setIncludePrincipalOrgChildren(true);
+		query.setAdvisorOrgId(advisorOrganizationId);
+		query.setIncludeAdvisorOrgChildren(true);
+
 		List<Report> reports = AnetObjectEngine.getInstance().getReportDao().search(query).getList();
 
 		ReportGrouping allReports = new ReportGrouping(reports);
@@ -71,6 +68,8 @@ public class DailyRollupEmail extends AnetEmailAction {
 		context.put("cancelledReasons", ReportCancelledReason.values());
 		context.put("title", getSubject());
 		context.put("comment", comment);
+		context.put("chartOrgType", chartOrgType);
+		context.put("innerOrgType", (OrganizationType.ADVISOR_ORG.equals(chartOrgType)) ? OrganizationType.PRINCIPAL_ORG : OrganizationType.ADVISOR_ORG);
 		context.put(SHOW_REPORT_TEXT_FLAG, false);
 		return context;
 	}
@@ -154,7 +153,6 @@ public class DailyRollupEmail extends AnetEmailAction {
 			return getCountByCancelledReason(ReportCancelledReason.valueOf(reason));
 		}
 
-		
 	}
 
 	public DateTime getStartDate() {
@@ -173,20 +171,28 @@ public class DailyRollupEmail extends AnetEmailAction {
 		this.endDate = endDate;
 	}
 
-	public OrganizationType getOrgType() {
-		return orgType;
+	public OrganizationType getChartOrgType() {
+		return chartOrgType;
 	}
 
-	public void setOrgType(OrganizationType orgType) {
-		this.orgType = orgType;
+	public void setChartOrgType(OrganizationType chartOrgType) {
+		this.chartOrgType = chartOrgType;
 	}
 
-	public Integer getFocusedOrg() {
-		return focusedOrg;
+	public Integer getAdvisorOrganizationId() {
+		return advisorOrganizationId;
 	}
 
-	public void setFocusedOrg(Integer focusedOrg) {
-		this.focusedOrg = focusedOrg;
+	public void setAdvisorOrganizationId(Integer advisorOrganizationId) {
+		this.advisorOrganizationId = advisorOrganizationId;
+	}
+
+	public Integer getPrincipalOrganizationId() {
+		return principalOrganizationId;
+	}
+
+	public void setPrincipalOrganizationId(Integer principalOrganizationId) {
+		this.principalOrganizationId = principalOrganizationId;
 	}
 
 	public String getComment() {

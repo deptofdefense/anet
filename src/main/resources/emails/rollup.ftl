@@ -47,7 +47,7 @@ a {
 </#if>
 
 
-<#assign byPrincipal = reports?api.getByGrouping("PRINCIPAL_ORG")>
+<#assign byPrincipal = reports?api.getByGrouping(chartOrgType)>
 
 <table class="tallyTable" cellspacing=0 >
 	<tr>
@@ -98,7 +98,7 @@ a {
 <#list byPrincipal as principal >
 	<#if principal.nonCancelled?size gt 0>
 		<h2>${principal.name}</h2>
-		<#assign byAdvisor = principal?api.getByGrouping("ADVISOR_ORG") >
+		<#assign byAdvisor = principal?api.getByGrouping(innerOrgType) >
 		<#list byAdvisor as advisor >
 			<#if advisor.nonCancelled?size gt 0>
 				<h3>${advisor.name}</h3>
