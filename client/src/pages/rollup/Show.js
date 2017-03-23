@@ -107,7 +107,7 @@ export default class RollupShow extends Page {
 
 		let graphQueryUrl = `/api/reports/rollupGraph?startDate=${rollupQuery.releasedAtStart}&endDate=${rollupQuery.releasedAtEnd}`
 		if (this.state.focusedOrg) {
-			if (this.state.focusedOrg.type === 'PRINCIPAL_ORG') {
+			if (this.state.orgType === 'PRINCIPAL_ORG') {
 				rollupQuery.principalOrgId = this.state.focusedOrg.id
 				rollupQuery.includePrincipalOrgChildren = true
 				graphQueryUrl += `&principalOrganizationId=${this.state.focusedOrg.id}`
@@ -134,7 +134,7 @@ export default class RollupShow extends Page {
 			this.setState({
 				reports: values[0].reportList,
 				graphData: values[1]
-					.map(d => {d.org = d.org || {shortName: "Other"}; return d})
+					.map(d => {d.org = d.org || {id: -1, shortName: "Other"}; return d})
 					.sort((a, b) => a.org.shortName - b.org.shortName)
 			})
 		})
