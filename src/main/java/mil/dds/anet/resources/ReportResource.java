@@ -602,14 +602,19 @@ public class ReportResource implements IGraphQLResource {
 	public Response emailRollup(@Auth Person user, 
 			@QueryParam("startDate") Long start, 
 			@QueryParam("endDate") Long end, 
-			@QueryParam("orgId") Integer focusedOrgId,
-			@QueryParam("orgType") OrganizationType orgType,
+			@QueryParam("orgType") OrganizationType orgType, 
+			@QueryParam("advisorOrganizationId") Integer advisorOrgId,
+			@QueryParam("principalOrganizationId") Integer principalOrgId,
 			AnetEmail email) {
 		DailyRollupEmail action = new DailyRollupEmail();
 		action.setStartDate(new DateTime(start));
 		action.setEndDate(new DateTime(end));
 		action.setComment(email.getComment());
-		action.setFocusedOrg(focusedOrgId);
+		if (advisorOrgId != null) { 
+			action.setFocusedOrg(advisorOrgId);
+		} else { 
+			action.setFocusedOrg(principalOrgId);
+		}
 		action.setOrgType(orgType);
 
 		email.setAction(action);
@@ -627,13 +632,18 @@ public class ReportResource implements IGraphQLResource {
 	@Produces(MediaType.TEXT_HTML)
 	public Response showRollupEmail(@Auth Person user, @QueryParam("startDate") Long start, 
 			@QueryParam("endDate") Long end, 
-			@QueryParam("orgId") Integer focusedOrgId,
-			@QueryParam("orgType") OrganizationType orgType,
+			@QueryParam("orgType") OrganizationType orgType, 
+			@QueryParam("advisorOrganizationId") Integer advisorOrgId,
+			@QueryParam("principalOrganizationId") Integer principalOrgId,
 			@QueryParam("showText") @DefaultValue("false") Boolean showReportText) {
 		DailyRollupEmail action = new DailyRollupEmail();
 		action.setStartDate(new DateTime(start));
 		action.setEndDate(new DateTime(end));
-		action.setFocusedOrg(focusedOrgId);
+		if (advisorOrgId != null) { 
+			action.setFocusedOrg(advisorOrgId);
+		} else { 
+			action.setFocusedOrg(principalOrgId);
+		}
 		action.setOrgType(orgType);
 		
 		Map<String,Object> context = action.execute();

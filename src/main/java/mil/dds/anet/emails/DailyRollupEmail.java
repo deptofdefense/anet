@@ -56,8 +56,10 @@ public class DailyRollupEmail extends AnetEmailAction {
 		if (focusedOrg != null) { 
 			if (OrganizationType.PRINCIPAL_ORG.equals(orgType)) { 
 				query.setPrincipalOrgId(focusedOrg);
+				query.setIncludePrincipalOrgChildren(true);
 			} else { 
 				query.setAdvisorOrgId(focusedOrg);
+				query.setIncludeAdvisorOrgChildren(true);
 			}
 		}
 		List<Report> reports = AnetObjectEngine.getInstance().getReportDao().search(query).getList();
