@@ -329,7 +329,7 @@ public class ReportDao implements IAnetDao<Report> {
 		Map<String,Object> sqlArgs = new HashMap<String,Object>();
 		
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT " + orgColumn + " as orgId, state, count(*) AS count ");
+		sql.append("/* RollupQuery */ SELECT " + orgColumn + " as orgId, state, count(*) AS count ");
 		sql.append("FROM reports WHERE ");
 		
 		if (DaoUtils.isMsSql(dbHandle)) { 

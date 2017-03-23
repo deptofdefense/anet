@@ -582,11 +582,14 @@ public class ReportResource implements IGraphQLResource {
 	public List<RollupGraph> getDailyRollupGraph(@QueryParam("startDate") Long start, 
 			@QueryParam("endDate") Long end, 
 			@QueryParam("orgType") OrganizationType orgType, 
-			@QueryParam("orgId") Integer orgId) {
+			@QueryParam("advisorOrganizationId") Integer advisorOrgId,
+			@QueryParam("principalOrganizationId") Integer principalOrgId) {
 		DateTime startDate = new DateTime(start);
 		DateTime endDate = new DateTime(end);
-		if (orgId != null) { 
-			return dao.getDailyRollupGraph(startDate, endDate, orgId);
+		if (principalOrgId != null) { 
+			return dao.getDailyRollupGraph(startDate, endDate, principalOrgId);
+		} else if (advisorOrgId != null) { 
+			return dao.getDailyRollupGraph(startDate, endDate, advisorOrgId);
 		}
 		
 		if (orgType == null) { orgType = OrganizationType.ADVISOR_ORG; } 
