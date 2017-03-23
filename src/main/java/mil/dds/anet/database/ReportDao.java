@@ -340,7 +340,7 @@ public class ReportDao implements IAnetDao<Report> {
 			sqlArgs.put("engagementDateStart", getRollupEngagmentStart(start));
 		} else { 
 			sql.append("releasedAt  >= DateTime(:startDate) AND releasedAt <= DateTime(:endDate) " 
-					+ "AND engagementDate > DateTime(:engagementDateStart");
+					+ "AND engagementDate > DateTime(:engagementDateStart) ");
 			sqlArgs.put("startDate", SqliteReportSearcher.sqlitePattern.print(start));
 			sqlArgs.put("endDate", SqliteReportSearcher.sqlitePattern.print(end));
 			sqlArgs.put("engagementDateStart", SqliteReportSearcher.sqlitePattern.print(getRollupEngagmentStart(start)));
