@@ -67,7 +67,7 @@ h2.legend {
 	margin-top: -2rem;
 }
 
-.legend small .btn + .btn {
+.legend small :not(.btn-group) .btn + .btn {
 	margin-left: 1rem;
 }
 

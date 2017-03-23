@@ -8,6 +8,7 @@ import Fieldset from 'components/Fieldset'
 import Breadcrumbs from 'components/Breadcrumbs'
 import ReportCollection from 'components/ReportCollection'
 import CalendarButton from 'components/CalendarButton'
+import ButtonToggleGroup from 'components/ButtonToggleGroup'
 import Form from 'components/Form'
 import History from 'components/History'
 import Messages from 'components/Messages'
@@ -59,7 +60,8 @@ export default class RollupShow extends Page {
 			showEmailModal: false,
 			email: {},
 			maxReportAge: null,
-			hoveredBar: {org: {}}
+			hoveredBar: {org: {}},
+			orgType: "ADVISOR_ORG",
 		}
 	}
 
@@ -108,6 +110,8 @@ export default class RollupShow extends Page {
 			rollupQuery.advisorOrgId = this.state.focusedOrg.id
 			rollupQuery.includeAdvisorOrgChildren = true
 			graphQueryUrl += `&orgId=${this.state.focusedOrg.id}`
+		} else if (this.state.orgType) {
+			graphQueryUrl += `&orgType=${this.state.orgType}`
 		}
 
 		let graphQuery = API.fetch(graphQueryUrl)
@@ -176,7 +180,13 @@ export default class RollupShow extends Page {
 					</div>
 				</Fieldset>
 
-				<Fieldset title={`Reports ${this.state.focusedOrg ? `for ${this.state.focusedOrg.shortName}` : ''}`}>
+				<Fieldset
+					title={`Reports ${this.state.focusedOrg ? `for ${this.state.focusedOrg.shortName}` : ''}`}
+					action={!this.state.focusedOrg && <ButtonToggleGroup value={this.state.orgType} onChange={this.changeOrgType}>
+						<Button value="ADVISOR_ORG">Advisor organizations</Button>
+						<Button value="PRINCIPAL_ORG">Principal organizations</Button>
+					</ButtonToggleGroup>}
+				>
 					<ReportCollection paginatedReports={this.state.reports} goToPage={this.goToReportsPage} />
 				</Fieldset>
 
@@ -273,6 +283,11 @@ export default class RollupShow extends Page {
 	@autobind
 	goToOrg(org) {
 		this.setState({reportsPageNum: 0, focusedOrg: org, graphPopover: null}, () => this.loadData())
+	}
+
+	@autobind
+	changeOrgType(orgType) {
+		this.setState({orgType}, () => this.loadData())
 	}
 
 	@autobind
