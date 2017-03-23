@@ -198,12 +198,12 @@ export default class RollupShow extends Page {
 			.enter().append('g')
 				.attr('transform', (d, i) => `translate(2, ${i * (BAR_HEIGHT + BAR_PADDING) - 1})`)
 				.classed('bar', true)
+				.on('click', d => this.goToOrg(d.org))
 
 		bar.append('rect')
 				.attr('width', d => d.released && xScale(d.released) - 2)
 				.attr('height', BAR_HEIGHT)
 				.attr('fill', barColors.verified)
-				.on('click', d => this.goToOrg(d.org))
 
 		bar.append('text')
 				.attr('x', d => xScale(d.released) - 6)
