@@ -599,11 +599,15 @@ public class ReportResource implements IGraphQLResource {
 	public Response emailRollup(@Auth Person user, 
 			@QueryParam("startDate") Long start, 
 			@QueryParam("endDate") Long end, 
+			@QueryParam("orgId") Integer focusedOrgId,
+			@QueryParam("orgType") OrganizationType orgType,
 			AnetEmail email) {
 		DailyRollupEmail action = new DailyRollupEmail();
 		action.setStartDate(new DateTime(start));
 		action.setEndDate(new DateTime(end));
 		action.setComment(email.getComment());
+		action.setFocusedOrg(focusedOrgId);
+		action.setOrgType(orgType);
 
 		email.setAction(action);
 		AnetEmailWorker.sendEmailAsync(email);
@@ -620,10 +624,14 @@ public class ReportResource implements IGraphQLResource {
 	@Produces(MediaType.TEXT_HTML)
 	public Response showRollupEmail(@Auth Person user, @QueryParam("startDate") Long start, 
 			@QueryParam("endDate") Long end, 
+			@QueryParam("orgId") Integer focusedOrgId,
+			@QueryParam("orgType") OrganizationType orgType,
 			@QueryParam("showText") @DefaultValue("false") Boolean showReportText) {
 		DailyRollupEmail action = new DailyRollupEmail();
 		action.setStartDate(new DateTime(start));
 		action.setEndDate(new DateTime(end));
+		action.setFocusedOrg(focusedOrgId);
+		action.setOrgType(orgType);
 		
 		Map<String,Object> context = action.execute();
 		context.put("serverUrl", config.getServerUrl());

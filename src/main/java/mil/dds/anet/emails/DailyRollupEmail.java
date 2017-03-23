@@ -27,6 +27,8 @@ public class DailyRollupEmail extends AnetEmailAction {
 
 	DateTime startDate;
 	DateTime endDate;
+	OrganizationType orgType; // show the table based off this organization type. 
+	Integer focusedOrg; //Only show reports under this org id
 	String comment;
 
 	public DailyRollupEmail() {
@@ -50,6 +52,14 @@ public class DailyRollupEmail extends AnetEmailAction {
 		query.setEngagementDateStart(engagementDateStart);
 		query.setSortBy(ReportSearchSortBy.ENGAGEMENT_DATE);
 		query.setSortOrder(SortOrder.DESC);
+		
+		if (focusedOrg != null) { 
+			if (OrganizationType.PRINCIPAL_ORG.equals(orgType)) { 
+				query.setPrincipalOrgId(focusedOrg);
+			} else { 
+				query.setAdvisorOrgId(focusedOrg);
+			}
+		}
 		List<Report> reports = AnetObjectEngine.getInstance().getReportDao().search(query).getList();
 
 		ReportGrouping allReports = new ReportGrouping(reports);
@@ -96,8 +106,8 @@ public class DailyRollupEmail extends AnetEmailAction {
 			this.name = name;
 		}
 
-		public List<ReportGrouping> getByGrouping(String orgType) {
-			return getByGrouping(OrganizationType.valueOf(orgType));
+		public List<ReportGrouping> getByGrouping(String groupByOrgType) {
+			return getByGrouping(OrganizationType.valueOf(groupByOrgType));
 		}
 
 		public List<ReportGrouping> getByGrouping(OrganizationType orgType) {
@@ -112,8 +122,13 @@ public class DailyRollupEmail extends AnetEmailAction {
 					topOrgName = "Other";
 				} else {
 					Organization topOrg = orgIdToTopOrg.get(reportOrg.getId());
-					topOrgId = topOrg.getId();
-					topOrgName = topOrg.getShortName();
+					if (topOrg == null) {  //this should never happen unless the data in the database is bad. 
+						topOrgId = -1;
+						topOrgName = "Other";
+					} else { 
+						topOrgId = topOrg.getId();
+						topOrgName = topOrg.getShortName();
+					}
 				}
 				ReportGrouping group = orgIdToReports.get(topOrgId);
 				if (group == null) {
@@ -154,6 +169,22 @@ public class DailyRollupEmail extends AnetEmailAction {
 
 	public void setEndDate(DateTime endDate) {
 		this.endDate = endDate;
+	}
+
+	public OrganizationType getOrgType() {
+		return orgType;
+	}
+
+	public void setOrgType(OrganizationType orgType) {
+		this.orgType = orgType;
+	}
+
+	public Integer getFocusedOrg() {
+		return focusedOrg;
+	}
+
+	public void setFocusedOrg(Integer focusedOrg) {
+		this.focusedOrg = focusedOrg;
 	}
 
 	public String getComment() {
