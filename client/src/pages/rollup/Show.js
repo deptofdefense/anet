@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
-import {Modal, Alert, Button} from 'react-bootstrap'
+import {Modal, Alert, Button, Popover, Overlay} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 import moment from 'moment'
 
@@ -8,6 +8,7 @@ import Fieldset from 'components/Fieldset'
 import Breadcrumbs from 'components/Breadcrumbs'
 import ReportCollection from 'components/ReportCollection'
 import CalendarButton from 'components/CalendarButton'
+import ButtonToggleGroup from 'components/ButtonToggleGroup'
 import Form from 'components/Form'
 import History from 'components/History'
 import Messages from 'components/Messages'
@@ -26,6 +27,12 @@ const barColors = {
 const calendarButtonCss = {
 	marginLeft: '20px',
 	marginTop: '-8px',
+}
+
+const legendCss = {
+	width: '14px',
+	height: '14px',
+	display: 'inline-block',
 }
 
 export default class RollupShow extends Page {
@@ -53,13 +60,17 @@ export default class RollupShow extends Page {
 			showEmailModal: false,
 			email: {},
 			maxReportAge: null,
+			hoveredBar: {org: {}},
+			orgType: "ADVISOR_ORG",
 		}
 	}
 
-	componentWillReceiveProps(newProps) {
+	componentWillReceiveProps(newProps, newContext) {
 		let newDate = moment(+newProps.location.query.date || undefined)
 		if (!this.state.date.isSame(newDate)) {
-			this.setState({date: newDate}, () => this.loadData())
+			this.setState({date: newDate}, () => this.loadData(newProps, newContext))
+		} else {
+			super.componentWillReceiveProps(newProps, newContext)
 		}
 	}
 
@@ -83,7 +94,6 @@ export default class RollupShow extends Page {
 			//don't run the query unless we've loaded the rollup settings.
 			return
 		}
-		this.setState({maxReportAge})
 
 		const rollupQuery = {
 			state: ['RELEASED'], //Specifically excluding cancelled engagements.
@@ -96,10 +106,12 @@ export default class RollupShow extends Page {
 		}
 
 		let graphQueryUrl = `/api/reports/rollupGraph?startDate=${rollupQuery.releasedAtStart}&endDate=${rollupQuery.releasedAtEnd}`
-		if (this.state.focusedOrgId) {
-			rollupQuery.advisorOrgId = this.state.focusedOrgId
+		if (this.state.focusedOrg) {
+			rollupQuery.advisorOrgId = this.state.focusedOrg.id
 			rollupQuery.includeAdvisorOrgChildren = true
-			graphQueryUrl += `&orgId=${this.state.focusedOrgId}`
+			graphQueryUrl += `&orgId=${this.state.focusedOrg.id}`
+		} else if (this.state.orgType) {
+			graphQueryUrl += `&orgType=${this.state.orgType}`
 		}
 
 		let graphQuery = API.fetch(graphQueryUrl)
@@ -143,9 +155,41 @@ export default class RollupShow extends Page {
 				}>
 					<p className="help-text">Number of reports released today per organization</p>
 					<svg ref={el => this.graph = el} style={{width: '100%'}} />
+
+					<Overlay
+						show={!!this.state.graphPopover}
+						placement="top"
+						container={document.body}
+						animation={false}
+						target={() => this.state.graphPopover}
+					>
+						<Popover id="graph-popover" title={this.state.hoveredBar.org.shortName}>
+							<p>Released: {this.state.hoveredBar.released}</p>
+							<p>Cancelled: {this.state.hoveredBar.cancelled}</p>
+							<p>Click to drill down</p>
+						</Popover>
+					</Overlay>
+
+					<div className="graph-legend">
+						<div style={{...legendCss, background: barColors.verified}}></div> Released reports:&nbsp;
+						<strong>{this.state.graphData.reduce((acc, org) => acc + org.released, 0)}</strong>
+					</div>
+					<div className="graph-legend">
+						<div style={{...legendCss, background: barColors.cancelled}}></div> Cancelled engagements:&nbsp;
+						<strong>{this.state.graphData.reduce((acc, org) => acc + org.cancelled, 0)}</strong>
+					</div>
 				</Fieldset>
 
-				<Fieldset title="Reports">
+				<Fieldset
+					title={`Reports ${this.state.focusedOrg ? `for ${this.state.focusedOrg.shortName}` : ''}`}
+					action={!this.state.focusedOrg
+						? <ButtonToggleGroup value={this.state.orgType} onChange={this.changeOrgType}>
+							<Button value="ADVISOR_ORG">Advisor organizations</Button>
+							<Button value="PRINCIPAL_ORG">Principal organizations</Button>
+						</ButtonToggleGroup>
+						: <Button onClick={() => this.goToOrg()}>All organizations</Button>
+					}
+				>
 					<ReportCollection paginatedReports={this.state.reports} goToPage={this.goToReportsPage} />
 				</Fieldset>
 
@@ -159,6 +203,12 @@ export default class RollupShow extends Page {
 		if (!graphData || !d3) {
 			return
 		}
+
+		if (graphData === this.renderedGraph) {
+			return
+		}
+
+		this.renderedGraph = graphData
 
 		const BAR_HEIGHT = 24
 		const BAR_PADDING = 8
@@ -197,12 +247,14 @@ export default class RollupShow extends Page {
 			.enter().append('g')
 				.attr('transform', (d, i) => `translate(2, ${i * (BAR_HEIGHT + BAR_PADDING) - 1})`)
 				.classed('bar', true)
+				.on('click', d => this.goToOrg(d.org))
+				.on('mouseenter', d => this.setState({graphPopover: d3.event.target, hoveredBar: d}))
+				.on('mouseleave', d =>this.setState({graphPopover: null}))
 
 		bar.append('rect')
-				.attr('width', d => xScale(d.released) - 2)
+				.attr('width', d => d.released && xScale(d.released) - 2)
 				.attr('height', BAR_HEIGHT)
 				.attr('fill', barColors.verified)
-				.on('click', d => this.goToOrg(d.org.id))
 
 		bar.append('text')
 				.attr('x', d => xScale(d.released) - 6)
@@ -212,8 +264,8 @@ export default class RollupShow extends Page {
 				.text(d => d.released || '')
 
 		bar.append('rect')
-				.attr('x', d => xScale(d.released) - 2)
-				.attr('width', d => xScale(d.cancelled))
+				.attr('x', d => d.released && xScale(d.released) - 2)
+				.attr('width', d => d.cancelled && (xScale(d.cancelled) - (d.released ? 0 : 2)))
 				.attr('height', BAR_HEIGHT)
 				.attr('fill', barColors.cancelled)
 
@@ -232,10 +284,13 @@ export default class RollupShow extends Page {
 	}
 
 	@autobind
-	goToOrg(orgId) {
-		this.state.reportsPageNum = 0
-		this.state.focusedOrgId = orgId
-		this.loadData()
+	goToOrg(org) {
+		this.setState({reportsPageNum: 0, focusedOrg: org, graphPopover: null}, () => this.loadData())
+	}
+
+	@autobind
+	changeOrgType(orgType) {
+		this.setState({orgType}, () => this.loadData())
 	}
 
 	@autobind
