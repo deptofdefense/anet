@@ -110,16 +110,16 @@ public class MssqlReportSearcher implements IReportSearcher {
 		}
 		
 		if (query.getAdvisorOrgId() != null) { 
-			if (query.getIncludeAdvisorOrgChildren()) { 
+			if (query.getAdvisorOrgId() == -1) { 
+				whereClauses.add("reports.advisorOrganizationId IS NULL");
+			} else if (query.getIncludeAdvisorOrgChildren()) { 
 				commonTableExpression = "WITH parent_orgs(id) AS ( "
 						+ "SELECT id FROM organizations WHERE id = :advisorOrgId "
 					+ "UNION ALL "
 						+ "SELECT o.id from parent_orgs po, organizations o WHERE o.parentOrgId = po.id "
 					+ ")";
 				whereClauses.add("reports.advisorOrganizationId IN (SELECT id from parent_orgs)");
-			} else if (query.getAdvisorOrgId() == -1) { 
-				whereClauses.add("reports.advisorOrganizationId IS NULL");
-			} else { 
+			} else  { 
 				whereClauses.add("reports.advisorOrganizationId = :advisorOrgId");
 			}
 			
@@ -127,15 +127,15 @@ public class MssqlReportSearcher implements IReportSearcher {
 		}
 		
 		if (query.getPrincipalOrgId() != null) { 
-			if (query.getIncludePrincipalOrgChildren()) { 
+			if (query.getPrincipalOrgId() == -1) { 
+				whereClauses.add("reports.principalOrganizationId IS NULL");
+			} else if (query.getIncludePrincipalOrgChildren()) { 
 				commonTableExpression = "WITH parent_orgs(id) AS ( "
 						+ "SELECT id FROM organizations WHERE id = :principalOrgId "
 					+ "UNION ALL "
 						+ "SELECT o.id from parent_orgs po, organizations o WHERE o.parentOrgId = po.id "
 					+ ")";
 				whereClauses.add("reports.principalOrganizationId IN (SELECT id from parent_orgs)");
-			} else if (query.getPrincipalOrgId() == -1) { 
-				whereClauses.add("reports.principalOrganizationId IS NULL");
 			} else { 
 				whereClauses.add("reports.principalOrganizationId = :principalOrgId");
 			}

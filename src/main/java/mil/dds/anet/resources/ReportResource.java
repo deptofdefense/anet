@@ -587,9 +587,9 @@ public class ReportResource implements IGraphQLResource {
 		DateTime startDate = new DateTime(start);
 		DateTime endDate = new DateTime(end);
 		if (principalOrgId != null) { 
-			return dao.getDailyRollupGraph(startDate, endDate, principalOrgId);
+			return dao.getDailyRollupGraph(startDate, endDate, principalOrgId, OrganizationType.PRINCIPAL_ORG);
 		} else if (advisorOrgId != null) { 
-			return dao.getDailyRollupGraph(startDate, endDate, advisorOrgId);
+			return dao.getDailyRollupGraph(startDate, endDate, advisorOrgId, OrganizationType.ADVISOR_ORG);
 		}
 		
 		if (orgType == null) { orgType = OrganizationType.ADVISOR_ORG; } 

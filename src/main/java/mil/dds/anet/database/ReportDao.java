@@ -27,7 +27,6 @@ import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
 import mil.dds.anet.beans.RollupGraph;
-import mil.dds.anet.beans.lists.AbstractAnetBeanList.OrganizationList;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.ReportList;
 import mil.dds.anet.beans.search.OrganizationSearchQuery;
 import mil.dds.anet.beans.search.ReportSearchQuery;
@@ -291,38 +290,45 @@ public class ReportDao implements IAnetDao<Report> {
 	
 	/* Generates the Rollup Graph for a particular Organization Type, starting at the root of the org hierarchy */
 	public List<RollupGraph> getDailyRollupGraph(DateTime start, DateTime end, OrganizationType orgType) {
-		List<Map<String, Object>> results = rollupQuery(start, end, orgType, null);
+		List<Map<String, Object>> results = rollupQuery(start, end, orgType, null, false);
 		Map<Integer,Organization> orgMap = AnetObjectEngine.getInstance().buildTopLevelOrgHash(orgType);
 		
 		return generateRollupGraphFromResults(results, orgMap);
 	}
 	
 	/* Generates a Rollup graph for a particular organiztaion.  Starting with a given parent Organization */
-	public List<RollupGraph> getDailyRollupGraph(DateTime start, DateTime end, Integer parentOrgId) {
-		//doing this as two separate queries because I do need all the information about the organizations
-		OrganizationSearchQuery query = new OrganizationSearchQuery();
-		query.setParentOrgId(parentOrgId);
-		query.setParentOrgRecursively(true);
-		query.setPageSize(Integer.MAX_VALUE);
-		OrganizationList orgs = AnetObjectEngine.getInstance().getOrganizationDao().search(query);
-		Optional<Organization> parentOrg = orgs.getList().stream().filter(o -> o.getId().equals(parentOrgId)).findFirst();
-		if (parentOrg.isPresent() == false) { 
-			throw new WebApplicationException("No such organization with id " + parentOrgId, Status.NOT_FOUND);
+	public List<RollupGraph> getDailyRollupGraph(DateTime start, DateTime end, Integer parentOrgId, OrganizationType orgType) {
+		List<Organization> orgList = null;
+		Map<Integer,Organization> orgMap;
+		if (parentOrgId.equals(-1) == false) { // -1 is code for no parent org.  
+			//doing this as two separate queries because I do need all the information about the organizations
+			OrganizationSearchQuery query = new OrganizationSearchQuery();
+			query.setParentOrgId(parentOrgId);
+			query.setParentOrgRecursively(true);
+			query.setPageSize(Integer.MAX_VALUE);
+			orgList = AnetObjectEngine.getInstance().getOrganizationDao().search(query).getList();
+			Optional<Organization> parentOrg = orgList.stream().filter(o -> o.getId().equals(parentOrgId)).findFirst();
+			if (parentOrg.isPresent() == false) { 
+				throw new WebApplicationException("No such organization with id " + parentOrgId, Status.NOT_FOUND);
+			}
+			orgMap  = Utils.buildParentOrgMapping(orgList, parentOrgId);
+		} else { 
+			orgMap = new HashMap<Integer, Organization>(); //guaranteed to match no orgs! 
 		}
-		OrganizationType orgType = parentOrg.get().getType();
 		
-		List<Map<String,Object>> results = rollupQuery(start, end, orgType, orgs.getList());
+		List<Map<String,Object>> results = rollupQuery(start, end, orgType, orgList, parentOrgId.equals(-1));
 		
-		
-		Map<Integer,Organization> orgMap = Utils.buildParentOrgMapping(orgs.getList(), parentOrgId);
 		return generateRollupGraphFromResults(results, orgMap);
 	}
 	
 	/** Helper method that builds and executes the daily rollup query
 	 * Handles both MsSql and Sqlite
-	 * Searching for just all reports and for reports in certain organizations. 
+	 * Searching for just all reports and for reports in certain organizations.
+	 * @param orgType: the type of organization Id to be lookinf ro 
+	 * @param orgs: the list of orgs for whose reports to find, null means all
+	 * @param missingOrgReports: true if we want to look for reports specifically with NULL org Ids. 
 	 */
-	private List<Map<String,Object>> rollupQuery(DateTime start, DateTime end, OrganizationType orgType, List<Organization> orgs) { 
+	private List<Map<String,Object>> rollupQuery(DateTime start, DateTime end, OrganizationType orgType, List<Organization> orgs, boolean missingOrgReports) { 
 		String orgColumn = orgType == OrganizationType.ADVISOR_ORG ? "advisorOrganizationId" : "principalOrganizationId";
 		Map<String,Object> sqlArgs = new HashMap<String,Object>();
 		
@@ -354,6 +360,8 @@ public class ReportDao implements IAnetDao<Report> {
 			}
 			String orgInSql = Joiner.on(',').join(sqlBind);
 			sql.append("AND " + orgColumn + " IN (" + orgInSql + ") ");
+		} else if (missingOrgReports) { 
+			sql.append(" AND " + orgColumn + " IS NULL ");
 		}
 		
 		sql.append("GROUP BY " + orgColumn + ", state");
