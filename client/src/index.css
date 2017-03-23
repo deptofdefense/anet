@@ -581,3 +581,8 @@ header.searchPagination {
 .bar text {
 	font-size:0.75em;
 }
+
+.graph-legend {
+	margin-top: 4px;
+	font-size: 0.8em;
+}

@@ -28,6 +28,12 @@ const calendarButtonCss = {
 	marginTop: '-8px',
 }
 
+const legendCss = {
+	width: '14px',
+	height: '14px',
+	display: 'inline-block',
+}
+
 export default class RollupShow extends Page {
 	static propTypes = {
 		date: React.PropTypes.object,
@@ -144,6 +150,15 @@ export default class RollupShow extends Page {
 				}>
 					<p className="help-text">Number of reports released today per organization</p>
 					<svg ref={el => this.graph = el} style={{width: '100%'}} />
+
+					<div className="graph-legend">
+						<div style={{...legendCss, background: barColors.verified}}></div> Released reports:&nbsp;
+						<strong>{this.state.graphData.reduce((acc, org) => acc + org.released, 0)}</strong>
+					</div>
+					<div className="graph-legend">
+						<div style={{...legendCss, background: barColors.cancelled}}></div> Cancelled engagements:&nbsp;
+						<strong>{this.state.graphData.reduce((acc, org) => acc + org.cancelled, 0)}</strong>
+					</div>
 				</Fieldset>
 
 				<Fieldset title={`Reports ${this.state.focusedOrg ? `for ${this.state.focusedOrg.shortName}` : ''}`}>
