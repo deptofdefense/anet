@@ -95,11 +95,14 @@ export default class RollupShow extends Page {
 			pageNum: this.state.reportsPageNum,
 		}
 
+		let graphQueryUrl = `/api/reports/rollupGraph?startDate=${rollupQuery.releasedAtStart}&endDate=${rollupQuery.releasedAtEnd}`
 		if (this.state.focusedOrgId) {
 			rollupQuery.advisorOrgId = this.state.focusedOrgId
+			rollupQuery.includeAdvisorOrgChildren = true
+			graphQueryUrl += `&orgId=${this.state.focusedOrgId}`
 		}
 
-		let graphQuery = API.fetch(`/api/reports/rollupGraph?startDate=${rollupQuery.releasedAtStart}&endDate=${rollupQuery.releasedAtEnd}&engagementDateStart=${rollupQuery.engagementDateStart}`)
+		let graphQuery = API.fetch(graphQueryUrl)
 
 		let reportQuery = API.query(/* GraphQL */`
 			reportList(f:search, query:$rollupQuery) {

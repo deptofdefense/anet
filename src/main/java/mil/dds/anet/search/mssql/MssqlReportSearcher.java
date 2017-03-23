@@ -96,7 +96,7 @@ public class MssqlReportSearcher implements IReportSearcher {
 			if (query.getAdvisorOrgId() != null || query.getPrincipalOrgId() != null) { 
 				throw new WebApplicationException("Cannot combine orgId with principalOrgId or advisorOrgId parameters", Status.BAD_REQUEST);
 			}
-			if (query.isIncludeOrgChildren()) { 
+			if (query.getIncludeOrgChildren()) { 
 				commonTableExpression = "WITH parent_orgs(id) AS ( "
 						+ "SELECT id FROM organizations WHERE id = :orgId "
 					+ "UNION ALL "
@@ -110,7 +110,7 @@ public class MssqlReportSearcher implements IReportSearcher {
 		}
 		
 		if (query.getAdvisorOrgId() != null) { 
-			if (query.isIncludeAdvisorOrgChildren()) { 
+			if (query.getIncludeAdvisorOrgChildren()) { 
 				commonTableExpression = "WITH parent_orgs(id) AS ( "
 						+ "SELECT id FROM organizations WHERE id = :advisorOrgId "
 					+ "UNION ALL "
@@ -124,7 +124,7 @@ public class MssqlReportSearcher implements IReportSearcher {
 		}
 		
 		if (query.getPrincipalOrgId() != null) { 
-			if (query.isIncludePrincipalOrgChildren()) { 
+			if (query.getIncludePrincipalOrgChildren()) { 
 				commonTableExpression = "WITH parent_orgs(id) AS ( "
 						+ "SELECT id FROM organizations WHERE id = :principalOrgId "
 					+ "UNION ALL "

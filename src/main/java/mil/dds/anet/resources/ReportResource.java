@@ -43,6 +43,7 @@ import mil.dds.anet.beans.ApprovalAction.ApprovalType;
 import mil.dds.anet.beans.ApprovalStep;
 import mil.dds.anet.beans.Comment;
 import mil.dds.anet.beans.Organization;
+import mil.dds.anet.beans.Organization.OrganizationType;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.beans.Poam;
@@ -566,13 +567,30 @@ public class ReportResource implements IGraphQLResource {
 		return dao.search(query);
 	}
 
+	/** 
+	 * 
+	 * @param start Start timestamp for the rollup period
+	 * @param end end timestamp for the rollup period
+	 * @param engagementDateStart minimum date on reports to include 
+	 * @param orgType  If orgId is NULL then the type of organization (ADVISOR_ORG or PRINCIPAL_ORG) that the chart should filter on
+	 * @param orgId if orgType is NULL then the parent org to create the graph off of. All reports will be by/about this org or a child org. 
+	 * @return
+	 */
 	@GET
 	@Timed
 	@Path("/rollupGraph")
 	public List<RollupGraph> getDailyRollupGraph(@QueryParam("startDate") Long start, 
 			@QueryParam("endDate") Long end, 
-			@QueryParam("engagementDateStart") Long engagementDateStart) {
-		return dao.getDailyRollupGraph(new DateTime(start), new DateTime(end), new DateTime(engagementDateStart));
+			@QueryParam("orgType") OrganizationType orgType, 
+			@QueryParam("orgId") Integer orgId) {
+		DateTime startDate = new DateTime(start);
+		DateTime endDate = new DateTime(end);
+		if (orgId != null) { 
+			return dao.getDailyRollupGraph(startDate, endDate, orgId);
+		}
+		
+		if (orgType == null) { orgType = OrganizationType.ADVISOR_ORG; } 
+		return dao.getDailyRollupGraph(startDate, endDate, orgType);
 	}
 
 	@POST

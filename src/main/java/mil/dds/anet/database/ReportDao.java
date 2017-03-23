@@ -4,6 +4,11 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response.Status;
 
 import org.joda.time.DateTime;
 import org.skife.jdbi.v2.GeneratedKeys;
@@ -11,6 +16,8 @@ import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.Query;
 import org.skife.jdbi.v2.TransactionCallback;
 import org.skife.jdbi.v2.TransactionStatus;
+
+import com.google.common.base.Joiner;
 
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Organization;
@@ -21,8 +28,11 @@ import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
 import mil.dds.anet.beans.RollupGraph;
+import mil.dds.anet.beans.lists.AbstractAnetBeanList.OrganizationList;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.ReportList;
+import mil.dds.anet.beans.search.OrganizationSearchQuery;
 import mil.dds.anet.beans.search.ReportSearchQuery;
+import mil.dds.anet.database.AdminDao.AdminSettingKeys;
 import mil.dds.anet.database.mappers.PoamMapper;
 import mil.dds.anet.database.mappers.ReportMapper;
 import mil.dds.anet.database.mappers.ReportPersonMapper;
@@ -272,23 +282,82 @@ public class ReportDao implements IAnetDao<Report> {
 		
 	}
 
-	public List<RollupGraph> getDailyRollupGraph(DateTime start, DateTime end, DateTime engagementDateStart) {
+	private DateTime getRollupEngagmentStart(DateTime start) { 
+		String maxReportAgeStr = AnetObjectEngine.getInstance().getAdminSetting(AdminSettingKeys.DAILY_ROLLUP_MAX_REPORT_AGE_DAYS);
+		if (maxReportAgeStr == null) { throw new WebApplicationException("Missing Admin Setting for " + AdminSettingKeys.DAILY_ROLLUP_MAX_REPORT_AGE_DAYS); } 
+		Integer maxReportAge = Integer.parseInt(maxReportAgeStr);
+		return start.minusDays(maxReportAge);
+	}
+	
+	/* Generates the Rollup Graph for a particular Organization Type, starting at the root of the org hierarchy */
+	public List<RollupGraph> getDailyRollupGraph(DateTime start, DateTime end, OrganizationType orgType) {
+		String orgColumn = orgType == OrganizationType.ADVISOR_ORG ? "advisorOrganizationId" : "principalOrganizationId";
 		List<Map<String, Object>> results = dbHandle.createQuery("/* dailyRollupGraph */ "
-				+ "SELECT advisorOrganizationId, state, count(*) AS count "
+				+ "SELECT " + orgColumn + " as orgId, state, count(*) AS count "
 				+ "FROM reports WHERE releasedAt >= :startDate and releasedAt <= :endDate "
 				+ "AND engagementDate > :engagementDateStart "
-				+ "GROUP BY advisorOrganizationId, state")
+				+ "GROUP BY " + orgColumn + ", state")
 			.bind("startDate", start)
 			.bind("endDate", end)
-			.bind("engagementDateStart", engagementDateStart)
+			.bind("engagementDateStart", getRollupEngagmentStart(start))
 			.list();
 
 		Map<Integer,Organization> orgMap = AnetObjectEngine.getInstance().buildTopLevelOrgHash(OrganizationType.ADVISOR_ORG);
 		
+		return generateRollupGraphFromResults(results, orgMap);
+	}
+	
+	/* Generates a Rollup graph for a particular organiztaion.  Starting with a given parent Organization */
+	public List<RollupGraph> getDailyRollupGraph(DateTime start, DateTime end, Integer parentOrgId) {
+		//doing this as two separate queries because I do need all the information about the organizations
+		OrganizationSearchQuery query = new OrganizationSearchQuery();
+		query.setParentOrgId(parentOrgId);
+		query.setParentOrgRecursively(true);
+		query.setPageSize(Integer.MAX_VALUE);
+		OrganizationList orgs = AnetObjectEngine.getInstance().getOrganizationDao().search(query);
+		Optional<Organization> parentOrg = orgs.getList().stream().filter(o -> o.getId().equals(parentOrgId)).findFirst();
+		if (parentOrg.isPresent() == false) { 
+			throw new WebApplicationException("No such organization with id " + parentOrgId, Status.NOT_FOUND);
+		}
+		OrganizationType orgType = parentOrg.get().getType();
+		
+		String orgColumn = orgType == OrganizationType.ADVISOR_ORG ? "advisorOrganizationId" : "principalOrganizationId";
+		Map<String,Object> sqlArgs = new HashMap<String,Object>();
+		List<String> sqlBind = new LinkedList<String>();
+		int orgNum = 0; 
+		for (Organization o : orgs.getList()) { 
+			sqlArgs.put("orgId" + orgNum, o.getId());
+			sqlBind.add(":orgId" + orgNum);
+			orgNum++;
+		}
+		String orgInSql = Joiner.on(',').join(sqlBind);
+		String sql = "SELECT " + orgColumn + " as orgId, state, count(*) AS count "
+			+ "FROM reports WHERE releasedAt >= :startDate and releasedAt <= :endDate "
+			+ "AND engagementDate > :engagementDateStart "
+			+ "AND " + orgColumn + " IN (" + orgInSql + ") "
+			+ "GROUP BY " + orgColumn + ", state";
+		
+		sqlArgs.put("startDate", start);
+		sqlArgs.put("endDate", end);
+		sqlArgs.put("engagementDateStart", getRollupEngagmentStart(start));
+		
+		List<Map<String, Object>> results = dbHandle.createQuery(sql)
+			.bindFromMap(sqlArgs)
+			.list();
+		
+		Map<Integer,Organization> orgMap = Utils.buildParentOrgMapping(orgs.getList(), parentOrgId);
+		return generateRollupGraphFromResults(results, orgMap);
+	}
+	
+	/* Given the results from the database on the number of reports grouped by organization
+	 * And the map of each organization to the organization that their reports roll up to
+	 * this method returns the final rollup graph information. 
+	 */
+	private List<RollupGraph> generateRollupGraphFromResults(List<Map<String,Object>> dbResults, Map<Integer, Organization> orgMap) { 
 		Map<Integer,Map<ReportState,Integer>> rollup = new HashMap<Integer,Map<ReportState,Integer>>();
 		
-		for (Map<String,Object> result : results) { 
-			Integer orgId = (Integer) result.get("advisorOrganizationId");
+		for (Map<String,Object> result : dbResults) { 
+			Integer orgId = (Integer) result.get("orgId");
 			Integer count = (Integer) result.get("count");
 			ReportState state = ReportState.values()[(Integer) result.get("state")];
 		
