@@ -378,7 +378,7 @@ public class ReportDao implements IAnetDao<Report> {
 			Integer count = (Integer) result.get("count");
 			ReportState state = ReportState.values()[(Integer) result.get("state")];
 		
-			Integer parentOrgId = (orgId == null) ? null : orgMap.get(orgId).getId();
+			Integer parentOrgId = (orgId == null) ? null : DaoUtils.getId(orgMap.get(orgId));
 			System.out.println("Mapped " + orgId + " to " + parentOrgId);
 			Map<ReportState,Integer> orgBar = rollup.get(parentOrgId);
 			if (orgBar == null) { 
