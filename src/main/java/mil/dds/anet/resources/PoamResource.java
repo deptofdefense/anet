@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.PermitAll;
@@ -36,6 +37,7 @@ import mil.dds.anet.graphql.GraphQLParam;
 import mil.dds.anet.graphql.IGraphQLResource;
 import mil.dds.anet.utils.AnetAuditLogger;
 import mil.dds.anet.utils.AuthUtils;
+import mil.dds.anet.utils.DaoUtils;
 import mil.dds.anet.utils.ResponseUtils;
 
 @Path("/api/poams")
@@ -98,6 +100,9 @@ public class PoamResource implements IGraphQLResource {
 	@RolesAllowed("SUPER_USER")
 	public Poam createNewPoam(@Auth Person user, Poam p) {
 		if (AuthUtils.isAdmin(user) == false) { 
+			if (p.getResponsibleOrg() == null || p.getResponsibleOrg().getId() == null) { 
+				throw new WebApplicationException("You must select a responsible organization", Status.FORBIDDEN);
+			}
 			//Super Users can only create poams within their organization. 
 			AuthUtils.assertSuperUserForOrg(user, p.getResponsibleOrg());
 		}
@@ -115,6 +120,14 @@ public class PoamResource implements IGraphQLResource {
 		if (AuthUtils.isAdmin(user) == false) { 
 			Poam existing = dao.getById(p.getId());
 			AuthUtils.assertSuperUserForOrg(user, existing.getResponsibleOrg());
+			
+			//If changing the Responsible ORganiation, Super Users must also have super user privelages over the next org. 
+			if (Objects.equals(DaoUtils.getId(existing.getResponsibleOrg()), p.getResponsibleOrg()) == false) { 
+				if (DaoUtils.getId(p.getResponsibleOrg()) == null) { 
+					throw new WebApplicationException("You must select a responsible organization", Status.FORBIDDEN);
+				}
+				AuthUtils.assertSuperUserForOrg(user, p.getResponsibleOrg());
+			}
 		}
 		
 		int numRows = dao.update(p);
