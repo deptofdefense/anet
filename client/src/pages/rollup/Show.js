@@ -56,10 +56,12 @@ export default class RollupShow extends Page {
 		}
 	}
 
-	componentWillReceiveProps(newProps) {
+	componentWillReceiveProps(newProps, newContext) {
 		let newDate = moment(+newProps.location.query.date || undefined)
 		if (!this.state.date.isSame(newDate)) {
-			this.setState({date: newDate}, () => this.loadData())
+			this.setState({date: newDate}, () => this.loadData(newProps, newContext))
+		} else {
+			super.componentWillReceiveProps(newProps, newContext)
 		}
 	}
 
@@ -83,7 +85,6 @@ export default class RollupShow extends Page {
 			//don't run the query unless we've loaded the rollup settings.
 			return
 		}
-		this.setState({maxReportAge})
 
 		const rollupQuery = {
 			state: ['RELEASED'], //Specifically excluding cancelled engagements.
@@ -145,7 +146,7 @@ export default class RollupShow extends Page {
 					<svg ref={el => this.graph = el} style={{width: '100%'}} />
 				</Fieldset>
 
-				<Fieldset title="Reports">
+				<Fieldset title={`Reports ${this.state.focusedOrgId}`}>
 					<ReportCollection paginatedReports={this.state.reports} goToPage={this.goToReportsPage} />
 				</Fieldset>
 
