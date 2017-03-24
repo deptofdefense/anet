@@ -209,7 +209,7 @@ test('Home Page', async t => {
 })
 
 test.only('Draft and submit a report', async t => {
-    t.plan(15)
+    t.plan(16)
 
     let {pageHelpers, $, $$, assertElementText} = t.context
 
@@ -302,6 +302,7 @@ test.only('Draft and submit a report', async t => {
     await $homeTile.click()
 
     let $firstReadReportButton = await $('.read-report-button')
+    let reportHref = await $firstReadReportButton.getAttribute('href')
     await $firstReadReportButton.click()
 
     await pageHelpers.assertReportShowStatusText(t, "This report is PENDING approvals.")
@@ -320,6 +321,41 @@ test.only('Draft and submit a report', async t => {
 
     currentPathname = await t.context.getCurrentPathname()
     t.is(currentPathname, '/rollup', 'Clicking the "daily rollup" link takes the user to the rollup page')
+
+    async function getReportHrefsForPage() {
+        let $readReportButtons = await $$('.read-report-button')
+        return await Promise.all($readReportButtons.map(button => button.getAttribute('href')))
+    }
+
+    async function getAllReportHrefs() {
+        let reportsHrefsForCurrentPage = await getReportHrefsForPage()
+        let $paginationNextButton
+        try {
+            $paginationNextButton = await $('.pagination li:last-child:not(.disabled) a')
+            await t.context.driver.wait(until.elementIsVisible($paginationNextButton))
+        } catch (e) {
+            if (e.name === 'NoSuchElementError') {
+                // If there is not an enabled "next page" button, then we don't need to keep going.
+                return reportsHrefsForCurrentPage
+            }
+            throw e
+        }
+
+        console.log('page button click')
+        try {
+            await $paginationNextButton.click()
+        }
+        catch (e) {
+            console.log(e, JSON.stringify(e))
+            await t.context.waitForever()
+        }
+
+        console.log('post page button click')
+        return reportsHrefsForCurrentPage.concat(await getAllReportHrefs())
+    }
+
+    let allReportRefs = await getAllReportHrefs()
+    t.true(_includes(allReportRefs, reportHref), 'Daily rollup report list includes the recently approved report')
 })
 
 test('Verify that validation and other reports/new interactions work', async t => {
