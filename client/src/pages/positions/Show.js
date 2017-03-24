@@ -120,7 +120,7 @@ export default class PositionShow extends Page {
 							: <div>
 								<p><em>{position.name} is currently empty.</em></p>
 									{canEdit &&
-										<p><Button onClick={this.showAssignPersonModal}>Change assigned Peson</Button></p>
+										<p><Button onClick={this.showAssignPersonModal}>Change assigned person</Button></p>
 									}
 							</div>
 						}
