@@ -15,7 +15,7 @@ require('chromedriver')
 webdriver.promise.USE_PROMISE_MANAGER = false
 
 console.log(chalk.bold.cyan(
-    `These tests assume that you have just run ${path.resolve(__dirname, '..', '..', '..', 'insertSqlBaseData.sql')} on your SQLServer instance`
+    `These tests assume that you have recently run ${path.resolve(__dirname, '..', '..', '..', 'insertSqlBaseData.sql')} on your SQLServer instance`
 ))
 
 let shortWait = 500
@@ -184,6 +184,13 @@ test.beforeEach(t => {
         async clickTodayButton() {
             let $todayButton = await t.context.$('.u-today-button')
             await $todayButton.click()
+        },
+        async chooseAutocompleteOption(autocompleteSelector, text) {
+            let $autocompleteTextbox = await t.context.$(autocompleteSelector)
+            await $autocompleteTextbox.sendKeys(text)
+            let $autocompleteSuggestion = await t.context.$('#react-autowhatever-1--item-0')
+            await $autocompleteSuggestion.click()
+            return $autocompleteTextbox
         }
     }
 })
@@ -230,10 +237,10 @@ test('Home Page', async t => {
     await assertElementNotPresent(t, '.hopscotch-title', 'Navigating to a new page clears the hopscotch tour')
 })
 
-test.only('Draft and submit a report', async t => {
-    t.plan(1)
+test('Draft and submit a report', async t => {
+    t.plan(6)
 
-    let {pageHelpers, $} = t.context
+    let {pageHelpers, $, $$, assertElementText} = t.context
 
     await pageHelpers.goHomeAndThenToReportsPage()
     let $meetingGoalInput = await $('#intent')
@@ -244,20 +251,40 @@ test.only('Draft and submit a report', async t => {
 
     await pageHelpers.clickTodayButton()
 
-    let $locationAutocomplete = await $('#location')
-    await $locationAutocomplete.sendKeys('general hospita')
-    let $autocompleteSuggestion = await $('#react-autowhatever-1--item-0')
-    await $autocompleteSuggestion.click()
+    let $locationAutocomplete = await pageHelpers.chooseAutocompleteOption('#location', 'general hospita')
 
     t.is(
         await $locationAutocomplete.getAttribute('value'), 
         'General Hospital', 
-        'Clicking an autocomplete suggestion populates the autocomplete field.'
+        'Clicking a location autocomplete suggestion populates the autocomplete field.'
     )
+
+    let $positiveAtmosphereButton = await $('#positiveAtmos')
+    await $positiveAtmosphereButton.click()
+
+    let $attendeesAutocomplete = await pageHelpers.chooseAutocompleteOption('#attendees', 'christopf topferness')
+
+    t.is(
+        await $attendeesAutocomplete.getAttribute('value'), 
+        '', 
+        'Clicking an attendee autocomplete suggestion empties the autocomplete field.'
+    )
+
+    let [$principalPrimaryCheckbox, $principalName, $principalPosition, $principalOrg] = 
+        await $$('#attendeesTable tbody tr:last-child td')
+
+    t.is(
+        await $principalPrimaryCheckbox.findElement(By.css('input')).getAttribute('value'), 
+        'on', 
+        'Principal primary attendee checkbox should be checked'
+    )
+    await assertElementText(t, $principalName, 'Christopf Topferness')
+    await assertElementText(t, $principalPosition, 'Planning Captain')
+    await assertElementText(t, $principalOrg, 'MoD')
 })
 
 test('Report validation', async t => {
-    t.plan(32)
+    t.plan(28)
 
     let {assertElementText, $, $$, assertElementNotPresent, pageHelpers} = t.context
 
@@ -387,20 +414,6 @@ test('Report validation', async t => {
     await Promise.all($addAttendeeShortcutButtons.map($button => $button.click()))
 
     t.is((await $$('#attendeesTable tbody tr')).length, 3, 'Clicking the shortcut button adds a row to the table')
-
-    let [$principalPrimaryCheckbox, $principalName, $principalPosition, $principalOrg] = 
-        await $$('#attendeesTable tbody tr:last-child td')
-
-    t.is(
-        await $principalPrimaryCheckbox.findElement(By.css('input')).getAttribute('value'), 
-        'on', 
-        'Principal primary attendee checkbox should be checked'
-    )
-    await assertElementText(t, $principalName, 'Christopf Topferness CIV')
-    await assertElementText(t, $principalPosition, 'Planning Captain')
-    await assertElementText(t, $principalOrg, 'MoD')
-
-    // There's a lot more stuff to assert, but let's skip to the end.
 
     let $submitButton = await $('#formBottomSubmit')
     await $submitButton.click()
