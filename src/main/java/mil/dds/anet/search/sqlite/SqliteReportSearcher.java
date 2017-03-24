@@ -27,6 +27,8 @@ import mil.dds.anet.utils.Utils;
 
 public class SqliteReportSearcher implements IReportSearcher {
 
+	public static DateTimeFormatter sqlitePattern = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+	
 	public ReportList runSearch(ReportSearchQuery query, Handle dbHandle) { 
 		StringBuffer sql = new StringBuffer();
 		sql.append("/* SqliteReportSearch */ SELECT " + ReportDao.REPORT_FIELDS + "," + PersonDao.PERSON_FIELDS);
@@ -52,7 +54,6 @@ public class SqliteReportSearcher implements IReportSearcher {
 			args.put("text", Utils.getSqliteFullTextQuery(text));
 		}
 		
-		DateTimeFormatter sqlitePattern = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
 		
 		if (query.getEngagementDateStart() != null) { 
 			whereClauses.add("reports.engagementDate >= DateTime(:startDate)");
@@ -95,7 +96,7 @@ public class SqliteReportSearcher implements IReportSearcher {
 			if (query.getAdvisorOrgId() != null || query.getPrincipalOrgId() != null) { 
 				throw new WebApplicationException("Cannot combine orgId with principalOrgId or advisorOrgId parameters", Status.BAD_REQUEST);
 			}
-			if (query.isIncludeOrgChildren()) { 
+			if (query.getIncludeOrgChildren()) { 
 				commonTableExpression = "WITH RECURSIVE parent_orgs(id) AS ( "
 						+ "SELECT id FROM organizations WHERE id = :orgId "
 					+ "UNION ALL "
@@ -109,7 +110,9 @@ public class SqliteReportSearcher implements IReportSearcher {
 		}
 		
 		if (query.getAdvisorOrgId() != null) { 
-			if (query.isIncludeAdvisorOrgChildren()) { 
+			if (query.getAdvisorOrgId() == -1) { 
+				whereClauses.add("reports.advisorOrganizationId IS NULL");
+			} else if (query.getIncludeAdvisorOrgChildren()) { 
 				commonTableExpression = "WITH RECURSIVE parent_orgs(id) AS ( "
 						+ "SELECT id FROM organizations WHERE id = :advisorOrgId "
 					+ "UNION ALL "
@@ -123,7 +126,9 @@ public class SqliteReportSearcher implements IReportSearcher {
 		}
 		
 		if (query.getPrincipalOrgId() != null) { 
-			if (query.isIncludePrincipalOrgChildren()) { 
+			if (query.getPrincipalOrgId() == -1) { 
+				whereClauses.add("reports.principalOrganizationId IS NULL");
+			} else if (query.getIncludePrincipalOrgChildren()) { 
 				commonTableExpression = "WITH RECURSIVE parent_orgs(id) AS ( "
 						+ "SELECT id FROM organizations WHERE id = :principalOrgId "
 					+ "UNION ALL "

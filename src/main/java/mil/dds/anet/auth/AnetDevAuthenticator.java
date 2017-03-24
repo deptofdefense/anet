@@ -24,7 +24,13 @@ public class AnetDevAuthenticator implements Authenticator<BasicCredentials, Per
 	public Optional<Person> authenticate(BasicCredentials credentials) throws AuthenticationException {
 		List<Person> p = dao.findByDomainUsername(credentials.getUsername());
 		if (p.size() > 0) { 
-			return Optional.of(p.get(0));
+			Person person = p.get(0);
+			if (person.getStatus().equals(PersonStatus.INACTIVE)) { 
+				//An Inactive person just logged in, make them active. 
+				person.setStatus(PersonStatus.ACTIVE);
+				AnetObjectEngine.getInstance().getPersonDao().update(person);
+			}
+			return Optional.of(person);
         }
         
 		if (credentials.getUsername().equals(credentials.getPassword())) {

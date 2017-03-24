@@ -43,6 +43,7 @@ import mil.dds.anet.beans.ApprovalAction.ApprovalType;
 import mil.dds.anet.beans.ApprovalStep;
 import mil.dds.anet.beans.Comment;
 import mil.dds.anet.beans.Organization;
+import mil.dds.anet.beans.Organization.OrganizationType;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.beans.Poam;
@@ -123,6 +124,12 @@ public class ReportResource implements IGraphQLResource {
 		return r;
 	}
 
+	//Returns a dateTime representing the very end of today. 
+	// Used to determine if a date is tomorrow or later. 
+	private DateTime tomorrow() { 
+		return DateTime.now().withHourOfDay(23).withMinuteOfHour(59).withSecondOfMinute(59);
+	}
+	
 	@POST
 	@Timed
 	@Path("/new")
@@ -137,6 +144,10 @@ public class ReportResource implements IGraphQLResource {
 		Person primaryPrincipal = findPrimaryAttendee(r, Role.PRINCIPAL);
 		if (r.getPrincipalOrg() == null && primaryPrincipal != null) {
 			r.setPrincipalOrg(engine.getOrganizationForPerson(primaryPrincipal));
+		}
+		
+		if (r.getEngagementDate() != null && r.getEngagementDate().isAfter(tomorrow())) { 
+			r.setState(ReportState.FUTURE);
 		}
 		
 		r = dao.insert(r);
@@ -162,6 +173,14 @@ public class ReportResource implements IGraphQLResource {
 		r.setApprovalStep(existing.getApprovalStep());
 		r.setAuthor(existing.getAuthor());
 		assertCanEditReport(r, editor);
+		
+		//If this report is in draft and in the future, set state to Future. 
+		if (ReportState.DRAFT.equals(r.getState()) && r.getEngagementDate() != null && r.getEngagementDate().isAfter(tomorrow())) { 
+			r.setState(ReportState.FUTURE);
+		} else if (ReportState.FUTURE.equals(r.getState()) && (r.getEngagementDate() == null || r.getEngagementDate().isBefore(tomorrow()))) {
+			//This catches a user editing the report to change date back to the past. 
+			r.setState(ReportState.DRAFT);
+		}
 		
 		//If there is a change to the primary advisor, change the advisor Org. 
 		Person primaryAdvisor = findPrimaryAttendee(r, Role.ADVISOR);
@@ -240,6 +259,7 @@ public class ReportResource implements IGraphQLResource {
 		switch (report.getState()) {
 		case DRAFT:
 		case REJECTED:
+		case FUTURE:
 			//Must be the author
 			if (!report.getAuthor().getId().equals(editor.getId())) {
 				throw new WebApplicationException(permError + "Must be the author of this report.", Status.FORBIDDEN);
@@ -293,6 +313,8 @@ public class ReportResource implements IGraphQLResource {
 
 		if (r.getEngagementDate() == null) {
 			throw new WebApplicationException("Missing engagement date", Status.BAD_REQUEST);
+		} else if (r.getEngagementDate().isAfter(tomorrow()) && r.getCancelledReason() == null) { 
+			throw new WebApplicationException("You cannot submit future engagements less they are cancelled", Status.BAD_REQUEST);
 		}
 
 		Organization org = engine.getOrganizationForPerson(r.getAuthor());
@@ -566,13 +588,33 @@ public class ReportResource implements IGraphQLResource {
 		return dao.search(query);
 	}
 
+	/** 
+	 * 
+	 * @param start Start timestamp for the rollup period
+	 * @param end end timestamp for the rollup period
+	 * @param engagementDateStart minimum date on reports to include 
+	 * @param orgType  If orgId is NULL then the type of organization (ADVISOR_ORG or PRINCIPAL_ORG) that the chart should filter on
+	 * @param orgId if orgType is NULL then the parent org to create the graph off of. All reports will be by/about this org or a child org. 
+	 * @return
+	 */
 	@GET
 	@Timed
 	@Path("/rollupGraph")
 	public List<RollupGraph> getDailyRollupGraph(@QueryParam("startDate") Long start, 
 			@QueryParam("endDate") Long end, 
-			@QueryParam("engagementDateStart") Long engagementDateStart) {
-		return dao.getDailyRollupGraph(new DateTime(start), new DateTime(end), new DateTime(engagementDateStart));
+			@QueryParam("orgType") OrganizationType orgType, 
+			@QueryParam("advisorOrganizationId") Integer advisorOrgId,
+			@QueryParam("principalOrganizationId") Integer principalOrgId) {
+		DateTime startDate = new DateTime(start);
+		DateTime endDate = new DateTime(end);
+		if (principalOrgId != null) { 
+			return dao.getDailyRollupGraph(startDate, endDate, principalOrgId, OrganizationType.PRINCIPAL_ORG);
+		} else if (advisorOrgId != null) { 
+			return dao.getDailyRollupGraph(startDate, endDate, advisorOrgId, OrganizationType.ADVISOR_ORG);
+		}
+		
+		if (orgType == null) { orgType = OrganizationType.ADVISOR_ORG; } 
+		return dao.getDailyRollupGraph(startDate, endDate, orgType);
 	}
 
 	@POST
@@ -581,11 +623,17 @@ public class ReportResource implements IGraphQLResource {
 	public Response emailRollup(@Auth Person user, 
 			@QueryParam("startDate") Long start, 
 			@QueryParam("endDate") Long end, 
+			@QueryParam("orgType") OrganizationType orgType, 
+			@QueryParam("advisorOrganizationId") Integer advisorOrgId,
+			@QueryParam("principalOrganizationId") Integer principalOrgId,
 			AnetEmail email) {
 		DailyRollupEmail action = new DailyRollupEmail();
 		action.setStartDate(new DateTime(start));
 		action.setEndDate(new DateTime(end));
 		action.setComment(email.getComment());
+		action.setAdvisorOrganizationId(advisorOrgId);
+		action.setPrincipalOrganizationId(principalOrgId);
+		action.setChartOrgType(orgType);
 
 		email.setAction(action);
 		AnetEmailWorker.sendEmailAsync(email);
@@ -602,10 +650,16 @@ public class ReportResource implements IGraphQLResource {
 	@Produces(MediaType.TEXT_HTML)
 	public Response showRollupEmail(@Auth Person user, @QueryParam("startDate") Long start, 
 			@QueryParam("endDate") Long end, 
+			@QueryParam("orgType") OrganizationType orgType, 
+			@QueryParam("advisorOrganizationId") Integer advisorOrgId,
+			@QueryParam("principalOrganizationId") Integer principalOrgId,
 			@QueryParam("showText") @DefaultValue("false") Boolean showReportText) {
 		DailyRollupEmail action = new DailyRollupEmail();
 		action.setStartDate(new DateTime(start));
 		action.setEndDate(new DateTime(end));
+		action.setChartOrgType(orgType);
+		action.setAdvisorOrganizationId(advisorOrgId);
+		action.setPrincipalOrganizationId(principalOrgId);
 		
 		Map<String,Object> context = action.execute();
 		context.put("serverUrl", config.getServerUrl());

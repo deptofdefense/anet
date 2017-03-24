@@ -111,7 +111,7 @@ export default class PositionShow extends Page {
 						id="assigned-advisor"
 						className={(!position.person || !position.person.id) && 'warning'}
 						style={{textAlign: 'center'}}
-						action={canEdit && <Button onClick={this.showAssignPersonModal}>Change assigned person</Button>} >
+						action={position.person && position.person.id && canEdit && <Button onClick={this.showAssignPersonModal}>Change assigned person</Button>} >
 						{position.person && position.person.id
 							? <div>
 								<h4><LinkTo person={position.person}>{position.person.rank} {position.person.name}</LinkTo></h4>
@@ -119,6 +119,9 @@ export default class PositionShow extends Page {
 							</div>
 							: <div>
 								<p><em>{position.name} is currently empty.</em></p>
+									{canEdit &&
+										<p><Button onClick={this.showAssignPersonModal}>Change assigned person</Button></p>
+									}
 							</div>
 						}
 						<AssignPersonModal

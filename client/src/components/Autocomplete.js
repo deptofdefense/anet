@@ -203,8 +203,11 @@ export default class Autocomplete extends Component {
 	onInputChange(event) {
 		if (!event.target.value) {
 			if (!this.props.clearOnSelect) {
-				//If the selection lives in this component, and the user just cleared the input
-				// Then set the selection to empty.
+				//If the component had a value, and the user just cleared the input
+				// then set the selection to an empty object. We need to do this because we need to
+				// tell the server that value was cleared, rather than that there was no change.
+				//This is so the server sees that the value is not-null, but that id is NULL.
+				//Which tells the server specifically that the id should be set to NULL on the foreignKey
 				this.onSuggestionSelected(event, {suggestion: {}, suggestionValue: ''})
 			}
 			if (this.props.onErrorChange) {

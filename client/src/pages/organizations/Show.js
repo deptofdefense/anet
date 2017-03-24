@@ -33,10 +33,12 @@ export default class OrganizationShow extends Page {
 		this.state = {
 			organization: new Organization({id: props.params.id}),
 			reports: null,
+			poams: null,
 			action: props.params.action
 		}
 
 		this.reportsPageNum = 0
+		this.poamsPageNum = 0
 		setMessages(props,this.state)
 	}
 
@@ -66,13 +68,28 @@ export default class OrganizationShow extends Page {
 		return reportsPart
 	}
 
+	getPoamQueryPart(orgId) {
+		let poamQuery = {
+			pageNum: this.poamsPageNum,
+			pageSize: 10,
+			responsibleOrgId: orgId
+		}
+		let poamsPart = new GQL.Part(/* GraphQL */`
+			poams: poamList(query:$poamQuery) {
+				pageNum, pageSize, totalCount, list {
+					id, shortName, longName
+				}
+			}`)
+			.addVariable("poamQuery", "PoamSearchQuery", poamQuery)
+		return poamsPart
+	}
+
 	fetchData(props) {
 		let orgPart = new GQL.Part(/* GraphQL */`
 			organization(id:${props.params.id}) {
 				id, shortName, longName, type
 				parentOrg { id, shortName, longName }
 				childrenOrgs { id, shortName, longName },
-				poams { id, shortName, longName },
 				positions {
 					id, name, code, status, type,
 					person { id, name, status, rank }
@@ -86,11 +103,13 @@ export default class OrganizationShow extends Page {
 				}
 			}`)
 		let reportsPart = this.getReportQueryPart(props.params.id)
+		let poamsPart = this.getPoamQueryPart(props.params.id)
 
-		GQL.run([orgPart, reportsPart]).then(data =>
+		GQL.run([orgPart, reportsPart, poamsPart]).then(data =>
 			this.setState({
 				organization: new Organization(data.organization),
-				reports: data.reports
+				reports: data.reports,
+				poams: data.poams
 			})
 		)
 	}
@@ -98,6 +117,7 @@ export default class OrganizationShow extends Page {
 	render() {
 		let org = this.state.organization
 		let reports = this.state.reports
+		let poams = this.state.poams
 
 		let currentUser = this.context.currentUser
 		let isSuperUser = currentUser && currentUser.isSuperUserForOrg(org)
@@ -170,7 +190,7 @@ export default class OrganizationShow extends Page {
 
 					<OrganizationLaydown organization={org} />
 					<OrganizationApprovals organization={org} />
-					<OrganizationPoams organization={org} />
+					<OrganizationPoams organization={org} poams={poams} goToPage={this.goToPoamsPage}/>
 
 					<Fieldset id="reports" title={`Reports from ${org.shortName}`}>
 						<ReportCollection
@@ -192,5 +212,13 @@ export default class OrganizationShow extends Page {
 		)
 	}
 
+	@autobind
+	goToPoamsPage(pageNum) {
+		this.poamsPageNum = pageNum
+		let poamQueryPart = this.getPoamQueryPart(this.state.organization.id)
+		GQL.run([poamQueryPart]).then(data =>
+			this.setState({poams: data.poams})
+		)
+	}
 
 }

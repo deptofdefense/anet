@@ -23,11 +23,12 @@ public class ReportSearchQuery implements ISearchQuery {
 	//Can use either orgId or one or both of advisorOrgId and principalOrgId
 	//only use orgId if you don't know the type of the organization. 
 	Integer advisorOrgId;
-	boolean includeAdvisorOrgChildren;
+	Boolean includeAdvisorOrgChildren;
+	//Set principalOrgId or advisorOrgId = -1 to tell ANET to search for reports specifically with a NULL organizationId. 
 	Integer principalOrgId;
-	boolean includePrincipalOrgChildren;
+	Boolean includePrincipalOrgChildren;
 	Integer orgId;
-	boolean includeOrgChildren;
+	Boolean includeOrgChildren;
 	
 	Integer locationId;
 	Integer poamId;
@@ -126,11 +127,11 @@ public class ReportSearchQuery implements ISearchQuery {
 		this.advisorOrgId = advisorOrgId;
 	}
 
-	public boolean isIncludeAdvisorOrgChildren() {
-		return includeAdvisorOrgChildren;
+	public boolean getIncludeAdvisorOrgChildren() {
+		return (includeAdvisorOrgChildren == null) ? false : includeAdvisorOrgChildren;
 	}
 
-	public void setIncludeAdvisorOrgChildren(boolean includeAdvisorOrgChildren) {
+	public void setIncludeAdvisorOrgChildren(Boolean includeAdvisorOrgChildren) {
 		this.includeAdvisorOrgChildren = includeAdvisorOrgChildren;
 	}
 
@@ -142,11 +143,11 @@ public class ReportSearchQuery implements ISearchQuery {
 		this.principalOrgId = principalOrgId;
 	}
 
-	public boolean isIncludePrincipalOrgChildren() {
-		return includePrincipalOrgChildren;
+	public boolean getIncludePrincipalOrgChildren() {
+		return (includePrincipalOrgChildren == null) ? false: includePrincipalOrgChildren;
 	}
 
-	public void setIncludePrincipalOrgChildren(boolean includePrincipalOrgChildren) {
+	public void setIncludePrincipalOrgChildren(Boolean includePrincipalOrgChildren) {
 		this.includePrincipalOrgChildren = includePrincipalOrgChildren;
 	}
 
@@ -158,8 +159,8 @@ public class ReportSearchQuery implements ISearchQuery {
 		this.orgId = orgId;
 	}
 
-	public boolean isIncludeOrgChildren() {
-		return includeOrgChildren;
+	public boolean getIncludeOrgChildren() {
+		return (includeOrgChildren == null) ? false : includeOrgChildren;
 	}
 
 	public void setIncludeOrgChildren(boolean includeOrgChildren) {

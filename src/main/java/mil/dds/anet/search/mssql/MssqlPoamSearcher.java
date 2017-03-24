@@ -56,13 +56,8 @@ public class MssqlPoamSearcher implements IPoamSearcher {
 			.bind("offset", query.getPageSize() * query.getPageNum())
 			.bind("limit", query.getPageSize())
 			.map(new PoamMapper());
-		result.setList(sqlQuery.list());
-		if (result.getList().size() > 0) { 
-			result.setTotalCount((Integer) sqlQuery.getContext().getAttribute("totalCount"));
-		} else { 
-			result.setTotalCount(0);
-		}
-		return result;
+		
+		return PoamList.fromQuery(sqlQuery, query.getPageNum(), query.getPageSize());
 	}
 	
 }

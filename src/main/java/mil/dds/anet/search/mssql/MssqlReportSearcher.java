@@ -96,7 +96,7 @@ public class MssqlReportSearcher implements IReportSearcher {
 			if (query.getAdvisorOrgId() != null || query.getPrincipalOrgId() != null) { 
 				throw new WebApplicationException("Cannot combine orgId with principalOrgId or advisorOrgId parameters", Status.BAD_REQUEST);
 			}
-			if (query.isIncludeOrgChildren()) { 
+			if (query.getIncludeOrgChildren()) { 
 				commonTableExpression = "WITH parent_orgs(id) AS ( "
 						+ "SELECT id FROM organizations WHERE id = :orgId "
 					+ "UNION ALL "
@@ -110,21 +110,26 @@ public class MssqlReportSearcher implements IReportSearcher {
 		}
 		
 		if (query.getAdvisorOrgId() != null) { 
-			if (query.isIncludeAdvisorOrgChildren()) { 
+			if (query.getAdvisorOrgId() == -1) { 
+				whereClauses.add("reports.advisorOrganizationId IS NULL");
+			} else if (query.getIncludeAdvisorOrgChildren()) { 
 				commonTableExpression = "WITH parent_orgs(id) AS ( "
 						+ "SELECT id FROM organizations WHERE id = :advisorOrgId "
 					+ "UNION ALL "
 						+ "SELECT o.id from parent_orgs po, organizations o WHERE o.parentOrgId = po.id "
 					+ ")";
 				whereClauses.add("reports.advisorOrganizationId IN (SELECT id from parent_orgs)");
-			} else { 
+			} else  { 
 				whereClauses.add("reports.advisorOrganizationId = :advisorOrgId");
 			}
+			
 			args.put("advisorOrgId", query.getAdvisorOrgId());
 		}
 		
 		if (query.getPrincipalOrgId() != null) { 
-			if (query.isIncludePrincipalOrgChildren()) { 
+			if (query.getPrincipalOrgId() == -1) { 
+				whereClauses.add("reports.principalOrganizationId IS NULL");
+			} else if (query.getIncludePrincipalOrgChildren()) { 
 				commonTableExpression = "WITH parent_orgs(id) AS ( "
 						+ "SELECT id FROM organizations WHERE id = :principalOrgId "
 					+ "UNION ALL "

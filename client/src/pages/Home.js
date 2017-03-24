@@ -89,12 +89,11 @@ export default class Home extends Page {
 
 	myOrgFuture(currentUser) {
 		if (!currentUser.position || !currentUser.position.organization) { return { query: {}} }
-		let start = moment().endOf('day').valueOf()
 		return {
 			title: currentUser.position.organization.shortName + "'s upcoming engagements",
 			query: {
 				advisorOrgId: currentUser.position.organization.id,
-				engagementDateStart: start
+				state: ["FUTURE"]
 			}
 		}
 	}
@@ -102,7 +101,7 @@ export default class Home extends Page {
 	allUpcoming() {
 		return {
 			title: "All upcoming engagements",
-			query: { engagementDateStart: moment().endOf('day').valueOf() }
+			query: { state: ["FUTURE"] }
 		}
 	}
 

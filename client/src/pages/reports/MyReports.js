@@ -1,124 +1,139 @@
-import React from 'react'
+import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 import Breadcrumbs from 'components/Breadcrumbs'
 import ReportCollection from 'components/ReportCollection'
-import API from 'api'
-import _get from 'lodash.get'
-import _mapValues from 'lodash.mapvalues'
+import GQL from 'graphql'
 import Report from 'models/Report'
 import Fieldset from 'components/Fieldset'
 import autobind from 'autobind-decorator'
 
 export default class MyReports extends Page {
-    constructor() {
-        super()
-        this.state = {}
-    }
+	static contextTypes = {
+		currentUser: PropTypes.object.isRequired,
+	}
 
-    componentWillReceiveProps(nextProps) {
-		if (!this.state.reports) {
-			this.loadData(nextProps)
+	constructor() {
+		super()
+		this.state = {
+			draft: null,
+			pending: null,
+			released: null
+		}
+		this.pageNums = {
+			draft: 0,
+			pending: 0,
+			released: 0
+		}
+		this.partFuncs = {
+			draft: this.getDraftPart,
+			pending: this.getPendingApprovalPart,
+			released: this.getReleasedPart
 		}
 	}
 
-    fetchData() {
-        API.query(/* GraphQL */`
-			person(f:me) {
-				pending: authoredReports(pageNum:0, pageSize:10, state: [PENDING_APPROVAL]) {
-                    pageNum, pageSize, totalCount, list {
-                        id, intent, engagementDate, keyOutcomes, nextSteps, atmosphere, state, updatedAt, cancelledReason
-                        primaryAdvisor { id, name } ,
-                        primaryPrincipal {id, name },
-                        advisorOrg { id, shortName, longName }
-                        principalOrg { id, shortName, longName }
-                        location { id, name, lat, lng }
-                    }
-                },
-				draft: authoredReports(pageNum:0, pageSize:10, state: [DRAFT]) {
-                    pageNum, pageSize, totalCount, list {
-                        id, intent, engagementDate, keyOutcomes, nextSteps, atmosphere, state, updatedAt, cancelledReason
-                        primaryAdvisor { id, name } ,
-                        primaryPrincipal {id, name },
-                        advisorOrg { id, shortName, longName }
-                        principalOrg { id, shortName, longName }
-                        location { id, name, lat, lng }
-                    }
-                },
-				released: authoredReports(pageNum:0, pageSize:10, state: [RELEASED]) {
-                    pageNum, pageSize, totalCount, list {
-                        id, intent, engagementDate, keyOutcomes, nextSteps, atmosphere, state, updatedAt, cancelledReason
-                        primaryAdvisor { id, name } ,
-                        primaryPrincipal {id, name },
-                        advisorOrg { id, shortName, longName }
-                        principalOrg { id, shortName, longName }
-                        location { id, name, lat, lng }
-                    }
-                },
-			}
-		`).then(data =>
-            this.setState({
-                reports: _mapValues(
-                    data.person,
-                    reportByStatus => ({list: Report.fromArray(reportByStatus.list), ...reportByStatus})
-                )
-            })
-        )
-    }
+	componentWillReceiveProps(nextProps, nextContext) {
+		if (!this.state.reports) {
+			this.loadData(nextProps, nextContext)
+		}
+	}
 
-    @autobind
-    queryReportPage(reportGroupName, state, pageNum) {
-        // TODO it would be better not to use string interpolation here for the graphql query,
-        // but I kept getting an error when I tried to pull $state out into a variable.
-        // I was passing state as a string with variable definition ($state: ReportState),
-        // and I got the following error:
-        //
-        //      {"errors":["Validation error of type VariableTypeMismatch: Variable type doesn't match"]}
-        API.query(/* GraphQL */`
-			person(f:me) {
-				authoredReports(pageNum: $pageNum, pageSize: 10, state: [${state}]) {
-                    pageNum, pageSize, totalCount, list {
-                        id, intent, engagementDate, keyOutcomes, nextSteps, atmosphere, state, updatedAt
-                        primaryAdvisor { id, name } ,
-                        primaryPrincipal {id, name },
-                        advisorOrg { id, shortName, longName }
-                        principalOrg { id, shortName, longName }
-                        location { id, name, lat, lng }
-                    }
-                }
-			}
-		`, {pageNum}, '($pageNum: Int)').then(data =>
-            this.setState({
-                reports: {
-                    ...this.state.reports,
-                    [reportGroupName]: ({
-                        list: Report.fromArray(data.person.authoredReports.list),
-                        ...data.person.authoredReports
-                    })
-                }
-            })
-        )
-    }
+	@autobind
+	getPendingApprovalPart(authorId) {
+		let query = {
+			pageSize: 10,
+			pageNum: this.pageNums.pending,
+			authorId: authorId,
+			state: ["PENDING_APPROVAL"]
+		}
+		return new GQL.Part(/* GraphQL */`
+			pending: reportList(query: $pendingQuery) {
+				pageNum, pageSize, totalCount, list {
+					${ReportCollection.GQL_REPORT_FIELDS}
+				}
+			}`).addVariable("pendingQuery", "ReportSearchQuery", query)
+	}
 
-    render() {
-        const ReportSection = props => {
-            let content = <p>Loading...</p>
-            const reportGroup = _get(this.state, ['reports', props.reportGroupName]),
-                goToPage = pageNum => this.queryReportPage(props.reportGroupName, props.reportGroupState, pageNum)
+	@autobind
+	getDraftPart(authorId) {
+		let query = {
+			pageSize: 10,
+			pageNum: this.pageNums.draft,
+			authorId: authorId,
+			state: ['DRAFT']
+		}
+		return new GQL.Part(/* GraphQL */ `
+			draft: reportList(query: $draftQuery) {
+				pageNum, pageSize, totalCount, list {
+					${ReportCollection.GQL_REPORT_FIELDS}
+				}
+			}`).addVariable("draftQuery", "ReportSearchQuery", query)
+	}
 
-            if (reportGroup) {
-                content = <ReportCollection paginatedReports={reportGroup} goToPage={goToPage} />
-            }
+	@autobind
+	getReleasedPart(authorId) {
+		let query = {
+			pageSize: 10,
+			pageNum: this.pageNums.released,
+			authorId: authorId,
+			state: ["RELEASED", "CANCELLED"]
+		}
+		return new GQL.Part(/* GraphQL */ `
+			released: reportList(query: $releasedQuery) {
+				pageNum, pageSize, totalCount, list {
+					${ReportCollection.GQL_REPORT_FIELDS}
+				}
+			}`).addVariable("releasedQuery", "ReportSearchQuery", query)
+	}
 
-            return <Fieldset title={props.title} id={props.id}>
-                {content}
-            </Fieldset>
-        }
 
-        return <div>
-            <Breadcrumbs items={[['My Reports', window.location.pathname]]} />
-            {ReportSection({title: 'Draft Reports', reportGroupName: 'draft', reportGroupState: 'DRAFT', id: 'draft-reports'})}
-            {ReportSection({title:"Pending Approval", reportGroupName:'pending', reportGroupState: 'PENDING', id: 'pending-approval'})}
-            {ReportSection({title: "Published Reports", reportGroupName:'released', reportGroupState: 'RELEASED', id: 'published-reports'})}
-        </div>
-    }
+	fetchData(props, context) {
+		if (!context.currentUser || !context.currentUser.id) {
+			return
+		}
+		let authorId = context.currentUser.id
+		let pending = this.getPendingApprovalPart(authorId)
+		let draft = this.getDraftPart(authorId)
+		let released = this.getReleasedPart(authorId)
+
+		GQL.run([pending, draft, released]).then(data =>
+			this.setState({
+				pending: data.pending,
+				draft: data.draft,
+				released: data.released
+			})
+		)
+	}
+
+	render() {
+		return <div>
+			<Breadcrumbs items={[['My Reports', window.location.pathname]]} />
+
+			{this.renderSection('Draft Reports', this.state.draft, this.goToPage.bind(this, 'draft'), 'draft-reports')}
+			{this.renderSection("Pending Approval", this.state.pending, this.goToPage.bind(this, 'pending'), 'pending-approval')}
+			{this.renderSection("Published Reports", this.state.released, this.goToPage.bind(this, 'released'), 'published-reports')}
+		</div>
+	}
+
+	renderSection(title, reports, goToPage, id) {
+		let content = <p>Loading...</p>
+		if (reports && reports.list) {
+			content = <ReportCollection paginatedReports={reports} goToPage={goToPage} />
+		}
+
+		return <Fieldset title={title} id={id}>
+			{content}
+		</Fieldset>
+	}
+
+	@autobind
+	goToPage(section, pageNum) {
+		this.pageNums[section] = pageNum
+		let part = (this.partFuncs[section])(this.context.currentUser.id)
+		GQL.run([part]).then( data => {
+			let stateChange = {}
+			stateChange[section] = data[section]
+			console.log(stateChange)
+			this.setState(stateChange)
+		})
+	}
 }

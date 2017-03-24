@@ -1,10 +1,15 @@
 package mil.dds.anet.utils;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nullable;
+
+import mil.dds.anet.beans.Organization;
 import mil.dds.anet.views.AbstractAnetBean;
 
 public class Utils {
@@ -85,5 +90,32 @@ public class Utils {
 	 */
 	public static String prepForLikeQuery(String text) {
 		return text.trim().replaceAll("[\"*]", "");
+	}
+
+	/**
+	 * Given a list of organizations and a topParentId, this function maps all of the organizations to their highest parent
+	 * within this list excluding the topParent.  This is used to generate graphs/tables that bubble things up to their highest parent
+	 * 
+	 * This is used in the daily rollup graphs. 
+	 */
+	public static Map<Integer, Organization> buildParentOrgMapping(List<Organization> orgs, @Nullable Integer topParentId) {
+		Map<Integer,Organization> result = new HashMap<Integer,Organization>();
+		Map<Integer,Organization> orgMap = new HashMap<Integer,Organization>();
+
+		for (Organization o : orgs) {
+			orgMap.put(o.getId(), o);
+		}
+
+		for (Organization o : orgs) {
+			int curr = o.getId();
+			Integer parentId = DaoUtils.getId(o.getParentOrg());
+			while (Objects.equals(parentId,topParentId) == false && orgMap.containsKey(parentId)) {
+				curr = parentId;
+				parentId = DaoUtils.getId(orgMap.get(parentId).getParentOrg());
+			}
+			result.put(o.getId(), orgMap.get(curr));
+		}
+
+		return result;
 	}
 }
