@@ -133,6 +133,11 @@ test.beforeEach(t => {
         t.pass(message || 'Element was not present')
     }
 
+    t.context.getCurrentPathname = async () => {
+        let currentUrl = await t.context.driver.getCurrentUrl()
+        return url.parse(currentUrl).pathname
+    }
+
     t.context.pageHelpers = {
         async goHomeAndThenToReportsPage() {
             await t.context.get('/')
@@ -203,8 +208,8 @@ test('Home Page', async t => {
     await assertElementNotPresent(t, '.hopscotch-title', 'Navigating to a new page clears the hopscotch tour')
 })
 
-test('Draft and submit a report', async t => {
-    t.plan(14)
+test.only('Draft and submit a report', async t => {
+    t.plan(15)
 
     let {pageHelpers, $, $$, assertElementText} = t.context
 
@@ -273,11 +278,12 @@ test('Draft and submit a report', async t => {
     await $formButtonSubmit.click()
     await pageHelpers.assertReportShowStatusText(t, "This report is in DRAFT state and hasn't been submitted.")
     
-    let currentUrl = await t.context.driver.getCurrentUrl()
-    t.regex(url.parse(currentUrl).pathname, /reports\/\d+/, 'URL is updated to reports/show page')
+    let currentPathname = await t.context.getCurrentPathname()
+    t.regex(currentPathname, /reports\/\d+/, 'URL is updated to reports/show page')
 
     let $submitReportButton = await $('#submitReportButton')
     await $submitReportButton.click()
+    // This assertion bombs out with a StaleElementReferenceError and I'm not sure why.
     // await pageHelpers.assertReportShowStatusText(t, "This report is PENDING approvals.")
 
     let $approveButton = await $('.approve-button')
@@ -308,6 +314,12 @@ test('Draft and submit a report', async t => {
         'Successfully approved report. It has been added to the daily rollup', 
         'When a report is approved, the user sees a message indicating that it has been added to the daily rollup'
     )
+
+    let $dailyRollupLink = await t.context.driver.findElement(By.linkText('Daily rollup'))
+    await $dailyRollupLink.click()
+
+    currentPathname = await t.context.getCurrentPathname()
+    t.is(currentPathname, '/rollup', 'Clicking the "daily rollup" link takes the user to the rollup page')
 })
 
 test('Verify that validation and other reports/new interactions work', async t => {
