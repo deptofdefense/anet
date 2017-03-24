@@ -163,18 +163,9 @@ public class Person extends AbstractAnetBean implements Principal {
 	
 	@GraphQLFetcher("authoredReports")
 	public ReportList loadAuthoredReports(@GraphQLParam("pageNum") Integer pageNum, @GraphQLParam("pageSize") Integer pageSize) { 
-		return this.loadAuthoredReports(pageNum, pageSize, null);
-	}
-	
-	@GraphQLFetcher("authoredReports")
-	public ReportList loadAuthoredReports(@GraphQLParam("pageNum") Integer pageNum, @GraphQLParam("pageSize") Integer pageSize, 
-			@GraphQLParam("state") List<ReportState> state) { 
 		ReportSearchQuery query = new ReportSearchQuery();
 		query.setPageNum(pageNum);
 		query.setPageSize(pageSize);
-		if (state != null) {
-			query.setState(state);
-		}
 		query.setAuthorId(id);
 		return AnetObjectEngine.getInstance().getReportDao().search(query);
 	}

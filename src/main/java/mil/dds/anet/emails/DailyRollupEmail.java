@@ -63,6 +63,8 @@ public class DailyRollupEmail extends AnetEmailAction {
 
 		ReportGrouping allReports = new ReportGrouping(reports);
 
+		if (chartOrgType == null) { chartOrgType = OrganizationType.PRINCIPAL_ORG; } 
+		
 		Map<String,Object> context = new HashMap<String,Object>();
 		context.put("reports", allReports);
 		context.put("cancelledReasons", ReportCancelledReason.values());
