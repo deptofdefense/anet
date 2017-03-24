@@ -4,6 +4,7 @@ let test = require('ava'),
     moment = require('moment'),
     _includes = require('lodash.includes'),
     _isFunction = require('lodash.isfunction'),
+    url = require('url'),
     path = require('path'),
     chalk = require('chalk')
 
@@ -191,7 +192,11 @@ test.beforeEach(t => {
             let $autocompleteSuggestion = await t.context.$('#react-autowhatever-1--item-0')
             await $autocompleteSuggestion.click()
             return $autocompleteTextbox
-        }
+        },
+        async writeInForm(inputSelector, text) {
+            let $meetingGoalInput = await t.context.$(inputSelector)
+            await $meetingGoalInput.sendKeys(text)
+        },
     }
 })
 
@@ -237,14 +242,13 @@ test('Home Page', async t => {
     await assertElementNotPresent(t, '.hopscotch-title', 'Navigating to a new page clears the hopscotch tour')
 })
 
-test('Draft and submit a report', async t => {
-    t.plan(6)
+test.only('Draft and submit a report', async t => {
+    t.plan(11)
 
     let {pageHelpers, $, $$, assertElementText} = t.context
 
     await pageHelpers.goHomeAndThenToReportsPage()
-    let $meetingGoalInput = await $('#intent')
-    await $meetingGoalInput.sendKeys('user input')
+    await pageHelpers.writeInForm('#intent', 'meeting goal')
 
     let $engagementDate = await $('#engagementDate')
     await $engagementDate.click()
@@ -281,9 +285,38 @@ test('Draft and submit a report', async t => {
     await assertElementText(t, $principalName, 'Christopf Topferness')
     await assertElementText(t, $principalPosition, 'Planning Captain')
     await assertElementText(t, $principalOrg, 'MoD')
+
+    let $poamsAutocomplete = await pageHelpers.chooseAutocompleteOption('#poams', '1.1.B')
+
+    t.is(
+        await $poamsAutocomplete.getAttribute('value'), 
+        '', 
+        'Clicking a PoAM autocomplete suggestion empties the autocomplete field.'
+    )
+
+    let $newPoamRow = await $('.poams-selector table tbody tr td')
+    await assertElementText(t, $newPoamRow, '1.1.B - Milestone the Second in EF1.1')
+
+    await pageHelpers.writeInForm('#keyOutcomes', 'key outcomes')
+    await pageHelpers.writeInForm('#nextSteps', 'next steps')
+
+    let $reportTextField = await $('.reportTextField')
+    t.false(await $reportTextField.isDisplayed(), 'Add details field should not be present before "add details" button is clicked"')
+
+    let $addDetailsButton = await $('#toggleReportDetails')
+    await $addDetailsButton.click()
+
+    await pageHelpers.writeInForm('.reportTextField .text-editor', 'report details')
+
+    let $formButtonSubmit = await $('#formBottomSubmit')
+    await $formButtonSubmit.click()
+
+    await assertElementText(t, await $('.report-draft-message h4'), "This report is in DRAFT state and hasn't been submitted.")
+    let currentUrl = await t.context.driver.getCurrentUrl()
+    t.regex(url.parse(currentUrl).pathname, /reports\/\d+/, 'URL is updated to reports/show page')
 })
 
-test('Report validation', async t => {
+test('Verify that validation and other reports/new interactions work', async t => {
     t.plan(28)
 
     let {assertElementText, $, $$, assertElementNotPresent, pageHelpers} = t.context
