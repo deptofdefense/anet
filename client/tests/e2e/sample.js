@@ -29,8 +29,9 @@ test.beforeEach(t => {
     // This method is a helper so we don't have to keep repeating the hostname.
     // Passing the authentication through the querystring is a hack so we can
     // pass the information along via window.fetch. 
-    t.context.get = async pathname => {
-        await t.context.driver.get(`http://localhost:3000${pathname}?user=erin&pass=erin`)
+    t.context.get = async (pathname, userPw) => {
+        let credentials = userPw || 'erin'
+        await t.context.driver.get(`http://localhost:3000${pathname}?user=${credentials}&pass=${credentials}`)
 
         // If we have a page-wide error message, we would like to cleanly fail the test on that.
         let $notFound
@@ -172,6 +173,19 @@ test.beforeEach(t => {
         }
         t.pass(message || 'Element was not present')
     }
+
+    t.context.pageHelpers = {
+        async goHomeAndThenToReportsPage() {
+            await t.context.get('/')
+
+            let $createButton = await t.context.$('#createButton')
+            await $createButton.click()
+        },
+        async clickTodayButton() {
+            let $todayButton = await t.context.$('.u-today-button')
+            await $todayButton.click()
+        }
+    }
 })
 
 // Shut down the browser when we are done.
@@ -216,26 +230,46 @@ test('Home Page', async t => {
     await assertElementNotPresent(t, '.hopscotch-title', 'Navigating to a new page clears the hopscotch tour')
 })
 
+test.only('Draft and submit a report', async t => {
+    t.plan(1)
+
+    let {pageHelpers, $} = t.context
+
+    await pageHelpers.goHomeAndThenToReportsPage()
+    let $meetingGoalInput = await $('#intent')
+    await $meetingGoalInput.sendKeys('user input')
+
+    let $engagementDate = await $('#engagementDate')
+    await $engagementDate.click()
+
+    await pageHelpers.clickTodayButton()
+
+    let $locationAutocomplete = await $('#location')
+    await $locationAutocomplete.sendKeys('general hospita')
+    let $autocompleteSuggestion = await $('#react-autowhatever-1--item-0')
+    await $autocompleteSuggestion.click()
+
+    t.is(
+        await $locationAutocomplete.getAttribute('value'), 
+        'General Hospital', 
+        'Clicking an autocomplete suggestion populates the autocomplete field.'
+    )
+})
+
 test('Report validation', async t => {
     t.plan(32)
 
-    let {assertElementText, $, $$, assertElementNotPresent} = t.context
+    let {assertElementText, $, $$, assertElementNotPresent, pageHelpers} = t.context
 
-    await t.context.get('/')
-    let $createButton = await $('#createButton')
-    await $createButton.click()
+    await pageHelpers.goHomeAndThenToReportsPage()
     await assertElementText(t, await $('.legend .title-text'), 'Create a new Report')
 
     let $searchBarInput = await $('#searchBarInput')
 
     async function verifyFieldIsRequired($fieldGroup, $input, warningClass, fieldName) {
         await $input.click()
-        if (fieldName.indexOf('Negative') !== -1) {
-            await t.context.waitForever()
-        }
         await $input.clear()
         await $searchBarInput.click()
-
 
         t.true(
             _includes(await $fieldGroup.getAttribute('class'), warningClass), 
@@ -264,8 +298,7 @@ test('Report validation', async t => {
     t.is(await $engagementDate.getAttribute('value'), '', 'Engagement date field starts blank')
     await $engagementDate.click()
 
-    let $todayButton = await $('.u-today-button')
-    await $todayButton.click()
+    await pageHelpers.clickTodayButton()
 
     t.is(
         await $engagementDate.getAttribute('value'), 
