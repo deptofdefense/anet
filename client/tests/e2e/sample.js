@@ -72,12 +72,13 @@ test.beforeEach(t => {
         )
         return await t.context.driver.findElement(locator)
     }
-    t.context.$$ =  async cssSelector => {
+    t.context.$$ = async (cssSelector, timeoutMs) => {
+        let waitTimeoutMs = timeoutMs || longWaitMs
         let locator = By.css(cssSelector)
         await t.context.driver.wait(
             until.elementsLocated(locator),
-            longWaitMs, 
-            `Could not find elements by css selector ${cssSelector} within ${longWaitMs} milliseconds`
+            waitTimeoutMs, 
+            `Could not find elements by css selector ${cssSelector} within ${waitTimeoutMs} milliseconds`
         )
         return t.context.driver.findElements(locator)
     }
@@ -342,9 +343,9 @@ test('Draft and submit a report', async t => {
         let reportsHrefs = await getReportHrefsForPage()
         let pageCount
         try {
-            pageCount = (await $$('.pagination li:not(:first-child):not(:last-child) a')).length
+            pageCount = (await $$('.pagination li:not(:first-child):not(:last-child) a', shortWaitMs)).length
         } catch (e) {
-            if (e.name === 'NoSuchElementError') {
+            if (e.name === 'TimeoutError') {
                 // If there are no pagination controls, then we do not need to look at multiple pages
                 return reportsHrefs
             }
