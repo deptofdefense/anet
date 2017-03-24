@@ -19,7 +19,7 @@ console.log(chalk.bold.cyan(
     `These tests assume that you have recently run ${path.resolve(__dirname, '..', '..', '..', 'insertSqlBaseData.sql')} on your SQLServer instance`
 ))
 
-let shortWait = 500
+let shortWaitMs = 500
 
 // We use the before hook to put helpers on t.context and set up test scaffolding.
 test.beforeEach(t => {
@@ -38,9 +38,9 @@ test.beforeEach(t => {
         try {
             await t.context.driver.wait(
                 until.elementTextIs(
-                    await t.context.$('.not-found-text', shortWait), 
+                    await t.context.$('.not-found-text', shortWaitMs), 
                     'There was an error processing this request. Please contact an administrator.'), 
-                shortWait
+                shortWaitMs
             )
             throw new Error('The API returned a 500. Do you need to restart the server?')
         } catch (e) {
@@ -61,9 +61,9 @@ test.beforeEach(t => {
         await t.context.driver.wait(() => {})
     }
 
-    let fiveSecondsMs = 5000
+    let longWaitMs = 7000
     t.context.$ = async (cssSelector, timeoutMs) => {
-        let waitTimeoutMs = timeoutMs || fiveSecondsMs
+        let waitTimeoutMs = timeoutMs || longWaitMs
         let locator = By.css(cssSelector)
         await t.context.driver.wait(
             until.elementLocated(locator), 
@@ -76,8 +76,8 @@ test.beforeEach(t => {
         let locator = By.css(cssSelector)
         await t.context.driver.wait(
             until.elementsLocated(locator),
-            fiveSecondsMs, 
-            `Could not find elements by css selector ${cssSelector} within ${fiveSecondsMs} milliseconds`
+            longWaitMs, 
+            `Could not find elements by css selector ${cssSelector} within ${longWaitMs} milliseconds`
         )
         return t.context.driver.findElements(locator)
     }
@@ -107,7 +107,7 @@ test.beforeEach(t => {
     t.context.assertElementTextIsInt = (t, $elem, message) => t.context.assertElementText(t, $elem, /^\d+$/,)
 
     t.context.assertElementNotPresent = async (t, cssSelector, message, timeoutMs) => {
-        let waitTimeoutMs = timeoutMs || fiveSecondsMs
+        let waitTimeoutMs = timeoutMs || longWaitMs
         try {
             await t.context.driver.wait(
                 async () => {
@@ -328,30 +328,30 @@ test.only('Draft and submit a report', async t => {
     }
 
     async function getAllReportHrefs() {
-        let reportsHrefsForCurrentPage = await getReportHrefsForPage()
-        let $paginationNextButton
+        let reportsHrefs = await getReportHrefsForPage()
+        let pageCount
         try {
-            $paginationNextButton = await $('.pagination li:last-child:not(.disabled) a')
-            await t.context.driver.wait(until.elementIsVisible($paginationNextButton))
+            pageCount = (await $$('.pagination li:not(:first-child):not(:last-child) a')).length
         } catch (e) {
             if (e.name === 'NoSuchElementError') {
-                // If there is not an enabled "next page" button, then we don't need to keep going.
-                return reportsHrefsForCurrentPage
+                // If there are no pagination controls, then we do not need to look at multiple pages
+                return reportsHrefs
             }
             throw e
         }
 
-        console.log('page button click')
-        try {
-            await $paginationNextButton.click()
-        }
-        catch (e) {
-            console.log(e, JSON.stringify(e))
-            await t.context.waitForever()
+        for (let pageIndex = 0; pageIndex < pageCount; pageIndex++) {
+            console.log('look for', pageIndex)
+            // +1 because nth-child is 1-indexed, 
+            // and +1 because the first pagination button will be the "previous" button.
+            let $pageButton = await $(`.pagination li:nth-child(${pageIndex + 2}) a`)
+            console.log('pre click', pageIndex)
+            await $pageButton.click()
+            console.log('post click', pageIndex)
+            reportsHrefs.push(...(await getReportHrefsForPage()))
         }
 
-        console.log('post page button click')
-        return reportsHrefsForCurrentPage.concat(await getAllReportHrefs())
+        return reportsHrefs
     }
 
     let allReportRefs = await getAllReportHrefs()
@@ -415,12 +415,12 @@ test('Verify that validation and other reports/new interactions work', async t =
     await $locationShortcutButton.click()
     t.is(await $locationInput.getAttribute('value'), 'General Hospital', 'Clicking the shortcut adds a location')
 
-    await assertElementNotPresent(t, '#cancelledReason', 'Cancelled reason should not be present initially', shortWait)
+    await assertElementNotPresent(t, '#cancelledReason', 'Cancelled reason should not be present initially', shortWaitMs)
     let $atmosphereFormGroup = await $('.atmosphere-form-group')
     t.true(await $atmosphereFormGroup.isDisplayed(), 'Atmosphere form group should be shown by default')
 
     await assertElementNotPresent(
-        t, '#atmosphere-details', 'Atmosphere details should not be displayed before choosing an atmosphere', shortWait
+        t, '#atmosphere-details', 'Atmosphere details should not be displayed before choosing an atmosphere', shortWaitMs
     )
 
     let $positiveAtmosphereButton = await $('#positiveAtmos')
@@ -454,7 +454,7 @@ test('Verify that validation and other reports/new interactions work', async t =
     await $cancelledCheckbox.click()
 
     await assertElementNotPresent(
-        t, '.atmosphere-form-group', 'After cancelling the enagement, the atmospherics should be hidden', shortWait
+        t, '.atmosphere-form-group', 'After cancelling the enagement, the atmospherics should be hidden', shortWaitMs
     )
     let $cancelledReason = await $('.cancelled-reason-form-group')
     t.true(await $cancelledReason.isDisplayed(), 'After cancelling the engagement, the cancellation reason should appear')
