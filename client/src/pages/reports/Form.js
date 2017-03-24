@@ -93,6 +93,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 		let {recents, errors, isCancelled, showAutoSaveBanner} = this.state
 
 		let hasErrors = Object.keys(errors).length > 0
+		let isFuture = report.engagementDate && moment().endOf("day").isBefore(report.engagementDate)
 
 		const invalidInputWarningMessage = <HelpBlock><b>
 			<img src={WARNING_ICON} role="presentation" height="20px" />
@@ -127,6 +128,11 @@ export default class ReportForm extends ValidatableFormWrapper {
 
 					<Form.Field id="engagementDate" addon={CALENDAR_ICON}>
 						<DatePicker showTodayButton placeholder="When did it happen?" dateFormat="DD/MM/YYYY" showClearButton={false} />
+						{isFuture &&
+							<Form.Field.ExtraCol>
+								<span className='text-success' >This will create a future engagement</span>
+							</Form.Field.ExtraCol>
+						}
 					</Form.Field>
 
 					<Form.Field id="location" addon={LOCATION_ICON} validationState={errors.location}

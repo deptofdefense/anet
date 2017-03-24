@@ -97,7 +97,7 @@ export default class ReportShow extends Page {
 		let canApprove = report.isPending() && currentUser.position &&
 			report.approvalStep.approvers.find(member => Position.isEqual(member, currentUser.position))
 		//Authors can edit in draft mode, rejected mode, or Pending Mode
-		let canEdit = (report.isDraft() || report.isPending() || report.isRejected()) && Person.isEqual(currentUser, report.author)
+		let canEdit = (report.isDraft() || report.isPending() || report.isRejected() || report.isFuture()) && Person.isEqual(currentUser, report.author)
 		//Approvers can edit.
 		canEdit = canEdit || canApprove
 
@@ -107,7 +107,7 @@ export default class ReportShow extends Page {
 		//Anbody can email a report as long as it's not in draft.
 		let canEmail = !report.isDraft()
 
-		let errors = report.isDraft() && report.validateForSubmit()
+		let errors = (report.isDraft() || report.isFuture()) && report.validateForSubmit()
 
 		let isCancelled = report.cancelledReason ? true : false
 
@@ -140,6 +140,18 @@ export default class ReportShow extends Page {
 					<Fieldset style={{textAlign: 'center'}}>
 						<h4 className="text-danger">This report is PENDING approvals.</h4>
 						<p>It won't be available in the ANET database until your <a href="#approvals">approval organization</a> marks it as approved.</p>
+					</Fieldset>
+				}
+
+				{report.isFuture() &&
+					<Fieldset style={{textAlign: 'center'}}>
+						<h4 className="text-success">This report is for a FUTURE engagement.</h4>
+						<p>After your engagement has taken place, edit and submit this document as an engagement report.</p>
+						<div style={{textAlign: 'left'}}>
+							{errors && errors.length > 0 &&
+								this.renderValidationErrors(errors)
+							}
+						</div>
 					</Fieldset>
 				}
 
@@ -515,8 +527,13 @@ export default class ReportShow extends Page {
 	}
 
 	renderValidationErrors(errors) {
-		return <Alert bsStyle="danger">
-			The following errors must be fixed before submitting this report
+		let warning = this.state.report.isFuture() ?
+			'You\'ll need to fill out these required fields before you can submit your final report:'
+			:
+			'The following errors must be fixed before submitting this report'
+		let style = this.state.report.isFuture() ? "info" : "danger"
+		return <Alert bsStyle={style}>
+			{warning}
 			<ul>
 			{ errors.map((error,idx) =>
 				<li key={idx}>{error}</li>

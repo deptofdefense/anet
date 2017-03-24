@@ -22,7 +22,7 @@ import mil.dds.anet.views.AbstractAnetBean;
 
 public class Report extends AbstractAnetBean {
 
-	public enum ReportState { DRAFT, PENDING_APPROVAL, RELEASED, REJECTED, CANCELLED }
+	public enum ReportState { DRAFT, PENDING_APPROVAL, RELEASED, REJECTED, CANCELLED, FUTURE }
 	public enum Atmosphere { POSITIVE, NEUTRAL, NEGATIVE }
 	public enum ReportCancelledReason { CANCELLED_BY_ADVISOR,
                                             CANCELLED_BY_PRINCIPAL,

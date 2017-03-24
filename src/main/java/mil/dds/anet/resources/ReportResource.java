@@ -124,6 +124,12 @@ public class ReportResource implements IGraphQLResource {
 		return r;
 	}
 
+	//Returns a dateTime representing the very end of today. 
+	// Used to determine if a date is tomorrow or later. 
+	private DateTime tomorrow() { 
+		return DateTime.now().withHourOfDay(23).withMinuteOfHour(59).withSecondOfMinute(59);
+	}
+	
 	@POST
 	@Timed
 	@Path("/new")
@@ -138,6 +144,10 @@ public class ReportResource implements IGraphQLResource {
 		Person primaryPrincipal = findPrimaryAttendee(r, Role.PRINCIPAL);
 		if (r.getPrincipalOrg() == null && primaryPrincipal != null) {
 			r.setPrincipalOrg(engine.getOrganizationForPerson(primaryPrincipal));
+		}
+		
+		if (r.getEngagementDate() != null && r.getEngagementDate().isAfter(tomorrow())) { 
+			r.setState(ReportState.FUTURE);
 		}
 		
 		r = dao.insert(r);
@@ -163,6 +173,14 @@ public class ReportResource implements IGraphQLResource {
 		r.setApprovalStep(existing.getApprovalStep());
 		r.setAuthor(existing.getAuthor());
 		assertCanEditReport(r, editor);
+		
+		//If this report is in draft and in the future, set state to Future. 
+		if (ReportState.DRAFT.equals(r.getState()) && r.getEngagementDate() != null && r.getEngagementDate().isAfter(tomorrow())) { 
+			r.setState(ReportState.FUTURE);
+		} else if (ReportState.FUTURE.equals(r.getState()) && (r.getEngagementDate() == null || r.getEngagementDate().isBefore(tomorrow()))) {
+			//This catches a user editing the report to change date back to the past. 
+			r.setState(ReportState.DRAFT);
+		}
 		
 		//If there is a change to the primary advisor, change the advisor Org. 
 		Person primaryAdvisor = findPrimaryAttendee(r, Role.ADVISOR);
@@ -241,6 +259,7 @@ public class ReportResource implements IGraphQLResource {
 		switch (report.getState()) {
 		case DRAFT:
 		case REJECTED:
+		case FUTURE:
 			//Must be the author
 			if (!report.getAuthor().getId().equals(editor.getId())) {
 				throw new WebApplicationException(permError + "Must be the author of this report.", Status.FORBIDDEN);
@@ -294,6 +313,8 @@ public class ReportResource implements IGraphQLResource {
 
 		if (r.getEngagementDate() == null) {
 			throw new WebApplicationException("Missing engagement date", Status.BAD_REQUEST);
+		} else if (r.getEngagementDate().isAfter(tomorrow()) && r.getCancelledReason() == null) { 
+			throw new WebApplicationException("You cannot submit future engagements less they are cancelled", Status.BAD_REQUEST);
 		}
 
 		Organization org = engine.getOrganizationForPerson(r.getAuthor());

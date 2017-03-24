@@ -33,6 +33,10 @@ export default class Report extends Model {
 		return this.state === 'REJECTED'
 	}
 
+	isFuture() {
+		return this.state === 'FUTURE'
+	}
+
 	toString() {
 		return this.intent || 'None'
 	}
