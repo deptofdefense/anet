@@ -197,6 +197,13 @@ test.beforeEach(t => {
             let $meetingGoalInput = await t.context.$(inputSelector)
             await $meetingGoalInput.sendKeys(text)
         },
+        async assertReportShowStatusText(text) {
+            await t.context.assertElementText(
+                t, 
+                await t.context.$('.report-draft-message h4'), 
+                "This report is in DRAFT state and hasn't been submitted."
+            )
+        },
     }
 })
 
@@ -310,10 +317,24 @@ test.only('Draft and submit a report', async t => {
 
     let $formButtonSubmit = await $('#formBottomSubmit')
     await $formButtonSubmit.click()
-
-    await assertElementText(t, await $('.report-draft-message h4'), "This report is in DRAFT state and hasn't been submitted.")
+    await pageHelpers.assertReportShowStatusText("This report is in DRAFT state and hasn't been submitted.")
+    
     let currentUrl = await t.context.driver.getCurrentUrl()
     t.regex(url.parse(currentUrl).pathname, /reports\/\d+/, 'URL is updated to reports/show page')
+
+    let $submitReportButton = await $('#submitReportButton')
+    await $submitReportButton.click()
+    await pageHelpers.assertReportShowStatusText("This report is PENDING approvals.")
+
+    let $approveButton = await $('.approve-button')
+    await $approveButton.click()
+
+    await assertElementText(
+        t, 
+        await $('.alert'), 
+        'Successfully approved report.', 
+        'Clicking the approve button displays a message telling the user that the action was successful.'
+    )
 })
 
 test('Verify that validation and other reports/new interactions work', async t => {
@@ -450,8 +471,7 @@ test('Verify that validation and other reports/new interactions work', async t =
 
     let $submitButton = await $('#formBottomSubmit')
     await $submitButton.click()
-
-    await assertElementText(t, await $('.report-draft-message h4'), "This report is in DRAFT state and hasn't been submitted.")
+    await pageHelpers.assertReportShowStatusText("This report is in DRAFT state and hasn't been submitted.")
 })
 
 test('Report 404', async t => {
