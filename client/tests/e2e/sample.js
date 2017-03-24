@@ -61,7 +61,7 @@ test.beforeEach(t => {
         await t.context.driver.wait(() => {})
     }
 
-    let longWaitMs = 7000
+    let longWaitMs = 10000
     t.context.$ = async (cssSelector, timeoutMs) => {
         let waitTimeoutMs = timeoutMs || longWaitMs
         let locator = By.css(cssSelector)
@@ -173,6 +173,9 @@ test.afterEach.always(async t => {
     }
 })
 
+// Ava provides a nice ability to run tests in parallel, but we need to run these tests
+// synchronously because too much parallel activity causes webdriver to throw EPIPE errors.
+
 test('Home Page', async t => {
     // We can use t.plan() to indicate how many assertions we plan to make.
     // This provides safety in case there's a silent failure and the test
@@ -208,7 +211,7 @@ test('Home Page', async t => {
     await assertElementNotPresent(t, '.hopscotch-title', 'Navigating to a new page clears the hopscotch tour')
 })
 
-test.only('Draft and submit a report', async t => {
+test('Draft and submit a report', async t => {
     t.plan(16)
 
     let {pageHelpers, $, $$, assertElementText} = t.context
@@ -324,7 +327,15 @@ test.only('Draft and submit a report', async t => {
 
     async function getReportHrefsForPage() {
         let $readReportButtons = await $$('.read-report-button')
-        return await Promise.all($readReportButtons.map(button => button.getAttribute('href')))
+
+        // Normally, we would do a Promise.all here to read all button href values in parallel.
+        // However, hilariously, that causes webdriver to fail with EPIPE errors. So we will 
+        // issue the commands synchronously to avoid overloading it.
+        let hrefs = []
+        for (let $button of $readReportButtons) {
+            hrefs.push(await $button.getAttribute('href'))
+        }
+        return hrefs
     }
 
     async function getAllReportHrefs() {
@@ -340,15 +351,18 @@ test.only('Draft and submit a report', async t => {
             throw e
         }
 
-        for (let pageIndex = 0; pageIndex < pageCount; pageIndex++) {
-            console.log('look for', pageIndex)
+        for (let pageIndex = 1; pageIndex < pageCount; pageIndex++) {
             // +1 because nth-child is 1-indexed, 
             // and +1 because the first pagination button will be the "previous" button.
             let $pageButton = await $(`.pagination li:nth-child(${pageIndex + 2}) a`)
-            console.log('pre click', pageIndex)
+            await t.context.driver.wait(until.elementIsVisible($pageButton))
+
             await $pageButton.click()
-            console.log('post click', pageIndex)
-            reportsHrefs.push(...(await getReportHrefsForPage()))
+            // After we click the button, we need to give React time to load the new results
+            await t.context.driver.wait(until.elementLocated(By.css(`.pagination li:nth-child(${pageIndex + 2}).active a`)))
+            
+            let reportHrefsForPage = await getReportHrefsForPage()
+            reportsHrefs.push(...reportHrefsForPage)
         }
 
         return reportsHrefs
