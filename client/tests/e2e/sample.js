@@ -509,35 +509,44 @@ test('Verify that validation and other reports/new interactions work', async t =
     await pageHelpers.assertReportShowStatusText(t, "This report is in DRAFT state and hasn't been submitted.")
 })
 
-test.only('Move someone in and out of a position', async t => {
-    t.plan(0)
+test('Move someone in and out of a position', async t => {
+    t.plan(1)
 
-    let {$, $$} = t.context
+    let {$, $$, assertElementText} = t.context
 
     await t.context.get('/', 'rebecca')
     let $myOrgLink = await $('#my-organization')
     await $myOrgLink.click()
 
     let $supportedPositionsRows = await $$('#supportedPositions table tbody tr')
-    let $erinLink
+    let $erinCell
     for (let $row of $supportedPositionsRows) {
         let [$billetCell, $advisorCell] = await $row.findElements(By.css('td'))
         let billetText = await $billetCell.getText()
         let advisorText = await $advisorCell.getText()
 
         if (billetText === 'EF2.2 Advisor D' && advisorText === 'Civ Erin Erinson') {
-            $erinLink = $advisorCell
+            $erinCell = $advisorCell
             break
         }
     }
 
-    if (!$erinLink) {
-        t.fail('Could not find Erin Erinson in the supported positions table.' +
+    if (!$erinCell) {
+        t.fail('Could not find Erin Erinson in the supported positions table. ' +
             'Please fix the database to be the way this test expects.')
     }
 
-    await t.context.driver.wait(until.elementIsVisible($erinLink))
+    await t.context.driver.wait(until.elementIsVisible($erinCell))
+    let $erinLink = await $erinCell.findElement(By.css('a'))
     await $erinLink.click()
+
+    let $changeAssignedPositionButton = await $('.change-assigned-position')
+    await $changeAssignedPositionButton.click()
+
+    let $removePersonButton = await $('.remove-person-from-position')
+    await $removePersonButton.click()
+
+    await assertElementText(t, await $('p.not-assigned-to-position-message'), 'Erin Erinson is not assigned to a position.')
 })
 
 test('Report 404', async t => {

@@ -174,7 +174,9 @@ export default class PersonShow extends Page {
 							action={position && position.id && canChangePosition &&
 								<div>
 									<LinkTo position={position} edit button="default" >Edit position details</LinkTo>
-									<Button onClick={this.showAssignPositionModal}>Change assigned position</Button>
+									<Button onClick={this.showAssignPositionModal} className="change-assigned-position">
+										Change assigned position
+									</Button>
 								</div>}>
 							{position && position.id
 								? this.renderPosition(position)
@@ -268,7 +270,7 @@ export default class PersonShow extends Page {
 			return <em>You are not assigned to a position. Contact your organization's super user to be added.</em>
 		} else {
 			return <div style={{textAlign: 'center'}}>
-				<p><em>{person.name} is not assigned to a position.</em></p>
+				<p className="not-assigned-to-position-message"><em>{person.name} is not assigned to a position.</em></p>
 				{canChangePosition &&
 					<p><Button onClick={this.showAssignPositionModal}>Assign position</Button></p>
 				}
