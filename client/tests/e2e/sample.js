@@ -1,6 +1,6 @@
 let test = require('ava'),
     webdriver = require('selenium-webdriver'),
-    By = webdriver.By,
+    {By, until} = webdriver,
     moment = require('moment'),
     _includes = require('lodash.includes'),
     _isFunction = require('lodash.isfunction'),
@@ -197,12 +197,8 @@ test.beforeEach(t => {
             let $meetingGoalInput = await t.context.$(inputSelector)
             await $meetingGoalInput.sendKeys(text)
         },
-        async assertReportShowStatusText(text) {
-            await t.context.assertElementText(
-                t, 
-                await t.context.$('.report-draft-message h4'), 
-                "This report is in DRAFT state and hasn't been submitted."
-            )
+        async assertReportShowStatusText(t, text) {
+            await t.context.assertElementText(t, await t.context.$('.report-show h4'), text)
         },
     }
 })
@@ -250,7 +246,7 @@ test('Home Page', async t => {
 })
 
 test.only('Draft and submit a report', async t => {
-    t.plan(11)
+    t.plan(14)
 
     let {pageHelpers, $, $$, assertElementText} = t.context
 
@@ -317,14 +313,14 @@ test.only('Draft and submit a report', async t => {
 
     let $formButtonSubmit = await $('#formBottomSubmit')
     await $formButtonSubmit.click()
-    await pageHelpers.assertReportShowStatusText("This report is in DRAFT state and hasn't been submitted.")
+    await pageHelpers.assertReportShowStatusText(t, "This report is in DRAFT state and hasn't been submitted.")
     
     let currentUrl = await t.context.driver.getCurrentUrl()
     t.regex(url.parse(currentUrl).pathname, /reports\/\d+/, 'URL is updated to reports/show page')
 
     let $submitReportButton = await $('#submitReportButton')
     await $submitReportButton.click()
-    await pageHelpers.assertReportShowStatusText("This report is PENDING approvals.")
+    await pageHelpers.assertReportShowStatusText(t, "This report is PENDING approvals.")
 
     let $approveButton = await $('.approve-button')
     await $approveButton.click()
@@ -334,6 +330,25 @@ test.only('Draft and submit a report', async t => {
         await $('.alert'), 
         'Successfully approved report.', 
         'Clicking the approve button displays a message telling the user that the action was successful.'
+    )
+
+    await t.context.get('/', 'rebecca')
+    let $homeTile = await $('.home-tile')
+    await t.context.driver.wait(until.elementIsVisible($homeTile))
+    await $homeTile.click()
+
+    let $firstReadReportButton = await $('.read-report-button')
+    await $firstReadReportButton.click()
+
+    await pageHelpers.assertReportShowStatusText(t, "This report is PENDING approvals.")
+    let $rebeccaApproveButton = await $('.approve-button')
+    await $rebeccaApproveButton.click()
+
+    await assertElementText(
+        t, 
+        await $('.alert'), 
+        'Successfully approved report. It has been added to the daily rollup', 
+        'When a report is approved, the user sees a message indicating that it has been added to the daily rollup'
     )
 })
 
@@ -471,7 +486,7 @@ test('Verify that validation and other reports/new interactions work', async t =
 
     let $submitButton = await $('#formBottomSubmit')
     await $submitButton.click()
-    await pageHelpers.assertReportShowStatusText("This report is in DRAFT state and hasn't been submitted.")
+    await pageHelpers.assertReportShowStatusText(t, "This report is in DRAFT state and hasn't been submitted.")
 })
 
 test('Report 404', async t => {

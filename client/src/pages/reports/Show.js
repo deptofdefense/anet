@@ -125,7 +125,7 @@ export default class ReportShow extends Page {
 				}
 
 				{report.isDraft() &&
-					<Fieldset style={{textAlign: 'center'}} className="report-draft-message">
+					<Fieldset style={{textAlign: 'center'}}>
 						<h4 className="text-danger">This report is in DRAFT state and hasn't been submitted.</h4>
 						<p>You can review the draft below to make sure all the details are correct.</p>
 						<div style={{textAlign: 'left'}}>
