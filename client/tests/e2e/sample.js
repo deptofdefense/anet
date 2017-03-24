@@ -70,38 +70,22 @@ test.beforeEach(t => {
     let fiveSecondsMs = 5000
     t.context.$ = async (cssSelector, timeoutMs) => {
         let waitTimeoutMs = timeoutMs || fiveSecondsMs
-        let $foundElem
-        await t.context.driver.wait(async () => {
-                try {
-                    $foundElem = await t.context.driver.findElement(By.css(cssSelector))
-                    return true
-                } catch (e) {
-                    if (e.name === 'NoSuchElementError') {
-                        return false
-                    }
-                    throw e
-                }
-            },
-            waitTimeoutMs, 
+        let locator = By.css(cssSelector)
+        await t.context.driver.wait(
+            until.elementLocated(locator), 
+            waitTimeoutMs,
             `Could not find element by css selector ${cssSelector} within ${waitTimeoutMs} milliseconds`
         )
-        return $foundElem
+        return await t.context.driver.findElement(locator)
     }
     t.context.$$ =  async cssSelector => {
-        await t.context.driver.wait(async () => {
-                try {
-                    return t.context.driver.findElements(By.css(cssSelector))
-                } catch (e) {
-                    if (e.name === 'NoSuchElementError') {
-                        return false
-                    }
-                    throw e
-                }
-            },
+        let locator = By.css(cssSelector)
+        await t.context.driver.wait(
+            until.elementsLocated(locator),
             fiveSecondsMs, 
             `Could not find elements by css selector ${cssSelector} within ${fiveSecondsMs} milliseconds`
         )
-        return t.context.driver.findElements(By.css(cssSelector))
+        return t.context.driver.findElements(locator)
     }
 
     // This helper method is necessary because we don't know when React has finished rendering the page.
