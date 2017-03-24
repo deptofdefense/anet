@@ -3,7 +3,7 @@ let test = require('ava'),
     {By, until} = webdriver,
     moment = require('moment'),
     _includes = require('lodash.includes'),
-    _isFunction = require('lodash.isfunction'),
+    _isRegExp = require('lodash.isregexp'),
     url = require('url'),
     path = require('path'),
     chalk = require('chalk')
@@ -35,27 +35,21 @@ test.beforeEach(t => {
         await t.context.driver.get(`http://localhost:3000${pathname}?user=${credentials}&pass=${credentials}`)
 
         // If we have a page-wide error message, we would like to cleanly fail the test on that.
-        let $notFound
         try {
-            $notFound = await t.context.$('.not-found-text', shortWait)
-        } catch (e) {
-            // If we couldn't find the error message element, then we don't need to fail the test.
-            if (e.name === 'TimeoutError') {
-                return
-            }
-            throw e
-        }
-
-        // If we have an error message, let's see if it's the backend 500 error.
-        try {
-            await t.context.waitUntilElementHasText(
-                $notFound, 
-                'There was an error processing this request. Please contact an administrator.', 
+            await t.context.driver.wait(
+                until.elementTextIs(
+                    await t.context.$('.not-found-text', shortWait), 
+                    'There was an error processing this request. Please contact an administrator.'), 
                 shortWait
             )
             throw new Error('The API returned a 500. Do you need to restart the server?')
         } catch (e) {
-            if (e.name !== 'TimeoutError') {
+            // NoSuchElementError: If we didn't find the "not found text" element, then we are not seeing a page-wide failure.
+            // StaleElementReferenceError: If we found the "not found text" element but it's no longer on the page, 
+            //      then we are not seeing a page-wide failure.
+            // TimeoutError: If we found the "not found text" element, but the text was never the backend error message,
+            //      then we are not seeing a page-wide failure.
+            if (!_includes(['NoSuchElementError', 'StaleElementReferenceError', 'TimeoutError'], e.name)) {
                 throw e
             }
         }
@@ -88,32 +82,13 @@ test.beforeEach(t => {
         return t.context.driver.findElements(locator)
     }
 
-    // This helper method is necessary because we don't know when React has finished rendering the page.
-    // We will wait for it to be done, with a max timeout so the test does not hang if the rendering fails.
-    t.context.waitUntilElementHasText = async ($elem, expectedText, timeoutMs) => {
-        let waitTimeoutMs = timeoutMs || fiveSecondsMs
-        let textIsCorrect = _isFunction(expectedText) ? expectedText : text => text === expectedText
-            await t.context.driver.wait(async () => {
-            try {
-                let text = await $elem.getText()
-                return textIsCorrect(text)
-            } catch (e) {
-                // If $elem has been removed from the DOM since it was queried for,
-                // we'll get a NoSuchElementError when trying to find its text.
-                // If the element is not in the DOM, then it certainly does not
-                // have the text we are looking for, so we'll return false.
-                if (e.name === 'StaleElementReferenceError') {
-                    return false
-                }
-                throw e
-            }
-        }, waitTimeoutMs, `Element did not have text '${expectedText}' within ${waitTimeoutMs} milliseconds`)
-    }
-
     // A helper function to combine waiting for an element to have rendered and then asserting on its contents.
     t.context.assertElementText = async (t, $elem, expectedText, message) => {
         try {
-            await t.context.waitUntilElementHasText($elem, expectedText)
+            let untilCondition = _isRegExp(expectedText) ? 
+                    until.elementTextMatches($elem, expectedText) : until.elementTextIs($elem, expectedText)
+
+            await t.context.driver.wait(untilCondition)
         } catch (e) {
             // If we got a TimeoutError because the element did not have the text we expected, just swallow it here
             // and let the assertion on blow up instead. That will produce a clearer error message.
@@ -122,15 +97,14 @@ test.beforeEach(t => {
             }
         }
         let actualText = (await $elem.getText()).trim()
-        if (_isFunction(expectedText)) {
-            t.true(expectedText(actualText), message)
+        if (_isRegExp(expectedText)) {
+            t.regex(actualText, expectedText, actualText, message)
         } else {
             t.is(actualText, expectedText, message)
         }
     }
 
-    t.context.assertElementTextIsNumeric = (t, $elem, message) => 
-        t.context.assertElementText(t, $elem, text => parseInt(text, 10).toString() === text)
+    t.context.assertElementTextIsInt = (t, $elem, message) => t.context.assertElementText(t, $elem, /^\d+$/,)
 
     t.context.assertElementNotPresent = async (t, cssSelector, message, timeoutMs) => {
         let waitTimeoutMs = timeoutMs || fiveSecondsMs
@@ -202,17 +176,17 @@ test('Home Page', async t => {
     // do not offer test planning.
     t.plan(6)
 
-    let {assertElementText, assertElementNotPresent, assertElementTextIsNumeric, $, $$} = t.context
+    let {assertElementText, assertElementNotPresent, assertElementTextIsInt, $, $$} = t.context
 
     await t.context.get('/')
 
     // Use a CSS selector to find an element that we care about on the page.
     let [$reportsPending, $draftReports, $orgReports, $upcomingEngagements] = await $$('.home-tile h1')
 
-    await assertElementTextIsNumeric(t, $reportsPending)
-    await assertElementTextIsNumeric(t, $draftReports)
-    await assertElementTextIsNumeric(t, $orgReports)
-    await assertElementTextIsNumeric(t, $upcomingEngagements)
+    await assertElementTextIsInt(t, $reportsPending)
+    await assertElementTextIsInt(t, $draftReports)
+    await assertElementTextIsInt(t, $orgReports)
+    await assertElementTextIsInt(t, $upcomingEngagements)
 
     let $tourLauncher = await $('.persistent-tour-launcher')
     await $tourLauncher.click()
