@@ -3,6 +3,7 @@ let test = require('ava'),
     By = webdriver.By,
     moment = require('moment'),
     _includes = require('lodash.includes'),
+    _isFunction = require('lodash.isfunction'),
     path = require('path'),
     chalk = require('chalk')
 
@@ -105,10 +106,11 @@ test.beforeEach(t => {
     // We will wait for it to be done, with a max timeout so the test does not hang if the rendering fails.
     t.context.waitUntilElementHasText = async ($elem, expectedText, timeoutMs) => {
         let waitTimeoutMs = timeoutMs || fiveSecondsMs
-        await t.context.driver.wait(async () => {
+        let textIsCorrect = _isFunction(expectedText) ? expectedText : text => text === expectedText
+            await t.context.driver.wait(async () => {
             try {
                 let text = await $elem.getText()
-                return text === expectedText
+                return textIsCorrect(text)
             } catch (e) {
                 // If $elem has been removed from the DOM since it was queried for,
                 // we'll get a NoSuchElementError when trying to find its text.
@@ -133,8 +135,16 @@ test.beforeEach(t => {
                 throw e
             }
         }
-        t.is((await $elem.getText()).trim(), expectedText, message)
+        let actualText = (await $elem.getText()).trim()
+        if (_isFunction(expectedText)) {
+            t.true(expectedText(actualText), message)
+        } else {
+            t.is(actualText, expectedText, message)
+        }
     }
+
+    t.context.assertElementTextIsNumeric = (t, $elem, message) => 
+        t.context.assertElementText(t, $elem, text => parseInt(text, 10).toString() === text)
 
     t.context.assertElementNotPresent = async (t, cssSelector, message, timeoutMs) => {
         let waitTimeoutMs = timeoutMs || fiveSecondsMs
@@ -179,17 +189,17 @@ test('Home Page', async t => {
     // do not offer test planning.
     t.plan(6)
 
-    let {assertElementText, assertElementNotPresent, $, $$} = t.context
+    let {assertElementText, assertElementNotPresent, assertElementTextIsNumeric, $, $$} = t.context
 
     await t.context.get('/')
 
     // Use a CSS selector to find an element that we care about on the page.
     let [$reportsPending, $draftReports, $orgReports, $upcomingEngagements] = await $$('.home-tile h1')
 
-    await assertElementText(t, $reportsPending, '0')
-    await assertElementText(t, $draftReports, '0')
-    await assertElementText(t, $orgReports, '2')
-    await assertElementText(t, $upcomingEngagements, '0')
+    await assertElementTextIsNumeric(t, $reportsPending)
+    await assertElementTextIsNumeric(t, $draftReports)
+    await assertElementTextIsNumeric(t, $orgReports)
+    await assertElementTextIsNumeric(t, $upcomingEngagements)
 
     let $tourLauncher = await $('.persistent-tour-launcher')
     await $tourLauncher.click()
