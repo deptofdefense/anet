@@ -242,7 +242,7 @@ export default class RollupShow extends Page {
 					 .append('g')
 						.attr('transform', `translate(${MARGIN.left}, ${MARGIN.top})`)
 
-		let xAxis = d3.axisBottom(xScale).ticks(maxNumberOfReports, 'd')
+		let xAxis = d3.axisBottom(xScale).ticks(Math.min(maxNumberOfReports, 10), 'd')
 		let yAxis = d3.axisLeft(yScale)
 
 		graph.append('g').call(yAxis)
