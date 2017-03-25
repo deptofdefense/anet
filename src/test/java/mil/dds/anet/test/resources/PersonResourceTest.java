@@ -67,9 +67,9 @@ public class PersonResourceTest extends AbstractResourceTest {
 		assertThat(retPerson.getName()).isEqualTo(newPerson.getName());
 		
 		//Test creating a person with a position already set. 
-		OrganizationList orgs = httpQuery("/api/organizations/search?text=EF6&type=ADVISOR_ORG", jack).get(OrganizationList.class);
+		OrganizationList orgs = httpQuery("/api/organizations/search?text=EF%206&type=ADVISOR_ORG", jack).get(OrganizationList.class);
 		assertThat(orgs.getList().size()).isGreaterThan(0);
-		Organization org = orgs.getList().stream().filter(o -> o.getShortName().equalsIgnoreCase("EF6")).findFirst().get();
+		Organization org = orgs.getList().stream().filter(o -> o.getShortName().equalsIgnoreCase("EF 6")).findFirst().get();
 
 		Position newPos = new Position();
 		newPos.setType(PositionType.ADVISOR);
@@ -82,6 +82,7 @@ public class PersonResourceTest extends AbstractResourceTest {
 		Person newPerson2 = new Person();
 		newPerson2.setName("Namey McNameface");
 		newPerson2.setRole(Role.ADVISOR);
+		newPerson2.setStatus(PersonStatus.ACTIVE);
 		newPerson2.setDomainUsername("namey_" + DateTime.now().getMillis());
 		newPerson2.setPosition(newPos);
 		newPerson2 = httpQuery("/api/people/new", admin).post(Entity.json(newPerson2), Person.class);

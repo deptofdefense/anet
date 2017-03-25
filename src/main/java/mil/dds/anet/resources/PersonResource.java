@@ -148,14 +148,17 @@ public class PersonResource implements IGraphQLResource {
 				//Update the position for this person.
 				AuthUtils.assertSuperUser(user);
 				AnetObjectEngine.getInstance().getPositionDao().setPersonInPosition(p, p.getPosition());
+				AnetAuditLogger.log("Person {} put in position {}  by {}", p, p.getPosition(), user);
 			} else if (existing != null && existing.getId().equals(p.getPosition().getId()) == false) {
 				//Update the position for this person.
 				AuthUtils.assertSuperUser(user);
 				AnetObjectEngine.getInstance().getPositionDao().setPersonInPosition(p, p.getPosition());
+				AnetAuditLogger.log("Person {} put in position {}  by {}", p, p.getPosition(), user);
 			} else if (existing != null && p.getPosition().getId() == null) {
 				//Remove this person from their position.
 				AuthUtils.assertSuperUser(user);
 				AnetObjectEngine.getInstance().getPositionDao().removePersonFromPosition(existing);
+				AnetAuditLogger.log("Person {} removed from position   by {}", p, user);
 			}
 		}
 		int numRows = dao.update(p);
@@ -277,10 +280,12 @@ public class PersonResource implements IGraphQLResource {
 		}
 		
 		dao.mergePeople(winner, loser, copyPosition);
+		AnetAuditLogger.log("Person {} merged into WINNER: {}  by {}", loser, winner, user);
 		
 		if (loserPosition != null && copyPosition) { 
 			AnetObjectEngine.getInstance().getPositionDao()
 				.setPersonInPosition(winner, loserPosition);
+			AnetAuditLogger.log("Person {} put in position {} as part of merge by {}", winner, loserPosition, user);
 		} else if (winner.getPosition() != null) { 
 			//We need to always re-put the winner back into their position
 			// because when we removed the loser, and then updated the peoplePositions table

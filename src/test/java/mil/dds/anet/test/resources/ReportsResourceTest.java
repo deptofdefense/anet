@@ -704,8 +704,8 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		r = httpQuery("/api/reports/new", liz).post(Entity.json(r), Report.class);
 		assertThat(r.getId()).isNotNull();
 
-		//Try to delete  by the admin, this should fail.
-		Response resp = httpQuery("/api/reports/" + r.getId() + "/delete", admin).delete();
+		//Try to delete  by jack, this should fail.
+		Response resp = httpQuery("/api/reports/" + r.getId() + "/delete", jack).delete();
 		assertThat(resp.getStatus()).isEqualTo(Status.FORBIDDEN.getStatusCode());
 
 		//Now have the author delete this report.

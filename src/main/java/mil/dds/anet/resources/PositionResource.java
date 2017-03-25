@@ -140,8 +140,10 @@ public class PositionResource implements IGraphQLResource {
 				if (current != null && pos.getPerson().getId() == null) { 
 					//Intentionally remove the person
 					dao.removePersonFromPosition(current);
+					AnetAuditLogger.log("Person {} removed from position {} by {}", pos.getPerson(), current, user);
 				} else if ( Utils.idEqual(pos.getPerson(), current.getPerson()) == false) {
 					dao.setPersonInPosition(pos.getPerson(), pos);
+					AnetAuditLogger.log("Person {} put in position {} by {}", pos.getPerson(), current, user);
 				}
 			}
 
@@ -149,6 +151,7 @@ public class PositionResource implements IGraphQLResource {
 				Utils.addRemoveElementsById(current.loadAssociatedPositions(), pos.getAssociatedPositions(),
 						newPosition -> { System.out.println("adding " + newPosition);; dao.associatePosition(newPosition, pos); } ,
 						oldPositionId -> { System.out.println("deleting " + oldPositionId); dao.deletePositionAssociation(pos, Position.createWithId(oldPositionId));});
+				AnetAuditLogger.log("Person {} associations changed to {} by {}", current, pos.getAssociatedPositions(), user);
 			}
 		}
 
