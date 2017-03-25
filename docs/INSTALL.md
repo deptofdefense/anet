@@ -109,6 +109,7 @@ ANET is configured primarily through the `anet.yml` file.  This file follows the
 		- ex: To Log in as `Jack Jackson` from the development data set, just type in a username of `jack` when prompted.
 		- ex: To simulate a new user type in the same name for both the username and password when prompted (ie un: `hunter`, pw: `hunter` will create a new user with Domain Username of `hunter`).
 	- GraphQL: When development mode is `true`, ANET will re-compute the GraphQL graph on every API call, this allows you to rapidly develop on changes without restarting the server.
+- **redirectToHttps**: If true, ANET will redirect all HTTP traffic to HTTPS.  You must also configure the application to listen on an HTTP connection (ie port 80). 
 - **smtp**: This section controls the configuration for how ANET sends emails.
 	- **hostname**: The Fully Qualified Domain Name of your SMTP Server
 	- **port**: The port to connect to your SMTP server on (default: 25)
