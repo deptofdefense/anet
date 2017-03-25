@@ -23,7 +23,7 @@ Hello ${report.author.name},
 
 <p>${editor.name} edited your report "${report.intent}". To review the changes, <a href="${serverUrl}/reports/${report.id?c}">click here</a>.</p>
 
-Thanks!<br>
+Danke!<br>
 The ANET Team
 </body>
 </html>

@@ -12,6 +12,11 @@ import mil.dds.anet.database.PersonDao;
 import mil.dds.anet.database.PositionDao;
 import mil.dds.anet.database.ReportDao;
 
+/**
+ * This Logger is mostly a copy of the default logger except it specifically looks for the very long column defintions that ANET2 uses
+ * and will replace them in the log with a shortened version.  This just makes the logs easier to read and debug. 
+ *
+ */
 public class AnetDbLogger implements SQLLog {
     private final Logger log;
     private Priority level;

@@ -40,10 +40,22 @@ export default class ReportSummary extends Component {
 				</p>
 			}
 
+			{report.isRejected() &&
+				<p className="report-rejected">
+					<span>Rejected</span>
+				</p>
+			}
+
 			{report.cancelledReason &&
 				<p className="report-cancelled">
 					<strong>Cancelled: </strong>
 					{utils.sentenceCase(report.cancelledReason.substr(report.cancelledReason.indexOf('_')))}
+				</p>
+			}
+
+			{report.isPending() &&
+				<p className="report-pending">
+					<strong>Pending Approval</strong>
 				</p>
 			}
 

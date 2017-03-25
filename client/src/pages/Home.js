@@ -43,13 +43,13 @@ export default class Home extends Page {
 
 	allDraft() { return {
 		title: "All draft reports",
-		query: { state: ["DRAFT"] }
+		query: { state: ["DRAFT", "REJECTED"] }
 	}}
 
 	myDraft(currentUser) {
 		return {
 			title: "My draft reports",
-			query: { state: ["DRAFT"], authorId: currentUser.id }
+			query: { state: ["DRAFT", "REJECTED"], authorId: currentUser.id }
 		}
 	}
 

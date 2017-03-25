@@ -31,7 +31,7 @@ Dear ${approvalStepName},
 <b>This report was CANCELLED for: ${report.cancelledReason}</b><br><br>
 </#if>
 
-Thank you,<br>
+Merci!<br>
 The ANET Team
 
 </body>

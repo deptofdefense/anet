@@ -26,7 +26,7 @@ export default class MyReports extends Page {
 			released: 0
 		}
 		this.partFuncs = {
-			draft: this.getPart.bind(this, 'draft', ['DRAFT']),
+			draft: this.getPart.bind(this, 'draft', ['DRAFT','REJECTED']),
 			future: this.getPart.bind(this, 'future', ['FUTURE']),
 			pending: this.getPart.bind(this, 'pending', ['PENDING_APPROVAL']),
 			released: this.getPart.bind(this, 'released', ["RELEASED", "CANCELLED"])

@@ -174,7 +174,7 @@ public class MssqlReportSearcher implements IReportSearcher {
 		
 		//Sort Ordering
 		sql.append(" ORDER BY ");
-		if (query.getSortBy() == null) { query.setSortBy(ReportSearchSortBy.CREATED_AT); }
+		if (query.getSortBy() == null) { query.setSortBy(ReportSearchSortBy.ENGAGEMENT_DATE); }
 		switch (query.getSortBy()) {
 			case ENGAGEMENT_DATE:
 				sql.append("reports.engagementDate");

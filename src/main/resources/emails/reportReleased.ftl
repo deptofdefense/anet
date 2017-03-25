@@ -25,7 +25,7 @@ Hi, ${report.author.name},
 
 <p>You can view the daily rollup by <a href="${serverUrl}/rollup">clicking here</a>.</p>
 
-Thanks!<br>
+Grazie!<br>
 The ANET Team
 
 </body>

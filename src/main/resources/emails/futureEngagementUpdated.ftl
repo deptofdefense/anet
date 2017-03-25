@@ -19,12 +19,11 @@ a {
 <body>
 <p style="color:red; font-size:12px; font-weight: bold;" align="center"><i>Classification: ${SECURITY_BANNER_TEXT}</i></p>
 
-Hi, ${report.author.name},
+Hi,<br><br>
 
-<p>Your report "<i>${report.intent}</i>" has been rejected by ${rejector.name}. The following comment was provided:</p>
-<p>"${comment.text}"</p>
-
-<p>You can edit and re-submit your report by <a href="${serverUrl}/reports/${report.id?c}">clicking here</a>.</p>
+<p>The date of your upcoming engagement, "<i>${report.intent}</i>", is today. We've changed this future engagement 
+into a draft engagement report. You can find and edit it by going to the "My drafts" on the "My reports" page, 
+or by clicking here: <a href="${serverUrl}/reports/${report.id?c}">${serverUrl}/reports/${report.id?c}</a>.</p>
 
 Thanks!<br>
 The ANET team

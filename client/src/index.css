@@ -470,7 +470,13 @@ table hr.attendee-divider {
 }
 
 .report-cancelled {
-	border-left: 1.5rem solid #DA9795;
+	/*border-left: 1.5rem solid #DA9795;*/
+	border-left: 1.5rem solid #C23030;
+	padding-left: 1rem;
+}
+
+.report-rejected { 
+	border-left: 1.5rem solid #EB532D;
 	padding-left: 1rem;
 }
 
@@ -480,7 +486,13 @@ table hr.attendee-divider {
 }
 
 .report-future { 
-	border-left: 1.5rem solid green;
+	/*border-left: 1.5rem solid #238C2C; */
+	border-left: 1.5rem solid #00998C;
+	padding-left: 1rem;
+}
+
+.report-pending { 
+	border-left: 1.5rem solid #2965CC;
 	padding-left: 1rem;
 }
 
