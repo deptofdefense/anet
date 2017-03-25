@@ -18,10 +18,8 @@ import API from 'api'
 var d3 = null/* required later */
 
 const barColors = {
-	cancelled: '#e39394',
-	verified: '#9CBDA4',
-	unverified: '#F5D98C',
-	incoming: '#DA9795',
+	cancelled: '#EC971F',
+	verified: '#337AB7',
 }
 
 const calendarButtonCss = {
