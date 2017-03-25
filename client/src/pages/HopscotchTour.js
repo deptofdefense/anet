@@ -100,7 +100,7 @@ let reportTour = (currentUser) => { return {
 		},
 		{
 			title: 'Engagement date',
-			content: 'When did this engagement happen, or when will it take place? Choosing a date in the future will create an upcoming engagement. Simply select the date from the calendar.',
+			content: 'When did this engagement happen, or when will it take place? Choosing a date in the future will create an upcoming engagement. On the day of your upcoming engagement you\'ll get an email letting you know that the report you started moved back to your drafts.',
 			target: '#engagementDate',
 			placement: 'right',
 		},
