@@ -88,6 +88,7 @@ export default class OrganizationForm extends ValidatableFormWrapper {
 			</Button>
 
 			<Form.Field id="name"
+				label="Step name"
 				value={step.name}
 				onChange={(event) => this.setStepName(index, event)} />
 
