@@ -261,7 +261,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 					</RequiredField>
 
 					<Button className="center-block toggle-section-button" onClick={this.toggleReportText} id="toggleReportDetails" >
-						{this.state.showReportText ? 'Hide' : 'Add'} report details
+						{this.state.showReportText ? 'Hide' : 'Add'} detailed report
 					</Button>
 
 					<Collapse in={this.state.showReportText}>
