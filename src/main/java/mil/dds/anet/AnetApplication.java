@@ -1,5 +1,6 @@
 package mil.dds.anet;
 
+import java.sql.Connection;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -15,6 +16,7 @@ import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.skife.jdbi.v2.DBI;
+import org.skife.jdbi.v2.Handle;
 
 import com.google.common.collect.ImmutableList;
 
@@ -105,6 +107,8 @@ public class AnetApplication extends Application<AnetConfiguration> {
 		System.out.println(configuration.getDataSourceFactory().getUrl());
 		final DBIFactory factory = new DBIFactory();
 		final DBI jdbi = factory.build(environment, configuration.getDataSourceFactory(), "mssql");
+
+		
 		//We want to use our own custom DB logger in order to clean up the logs a bit. 
 		jdbi.setSQLLog(new AnetDbLogger());
 
