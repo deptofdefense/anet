@@ -18,6 +18,9 @@
 # - Will use Basic authentication (rather than Windows Domain Auth)
 # - Will reload the GraphQL Graph on every request. 
 developmentMode: true
+
+# Flag to tell the server to redirect all HTTP traffic to HTTPS
+# You will need to add an HTTP/80 adapter
 redirectToHttps: false
 
 # Settings for the SMTP server to send email 
@@ -46,7 +49,7 @@ waffleConfig:
   impersonate: false
   securityFilterProviders: waffle.servlet.spi.BasicSecurityFilterProvider
   #securityFilterProviders: "waffle.servlet.spi.BasicSecurityFilterProvider waffle.servlet.spi.NegotiateSecurityFilterProvider"
-  #"waffle.servlet.spi.NegotiateSecurityFilterProvider/protocols": Negotiate NTLM
+  #"waffle.servlet.spi.NegotiateSecurityFilterProvider/protocols": NTLM
   "waffle.servlet.spi.BasicSecurityFilterProvider/realm": ANET
 
 ########################################################
@@ -112,7 +115,8 @@ logging:
     "io.dropwizard.assets.*" : TRACE
     "waffle.servlet.NegotiateSecurityFilter" : TRACE
     "mil.dds.anet.auth.AnetAuthenticationFilter" : TRACE
-    "mil.dds.anet.AnetEmailWorker" : DEBUG
+    "mil.dds.anet.threads.AnetEmailWorker" : DEBUG
+    "mil.dds.anet.threads.FutureEngagementWorker" : DEBUG
     "mil.dds.anet.resources.TestingResource" :
       level: INFO
       appenders:
