@@ -343,6 +343,12 @@ export default class RollupShow extends Page {
 		this.setState({showEmailModal: !this.state.showEmailModal})
 	}
 
+	//**NOTE**: This hits an endpoint that sits only on the backend dropwizard server
+	// In development mode when running the frontend out of Node, this link will not work
+	// but if you change the URL to the port of the backend server (ie 8080) rather than
+	// the port of the frontend server (ie 3000) then it should work.  NPM doesn't proxy this
+	// through for some reason. But it works in production when the frontend and backend
+	// are run out of the same server process.
 	emailPreviewUrl() {
 		// orgType drives chart
 		// principalOrganizationId or advisorOrganizationId drive drill down.
