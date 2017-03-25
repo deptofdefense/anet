@@ -130,6 +130,11 @@ public class ReportResource implements IGraphQLResource {
 		return DateTime.now().withHourOfDay(23).withMinuteOfHour(59).withSecondOfMinute(59);
 	}
 	
+	// Helper method to determine if a report should be pushed into FUTURE state. 
+	private boolean shouldBeFuture(Report r) { 
+		return r.getEngagementDate() != null && r.getEngagementDate().isAfter(tomorrow()) && r.getCancelledReason() == null;
+	}
+	
 	@POST
 	@Timed
 	@Path("/new")
@@ -146,7 +151,7 @@ public class ReportResource implements IGraphQLResource {
 			r.setPrincipalOrg(engine.getOrganizationForPerson(primaryPrincipal));
 		}
 		
-		if (r.getEngagementDate() != null && r.getEngagementDate().isAfter(tomorrow())) { 
+		if (shouldBeFuture(r)) { 
 			r.setState(ReportState.FUTURE);
 		}
 		
@@ -175,10 +180,13 @@ public class ReportResource implements IGraphQLResource {
 		assertCanEditReport(r, editor);
 		
 		//If this report is in draft and in the future, set state to Future. 
-		if (ReportState.DRAFT.equals(r.getState()) && r.getEngagementDate() != null && r.getEngagementDate().isAfter(tomorrow())) { 
+		if (ReportState.DRAFT.equals(r.getState()) && shouldBeFuture(r)) { 
 			r.setState(ReportState.FUTURE);
 		} else if (ReportState.FUTURE.equals(r.getState()) && (r.getEngagementDate() == null || r.getEngagementDate().isBefore(tomorrow()))) {
 			//This catches a user editing the report to change date back to the past. 
+			r.setState(ReportState.DRAFT);
+		} else if (ReportState.FUTURE.equals(r.getState()) && r.getCancelledReason() != null) {
+			//Cancelled future engagements become draft. 
 			r.setState(ReportState.DRAFT);
 		}
 		

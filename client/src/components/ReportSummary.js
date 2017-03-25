@@ -25,12 +25,12 @@ export default class ReportSummary extends Component {
 		}
 
 		return <Grid fluid className="report-summary">
-			{report.state === 'DRAFT' && 
+			{report.state === 'DRAFT' &&
 				<p className="report-draft">
-					<strong>Draft{report.updatedAt && ':'}</strong> 
-					{ 
+					<strong>Draft{report.updatedAt && ':'}</strong>
+					{
 						/* If the parent does not fetch report.updatedAt, we will not display this
-							so we do not get a broken view. It would be better to go through and 
+							so we do not get a broken view. It would be better to go through and
 							find all the places where report is passed in and ensure that the graphql
 							query includes updatedAt, but I don't have time for that now.
 						*/
@@ -44,6 +44,12 @@ export default class ReportSummary extends Component {
 				<p className="report-cancelled">
 					<strong>Cancelled: </strong>
 					{utils.sentenceCase(report.cancelledReason.substr(report.cancelledReason.indexOf('_')))}
+				</p>
+			}
+
+			{report.isFuture() &&
+				<p className="report-future">
+					<strong>Future Engagement</strong>
 				</p>
 			}
 
