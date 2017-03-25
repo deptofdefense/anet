@@ -506,12 +506,13 @@ table hr.attendee-divider {
 	margin: 5rem 0 5rem 0;
 }
 
-.submit-buttons > div:first-child {
-	flex-grow: 2;
+.submit-buttons > div {
+	margin-left: 2.5rem;
 }
 
-.submit-buttons > div:last-child {
-	margin-left: 10px;
+.submit-buttons > div:first-child {
+	flex-grow: 2;
+	margin-left: 0;
 }
 
 .submit-buttons .btn-primary {
