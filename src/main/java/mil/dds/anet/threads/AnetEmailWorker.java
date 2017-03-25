@@ -17,6 +17,7 @@ import javax.mail.Authenticator;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
+import javax.mail.SendFailedException;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
@@ -144,12 +145,19 @@ public class AnetEmailWorker implements Runnable {
 		Map<String,Object> context = email.getAction().execute();
 		AnetObjectEngine engine = AnetObjectEngine.getInstance();
 		
-		context.put("serverUrl", serverUrl);
-		context.put(AdminSettingKeys.SECURITY_BANNER_TEXT.name(), engine.getAdminSetting(AdminSettingKeys.SECURITY_BANNER_TEXT));
-		context.put(AdminSettingKeys.SECURITY_BANNER_COLOR.name(), engine.getAdminSetting(AdminSettingKeys.SECURITY_BANNER_COLOR));
-		Template temp = freemarkerConfig.getTemplate(email.getAction().getTemplateName());
 		StringWriter writer = new StringWriter();
-		temp.process(context, writer);
+		try { 
+			context.put("serverUrl", serverUrl);
+			context.put(AdminSettingKeys.SECURITY_BANNER_TEXT.name(), engine.getAdminSetting(AdminSettingKeys.SECURITY_BANNER_TEXT));
+			context.put(AdminSettingKeys.SECURITY_BANNER_COLOR.name(), engine.getAdminSetting(AdminSettingKeys.SECURITY_BANNER_COLOR));
+			Template temp = freemarkerConfig.getTemplate(email.getAction().getTemplateName());
+			
+			temp.process(context, writer);
+		} catch (Exception e) { 
+			//Exceptions thrown while processing the template are unlikely to ever get fixed, so we just log this and drop the email. 
+			e.printStackTrace();
+			return;
+		}
 		
 		Session session = Session.getInstance(props, auth);
 		Message message = new MimeMessage(session);
@@ -160,7 +168,14 @@ public class AnetEmailWorker implements Runnable {
 		message.setSubject(email.getAction().getSubject());
 		message.setContent(writer.toString(), "text/html; charset=utf-8");
 
-		Transport.send(message);
+		try { 
+			Transport.send(message);
+		} catch (SendFailedException e) { 
+			//The server rejected this... we'll log it and then not try again. 
+			e.printStackTrace();
+			return;
+		}
+		//Other errors are intentially thrown, as we want ANET to try again. 
 	}
 	
 	
