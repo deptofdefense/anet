@@ -70,8 +70,18 @@ public class DailyRollupEmail extends AnetEmailAction {
 		context.put("cancelledReasons", ReportCancelledReason.values());
 		context.put("title", getSubject());
 		context.put("comment", comment);
-		context.put("chartOrgType", chartOrgType);
+		
+		List<ReportGrouping> outerGrouping = null;
+		if (principalOrganizationId != null) { 
+			outerGrouping = allReports.getGroupingForParent(principalOrganizationId);
+		} else if (advisorOrganizationId != null) { 
+			outerGrouping = allReports.getGroupingForParent(advisorOrganizationId);
+		} else { 
+			outerGrouping = allReports.getByGrouping(chartOrgType);
+		}
+		
 		context.put("innerOrgType", (OrganizationType.ADVISOR_ORG.equals(chartOrgType)) ? OrganizationType.PRINCIPAL_ORG : OrganizationType.ADVISOR_ORG);
+		context.put("outerGrouping", outerGrouping);
 		context.put(SHOW_REPORT_TEXT_FLAG, false);
 		return context;
 	}
@@ -87,7 +97,7 @@ public class DailyRollupEmail extends AnetEmailAction {
 		public ReportGrouping(List<Report> reports) {
 			this.reports = reports;
 		}
-
+		
 		public List<Report> getAll() {
 			return reports;
 		}
@@ -114,8 +124,19 @@ public class DailyRollupEmail extends AnetEmailAction {
 		}
 
 		public List<ReportGrouping> getByGrouping(OrganizationType orgType) {
-			Map<Integer, ReportGrouping> orgIdToReports = new HashMap<Integer,ReportGrouping>();
+			
 			Map<Integer, Organization> orgIdToTopOrg = AnetObjectEngine.getInstance().buildTopLevelOrgHash(orgType);
+			return groupReports(orgIdToTopOrg, orgType);
+		}
+		
+		public List<ReportGrouping> getGroupingForParent(Integer parentOrgId) { 
+			Map<Integer, Organization> orgIdToTopOrg = AnetObjectEngine.getInstance().buildTopLevelOrgHash(parentOrgId);
+			OrganizationType orgType = orgIdToTopOrg.get(parentOrgId).getType();
+			return groupReports(orgIdToTopOrg, orgType);
+		}
+		
+		private List<ReportGrouping> groupReports(Map<Integer,Organization> orgIdToTopOrg, OrganizationType orgType) { 
+			Map<Integer, ReportGrouping> orgIdToReports = new HashMap<Integer,ReportGrouping>();
 			for (Report r : reports) {
 				Organization reportOrg = (orgType == OrganizationType.ADVISOR_ORG) ? r.loadAdvisorOrg() : r.loadPrincipalOrg();
 				int topOrgId;
