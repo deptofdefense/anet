@@ -31,6 +31,13 @@ let userTour = (currentUser) => { return {
 			fixedElement: true
 		},
 		{
+			title: 'Saved searches',
+			content: 'When you save searches, they appear in this list. Saved searches are a good way to stay update on certain topics. For example, you can save a search for the word "Corruption" to see reports that mention that keyword. If you have more than one saved search, you can choose which one to display by selecting it from this list.',
+			target: 'savedSearchSelect',
+			placement: 'top',
+			fixedElement: true
+		},
+		{
 			title: 'New Report',
 			content: 'Create a report by clicking on this button.',
 			target: 'createButton',
@@ -184,6 +191,12 @@ let orgTour = (currentUser) => { return {
 			placement: 'bottom',
 		},
 		{
+			title: 'Navigating your organization\'s page',
+			content: 'When viewing your organization, you can quickly see and navigate to each section on this page using the sub-menu under your organization\'s name.',
+			target: 'my-organization',
+			placement: 'right',
+		},
+		{
 			title: 'Supported positions',
 			content: 'This section shows positions in your organization that currently have people assigned to them. The billet column tells you the name and billet code of the position. To update this information, click on the position and select the "Edit" option.',
 			target: '#supportedPositions h2',
@@ -197,7 +210,7 @@ let orgTour = (currentUser) => { return {
 		},
 		{
 			title: 'Approval process',
-			content: 'Set up or update the approval process for reports authored in your organization by clicking "Edit" on the top of the page. We recommend having more than one approver in each step so that either person can approve the report. When a report has gone through every step in your approval chain, it will automatically go into that day\'s daily rollup. You can add anyone to your approval chain, they do not need to be a super user. Keep in mind that you\'ll need to set up an approval chain for each sub-organization as well.',
+			content: 'Set up or update the approval process for reports authored in your organization by clicking "Edit" on the top of the page. We recommend having more than one approver in each step so that either person can approve the report. When a report has gone through every step in your approval chain, it will automatically go into that day\'s daily rollup. You can add anyone in a position to your approval chain, they do not need to be a super user. Keep in mind that you\'ll need to set up an approval chain for each sub-organization as well.',
 			target: '#approvals h2',
 			placement: 'top',
 		},
