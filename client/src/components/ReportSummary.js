@@ -42,7 +42,7 @@ export default class ReportSummary extends Component {
 
 			{report.isRejected() &&
 				<p className="report-rejected">
-					<span>Rejected</span>
+					<strong>Rejected</strong>
 				</p>
 			}
 
