@@ -157,6 +157,7 @@ export default class Home extends Page {
 			<div>
 				<div className="pull-right">
 					<GuidedTour
+						title="Take a guided tour of the home page."
 						tour={currentUser.isSuperUser() ? superUserTour : userTour}
 						autostart={localStorage.newUser === 'true' && localStorage.hasSeenHomeTour !== 'true'}
 						onEnd={() => localStorage.hasSeenHomeTour = 'true'}

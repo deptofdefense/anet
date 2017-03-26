@@ -79,6 +79,7 @@ export default class PositionShow extends Page {
 			<div>
 				<div className="pull-right">
 					<GuidedTour
+						title="Take a guided tour of this position's page."
 						tour={positionTour}
 						autostart={localStorage.newUser === 'true' && localStorage.hasSeenPositionTour !== 'true'}
 						onEnd={() => localStorage.hasSeenPositionTour = 'true'}

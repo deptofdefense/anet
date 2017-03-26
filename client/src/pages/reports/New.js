@@ -54,6 +54,7 @@ export default class ReportNew extends Page {
 			<div className="report-new">
 				<div className="pull-right">
 					<GuidedTour
+						title="Take a guided tour of the report page."
 						tour={reportTour}
 						autostart={localStorage.newUser === 'true' && localStorage.hasSeenReportTour !== 'true'}
 						onEnd={() => localStorage.hasSeenReportTour = 'true'}
