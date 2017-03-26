@@ -582,9 +582,9 @@ public class ReportResource implements IGraphQLResource {
 	@GET
 	@Timed
 	@Path("/search")
-	public ReportList search(@Context HttpServletRequest request) {
+	public ReportList search(@Auth Person user, @Context HttpServletRequest request) {
 		try {
-			return search(ResponseUtils.convertParamsToBean(request, ReportSearchQuery.class));
+			return search(ResponseUtils.convertParamsToBean(request, ReportSearchQuery.class), user);
 		} catch (IllegalArgumentException e) {
 			throw new WebApplicationException(e.getMessage(), e.getCause(), Status.BAD_REQUEST);
 		}
@@ -594,8 +594,8 @@ public class ReportResource implements IGraphQLResource {
 	@Timed
 	@GraphQLFetcher
 	@Path("/search")
-	public ReportList search(@GraphQLParam("query") ReportSearchQuery query) {
-		return dao.search(query);
+	public ReportList search(@GraphQLParam("query") ReportSearchQuery query, @Auth Person user) {
+		return dao.search(query, user);
 	}
 
 	/** 

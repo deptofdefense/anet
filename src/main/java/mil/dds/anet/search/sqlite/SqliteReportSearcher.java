@@ -13,10 +13,12 @@ import org.joda.time.format.DateTimeFormatter;
 import org.skife.jdbi.v2.Handle;
 
 import jersey.repackaged.com.google.common.base.Joiner;
+import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Report;
+import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.ReportList;
-import mil.dds.anet.beans.search.ReportSearchQuery;
 import mil.dds.anet.beans.search.ISearchQuery.SortOrder;
+import mil.dds.anet.beans.search.ReportSearchQuery;
 import mil.dds.anet.beans.search.ReportSearchQuery.ReportSearchSortBy;
 import mil.dds.anet.database.PersonDao;
 import mil.dds.anet.database.ReportDao;
@@ -29,7 +31,7 @@ public class SqliteReportSearcher implements IReportSearcher {
 
 	public static DateTimeFormatter sqlitePattern = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
 	
-	public ReportList runSearch(ReportSearchQuery query, Handle dbHandle) { 
+	public ReportList runSearch(ReportSearchQuery query, Handle dbHandle, Person user) { 
 		StringBuffer sql = new StringBuffer();
 		sql.append("/* SqliteReportSearch */ SELECT " + ReportDao.REPORT_FIELDS + "," + PersonDao.PERSON_FIELDS);
 		sql.append(" FROM reports, people WHERE reports.authorId = people.id ");
@@ -168,6 +170,20 @@ public class SqliteReportSearcher implements IReportSearcher {
 		}
 		
 		if (whereClauses.size() == 0) { return new ReportList(); }
+		
+		
+		//Apply a filter to restrict access to other's draft reports
+		if (user == null) { 
+			whereClauses.add("reports.state != :draftState");
+			whereClauses.add("reports.state != :rejectedState");
+			args.put("draftState", DaoUtils.getEnumId(ReportState.DRAFT));
+			args.put("rejectedState", DaoUtils.getEnumId(ReportState.REJECTED));
+		} else { 
+	 		whereClauses.add("((reports.state != :draftState AND reports.state != :rejectedState) OR (reports.authorId = :userId))");
+			args.put("draftState", DaoUtils.getEnumId(ReportState.DRAFT));
+			args.put("rejectedState", DaoUtils.getEnumId(ReportState.REJECTED));
+			args.put("userId", user.getId());
+		}
 		
 		sql.append(" WHERE ");
 		sql.append(Joiner.on(" AND ").join(whereClauses));
