@@ -155,6 +155,7 @@ public class ReportResource implements IGraphQLResource {
 			r.setState(ReportState.FUTURE);
 		}
 		
+		r.setReportText(Utils.sanitizeHtml(r.getReportText()));
 		r = dao.insert(r);
 		AnetAuditLogger.log("Report {} created by author {} ", r, author);
 		return r;
@@ -205,6 +206,7 @@ public class ReportResource implements IGraphQLResource {
 			r.setPrincipalOrg(existing.getPrincipalOrg());
 		}
 		
+		r.setReportText(Utils.sanitizeHtml(r.getReportText()));
 		dao.update(r);
 		
 		//Update Attendees:

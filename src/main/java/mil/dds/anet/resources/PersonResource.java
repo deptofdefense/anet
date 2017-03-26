@@ -33,6 +33,7 @@ import mil.dds.anet.graphql.IGraphQLResource;
 import mil.dds.anet.utils.AnetAuditLogger;
 import mil.dds.anet.utils.AuthUtils;
 import mil.dds.anet.utils.ResponseUtils;
+import mil.dds.anet.utils.Utils;
 
 @Path("/api/people")
 @Produces(MediaType.APPLICATION_JSON)
@@ -108,6 +109,7 @@ public class PersonResource implements IGraphQLResource {
 			if (position.getType() == PositionType.ADMINISTRATOR) { AuthUtils.assertAdministrator(user); } 
 		}
 		
+		p.setBiography(Utils.sanitizeHtml(p.getBiography()));
 		Person created = dao.insert(p);
 		
 		if (created.getPosition() != null) { 
@@ -161,6 +163,7 @@ public class PersonResource implements IGraphQLResource {
 				AnetAuditLogger.log("Person {} removed from position   by {}", p, user);
 			}
 		}
+		p.setBiography(Utils.sanitizeHtml(p.getBiography()));
 		int numRows = dao.update(p);
 		
 		AnetAuditLogger.log("Person {} edited by {}", p, user);

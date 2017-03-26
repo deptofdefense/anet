@@ -123,6 +123,14 @@ public class PersonResourceTest extends AbstractResourceTest {
 		resp = httpQuery("/api/people/update", newPerson2).post(Entity.json(newPerson));
 		assertThat(resp.getStatus()).isEqualTo(javax.ws.rs.core.Response.Status.FORBIDDEN.getStatusCode());
 		
+		//Add some scary HTML to newPerson2's profile and ensure it gets stripped out. 
+		newPerson2.setBiography("<b>Hello world</b>.  I like script tags! <script>window.alert('hello world')</script>");
+		resp = httpQuery("/api/people/update", admin).post(Entity.json(newPerson2));
+		assertThat(resp.getStatus()).isEqualTo(200);
+		
+		retPerson = httpQuery("/api/people/" + newPerson2.getId(), admin).get(Person.class);
+		assertThat(retPerson.getBiography()).contains("<b>Hello world</b>");
+		assertThat(retPerson.getBiography()).doesNotContain("<script>window.alert");
 	}
 
 	@Test

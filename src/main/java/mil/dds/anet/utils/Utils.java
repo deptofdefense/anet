@@ -9,6 +9,9 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
+import org.owasp.html.HtmlPolicyBuilder;
+import org.owasp.html.PolicyFactory;
+
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.views.AbstractAnetBean;
 
@@ -118,4 +121,30 @@ public class Utils {
 
 		return result;
 	}
+	
+	public static final PolicyFactory POLICY_DEFINITION = new HtmlPolicyBuilder()
+			.allowStandardUrlProtocols()
+			// Allow title="..." on any element.
+			.allowAttributes("title").globally()
+			// Allow href="..." on <a> elements.
+			.allowAttributes("href").onElements("a")
+			// Defeat link spammers.
+			.requireRelNofollowOnLinks()
+			// The align attribute on <p> elements can have any value below.
+			.allowAttributes("align").matching(true, "center", "left", "right", "justify", "char").onElements("p")
+			.allowAttributes("border","cellpadding","cellspacing").onElements("table")
+			.allowAttributes("colspan","rowspan").onElements("td","th")
+			.allowStyling()
+			// These elements are allowed.
+			.allowElements("a", "p", "div", "i", "b", "u", "em", "blockquote", "tt", "strong", "br", 
+					"ul", "ol", "li","table","tr","td","thead","tbody","th","span","h1","h2","h3",
+					"h4","h5","h6","hr")
+			.toFactory();
+	
+	public static String sanitizeHtml(String input) {
+		if (input == null) { return null; } 
+		return POLICY_DEFINITION.sanitize(input);
+	}
+	
+	
 }

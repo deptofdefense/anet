@@ -683,7 +683,6 @@ public class ReportsResourceTest extends AbstractResourceTest {
 	public void reportDeleteTest() {
 		final Person jack = getJackJackson();
 		final Person liz = getElizabethElizawell();
-		final Person admin = getArthurDmin();
 		final Person roger = getRogerRogwell();
 
 		List<ReportPerson> attendees = ImmutableList.of(
