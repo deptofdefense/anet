@@ -23,6 +23,7 @@ import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Position;
+import mil.dds.anet.beans.Position.PositionStatus;
 import mil.dds.anet.beans.Position.PositionType;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.PositionList;
 import mil.dds.anet.beans.search.PositionSearchQuery;
@@ -258,4 +259,29 @@ public class PositionResource implements IGraphQLResource {
 		return dao.search(query);
 	}
 
+	
+	@DELETE
+	@Path("/{id}")
+	public Response deletePosition(@PathParam("id") int positionId) { 
+		Position p = dao.getById(positionId);
+		if (p == null) { return Response.status(Status.NOT_FOUND).build(); } 
+		
+		//if there is a person in this position, reject
+		if (p.getPerson() != null) { 
+			throw new WebApplicationException("Cannot delete a position that current has a person", Status.BAD_REQUEST); 
+		} 
+		
+		//if position is active, reject. 
+		if (PositionStatus.ACTIVE.equals(p.getStatus())) { 
+			throw new WebApplicationException("Cannot delete an active position", Status.BAD_REQUEST);
+		}
+		
+		//if this position has any history, we'll just delete it
+		//if this position is in an approval chain, we just delete it 
+		//if this position is in an organization, just remove it.
+		//if this position has any associated positions, just remove them.
+		dao.deletePosition(p);
+		return Response.ok().build();
+	}
+	
 }

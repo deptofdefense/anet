@@ -16,6 +16,7 @@ import GuidedTour from 'components/GuidedTour'
 import {positionTour} from 'pages/HopscotchTour'
 
 import API from 'api'
+import History from 'components/History'
 import {Position, Organization} from 'models'
 import autobind from 'autobind-decorator'
 
@@ -70,6 +71,9 @@ export default class PositionShow extends Page {
 			(currentUser.isAdmin()) ||
 			//Super users can edit positions within their own organization
 			(position.organization && position.organization.id && currentUser.isSuperUserForOrg(position.organization))
+		let canDelete = (currentUser.isAdmin()) &&
+			position.status === 'INACTIVE' &&
+			(position.id && ((!position.person) || (!position.person.id)))
 
 		return (
 			<div>
@@ -153,12 +157,12 @@ export default class PositionShow extends Page {
 							<em>{position.name} has no associated {assignedRole}</em>
 						}
 
-						<EditAssociatedPositionsModal
+						{canEdit && <EditAssociatedPositionsModal
 							position={position}
 							showModal={this.state.showAssociatedPositionModal}
 							onCancel={this.hideAssociatedPositionsModal.bind(this, false)}
 							onSuccess={this.hideAssociatedPositionsModal.bind(this, true)}
-						/>
+						/>}
 					</Fieldset>
 
 					<Fieldset title="Previous position holders" id="previous-people">
@@ -183,6 +187,10 @@ export default class PositionShow extends Page {
 						</Table>
 					</Fieldset>
 				</Form>
+
+				{canDelete && <div className="pull-right submit-buttons">
+					<Button bsStyle="danger" onClick={this.deletePosition}>Delete Position</Button>
+				</div>}
 			</div>
 		)
 	}
@@ -222,5 +230,18 @@ export default class PositionShow extends Page {
 		if (success) {
 			this.fetchData(this.props)
 		}
+	}
+
+	@autobind
+	deletePosition() {
+		if (!confirm("Are you sure you want to delete this position? This cannot be undon")) {
+			return
+		}
+
+		API.send(`/api/positions/${this.state.position.id}`, {}, {method: 'DELETE'}).then(data => {
+			History.push('/', {success: 'Position Deleted'})
+		}, data => {
+			this.setState({success: null, error: data})
+		})
 	}
 }
