@@ -21,7 +21,7 @@ a {
 
 Hi,<br><br>
 
-<p>The date of your upcoming engagement, "<i>${report.intent}</i>", is today. We've changed this future engagement 
+<p>The date of your upcoming engagement, "<i>${report.intent}</i>", is today. We've changed this upcoming engagement 
 into a draft engagement report. You can find and edit it by going to the "My drafts" on the "My reports" page, 
 or by clicking here: <a href="${serverUrl}/reports/${report.id?c}">${serverUrl}/reports/${report.id?c}</a>.</p>
 

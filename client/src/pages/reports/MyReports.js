@@ -80,7 +80,7 @@ export default class MyReports extends Page {
 			<Breadcrumbs items={[['My Reports', window.location.pathname]]} />
 
 			{this.renderSection('Draft Reports', this.state.draft, this.goToPage.bind(this, 'draft'), 'draft-reports')}
-			{this.renderSection('Future Engagements', this.state.future, this.goToPage.bind(this, 'future'), 'future-engagements')}
+			{this.renderSection('Upcoming Engagements', this.state.future, this.goToPage.bind(this, 'future'), 'upcoming-engagements')}
 			{this.renderSection("Pending Approval", this.state.pending, this.goToPage.bind(this, 'pending'), 'pending-approval')}
 			{this.renderSection("Published Reports", this.state.released, this.goToPage.bind(this, 'released'), 'published-reports')}
 		</div>

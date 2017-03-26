@@ -100,6 +100,10 @@ export default class ReportForm extends ValidatableFormWrapper {
 			Location not found in database
 		</b></HelpBlock>
 
+		const futureMessage = isFuture && <HelpBlock>
+				<span className='text-success' >This will create an upcoming engagement</span>
+			</HelpBlock>
+
 		const {ValidatableForm, RequiredField} = this
 
 		return <div className="report-form">
@@ -126,13 +130,8 @@ export default class ReportForm extends ValidatableFormWrapper {
 						<Form.Field.ExtraCol>{250 - report.intent.length} characters remaining</Form.Field.ExtraCol>
 					</RequiredField>
 
-					<Form.Field id="engagementDate" addon={CALENDAR_ICON}>
+					<Form.Field id="engagementDate" addon={CALENDAR_ICON} postInputGroupChildren={futureMessage} >
 						<DatePicker showTodayButton placeholder="When did it happen?" dateFormat="DD/MM/YYYY" showClearButton={false} />
-						{isFuture &&
-							<Form.Field.ExtraCol>
-								<span className='text-success' >This will create a future engagement</span>
-							</Form.Field.ExtraCol>
-						}
 					</Form.Field>
 
 					<Form.Field id="location" addon={LOCATION_ICON} validationState={errors.location}
