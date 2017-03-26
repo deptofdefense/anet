@@ -172,7 +172,7 @@ export default class RollupShow extends Page {
 						<Popover id="graph-popover" title={this.state.hoveredBar.org.shortName}>
 							<p>Released: {this.state.hoveredBar.released}</p>
 							<p>Cancelled: {this.state.hoveredBar.cancelled}</p>
-							<p>Click to drill down</p>
+							<p>Click to view details</p>
 						</Popover>
 					</Overlay>
 
