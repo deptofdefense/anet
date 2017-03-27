@@ -55,7 +55,7 @@ test('Draft and submit a report', async t => {
     )
 
     let $newPoamRow = await $('.poams-selector table tbody tr td')
-    await assertElementText(t, $newPoamRow, '1.1.B - Milestone the Second in EF1.1')
+    await assertElementText(t, $newPoamRow, '1.1.B - Milestone the Second in EF 1.1')
 
     await pageHelpers.writeInForm('#keyOutcomes', 'key outcomes')
     await pageHelpers.writeInForm('#nextSteps', 'next steps')
@@ -282,8 +282,8 @@ test('Verify that validation and other reports/new interactions work', async t =
         'Advisor primary attendee checkbox should be checked'
     )
     await assertElementText(t, $advisorName, 'Erin Erinson CIV')
-    await assertElementText(t, $advisorPosition, 'EF2.2 Advisor D')
-    await assertElementText(t, $advisorOrg, 'EF2.2')
+    await assertElementText(t, $advisorPosition, 'EF 2.2 Advisor D')
+    await assertElementText(t, $advisorOrg, 'EF 2.2')
 
     // We expect to see two shortcut buttons. One will be the current user's name.
     // Clicking on that button will have no effect, because the current user is already an attendee. The other will
