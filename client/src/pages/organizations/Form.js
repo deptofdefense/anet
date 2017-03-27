@@ -43,11 +43,11 @@ export default class OrganizationForm extends ValidatableFormWrapper {
 
 			<Messages error={this.state.error} />
 
-			<Fieldset title={edit ? `Editing ${organization.shortName}` : "Create a new Organization"}>
+			<Fieldset title={edit ? `Edit Organization ${organization.shortName}` : "Create a new Organization"}>
 				<Form.Field id="type">
 					<ButtonToggleGroup>
-						<Button id="advisorOrgButton" value="ADVISOR_ORG">Advisor Organization</Button>
-						<Button id="principalOrgButton" value="PRINCIPAL_ORG">Afghan Govt Organization</Button>
+						<Button id="advisorOrgButton" value="ADVISOR_ORG">Advisor organization</Button>
+						<Button id="principalOrgButton" value="PRINCIPAL_ORG">Afghan Govt organization</Button>
 					</ButtonToggleGroup>
 				</Form.Field>
 

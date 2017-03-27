@@ -38,7 +38,7 @@ export default class PersonForm extends ValidatableFormWrapper {
 	render() {
 		let {person, edit} = this.props
 		const isAdvisor = person.role === 'ADVISOR'
-		const legendText = this.props.legendText || (edit ? `Edit ${person.name}` : 'Create a new person')
+		const legendText = this.props.legendText || (edit ? `Edit Person ${person.name}` : 'Create a new Person')
 
 		const {ValidatableForm, RequiredField} = this
 
