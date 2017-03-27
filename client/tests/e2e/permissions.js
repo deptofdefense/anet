@@ -76,3 +76,50 @@ test('checking super user permissions', async t => {
     
     await editAndSavePosition()
 })
+
+test('super user cannot edit administrator', async t => {
+    t.plan(2)
+
+    let {$, $$, assertElementNotPresent} = t.context
+
+    await t.context.get('/', 'rebecca')
+
+    let $searchBar = await $('#searchBarInput')
+    await $searchBar.sendKeys('arthur')
+
+    let $searchBarSubmit = await $('#searchBarSubmit')
+    await $searchBarSubmit.click()
+
+    async function getArthurFromSearchResults() {
+        let $searchResultLinks = await $$('.people-search-results td a')
+
+        async function findLinkWithText(text) {
+            for (let $link of $searchResultLinks) {
+                let linkText = await $link.getText()
+                if (linkText === text) {
+                    return $link
+                }
+            }
+            return null
+        }
+
+        let $arthurPersonLink = await findLinkWithText('Arthur Dmin')
+        let $arthurPositionLink = await findLinkWithText('ANET Administrator')
+
+        if (!$arthurPersonLink || !$arthurPositionLink) {
+            t.fail('Could not find Arthur Dmin when searching for "arthur". The data does not match what this test expects.')
+        }
+
+        return [$arthurPersonLink, $arthurPositionLink]
+    }
+
+    let [$arthurPersonLink] = await getArthurFromSearchResults()
+    await $arthurPersonLink.click()
+    await assertElementNotPresent(t, '.edit-person', 'Rebecca should not be able edit an administrator')
+
+    await t.context.driver.navigate().back()
+
+    let $arthurPositionLink = (await getArthurFromSearchResults())[1]
+    await $arthurPositionLink.click()
+    await assertElementNotPresent(t, '.edit-position', 'Rebecca should not be able edit the "ANET Administrator" position')
+})

@@ -130,7 +130,9 @@ test.beforeEach(t => {
                     try {
                         return !(await t.context.$(cssSelector, waitTimeoutMs))
                     } catch (e) {
-                        if (e.name === 'TimeoutError') {
+                        // Hilariously, when Selenium can't find an element, sometimes it throws TimeoutError,
+                        // and sometimes it throws NoSuchElementError.
+                        if (e.name === 'TimeoutError' || e.name === 'NoSuchElementError') {
                             return true
                         }
                         throw e
