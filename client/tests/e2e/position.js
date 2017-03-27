@@ -14,7 +14,7 @@ test('Move someone in and out of a position', async t => {
 
     await clickMyOrgLink()
 
-    let positionName = 'EF2.2 Advisor D'
+    let positionName = 'EF 2.2 Advisor D'
     let personName = 'Civ Erin Erinson'
 
     let $supportedPositionsRows = await $$('#supportedPositions table tbody tr')
