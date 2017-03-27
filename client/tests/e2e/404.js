@@ -1,0 +1,46 @@
+let test = require('../util/test')
+
+test('Report 404', async t => {
+    t.plan(1)
+
+    let {assertElementText, $} = t.context
+
+    await t.context.get('/reports/555')
+    await assertElementText(t, await $('.not-found-text'), 'Report #555 not found.')
+})
+
+test('Organization 404', async t => {
+    t.plan(1)
+
+    let {assertElementText, $} = t.context
+
+    await t.context.get('/organizations/555')
+    await assertElementText(t, await $('.not-found-text'), 'Organization #555 not found.')
+})
+
+test('People 404', async t => {
+    t.plan(1)
+
+    let {assertElementText, $} = t.context
+
+    await t.context.get('/people/555')
+    await assertElementText(t, await $('.not-found-text'), 'User #555 not found.')
+})
+
+test('PoAMs 404', async t => {
+    t.plan(1)
+
+    let {assertElementText, $} = t.context
+
+    await t.context.get('/poams/555')
+    await assertElementText(t, await $('.not-found-text'), 'PoAM #555 not found.')
+})
+
+test('Positions 404', async t => {
+    t.plan(1)
+
+    let {assertElementText, $} = t.context
+
+    await t.context.get('/positions/555')
+    await assertElementText(t, await $('.not-found-text'), 'Position #555 not found.')
+})

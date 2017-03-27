@@ -11,7 +11,7 @@ export default class Fieldset extends Component {
 
 		return <div id={id} data-jumptarget={id}>
 			<h2 className="legend">
-				{title}
+				<span className="title-text">{title}</span>
 				{action && <small>{action}</small>}
 			</h2>
 

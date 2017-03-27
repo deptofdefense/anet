@@ -123,6 +123,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 					<RequiredField id="intent" label="Meeting goal (purpose)"
 						canSubmitWithError={true}
 						validateBeforeUserTouches={this.props.edit}
+						className="meeting-goal"
 						placeholder="What happened?" componentClass="textarea" maxCharacters={250}>
 						<Form.Field.ExtraCol>{250 - report.intent.length} characters remaining</Form.Field.ExtraCol>
 					</RequiredField>
@@ -131,7 +132,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 						<DatePicker showTodayButton placeholder="When did it happen?" dateFormat="DD/MM/YYYY" showClearButton={false} />
 					</Form.Field>
 
-					<Form.Field id="location" addon={LOCATION_ICON} validationState={errors.location}
+					<Form.Field id="location" addon={LOCATION_ICON} validationState={errors.location} className="location-form-group"
 						postInputGroupChildren={errors.location && invalidInputWarningMessage}>
 						<Autocomplete valueKey="name" placeholder="Start typing to search for the location where this happened..." url="/api/locations/search" />
 						{recents.locations && recents.locations.length > 0 &&
@@ -143,13 +144,13 @@ export default class ReportForm extends ValidatableFormWrapper {
 					</Form.Field>
 
 					<Form.Field id="isCancelled" value={isCancelled} label="">
-						<Checkbox inline onChange={this.toggleCancelled} checked={isCancelled}>
+						<Checkbox inline onChange={this.toggleCancelled} checked={isCancelled} className="cancelled-checkbox">
 							This engagement was cancelled
 						</Checkbox>
 					</Form.Field>
 
 					{!isCancelled &&
-						<Form.Field id="atmosphere">
+						<Form.Field id="atmosphere" className="atmosphere-form-group">
 							<ButtonToggleGroup>
 								<Button value="POSITIVE" id="positiveAtmos">Positive</Button>
 								<Button value="NEUTRAL" id="neutralAtmos">Neutral</Button>
@@ -159,13 +160,13 @@ export default class ReportForm extends ValidatableFormWrapper {
 					}
 
 					{!isCancelled && report.atmosphere &&
-						<RequiredField id="atmosphereDetails"
+						<RequiredField id="atmosphereDetails" className="atmosphere-details"
 							placeholder={`Why was this engagement ${report.atmosphere.toLowerCase()}? ${report.atmosphere === 'POSITIVE' ? "(optional)" : ""}`}
 							required={report.atmosphere !== 'POSITIVE'} />
 					}
 
 					{isCancelled &&
-						<Form.Field id="cancelledReason" componentClass="select" >
+						<Form.Field id="cancelledReason" componentClass="select" className="cancelled-reason-form-group">
 							<option value="CANCELLED_BY_ADVISOR">Cancelled by Advisor</option>
 							<option value="CANCELLED_BY_PRINCIPAL">Cancelled by Principal</option>
 							<option value="CANCELLED_DUE_TO_TRANSPORTATION">Cancelled due to Transportation</option>
@@ -176,7 +177,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 					}
 				</Fieldset>
 
-				<Fieldset title={!isCancelled ? "Meeting attendance" : "Planned attendance"}>
+				<Fieldset title={!isCancelled ? "Meeting attendance" : "Planned attendance"} id="attendance-fieldset">
 					<Form.Field id="attendees" validationState={errors.attendees}>
 						<Autocomplete objectType={Person}
 							onChange={this.addAttendee}

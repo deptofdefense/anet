@@ -12,17 +12,29 @@ React structures the application into components instead of technologies. This m
 1. Re launch the backend server with `./gradlew run`
 1. Re launch the frontend server with `./npm run start`
 
-# How to set up Selenium Builds to automatically test workflows
-Selenium makes a plug-in for Firefox that lets you record the actions you take on a webpage so that it can rerun them for you later. We use Selenium builds to walk through a series of workflows to see if everything worked as expected, or if something failed. This helps us quickly identify if changes have broken something that we need to fix. Are you super excited to set this up and get testing?! Me too. Here's what you do:
+# How to run tests
+Run `npm test` to run the linter and tests.
 
-1. Make sure you have Mozilla Firefox installed on your computer
-1. Google and download "Selenium IDE" - this is the name of the extension you'll install
-1. Install Selenium IDE
-1. Once you've installed Selenium, open up Firefox and click on "Tools" on the top menu.
-1. Select "Selenium IDE" from the dropdown menu.
-1. From there, a window will pop up that allows you to record workflows by selecting the record icon and completing your desired actions
-1. To load the existing workflows we have recorded, select "File" and then open from the top menu
-1. Our existing builds are saved in client/tests/selenium
+Run `npm lint-fix` to automatically fix some kinds of lint errors.
+
+## How the tests work
+Our tests use selenium to simulate interacting with the app like a user. To do this, we need to connect a browser to the JavaScript tests. We do that via a driver. By having [`chromedriver`](https://www.npmjs.com/package/chromedriver) as an npm dependency, we automatically have access to run in Chrome. To use Firefox instead, see [`geckodriver`](https://www.npmjs.com/package/geckodriver).
+
+When writing browser tests, remember that when you take an action, you need to give the browser time to update in response before you start making assertions. Use the `driver.wait` method to do this.
+
+If the tests are failing and you don't know why, run them with env var `DEBUG_LOG=true`:
+
+```
+$ DEBUG_LOG=true npm test
+```
+
+You can also insert the following into your code to make the browser pause, allowing you to investigate what is currently happening:
+
+```js
+await t.context.waitForever()
+```
+
+In rare circumstances, when using Chrome, the tests will hang on the `data:,` URL. I don't know why this is. If you re-run the test, you should not see the issue a second time.
 
 # Random Documentation!!
 

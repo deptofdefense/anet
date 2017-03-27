@@ -24,7 +24,7 @@ export default class PoamsSelector extends Component {
 	render() {
 		let {poams, shortcuts, validationState, optional} = this.props
 
-		return <Fieldset title="Plans of Action and Milestones / Pillars" action={optional && "(Optional)"}>
+		return <Fieldset title="Plans of Action and Milestones / Pillars" action={optional && "(Optional)"} className="poams-selector">
 			<Form.Field id="poams" label="PoAMs" validationState={validationState} >
 				<Autocomplete
 					objectType={Poam}

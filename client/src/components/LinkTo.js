@@ -35,6 +35,8 @@ export default class LinkTo extends Component {
 
 		if (button) {
 			componentProps.className = [className, 'btn', `btn-${button === true ? 'default' : button}`].join(' ')
+		} else {
+			componentProps.className = className
 		}
 
 		let modelName = Object.keys(componentProps).find(key => MODEL_NAMES.indexOf(key) !== -1)

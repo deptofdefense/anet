@@ -327,7 +327,7 @@ export default class ReportShow extends Page {
 			<Button bsStyle="warning" onClick={this.rejectReport}>Reject with comment</Button>
 			<div className="right-button">
 				<LinkTo report={this.state.report} edit button>Edit report</LinkTo>
-				<Button bsStyle="primary" onClick={this.approveReport}><strong>Approve</strong></Button>
+				<Button bsStyle="primary" onClick={this.approveReport} className="approve-button"><strong>Approve</strong></Button>
 			</div>
 		</Fieldset>
 	}
