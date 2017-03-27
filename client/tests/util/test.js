@@ -183,6 +183,11 @@ test.beforeEach(t => {
             let $myOrgLink = await t.context.$('#my-organization')
             await t.context.driver.wait(t.context.until.elementIsVisible($myOrgLink))
             await $myOrgLink.click()
+        },
+        async clickFormBottomSubmit() {
+            let $formBottomSubmit = await t.context.$('#formBottomSubmit')
+            await t.context.driver.wait(t.context.until.elementIsVisible($formBottomSubmit))
+            await $formBottomSubmit.click()
         }
     }
 })
