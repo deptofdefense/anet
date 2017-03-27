@@ -57,7 +57,14 @@ export default class Form extends Component {
 
 		return (
 			<BSForm {...bsProps} ref="container">
+				{showSubmit && <div className="form-top-submit">
+					<Button bsStyle="primary" type="submit" disabled={submitDisabled}>
+						{submitText}
+					</Button>
+				</div>}
+
 				{children}
+
 				{!this.props.static && (showSubmit || showDelete) &&
 					<div className="submit-buttons">
 						{showSubmit &&
