@@ -189,6 +189,13 @@ fieldset.danger {
 	margin: 0;
 }
 
+.header small a {
+	padding: 5px;
+	text-decoration: underline;
+	display: inline-block;
+	cursor: pointer;
+}
+
 .banner {
 	color: #fff;
 	position: fixed;
@@ -198,6 +205,11 @@ fieldset.danger {
 	font-size: 18px;
 	text-align: center;
 	z-index: 10;
+}
+
+#advanced-search.popover {
+	width: 410px;
+	max-width: none;
 }
 
 .nprogress-custom-parent .bar {
@@ -460,10 +472,6 @@ a.home-tile {
 
 .getting-started-grid p {
 	margin-bottom: 0;
-}
-
-.middle-header {
-	text-align: center;
 }
 
 table.borderless td {
