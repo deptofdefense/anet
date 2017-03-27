@@ -86,6 +86,7 @@ INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 1.1 Advisor E', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 1.1 Advisor F', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 1.1 Advisor for Agriculture', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 1.1 Old Inactive Advisor', 0, 1, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 1.1 Advisor for Mining', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 1.1 Advisor for Space Issues', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 1.1 Advisor for Interagency Advising', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
@@ -96,6 +97,7 @@ INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 2.1 SuperUser', 2, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 2.2 Advisor C', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 2.2 Advisor D', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 2.2 Old and Inactive', 0, 1, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 2.2 Advisor Sewing Facilities', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 2.2 Advisor Local Kebabs', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 2.2 Super User', 2, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
@@ -104,6 +106,7 @@ INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 4.1 Advisor for Coffee', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 4.1 Advisor on Software Engineering', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 4.1 Advisor E', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 4.1 Advisor old - dont use', 0, 1, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 9 Advisor <empty>', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 

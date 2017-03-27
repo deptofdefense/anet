@@ -313,7 +313,12 @@ public class PositionResourceTest extends AbstractResourceTest {
 			prevCode = p.getCode();
 		}
 		
-		//Search by location
+		//search by status. 
+		query = new PositionSearchQuery();
+		query.setStatus(PositionStatus.INACTIVE);
+		searchResults = httpQuery("/api/positions/search", jack).post(Entity.json(query), PositionList.class).getList();
+		assertThat(searchResults.size()).isGreaterThan(0);
+		assertThat(searchResults.stream().filter(p -> p.getStatus().equals(PositionStatus.INACTIVE)).count()).isEqualTo(searchResults.size());
 	}
 	
 	@Test

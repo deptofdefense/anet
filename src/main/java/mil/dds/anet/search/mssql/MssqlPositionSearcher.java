@@ -86,6 +86,11 @@ public class MssqlPositionSearcher implements IPositionSearcher {
 			sqlArgs.put("locationId", query.getLocationId());
 		}
 		
+		if (query.getStatus() != null) { 
+			whereClauses.add("positions.status = :status");
+			sqlArgs.put("status", DaoUtils.getEnumId(query.getStatus()));
+		}
+		
 		if (whereClauses.size() == 0) { return result; }
 		
 		sql.append(Joiner.on(" AND ").join(whereClauses));

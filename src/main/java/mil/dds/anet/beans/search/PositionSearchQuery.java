@@ -2,6 +2,7 @@ package mil.dds.anet.beans.search;
 
 import java.util.List;
 
+import mil.dds.anet.beans.Position.PositionStatus;
 import mil.dds.anet.beans.Position.PositionType;
 
 public class PositionSearchQuery implements ISearchQuery {
@@ -15,6 +16,8 @@ public class PositionSearchQuery implements ISearchQuery {
 	List<PositionType> type;
 	Boolean isFilled;
 	Integer locationId;
+	PositionStatus status;
+	
 	PositionSearchSortBy sortBy;
 	SortOrder sortOrder;
 
@@ -83,6 +86,14 @@ public class PositionSearchQuery implements ISearchQuery {
 		this.locationId = locationId;
 	}
 	
+	public PositionStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(PositionStatus status) {
+		this.status = status;
+	}
+
 	public PositionSearchSortBy getSortBy() {
 		return sortBy;
 	}

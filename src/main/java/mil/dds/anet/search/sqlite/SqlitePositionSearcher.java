@@ -47,7 +47,6 @@ public class SqlitePositionSearcher implements IPositionSearcher {
 				whereClauses.add("(name LIKE '%' || :text || '%' OR code LIKE '%' || :text || '%')");
 			}
 			
-			
 			sqlArgs.put("text", Utils.getSqliteFullTextQuery(text));
 		}
 		
@@ -85,6 +84,11 @@ public class SqlitePositionSearcher implements IPositionSearcher {
 		if (query.getLocationId() != null) { 
 			whereClauses.add("positions.locationId = :locationId");
 			sqlArgs.put("locationId", query.getLocationId());
+		}
+		
+		if (query.getStatus() != null) { 
+			whereClauses.add("positions.status = :status");
+			sqlArgs.put("status", DaoUtils.getEnumId(query.getStatus()));
 		}
 		
 		if (whereClauses.size() == 0) { return result; }
