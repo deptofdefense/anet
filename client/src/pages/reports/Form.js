@@ -183,7 +183,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 							onErrorChange={this.attendeeError}
 							clearOnSelect={true}
 							fields={'id, name, role, position { id, name, organization { id, shortName}} '}
-							queryParams={{status: ['ACTIVE','NEW_USER']}}
+							queryParams={{status: ['ACTIVE','NEW_USER'], matchPositionName: true}}
 							template={person =>
 								<span>
 									<img src={(new Person(person)).iconUrl()} alt={person.role} height={20} className="person-icon" />

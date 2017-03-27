@@ -15,8 +15,16 @@ public class PersonSearchQuery implements ISearchQuery {
 	List<PersonStatus> status;
 	Boolean includeChildOrgs;
 	String country;
+	
+	//Filter to people in positions at a certain location
 	Integer locationId;
+	
+	//Also match on positions whose name or code matches text. 
+	Boolean matchPositionName;
+	
+	//Find people who are pending verification
 	Boolean pendingVerification;
+	
 	PersonSearchSortBy sortBy;
 	SortOrder sortOrder;
 	
@@ -82,6 +90,14 @@ public class PersonSearchQuery implements ISearchQuery {
 
 	public void setLocationId(Integer locationId) {
 		this.locationId = locationId;
+	}
+
+	public Boolean getMatchPositionName() {
+		return matchPositionName == null ? false : matchPositionName;
+	}
+
+	public void setMatchPositionName(Boolean matchPositionName) {
+		this.matchPositionName = matchPositionName;
 	}
 
 	public Boolean getPendingVerification() {
