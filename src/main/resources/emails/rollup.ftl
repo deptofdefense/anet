@@ -46,9 +46,6 @@ a {
 	</div>
 </#if>
 
-
-<#assign byPrincipal = reports?api.getByGrouping(chartOrgType)>
-
 <table class="tallyTable" cellspacing=0 >
 	<tr>
 		<th rowspan=2>Organization</th>
@@ -63,7 +60,7 @@ a {
 		<th>Routes</th>
 		<th>Threat</th>
 	</tr>
-	<#list byPrincipal as org>
+	<#list outerGrouping as org>
 		<#assign orgReports = org.all >
 		<#if orgReports?size gt 0>
 			<tr>
@@ -95,7 +92,7 @@ a {
 
 <#assign counter = 1>
 
-<#list byPrincipal as principal >
+<#list outerGrouping as principal >
 	<#if principal.nonCancelled?size gt 0>
 		<h2>${principal.name}</h2>
 		<#assign byAdvisor = principal?api.getByGrouping(innerOrgType) >

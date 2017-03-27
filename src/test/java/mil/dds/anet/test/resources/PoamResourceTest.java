@@ -13,6 +13,7 @@ import io.dropwizard.client.JerseyClientBuilder;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
+import mil.dds.anet.beans.Poam.PoamStatus;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.OrganizationList;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.PoamList;
 import mil.dds.anet.beans.search.PoamSearchQuery;
@@ -35,19 +36,19 @@ public class PoamResourceTest extends AbstractResourceTest {
 		assertThat(a.getId()).isNotNull();
 				
 		Poam b = httpQuery("/api/poams/new", admin)
-				.post(Entity.json(Poam.create("TestM1", "Teach a person how to fish", "Test-Milestone", a, null)), Poam.class);
+				.post(Entity.json(Poam.create("TestM1", "Teach a person how to fish", "Test-Milestone", a, null, PoamStatus.ACTIVE)), Poam.class);
 		assertThat(b.getId()).isNotNull();
 		
 		Poam c = httpQuery("/api/poams/new", admin)
-				.post(Entity.json(Poam.create("TestM2", "Watch the person fishing", "Test-Milestone", a, null)), Poam.class);
+				.post(Entity.json(Poam.create("TestM2", "Watch the person fishing", "Test-Milestone", a, null, PoamStatus.ACTIVE)), Poam.class);
 		assertThat(c.getId()).isNotNull();
 		
 		Poam d = httpQuery("/api/poams/new", admin)
-				.post(Entity.json(Poam.create("TestM3", "Have the person go fishing without you", "Test-Milestone", a, null)), Poam.class);
+				.post(Entity.json(Poam.create("TestM3", "Have the person go fishing without you", "Test-Milestone", a, null, PoamStatus.ACTIVE)), Poam.class);
 		assertThat(d.getId()).isNotNull();
 		
 		Poam e = httpQuery("/api/poams/new", admin)
-				.post(Entity.json(Poam.create("TestF2", "Be a thing in a test case", "Test-EF", null, null)), Poam.class);
+				.post(Entity.json(Poam.create("TestF2", "Be a thing in a test case", "Test-EF", null, null, PoamStatus.ACTIVE)), Poam.class);
 		assertThat(e.getId()).isNotNull();
 		
 		Poam returned = httpQuery("/api/poams/" + a.getId(), admin).get(Poam.class);
@@ -91,6 +92,13 @@ public class PoamResourceTest extends AbstractResourceTest {
 		assertThat(poams).contains(a);
 		
 		//Search for the poam: 
+		
+		//set poam to inactive
+		a.setStatus(PoamStatus.INACTIVE);
+		resp = httpQuery("/api/poams/update", admin).post(Entity.json(a));
+		assertThat(resp.getStatus()).isEqualTo(200);
+		returned = httpQuery("/api/poams/" + a.getId(), jack).get(Poam.class);
+		assertThat(returned.getStatus()).isEqualTo(PoamStatus.INACTIVE);
 	}
 	
 	@Test

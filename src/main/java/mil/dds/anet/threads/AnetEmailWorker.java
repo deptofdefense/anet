@@ -1,4 +1,4 @@
-package mil.dds.anet;
+package mil.dds.anet.threads;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -10,11 +10,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.mail.Authenticator;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
+import javax.mail.SendFailedException;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
@@ -37,6 +40,7 @@ import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapperBuilder;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.config.AnetConfiguration;
 import mil.dds.anet.config.AnetConfiguration.SmtpConfiguration;
 import mil.dds.anet.database.AdminDao.AdminSettingKeys;
@@ -52,12 +56,14 @@ public class AnetEmailWorker implements Runnable {
 	private String fromAddr;
 	private String serverUrl;
 	private Configuration freemarkerConfig;
+	private ScheduledExecutorService scheduler;
 	
 	private static AnetEmailWorker instance;
 	private Logger logger = LoggerFactory.getLogger(AnetEmailWorker.class);
 	
-	public AnetEmailWorker(Handle dbHandle, AnetConfiguration config) { 
+	public AnetEmailWorker(Handle dbHandle, AnetConfiguration config, ScheduledExecutorService scheduler) { 
 		this.handle = dbHandle;
+		this.scheduler = scheduler;
 		this.mapper = new ObjectMapper();
 		mapper.registerModule(new JodaModule());
 //		mapper.enableDefaultTyping();
@@ -91,52 +97,42 @@ public class AnetEmailWorker implements Runnable {
 	}
 	
 	@Override
-	public void run() {
-		while (true) { 
-			logger.debug("AnetEmailWorker waking up to send emails!");
-			
-			//check the database for any emails we need to send. 
-			List<AnetEmail> emails = handle.createQuery("SELECT * FROM pendingEmails ORDER BY createdAt ASC")
-					.map(emailMapper)
-					.list();
-			
-			//Send the emails!
-			List<Integer> sentEmails = new LinkedList<Integer>();
-			for (AnetEmail email : emails) { 
-				try {
-					logger.info("Sending email to {} re: {}",email.getToAddresses(), email.getAction().getSubject());
-					sendEmail(email);
-					sentEmails.add(email.getId());
-				} catch (Exception e) { 
-					logger.error("Error sending email", e);
-					e.printStackTrace();
-				}
-			}
-			
-			//Update the database.
-			if (sentEmails.size() > 0) { 
-				String emailIds = Joiner.on(", ").join(sentEmails);
-				handle.createStatement("DELETE FROM pendingEmails WHERE id IN (" + emailIds + ")").execute();
-			}
-		
-			//TODO: figure out if we should be cancelled
-			
-			//Back to sleep!
-			fallAsleep();
-		}
-	}
-
-	/*
-	 * Puts the thread to sleep for 30 seconds. 
-	 */
-	public synchronized void fallAsleep() { 
-		try {
-			this.wait(300 * 1000L);
-		} catch (InterruptedException ignore) {
-			/*ignore */
+	public void run() { 
+		logger.debug("AnetEmailWorker waking up to send emails!");
+		try { 
+			runInternal();
+		} catch (Throwable e) {
+			//Cannot let this thread die, otherwise ANET will stop sending emails until you reboot the server :(
+			e.printStackTrace();
 		}
 	}
 	
+	private void runInternal() {
+		//check the database for any emails we need to send. 
+		List<AnetEmail> emails = handle.createQuery("/* PendingEmailCheck */ SELECT * FROM pendingEmails ORDER BY createdAt ASC")
+				.map(emailMapper)
+				.list();
+		
+		//Send the emails!
+		List<Integer> sentEmails = new LinkedList<Integer>();
+		for (AnetEmail email : emails) { 
+			try {
+				logger.info("Sending email to {} re: {}",email.getToAddresses(), email.getAction().getSubject());
+				sendEmail(email);
+				sentEmails.add(email.getId());
+			} catch (Exception e) { 
+				logger.error("Error sending email", e);
+				e.printStackTrace();
+			}
+		}
+		
+		//Update the database.
+		if (sentEmails.size() > 0) {
+			String emailIds = Joiner.on(", ").join(sentEmails);
+			handle.createStatement("/* PendingEmailDelete*/ DELETE FROM pendingEmails WHERE id IN (" + emailIds + ")").execute();
+		}
+	}
+
 	private void sendEmail(AnetEmail email) throws MessagingException, IOException, TemplateException {
 		//Remove any null email addresses
 		email.getToAddresses().removeIf(s -> Objects.equals(s, null));
@@ -149,12 +145,19 @@ public class AnetEmailWorker implements Runnable {
 		Map<String,Object> context = email.getAction().execute();
 		AnetObjectEngine engine = AnetObjectEngine.getInstance();
 		
-		context.put("serverUrl", serverUrl);
-		context.put(AdminSettingKeys.SECURITY_BANNER_TEXT.name(), engine.getAdminSetting(AdminSettingKeys.SECURITY_BANNER_TEXT));
-		context.put(AdminSettingKeys.SECURITY_BANNER_COLOR.name(), engine.getAdminSetting(AdminSettingKeys.SECURITY_BANNER_COLOR));
-		Template temp = freemarkerConfig.getTemplate(email.getAction().getTemplateName());
 		StringWriter writer = new StringWriter();
-		temp.process(context, writer);
+		try { 
+			context.put("serverUrl", serverUrl);
+			context.put(AdminSettingKeys.SECURITY_BANNER_TEXT.name(), engine.getAdminSetting(AdminSettingKeys.SECURITY_BANNER_TEXT));
+			context.put(AdminSettingKeys.SECURITY_BANNER_COLOR.name(), engine.getAdminSetting(AdminSettingKeys.SECURITY_BANNER_COLOR));
+			Template temp = freemarkerConfig.getTemplate(email.getAction().getTemplateName());
+			
+			temp.process(context, writer);
+		} catch (Exception e) { 
+			//Exceptions thrown while processing the template are unlikely to ever get fixed, so we just log this and drop the email. 
+			e.printStackTrace();
+			return;
+		}
 		
 		Session session = Session.getInstance(props, auth);
 		Message message = new MimeMessage(session);
@@ -165,7 +168,14 @@ public class AnetEmailWorker implements Runnable {
 		message.setSubject(email.getAction().getSubject());
 		message.setContent(writer.toString(), "text/html; charset=utf-8");
 
-		Transport.send(message);
+		try { 
+			Transport.send(message);
+		} catch (SendFailedException e) { 
+			//The server rejected this... we'll log it and then not try again. 
+			e.printStackTrace();
+			return;
+		}
+		//Other errors are intentially thrown, as we want ANET to try again. 
 	}
 	
 	
@@ -177,7 +187,7 @@ public class AnetEmailWorker implements Runnable {
 		//Insert the job spec into the database.
 		try { 
 			String jobSpec = mapper.writeValueAsString(email);
-			handle.createStatement("INSERT INTO pendingEmails (jobSpec, createdAt) VALUES (:jobSpec, :createdAt)")
+			handle.createStatement("/* SendEmailAsync */ INSERT INTO pendingEmails (jobSpec, createdAt) VALUES (:jobSpec, :createdAt)")
 				.bind("jobSpec", jobSpec)
 				.bind("createdAt", new DateTime())
 				.execute();
@@ -186,7 +196,7 @@ public class AnetEmailWorker implements Runnable {
 		}
 		
 		//poke the worker thread so it wakes up. 
-		this.notify();
+		scheduler.schedule(this, 1, TimeUnit.SECONDS);
 	} 
 	
 	public static class AnetEmail { 

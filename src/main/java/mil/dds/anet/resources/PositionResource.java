@@ -23,6 +23,7 @@ import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Position;
+import mil.dds.anet.beans.Position.PositionStatus;
 import mil.dds.anet.beans.Position.PositionType;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.PositionList;
 import mil.dds.anet.beans.search.PositionSearchQuery;
@@ -132,7 +133,7 @@ public class PositionResource implements IGraphQLResource {
 
 		int numRows = dao.update(pos);
 
-		if (pos.getPerson() != null || pos.getAssociatedPositions() != null) {
+		if (pos.getPerson() != null || pos.getAssociatedPositions() != null || PositionStatus.INACTIVE.equals(pos.getStatus())) {
 			Position current = dao.getById(pos.getId());
 			//Run the diff and see if anything changed and update.
 
@@ -140,8 +141,10 @@ public class PositionResource implements IGraphQLResource {
 				if (current != null && pos.getPerson().getId() == null) { 
 					//Intentionally remove the person
 					dao.removePersonFromPosition(current);
+					AnetAuditLogger.log("Person {} removed from position {} by {}", pos.getPerson(), current, user);
 				} else if ( Utils.idEqual(pos.getPerson(), current.getPerson()) == false) {
 					dao.setPersonInPosition(pos.getPerson(), pos);
+					AnetAuditLogger.log("Person {} put in position {} by {}", pos.getPerson(), current, user);
 				}
 			}
 
@@ -149,6 +152,13 @@ public class PositionResource implements IGraphQLResource {
 				Utils.addRemoveElementsById(current.loadAssociatedPositions(), pos.getAssociatedPositions(),
 						newPosition -> { System.out.println("adding " + newPosition);; dao.associatePosition(newPosition, pos); } ,
 						oldPositionId -> { System.out.println("deleting " + oldPositionId); dao.deletePositionAssociation(pos, Position.createWithId(oldPositionId));});
+				AnetAuditLogger.log("Person {} associations changed to {} by {}", current, pos.getAssociatedPositions(), user);
+			}
+			
+			if (PositionStatus.INACTIVE.equals(pos.getStatus()) && current.getPerson() != null) { 
+				//Remove this person from this position. 
+				AnetAuditLogger.log("Person {} removed from position {} by {} because the position is now inactive", current.getPerson(), current, user);
+				dao.removePersonFromPosition(current);
 			}
 		}
 
@@ -255,4 +265,29 @@ public class PositionResource implements IGraphQLResource {
 		return dao.search(query);
 	}
 
+	
+	@DELETE
+	@Path("/{id}")
+	public Response deletePosition(@PathParam("id") int positionId) { 
+		Position p = dao.getById(positionId);
+		if (p == null) { return Response.status(Status.NOT_FOUND).build(); } 
+		
+		//if there is a person in this position, reject
+		if (p.getPerson() != null) { 
+			throw new WebApplicationException("Cannot delete a position that current has a person", Status.BAD_REQUEST); 
+		} 
+		
+		//if position is active, reject. 
+		if (PositionStatus.ACTIVE.equals(p.getStatus())) { 
+			throw new WebApplicationException("Cannot delete an active position", Status.BAD_REQUEST);
+		}
+		
+		//if this position has any history, we'll just delete it
+		//if this position is in an approval chain, we just delete it 
+		//if this position is in an organization, just remove it.
+		//if this position has any associated positions, just remove them.
+		dao.deletePosition(p);
+		return Response.ok().build();
+	}
+	
 }

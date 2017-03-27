@@ -126,7 +126,7 @@ export default class ReportShow extends Page {
 
 				{report.isDraft() &&
 					<Fieldset style={{textAlign: 'center'}}>
-						<h4 className="text-danger">This report is in DRAFT state and hasn't been submitted.</h4>
+						<h4 className="text-danger">This is a DRAFT report and hasn't been submitted.</h4>
 						<p>You can review the draft below to make sure all the details are correct.</p>
 						<div style={{textAlign: 'left'}}>
 							{errors && errors.length > 0 &&
@@ -145,7 +145,7 @@ export default class ReportShow extends Page {
 
 				{report.isFuture() &&
 					<Fieldset style={{textAlign: 'center'}}>
-						<h4 className="text-success">This report is for a FUTURE engagement.</h4>
+						<h4 className="text-success">This report is for an UPCOMING engagement.</h4>
 						<p>After your engagement has taken place, edit and submit this document as an engagement report.</p>
 						<div style={{textAlign: 'left'}}>
 							{errors && errors.length > 0 &&

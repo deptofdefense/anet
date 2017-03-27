@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react'
-import {Button} from 'react-bootstrap'
+import {Button, HelpBlock} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
 import ValidatableFormWrapper from 'components/ValidatableFormWrapper'
@@ -46,6 +46,8 @@ export default class PositionForm extends ValidatableFormWrapper {
 
 		const {ValidatableForm, RequiredField} = this
 
+		let willAutoKickPerson = position.status === 'INACTIVE' && position.person && position.person.id
+
 		return (
 			<ValidatableForm
 				formFor={position}
@@ -57,7 +59,7 @@ export default class PositionForm extends ValidatableFormWrapper {
 
 				<Messages error={error} success={success} />
 
-				<Fieldset title={edit ? "Edit Position" : "Create a new Position"}>
+				<Fieldset title={edit ? `Edit Position ${position.name}` : "Create a new Position"}>
 					<Form.Field id="type" disabled={this.props.edit}>
 						<ButtonToggleGroup>
 							<Button id="typeAdvisorButton" value="ADVISOR">NATO (Billet)</Button>
@@ -70,6 +72,10 @@ export default class PositionForm extends ValidatableFormWrapper {
 							<Button id="statusActiveButton" value="ACTIVE">Active</Button>
 							<Button id="statusInactiveButton" value="INACTIVE">Inactive</Button>
 						</ButtonToggleGroup>
+
+						{willAutoKickPerson && <HelpBlock>
+							<span className="text-danger">Setting this position to inactive will automatically remove <strong>{position.person.name}</strong> from this position.</span>
+						</HelpBlock> }
 					</Form.Field>
 
 					<Form.Field id="organization">

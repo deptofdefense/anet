@@ -18,10 +18,8 @@ import API from 'api'
 var d3 = null/* required later */
 
 const barColors = {
-	cancelled: '#e39394',
-	verified: '#9CBDA4',
-	unverified: '#F5D98C',
-	incoming: '#DA9795',
+	cancelled: '#EC971F',
+	verified: '#337AB7',
 }
 
 const calendarButtonCss = {
@@ -174,7 +172,7 @@ export default class RollupShow extends Page {
 						<Popover id="graph-popover" title={this.state.hoveredBar.org.shortName}>
 							<p>Released: {this.state.hoveredBar.released}</p>
 							<p>Cancelled: {this.state.hoveredBar.cancelled}</p>
-							<p>Click to drill down</p>
+							<p>Click to view details</p>
 						</Popover>
 					</Overlay>
 
@@ -345,8 +343,28 @@ export default class RollupShow extends Page {
 		this.setState({showEmailModal: !this.state.showEmailModal})
 	}
 
+	//**NOTE**: This hits an endpoint that sits only on the backend dropwizard server
+	// In development mode when running the frontend out of Node, this link will not work
+	// but if you change the URL to the port of the backend server (ie 8080) rather than
+	// the port of the frontend server (ie 3000) then it should work.  NPM doesn't proxy this
+	// through for some reason. But it works in production when the frontend and backend
+	// are run out of the same server process.
 	emailPreviewUrl() {
-		return `/api/reports/rollup?startDate=${this.rollupStart.valueOf()}&endDate=${this.rollupEnd.valueOf()}`
+		// orgType drives chart
+		// principalOrganizationId or advisorOrganizationId drive drill down.
+		let rollupUrl = `/api/reports/rollup?startDate=${this.rollupStart.valueOf()}&endDate=${this.rollupEnd.valueOf()}`
+		if (this.state.focusedOrg) {
+			if (this.state.orgType === 'PRINCIPAL_ORG') {
+				rollupUrl += `&principalOrganizationId=${this.state.focusedOrg.id}`
+			} else {
+				rollupUrl += `&advisorOrganizationId=${this.state.focusedOrg.id}`
+			}
+		}
+		if (this.state.orgType) {
+			rollupUrl += `&orgType=${this.state.orgType}`
+		}
+
+		return rollupUrl
 	}
 
 	@autobind
@@ -363,7 +381,20 @@ export default class RollupShow extends Page {
 			comment: email.comment
 		}
 
-		API.send(`/api/reports/rollup/email?startDate=${this.rollupStart.valueOf()}&endDate=${this.rollupEnd.valueOf()}`, email).then (() =>
+		let emailUrl = `/api/reports/rollup/email?startDate=${this.rollupStart.valueOf()}&endDate=${this.rollupEnd.valueOf()}`
+		if (this.state.focusedOrg) {
+			if (this.state.orgType === 'PRINCIPAL_ORG') {
+				emailUrl += `&principalOrganizationId=${this.state.focusedOrg.id}`
+			} else {
+				emailUrl += `&advisorOrganizationId=${this.state.focusedOrg.id}`
+			}
+		}
+		if (this.state.orgType) {
+			emailUrl += `&orgType=${this.state.orgType}`
+		}
+
+
+		API.send(emailUrl, email).then (() =>
 			this.setState({
 				success: 'Email successfully sent',
 				showEmailModal: false,

@@ -30,7 +30,7 @@ public class MssqlPersonSearcher implements IPersonSearcher {
 		Map<String,Object> sqlArgs = new HashMap<String,Object>();
 		String commonTableExpression = null;
 		
-		if (query.getOrgId() != null || query.getLocationId() != null) { 
+		if (query.getOrgId() != null || query.getLocationId() != null || query.getMatchPositionName()) { 
 			sql.append(" LEFT JOIN positions ON people.id = positions.currentPersonId ");
 		}
 		
@@ -41,8 +41,15 @@ public class MssqlPersonSearcher implements IPersonSearcher {
 		result.setPageSize(query.getPageSize());
 		
 		String text = query.getText();
-		if (text != null && text.trim().length() > 0) { 
-			whereClauses.add("(CONTAINS ((name, emailAddress, biography), :containsQuery) OR FREETEXT((name, biography), :freetextQuery))");
+		if (text != null && text.trim().length() > 0) {
+			if (query.getMatchPositionName()) { 
+				whereClauses.add("(CONTAINS ((people.name, emailAddress, biography), :containsQuery) "
+						+ "OR FREETEXT((people.name, biography), :freetextQuery) "
+						+ "OR CONTAINS((positions.name, positions.code), :containsQuery))");
+			} else { 
+				whereClauses.add("(CONTAINS ((people.name, emailAddress, biography), :containsQuery) "
+						+ "OR FREETEXT((name, biography), :freetextQuery))");
+			}
 			sqlArgs.put("containsQuery", Utils.getSqlServerFullTextQuery(query.getText()));
 			sqlArgs.put("freetextQuery", query.getText());
 		}

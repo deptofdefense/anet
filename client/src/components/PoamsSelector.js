@@ -6,6 +6,8 @@ import Autocomplete from 'components/Autocomplete'
 import Form from 'components/Form'
 import {Table, Button, HelpBlock} from 'react-bootstrap'
 
+import {Poam} from 'models'
+
 import REMOVE_ICON from 'resources/delete.png'
 import WARNING_ICON from 'resources/warning.png'
 
@@ -25,7 +27,9 @@ export default class PoamsSelector extends Component {
 		return <Fieldset title="Plans of Action and Milestones / Pillars" action={optional && "(Optional)"} className="poams-selector">
 			<Form.Field id="poams" label="PoAMs" validationState={validationState} >
 				<Autocomplete
-					url="/api/poams/search"
+					objectType={Poam}
+					fields={'id, shortName, longName'}
+					queryParams={{status: 'ACTIVE'}}
 					placeholder="Start typing to search for PoAMs..."
 					template={poam =>
 						<span>{[poam.shortName, poam.longName].join(' - ')}</span>

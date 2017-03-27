@@ -84,8 +84,8 @@ export default class Autocomplete extends Component {
 		inputProps.onChange = this.onInputChange
 		inputProps.onBlur = this.onInputBlur
 
-		return <div style={{position: 'relative'}}>
-			<img src={SEARCH_ICON} className="form-control-icon" role="presentation" />
+		return <div style={{position: 'relative'}} ref={(el) => this.container = el}>
+			<img src={SEARCH_ICON} className="form-control-icon" role="presentation" onClick={this.focus} />
 
 			<Autosuggest
 				suggestions={this.state.noSuggestions ? [{}] : this.state.suggestions}
@@ -240,5 +240,11 @@ export default class Autocomplete extends Component {
 				this.props.onChange(val)
 			}
 		}
+	}
+
+	@autobind
+	focus() {
+		if (!this.container) { return }
+		this.container.querySelector('input').focus()
 	}
 }

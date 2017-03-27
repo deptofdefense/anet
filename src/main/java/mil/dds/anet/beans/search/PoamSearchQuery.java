@@ -1,10 +1,13 @@
 package mil.dds.anet.beans.search;
 
+import mil.dds.anet.beans.Poam.PoamStatus;
+
 public class PoamSearchQuery implements ISearchQuery {
 
 	String text;
 	Integer responsibleOrgId;
 	String category;
+	PoamStatus status;
 	int pageNum;
 	int pageSize;
 	
@@ -35,6 +38,14 @@ public class PoamSearchQuery implements ISearchQuery {
 
 	public void setCategory(String category) {
 		this.category = category;
+	}
+
+	public PoamStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(PoamStatus status) {
+		this.status = status;
 	}
 
 	@Override

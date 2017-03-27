@@ -71,6 +71,7 @@ export default class OrganizationShow extends Page {
 	getPoamQueryPart(orgId) {
 		let poamQuery = {
 			pageNum: this.poamsPageNum,
+			status: 'ACTIVE',
 			pageSize: 10,
 			responsibleOrgId: orgId
 		}
@@ -129,6 +130,7 @@ export default class OrganizationShow extends Page {
 			<div>
 				{currentUser.isSuperUser() && <div className="pull-right">
 					<GuidedTour
+						title="Take a guided tour of this organization's page."
 						tour={orgTour}
 						autostart={localStorage.newUser === 'true' && localStorage.hasSeenOrgTour !== 'true'}
 						onEnd={() => localStorage.hasSeenOrgTour = 'true'}

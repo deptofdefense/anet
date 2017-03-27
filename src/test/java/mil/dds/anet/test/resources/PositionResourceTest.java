@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -162,7 +163,26 @@ public class PositionResourceTest extends AbstractResourceTest {
 		//verify that it's now gone. 
 		retT = httpQuery(String.format("/api/positions/%d/associated", created.getId()), jack).get(PositionList.class);
 		assertThat(retT.getList().size()).isEqualTo(0);
+		
+		//remove the principal from the tashkil
+		resp = httpQuery(String.format("/api/positions/%d/person", tashkil.getId()), admin).delete();
+		assertThat(resp.getStatus()).isEqualTo(200);
+		
+		//Try to delete this position, it should fail because the tashkil is active
+		resp = httpQuery(String.format("/api/positions/%d",  tashkil.getId()), admin).delete();
+		assertThat(resp.getStatus()).isEqualTo(Status.BAD_REQUEST.getStatusCode());
+		
+		tashkil.setStatus(PositionStatus.INACTIVE);
+		resp = httpQuery("/api/positions/update", admin).post(Entity.json(tashkil));
+		assertThat(resp.getStatus()).isEqualTo(200);
+		
+		resp = httpQuery(String.format("/api/positions/%d",  tashkil.getId()), admin).delete();
+		assertThat(resp.getStatus()).isEqualTo(200);
+	
+		resp = httpQuery(String.format("/api/positions/%d",tashkil.getId()), jack).get();
+		assertThat(resp.getStatus()).isEqualTo(Status.NOT_FOUND.getStatusCode());
 	}
+		
 	
 	@Test
 	public void tashkilTest() {

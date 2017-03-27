@@ -134,3 +134,9 @@ To log in as one of the base data users, when prompted for a username and passwo
     - **Password:** Leave it blank
 
 NB: You only need node.js and the npm dependencies for developing. When we deploy for production, everything is compiled to static files. No javascript dependencies are necessary on the server.
+
+## Development Mode
+In the `anet.yml` file there is a flag for `developmentMode`.  This flag does several valuable things::
+1. On every graphql query, the entire graphql graph is reloaded and re-parsed.  This helps in backend evelopment by allowing you to make quick changes without having to restart the server.  (Note: this only helps if you're running ANET out of eclipse in debug mode). 
+1. ANET will use AuthType Basic rather than windows authentication.  This allows you to develop on non-windows computers and also quickly impersonate other accounts for testing.  To log in with an account, enter the `domainUsername` value for that user in the 'Username' field when prompted by your browser.  Leave the password field blank. 
+1. You can easily simulate a "new user" in development mode by entering a new username into both the username and password field.  This will activate the same code path as if a user came to the production system with a valid Windows Authentication Principal but we don't find them in the `people` table.  If you enter an unknown username and no password, ANET will reject you. If you enter an unknown username and the same unknown username into the password field, it will create that account and drop you into the new user workflow. 

@@ -100,6 +100,10 @@ export default class ReportForm extends ValidatableFormWrapper {
 			Location not found in database
 		</b></HelpBlock>
 
+		const futureMessage = isFuture && <HelpBlock>
+			<span className="text-success">This will create an upcoming engagement</span>
+		</HelpBlock>
+
 		const {ValidatableForm, RequiredField} = this
 
 		return <div className="report-form">
@@ -111,14 +115,11 @@ export default class ReportForm extends ValidatableFormWrapper {
 
 			<ValidatableForm formFor={report} horizontal onSubmit={this.onSubmit} onChange={this.onChange}
 				onDelete={onDelete} deleteText="Delete this report"
-				submitDisabled={hasErrors} submitText="Preview and submit">
+				submitDisabled={hasErrors} submitText="Preview and submit"
+				bottomAccessory={this.state.autoSavedAt && <div>Last autosaved at {this.state.autoSavedAt.format('hh:mm:ss')}</div>}
+			>
 
-				<Fieldset title={this.props.title} action={
-					<Button bsStyle="primary" type="submit" disabled={hasErrors}>
-						Preview and submit
-					</Button>
-				}>
-
+				<Fieldset title={this.props.title}>
 					<RequiredField id="intent" label="Meeting goal (purpose)"
 						canSubmitWithError={true}
 						validateBeforeUserTouches={this.props.edit}
@@ -127,13 +128,8 @@ export default class ReportForm extends ValidatableFormWrapper {
 						<Form.Field.ExtraCol>{250 - report.intent.length} characters remaining</Form.Field.ExtraCol>
 					</RequiredField>
 
-					<Form.Field id="engagementDate" addon={CALENDAR_ICON}>
+					<Form.Field id="engagementDate" addon={CALENDAR_ICON} postInputGroupChildren={futureMessage} >
 						<DatePicker showTodayButton placeholder="When did it happen?" dateFormat="DD/MM/YYYY" showClearButton={false} />
-						{isFuture &&
-							<Form.Field.ExtraCol>
-								<span className='text-success' >This will create a future engagement</span>
-							</Form.Field.ExtraCol>
-						}
 					</Form.Field>
 
 					<Form.Field id="location" addon={LOCATION_ICON} validationState={errors.location} className="location-form-group"
@@ -188,7 +184,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 							onErrorChange={this.attendeeError}
 							clearOnSelect={true}
 							fields={'id, name, role, position { id, name, organization { id, shortName}} '}
-							queryParams={{status: ['ACTIVE','NEW_USER']}}
+							queryParams={{status: ['ACTIVE','NEW_USER'], matchPositionName: true}}
 							template={person =>
 								<span>
 									<img src={(new Person(person)).iconUrl()} alt={person.role} height={20} className="person-icon" />
@@ -262,7 +258,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 					</RequiredField>
 
 					<Button className="center-block toggle-section-button" onClick={this.toggleReportText} id="toggleReportDetails" >
-						{this.state.showReportText ? 'Hide' : 'Add'} report details
+						{this.state.showReportText ? 'Hide' : 'Add'} detailed report
 					</Button>
 
 					<Collapse in={this.state.showReportText}>

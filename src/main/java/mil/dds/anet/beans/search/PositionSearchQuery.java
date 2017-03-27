@@ -36,7 +36,7 @@ public class PositionSearchQuery implements ISearchQuery {
 	}
 	
 	public Boolean getMatchPersonName() {
-		return matchPersonName;
+		return matchPersonName == null ? false : matchPersonName;
 	}
 	
 	public void setMatchPersonName(Boolean matchPersonName) {

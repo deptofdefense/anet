@@ -13,7 +13,9 @@ import org.skife.jdbi.v2.Query;
 
 import com.google.common.base.Joiner;
 
+import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Report;
+import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.ReportList;
 import mil.dds.anet.beans.search.ISearchQuery.SortOrder;
 import mil.dds.anet.beans.search.ReportSearchQuery;
@@ -27,7 +29,7 @@ import mil.dds.anet.utils.Utils;
 
 public class MssqlReportSearcher implements IReportSearcher {
 	
-	public ReportList runSearch(ReportSearchQuery query, Handle dbHandle) { 
+	public ReportList runSearch(ReportSearchQuery query, Handle dbHandle, Person user) { 
 		StringBuffer sql = new StringBuffer();
 		sql.append("/* MssqlReportSearch */ SELECT " + ReportDao.REPORT_FIELDS + "," + PersonDao.PERSON_FIELDS);
 		sql.append(", count(*) OVER() AS totalCount "
@@ -170,11 +172,24 @@ public class MssqlReportSearcher implements IReportSearcher {
 		
 		if (whereClauses.size() == 0) { return results; }
 		
+		//Apply a filter to restrict access to other's draft reports
+		if (user == null) { 
+			whereClauses.add("reports.state != :draftState");
+			whereClauses.add("reports.state != :rejectedState");
+			args.put("draftState", DaoUtils.getEnumId(ReportState.DRAFT));
+			args.put("rejectedState", DaoUtils.getEnumId(ReportState.REJECTED));
+		} else { 
+	 		whereClauses.add("((reports.state != :draftState AND reports.state != :rejectedState) OR (reports.authorId = :userId))");
+			args.put("draftState", DaoUtils.getEnumId(ReportState.DRAFT));
+			args.put("rejectedState", DaoUtils.getEnumId(ReportState.REJECTED));
+			args.put("userId", user.getId());
+		}
+		
 		sql.append(Joiner.on(" AND ").join(whereClauses));
 		
 		//Sort Ordering
 		sql.append(" ORDER BY ");
-		if (query.getSortBy() == null) { query.setSortBy(ReportSearchSortBy.CREATED_AT); }
+		if (query.getSortBy() == null) { query.setSortBy(ReportSearchSortBy.ENGAGEMENT_DATE); }
 		switch (query.getSortBy()) {
 			case ENGAGEMENT_DATE:
 				sql.append("reports.engagementDate");

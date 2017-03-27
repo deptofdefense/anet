@@ -131,6 +131,7 @@ export default class PersonShow extends Page {
 			<div>
 				<div className="pull-right">
 					<GuidedTour
+						title="Take a guided tour of this person's page."
 						tour={personTour}
 						autostart={localStorage.newUser === 'true' && localStorage.hasSeenPersonTour !== 'true'}
 						onEnd={() => localStorage.hasSeenPersonTour = 'true'}

@@ -71,6 +71,11 @@ h2.legend {
 	margin-left: 1rem;
 }
 
+.form-top-submit {
+	float: right;
+	margin-bottom: -42px;
+}
+
 fieldset .pagination {
 	margin: 0;
 }
@@ -470,12 +475,29 @@ table hr.attendee-divider {
 }
 
 .report-cancelled {
-	border-left: 1.5rem solid #DA9795;
+	/*border-left: 1.5rem solid #DA9795;*/
+	border-left: 1.5rem solid #C23030;
+	padding-left: 1rem;
+}
+
+.report-rejected {
+	border-left: 1.5rem solid #EB532D;
 	padding-left: 1rem;
 }
 
 .report-draft {
 	border-left: 1.5rem solid #f3a537;
+	padding-left: 1rem;
+}
+
+.report-future {
+	/*border-left: 1.5rem solid #238C2C; */
+	border-left: 1.5rem solid #00998C;
+	padding-left: 1rem;
+}
+
+.report-pending {
+	border-left: 1.5rem solid #2965CC;
 	padding-left: 1rem;
 }
 
@@ -489,12 +511,13 @@ table hr.attendee-divider {
 	margin: 5rem 0 5rem 0;
 }
 
-.submit-buttons > div:first-child {
-	flex-grow: 2;
+.submit-buttons > div {
+	margin-left: 2.5rem;
 }
 
-.submit-buttons > div:last-child {
-	margin-left: 10px;
+.submit-buttons > div:first-child {
+	flex-grow: 2;
+	margin-left: 0;
 }
 
 .submit-buttons .btn-primary {

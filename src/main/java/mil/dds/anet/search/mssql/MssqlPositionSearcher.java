@@ -30,7 +30,7 @@ public class MssqlPositionSearcher implements IPositionSearcher {
 		Map<String,Object> sqlArgs = new HashMap<String,Object>();
 		String commonTableExpression = null;
 		
-		if (query.getMatchPersonName() != null && query.getMatchPersonName()) { 
+		if (query.getMatchPersonName()) { 
 			sql.append(" LEFT JOIN people ON positions.currentPersonId = people.id ");
 		}
 		

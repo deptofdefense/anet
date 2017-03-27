@@ -362,4 +362,25 @@ public class PositionDao implements IAnetDao<Position> {
 		return count > 0;
 	}
 
+	public Integer deletePosition(final Position p) {
+		return dbHandle.inTransaction(new TransactionCallback<Integer>() {
+			public Integer inTransaction(Handle conn, TransactionStatus status) throws Exception {
+				//if this position has any history, we'll just delete it
+				dbHandle.execute("DELETE FROM peoplePositions WHERE positionId = ?", p.getId());
+				
+				//if this position is in an approval chain, we just delete it
+				dbHandle.execute("DELETE FROM approvers WHERE positionId = ?", p.getId());
+				
+				//if this position is in an organization, it'll be automatically removed. 
+				
+				//if this position has any associated positions, just remove them.
+				dbHandle.execute("DELETE FROM positionRelationships WHERE positionId_a = ? OR positionId_b= ?", p.getId(), p.getId());
+				
+				return dbHandle.createStatement("DELETE FROM positions WHERE id = :positionId")
+					.bind("positionId", p.getId())
+					.execute();
+			}
+		});
+	}
+
 }

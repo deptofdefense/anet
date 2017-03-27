@@ -9,6 +9,7 @@ import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Poam;
+import mil.dds.anet.beans.Poam.PoamStatus;
 
 public class PoamMapper implements ResultSetMapper<Poam> {
 
@@ -19,6 +20,7 @@ public class PoamMapper implements ResultSetMapper<Poam> {
 		p.setLongName(r.getString("longName"));
 		p.setShortName(r.getString("shortName"));
 		p.setCategory(r.getString("category"));
+		p.setStatus(MapperUtils.getEnumIdx(r, "status", PoamStatus.class));
 		
 		Integer parentPoamId = MapperUtils.getInteger(r, "parentPoamId");
 		if (parentPoamId != null) { 

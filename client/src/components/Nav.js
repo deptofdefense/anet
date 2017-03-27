@@ -71,6 +71,7 @@ class Nav extends Component {
 						offset={-152}
 					>
 						<AnchorLink scrollTo="draft-reports">Draft reports</AnchorLink>
+						<AnchorLink scrollTo="upcoming-engagements">Upcoming Engagements</AnchorLink>
 						<AnchorLink scrollTo="pending-approval">Pending approval</AnchorLink>
 						<AnchorLink scrollTo="published-reports">Published reports</AnchorLink>
 					</SubNav>

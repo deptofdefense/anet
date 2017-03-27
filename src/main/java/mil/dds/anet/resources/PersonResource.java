@@ -21,6 +21,7 @@ import com.codahale.metrics.annotation.Timed;
 import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.Person.PersonStatus;
 import mil.dds.anet.beans.Person.Role;
 import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Position.PositionType;
@@ -33,6 +34,7 @@ import mil.dds.anet.graphql.IGraphQLResource;
 import mil.dds.anet.utils.AnetAuditLogger;
 import mil.dds.anet.utils.AuthUtils;
 import mil.dds.anet.utils.ResponseUtils;
+import mil.dds.anet.utils.Utils;
 
 @Path("/api/people")
 @Produces(MediaType.APPLICATION_JSON)
@@ -108,6 +110,7 @@ public class PersonResource implements IGraphQLResource {
 			if (position.getType() == PositionType.ADMINISTRATOR) { AuthUtils.assertAdministrator(user); } 
 		}
 		
+		p.setBiography(Utils.sanitizeHtml(p.getBiography()));
 		Person created = dao.insert(p);
 		
 		if (created.getPosition() != null) { 
@@ -135,29 +138,42 @@ public class PersonResource implements IGraphQLResource {
 	@Timed
 	@Path("/update")
 	public Response updatePerson(@Auth Person user, Person p) {
-		if (canEditPerson(user, p) == false) { 
+		Person existing = dao.getById(p.getId());
+		if (canEditPerson(user, existing) == false) { 
 			throw new WebApplicationException("You do not have permissions to edit this person", Status.FORBIDDEN);
 		}
 		
 		//Swap the position first in order to do the authentication check. 
 		if (p.getPosition() != null) {
 			//Maybe update position? 
-			Position existing = AnetObjectEngine.getInstance()
-					.getPositionDao().getCurrentPositionForPerson(Person.createWithId(p.getId()));
-			if (existing == null && p.getPosition().getId() != null) {
+			Position existingPos = existing.loadPosition();
+			if (existingPos == null && p.getPosition().getId() != null) {
 				//Update the position for this person.
 				AuthUtils.assertSuperUser(user);
 				AnetObjectEngine.getInstance().getPositionDao().setPersonInPosition(p, p.getPosition());
-			} else if (existing != null && existing.getId().equals(p.getPosition().getId()) == false) {
+				AnetAuditLogger.log("Person {} put in position {}  by {}", p, p.getPosition(), user);
+			} else if (existingPos != null && existing.getId().equals(p.getPosition().getId()) == false) {
 				//Update the position for this person.
 				AuthUtils.assertSuperUser(user);
 				AnetObjectEngine.getInstance().getPositionDao().setPersonInPosition(p, p.getPosition());
-			} else if (existing != null && p.getPosition().getId() == null) {
+				AnetAuditLogger.log("Person {} put in position {}  by {}", p, p.getPosition(), user);
+			} else if (existingPos != null && p.getPosition().getId() == null) {
 				//Remove this person from their position.
 				AuthUtils.assertSuperUser(user);
-				AnetObjectEngine.getInstance().getPositionDao().removePersonFromPosition(existing);
+				AnetObjectEngine.getInstance().getPositionDao().removePersonFromPosition(existingPos);
+				AnetAuditLogger.log("Person {} removed from position   by {}", p, user);
 			}
 		}
+		
+		//Automatically remove peopple from a position if they are inactive.  
+		if (PersonStatus.INACTIVE.equals(p.getStatus()) && p.getPosition() != null) {
+			AuthUtils.assertSuperUser(user);
+			AnetAuditLogger.log("Person {} removed from position by {} because they are now inactive", p, user);
+			Position existingPos = existing.loadPosition();
+			AnetObjectEngine.getInstance().getPositionDao().removePersonFromPosition(existingPos);
+		}
+		
+		p.setBiography(Utils.sanitizeHtml(p.getBiography()));
 		int numRows = dao.update(p);
 		
 		AnetAuditLogger.log("Person {} edited by {}", p, user);
@@ -175,7 +191,7 @@ public class PersonResource implements IGraphQLResource {
 			//Super Users can edit any principal
 			if (subject.getRole().equals(Role.PRINCIPAL)) { return true; }
 			//Ensure that the editor is the Super User for the subject's organization.
-			Position subjectPos = Person.createWithId(subject.getId()).loadPosition();
+			Position subjectPos = subject.loadPosition();
 			if (subjectPos == null) { 
 				//Super Users can edit position-less people. 
 				return true; 
@@ -277,10 +293,12 @@ public class PersonResource implements IGraphQLResource {
 		}
 		
 		dao.mergePeople(winner, loser, copyPosition);
+		AnetAuditLogger.log("Person {} merged into WINNER: {}  by {}", loser, winner, user);
 		
 		if (loserPosition != null && copyPosition) { 
 			AnetObjectEngine.getInstance().getPositionDao()
 				.setPersonInPosition(winner, loserPosition);
+			AnetAuditLogger.log("Person {} put in position {} as part of merge by {}", winner, loserPosition, user);
 		} else if (winner.getPosition() != null) { 
 			//We need to always re-put the winner back into their position
 			// because when we removed the loser, and then updated the peoplePositions table

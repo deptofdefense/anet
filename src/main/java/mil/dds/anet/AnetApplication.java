@@ -1,7 +1,11 @@
 package mil.dds.anet;
 
+import java.sql.Connection;
 import java.util.EnumSet;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
@@ -12,6 +16,7 @@ import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.skife.jdbi.v2.DBI;
+import org.skife.jdbi.v2.Handle;
 
 import com.google.common.collect.ImmutableList;
 
@@ -43,6 +48,8 @@ import mil.dds.anet.resources.PoamResource;
 import mil.dds.anet.resources.PositionResource;
 import mil.dds.anet.resources.ReportResource;
 import mil.dds.anet.resources.SavedSearchResource;
+import mil.dds.anet.threads.AnetEmailWorker;
+import mil.dds.anet.threads.FutureEngagementWorker;
 import mil.dds.anet.utils.AnetDbLogger;
 import mil.dds.anet.utils.HttpsRedirectFilter;
 import mil.dds.anet.views.ViewResponseFilter;
@@ -96,11 +103,17 @@ public class AnetApplication extends Application<AnetConfiguration> {
 
 	@Override
 	public void run(AnetConfiguration configuration, Environment environment) {
+		//Get the Database connection up and running
 		System.out.println(configuration.getDataSourceFactory().getUrl());
 		final DBIFactory factory = new DBIFactory();
 		final DBI jdbi = factory.build(environment, configuration.getDataSourceFactory(), "mssql");
+
+		
+		//We want to use our own custom DB logger in order to clean up the logs a bit. 
 		jdbi.setSQLLog(new AnetDbLogger());
 
+		//The Object Engine is the core place where we store all of the Dao's
+		//You can always grab the engine from anywhere with AnetObjectEngine.getInstance()
 		final AnetObjectEngine engine = new AnetObjectEngine(jdbi);
 		environment.servlets().setSessionHandler(new SessionHandler());
 		
@@ -131,9 +144,26 @@ public class AnetApplication extends Application<AnetConfiguration> {
 		environment.jersey().register(RolesAllowedDynamicFeature.class);
 		environment.jersey().register(new WebExceptionMapper());
 
-		Thread emailThread = new Thread(new AnetEmailWorker(jdbi.open(), configuration));
-		emailThread.start();
-	    
+		//Schedule any tasks that need to run on an ongoing basis. 
+		ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+		AnetEmailWorker emailWorker = new AnetEmailWorker(jdbi.open(), configuration, scheduler);
+		FutureEngagementWorker futureWorker = new FutureEngagementWorker(jdbi.open());
+		
+		//Check for any emails that need to be sent every 5 minutes. 
+		//And run once in 5 seconds from boot-up. (give the server time to boot up).   
+		scheduler.scheduleAtFixedRate(emailWorker, 5, 5, TimeUnit.MINUTES);
+		scheduler.schedule(emailWorker, 5, TimeUnit.SECONDS);
+		
+		//Check for any future engagements every 1 hour.
+		//And check in 10 seconds (give the server time to boot up)
+		if (configuration.isDevelopmentMode()) { 
+			scheduler.scheduleAtFixedRate(futureWorker, 0, 1, TimeUnit.MINUTES);
+		} else { 
+			scheduler.scheduleAtFixedRate(futureWorker, 0, 3, TimeUnit.HOURS);
+		}
+		scheduler.schedule(futureWorker, 10, TimeUnit.SECONDS);
+		
+	    //Create all of the HTTP Resources.  
 		PersonResource personResource = new PersonResource(engine);
 		PoamResource poamResource =  new PoamResource(engine);
 		LocationResource locationResource = new LocationResource(engine);
@@ -145,6 +175,7 @@ public class AnetApplication extends Application<AnetConfiguration> {
 		HomeResource homeResource = new HomeResource(engine);
 		SavedSearchResource savedSearchResource = new SavedSearchResource(engine);
 
+		//Register all of the HTTP Resources
 		environment.jersey().register(personResource);
 		environment.jersey().register(poamResource);
 		environment.jersey().register(locationResource);
@@ -164,6 +195,9 @@ public class AnetApplication extends Application<AnetConfiguration> {
 			configuration.isDevelopmentMode()));
 	}
 
+	/*
+	 * Adds a Request filter that looks for any HTTP requests and redirects them to HTTPS
+	 */
 	public void forwardToHttps(ServletContextHandler handler) {
 		handler.addFilter(new FilterHolder(new HttpsRedirectFilter()), "/*",  EnumSet.of(DispatcherType.REQUEST));
 	}

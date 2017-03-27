@@ -27,7 +27,7 @@ public class SqlitePersonSearcher implements IPersonSearcher {
 				+ " FROM people WHERE people.id IN (SELECT people.id FROM people ");
 		Map<String,Object> sqlArgs = new HashMap<String,Object>();
 		
-		if (query.getOrgId() != null || query.getLocationId() != null) { 
+		if (query.getOrgId() != null || query.getLocationId() != null || query.getMatchPositionName()) { 
 			sql.append(" LEFT JOIN positions ON people.id = positions.currentPersonId ");
 		}
 		
@@ -39,7 +39,17 @@ public class SqlitePersonSearcher implements IPersonSearcher {
 		
 		String text = query.getText();
 		if (text != null && text.trim().length() > 0) { 
-			whereClauses.add("(name LIKE '%' || :text || '%' OR emailAddress LIKE '%' || :text || '%' OR biography LIKE '%' || :text || '%')");
+			if (query.getMatchPositionName()) { 
+				whereClauses.add("(people.name LIKE '%' || :text || '%' "
+						+ "OR emailAddress LIKE '%' || :text || '%' "
+						+ "OR biography LIKE '%' || :text || '%'"
+						+ "OR positions.name LIKE '%' || :text || '%'"
+						+ "OR positions.code LIKE '%' || :text || '%')");
+			} else { 
+				whereClauses.add("(people.name LIKE '%' || :text || '%' "
+						+ "OR emailAddress LIKE '%' || :text || '%' "
+						+ "OR biography LIKE '%' || :text || '%')");
+			}
 			sqlArgs.put("text", Utils.getSqliteFullTextQuery(text));
 		}
 		

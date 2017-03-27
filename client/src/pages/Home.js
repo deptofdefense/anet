@@ -43,13 +43,13 @@ export default class Home extends Page {
 
 	allDraft() { return {
 		title: "All draft reports",
-		query: { state: ["DRAFT"] }
+		query: { state: ["DRAFT", "REJECTED"] }
 	}}
 
 	myDraft(currentUser) {
 		return {
 			title: "My draft reports",
-			query: { state: ["DRAFT"], authorId: currentUser.id }
+			query: { state: ["DRAFT", "REJECTED"], authorId: currentUser.id }
 		}
 	}
 
@@ -157,6 +157,7 @@ export default class Home extends Page {
 			<div>
 				<div className="pull-right">
 					<GuidedTour
+						title="Take a guided tour of the home page."
 						tour={currentUser.isSuperUser() ? superUserTour : userTour}
 						autostart={localStorage.newUser === 'true' && localStorage.hasSeenHomeTour !== 'true'}
 						onEnd={() => localStorage.hasSeenHomeTour = 'true'}

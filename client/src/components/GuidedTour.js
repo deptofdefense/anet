@@ -21,6 +21,7 @@ export default class GuidedTour extends Component {
 		tour: PropTypes.func.isRequired,
 		autostart: PropTypes.bool,
 		onEnd: PropTypes.func,
+		title: PropTypes.string,
 	}
 
 	static contextTypes = {
@@ -48,8 +49,9 @@ export default class GuidedTour extends Component {
 	}
 
 	render() {
+		let title = this.props.title || 'New to ANET? Take a guided tour'
 		return <Button bsStyle="link" onClick={this.onClick} className="persistent-tour-launcher">
-			New to ANET? Take a guided tour
+			{title}
 			<img src={TOUR_ICON} className="tour-icon" role="presentation" style={iconCss} />
 		</Button>
 	}

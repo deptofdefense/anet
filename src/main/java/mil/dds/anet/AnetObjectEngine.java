@@ -173,6 +173,20 @@ public class AnetObjectEngine {
 		return Utils.buildParentOrgMapping(orgs, null);
 	}
 	
+	/* Helper function to build a map or organization IDS to their top parent
+	 * capped at a certain point in the hierarchy. 
+	 * parentOrg will map to parentOrg, and all children will map to the highest 
+	 * parent that is NOT the parentOrgId. 
+	 */
+	public Map<Integer,Organization> buildTopLevelOrgHash(Integer parentOrgId) { 
+		OrganizationSearchQuery query = new OrganizationSearchQuery();
+		query.setParentOrgId(parentOrgId);
+		query.setParentOrgRecursively(true);
+		query.setPageSize(Integer.MAX_VALUE);
+		List<Organization> orgList = AnetObjectEngine.getInstance().getOrganizationDao().search(query).getList();
+		return Utils.buildParentOrgMapping(orgList, parentOrgId);
+	}
+	
 	public static AnetObjectEngine getInstance() { 
 		return instance;
 	}

@@ -26,6 +26,7 @@ import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Person.PersonStatus;
 import mil.dds.anet.beans.Person.Role;
+import mil.dds.anet.beans.Poam.PoamStatus;
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Position.PositionStatus;
@@ -159,9 +160,9 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		
 		//Create some poams for this organization
 		Poam top = httpQuery("/api/poams/new", admin)
-				.post(Entity.json(Poam.create("test-1", "Test Top Poam", "TOP", null, advisorOrg)), Poam.class);
+				.post(Entity.json(Poam.create("test-1", "Test Top Poam", "TOP", null, advisorOrg, PoamStatus.ACTIVE)), Poam.class);
 		Poam action = httpQuery("/api/poams/new", admin)
-				.post(Entity.json(Poam.create("test-1-1", "Test Poam Action", "Action", top, null)), Poam.class);
+				.post(Entity.json(Poam.create("test-1-1", "Test Poam Action", "Action", top, null, PoamStatus.ACTIVE)), Poam.class);
 
 		//Create a Location that this Report was written at
 		Location loc = httpQuery("/api/locations/new", admin)
@@ -683,7 +684,6 @@ public class ReportsResourceTest extends AbstractResourceTest {
 	public void reportDeleteTest() {
 		final Person jack = getJackJackson();
 		final Person liz = getElizabethElizawell();
-		final Person admin = getArthurDmin();
 		final Person roger = getRogerRogwell();
 
 		List<ReportPerson> attendees = ImmutableList.of(
@@ -704,8 +704,8 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		r = httpQuery("/api/reports/new", liz).post(Entity.json(r), Report.class);
 		assertThat(r.getId()).isNotNull();
 
-		//Try to delete  by the admin, this should fail.
-		Response resp = httpQuery("/api/reports/" + r.getId() + "/delete", admin).delete();
+		//Try to delete  by jack, this should fail.
+		Response resp = httpQuery("/api/reports/" + r.getId() + "/delete", jack).delete();
 		assertThat(resp.getStatus()).isEqualTo(Status.FORBIDDEN.getStatusCode());
 
 		//Now have the author delete this report.

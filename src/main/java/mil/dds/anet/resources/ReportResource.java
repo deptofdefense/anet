@@ -35,8 +35,6 @@ import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapperBuilder;
 import freemarker.template.Template;
 import io.dropwizard.auth.Auth;
-import mil.dds.anet.AnetEmailWorker;
-import mil.dds.anet.AnetEmailWorker.AnetEmail;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.ApprovalAction;
 import mil.dds.anet.beans.ApprovalAction.ApprovalType;
@@ -67,6 +65,8 @@ import mil.dds.anet.emails.ReportReleasedEmail;
 import mil.dds.anet.graphql.GraphQLFetcher;
 import mil.dds.anet.graphql.GraphQLParam;
 import mil.dds.anet.graphql.IGraphQLResource;
+import mil.dds.anet.threads.AnetEmailWorker;
+import mil.dds.anet.threads.AnetEmailWorker.AnetEmail;
 import mil.dds.anet.utils.AnetAuditLogger;
 import mil.dds.anet.utils.AuthUtils;
 import mil.dds.anet.utils.ResponseUtils;
@@ -130,6 +130,11 @@ public class ReportResource implements IGraphQLResource {
 		return DateTime.now().withHourOfDay(23).withMinuteOfHour(59).withSecondOfMinute(59);
 	}
 	
+	// Helper method to determine if a report should be pushed into FUTURE state. 
+	private boolean shouldBeFuture(Report r) { 
+		return r.getEngagementDate() != null && r.getEngagementDate().isAfter(tomorrow()) && r.getCancelledReason() == null;
+	}
+	
 	@POST
 	@Timed
 	@Path("/new")
@@ -146,10 +151,11 @@ public class ReportResource implements IGraphQLResource {
 			r.setPrincipalOrg(engine.getOrganizationForPerson(primaryPrincipal));
 		}
 		
-		if (r.getEngagementDate() != null && r.getEngagementDate().isAfter(tomorrow())) { 
+		if (shouldBeFuture(r)) { 
 			r.setState(ReportState.FUTURE);
 		}
 		
+		r.setReportText(Utils.sanitizeHtml(r.getReportText()));
 		r = dao.insert(r);
 		AnetAuditLogger.log("Report {} created by author {} ", r, author);
 		return r;
@@ -175,10 +181,13 @@ public class ReportResource implements IGraphQLResource {
 		assertCanEditReport(r, editor);
 		
 		//If this report is in draft and in the future, set state to Future. 
-		if (ReportState.DRAFT.equals(r.getState()) && r.getEngagementDate() != null && r.getEngagementDate().isAfter(tomorrow())) { 
+		if (ReportState.DRAFT.equals(r.getState()) && shouldBeFuture(r)) { 
 			r.setState(ReportState.FUTURE);
 		} else if (ReportState.FUTURE.equals(r.getState()) && (r.getEngagementDate() == null || r.getEngagementDate().isBefore(tomorrow()))) {
 			//This catches a user editing the report to change date back to the past. 
+			r.setState(ReportState.DRAFT);
+		} else if (ReportState.FUTURE.equals(r.getState()) && r.getCancelledReason() != null) {
+			//Cancelled future engagements become draft. 
 			r.setState(ReportState.DRAFT);
 		}
 		
@@ -197,6 +206,7 @@ public class ReportResource implements IGraphQLResource {
 			r.setPrincipalOrg(existing.getPrincipalOrg());
 		}
 		
+		r.setReportText(Utils.sanitizeHtml(r.getReportText()));
 		dao.update(r);
 		
 		//Update Attendees:
@@ -572,9 +582,9 @@ public class ReportResource implements IGraphQLResource {
 	@GET
 	@Timed
 	@Path("/search")
-	public ReportList search(@Context HttpServletRequest request) {
+	public ReportList search(@Auth Person user, @Context HttpServletRequest request) {
 		try {
-			return search(ResponseUtils.convertParamsToBean(request, ReportSearchQuery.class));
+			return search(ResponseUtils.convertParamsToBean(request, ReportSearchQuery.class), user);
 		} catch (IllegalArgumentException e) {
 			throw new WebApplicationException(e.getMessage(), e.getCause(), Status.BAD_REQUEST);
 		}
@@ -584,8 +594,8 @@ public class ReportResource implements IGraphQLResource {
 	@Timed
 	@GraphQLFetcher
 	@Path("/search")
-	public ReportList search(@GraphQLParam("query") ReportSearchQuery query) {
-		return dao.search(query);
+	public ReportList search(@GraphQLParam("query") ReportSearchQuery query, @Auth Person user) {
+		return dao.search(query, user);
 	}
 
 	/** 

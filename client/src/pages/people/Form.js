@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react'
-import {Button, Alert} from 'react-bootstrap'
+import {Button, Alert, HelpBlock} from 'react-bootstrap'
 import DatePicker from 'react-bootstrap-date-picker'
 import autobind from 'autobind-decorator'
 
@@ -38,9 +38,11 @@ export default class PersonForm extends ValidatableFormWrapper {
 	render() {
 		let {person, edit} = this.props
 		const isAdvisor = person.role === 'ADVISOR'
-		const legendText = this.props.legendText || (edit ? `Edit ${person.name}` : 'Create a new person')
+		const legendText = this.props.legendText || (edit ? `Edit Person ${person.name}` : 'Create a new Person')
 
 		const {ValidatableForm, RequiredField} = this
+
+		let willAutoKickPosition = person.status === 'INACTIVE' && person.position && !!person.position.id
 
 		return <ValidatableForm formFor={person} onChange={this.onChange} onSubmit={this.onSubmit} horizontal
 			submitText={this.props.saveText || 'Save person'}>
@@ -64,11 +66,16 @@ export default class PersonForm extends ValidatableFormWrapper {
 				{person.isNewUser() ?
 					<Form.Field type="static" id="status" value="New user" />
 					:
-					<Form.Field id="status">
+					<Form.Field id="status" >
 						<ButtonToggleGroup>
 							<Button id="statusActiveButton" value="ACTIVE">Active</Button>
 							<Button id="statusInactiveButton" value="INACTIVE">Inactive</Button>
 						</ButtonToggleGroup>
+
+						{willAutoKickPosition && <HelpBlock>
+							<span className="text-danger">Setting this person to inactive will automatically remove them from the <strong>{person.position.name}</strong> position.</span>
+						</HelpBlock> }
+
 					</Form.Field>
 				}
 
