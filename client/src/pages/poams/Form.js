@@ -1,12 +1,15 @@
 import React, {PropTypes} from 'react'
 import autobind from 'autobind-decorator'
 
+import {Button} from 'react-bootstrap'
+
 import ValidatableFormWrapper from 'components/ValidatableFormWrapper'
 import Fieldset from 'components/Fieldset'
 import Autocomplete from 'components/Autocomplete'
 import Form from 'components/Form'
 import History from 'components/History'
 import Messages from'components/Messages'
+import ButtonToggleGroup from 'components/ButtonToggleGroup'
 
 import API from 'api'
 import {Poam} from 'models'
@@ -48,6 +51,14 @@ export default class PoamForm extends ValidatableFormWrapper {
 					<Fieldset title={edit ? `Edit PoAM ${poam.shortName}` : "Create a new PoAM"}>
 						<RequiredField id="shortName" label="PoAM number" />
 						<RequiredField id="longName" label="PoAM description" />
+
+						<Form.Field id="status" >
+							<ButtonToggleGroup>
+								<Button id="statusActiveButton" value="ACTIVE">Active</Button>
+								<Button id="statusInactiveButton" value="INACTIVE">Inactive</Button>
+							</ButtonToggleGroup>
+						</Form.Field>
+
 						<Form.Field id="responsibleOrg" label="Responsible organization">
 							<Autocomplete valueKey="shortName"
 								placeholder="Select a responsible organization for this PoAM"

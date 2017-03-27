@@ -16,6 +16,7 @@ import io.dropwizard.client.JerseyClientBuilder;
 import mil.dds.anet.beans.ApprovalStep;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Organization.OrganizationType;
+import mil.dds.anet.beans.Poam.PoamStatus;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.Position;
@@ -105,6 +106,7 @@ public class OrganizationResourceTest extends AbstractResourceTest {
 		Poam poam = new Poam();
 		poam.setShortName("TST POM1");
 		poam.setLongName("Verify that you can update Poams on a Organization");
+		poam.setStatus(PoamStatus.ACTIVE);
 		poam = httpQuery("/api/poams/new", admin).post(Entity.json(poam), Poam.class);
 		assertThat(poam.getId()).isNotNull();
 		

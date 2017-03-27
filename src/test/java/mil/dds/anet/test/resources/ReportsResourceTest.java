@@ -26,6 +26,7 @@ import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Person.PersonStatus;
 import mil.dds.anet.beans.Person.Role;
+import mil.dds.anet.beans.Poam.PoamStatus;
 import mil.dds.anet.beans.Poam;
 import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Position.PositionStatus;
@@ -159,9 +160,9 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		
 		//Create some poams for this organization
 		Poam top = httpQuery("/api/poams/new", admin)
-				.post(Entity.json(Poam.create("test-1", "Test Top Poam", "TOP", null, advisorOrg)), Poam.class);
+				.post(Entity.json(Poam.create("test-1", "Test Top Poam", "TOP", null, advisorOrg, PoamStatus.ACTIVE)), Poam.class);
 		Poam action = httpQuery("/api/poams/new", admin)
-				.post(Entity.json(Poam.create("test-1-1", "Test Poam Action", "Action", top, null)), Poam.class);
+				.post(Entity.json(Poam.create("test-1-1", "Test Poam Action", "Action", top, null, PoamStatus.ACTIVE)), Poam.class);
 
 		//Create a Location that this Report was written at
 		Location loc = httpQuery("/api/locations/new", admin)

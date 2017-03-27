@@ -56,11 +56,12 @@ public class PoamDao implements IAnetDao<Poam> {
 		p.setCreatedAt(DateTime.now());
 		p.setUpdatedAt(DateTime.now());
 		GeneratedKeys<Map<String, Object>> keys = dbHandle.createStatement("/* inserPoam */ INSERT INTO poams "
-				+ "(longName, shortName, category, parentPoamId, organizationId, createdAt, updatedAt) " 
-				+ "VALUES (:longName, :shortName, :category, :parentPoamId, :organizationId, :createdAt, :updatedAt)")
+				+ "(longName, shortName, category, parentPoamId, organizationId, createdAt, updatedAt, status) " 
+				+ "VALUES (:longName, :shortName, :category, :parentPoamId, :organizationId, :createdAt, :updatedAt, :status)")
 			.bindFromProperties(p)
 			.bind("parentPoamId", DaoUtils.getId(p.getParentPoam()))
 			.bind("organizationId", DaoUtils.getId(p.getResponsibleOrg()))
+			.bind("status", DaoUtils.getEnumId(p.getStatus()))
 			.executeAndReturnGeneratedKeys();
 		p.setId(DaoUtils.getGeneratedId(keys));
 		return p;
@@ -71,11 +72,12 @@ public class PoamDao implements IAnetDao<Poam> {
 		p.setUpdatedAt(DateTime.now());
 		return dbHandle.createStatement("/* updatePoam */ UPDATE poams set longName = :longName, shortName = :shortName, "
 				+ "category = :category, parentPoamId = :parentPoamId, updatedAt = :updatedAt, "
-				+ "organizationId = :organizationId " 
+				+ "organizationId = :organizationId, status = :status " 
 				+ "WHERE id = :id")
 			.bindFromProperties(p)
 			.bind("parentPoamId", DaoUtils.getId(p.getParentPoam()))
 			.bind("organizationId", DaoUtils.getId(p.getResponsibleOrg()))
+			.bind("status", DaoUtils.getEnumId(p.getStatus()))
 			.execute();
 	}
 	
@@ -104,10 +106,10 @@ public class PoamDao implements IAnetDao<Poam> {
 		} else { 
 			sql.append("WITH RECURSIVE");
 		}
-		sql.append(" parent_poams(id, shortName, longName, category, parentPoamId, organizationId, createdAt, updatedAt) AS ("
-				+ "SELECT id, shortName, longName, category, parentPoamId, organizationId, createdAt, updatedAt FROM poams WHERE id = :poamId "
+		sql.append(" parent_poams(id, shortName, longName, category, parentPoamId, organizationId, createdAt, updatedAt, status) AS ("
+				+ "SELECT id, shortName, longName, category, parentPoamId, organizationId, createdAt, updatedAt, status FROM poams WHERE id = :poamId "
 			+ "UNION ALL "
-				+ "SELECT p.id, p.shortName, p.longName, p.category, p.parentPoamId, p.organizationId, p.createdAt, p.updatedAt "
+				+ "SELECT p.id, p.shortName, p.longName, p.category, p.parentPoamId, p.organizationId, p.createdAt, p.updatedAt, p.status "
 				+ "from parent_poams pp, poams p WHERE p.parentPoamId = pp.id "
 			+ ") SELECT * from parent_poams;");
 		return dbHandle.createQuery(sql.toString())

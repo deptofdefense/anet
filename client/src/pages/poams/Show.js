@@ -50,7 +50,7 @@ export default class PoamShow extends Page {
 
 		let poamQuery = new GQL.Part(/* GraphQL */`
 			poam(id:${props.params.id}) {
-				id, shortName, longName,
+				id, shortName, longName, status,
 				responsibleOrg {id, shortName, longName}
 			}
 		`)
@@ -79,6 +79,7 @@ export default class PoamShow extends Page {
 					<Fieldset title={`PoAM ${poam.shortName}`} action={canEdit && <LinkTo poam={poam} edit button="primary">Edit</LinkTo>}>
 						<Form.Field id="shortName" label="PoAM number" />
 						<Form.Field id="longName" label="PoAM description" />
+						<Form.Field id="status" />
 						{poam.responsibleOrg && poam.responsibleOrg.id && this.renderOrg()}
 					</Fieldset>
 				</Form>

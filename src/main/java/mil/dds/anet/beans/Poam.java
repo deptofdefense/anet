@@ -11,11 +11,15 @@ import mil.dds.anet.views.AbstractAnetBean;
 
 public class Poam extends AbstractAnetBean {
 
+	public enum PoamStatus { ACTIVE, INACTIVE }
+	
 	String shortName;
 	String longName;
 	String category;
 	Poam parentPoam;
 	List<Poam> childrenPoams;
+	
+	PoamStatus status;
 	
 	Organization responsibleOrg;
 
@@ -80,6 +84,14 @@ public class Poam extends AbstractAnetBean {
 		this.childrenPoams = childrenPoams;
 	}
 	
+	public PoamStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(PoamStatus status) {
+		this.status = status;
+	}
+
 	public void setResponsibleOrg(Organization org) { 
 		this.responsibleOrg = org;
 	}
@@ -100,16 +112,17 @@ public class Poam extends AbstractAnetBean {
 	}
 	
 	public static Poam create(String shortName, String longName, String category) { 
-		return create(shortName, longName, category, null, null);
+		return create(shortName, longName, category, null, null, PoamStatus.ACTIVE);
 	}
 	
-	public static Poam create(String shortName, String longName, String category, Poam parent, Organization responsibleOrg) { 
+	public static Poam create(String shortName, String longName, String category, Poam parent, Organization responsibleOrg, PoamStatus status) { 
 		Poam p = new Poam();
 		p.setShortName(shortName);
 		p.setLongName(longName);
 		p.setCategory(category);
 		p.setParentPoam(parent);
 		p.setResponsibleOrg(responsibleOrg);
+		p.setStatus(status);
 		return p;
 	}
 	

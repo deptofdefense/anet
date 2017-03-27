@@ -29,9 +29,7 @@ export default class PoamEdit extends Page {
 	fetchData(props) {
 		API.query(/* GraphQL */`
 			poam(id:${props.params.id}) {
-				id,
-				shortName,
-				longName,
+				id, shortName, longName, status,
 				responsibleOrg {id,shortName, longName}
 			}
 		`).then(data => {

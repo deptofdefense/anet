@@ -71,6 +71,7 @@ export default class OrganizationShow extends Page {
 	getPoamQueryPart(orgId) {
 		let poamQuery = {
 			pageNum: this.poamsPageNum,
+			status: 'ACTIVE',
 			pageSize: 10,
 			responsibleOrgId: orgId
 		}

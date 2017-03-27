@@ -14,6 +14,7 @@ import mil.dds.anet.beans.lists.AbstractAnetBeanList.PoamList;
 import mil.dds.anet.beans.search.PoamSearchQuery;
 import mil.dds.anet.database.mappers.PoamMapper;
 import mil.dds.anet.search.IPoamSearcher;
+import mil.dds.anet.utils.DaoUtils;
 import mil.dds.anet.utils.Utils;
 
 public class MssqlPoamSearcher implements IPoamSearcher {
@@ -44,6 +45,11 @@ public class MssqlPoamSearcher implements IPoamSearcher {
 		if (query.getCategory() != null) { 
 			whereClauses.add("category = :category");
 			args.put("category", query.getCategory());
+		}
+		
+		if (query.getStatus() != null) { 
+			whereClauses.add("status = :status");
+			args.put("status", DaoUtils.getEnumId(query.getStatus()));
 		}
 		
 		if (whereClauses.size() == 0) { return result; }
