@@ -133,7 +133,7 @@ public class PositionResource implements IGraphQLResource {
 
 		int numRows = dao.update(pos);
 
-		if (pos.getPerson() != null || pos.getAssociatedPositions() != null) {
+		if (pos.getPerson() != null || pos.getAssociatedPositions() != null || PositionStatus.INACTIVE.equals(pos.getStatus())) {
 			Position current = dao.getById(pos.getId());
 			//Run the diff and see if anything changed and update.
 
@@ -153,6 +153,12 @@ public class PositionResource implements IGraphQLResource {
 						newPosition -> { System.out.println("adding " + newPosition);; dao.associatePosition(newPosition, pos); } ,
 						oldPositionId -> { System.out.println("deleting " + oldPositionId); dao.deletePositionAssociation(pos, Position.createWithId(oldPositionId));});
 				AnetAuditLogger.log("Person {} associations changed to {} by {}", current, pos.getAssociatedPositions(), user);
+			}
+			
+			if (PositionStatus.INACTIVE.equals(pos.getStatus()) && current.getPerson() != null) { 
+				//Remove this person from this position. 
+				AnetAuditLogger.log("Person {} removed from position {} by {} because the position is now inactive", current.getPerson(), current, user);
+				dao.removePersonFromPosition(current);
 			}
 		}
 
