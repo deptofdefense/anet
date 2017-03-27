@@ -510,14 +510,22 @@ test('Verify that validation and other reports/new interactions work', async t =
     await pageHelpers.assertReportShowStatusText(t, "This is a DRAFT report and hasn't been submitted.")
 })
 
-test('Move someone in and out of a position', async t => {
-    t.plan(1)
+test.only('Move someone in and out of a position', async t => {
+    t.plan(8)
 
     let {$, $$, assertElementText} = t.context
 
     await t.context.get('/', 'rebecca')
-    let $myOrgLink = await $('#my-organization')
-    await $myOrgLink.click()
+
+    async function clickMyOrgLink() {
+        let $myOrgLink = await $('#my-organization')
+        await $myOrgLink.click()
+    }
+
+    await clickMyOrgLink()
+
+    let positionName = 'EF2.2 Advisor D'
+    let personName = 'Civ Erin Erinson'
 
     let $supportedPositionsRows = await $$('#supportedPositions table tbody tr')
     let $erinCell
@@ -526,7 +534,7 @@ test('Move someone in and out of a position', async t => {
         let billetText = await $billetCell.getText()
         let advisorText = await $advisorCell.getText()
 
-        if (billetText === 'EF2.2 Advisor D' && advisorText === 'Civ Erin Erinson') {
+        if (billetText === positionName && advisorText === personName) {
             $erinCell = $advisorCell
             break
         }
@@ -548,6 +556,66 @@ test('Move someone in and out of a position', async t => {
     await $removePersonButton.click()
 
     await assertElementText(t, await $('p.not-assigned-to-position-message'), 'Erin Erinson is not assigned to a position.')
+    
+    await clickMyOrgLink()
+
+    let $vacantPositionRows = await $$('#vacantPositions table tbody tr')
+    let $positionToFillCell
+    for (let $row of $vacantPositionRows) {
+        let [$billetCell, $advisorCell] = await $row.findElements(By.css('td'))
+        let billetText = await $billetCell.getText()
+        let advisorText = await $advisorCell.getText()
+
+        if (billetText === positionName && advisorText === 'Unfilled') {
+            $positionToFillCell = $billetCell
+            break
+        }
+    }
+
+    if (!$positionToFillCell) {
+        t.fail(`Could not find ${positionName} in the vacant positions table.`)
+    }
+
+    await t.context.driver.wait(until.elementIsVisible($positionToFillCell))
+    let $positionToFillLink = await $positionToFillCell.findElement(By.css('a'))
+    await $positionToFillLink.click()
+    let currentPathname = await t.context.getCurrentPathname()
+    t.regex(currentPathname, /positions\/\d+/, 'URL is updated to positions/show page')
+
+    await assertElementText(t, await $('.legend .title-text'), positionName)
+    await assertElementText(t, await $('.position-empty-message'), `${positionName} is currently empty.`)
+
+    let $changeAssignedPersonButton = await $('button.change-assigned-person')
+    await $changeAssignedPersonButton.click()
+
+    await t.context.pageHelpers.chooseAutocompleteOption('.select-person-autocomplete', personName)
+    let $saveButton = await $('button.save-button')
+    await $saveButton.click()
+
+    await assertElementText(t, await $('h4.assigned-person-name'), personName)
+
+    let $personLink = await $('h4.assigned-person-name a')
+    await $personLink.click()
+    currentPathname = await t.context.getCurrentPathname()
+    t.regex(currentPathname, /people\/\d+/, 'URL is updated to people/show page')
+
+    await assertElementText(t, await $('.position-name'), positionName)
+
+    await clickMyOrgLink()
+
+    $supportedPositionsRows = await $$('#supportedPositions table tbody tr')
+    let foundCorrectRow = false
+    for (let $row of $supportedPositionsRows) {
+        let [$billetCell, $advisorCell] = await $row.findElements(By.css('td'))
+        let billetText = await $billetCell.getText()
+        let advisorText = await $advisorCell.getText()
+
+        if (billetText === positionName && advisorText === personName) {
+            foundCorrectRow = true
+            break
+        }
+    }
+    t.true(foundCorrectRow, `Could not find ${positionName} and ${personName} in the supported positions table`)
 })
 
 test('Report 404', async t => {

@@ -59,6 +59,7 @@ export default class AssignPersonModal extends Component {
 								<Autocomplete valueKey="name"
 									placeholder="Select a person for this position"
 									objectType={Person}
+									className="select-person-autocomplete"
 									fields={'id, name, rank, role, position  { id, name}'}
 									template={person =>
 										<span>{[person.name, person.rank].join(' - ')}</span>
@@ -110,7 +111,7 @@ export default class AssignPersonModal extends Component {
 				</Modal.Body>
 				<Modal.Footer>
 					<Button className="pull-left" onClick={this.close}>Cancel</Button>
-					<Button onClick={this.save} bsStyle={"primary"} >Save</Button>
+					<Button onClick={this.save} bsStyle={"primary"} className="save-button">Save</Button>
 				</Modal.Footer>
 			</Modal>
 		)

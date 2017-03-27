@@ -233,7 +233,7 @@ export default class PersonShow extends Page {
 	renderPosition(position) {
 		return <div style={{textAlign: 'center'}}>
 					<h4>
-						<LinkTo position={position} />  (<LinkTo organization={position.organization} />)
+						<LinkTo position={position} className="position-name" />  (<LinkTo organization={position.organization} />)
 					</h4>
 			</div>
 	}
