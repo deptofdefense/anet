@@ -19,7 +19,7 @@ console.log(chalk.bold.cyan(
     `These tests assume that you have recently run ${path.resolve(__dirname, '..', '..', '..', 'insertSqlBaseData.sql')} on your SQLServer instance`
 ))
 
-let shortWaitMs = 500
+let shortWaitMs = moment.duration(.5, 'seconds').asMilliseconds()
 
 // We use the before hook to put helpers on t.context and set up test scaffolding.
 test.beforeEach(t => {
@@ -61,7 +61,7 @@ test.beforeEach(t => {
         await t.context.driver.wait(() => {})
     }
 
-    let longWaitMs = 10000
+    let longWaitMs = moment.duration(10, 'seconds').asMilliseconds()
     t.context.$ = async (cssSelector, timeoutMs) => {
         let waitTimeoutMs = timeoutMs || longWaitMs
         let locator = By.css(cssSelector)
@@ -89,7 +89,7 @@ test.beforeEach(t => {
             let untilCondition = _isRegExp(expectedText) ? 
                     until.elementTextMatches($elem, expectedText) : until.elementTextIs($elem, expectedText)
 
-            await t.context.driver.wait(untilCondition)
+            await t.context.driver.wait(untilCondition, longWaitMs)
         } catch (e) {
             // If we got a TimeoutError because the element did not have the text we expected, just swallow it here
             // and let the assertion on blow up instead. That will produce a clearer error message.
@@ -280,8 +280,8 @@ test('Draft and submit a report', async t => {
 
     let $formButtonSubmit = await $('#formBottomSubmit')
     await $formButtonSubmit.click()
-    await pageHelpers.assertReportShowStatusText(t, "This report is in DRAFT state and hasn't been submitted.")
-    
+    await pageHelpers.assertReportShowStatusText(t, "This is a DRAFT report and hasn't been submitted.")
+
     let currentPathname = await t.context.getCurrentPathname()
     t.regex(currentPathname, /reports\/\d+/, 'URL is updated to reports/show page')
 
@@ -507,7 +507,7 @@ test('Verify that validation and other reports/new interactions work', async t =
 
     let $submitButton = await $('#formBottomSubmit')
     await $submitButton.click()
-    await pageHelpers.assertReportShowStatusText(t, "This report is in DRAFT state and hasn't been submitted.")
+    await pageHelpers.assertReportShowStatusText(t, "This is a DRAFT report and hasn't been submitted.")
 })
 
 test('Move someone in and out of a position', async t => {
