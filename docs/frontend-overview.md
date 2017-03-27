@@ -22,6 +22,20 @@ Our tests use selenium to simulate interacting with the app like a user. To do t
 
 When writing browser tests, remember that when you take an action, you need to give the browser time to update in response before you start making assertions. Use the `driver.wait` method to do this.
 
+If the tests are failing and you don't know why, run them with env var `DEBUG_LOG=true`:
+
+```
+$ DEBUG_LOG=true npm test
+```
+
+You can also insert the following into your code to make the browser pause, allowing you to investigate what is currently happening:
+
+```js
+await t.context.waitForever()
+```
+
+In rare circumstances, when using Chrome, the tests will hang on the `data:,` URL. I don't know why this is. If you re-run the test, you should not see the issue a second time.
+
 # Random Documentation!!
 
 ## How to add a new field to an object

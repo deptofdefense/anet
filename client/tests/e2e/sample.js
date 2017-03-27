@@ -19,6 +19,12 @@ console.log(chalk.bold.cyan(
     `These tests assume that you have recently run ${path.resolve(__dirname, '..', '..', '..', 'insertSqlBaseData.sql')} on your SQLServer instance`
 ))
 
+function debugLog(...args) {
+    if (process.env.DEBUG_LOG === 'true') {
+        console.log(chalk.grey('[DEBUG]'), ...args)
+    }
+}
+
 let shortWaitMs = moment.duration(.5, 'seconds').asMilliseconds()
 
 // We use the before hook to put helpers on t.context and set up test scaffolding.
@@ -32,7 +38,9 @@ test.beforeEach(t => {
     // pass the information along via window.fetch. 
     t.context.get = async (pathname, userPw) => {
         let credentials = userPw || 'erin'
-        await t.context.driver.get(`http://localhost:3000${pathname}?user=${credentials}&pass=${credentials}`)
+        let urlToGet = `http://localhost:3000${pathname}?user=${credentials}&pass=${credentials}`
+        debugLog('Getting URL', urlToGet)
+        await t.context.driver.get(urlToGet)
 
         // If we have a page-wide error message, we would like to cleanly fail the test on that.
         try {
@@ -63,6 +71,7 @@ test.beforeEach(t => {
 
     let longWaitMs = moment.duration(10, 'seconds').asMilliseconds()
     t.context.$ = async (cssSelector, timeoutMs) => {
+        debugLog('Find element', cssSelector)
         let waitTimeoutMs = timeoutMs || longWaitMs
         let locator = By.css(cssSelector)
         await t.context.driver.wait(
@@ -73,6 +82,7 @@ test.beforeEach(t => {
         return await t.context.driver.findElement(locator)
     }
     t.context.$$ = async (cssSelector, timeoutMs) => {
+        debugLog('Find elements', cssSelector)
         let waitTimeoutMs = timeoutMs || longWaitMs
         let locator = By.css(cssSelector)
         await t.context.driver.wait(
@@ -510,7 +520,7 @@ test('Verify that validation and other reports/new interactions work', async t =
     await pageHelpers.assertReportShowStatusText(t, "This is a DRAFT report and hasn't been submitted.")
 })
 
-test.only('Move someone in and out of a position', async t => {
+test('Move someone in and out of a position', async t => {
     t.plan(8)
 
     let {$, $$, assertElementText} = t.context

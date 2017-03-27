@@ -103,7 +103,7 @@
     "build": "node scripts/build.js",
     "lint": "eslint src tests/e2e/*.js",
     "lint-fix": "eslint src tests/e2e/*.js --fix",
-    "test": "npm run lint && ava tests/e2e/*.js --serial"
+    "test": "npm run lint && ava tests/e2e/*.js --serial --fail-fast"
   },
   "jest": {
     "moduleFileExtensions": [
