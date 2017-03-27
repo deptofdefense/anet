@@ -1,5 +1,6 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
+import autobind from 'autobind-decorator'
 
 import Form from 'components/Form'
 import Fieldset from 'components/Fieldset'
@@ -7,8 +8,9 @@ import Breadcrumbs from 'components/Breadcrumbs'
 import Messages, {setMessages} from 'components/Messages'
 import Leaflet from 'components/Leaflet'
 import LinkTo from 'components/LinkTo'
+import ReportCollection from 'components/ReportCollection'
 
-import API from 'api'
+import GQL from 'graphql'
 import {Location} from 'models'
 
 export default class LocationShow extends Page {
@@ -27,37 +29,65 @@ export default class LocationShow extends Page {
 	}
 
 	fetchData(props) {
-		API.query(/* GraphQL */`
+		let reportsQuery = new GQL.Part(/* GraphQL */`
+			reports: reportList(query: $reportsQuery) {
+				pageNum, pageSize, totalCount, list {
+					${ReportCollection.GQL_REPORT_FIELDS}
+				}
+			}
+		`).addVariable("reportsQuery", "ReportSearchQuery", {
+			pageSize: 10,
+			pageNum: this.state.reportsPageNum,
+			locationId: props.params.id,
+		})
+
+		let locationQuery = new GQL.Part(/* GraphQL */`
 			location(id:${props.params.id}) {
 				id, name, lat, lng
 			}
-		`).then(data => this.setState({location: new Location(data.location)}))
+		`)
+
+		GQL.run([reportsQuery, locationQuery]).then(data => {
+            this.setState({
+                location: new Location(data.location),
+				reports: data.reports,
+            })
+        })
 	}
 
 	render() {
-		let loc = this.state.location
+		let {location, reports} = this.state
 		let currentUser = this.context.currentUser
 		let markers=[]
 		let latlng = 'None'
-		if (loc.lat && loc.lng) {
-			latlng = loc.lat + ', ' + loc.lng
-			markers.push({name: loc.name, lat: loc.lat, lng: loc.lng})
+		if (location.lat && location.lng) {
+			latlng = location.lat + ', ' + location.lng
+			markers.push({name: location.name, lat: location.lat, lng: location.lng})
 		}
 
 		return (
 			<div>
-				<Breadcrumbs items={[[loc.name || 'Location', Location.pathFor(loc)]]} />
+				<Breadcrumbs items={[[location.name || 'Location', Location.pathFor(location)]]} />
 
 				<Messages success={this.state.success} error={this.state.error} />
 
-				<Form static formFor={loc} horizontal >
-					<Fieldset title={loc.name} action={currentUser.isSuperUser() && <LinkTo location={loc} edit button="primary">Edit</LinkTo>} >
+				<Form static formFor={location} horizontal >
+					<Fieldset title={location.name} action={currentUser.isSuperUser() && <LinkTo location={location} edit button="primary">Edit</LinkTo>} >
 						<Form.Field id="latlng" value={latlng} label="Lat/Lon" />
 					</Fieldset>
 
 					<Leaflet markers={markers}/>
 				</Form>
+
+				<Fieldset title="Reports at this location">
+					<ReportCollection paginatedReports={reports} goToPage={this.goToReportsPage} />
+				</Fieldset>
 			</div>
 		)
+	}
+
+	@autobind
+	goToReportsPage(pageNum) {
+		this.setState({reportsPageNum: pageNum}, () => this.loadData())
 	}
 }

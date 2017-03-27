@@ -7,8 +7,9 @@ import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
 import LinkTo from 'components/LinkTo'
 import Messages, {setMessages} from 'components/Messages'
+import ReportCollection from 'components/ReportCollection'
 
-import API from 'api'
+import GQL from 'graphql'
 import {Poam} from 'models'
 
 export default class PoamShow extends Page {
@@ -28,29 +29,42 @@ export default class PoamShow extends Page {
 				longName: props.params.longName,
 				responsibleOrg: props.params.responsibleOrg
 			}),
+			reportsPageNum: 0,
 		}
 
 		setMessages(props,this.state)
 	}
 
 	fetchData(props) {
-		API.query(/* GraphQL */`
+		let reportsQuery = new GQL.Part(/* GraphQL */`
+			reports: reportList(query: $reportsQuery) {
+				pageNum, pageSize, totalCount, list {
+					${ReportCollection.GQL_REPORT_FIELDS}
+				}
+			}
+		`).addVariable("reportsQuery", "ReportSearchQuery", {
+			pageSize: 10,
+			pageNum: this.state.reportsPageNum,
+			poamId: props.params.id,
+		})
+
+		let poamQuery = new GQL.Part(/* GraphQL */`
 			poam(id:${props.params.id}) {
-				id,
-				shortName,
-				longName,
+				id, shortName, longName,
 				responsibleOrg {id, shortName, longName}
 			}
-		`).then(data => {
+		`)
+
+		GQL.run([reportsQuery, poamQuery]).then(data => {
             this.setState({
-                poam: new Poam(data.poam)
+                poam: new Poam(data.poam),
+				reports: data.reports,
             })
-        }
-        )
+        })
 	}
 
 	render() {
-		let {poam} = this.state
+		let {poam, reports} = this.state
 		// Admins can edit poams, or super users if this poam is assigned to their org.
 		let currentUser = this.context.currentUser
 		let canEdit = currentUser.isAdmin() ||
@@ -68,6 +82,10 @@ export default class PoamShow extends Page {
 						{poam.responsibleOrg && poam.responsibleOrg.id && this.renderOrg()}
 					</Fieldset>
 				</Form>
+
+				<Fieldset title="Reports for this PoAM">
+					<ReportCollection paginatedReports={reports} goToPage={this.goToReportsPage} />
+				</Fieldset>
 			</div>
 		)
 	}
@@ -82,5 +100,10 @@ export default class PoamShow extends Page {
 				</LinkTo>
 			</Form.Field>
 		)
+	}
+
+	@autobind
+	goToReportsPage(pageNum) {
+		this.setState({reportsPageNum: pageNum}, () => this.loadData())
 	}
 }

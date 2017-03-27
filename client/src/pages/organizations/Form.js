@@ -43,11 +43,11 @@ export default class OrganizationForm extends ValidatableFormWrapper {
 
 			<Messages error={this.state.error} />
 
-			<Fieldset title={edit ? `Editing ${organization.shortName}` : "Create a new Organization"}>
+			<Fieldset title={edit ? `Edit Organization ${organization.shortName}` : "Create a new Organization"}>
 				<Form.Field id="type">
 					<ButtonToggleGroup>
-						<Button id="advisorOrgButton" value="ADVISOR_ORG">Advisor Organization</Button>
-						<Button id="principalOrgButton" value="PRINCIPAL_ORG">Afghan Govt Organization</Button>
+						<Button id="advisorOrgButton" value="ADVISOR_ORG">Advisor organization</Button>
+						<Button id="principalOrgButton" value="PRINCIPAL_ORG">Afghan Govt organization</Button>
 					</ButtonToggleGroup>
 				</Form.Field>
 
@@ -97,9 +97,13 @@ export default class OrganizationForm extends ValidatableFormWrapper {
 					placeholder="Search for the approver's position"
 					objectType={Position}
 					fields="id, name, code, type, person { id, name, rank }"
-					template={pos =>
-						<span>{pos.name} - {pos.code} ({pos.person ? pos.person.name : <i>empty</i>})</span>
-					}
+					template={pos => {
+						let components = []
+						pos.person && components.push(pos.person.name)
+						pos.name && components.push(pos.name)
+						pos.code && components.push(pos.code)
+						return <span>{components.join(' - ')}</span>
+					}}
 					queryParams={{type: ['ADVISOR', 'SUPER_USER', 'ADMINISTRATOR'], matchPersonName: true}}
 					onChange={this.addApprover.bind(this, index)}
 					clearOnSelect={true} />

@@ -101,8 +101,8 @@ export default class ReportForm extends ValidatableFormWrapper {
 		</b></HelpBlock>
 
 		const futureMessage = isFuture && <HelpBlock>
-				<span className='text-success' >This will create an upcoming engagement</span>
-			</HelpBlock>
+			<span className="text-success">This will create an upcoming engagement</span>
+		</HelpBlock>
 
 		const {ValidatableForm, RequiredField} = this
 
@@ -115,14 +115,11 @@ export default class ReportForm extends ValidatableFormWrapper {
 
 			<ValidatableForm formFor={report} horizontal onSubmit={this.onSubmit} onChange={this.onChange}
 				onDelete={onDelete} deleteText="Delete this report"
-				submitDisabled={hasErrors} submitText="Preview and submit">
+				submitDisabled={hasErrors} submitText="Preview and submit"
+				bottomAccessory={this.state.autoSavedAt && <div>Last autosaved at {this.state.autoSavedAt.format('hh:mm:ss')}</div>}
+			>
 
-				<Fieldset title={this.props.title} action={
-					<Button bsStyle="primary" type="submit" disabled={hasErrors}>
-						Preview and submit
-					</Button>
-				}>
-
+				<Fieldset title={this.props.title}>
 					<RequiredField id="intent" label="Meeting goal (purpose)"
 						canSubmitWithError={true}
 						validateBeforeUserTouches={this.props.edit}

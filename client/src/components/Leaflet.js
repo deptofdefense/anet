@@ -7,6 +7,7 @@ import 'leaflet/dist/leaflet.css'
 const css = {
 	height: '500px',
 	marginBottom: '80px',
+	zIndex: 1,
 }
 
 export default class Leaflet extends Component {

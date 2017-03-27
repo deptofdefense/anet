@@ -16,6 +16,7 @@ export default class Form extends Component {
 		onChange: PropTypes.func,
 		onSubmit: PropTypes.func,
 		onDelete: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
+		bottomAccessory: PropTypes.node,
 	})
 
 	static defaultProps = {
@@ -38,8 +39,8 @@ export default class Form extends Component {
 	}
 
 	render() {
-		let {children, submitText, submitOnEnter, submitDisabled, deleteText, onDelete, ...bsProps} = this.props
-		bsProps = Object.without(bsProps, 'formFor', 'static')
+		let {children, submitText, submitOnEnter, submitDisabled, deleteText, onDelete, bottomAccessory, ...bsProps} = this.props
+		bsProps = Object.without(bsProps, 'formFor', 'static', '')
 
 		if (this.props.static) {
 			bsProps.componentClass = 'div'
@@ -56,7 +57,14 @@ export default class Form extends Component {
 
 		return (
 			<BSForm {...bsProps} ref="container">
+				{showSubmit && <div className="form-top-submit">
+					<Button bsStyle="primary" type="submit" disabled={submitDisabled}>
+						{submitText}
+					</Button>
+				</div>}
+
 				{children}
+
 				{!this.props.static && (showSubmit || showDelete) &&
 					<div className="submit-buttons">
 						{showSubmit &&
@@ -64,6 +72,8 @@ export default class Form extends Component {
 								<Button onClick={this.onCancel}>Cancel</Button>
 							</div>
 						}
+
+						{bottomAccessory}
 
 						{showDelete &&
 							<div>

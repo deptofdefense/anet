@@ -59,7 +59,7 @@ export default class PositionForm extends ValidatableFormWrapper {
 
 				<Messages error={error} success={success} />
 
-				<Fieldset title={edit ? "Edit Position" : "Create a new Position"}>
+				<Fieldset title={edit ? `Edit Position ${position.name}` : "Create a new Position"}>
 					<Form.Field id="type" disabled={this.props.edit}>
 						<ButtonToggleGroup>
 							<Button id="typeAdvisorButton" value="ADVISOR">NATO (Billet)</Button>
