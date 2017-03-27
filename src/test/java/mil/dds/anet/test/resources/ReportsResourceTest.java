@@ -678,6 +678,14 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		assertThat(searchResults.getList().stream().filter(r -> 
 			r.getAdvisorOrg().getId().equals(ef22.getId()) && r.getPrincipalOrg().getId().equals(mod.getId())
 			).count()).isEqualTo(searchResults.getList().size());
+		
+		//Search by Atmosphere
+		query = new ReportSearchQuery();
+		query.setAtmosphere(Atmosphere.NEGATIVE);
+		searchResults = httpQuery("/api/reports/search", jack).post(Entity.json(query), ReportList.class);
+		assertThat(searchResults.getList().stream().filter(r -> r.getAtmosphere().equals(Atmosphere.NEGATIVE)
+			).count()).isEqualTo(searchResults.getList().size());
+		
 	}
 
 	@Test

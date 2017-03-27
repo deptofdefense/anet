@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 
+import mil.dds.anet.beans.Report.Atmosphere;
 import mil.dds.anet.beans.Report.ReportState;
 
 public class ReportSearchQuery implements ISearchQuery {
@@ -19,6 +20,7 @@ public class ReportSearchQuery implements ISearchQuery {
 	DateTime releasedAtStart;
 	DateTime releasedAtEnd;
 	Integer attendeeId;
+	Atmosphere atmosphere;
 	
 	//Can use either orgId or one or both of advisorOrgId and principalOrgId
 	//only use orgId if you don't know the type of the organization. 
@@ -117,6 +119,14 @@ public class ReportSearchQuery implements ISearchQuery {
 
 	public void setAttendeeId(Integer attendeeId) {
 		this.attendeeId = attendeeId;
+	}
+
+	public Atmosphere getAtmosphere() {
+		return atmosphere;
+	}
+
+	public void setAtmosphere(Atmosphere atmosphere) {
+		this.atmosphere = atmosphere;
 	}
 
 	public Integer getAdvisorOrgId() {

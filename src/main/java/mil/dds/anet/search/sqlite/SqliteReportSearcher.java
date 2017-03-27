@@ -89,6 +89,11 @@ public class SqliteReportSearcher implements IReportSearcher {
 			args.put("attendeeId", query.getAttendeeId());
 		}
 		
+		if (query.getAtmosphere() != null) { 
+			whereClauses.add("reports.atmosphere = :atmosphere");
+			args.put("atmosphere", DaoUtils.getEnumId(query.getAtmosphere()));
+		}
+		
 		if (query.getPoamId() != null) { 
 			whereClauses.add("reports.id IN (SELECT reportId from reportPoams where poamId = :poamId)");
 			args.put("poamId", query.getPoamId());
