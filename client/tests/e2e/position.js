@@ -7,12 +7,7 @@ test('Move someone in and out of a position', async t => {
 
     await t.context.get('/', 'rebecca')
 
-    async function clickMyOrgLink() {
-        let $myOrgLink = await $('#my-organization')
-        await $myOrgLink.click()
-    }
-
-    await clickMyOrgLink()
+    await t.context.pageHelpers.clickMyOrgLink()
 
     let positionName = 'EF2.2 Advisor D'
     let personName = 'Civ Erin Erinson'
@@ -47,7 +42,7 @@ test('Move someone in and out of a position', async t => {
 
     await assertElementText(t, await $('p.not-assigned-to-position-message'), 'Erin Erinson is not assigned to a position.')
     
-    await clickMyOrgLink()
+    await t.context.pageHelpers.clickMyOrgLink()
 
     let $vacantPositionRows = await $$('#vacantPositions table tbody tr')
     let $positionToFillCell
@@ -91,7 +86,7 @@ test('Move someone in and out of a position', async t => {
 
     await assertElementText(t, await $('.position-name'), positionName)
 
-    await clickMyOrgLink()
+    await t.context.pageHelpers.clickMyOrgLink()
 
     $supportedPositionsRows = await $$('#supportedPositions table tbody tr')
     let foundCorrectRow = false

@@ -178,6 +178,10 @@ test.beforeEach(t => {
         async assertReportShowStatusText(t, text) {
             await t.context.assertElementText(t, await t.context.$('.report-show h4'), text)
         },
+        async clickMyOrgLink() {
+            let $myOrgLink = await $('#my-organization')
+            await $myOrgLink.click()
+        }
     }
 })
 
