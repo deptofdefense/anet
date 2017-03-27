@@ -1,17 +1,12 @@
 package mil.dds.anet.threads;
 
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.joda.time.DateTime;
 import org.skife.jdbi.v2.Handle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Joiner;
 
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Report;
@@ -51,10 +46,6 @@ public class FutureEngagementWorker implements Runnable {
 		query.setEngagementDateEnd(endOfToday);
 		List<Report> reports = AnetObjectEngine.getInstance().getReportDao().search(query).getList();
 		
-		Map<String,Object> sqlBindArgs = new HashMap<String,Object>();
-		List<String> reportIdBinds = new LinkedList<String>();
-		int i = 0;
-		
 		//send them all emails to let them know we updated their report. 
 		for (Report r : reports) { 
 			try { 
@@ -64,28 +55,13 @@ public class FutureEngagementWorker implements Runnable {
 				email.setAction(action);
 				email.setToAddresses(Collections.singletonList(r.loadAuthor().getEmailAddress()));
 				AnetEmailWorker.sendEmailAsync(email);
-				
-				sqlBindArgs.put("report" + i, r.getId());
-				reportIdBinds.add(":report" + i);
+						
+				handle.execute("/* UpdateFutureEngagement */ UPDATE reports SET state = ? WHERE id = ?", DaoUtils.getEnumId(ReportState.DRAFT), r.getId());
 			} catch (Exception e) { 
 				e.printStackTrace();
 			}
 		}
 		
-		sqlBindArgs.put("future", DaoUtils.getEnumId(ReportState.FUTURE));
-		sqlBindArgs.put("draft", DaoUtils.getEnumId(ReportState.DRAFT));
-		sqlBindArgs.put("today", endOfToday);
-		String reportIdBind = "(" + Joiner.on(',').join(reportIdBinds) + ")";
-		
-		//update the reports
-		if (reportIdBinds.size() > 0) { 
-			handle.createStatement("/* FutureEngagementUpdate */ UPDATE reports SET state = :draft "
-					+ "WHERE state = :future "
-					+ "AND engagementDate < :today "
-					+ "AND reports.id IN " + reportIdBind)
-				.bindFromMap(sqlBindArgs)
-				.execute();
-		}
 	}
 
 }
