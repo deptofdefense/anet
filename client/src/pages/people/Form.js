@@ -174,7 +174,7 @@ export default class PersonForm extends ValidatableFormWrapper {
 					<DatePicker placeholder="End of Tour Date" dateFormat="DD/MM/YYYY" showClearButton={false} />
 				</Form.Field>
 
-				<Form.Field id="biography" componentClass={TextEditor} />
+				<Form.Field id="biography" componentClass={TextEditor} className="biography" />
 			</Fieldset>
 		</ValidatableForm>
 	}

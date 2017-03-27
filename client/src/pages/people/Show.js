@@ -143,7 +143,7 @@ export default class PersonShow extends Page {
 
 				<Form static formFor={person} horizontal>
 					<Fieldset title={`${person.rank} ${person.name}`} action={
-						canEdit && <LinkTo person={person} edit button="primary">Edit</LinkTo>
+						canEdit && <LinkTo person={person} edit button="primary" className="edit-person">Edit</LinkTo>
 					}>
 
 						<Form.Field id="rank" />

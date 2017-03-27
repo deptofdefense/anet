@@ -1,6 +1,6 @@
 let test = require('ava'),
     webdriver = require('selenium-webdriver'),
-    {By, until} = webdriver,
+    {By, until, Key} = webdriver,
     moment = require('moment'),
     _includes = require('lodash.includes'),
     _isRegExp = require('lodash.isregexp'),
@@ -36,6 +36,7 @@ test.beforeEach(t => {
     t.context.By = By
     t.context.until = until
     t.context.shortWaitMs = shortWaitMs
+    t.context.Key = Key
 
     // This method is a helper so we don't have to keep repeating the hostname.
     // Passing the authentication through the querystring is a hack so we can
@@ -180,6 +181,7 @@ test.beforeEach(t => {
         },
         async clickMyOrgLink() {
             let $myOrgLink = await t.context.$('#my-organization')
+            await t.context.driver.wait(t.context.until.elementIsVisible($myOrgLink))
             await $myOrgLink.click()
         }
     }
