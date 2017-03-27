@@ -59,7 +59,7 @@ export default class AssignPositionModal extends Component {
 				<Modal.Body>
 					{person.position.id &&
 						<div style={{textAlign:'center'}}>
-							<Button bsStyle="danger" onClick={this.remove}>
+							<Button bsStyle="danger" onClick={this.remove} className="remove-person-from-position">
 								Remove {person.name} from {person.position.name}
 							</Button>
 							<hr className="assignModalSplit" />

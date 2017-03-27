@@ -117,7 +117,7 @@ export default class ReportSummary extends Component {
 
 			<Row>
 				<Col mdOffset={9} md={3}>
-					<LinkTo report={report} button className="pull-right">Read report</LinkTo>
+					<LinkTo report={report} button className="pull-right read-report-button">Read report</LinkTo>
 				</Col>
 			</Row>
 		</Grid>

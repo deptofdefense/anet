@@ -119,13 +119,13 @@ export default class PositionShow extends Page {
 						action={position.person && position.person.id && canEdit && <Button onClick={this.showAssignPersonModal}>Change assigned person</Button>} >
 						{position.person && position.person.id
 							? <div>
-								<h4><LinkTo person={position.person}>{position.person.rank} {position.person.name}</LinkTo></h4>
+								<h4 className="assigned-person-name"><LinkTo person={position.person}>{position.person.rank} {position.person.name}</LinkTo></h4>
 								<p></p>
 							</div>
 							: <div>
-								<p><em>{position.name} is currently empty.</em></p>
+								<p className="position-empty-message"><em>{position.name} is currently empty.</em></p>
 									{canEdit &&
-										<p><Button onClick={this.showAssignPersonModal}>Change assigned person</Button></p>
+										<p><Button onClick={this.showAssignPersonModal} className="change-assigned-person">Change assigned person</Button></p>
 									}
 							</div>
 						}
