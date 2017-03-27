@@ -61,9 +61,13 @@ export default class EditAssociatedPositionsModal extends Component {
 						placeholder={'Start typing to search for ' + (position.type === 'PRINCIPAL' ? 'an advisor' : 'a principal') + ' position...'}
 						objectType={Position}
 						fields={'id, name, code, type, person { id, name, rank }, organization { id, shortName, longName}'}
-						template={pos =>
-							<span>{pos.name} - {pos.code} ({(pos.person) ? pos.person.name : <i>empty</i>})</span>
-						}
+						template={pos => {
+							let components = []
+							pos.person && components.push(pos.person.name)
+							pos.name && components.push(pos.name)
+							pos.code && components.push(pos.code)
+							return <span>{components.join(' - ')}</span>
+						}}
 						onChange={this.addPositionRelationship}
 						clearOnSelect={true}
 						value={associatedPositions}
