@@ -1,5 +1,7 @@
 package mil.dds.anet.resources;
 
+import java.util.List;
+
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +24,7 @@ import org.joda.time.DateTime;
 import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.PersonPositionHistory;
 import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Position.PositionStatus;
 import mil.dds.anet.beans.Position.PositionType;
@@ -248,6 +251,14 @@ public class PositionResource implements IGraphQLResource {
 		return Response.ok().build();
 	}
 
+	@GET
+	@Path("/{id}/history")
+	public List<PersonPositionHistory> getPositionHistory(@PathParam("id") int positionId) { 
+		Position position = dao.getById(positionId);
+		if (position == null) { throw new WebApplicationException(Status.NOT_FOUND); } 
+		return dao.getPositionHistory(position);
+	}
+	
 	@GET
 	@Path("/search")
 	public PositionList search(@Context HttpServletRequest request) {
