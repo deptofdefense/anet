@@ -28,12 +28,10 @@ export default class PoamsSelector extends Component {
 			<Form.Field id="poams" label="PoAMs" validationState={validationState} >
 				<Autocomplete
 					objectType={Poam}
-					fields={'id, shortName, longName'}
+					fields={Poam.autocompleteQuery}
 					queryParams={{status: 'ACTIVE'}}
 					placeholder="Start typing to search for PoAMs..."
-					template={poam =>
-						<span>{[poam.shortName, poam.longName].join(' - ')}</span>
-					}
+					template={Poam.autocompleteTemplate}
 					onChange={this.addPoam}
 					onErrorChange={this.props.onErrorChange}
 					clearOnSelect={true} />

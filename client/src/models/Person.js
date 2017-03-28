@@ -1,3 +1,5 @@
+import React from 'react'
+
 import Model from 'components/Model'
 import utils from 'utils'
 
@@ -19,6 +21,15 @@ export default class Person extends Model {
 		biography: '',
 		role: 'PRINCIPAL',
 		position: {},
+	}
+
+	static autocompleteQuery = "id, name, role, position { id, name, organization { id, shortName } }"
+
+	static autocompleteTemplate(person) {
+		return <span>
+			<img src={(new Person(person)).iconUrl()} alt={person.role} height={20} className="person-icon" />
+			{person.name} {person.rank && person.rank.toUpperCase()} - {person.position && `(${person.position.name})`}
+		</span>
 	}
 
 	static humanNameOfRole(role) {

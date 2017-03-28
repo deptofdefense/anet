@@ -1,3 +1,5 @@
+import React from 'react'
+
 import Model from 'components/Model'
 
 export default class Poam extends Model {
@@ -12,6 +14,12 @@ export default class Poam extends Model {
 		responsibleOrg: {},
 		parentPoam: {},
 		childrenPoams: [],
+	}
+
+	static autocompleteQuery = "id, shortName, longName"
+
+	static autocompleteTemplate(poam) {
+		return <span>{[poam.shortName, poam.longName].join(' - ')}</span>
 	}
 
 	toString() {
