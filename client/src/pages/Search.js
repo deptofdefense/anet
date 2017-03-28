@@ -96,14 +96,15 @@ export default class Search extends Page {
 			success: null,
 		}
 
-		if (props.location.state.advancedSearch) {
+		if (props.location.state && props.location.state.advancedSearch) {
 			this.state.advancedSearch = props.location.state.advancedSearch
 		}
 	}
 
 	componentWillReceiveProps(props, context) {
-		if (props.location.state.advancedSearch) {
-			this.setState({advancedSearch: props.location.state.advancedSearch}, () => this.loadData())
+		let newAdvancedSearch = props.location.state && props.location.state.advancedSearch
+		if (this.state.advancedSearch !== newAdvancedSearch) {
+			this.setState({advancedSearch: newAdvancedSearch}, () => this.loadData())
 		}
 	}
 
@@ -240,7 +241,7 @@ export default class Search extends Page {
 				</ContentForNav>
 
 				{this.state.advancedSearch && <Fieldset title="Search filters">
-					<AdvancedSearch query={this.state.advancedSearch} />
+					<AdvancedSearch query={this.state.advancedSearch} onCancel={this.cancelAdvancedSearch} />
 				</Fieldset>}
 
 				<Messages error={error} success={success} />
@@ -323,6 +324,11 @@ export default class Search extends Page {
 		}).catch(response =>
 			this.setState({error: response})
 		)
+	}
+
+	@autobind
+	cancelAdvancedSearch() {
+		History.push({pathname: '/search', query: {text: this.state.advancedSearch ? this.state.advancedSearch.text : ""}, advancedSearch: null})
 	}
 
 	renderPeople() {
