@@ -1,5 +1,5 @@
 import React, {Component, PropTypes} from 'react'
-import {Button, Row, Col, FormGroup, FormControl, ControlLabel} from 'react-bootstrap'
+import {Button, Col, FormGroup, FormControl, ControlLabel} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 import utils from 'utils'
 
@@ -7,7 +7,6 @@ import ButtonToggleGroup from 'components/ButtonToggleGroup'
 import Autocomplete from 'components/Autocomplete'
 import DatePicker from 'react-bootstrap-date-picker'
 
-import GQL from 'graphql'
 import {Person, Organization, Poam} from 'models'
 
 import REMOVE_ICON from 'resources/delete.png'

@@ -122,8 +122,25 @@ export default class Search extends Page {
 	}
 
 	fetchData(props) {
-		let {type, text, ...advQuery} = props.location.query
+		let {advancedSearch} = this.state
 
+		if (advancedSearch) {
+			let query = {text: advancedSearch.text}
+			advancedSearch.filters.forEach(filter => {
+				if (filter.value.id) {
+					query[filter.key + 'Id'] = filter.value.id
+				} else {
+					query[filter.key] = filter.value
+				}
+			})
+
+			let part = this.getSearchPart(advancedSearch.objectType.toLowerCase(), query)
+			GQL.run([part]).then(data => {
+				this.setState({results: data})
+			})
+		}
+
+		let {type, text, ...advQuery} = props.location.query
 		//Any query with a field other than 'text' and 'type' is an advanced query.
 		let isAdvQuery = Object.keys(advQuery).length
 		advQuery.text = text
