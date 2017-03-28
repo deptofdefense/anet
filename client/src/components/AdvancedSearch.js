@@ -72,7 +72,35 @@ const OBJECT_TYPES = {
 		}
 	},
 
-	People: "PEOPLE",
+	People: {
+		filters: {
+			Organization: <OrganizationFilter
+				queryKey="orgId"
+				queryIncludeChildOrgsKey="includeChildOrgs"
+				objectType={Organization}
+				valueKey="shortName"
+				value=""
+				url="/api/organizations/search"
+				placeholder="Filter reports by organization..."
+			/>,
+			Role: <SelectSearchFilter
+				queryKey="role"
+				values={["ADVISOR","PRINCIPAL"]}
+				labels={["NATO Member", "Afghan Principal"]}
+			/>,
+			Status: <SelectSearchFilter
+				queryKey="status"
+				values={["ACTIVE","INACTIVE","NEW_USER"]}
+			/>,
+			Location: <AutocompleteFilter
+				queryKey="locationId"
+				valueKey="name"
+				placeholder="Filter reports by location..."
+				url="/api/locations/search"
+			/>,
+			//TODO: country
+		}
+	},
 	Organizations: "ORGANIZATIONS",
 	Positions: "POSITIONS",
 	Locations: "POSITIONS",
