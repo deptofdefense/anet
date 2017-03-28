@@ -7,8 +7,10 @@ import ButtonToggleGroup from 'components/ButtonToggleGroup'
 import Autocomplete from 'components/Autocomplete'
 import History from 'components/History'
 
-import ReportStateSearch from 'components/ReportStateSearch'
-import DateRangeSearch from 'components/DateRangeSearch'
+import ReportStateSearch from 'components/advancedSearch/ReportStateSearch'
+import DateRangeSearch from 'components/advancedSearch/DateRangeSearch'
+import AutocompleteFilter from 'components/advancedSearch/AutocompleteFilter'
+import OrganizationFilter from 'components/advancedSearch/OrganizationFilter'
 
 import {Person, Organization, Poam} from 'models'
 
@@ -17,7 +19,8 @@ import REMOVE_ICON from 'resources/delete.png'
 const OBJECT_TYPES = {
 	Reports: {
 		filters: {
-			author: <Autocomplete
+			Author: <AutocompleteFilter
+				queryKey="authorId"
 				objectType={Person}
 				valueKey="name"
 				fields={Person.autocompleteQuery}
@@ -25,7 +28,8 @@ const OBJECT_TYPES = {
 				placeholder="Filter reports by author..."
 			/>,
 
-			attendee: <Autocomplete
+			Attendee: <AutocompleteFilter
+				queryKey="attendeeId"
 				objectType={Person}
 				valueKey="name"
 				fields={Person.autocompleteQuery}
@@ -33,7 +37,9 @@ const OBJECT_TYPES = {
 				placeholder="Filter reports by attendee..."
 			/>,
 
-			organization: <Autocomplete
+			Organization: <OrganizationFilter
+				queryKey="orgId"
+				queryIncludeChildOrgsKey="includeOrgChildren"
 				objectType={Organization}
 				valueKey="shortName"
 				value=""
@@ -41,19 +47,25 @@ const OBJECT_TYPES = {
 				placeholder="Filter reports by organization..."
 			/>,
 
-			engagementDate: <DateRangeSearch queryKey="enagementDate" />,
-			releaseDate: <DateRangeSearch queryKey="releaseDate" />,
+			"Engagement Date": <DateRangeSearch queryKey="enagementDate" />,
+			"Release Date": <DateRangeSearch queryKey="releaseDate" />,
 
-			location: <Autocomplete valueKey="name" placeholder="Filter reports by location..." url="/api/locations/search" />,
+			Location: <AutocompleteFilter
+				queryKey="locationId"
+				valueKey="name"
+				placeholder="Filter reports by location..."
+				url="/api/locations/search"
+			/>,
 
-			poam: <Autocomplete
+			"PoAM": <AutocompleteFilter
+				queryKey="poamId"
 				objectType={Poam}
 				fields={Poam.autocompleteQuery}
 				template={Poam.autocompleteTemplate}
 				placeholder="Filter reports by PoAM..."
 			/>,
 
-			state: <ReportStateSearch />,
+			State: <ReportStateSearch />,
 		}
 	},
 
@@ -76,7 +88,7 @@ export default class AdvancedSearch extends Component {
 		this.state = {
 			objectType: query.objectType || "Reports",
 			text: query.text || "",
-			filters: query.filters || [{key: "author"}],
+			filters: query.filters || [{key: "Author"}],
 		}
 	}
 
@@ -184,7 +196,7 @@ class SearchFilter extends Component {
 			let filterDefs = OBJECT_TYPES[query.objectType].filters
 			label = <select onChange={this.onFilterTypeChange} value={filter.key}>
 				{Object.keys(filterDefs).map(filterKey =>
-					<option key={filterKey} value={filterKey}>{utils.sentenceCase(filterKey)}</option>
+					<option key={filterKey} value={filterKey}>{filterKey}</option>
 				)}
 			</select>
 
