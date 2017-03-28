@@ -30,35 +30,38 @@ export default class OrganizationFilter extends Component {
 		}
 	}
 
+	render() {
+		let autocompleteProps = Object.without(this.props, 'value', 'queryKey', 'queryIncludeChildOrgsKey')
+
+		return <div>
+			<Autocomplete
+				{...autocompleteProps}
+				onChange={this.onAutocomplete}
+				value={this.state.value}
+			/>
+
+			<Checkbox inline checked={this.state.includeChildOrgs} onChange={this.changeIncludeChildren}>
+				Include children organizations
+			</Checkbox>
+		</div>
+	}
+
+	@autobind
+	changeIncludeChildren(event) {
+		this.setState({includeChildOrgs: event.target.checked}, this.updateFilter)
+	}
+
+	@autobind
+	onAutocomplete(event) {
+		this.setState({value: event}, this.updateFilter)
+	}
+
 	@autobind
 	toQuery() {
 		return {
 			[this.props.queryKey]: this.state.value.id,
 			[this.props.queryIncludeChildOrgsKey]: this.state.includeChildOrgs,
 		}
-	}
-
-	render() {
-		let autocompleteProps = Object.without(this.props, 'value', 'queryKey', 'queryIncludeChildOrgsKey')
-		console.log("rendering org auto", this.props.queryKey, this.value)
-		return <div>
-			<Autocomplete
-				{...autocompleteProps}
-				onChange={this.onChange}
-				value={this.state.value}
-			/>
-			<Checkbox inline value={this.state.includeChildOrgs} onChange={this.toggleChild}>Include children organizations</Checkbox>
-		</div>
-	}
-
-	@autobind
-	toggleChild() {
-		this.setState({includeChildOrgs: !this.state.includeChildOrgs}, this.updateFilter)
-	}
-
-	@autobind
-	onChange(event) {
-		this.setState({value: event}, this.updateFilter)
 	}
 
 	@autobind
