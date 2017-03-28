@@ -122,21 +122,28 @@ export default class Search extends Page {
 		return part
 	}
 
+	@autobind
+	getAdvancedSearchQuery() {
+		let advancedSearch = this.state.advancedSearch
+		let query = {text: advancedSearch.text}
+		advancedSearch.filters.forEach(filter => {
+			if (typeof filter.value === 'object') {
+				Object.assign(query, filter.value)
+			} else {
+				query[filter.key] = filter.value
+			}
+		})
+
+		console.log("ended up with ", query)
+		return query
+	}
+
+
 	fetchData(props) {
 		let {advancedSearch} = this.state
 
 		if (advancedSearch) {
-			let query = {text: advancedSearch.text}
-			advancedSearch.filters.forEach(filter => {
-				if (typeof filter.value === 'object') {
-					Object.assign(query, filter.value)
-				} else {
-					query[filter.key] = filter.value
-				}
-			})
-
-			console.log("ended up with ", query)
-
+			let query = this.getAdvancedSearchQuery()
 			let part = this.getSearchPart(advancedSearch.objectType.toLowerCase(), query)
 			GQL.run([part]).then(data => {
 				this.setState({results: data})
@@ -316,7 +323,7 @@ export default class Search extends Page {
 		let pageNums = this.state.pageNum
 		pageNums[type] = pageNum
 
-		let query = Object.without(this.props.location.query, 'type')
+		let query = (this.state.advancedSearch) ? this.getAdvancedSearchQuery() : Object.without(this.props.location.query, 'type')
 		let part = this.getSearchPart(type, query)
 		GQL.run([part]).then(data => {
 			let results = this.state.results //TODO: @nickjs this feels wrong, help!
