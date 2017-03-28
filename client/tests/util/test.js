@@ -190,6 +190,24 @@ test.beforeEach(t => {
             let $formBottomSubmit = await t.context.$('#formBottomSubmit')
             await t.context.driver.wait(t.context.until.elementIsVisible($formBottomSubmit))
             await $formBottomSubmit.click()
+        },
+        async clickPersonNameFromSupportedPositionsFieldset(personName, positionName) {
+            let $supportedPositionsRows = await t.context.$$('#supportedPositions table tbody tr')
+            for (let $row of $supportedPositionsRows) {
+                let [$billetCell, $advisorCell] = await $row.findElements(By.css('td'))
+                let billetText = await $billetCell.getText()
+                let advisorText = await $advisorCell.getText()
+
+                if (billetText === positionName && advisorText === personName) {
+                    await t.context.driver.wait(until.elementIsVisible($advisorCell))
+                    let $advisorLink = await $advisorCell.findElement(By.css('a'))
+                    await $advisorLink.click()
+                    return
+                }
+            }
+            t.fail(`Could not find a row with person name = '${personName}'` +
+                `and position name = '${positionName}' in the supported positions table. ` +
+                'Please fix the database to be the way this test expects.')
         }
     }
 })

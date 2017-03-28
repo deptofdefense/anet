@@ -104,7 +104,7 @@
     "build": "node scripts/build.js",
     "lint": "eslint src tests/e2e/*.js tests/util/*.js",
     "lint-fix": "eslint src tests/e2e/*.js  tests/util/*.js --fix",
-    "test": "npm run lint && node --harmony-async-await $(npm bin)/ava tests/e2e/permissions.js --serial --fail-fast --verbose -m 'admins can edit superusers and their positions'"
+    "test": "npm run lint && node --harmony-async-await $(npm bin)/ava tests/e2e/*.js --serial --fail-fast --verbose -m 'Move someone in and out of a position'"
   },
   "jest": {
     "moduleFileExtensions": [

@@ -41,6 +41,16 @@ test('super user cannot edit administrator', async t => {
     await assertElementNotPresent(t, '.edit-position', 'Rebecca should not be able edit the "ANET Administrator" position')
 })
 
+test('checking regular user permissions', async t => {
+    t.plan(0)
+
+    let {pageHelpers} = t.context
+
+    await t.context.get('/', 'jack')
+    await t.context.pageHelpers.clickMyOrgLink()
+    await pageHelpers.clickPersonNameFromSupportedPositionsFieldset('OF-9 Jack Jackson', 'EF 2.1 Advisor B')
+})
+
 test('checking admin permissions', async t => {
     t.plan(3)
 

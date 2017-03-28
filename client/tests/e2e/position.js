@@ -12,27 +12,7 @@ test('Move someone in and out of a position', async t => {
     let positionName = 'EF 2.2 Advisor D'
     let personName = 'Civ Erin Erinson'
 
-    let $supportedPositionsRows = await $$('#supportedPositions table tbody tr')
-    let $erinCell
-    for (let $row of $supportedPositionsRows) {
-        let [$billetCell, $advisorCell] = await $row.findElements(By.css('td'))
-        let billetText = await $billetCell.getText()
-        let advisorText = await $advisorCell.getText()
-
-        if (billetText === positionName && advisorText === personName) {
-            $erinCell = $advisorCell
-            break
-        }
-    }
-
-    if (!$erinCell) {
-        t.fail('Could not find Erin Erinson in the supported positions table. ' +
-            'Please fix the database to be the way this test expects.')
-    }
-
-    await t.context.driver.wait(until.elementIsVisible($erinCell))
-    let $erinLink = await $erinCell.findElement(By.css('a'))
-    await $erinLink.click()
+    await t.context.pageHelpers.clickPersonNameFromSupportedPositionsFieldset(personName, positionName)
 
     let $changeAssignedPositionButton = await $('.change-assigned-position')
     await $changeAssignedPositionButton.click()
@@ -88,7 +68,7 @@ test('Move someone in and out of a position', async t => {
 
     await t.context.pageHelpers.clickMyOrgLink()
 
-    $supportedPositionsRows = await $$('#supportedPositions table tbody tr')
+    let $supportedPositionsRows = await $$('#supportedPositions table tbody tr')
     let foundCorrectRow = false
     for (let $row of $supportedPositionsRows) {
         let [$billetCell, $advisorCell] = await $row.findElements(By.css('td'))
