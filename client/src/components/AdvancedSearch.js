@@ -1,6 +1,5 @@
 import React, {Component, PropTypes} from 'react'
 import {Button, Col, FormGroup, FormControl, ControlLabel} from 'react-bootstrap'
-import DatePicker from 'react-bootstrap-date-picker'
 import autobind from 'autobind-decorator'
 import utils from 'utils'
 
@@ -9,6 +8,7 @@ import Autocomplete from 'components/Autocomplete'
 import History from 'components/History'
 
 import ReportStateSearch from 'components/ReportStateSearch'
+import DateRangeSearch from 'components/DateRangeSearch'
 
 import {Person, Organization, Poam} from 'models'
 
@@ -41,8 +41,8 @@ const OBJECT_TYPES = {
 				placeholder="Filter reports by organization..."
 			/>,
 
-			engagementDate: <DatePicker showTodayButton showClearButton={false} />,
-			releaseDate: <DatePicker />,
+			engagementDate: <DateRangeSearch queryKey="enagementDate" />,
+			releaseDate: <DateRangeSearch queryKey="releaseDate" />,
 
 			location: <Autocomplete valueKey="name" placeholder="Filter reports by location..." url="/api/locations/search" />,
 
