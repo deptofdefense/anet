@@ -28,6 +28,12 @@ export default class OrganizationFilter extends Component {
 			value: props.value || {},
 			includeChildOrgs: props.value.includeChildOrgs || false,
 		}
+
+		this.updateFilter()
+	}
+
+	componentDidUpdate() {
+		this.updateFilter()
 	}
 
 	render() {

@@ -1,6 +1,7 @@
 import React, {Component, PropTypes} from 'react'
 import {Button, DropdownButton, MenuItem, Row, Col, FormGroup, FormControl, ControlLabel} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
+import _isequal from 'lodash.isequal'
 
 import ButtonToggleGroup from 'components/ButtonToggleGroup'
 import History from 'components/History'
@@ -164,6 +165,7 @@ export default class AdvancedSearch extends Component {
 
 	render() {
 		let {objectType, text, filters} = this.state
+		console.log("RENDER AdvancedSearch", objectType, text, filters)
 		let filterDefs = OBJECT_TYPES[this.state.objectType].filters
 		let existingKeys = filters.map(f => f.key)
 
@@ -249,7 +251,7 @@ class SearchFilter extends Component {
 
 	render() {
 		let {label, onRemove, query, filter, children} = this.props
-		console.log("rendering searchfilter", filter)
+
 		if (query) {
 			let filterDefs = OBJECT_TYPES[query.objectType].filters
 			label = filter.key

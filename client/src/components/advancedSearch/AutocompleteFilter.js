@@ -25,16 +25,17 @@ export default class AutocompleteFilter extends Component {
 		this.state = {
 			value: props.value || {}
 		}
+
+		this.updateFilter()
 	}
 
-	@autobind
-	toQuery() {
-		return {[this.props.queryKey]: this.state.value && this.state.value.id}
+	componentDidUpdate() {
+		this.updateFilter()
 	}
 
 	render() {
-		console.log("rendering", this.props.queryKey, this.value)
 		let autocompleteProps = Object.without(this.props, 'value', 'queryKey', 'queryParams')
+
 		return <Autocomplete
 			{...autocompleteProps}
 			onChange={this.onChange}
@@ -44,7 +45,18 @@ export default class AutocompleteFilter extends Component {
 
 	@autobind
 	onChange(event) {
-		event.toQuery = this.toQuery
-		this.setState({value: event}, () => this.props.onChange(this.state.value))
+		this.setState({value: event}, this.updateFilter)
+	}
+
+	@autobind
+	toQuery() {
+		return {[this.props.queryKey]: this.state.value && this.state.value.id}
+	}
+
+	@autobind
+	updateFilter() {
+		let value = this.state.value
+		value.toQuery = this.toQuery
+		this.props.onChange(value)
 	}
 }
