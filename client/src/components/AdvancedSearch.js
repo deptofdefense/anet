@@ -107,9 +107,7 @@ export default class AdvancedSearch extends Component {
 
 			<Button onClick={this.addFilter}>+ Add another filter</Button>
 
-			<div className="submit-buttons">
-				<Button bsStyle="primary" onClick={this.performSearch}>Search</Button>
-			</div>
+			<Button bsStyle="primary" onClick={this.performSearch}>Search</Button>
 		</div>
 	}
 
