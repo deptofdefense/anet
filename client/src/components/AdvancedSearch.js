@@ -106,7 +106,7 @@ export default class AdvancedSearch extends Component {
 			</SearchFilter>
 
 			{filters.map(filter =>
-				<SearchFilter key={filter.key} query={this.state} filter={filter} parent={this} />
+				<SearchFilter key={filter.key} query={this.state} filter={filter} onRemove={this.removeFilter} />
 			)}
 
 			<Button onClick={this.addFilter}>+ Add another filter</Button>
@@ -140,6 +140,13 @@ export default class AdvancedSearch extends Component {
 			filters.push({key: filterKey})
 			this.setState({filters})
 		}
+	}
+
+	@autobind
+	removeFilter(filter) {
+		let filters = this.state.filters
+		filters.splice(filters.indexOf(filter), 1)
+		this.setState({filters})
 	}
 
 	@autobind
@@ -179,13 +186,11 @@ class SearchFilter extends Component {
 			children = React.cloneElement(filterDefs[filter.key], {value: filter.value || "", onChange: this.onChange})
 		}
 
-		onRemove = onRemove || this.removeSearchFilter
-
 		return <FormGroup>
 			<Col xs={3}><ControlLabel>{label}</ControlLabel></Col>
 			<Col xs={8}>{children}</Col>
 			<Col xs={1}>
-				<Button bsStyle="link" onClick={onRemove}>
+				<Button bsStyle="link" onClick={() => onRemove(this.filter)}>
 					<img src={REMOVE_ICON} height={14} alt="Remove this filter" />
 				</Button>
 			</Col>
@@ -210,14 +215,5 @@ class SearchFilter extends Component {
 		} else {
 			filter.value = event
 		}
-	}
-
-	@autobind
-	removeSearchFilter() {
-		let filters = this.props.query.filters
-		filters.splice(filters.indexOf(this.props.filter), 1)
-
-		// FIXME: this is awful, we should not pass parent in
-		this.props.parent.forceUpdate()
 	}
 }
