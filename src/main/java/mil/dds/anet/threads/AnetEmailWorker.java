@@ -142,7 +142,15 @@ public class AnetEmailWorker implements Runnable {
 			return;
 		}
 		
-		Map<String,Object> context = email.getAction().execute();
+		Map<String,Object> context;
+		try { 
+			context = email.getAction().execute();
+		}catch (Throwable t) { 
+			//This email will never complete, just kill it. 
+			t.printStackTrace();
+			return;
+		}
+		
 		AnetObjectEngine engine = AnetObjectEngine.getInstance();
 		
 		StringWriter writer = new StringWriter();

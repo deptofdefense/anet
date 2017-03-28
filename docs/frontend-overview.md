@@ -36,6 +36,8 @@ await t.context.waitForever()
 
 In rare circumstances, when using Chrome, the tests will hang on the `data:,` URL. I don't know why this is. If you re-run the test, you should not see the issue a second time.
 
+The tests are reliant on the data looking pretty similar to what you'd get after a fresh run of `insertBaseData.sql`. If the tests crash and do not complete, they could leave the data set in a state which would cause future test runs to fail. To get out of this situation, run `insertBaseData.sql` again.
+
 # Random Documentation!!
 
 ## How to add a new field to an object
