@@ -72,10 +72,11 @@ export default class AdvancedSearch extends Component {
 	constructor(props) {
 		super(props)
 
-		this.state = props.query || {
-			objectType: "Reports",
-			text: "",
-			filters: [{key: "author"}],
+		let query = props || {}
+		this.state = {
+			objectType: query.objectType || "Reports",
+			text: query.text || "",
+			filters: query.filters || [{key: "author"}],
 		}
 	}
 

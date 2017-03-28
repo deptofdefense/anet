@@ -190,9 +190,10 @@ export default class Search extends Page {
 
 		return (
 			<div>
-				{this.props.location.query.text && <div className="pull-right">
-					<Button onClick={this.showSaveModal} id="saveSearchButton">Save search</Button>
-				</div>}
+				<div className="pull-right">
+					<Button onClick={this.showSaveModal} id="saveSearchButton" style={{marginRight: 12}}>Save search</Button>
+					{!this.state.advancedSearch && <Button onClick={this.showAdvancedSearch}>Advanced search</Button>}
+				</div>
 
 				<Breadcrumbs items={[['Search results', '']]} />
 
@@ -324,6 +325,11 @@ export default class Search extends Page {
 		}).catch(response =>
 			this.setState({error: response})
 		)
+	}
+
+	@autobind
+	showAdvancedSearch() {
+		this.setState({advancedSearch: {text: this.state.query}})
 	}
 
 	@autobind
