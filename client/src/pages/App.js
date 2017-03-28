@@ -107,7 +107,7 @@ export default class App extends Page {
 					{pageProps.useNavigation === false
 						? <Row><Col xs={12}>{this.props.children}</Col></Row>
 						: <Row>
-							<Col sm={3}>
+							<Col sm={3} className="hide-for-print">
 								<Nav />
 							</Col>
 							<Col sm={9} className="primary-content">

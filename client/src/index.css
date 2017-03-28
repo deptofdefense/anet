@@ -610,8 +610,16 @@ header.searchPagination {
 	font-size: 0.8em;
 }
 
+.only-show-for-print {
+	display: none;
+}
+
 @media print {
-	#leftNav, .breadcrumb, .header, .banner, .add-new-comment, button {
+	.only-show-for-print {
+		display: inherit;
+	}
+
+	.breadcrumb, .header, .banner, .add-new-comment, button, .btn, .hide-for-print {
 		display: none !important;
 	}
 
