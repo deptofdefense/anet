@@ -8,10 +8,10 @@ export default class ReportStateSearch extends Component {
 		return <div>
 			<select value={value.state} onChange={this.onChange} ref={(el) => this.stateSelect = el}>
 				<option value="DRAFT">Draft</option>
-				<option value="PENDING">Pending</option>
+				<option value="PENDING_APPROVAL">Pending Approval</option>
 				<option value="RELEASED">Released</option>
 				<option value="CANCELLED">Cancelled</option>
-				<option value="FUTURE">Future</option>
+				<option value="FUTURE">Upcoming Engagement</option>
 			</select>
 
 			{value.state === "CANCELLED" && <span>
