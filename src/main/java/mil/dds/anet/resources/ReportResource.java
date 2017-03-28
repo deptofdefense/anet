@@ -171,7 +171,7 @@ public class ReportResource implements IGraphQLResource {
 	@POST
 	@Timed
 	@Path("/update")
-	public Response editReport(@Auth Person editor, Report r) {
+	public Response editReport(@Auth Person editor, Report r, @DefaultValue("true") @QueryParam("sendEditEmail") Boolean sendEmail) {
 		//Verify this person has access to edit this report
 		//Either they are the author, or an approver for the current step.
 		Report existing = dao.getById(r.getId());
@@ -248,7 +248,7 @@ public class ReportResource implements IGraphQLResource {
 			}
 		}
 		
-		if (existing.getState() == ReportState.PENDING_APPROVAL) { 
+		if (sendEmail && existing.getState() == ReportState.PENDING_APPROVAL) {
 			boolean canApprove = engine.canUserApproveStep(editor.getId(), existing.getApprovalStep().getId());
 			if (canApprove) { 
 				AnetEmail email = new AnetEmail();

@@ -409,7 +409,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 			delete report.cancelledReason
 		}
 
-		let url = `/api/reports/${edit ? 'update' : 'new'}`
+		let url = `/api/reports/${edit ? 'update' : 'new'}?sendEditEmail=${disableSubmits}`
 		return API.send(url, report, {disableSubmits: disableSubmits})
 	}
 
