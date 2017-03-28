@@ -127,7 +127,7 @@ export default class Search extends Page {
 		if (advancedSearch) {
 			let query = {text: advancedSearch.text}
 			advancedSearch.filters.forEach(filter => {
-				if (filter.value.id) {
+				if (filter.value && filter.value.id) {
 					query[filter.key + 'Id'] = filter.value.id
 				} else {
 					query[filter.key] = filter.value
@@ -236,7 +236,7 @@ export default class Search extends Page {
 				</ContentForNav>
 
 				{this.state.advancedSearch && <Fieldset>
-					<AdvancedSearch query={this.state.advancedSearch} onSearch={() => this.loadData()} />
+					<AdvancedSearch query={this.state.advancedSearch} />
 				</Fieldset>}
 
 				<Messages error={error} success={success} />

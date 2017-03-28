@@ -1,11 +1,12 @@
 import React, {Component, PropTypes} from 'react'
 import {Button, Col, FormGroup, FormControl, ControlLabel} from 'react-bootstrap'
+import DatePicker from 'react-bootstrap-date-picker'
 import autobind from 'autobind-decorator'
 import utils from 'utils'
 
 import ButtonToggleGroup from 'components/ButtonToggleGroup'
 import Autocomplete from 'components/Autocomplete'
-import DatePicker from 'react-bootstrap-date-picker'
+import History from 'components/History'
 
 import {Person, Organization, Poam} from 'models'
 
@@ -69,7 +70,7 @@ const OBJECT_TYPES = {
 
 export default class AdvancedSearch extends Component {
 	static propTypes = {
-		onSearch: PropTypes.func.isRequired,
+		onSearch: PropTypes.func,
 	}
 
 	constructor(props) {
@@ -79,6 +80,12 @@ export default class AdvancedSearch extends Component {
 			objectType: "Reports",
 			text: "",
 			filters: [{key: "author"}],
+		}
+	}
+
+	componentWillReceiveProps(props) {
+		if (props.query) {
+			this.setState(props.query)
 		}
 	}
 
@@ -142,7 +149,10 @@ export default class AdvancedSearch extends Component {
 
 	@autobind
 	performSearch() {
-		this.props.onSearch({objectType: this.state.objectType, filters: this.state.filters, text: this.state.text})
+		let queryState = {objectType: this.state.objectType, filters: this.state.filters, text: this.state.text}
+		if (!this.props.onSearch || this.props.onSearch(queryState) !== false) {
+			History.push('/search', {advancedSearch: queryState})
+		}
 	}
 }
 

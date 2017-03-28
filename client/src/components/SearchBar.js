@@ -61,8 +61,7 @@ export default class SearchBar extends Component {
 	}
 
 	@autobind
-	runAdvancedSearch(query) {
+	runAdvancedSearch() {
 		this.setState({showAdvancedSearch: false})
-		History.push('/search', {advancedSearch: query})
 	}
 }
