@@ -8,6 +8,8 @@ import ButtonToggleGroup from 'components/ButtonToggleGroup'
 import Autocomplete from 'components/Autocomplete'
 import History from 'components/History'
 
+import ReportStateSearch from 'components/ReportStateSearch'
+
 import {Person, Organization, Poam} from 'models'
 
 import REMOVE_ICON from 'resources/delete.png'
@@ -51,13 +53,7 @@ const OBJECT_TYPES = {
 				placeholder="Filter reports by PoAM..."
 			/>,
 
-			state: <select>
-				<option value="DRAFT">Draft</option>
-				<option value="PENDING">Pending</option>
-				<option value="RELEASED">Released</option>
-				<option value="CANCELLED">Cancelled</option>
-				<option value="FUTURE">Future</option>
-			</select>,
+			state: <ReportStateSearch />,
 		}
 	},
 
@@ -183,7 +179,10 @@ class SearchFilter extends Component {
 				)}
 			</select>
 
-			children = React.cloneElement(filterDefs[filter.key], {value: filter.value || "", onChange: this.onChange})
+			children = React.cloneElement(
+				filterDefs[filter.key],
+				{value: filter.value || "", onChange: this.onChange}
+			)
 		}
 
 		return <FormGroup>
@@ -208,12 +207,19 @@ class SearchFilter extends Component {
 	@autobind
 	onChange(event) {
 		if (!event) { return }
-
 		let filter = this.props.filter
+
+		// simple text value
 		if (event.target) {
-			filter.value = event.target.value
+			filter.value = {[filter.key]: event.target.value}
+		// autocomplete result
+		} else if (event.id) {
+			filter.value = event
+		// complex components that will return their query params directly
 		} else {
 			filter.value = event
 		}
+
+		this.forceUpdate()
 	}
 }
