@@ -113,13 +113,14 @@ export default class AdvancedSearch extends Component {
 
 	@autobind
 	changeObjectType(objectType) {
-		this.setState({query: {objectType, filters: []}})
+		this.setState({objectType, filters: []}, () => this.addFilter())
 	}
 
 	@autobind
 	addFilter() {
 		let filters = this.state.filters
 		let filterDefs = OBJECT_TYPES[this.state.objectType].filters
+		if (!filterDefs) { return }
 
 		let allKeys = Object.keys(filterDefs)
 		let filterKey
