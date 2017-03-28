@@ -36,11 +36,15 @@ export default class OrganizationFilter extends Component {
 		// I think it's safe because our onChange changes our parents state
 		// and that should cause us to re-render anyways.
 		this.value = props.value
+		if (this.value[this.props.queryKey]) {
+			this.value = {id : this.value[this.props.queryKey]}
+		}
 		this.includeChildOrgs = false
 	}
 
 	render() {
 		let autocompleteProps = Object.without(this.props, 'value', 'queryKey', 'queryIncludeChildOrgsKey')
+		console.log("rendering org auto", this.props.queryKey, this.value)
 		return <div>
 			<Autocomplete
 				{...autocompleteProps}

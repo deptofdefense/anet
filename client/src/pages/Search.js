@@ -134,7 +134,8 @@ export default class Search extends Page {
 			}
 		})
 
-		console.log("ended up with ", query)
+		console.log('adv query is', query)
+
 		return query
 	}
 

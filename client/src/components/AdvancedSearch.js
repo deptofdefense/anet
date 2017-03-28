@@ -46,7 +46,7 @@ const OBJECT_TYPES = {
 				placeholder="Filter reports by organization..."
 			/>,
 
-			"Engagement Date": <DateRangeSearch queryKey="enagementDate" />,
+			"Engagement Date": <DateRangeSearch queryKey="engagementDate" />,
 			"Release Date": <DateRangeSearch queryKey="releaseDate" />,
 
 			Location: <AutocompleteFilter
@@ -61,6 +61,7 @@ const OBJECT_TYPES = {
 				objectType={Poam}
 				fields={Poam.autocompleteQuery}
 				template={Poam.autocompleteTemplate}
+				valueKey="shortName"
 				placeholder="Filter reports by PoAM..."
 			/>,
 
@@ -254,7 +255,7 @@ class SearchFilter extends Component {
 
 	render() {
 		let {label, onRemove, query, filter, children} = this.props
-
+		console.log("rendering searchfilter", filter)
 		if (query) {
 			let filterDefs = OBJECT_TYPES[query.objectType].filters
 			label = <select onChange={this.onFilterTypeChange} value={filter.key}>

@@ -30,16 +30,17 @@ export default class AutocompleteFilter extends Component {
 		// I think it's safe because our onChange changes our parents state
 		// and that should cause us to re-render anyways.
 		this.value = props.value
+		if (this.value[this.props.queryKey]) {
+			this.value = {id : this.value[this.props.queryKey]}
+		}
+		console.log('autocomplete cons', props.value, this.value)
 	}
 
 	render() {
+		console.log("rendering", this.props.queryKey, this.value)
 		let autocompleteProps = Object.without(this.props, 'value', 'queryKey')
 		return <Autocomplete
 			{...autocompleteProps}
-//			objectType={objectType}
-//			fields={fields}
-//			template={template}
-//			placeholder={placeholder}
 			onChange={this.onChange}
 			value={this.value}
 		/>
@@ -48,7 +49,7 @@ export default class AutocompleteFilter extends Component {
 	@autobind
 	onChange(event) {
 		this.value = event
-
+		console.log("onChange", event, this.props.queryKey)
 		let query = {}
 		query[this.props.queryKey] = event.id
 		this.props.onChange(query)
