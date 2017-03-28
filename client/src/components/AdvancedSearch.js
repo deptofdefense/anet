@@ -1,5 +1,5 @@
 import React, {Component, PropTypes} from 'react'
-import {Button, Row, Col, FormGroup, FormControl, ControlLabel} from 'react-bootstrap'
+import {Button, DropdownButton, MenuItem, Row, Col, FormGroup, FormControl, ControlLabel} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
 import ButtonToggleGroup from 'components/ButtonToggleGroup'
@@ -164,6 +164,8 @@ export default class AdvancedSearch extends Component {
 
 	render() {
 		let {objectType, text, filters} = this.state
+		let filterDefs = OBJECT_TYPES[this.state.objectType].filters
+		let existingKeys = filters.map(f => f.key)
 
 		return <div className="advanced-search form-horizontal">
 			<FormGroup style={{textAlign: "center"}}>
@@ -184,7 +186,11 @@ export default class AdvancedSearch extends Component {
 
 			<Row>
 				<Col xs={3} xsOffset={3}>
-					<Button bsStyle="link" onClick={this.addFilter}>+ Add another filter</Button>
+					<DropdownButton bsStyle="link" title="+ Add another filter" onSelect={this.addFilter} >
+						{Object.keys(filterDefs).map(filterKey =>
+							<MenuItem disabled={existingKeys.indexOf(filterKey) > -1} eventKey={filterKey}>{filterKey}</MenuItem>
+						)}
+					</DropdownButton>
 				</Col>
 			</Row>
 
@@ -203,20 +209,8 @@ export default class AdvancedSearch extends Component {
 	}
 
 	@autobind
-	addFilter() {
+	addFilter(filterKey) {
 		let filters = this.state.filters
-		let filterDefs = OBJECT_TYPES[this.state.objectType].filters
-		if (!filterDefs) { return }
-
-		let allKeys = Object.keys(filterDefs)
-		let filterKey
-		for (var i = 0, count = allKeys.length; i < count; i++) {
-			if (!filters.find(filter => filter.key === allKeys[i])) {
-				filterKey = allKeys[i]
-				break
-			}
-		}
-
 		if (filterKey) {
 			filters.push({key: filterKey})
 			this.setState({filters})
@@ -258,12 +252,7 @@ class SearchFilter extends Component {
 		console.log("rendering searchfilter", filter)
 		if (query) {
 			let filterDefs = OBJECT_TYPES[query.objectType].filters
-			label = <select onChange={this.onFilterTypeChange} value={filter.key}>
-				{Object.keys(filterDefs).map(filterKey =>
-					<option key={filterKey} value={filterKey}>{filterKey}</option>
-				)}
-			</select>
-
+			label = filter.key
 			children = React.cloneElement(
 				filterDefs[filter.key],
 				{value: filter.value || "", onChange: this.onChange}
@@ -279,14 +268,6 @@ class SearchFilter extends Component {
 				</Button>
 			</Col>
 		</FormGroup>
-	}
-
-	@autobind
-	onFilterTypeChange(event) {
-		let filter = this.props.filter
-		filter.key = event.target.value
-		filter.value = ""
-		this.forceUpdate()
 	}
 
 	@autobind
