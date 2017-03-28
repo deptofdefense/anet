@@ -271,17 +271,8 @@ class SearchFilter extends Component {
 	}
 
 	@autobind
-	onChange(event) {
-		if (!event) { return }
+	onChange(value) {
 		let filter = this.props.filter
-
-		// simple text value
-		if (event.target) {
-			filter.value = {[filter.key]: event.target.value}
-		// complex components that will return their query params directly
-		} else {
-			filter.value = event
-		}
-		this.forceUpdate()
+		filter.value = value
 	}
 }

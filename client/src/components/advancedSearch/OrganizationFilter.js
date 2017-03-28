@@ -14,32 +14,28 @@ export default class OrganizationFilter extends Component {
 		queryIncludeChildOrgsKey: PropTypes.string.isRequired,
 
 		//Passed by the SearchFilter row
-		value: PropTypes.oneOfType([
-			PropTypes.object,
-			PropTypes.array,
-			PropTypes.string,
-		]),
+		value: PropTypes.any,
 		onChange: PropTypes.func,
 
 		//All other properties are passed directly to the Autocomplete.
 
 	}
 
-	//TODO: how do you set initial state of this component given a query?
-	// not sure how other components do this.
-
-
 	constructor(props) {
 		super(props)
 
-		//I don't know why I can't use state, but it's annoyning.
-		// I think it's safe because our onChange changes our parents state
-		// and that should cause us to re-render anyways.
-		this.value = props.value
-		if (this.value[this.props.queryKey]) {
-			this.value = {id : this.value[this.props.queryKey]}
+		this.state = {
+			value: props.value || {},
+			includeChildOrgs: props.value.includeChildOrgs || false,
 		}
-		this.includeChildOrgs = false
+	}
+
+	@autobind
+	toQuery() {
+		return {
+			[this.props.queryKey]: this.state.value.id,
+			[this.props.queryIncludeChildOrgsKey]: this.state.includeChildOrgs,
+		}
 	}
 
 	render() {
@@ -49,31 +45,27 @@ export default class OrganizationFilter extends Component {
 			<Autocomplete
 				{...autocompleteProps}
 				onChange={this.onChange}
-				value={this.value}
+				value={this.state.value}
 			/>
-			<Checkbox inline onChange={this.toggleChild}>Include children organizations</Checkbox>
+			<Checkbox inline value={this.state.includeChildOrgs} onChange={this.toggleChild}>Include children organizations</Checkbox>
 		</div>
 	}
 
 	@autobind
 	toggleChild() {
-		this.includeChildOrgs = !this.includeChildOrgs
-
-		this.updateQuery()
+		this.setState({includeChildOrgs: !this.state.includeChildOrgs}, this.updateFilter)
 	}
 
 	@autobind
 	onChange(event) {
-		this.value = event
-
-		this.updateQuery()
+		this.setState({value: event}, this.updateFilter)
 	}
 
 	@autobind
-	updateQuery() {
-		let query = {}
-		query[this.props.queryKey] = this.value.id
-		query[this.props.queryIncludeChildOrgsKey] = this.includeChildOrgs
-		this.props.onChange(query)
+	updateFilter() {
+		let value = this.state.value
+		value.includeChildOrgs = this.state.includeChildOrgs
+		value.toQuery = this.toQuery
+		this.props.onChange(value)
 	}
 }

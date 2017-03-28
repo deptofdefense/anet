@@ -127,10 +127,12 @@ export default class Search extends Page {
 		let advancedSearch = this.state.advancedSearch
 		let query = {text: advancedSearch.text}
 		advancedSearch.filters.forEach(filter => {
-			if (typeof filter.value === 'object') {
-				Object.assign(query, filter.value)
-			} else {
-				query[filter.key] = filter.value
+			if (filter.value) {
+				if (filter.value.toQuery) {
+					Object.assign(query, filter.value.toQuery())
+				} else {
+					query[filter.key] = filter.value
+				}
 			}
 		})
 

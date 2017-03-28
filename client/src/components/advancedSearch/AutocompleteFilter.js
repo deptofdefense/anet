@@ -12,11 +12,7 @@ export default class AutocompleteFilter extends Component {
 		queryKey: PropTypes.string.isRequired,
 
 		//Passed by the SearchFilter row
-		value: PropTypes.oneOfType([
-			PropTypes.object,
-			PropTypes.array,
-			PropTypes.string,
-		]),
+		queryParams: PropTypes.any,
 		onChange: PropTypes.func,
 
 		//All other properties are passed directly to the Autocomplete.
@@ -26,32 +22,29 @@ export default class AutocompleteFilter extends Component {
 	constructor(props) {
 		super(props)
 
-		//I don't know why I can't use state, but it's annoyning.
-		// I think it's safe because our onChange changes our parents state
-		// and that should cause us to re-render anyways.
-		this.value = props.value
-		if (this.value[this.props.queryKey]) {
-			this.value = {id : this.value[this.props.queryKey]}
+		this.state = {
+			value: props.value || {}
 		}
-		console.log('autocomplete cons', props.value, this.value)
+	}
+
+	@autobind
+	toQuery() {
+		return {[this.props.queryKey]: this.state.value && this.state.value.id}
 	}
 
 	render() {
 		console.log("rendering", this.props.queryKey, this.value)
-		let autocompleteProps = Object.without(this.props, 'value', 'queryKey')
+		let autocompleteProps = Object.without(this.props, 'value', 'queryKey', 'queryParams')
 		return <Autocomplete
 			{...autocompleteProps}
 			onChange={this.onChange}
-			value={this.value}
+			value={this.state.value}
 		/>
 	}
 
 	@autobind
 	onChange(event) {
-		this.value = event
-		console.log("onChange", event, this.props.queryKey)
-		let query = {}
-		query[this.props.queryKey] = event.id
-		this.props.onChange(query)
+		event.toQuery = this.toQuery
+		this.setState({value: event}, () => this.props.onChange(this.state.value))
 	}
 }
