@@ -48,7 +48,7 @@ export default class OrganizationFilter extends Component {
 				onChange={this.onChange}
 				value={this.value}
 			/>
-			<Checkbox inline onChange={this.toggleChild}>Include children organizations?</Checkbox>
+			<Checkbox inline onChange={this.toggleChild}>Include children organizations</Checkbox>
 		</div>
 	}
 

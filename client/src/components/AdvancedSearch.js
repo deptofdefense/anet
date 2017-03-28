@@ -1,16 +1,15 @@
 import React, {Component, PropTypes} from 'react'
 import {Button, Row, Col, FormGroup, FormControl, ControlLabel} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
-import utils from 'utils'
 
 import ButtonToggleGroup from 'components/ButtonToggleGroup'
-import Autocomplete from 'components/Autocomplete'
 import History from 'components/History'
 
 import ReportStateSearch from 'components/advancedSearch/ReportStateSearch'
 import DateRangeSearch from 'components/advancedSearch/DateRangeSearch'
 import AutocompleteFilter from 'components/advancedSearch/AutocompleteFilter'
 import OrganizationFilter from 'components/advancedSearch/OrganizationFilter'
+import SelectSearchFilter from 'components/advancedSearch/SelectSearchFilter'
 
 import {Person, Organization, Poam} from 'models'
 
@@ -66,6 +65,10 @@ const OBJECT_TYPES = {
 			/>,
 
 			State: <ReportStateSearch />,
+			Atmosphere: <SelectSearchFilter
+				queryKey="atmosphere"
+				values={["POSITIVE","NEUTRAL","NEGATIVE"]}
+			/>
 		}
 	},
 
