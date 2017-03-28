@@ -76,7 +76,7 @@ test.beforeEach(t => {
 
     let longWaitMs = moment.duration(10, 'seconds').asMilliseconds()
     t.context.$ = async (cssSelector, timeoutMs) => {
-        debugLog('Find element', cssSelector)
+        debugLog(`Find element: $('${cssSelector}')`)
         let waitTimeoutMs = timeoutMs || longWaitMs
         let locator = By.css(cssSelector)
         await t.context.driver.wait(
@@ -87,7 +87,7 @@ test.beforeEach(t => {
         return await t.context.driver.findElement(locator)
     }
     t.context.$$ = async (cssSelector, timeoutMs) => {
-        debugLog('Find elements', cssSelector)
+        debugLog(`Find elements: $$('${cssSelector}')`)
         let waitTimeoutMs = timeoutMs || longWaitMs
         let locator = By.css(cssSelector)
         await t.context.driver.wait(
