@@ -138,6 +138,8 @@ export default class Search extends Page {
 			GQL.run([part]).then(data => {
 				this.setState({results: data})
 			})
+
+			return
 		}
 
 		let {type, text, ...advQuery} = props.location.query
