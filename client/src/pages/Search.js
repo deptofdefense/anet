@@ -128,14 +128,14 @@ export default class Search extends Page {
 		if (advancedSearch) {
 			let query = {text: advancedSearch.text}
 			advancedSearch.filters.forEach(filter => {
-				if (filter.value && filter.value.id) {
-					query[filter.key + 'Id'] = filter.value.id
-				} else if (typeof filter.value === 'object') {
+				if (typeof filter.value === 'object') {
 					Object.assign(query, filter.value)
 				} else {
 					query[filter.key] = filter.value
 				}
 			})
+
+			console.log("ended up with ", query)
 
 			let part = this.getSearchPart(advancedSearch.objectType.toLowerCase(), query)
 			GQL.run([part]).then(data => {

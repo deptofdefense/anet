@@ -33,7 +33,6 @@ export default class AutocompleteFilter extends Component {
 	}
 
 	render() {
-		let value = this.value
 		let autocompleteProps = Object.without(this.props, 'value', 'queryKey')
 		return <Autocomplete
 			{...autocompleteProps}

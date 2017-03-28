@@ -56,7 +56,7 @@ const OBJECT_TYPES = {
 				url="/api/locations/search"
 			/>,
 
-			"PoAM": <AutocompleteFilter
+			PoAM: <AutocompleteFilter
 				queryKey="poamId"
 				objectType={Poam}
 				fields={Poam.autocompleteQuery}
@@ -81,7 +81,7 @@ const OBJECT_TYPES = {
 				valueKey="shortName"
 				value=""
 				url="/api/organizations/search"
-				placeholder="Filter reports by organization..."
+				placeholder="Filter by organization..."
 			/>,
 			Role: <SelectSearchFilter
 				queryKey="role"
@@ -95,14 +95,46 @@ const OBJECT_TYPES = {
 			Location: <AutocompleteFilter
 				queryKey="locationId"
 				valueKey="name"
-				placeholder="Filter reports by location..."
+				placeholder="Filter by location..."
 				url="/api/locations/search"
 			/>,
 			//TODO: country
 		}
 	},
 	Organizations: "ORGANIZATIONS",
-	Positions: "POSITIONS",
+	Positions: {
+		filters: {
+			Type: <SelectSearchFilter
+				queryKey="type"
+				values={["ADVISOR", "PRINCIPAL"]}
+				labels={["Billet", "Tashkil"]}
+			/>,
+			Organization: <OrganizationFilter
+				queryKey="organizationId"
+				queryIncludeChildOrgsKey="includeChildrenOrgs"
+				objectType={Organization}
+				valueKey="shortName"
+				value=""
+				url="/api/organizations/search"
+				placeholder="Filter by organization..."
+			/>,
+			Status: <SelectSearchFilter
+				queryKey="status"
+				values={["ACTIVE","INACTIVE"]}
+			/>,
+			Location: <AutocompleteFilter
+				queryKey="locationId"
+				valueKey="name"
+				placeholder="Filter by location..."
+				url="/api/locations/search"
+			/>,
+			"Is Filled?": <SelectSearchFilter
+				queryKey="isFilled"
+				values={["true","false"]}
+				labels={["Yes","No"]}
+			/>,
+		}
+	},
 	Locations: "POSITIONS",
 	PoAMs: "POSITIONS",
 }
@@ -264,14 +296,10 @@ class SearchFilter extends Component {
 		// simple text value
 		if (event.target) {
 			filter.value = {[filter.key]: event.target.value}
-		// autocomplete result
-		} else if (event.id) {
-			filter.value = event
 		// complex components that will return their query params directly
 		} else {
 			filter.value = event
 		}
-
 		this.forceUpdate()
 	}
 }

@@ -40,7 +40,6 @@ export default class OrganizationFilter extends Component {
 	}
 
 	render() {
-		let value = this.value
 		let autocompleteProps = Object.without(this.props, 'value', 'queryKey', 'queryIncludeChildOrgsKey')
 		return <div>
 			<Autocomplete
