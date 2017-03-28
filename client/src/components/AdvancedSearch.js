@@ -7,6 +7,7 @@ import ButtonToggleGroup from 'components/ButtonToggleGroup'
 import Autocomplete from 'components/Autocomplete'
 import DatePicker from 'react-bootstrap-date-picker'
 
+import GQL from 'graphql'
 import {Person, Organization, Poam} from 'models'
 
 import REMOVE_ICON from 'resources/delete.png'
@@ -68,10 +69,14 @@ const OBJECT_TYPES = {
 }
 
 export default class AdvancedSearch extends Component {
+	static propTypes = {
+		onSearch: PropTypes.func.isRequired,
+	}
+
 	constructor(props) {
 		super(props)
 
-		this.state = {
+		this.state = props.query || {
 			objectType: "Reports",
 			text: "",
 			filters: [{key: "author"}],
@@ -99,6 +104,10 @@ export default class AdvancedSearch extends Component {
 			)}
 
 			<Button onClick={this.addFilter}>+ Add another filter</Button>
+
+			<div className="submit-buttons">
+				<Button bsStyle="primary" onClick={this.performSearch}>Search</Button>
+			</div>
 		</div>
 	}
 
@@ -130,6 +139,11 @@ export default class AdvancedSearch extends Component {
 	@autobind
 	setText(event) {
 		this.setState({text: event.target.value})
+	}
+
+	@autobind
+	performSearch() {
+		this.props.onSearch({objectType: this.state.objectType, filters: this.state.filters, text: this.state.text})
 	}
 }
 
@@ -184,8 +198,8 @@ class SearchFilter extends Component {
 		let filter = this.props.filter
 		if (event.target) {
 			filter.value = event.target.value
-		} else if (event.id) {
-			filter.value = event.id
+		} else {
+			filter.value = event
 		}
 	}
 

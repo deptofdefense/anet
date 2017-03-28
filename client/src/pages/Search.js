@@ -11,6 +11,7 @@ import LinkTo from 'components/LinkTo'
 import ReportCollection from 'components/ReportCollection'
 import Form from 'components/Form'
 import Messages from 'components/Messages'
+import AdvancedSearch from 'components/AdvancedSearch'
 
 import API from 'api'
 import GQL from 'graphql'
@@ -94,8 +95,17 @@ export default class Search extends Page {
 			error: null,
 			success: null,
 		}
+
+		if (props.location.state.advancedSearch) {
+			this.state.advancedSearch = props.location.state.advancedSearch
+		}
 	}
 
+	componentWillReceiveProps(props, context) {
+		if (props.location.state.advancedSearch) {
+			this.setState({advancedSearch: props.location.state.advancedSearch}, () => this.loadData())
+		}
+	}
 
 	getSearchPart(type, query) {
 		query = Object.without(query, 'type')
@@ -207,6 +217,10 @@ export default class Search extends Page {
 						</Nav>
 					</div>
 				</ContentForNav>
+
+				{this.state.advancedSearch && <Fieldset>
+					<AdvancedSearch query={this.state.advancedSearch} onSearch={() => this.loadData()} />
+				</Fieldset>}
 
 				<Messages error={error} success={success} />
 
