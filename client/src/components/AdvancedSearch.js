@@ -186,9 +186,9 @@ export default class AdvancedSearch extends Component {
 
 			<Row>
 				<Col xs={3} xsOffset={3}>
-					<DropdownButton bsStyle="link" title="+ Add another filter" onSelect={this.addFilter} >
+					<DropdownButton bsStyle="link" title="+ Add another filter" onSelect={this.addFilter} id="addFilterDropdown">
 						{Object.keys(filterDefs).map(filterKey =>
-							<MenuItem disabled={existingKeys.indexOf(filterKey) > -1} eventKey={filterKey}>{filterKey}</MenuItem>
+							<MenuItem disabled={existingKeys.indexOf(filterKey) > -1} eventKey={filterKey} key={filterKey} >{filterKey}</MenuItem>
 						)}
 					</DropdownButton>
 				</Col>
@@ -263,7 +263,7 @@ class SearchFilter extends Component {
 			<Col xs={3}><ControlLabel>{label}</ControlLabel></Col>
 			<Col xs={8}>{children}</Col>
 			<Col xs={1}>
-				<Button bsStyle="link" onClick={() => onRemove(this.filter)}>
+				<Button bsStyle="link" onClick={() => onRemove(this.props.filter)}>
 					<img src={REMOVE_ICON} height={14} alt="Remove this filter" />
 				</Button>
 			</Col>
