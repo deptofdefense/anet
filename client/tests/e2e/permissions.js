@@ -57,6 +57,42 @@ test('checking regular user permissions', async t => {
     await assertElementNotPresent(t, '.edit-position', 'Jack should not be able to edit his own position')
 })
 
+test('Regular user cannot edit super user people or positions', async t => {
+    t.plan(2)
+
+    let {assertElementNotPresent} = t.context
+
+    await t.context.get('/', 'jack')
+
+    let [$arthurPersonLink] = 
+        await getUserPersonAndPositionFromSearchResults(t, 'rebecca', 'CTR Rebecca Beccabon', 'EF 2.2 Final Reviewer')
+    await $arthurPersonLink.click()
+    await assertElementNotPresent(t, '.edit-person', 'Jack should not be able edit an administrator')
+
+    let $arthurPositionLink = 
+        (await getUserPersonAndPositionFromSearchResults(t, 'rebecca', 'CTR Rebecca Beccabon', 'EF 2.2 Final Reviewer'))[1]
+    await $arthurPositionLink.click()
+    await assertElementNotPresent(t, '.edit-position', 'Jack should not be able edit the "ANET Administrator" position')
+})
+
+test('Regular user cannot edit admin people or positions', async t => {
+    t.plan(2)
+
+    let {assertElementNotPresent} = t.context
+
+    await t.context.get('/', 'jack')
+
+    let [$arthurPersonLink] = 
+        await getUserPersonAndPositionFromSearchResults(t, 'arthur', 'CIV Arthur Dmin', 'ANET Administrator')
+    await $arthurPersonLink.click()
+    await assertElementNotPresent(t, '.edit-person', 'Jack should not be able edit an administrator')
+
+    let $arthurPositionLink = 
+        (await getUserPersonAndPositionFromSearchResults(t, 'arthur', 'CIV Arthur Dmin', 'ANET Administrator'))[1]
+    await $arthurPositionLink.click()
+    await assertElementNotPresent(t, '.edit-position', 'Jack should not be able edit the "ANET Administrator" position')
+})
+
 test('checking admin permissions', async t => {
     t.plan(3)
 
