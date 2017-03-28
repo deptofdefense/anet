@@ -26,46 +26,17 @@ test('checking super user permissions', async t => {
 test('super user cannot edit administrator', async t => {
     t.plan(2)
 
-    let {$, $$, assertElementNotPresent} = t.context
+    let {assertElementNotPresent} = t.context
 
     await t.context.get('/', 'rebecca')
 
-    let $searchBar = await $('#searchBarInput')
-    await $searchBar.sendKeys('arthur')
-
-    let $searchBarSubmit = await $('#searchBarSubmit')
-    await $searchBarSubmit.click()
-
-    async function getArthurFromSearchResults() {
-        let $searchResultLinks = await $$('.people-search-results td a')
-
-        async function findLinkWithText(text) {
-            for (let $link of $searchResultLinks) {
-                let linkText = await $link.getText()
-                if (linkText === text) {
-                    return $link
-                }
-            }
-            return null
-        }
-
-        let $arthurPersonLink = await findLinkWithText('CIV Arthur Dmin')
-        let $arthurPositionLink = await findLinkWithText('ANET Administrator')
-
-        if (!$arthurPersonLink || !$arthurPositionLink) {
-            t.fail('Could not find Arthur Dmin when searching for "arthur". The data does not match what this test expects.')
-        }
-
-        return [$arthurPersonLink, $arthurPositionLink]
-    }
-
-    let [$arthurPersonLink] = await getArthurFromSearchResults()
+    let [$arthurPersonLink] = 
+        await getUserPersonAndPositionFromSearchResults(t, 'arthur', 'CIV Arthur Dmin', 'ANET Administrator')
     await $arthurPersonLink.click()
     await assertElementNotPresent(t, '.edit-person', 'Rebecca should not be able edit an administrator')
 
-    await t.context.driver.navigate().back()
-
-    let $arthurPositionLink = (await getArthurFromSearchResults())[1]
+    let $arthurPositionLink = 
+        (await getUserPersonAndPositionFromSearchResults(t, 'arthur', 'CIV Arthur Dmin', 'ANET Administrator'))[1]
     await $arthurPositionLink.click()
     await assertElementNotPresent(t, '.edit-position', 'Rebecca should not be able edit the "ANET Administrator" position')
 })
@@ -80,6 +51,22 @@ test('checking admin permissions', async t => {
 
     await validateUserCanEditUserForCurrentPage(t)
     await editAndSavePositionFromCurrentUserPage(t)
+})
+
+test('admins can edit superusers and their positions', async t => {
+    t.plan(3)
+
+    await t.context.get('/', 'arthur')
+
+    let [$rebeccaPersonLink] = 
+        await getUserPersonAndPositionFromSearchResults(t, 'rebecca', 'CTR Rebecca Beccabon', 'EF 2.2 Final Reviewer')
+    await $rebeccaPersonLink.click()
+    await validateUserCanEditUserForCurrentPage(t)
+
+    let $rebeccaPositionLink = 
+        (await getUserPersonAndPositionFromSearchResults(t, 'rebecca', 'CTR Rebecca Beccabon', 'EF 2.2 Final Reviewer'))[1]
+    await $rebeccaPositionLink.click()
+    await validatePositionCanBeEditedOnCurrentPage(t)
 })
 
 async function findSuperUserLink(t, desiredSuperUserName) {
@@ -128,14 +115,46 @@ async function validateUserCanEditUserForCurrentPage(t) {
 }
 
 async function editAndSavePositionFromCurrentUserPage(t) {
-    let {$, assertElementText, until} = t.context
+    let {$} = t.context
 
     let $positionName = await $('.position-name')
     await $positionName.click()
+    await validatePositionCanBeEditedOnCurrentPage(t)
+}
+
+async function validatePositionCanBeEditedOnCurrentPage(t) {
+    let {$, assertElementText, until} = t.context
     let $editButton = await $('.edit-position')
     await t.context.driver.wait(until.elementIsVisible($editButton))
     await $editButton.click()
     await t.context.pageHelpers.clickFormBottomSubmit()
 
     await assertElementText(t, await $('.alert'), 'Saved Position')
+}
+
+async function getUserPersonAndPositionFromSearchResults(t, searchQuery, personName, positionName) {
+    let {$, $$} = t.context
+
+    let $searchBar = await $('#searchBarInput')
+    await $searchBar.sendKeys(searchQuery)
+
+    let $searchBarSubmit = await $('#searchBarSubmit')
+    await $searchBarSubmit.click()
+
+    let $searchResultLinks = await $$('.people-search-results td a')
+
+    async function findLinkWithText(text) {
+        for (let $link of $searchResultLinks) {
+            let linkText = await $link.getText()
+            if (linkText === text) {
+                return $link
+            }
+        }
+        t.fail(`Could not find link with text '${text}' when searching '${searchQuery}'. The data does not match what this test expects.`)
+    }
+
+    let $arthurPersonLink = await findLinkWithText(personName)
+    let $arthurPositionLink = await findLinkWithText(positionName)
+
+    return [$arthurPersonLink, $arthurPositionLink]
 }
