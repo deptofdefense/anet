@@ -1,5 +1,5 @@
 import React, {Component, PropTypes} from 'react'
-import {Button, Col, FormGroup, FormControl, ControlLabel} from 'react-bootstrap'
+import {Button, Row, Col, FormGroup, FormControl, ControlLabel} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 import utils from 'utils'
 
@@ -88,7 +88,7 @@ export default class AdvancedSearch extends Component {
 	render() {
 		let {objectType, text, filters} = this.state
 
-		return <div>
+		return <div className="advanced-search form-horizontal">
 			<FormGroup style={{textAlign: "center"}}>
 				<ButtonToggleGroup value={objectType} onChange={this.changeObjectType}>
 					{Object.keys(OBJECT_TYPES).map(type =>
@@ -97,7 +97,7 @@ export default class AdvancedSearch extends Component {
 				</ButtonToggleGroup>
 			</FormGroup>
 
-			<SearchFilter label="Search for:" onRemove={() => this.setState({text: ""})}>
+			<SearchFilter label="Search term" onRemove={() => this.setState({text: ""})}>
 				<FormControl value={text} onChange={this.setText} />
 			</SearchFilter>
 
@@ -105,9 +105,18 @@ export default class AdvancedSearch extends Component {
 				<SearchFilter key={filter.key} query={this.state} filter={filter} onRemove={this.removeFilter} />
 			)}
 
-			<Button onClick={this.addFilter}>+ Add another filter</Button>
+			<Row>
+				<Col xs={3} xsOffset={3}>
+					<Button bsStyle="link" onClick={this.addFilter}>+ Add another filter</Button>
+				</Col>
+			</Row>
 
-			<Button bsStyle="primary" onClick={this.performSearch}>Search</Button>
+			<Row>
+				<div className="pull-right">
+					<Button onClick={this.props.onCancel} style={{marginRight: 20}}>Cancel</Button>
+					<Button bsStyle="primary" onClick={this.performSearch} style={{marginRight: 20}}>Search</Button>
+				</div>
+			</Row>
 		</div>
 	}
 

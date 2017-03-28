@@ -239,7 +239,7 @@ export default class Search extends Page {
 					</div>
 				</ContentForNav>
 
-				{this.state.advancedSearch && <Fieldset>
+				{this.state.advancedSearch && <Fieldset title="Search filters">
 					<AdvancedSearch query={this.state.advancedSearch} />
 				</Fieldset>}
 

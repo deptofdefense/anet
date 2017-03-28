@@ -617,3 +617,11 @@ header.searchPagination {
 	margin-top: 4px;
 	font-size: 0.8em;
 }
+
+.advanced-search .col-xs-3 select {
+	margin-top: -8px;
+}
+
+.advanced-search select {
+	height: 32px;
+}
