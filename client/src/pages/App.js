@@ -110,7 +110,7 @@ export default class App extends Page {
 							<Col sm={3}>
 								<Nav />
 							</Col>
-							<Col sm={9}>
+							<Col sm={9} className="primary-content">
 								{this.props.children}
 							</Col>
 						</Row>
