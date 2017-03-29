@@ -178,7 +178,7 @@ export default class AdvancedSearch extends Component {
 
 	render() {
 		let {objectType, text, filters} = this.state
-		console.log("RENDER AdvancedSearch", objectType, text, filters)
+		//console.log("RENDER AdvancedSearch", objectType, text, filters)
 		let filterDefs = OBJECT_TYPES[this.state.objectType].filters
 		let existingKeys = filters.map(f => f.key)
 		let moreFiltersAvailable = existingKeys.length < Object.keys(filterDefs).length
