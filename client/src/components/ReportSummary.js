@@ -115,7 +115,7 @@ export default class ReportSummary extends Component {
 				</Col>
 			</Row>
 
-			<Row>
+			<Row className="hide-for-print">
 				<Col mdOffset={9} md={3}>
 					<LinkTo report={report} button className="pull-right read-report-button">Read report</LinkTo>
 				</Col>
