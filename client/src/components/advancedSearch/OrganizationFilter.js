@@ -54,7 +54,7 @@ export default class OrganizationFilter extends Component {
 			/>
 
 			<Checkbox inline checked={this.state.includeChildOrgs} onChange={this.changeIncludeChildren}>
-				Include children organizations
+				Include sub-organizations
 			</Checkbox>
 		</div>
 	}
