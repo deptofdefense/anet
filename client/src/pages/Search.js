@@ -124,7 +124,7 @@ export default class Search extends Page {
 
 	@autobind
 	getAdvancedSearchQuery() {
-		let advancedSearch = this.state.advancedSearch
+		let {advancedSearch} = this.state
 		let query = {text: advancedSearch.text}
 		advancedSearch.filters.forEach(filter => {
 			if (filter.value) {
@@ -136,7 +136,7 @@ export default class Search extends Page {
 			}
 		})
 
-		console.log('adv query is', query)
+		console.log('SEARCH advanced query', query)
 
 		return query
 	}
