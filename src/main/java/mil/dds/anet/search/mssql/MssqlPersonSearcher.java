@@ -74,7 +74,7 @@ public class MssqlPersonSearcher implements IPersonSearcher {
 		}
 		
 		if (query.getCountry() != null && query.getCountry().trim().length() > 0) { 
-			whereClauses.add(" people.country LIKE '%' || :country || '%' ");
+			whereClauses.add(" people.country = :country ");
 			sqlArgs.put("country", query.getCountry());
 		}
 		
