@@ -494,8 +494,13 @@ export default class Search extends Page {
 		event.preventDefault()
 
 		let search = Object.without(this.state.saveSearch, 'show')
-		search.query = JSON.stringify({text: this.props.location.query.text })
-		search.objectType = 'REPORTS' //right now we only support saving searches for reports.
+		if (this.state.advancedSearch) {
+			search.query = JSON.stringify(this.getAdvancedSearchQuery())
+			search.objectType = this.state.advancedSearch.objectType.toUpperCase()
+		} else {
+			search.query = JSON.stringify({text: this.props.location.query.text })
+			search.objectType = 'REPORTS' //right now we only support saving searches for reports.
+		}
 
 		API.send('/api/savedSearches/new', search, {disableSubmits: true})
 			.then(response => {
