@@ -174,6 +174,11 @@ public class SqliteReportSearcher implements IReportSearcher {
 			}
 		}
 		
+		if (query.getCancelledReason() != null) { 
+			whereClauses.add("reports.cancelledReason = :cancelledReason");
+			args.put("cancelledReason", DaoUtils.getEnumId(query.getCancelledReason()));
+		}
+		
 		if (whereClauses.size() == 0) { return new ReportList(); }
 		
 		

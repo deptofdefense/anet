@@ -175,6 +175,11 @@ public class MssqlReportSearcher implements IReportSearcher {
 			}
 		}
 		
+		if (query.getCancelledReason() != null) { 
+			whereClauses.add("reports.cancelledReason = :cancelledReason");
+			args.put("cancelledReason", DaoUtils.getEnumId(query.getCancelledReason()));
+		}
+		
 		if (whereClauses.size() == 0) { return results; }
 		
 		//Apply a filter to restrict access to other's draft reports

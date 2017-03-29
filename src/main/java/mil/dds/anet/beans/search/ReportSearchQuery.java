@@ -5,6 +5,7 @@ import java.util.List;
 import org.joda.time.DateTime;
 
 import mil.dds.anet.beans.Report.Atmosphere;
+import mil.dds.anet.beans.Report.ReportCancelledReason;
 import mil.dds.anet.beans.Report.ReportState;
 
 public class ReportSearchQuery implements ISearchQuery {
@@ -36,6 +37,8 @@ public class ReportSearchQuery implements ISearchQuery {
 	Integer poamId;
 	Integer pendingApprovalOf;
 	List<ReportState> state;
+	ReportCancelledReason cancelledReason;
+
 	ReportSearchSortBy sortBy;
 	SortOrder sortOrder;
 	
@@ -207,6 +210,14 @@ public class ReportSearchQuery implements ISearchQuery {
 
 	public void setState(List<ReportState> state) {
 		this.state = state;
+	}
+
+	public ReportCancelledReason getCancelledReason() {
+		return cancelledReason;
+	}
+
+	public void setCancelledReason(ReportCancelledReason cancelledReason) {
+		this.cancelledReason = cancelledReason;
 	}
 
 	public ReportSearchSortBy getSortBy() {
