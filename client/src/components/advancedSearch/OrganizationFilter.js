@@ -2,7 +2,10 @@ import React, {Component, PropTypes} from 'react'
 import autobind from 'autobind-decorator'
 import {Checkbox} from 'react-bootstrap'
 import 'utils'
+
 import Autocomplete from 'components/Autocomplete'
+
+import {Organization} from 'models'
 
 export default class OrganizationFilter extends Component {
 	static propTypes = {
@@ -41,6 +44,10 @@ export default class OrganizationFilter extends Component {
 
 		return <div>
 			<Autocomplete
+				objectType={Organization}
+				valueKey="shortName"
+				url="/api/organizations/search"
+				placeholder="Filter by organization..."
 				{...autocompleteProps}
 				onChange={this.onAutocomplete}
 				value={this.state.value}

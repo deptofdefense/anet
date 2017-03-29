@@ -12,7 +12,7 @@ import AutocompleteFilter from 'components/advancedSearch/AutocompleteFilter'
 import OrganizationFilter from 'components/advancedSearch/OrganizationFilter'
 import SelectSearchFilter from 'components/advancedSearch/SelectSearchFilter'
 
-import {Person, Organization, Poam} from 'models'
+import {Person, Poam} from 'models'
 
 import REMOVE_ICON from 'resources/delete.png'
 
@@ -40,11 +40,6 @@ const OBJECT_TYPES = {
 			Organization: <OrganizationFilter
 				queryKey="orgId"
 				queryIncludeChildOrgsKey="includeOrgChildren"
-				objectType={Organization}
-				valueKey="shortName"
-				value=""
-				url="/api/organizations/search"
-				placeholder="Filter reports by organization..."
 			/>,
 
 			"Engagement Date": <DateRangeSearch queryKey="engagementDate" />,
@@ -79,11 +74,6 @@ const OBJECT_TYPES = {
 			Organization: <OrganizationFilter
 				queryKey="orgId"
 				queryIncludeChildOrgsKey="includeChildOrgs"
-				objectType={Organization}
-				valueKey="shortName"
-				value=""
-				url="/api/organizations/search"
-				placeholder="Filter by organization..."
 			/>,
 			Role: <SelectSearchFilter
 				queryKey="role"
@@ -122,11 +112,6 @@ const OBJECT_TYPES = {
 			Organization: <OrganizationFilter
 				queryKey="organizationId"
 				queryIncludeChildOrgsKey="includeChildrenOrgs"
-				objectType={Organization}
-				valueKey="shortName"
-				value=""
-				url="/api/organizations/search"
-				placeholder="Filter by organization..."
 			/>,
 			Status: <SelectSearchFilter
 				queryKey="status"
@@ -145,8 +130,24 @@ const OBJECT_TYPES = {
 			/>,
 		}
 	},
-	Locations: "POSITIONS",
-	PoAMs: "POSITIONS",
+	Locations: {
+		filters: {
+
+		}
+	},
+	PoAMs: {
+		filters: {
+			Organization: <OrganizationFilter
+				queryKey="responsibleOrgId"
+				queryIncludeChildOrgsKey="includeChildrenOrgs"
+			/>,
+			Status: <SelectSearchFilter
+				queryKey="status"
+				values={["ACTIVE", "INACTIVE"]}
+				labels={["Active", "Inactive"]}
+			/>,
+		}
+	},
 }
 
 export default class AdvancedSearch extends Component {
