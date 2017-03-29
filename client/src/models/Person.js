@@ -1,12 +1,59 @@
+import React from 'react'
+
 import Model from 'components/Model'
 import utils from 'utils'
 
 import RS_ICON from 'resources/rs_small.png'
 import AFG_ICON from 'resources/afg_small.png'
 
+const COUNTRIES = [
+	"Afghanistan",
+	"Albania",
+	"Armenia",
+	"Azerbaijan",
+	"Australia",
+	"Austria",
+	"Belgium",
+	"Bosnia-Herzegovina",
+	"Bulgaria",
+	"Croatia",
+	"Czech Republic",
+	"Denmark",
+	"Estonia",
+	"Finland",
+	"Germany",
+	"Georgia",
+	"Greece",
+	"Hungary",
+	"Italy",
+	"Iceland",
+	"Latvia",
+	"Luxembourg",
+	"Lithuania",
+	"Macedonia",
+	"Mongolia",
+	"Montenegro",
+	"Netherlands",
+	"New Zealand",
+	"Norway",
+	"Poland",
+	"Portugal",
+	"Romania",
+	"Sweden",
+	"Slovakia",
+	"Slovenia",
+	"Spain",
+	"Turkey",
+	"United States of America",
+	"United Kingdom",
+	"Ukraine",
+]
+
 export default class Person extends Model {
 	static resourceName = 'Person'
 	static listName = 'personList'
+
+	static COUNTRIES = COUNTRIES
 
 	static schema = {
 		name: '',
@@ -19,6 +66,15 @@ export default class Person extends Model {
 		biography: '',
 		role: 'PRINCIPAL',
 		position: {},
+	}
+
+	static autocompleteQuery = "id, name, role, position { id, name, organization { id, shortName } }"
+
+	static autocompleteTemplate(person) {
+		return <span>
+			<img src={(new Person(person)).iconUrl()} alt={person.role} height={20} className="person-icon" />
+			{person.name} {person.rank && person.rank.toUpperCase()} - {person.position && `(${person.position.name})`}
+		</span>
 	}
 
 	static humanNameOfRole(role) {

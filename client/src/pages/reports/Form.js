@@ -183,14 +183,9 @@ export default class ReportForm extends ValidatableFormWrapper {
 							onChange={this.addAttendee}
 							onErrorChange={this.attendeeError}
 							clearOnSelect={true}
-							fields={'id, name, role, position { id, name, organization { id, shortName}} '}
 							queryParams={{status: ['ACTIVE','NEW_USER'], matchPositionName: true}}
-							template={person =>
-								<span>
-									<img src={(new Person(person)).iconUrl()} alt={person.role} height={20} className="person-icon" />
-									{person.name} {person.rank && person.rank.toUpperCase()} - {person.position && `(${person.position.name})`}
-								</span>
-							}
+							fields={Person.autocompleteQuery}
+							template={Person.autocompleteTemplate}
 							placeholder="Start typing to search for people who attended the meeting..."
 							valueKey="name" />
 
@@ -409,7 +404,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 			delete report.cancelledReason
 		}
 
-		let url = `/api/reports/${edit ? 'update' : 'new'}`
+		let url = `/api/reports/${edit ? 'update' : 'new'}?sendEditEmail=${disableSubmits}`
 		return API.send(url, report, {disableSubmits: disableSubmits})
 	}
 

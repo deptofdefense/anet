@@ -59,29 +59,29 @@ public class MssqlReportSearcher implements IReportSearcher {
 		
 		if (query.getEngagementDateStart() != null) { 
 			whereClauses.add("reports.engagementDate >= :startDate");
-			args.put("startDate", query.getEngagementDateStart());	
+			args.put("startDate", Utils.handleRelativeDate(query.getEngagementDateStart()));	
 		}
 		if (query.getEngagementDateEnd() != null) { 
 			whereClauses.add("reports.engagementDate <= :endDate");
-			args.put("endDate", query.getEngagementDateEnd());	
+			args.put("endDate", Utils.handleRelativeDate(query.getEngagementDateEnd()));	
 		}
 		
 		if (query.getCreatedAtStart() != null) { 
 			whereClauses.add("reports.createdAt >= :startCreatedAt");
-			args.put("startCreatedAt", query.getCreatedAtStart());
+			args.put("startCreatedAt", Utils.handleRelativeDate(query.getCreatedAtStart()));
 		}
 		if (query.getCreatedAtEnd() != null) { 
 			whereClauses.add("reports.createdAt <= :endCreatedAt");
-			args.put("endCreatedAt", query.getCreatedAtEnd());
+			args.put("endCreatedAt", Utils.handleRelativeDate(query.getCreatedAtEnd()));
 		}
 		
 		if (query.getReleasedAtStart() != null) { 
 			whereClauses.add("reports.releasedAt >= :releasedAtStart");
-			args.put("releasedAtStart", query.getReleasedAtStart());
+			args.put("releasedAtStart", Utils.handleRelativeDate(query.getReleasedAtStart()));
 		}
 		if (query.getReleasedAtEnd() != null) { 
 			whereClauses.add("reports.releasedAt <= :releasedAtEnd");
-			args.put("releasedAtEnd", query.getReleasedAtEnd());
+			args.put("releasedAtEnd", Utils.handleRelativeDate(query.getReleasedAtEnd()));
 		}
 		
 		if (query.getAttendeeId() != null) { 

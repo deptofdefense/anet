@@ -24,6 +24,7 @@ public class SqlitePoamSearcher implements IPoamSearcher {
 		
 		sql.append(" WHERE ");
 		List<String> whereClauses = new LinkedList<String>();
+		String commonTableExpression = null;
 		PoamList result =  new PoamList();
 		result.setPageNum(query.getPageNum());
 		result.setPageSize(query.getPageSize());
@@ -35,7 +36,16 @@ public class SqlitePoamSearcher implements IPoamSearcher {
 		}
 		
 		if (query.getResponsibleOrgId() != null) { 
-			whereClauses.add("organizationId = :orgId");
+			if (query.getIncludeChildrenOrgs() != null && query.getIncludeChildrenOrgs()) {
+				commonTableExpression = "WITH RECURSIVE parent_orgs(id) AS ( "
+						+ "SELECT id FROM organizations WHERE id = :orgId "
+					+ "UNION ALL "
+						+ "SELECT o.id from parent_orgs po, organizations o WHERE o.parentOrgId = po.id "
+					+ ") ";
+				whereClauses.add(" organizationId IN (SELECT id from parent_orgs)");
+			} else { 
+				whereClauses.add("organizationId = :orgId");
+			}
 			args.put("orgId", query.getResponsibleOrgId());
 		}
 		
@@ -53,6 +63,10 @@ public class SqlitePoamSearcher implements IPoamSearcher {
 		
 		sql.append(Joiner.on(" AND ").join(whereClauses));
 		sql.append(" ORDER BY shortName ASC LIMIT :limit OFFSET :offset");
+		
+		if (commonTableExpression != null) { 
+			sql.insert(0, commonTableExpression);
+		}
 		
 		result.setList(dbHandle.createQuery(sql.toString())
 			.bindFromMap(args)

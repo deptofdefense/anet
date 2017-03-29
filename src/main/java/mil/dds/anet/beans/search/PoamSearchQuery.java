@@ -6,6 +6,7 @@ public class PoamSearchQuery implements ISearchQuery {
 
 	String text;
 	Integer responsibleOrgId;
+	Boolean includeChildrenOrgs;
 	String category;
 	PoamStatus status;
 	int pageNum;
@@ -30,6 +31,14 @@ public class PoamSearchQuery implements ISearchQuery {
 
 	public void setResponsibleOrgId(Integer responsibleOrgId) {
 		this.responsibleOrgId = responsibleOrgId;
+	}
+
+	public Boolean getIncludeChildrenOrgs() {
+		return includeChildrenOrgs == null ? false: includeChildrenOrgs;
+	}
+
+	public void setIncludeChildrenOrgs(Boolean includeChildrenOrgs) {
+		this.includeChildrenOrgs = includeChildrenOrgs;
 	}
 
 	public String getCategory() {

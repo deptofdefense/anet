@@ -11,6 +11,7 @@ import LinkTo from 'components/LinkTo'
 import ReportCollection from 'components/ReportCollection'
 import Form from 'components/Form'
 import Messages from 'components/Messages'
+import AdvancedSearch from 'components/AdvancedSearch'
 
 import API from 'api'
 import GQL from 'graphql'
@@ -94,11 +95,21 @@ export default class Search extends Page {
 			error: null,
 			success: null,
 		}
+
+		if (props.location.state && props.location.state.advancedSearch) {
+			this.state.advancedSearch = props.location.state.advancedSearch
+		}
 	}
 
+	componentWillReceiveProps(props, context) {
+		let newAdvancedSearch = props.location.state && props.location.state.advancedSearch
+		if (this.state.advancedSearch !== newAdvancedSearch) {
+			this.setState({advancedSearch: newAdvancedSearch}, () => this.loadData())
+		}
+	}
 
 	getSearchPart(type, query) {
-		query = Object.without(query, 'type')
+//		query = Object.without(query, 'type')
 		query.pageSize = 10
 		query.pageNum = this.state.pageNum[type]
 
@@ -111,9 +122,40 @@ export default class Search extends Page {
 		return part
 	}
 
-	fetchData(props) {
-		let {type, text, ...advQuery} = props.location.query
+	@autobind
+	getAdvancedSearchQuery() {
+		let {advancedSearch} = this.state
+		let query = {text: advancedSearch.text}
+		advancedSearch.filters.forEach(filter => {
+			if (filter.value) {
+				if (filter.value.toQuery) {
+					Object.assign(query, filter.value.toQuery())
+				} else {
+					query[filter.key] = filter.value
+				}
+			}
+		})
 
+		console.log('SEARCH advanced query', query)
+
+		return query
+	}
+
+
+	fetchData(props) {
+		let {advancedSearch} = this.state
+
+		if (advancedSearch) {
+			let query = this.getAdvancedSearchQuery()
+			let part = this.getSearchPart(advancedSearch.objectType.toLowerCase(), query)
+			GQL.run([part]).then(data => {
+				this.setState({results: data})
+			})
+
+			return
+		}
+
+		let {type, text, ...advQuery} = props.location.query
 		//Any query with a field other than 'text' and 'type' is an advanced query.
 		let isAdvQuery = Object.keys(advQuery).length
 		advQuery.text = text
@@ -158,9 +200,10 @@ export default class Search extends Page {
 
 		return (
 			<div>
-				{this.props.location.query.text && <div className="pull-right">
-					<Button onClick={this.showSaveModal} id="saveSearchButton">Save search</Button>
-				</div>}
+				<div className="pull-right">
+					<Button onClick={this.showSaveModal} id="saveSearchButton" style={{marginRight: 12}}>Save search</Button>
+					{!this.state.advancedSearch && <Button onClick={this.showAdvancedSearch}>Advanced search</Button>}
+				</div>
 
 				<Breadcrumbs items={[['Search results', '']]} />
 
@@ -207,6 +250,10 @@ export default class Search extends Page {
 						</Nav>
 					</div>
 				</ContentForNav>
+
+				{this.state.advancedSearch && <Fieldset title="Search filters">
+					<AdvancedSearch query={this.state.advancedSearch} onCancel={this.cancelAdvancedSearch} />
+				</Fieldset>}
 
 				<Messages error={error} success={success} />
 
@@ -281,7 +328,7 @@ export default class Search extends Page {
 		let pageNums = this.state.pageNum
 		pageNums[type] = pageNum
 
-		let query = Object.without(this.props.location.query, 'type')
+		let query = (this.state.advancedSearch) ? this.getAdvancedSearchQuery() : Object.without(this.props.location.query, 'type')
 		let part = this.getSearchPart(type, query)
 		GQL.run([part]).then(data => {
 			let results = this.state.results //TODO: @nickjs this feels wrong, help!
@@ -290,6 +337,16 @@ export default class Search extends Page {
 		}).catch(response =>
 			this.setState({error: response})
 		)
+	}
+
+	@autobind
+	showAdvancedSearch() {
+		this.setState({advancedSearch: {text: this.state.query}})
+	}
+
+	@autobind
+	cancelAdvancedSearch() {
+		History.push({pathname: '/search', query: {text: this.state.advancedSearch ? this.state.advancedSearch.text : ""}, advancedSearch: null})
 	}
 
 	renderPeople() {
@@ -439,8 +496,13 @@ export default class Search extends Page {
 		event.preventDefault()
 
 		let search = Object.without(this.state.saveSearch, 'show')
-		search.query = JSON.stringify({text: this.props.location.query.text })
-		search.objectType = 'REPORTS' //right now we only support saving searches for reports.
+		if (this.state.advancedSearch) {
+			search.query = JSON.stringify(this.getAdvancedSearchQuery())
+			search.objectType = this.state.advancedSearch.objectType.toUpperCase()
+		} else {
+			search.query = JSON.stringify({text: this.props.location.query.text })
+			search.objectType = 'REPORTS' //right now we only support saving searches for reports.
+		}
 
 		API.send('/api/savedSearches/new', search, {disableSubmits: true})
 			.then(response => {

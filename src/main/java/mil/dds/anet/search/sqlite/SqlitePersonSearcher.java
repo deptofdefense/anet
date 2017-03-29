@@ -73,7 +73,7 @@ public class SqlitePersonSearcher implements IPersonSearcher {
 		}
 		
 		if (query.getCountry() != null && query.getCountry().trim().length() > 0) { 
-			whereClauses.add(" people.country LIKE '%' || :country || '%' ");
+			whereClauses.add(" people.country = :country ");
 			sqlArgs.put("country", query.getCountry());
 		}
 		
@@ -91,7 +91,7 @@ public class SqlitePersonSearcher implements IPersonSearcher {
 						+ "SELECT o.id from parent_orgs po, organizations o WHERE o.parentOrgId = po.id "
 					+ ") SELECT id from parent_orgs)");
 			} else { 
-				sql.append(" positions.organizationId = :orgId ");
+				whereClauses.add(" positions.organizationId = :orgId ");
 			}
 			sqlArgs.put("orgId", query.getOrgId());
 		}
