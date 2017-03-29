@@ -20,7 +20,8 @@ export default class SelectSearchFilter extends Component {
 
 		this.state = {
 			value: {
-				value: value.value || "POSITIVE"
+				value: value.value || this.props.values[0] || ''
+
 			}
 		}
 

@@ -109,7 +109,7 @@ export default class Search extends Page {
 	}
 
 	getSearchPart(type, query) {
-		query = Object.without(query, 'type')
+//		query = Object.without(query, 'type')
 		query.pageSize = 10
 		query.pageNum = this.state.pageNum[type]
 

@@ -101,7 +101,7 @@ const OBJECT_TYPES = {
 		filters: {
 			Type: <SelectSearchFilter
 				queryKey="type"
-				values={["ADVISOR", "PRINCIPAL"]}
+				values={["ADVISOR_ORG", "PRINCIPAL_ORG"]}
 				labels={["NATO", "Afghan"]}
 			  />,
 		}
