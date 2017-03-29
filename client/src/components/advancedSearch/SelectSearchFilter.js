@@ -13,35 +13,51 @@ export default class SelectSearchFilter extends Component {
 		//onChange
 	}
 
+	constructor(props) {
+		super(props)
 
-	componentWillMount() {
-		this.value = this.props.values && this.props.values[0]
-		this.updateQuery()
+		let {value} = props
+
+		this.state = {
+			value: {
+				value: value.value || "POSITIVE"
+			}
+		}
+
+		this.updateFilter()
+	}
+
+	componentDidUpdate() {
+		this.updateFilter()
 	}
 
 	render() {
 		let values = this.props.values
 		let labels = this.props.labels || values.map(v => utils.sentenceCase(v))
 
-		return <select value={this.value} onChange={this.onChange} >
+		return <select value={this.state.value.value} onChange={this.onChange} >
 			{values.map((v,idx) =>
 				<option key={idx} value={v}>{labels[idx]}</option>
 			)}
 		</select>
-
 	}
 
 	@autobind
 	onChange(event) {
-		this.value = event.target.value
-		this.updateQuery()
+		let {value} = this.state
+		value.value = event.target.value
+		this.setState({value}, this.updateFilter)
 	}
 
 	@autobind
-	updateQuery() {
-		let query = {}
-		query[this.props.queryKey] = this.value
-		this.props.onChange(query)
+	toQuery() {
+		return {[this.props.queryKey]: this.state.value.value}
 	}
 
+	@autobind
+	updateFilter() {
+		let {value} = this.state
+		value.toQuery = this.toQuery
+		this.props.onChange(value)
+	}
 }
