@@ -103,7 +103,15 @@ const OBJECT_TYPES = {
 			//TODO: country
 		}
 	},
-	Organizations: "ORGANIZATIONS",
+	Organizations: {
+		filters: {
+			Type: <SelectSearchFilter
+				queryKey="type"
+				values={["ADVISOR", "PRINCIPAL"]}
+				labels={["NATO", "Afghan"]}
+			  />,
+		}
+	},
 	Positions: {
 		filters: {
 			Type: <SelectSearchFilter
