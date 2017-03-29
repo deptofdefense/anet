@@ -625,3 +625,50 @@ header.searchPagination {
 .advanced-search select {
 	height: 32px;
 }
+.only-show-for-print {
+	display: none;
+}
+
+@media print {
+	.only-show-for-print {
+		display: inherit;
+	}
+
+	.breadcrumb, .header, .banner, .add-new-comment, button, .btn, .hide-for-print {
+		display: none !important;
+	}
+
+	body {
+		margin-top: 0
+	}
+
+	/* If we don't have this, then every link will be printed with its href afterwards. So "CIV Erin Erinson" will be printed as:
+	 
+	 		CIV Erin Erinson (/people/256)
+	 
+	   My intuition is that this is useless visual clutter, but maybe it would be useful to people.
+	 */
+	a[href]:after {
+		content: none;
+	}
+
+	/* The following rules are from Bootstrap, but they're in media queries. Those media queries do not get picked up for @media print,
+		so we need to copy them here for the print view to see them. If we ever change the version of Bootstrap being used, we'll have
+		to re-copy the styles here to make the print view consistent. */
+	.form-horizontal .control-label {
+		padding-top: 7px;
+		margin-bottom: 0;
+		text-align: right;
+	}
+
+	.col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12 {
+		float: left;
+	}
+	/* end styles copied from bootstrap */
+
+	/* Normally, the primary content is 9 columns. When we remove the nav, we'd like the primary content to expand to fill the remaining space.
+		To do this, we'll override the 9 columns class and make the width 100% */
+	.primary-content {
+		width: 100%
+	}
+}

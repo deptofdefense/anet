@@ -63,7 +63,7 @@ export default class ReportCollection extends Component {
 			{reportsExist ?
 				<div>
 					<header>
-						<ButtonToggleGroup value={this.state.viewFormat} onChange={this.changeViewFormat}>
+						<ButtonToggleGroup value={this.state.viewFormat} onChange={this.changeViewFormat} className="hide-for-print">
 							<Button value={FORMAT_SUMMARY}>Summary</Button>
 							<Button value={FORMAT_TABLE}>Table</Button>
 							<Button value={FORMAT_MAP}>Map</Button>

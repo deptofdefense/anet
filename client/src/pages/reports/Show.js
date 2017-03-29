@@ -295,7 +295,7 @@ export default class ReportShow extends Page {
 
 						{!report.comments.length && <p>There are no comments yet.</p>}
 
-						<Form formFor={this.state.newComment} horizontal onSubmit={this.submitComment} submitText={false}>
+						<Form formFor={this.state.newComment} horizontal onSubmit={this.submitComment} submitText={false} className="add-new-comment">
 							<Form.Field id="text" placeholder="Type a comment here" label="Add a comment" componentClass="textarea" />
 
 							<div className="right-button">

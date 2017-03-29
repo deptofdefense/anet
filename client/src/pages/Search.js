@@ -257,6 +257,8 @@ export default class Search extends Page {
 
 				<Messages error={error} success={success} />
 
+				{this.props.location.query.text && <h2 className="only-show-for-print">Search query: '{this.props.location.query.text}'</h2>}
+
 				{noResults &&
 					<Alert bsStyle="warning">
 						<b>No search results found!</b>
