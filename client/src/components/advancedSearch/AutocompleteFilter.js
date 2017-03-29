@@ -12,7 +12,7 @@ export default class AutocompleteFilter extends Component {
 		queryKey: PropTypes.string.isRequired,
 
 		//Passed by the SearchFilter row
-		queryParams: PropTypes.any,
+		//queryParams: PropTypes.any,
 		onChange: PropTypes.func,
 
 		//All other properties are passed directly to the Autocomplete.
@@ -34,7 +34,7 @@ export default class AutocompleteFilter extends Component {
 	}
 
 	render() {
-		let autocompleteProps = Object.without(this.props, 'value', 'queryKey', 'queryParams')
+		let autocompleteProps = Object.without(this.props, 'value', 'queryKey')
 
 		return <Autocomplete
 			{...autocompleteProps}

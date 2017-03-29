@@ -25,6 +25,7 @@ const OBJECT_TYPES = {
 				valueKey="name"
 				fields={Person.autocompleteQuery}
 				template={Person.autocompleteTemplate}
+				queryParams={{role: 'ADVISOR'}}
 				placeholder="Filter reports by author..."
 			/>,
 
@@ -108,7 +109,7 @@ const OBJECT_TYPES = {
 	},
 	Positions: {
 		filters: {
-			"Organization type": <SelectSearchFilter
+			"Position type": <SelectSearchFilter
 				queryKey="type"
 				values={["ADVISOR", "PRINCIPAL"]}
 				labels={["Billet", "Tashkil"]}
