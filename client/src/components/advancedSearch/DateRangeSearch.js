@@ -9,45 +9,57 @@ export default class DateRangeSearch extends Component {
 	constructor(props) {
 		super(props)
 
-		let {value, queryKey} = props
-		let startKey = queryKey ? queryKey + 'Start' : 'start'
-		let endKey = queryKey ? queryKey + 'End' : 'end'
+		let {value} = props
 
-		this.start = value[startKey] ? moment.unix(value[startKey] / 1000).toISOString() : null
-		this.end = value[endKey] ? moment.unix(value[endKey] / 1000).toISOString() : null
+		this.state = {
+			value: {
+				start: value.start ? value.start : null,
+				end: value.end ? value.end : null,
+			}
+		}
+
+		this.updateFilter()
 	}
 
 	render() {
-
+		let {value} = this.state
 		return <div>
-			<DatePicker value={this.start} onChange={this.onChangeStart} showTodayButton showClearButton={false} /> to
-			<DatePicker value={this.end} onChange={this.onChangeEnd} showTodayButton showClearButton={false} />
+			<DatePicker value={value.start} onChange={this.onChangeStart} showTodayButton showClearButton={false} /> to
+			<DatePicker value={value.end} onChange={this.onChangeEnd} showTodayButton showClearButton={false} />
 		</div>
 	}
 
 	@autobind
-	onChangeStart(event) {
-		console.log(event)
-		this.start = event
-
-		this.updateQuery()
+	onChangeStart(newDate) {
+		let {value} = this.state
+		value.start = newDate
+		this.setState({value}, this.updateFilter)
 	}
 
 	@autobind
-	onChangeEnd(event) {
-		this.end = event
-		this.updateQuery()
+	onChangeEnd(newDate) {
+		let {value} = this.state
+		value.end = newDate
+		this.setState({value}, this.updateFilter)
 	}
 
 	@autobind
-	updateQuery() {
+	toQuery() {
 		let {queryKey} = this.props
+		let {value} = this.state
 		let startKey = queryKey ? queryKey + 'Start' : 'start'
 		let endKey = queryKey ? queryKey + 'End' : 'end'
 
-		let start = this.start && moment(this.start).startOf('day').valueOf() + 1
-		let end = this.end && moment(this.end).endOf('day').valueOf() - 1
-		let queryParams = {[startKey]: start, [endKey]: end}
-		this.props.onChange(queryParams)
+		return {
+			[startKey]: moment(value.start).valueOf(),
+			[endKey]: moment(value.end).valueOf(),
+		}
+	}
+
+	@autobind
+	updateFilter() {
+		let value = this.state.value
+		value.toQuery = this.toQuery
+		this.props.onChange(value)
 	}
 }
