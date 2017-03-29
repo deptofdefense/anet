@@ -640,11 +640,10 @@
 		</addColumn>
 	</changeSet>
 
-<!-- Temp putting this here until we can fix production data. 
-	<changeSet id="29" author="hpitelka" dbms="mssql" >
+	<changeSet id="34" author="hpitelka" dbms="mssql" >
 		<sql dbms="mssql">
 			CREATE UNIQUE NONCLUSTERED INDEX UniquePositionCodes ON positions (code) WHERE code IS NOT NULL;
 		</sql>
 	</changeSet>
--->
+
 </databaseChangeLog>
