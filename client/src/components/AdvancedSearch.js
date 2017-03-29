@@ -99,7 +99,7 @@ const OBJECT_TYPES = {
 	},
 	Organizations: {
 		filters: {
-			Type: <SelectSearchFilter
+			"Organization type": <SelectSearchFilter
 				queryKey="type"
 				values={["ADVISOR_ORG", "PRINCIPAL_ORG"]}
 				labels={["NATO", "Afghan"]}
@@ -108,7 +108,7 @@ const OBJECT_TYPES = {
 	},
 	Positions: {
 		filters: {
-			Type: <SelectSearchFilter
+			"Organization type": <SelectSearchFilter
 				queryKey="type"
 				values={["ADVISOR", "PRINCIPAL"]}
 				labels={["Billet", "Tashkil"]}
@@ -127,7 +127,7 @@ const OBJECT_TYPES = {
 				placeholder="Filter by location..."
 				url="/api/locations/search"
 			/>,
-			"Is Filled?": <SelectSearchFilter
+			"Is filled?": <SelectSearchFilter
 				queryKey="isFilled"
 				values={["true","false"]}
 				labels={["Yes","No"]}
@@ -181,6 +181,7 @@ export default class AdvancedSearch extends Component {
 		console.log("RENDER AdvancedSearch", objectType, text, filters)
 		let filterDefs = OBJECT_TYPES[this.state.objectType].filters
 		let existingKeys = filters.map(f => f.key)
+		let moreFiltersAvailable = existingKeys.length < Object.keys(filterDefs).length
 
 		return <div className="advanced-search form-horizontal">
 			<FormGroup style={{textAlign: "center"}}>
@@ -200,12 +201,16 @@ export default class AdvancedSearch extends Component {
 			)}
 
 			<Row>
-				<Col xs={3} xsOffset={3}>
-					<DropdownButton bsStyle="link" title="+ Add another filter" onSelect={this.addFilter} id="addFilterDropdown">
-						{Object.keys(filterDefs).map(filterKey =>
-							<MenuItem disabled={existingKeys.indexOf(filterKey) > -1} eventKey={filterKey} key={filterKey} >{filterKey}</MenuItem>
-						)}
-					</DropdownButton>
+				<Col xs={5} xsOffset={3}>
+					{moreFiltersAvailable ?
+						<DropdownButton bsStyle="link" title="+ Add another filter" onSelect={this.addFilter} id="addFilterDropdown">
+							{Object.keys(filterDefs).map(filterKey =>
+								<MenuItem disabled={existingKeys.indexOf(filterKey) > -1} eventKey={filterKey} key={filterKey} >{filterKey}</MenuItem>
+							)}
+						</DropdownButton>
+						:
+						"No additional filters available"
+					}
 				</Col>
 			</Row>
 
