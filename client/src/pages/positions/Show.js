@@ -91,7 +91,7 @@ export default class PositionShow extends Page {
 
 				<Form static formFor={position} horizontal>
 					<Fieldset title={position.name} action={
-						canEdit && <LinkTo position={position} edit button="primary">Edit</LinkTo>
+						canEdit && <LinkTo position={position} edit button="primary" className="edit-position">Edit</LinkTo>
 					}>
 						<Form.Field id="code" />
 

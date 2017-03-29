@@ -7,37 +7,12 @@ test('Move someone in and out of a position', async t => {
 
     await t.context.get('/', 'rebecca')
 
-    async function clickMyOrgLink() {
-        let $myOrgLink = await $('#my-organization')
-        await $myOrgLink.click()
-    }
-
-    await clickMyOrgLink()
+    await t.context.pageHelpers.clickMyOrgLink()
 
     let positionName = 'EF 2.2 Advisor D'
     let personName = 'Civ Erin Erinson'
 
-    let $supportedPositionsRows = await $$('#supportedPositions table tbody tr')
-    let $erinCell
-    for (let $row of $supportedPositionsRows) {
-        let [$billetCell, $advisorCell] = await $row.findElements(By.css('td'))
-        let billetText = await $billetCell.getText()
-        let advisorText = await $advisorCell.getText()
-
-        if (billetText === positionName && advisorText === personName) {
-            $erinCell = $advisorCell
-            break
-        }
-    }
-
-    if (!$erinCell) {
-        t.fail('Could not find Erin Erinson in the supported positions table. ' +
-            'Please fix the database to be the way this test expects.')
-    }
-
-    await t.context.driver.wait(until.elementIsVisible($erinCell))
-    let $erinLink = await $erinCell.findElement(By.css('a'))
-    await $erinLink.click()
+    await t.context.pageHelpers.clickPersonNameFromSupportedPositionsFieldset(personName, positionName)
 
     let $changeAssignedPositionButton = await $('.change-assigned-position')
     await $changeAssignedPositionButton.click()
@@ -47,7 +22,7 @@ test('Move someone in and out of a position', async t => {
 
     await assertElementText(t, await $('p.not-assigned-to-position-message'), 'Erin Erinson is not assigned to a position.')
     
-    await clickMyOrgLink()
+    await t.context.pageHelpers.clickMyOrgLink()
 
     let $vacantPositionRows = await $$('#vacantPositions table tbody tr')
     let $positionToFillCell
@@ -91,9 +66,9 @@ test('Move someone in and out of a position', async t => {
 
     await assertElementText(t, await $('.position-name'), positionName)
 
-    await clickMyOrgLink()
+    await t.context.pageHelpers.clickMyOrgLink()
 
-    $supportedPositionsRows = await $$('#supportedPositions table tbody tr')
+    let $supportedPositionsRows = await $$('#supportedPositions table tbody tr')
     let foundCorrectRow = false
     for (let $row of $supportedPositionsRows) {
         let [$billetCell, $advisorCell] = await $row.findElements(By.css('td'))

@@ -1,6 +1,6 @@
 let test = require('ava'),
     webdriver = require('selenium-webdriver'),
-    {By, until} = webdriver,
+    {By, until, Key} = webdriver,
     moment = require('moment'),
     _includes = require('lodash.includes'),
     _isRegExp = require('lodash.isregexp'),
@@ -36,6 +36,7 @@ test.beforeEach(t => {
     t.context.By = By
     t.context.until = until
     t.context.shortWaitMs = shortWaitMs
+    t.context.Key = Key
 
     // This method is a helper so we don't have to keep repeating the hostname.
     // Passing the authentication through the querystring is a hack so we can
@@ -75,7 +76,7 @@ test.beforeEach(t => {
 
     let longWaitMs = moment.duration(10, 'seconds').asMilliseconds()
     t.context.$ = async (cssSelector, timeoutMs) => {
-        debugLog('Find element', cssSelector)
+        debugLog(`Find element: $('${cssSelector}')`)
         let waitTimeoutMs = timeoutMs || longWaitMs
         let locator = By.css(cssSelector)
         await t.context.driver.wait(
@@ -86,7 +87,7 @@ test.beforeEach(t => {
         return await t.context.driver.findElement(locator)
     }
     t.context.$$ = async (cssSelector, timeoutMs) => {
-        debugLog('Find elements', cssSelector)
+        debugLog(`Find elements: $$('${cssSelector}')`)
         let waitTimeoutMs = timeoutMs || longWaitMs
         let locator = By.css(cssSelector)
         await t.context.driver.wait(
@@ -129,7 +130,9 @@ test.beforeEach(t => {
                     try {
                         return !(await t.context.$(cssSelector, waitTimeoutMs))
                     } catch (e) {
-                        if (e.name === 'TimeoutError') {
+                        // Hilariously, when Selenium can't find an element, sometimes it throws TimeoutError,
+                        // and sometimes it throws NoSuchElementError.
+                        if (e.name === 'TimeoutError' || e.name === 'NoSuchElementError') {
                             return true
                         }
                         throw e
@@ -178,6 +181,34 @@ test.beforeEach(t => {
         async assertReportShowStatusText(t, text) {
             await t.context.assertElementText(t, await t.context.$('.report-show h4'), text)
         },
+        async clickMyOrgLink() {
+            let $myOrgLink = await t.context.$('#my-organization')
+            await t.context.driver.wait(t.context.until.elementIsVisible($myOrgLink))
+            await $myOrgLink.click()
+        },
+        async clickFormBottomSubmit() {
+            let $formBottomSubmit = await t.context.$('#formBottomSubmit')
+            await t.context.driver.wait(t.context.until.elementIsVisible($formBottomSubmit))
+            await $formBottomSubmit.click()
+        },
+        async clickPersonNameFromSupportedPositionsFieldset(personName, positionName) {
+            let $supportedPositionsRows = await t.context.$$('#supportedPositions table tbody tr')
+            for (let $row of $supportedPositionsRows) {
+                let [$billetCell, $advisorCell] = await $row.findElements(By.css('td'))
+                let billetText = await $billetCell.getText()
+                let advisorText = await $advisorCell.getText()
+
+                if (billetText === positionName && advisorText === personName) {
+                    await t.context.driver.wait(until.elementIsVisible($advisorCell))
+                    let $advisorLink = await $advisorCell.findElement(By.css('a'))
+                    await $advisorLink.click()
+                    return
+                }
+            }
+            t.fail(`Could not find a row with person name = '${personName}'` +
+                `and position name = '${positionName}' in the supported positions table. ` +
+                'Please fix the database to be the way this test expects.')
+        }
     }
 })
 

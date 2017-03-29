@@ -352,7 +352,7 @@ export default class Search extends Page {
 	renderPeople() {
 		return <div>
 			{this.paginationFor('people')}
-			<Table responsive hover striped>
+			<Table responsive hover striped className="people-search-results">
 				<thead>
 				<tr>
 						<th>Name</th>
