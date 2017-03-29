@@ -1,3 +1,5 @@
+#Contributing to this project
+
 Thanks for thinking about contributing to this project!
 
 ## The legal stuff
