@@ -195,6 +195,7 @@ public class PositionResource implements IGraphQLResource {
 	@RolesAllowed("SUPER_USER")
 	public Response deletePersonFromPosition(@Auth Person user, @PathParam("id") int positionId) {
 		Position pos = dao.getById(positionId);
+		if (pos == null) { return Response.status(Status.NOT_FOUND).build(); } 
 		AuthUtils.assertSuperUserForOrg(user, pos.getOrganization());
 
 		dao.removePersonFromPosition(pos);
