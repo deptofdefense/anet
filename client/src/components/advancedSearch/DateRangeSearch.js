@@ -18,7 +18,7 @@ export default class DateRangeSearch extends Component {
 
 		this.state = {
 			value: {
-				relative: 0,
+				relative: "0",
 				start: value.start ? value.start : null,
 				end: value.end ? value.end : null,
 			}

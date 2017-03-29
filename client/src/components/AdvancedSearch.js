@@ -43,7 +43,7 @@ const OBJECT_TYPES = {
 			/>,
 
 			"Engagement Date": <DateRangeSearch queryKey="engagementDate" />,
-			"Release Date": <DateRangeSearch queryKey="releaseDate" />,
+			"Release Date": <DateRangeSearch queryKey="releasedAt" />,
 
 			Location: <AutocompleteFilter
 				queryKey="locationId"
