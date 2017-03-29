@@ -561,7 +561,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		Organization ef11 = orgs.getList().stream().filter(o -> o.getShortName().equals("EF 1.1")).findFirst().get();
 		assertThat(ef11.getShortName()).isEqualToIgnoringCase("EF 1.1");
 
-		query.setPoamId(null);
+		query = new ReportSearchQuery();
 		query.setAdvisorOrgId(ef11.getId());
 		query.setIncludeAdvisorOrgChildren(false);
 		searchResults = httpQuery("/api/reports/search", jack).post(Entity.json(query), ReportList.class);
