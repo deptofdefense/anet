@@ -128,46 +128,7 @@ export default class PersonForm extends ValidatableFormWrapper {
 				<RequiredField id="country" componentClass="select"
 					required={isAdvisor}>
 					<option />
-					<option>Afghanistan</option>
-					<option>Albania</option>
-					<option>Armenia</option>
-					<option>Azerbaijan</option>
-					<option>Australia</option>
-					<option>Austria</option>
-					<option>Belgium</option>
-					<option>Bosnia-Herzegovina</option>
-					<option>Bulgaria</option>
-					<option>Croatia</option>
-					<option>Czech Republic</option>
-					<option>Denmark</option>
-					<option>Estonia</option>
-					<option>Finland</option>
-					<option>Germany</option>
-					<option>Georgia</option>
-					<option>Greece</option>
-					<option>Hungary</option>
-					<option>Italy</option>
-					<option>Iceland</option>
-					<option>Latvia</option>
-					<option>Luxembourg</option>
-					<option>Lithuania</option>
-					<option>Macedonia</option>
-					<option>Mongolia</option>
-					<option>Montenegro</option>
-					<option>Netherlands</option>
-					<option>New Zealand</option>
-					<option>Norway</option>
-					<option>Poland</option>
-					<option>Portugal</option>
-					<option>Romania</option>
-					<option>Sweden</option>
-					<option>Slovakia</option>
-					<option>Slovenia</option>
-					<option>Spain</option>
-					<option>Turkey</option>
-					<option>United States of America</option>
-					<option>United Kingdom</option>
-					<option>Ukraine</option>
+					{Person.COUNTRIES.map(country => <option key={country} value={country}>{country}</option>)}
 				</RequiredField>
 
 				<Form.Field id="endOfTourDate" addon={CALENDAR_ICON}>

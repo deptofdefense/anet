@@ -6,9 +6,54 @@ import utils from 'utils'
 import RS_ICON from 'resources/rs_small.png'
 import AFG_ICON from 'resources/afg_small.png'
 
+const COUNTRIES = [
+	"Afghanistan",
+	"Albania",
+	"Armenia",
+	"Azerbaijan",
+	"Australia",
+	"Austria",
+	"Belgium",
+	"Bosnia-Herzegovina",
+	"Bulgaria",
+	"Croatia",
+	"Czech Republic",
+	"Denmark",
+	"Estonia",
+	"Finland",
+	"Germany",
+	"Georgia",
+	"Greece",
+	"Hungary",
+	"Italy",
+	"Iceland",
+	"Latvia",
+	"Luxembourg",
+	"Lithuania",
+	"Macedonia",
+	"Mongolia",
+	"Montenegro",
+	"Netherlands",
+	"New Zealand",
+	"Norway",
+	"Poland",
+	"Portugal",
+	"Romania",
+	"Sweden",
+	"Slovakia",
+	"Slovenia",
+	"Spain",
+	"Turkey",
+	"United States of America",
+	"United Kingdom",
+	"Ukraine",
+]
+
 export default class Person extends Model {
 	static resourceName = 'Person'
 	static listName = 'personList'
+
+	static COUNTRIES = COUNTRIES
 
 	static schema = {
 		name: '',

@@ -90,7 +90,11 @@ const OBJECT_TYPES = {
 				placeholder="Filter by location..."
 				url="/api/locations/search"
 			/>,
-			//TODO: country
+			Country: <SelectSearchFilter
+				queryKey="country"
+				values={Person.COUNTRIES}
+				labels={Person.COUNTRIES}
+			/>,
 		}
 	},
 	Organizations: {
