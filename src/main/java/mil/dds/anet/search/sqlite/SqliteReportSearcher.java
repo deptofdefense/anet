@@ -59,29 +59,29 @@ public class SqliteReportSearcher implements IReportSearcher {
 		
 		if (query.getEngagementDateStart() != null) { 
 			whereClauses.add("reports.engagementDate >= DateTime(:startDate)");
-			args.put("startDate", sqlitePattern.print(query.getEngagementDateStart()));
+			args.put("startDate", sqlitePattern.print(Utils.handleRelativeDate(query.getEngagementDateStart())));
 		}
 		if (query.getEngagementDateEnd() != null) { 
 			whereClauses.add("reports.engagementDate <= DateTime(:endDate)");
-			args.put("endDate", sqlitePattern.print(query.getEngagementDateEnd()));
+			args.put("endDate", sqlitePattern.print(Utils.handleRelativeDate(query.getEngagementDateEnd())));
 		}
 		
 		if (query.getCreatedAtStart() != null) { 
 			whereClauses.add("reports.createdAt >= DateTime(:startCreatedAt)");
-			args.put("startCreatedAt", sqlitePattern.print(query.getCreatedAtStart()));
+			args.put("startCreatedAt", sqlitePattern.print(Utils.handleRelativeDate(query.getCreatedAtStart())));
 		}
 		if (query.getCreatedAtEnd() != null) { 
 			whereClauses.add("reports.createdAt <= DateTime(:endCreatedAt)");
-			args.put("endCreatedAt", sqlitePattern.print(query.getCreatedAtEnd()));
+			args.put("endCreatedAt", sqlitePattern.print(Utils.handleRelativeDate(query.getCreatedAtEnd())));
 		}
 		
 		if (query.getReleasedAtStart() != null) { 
 			whereClauses.add("reports.releasedAt >= DateTime(:releasedAtStart)");
-			args.put("releasedAtStart", sqlitePattern.print(query.getReleasedAtStart()));
+			args.put("releasedAtStart", sqlitePattern.print(Utils.handleRelativeDate(query.getReleasedAtStart())));
 		}
 		if (query.getReleasedAtEnd() != null) { 
 			whereClauses.add("reports.releasedAt <= DateTime(:releasedAtEnd)");
-			args.put("releasedAtEnd", sqlitePattern.print(query.getReleasedAtEnd()));
+			args.put("releasedAtEnd", sqlitePattern.print(Utils.handleRelativeDate(query.getReleasedAtEnd())));
 		}
 		
 		if (query.getAttendeeId() != null) { 
