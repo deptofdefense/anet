@@ -103,11 +103,10 @@ export default class Search extends Page {
 
 	componentWillReceiveProps(props, context) {
 		let newAdvancedSearch = props.location.state && props.location.state.advancedSearch
-		let newQuery = props.location.query
 		if (this.state.advancedSearch !== newAdvancedSearch) {
 			this.setState({advancedSearch: newAdvancedSearch}, () => this.loadData())
-		} else if (newQuery != this.props.location.query) {
-			this.loadData(props, context)
+		} else {
+			super.componentWillReceiveProps(props, context)
 		}
 	}
 
