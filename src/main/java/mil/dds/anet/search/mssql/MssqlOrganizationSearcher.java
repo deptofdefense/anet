@@ -51,7 +51,7 @@ public class MssqlOrganizationSearcher implements IOrganizationSearcher {
 				commonTableExpression = "WITH parent_orgs(id) AS ( "
 						+ "SELECT id FROM organizations WHERE id = :parentOrgId "
 					+ "UNION ALL "
-						+ "SELECT o.id from parent_orgs po, organizations o WHERE o.parentOrgId = po.id "
+						+ "SELECT o.id from parent_orgs po, organizations o WHERE o.parentOrgId = po.id AND o.id != :parentOrgId"
 					+ ") ";
 				whereClauses.add("( organizations.parentOrgId IN (SELECT id from parent_orgs) "
 					+ "OR organizations.id = :parentOrgId)");
