@@ -47,8 +47,8 @@ public class MssqlPersonSearcher implements IPersonSearcher {
 						+ "OR FREETEXT((people.name, biography), :freetextQuery) "
 						+ "OR CONTAINS((positions.name, positions.code), :containsQuery))");
 			} else { 
-				whereClauses.add("(CONTAINS ((people.name, emailAddress, biography), :containsQuery) "
-						+ "OR FREETEXT((name, biography), :freetextQuery))");
+				whereClauses.add("(CONTAINS ((people.name, people.emailAddress, people.biography), :containsQuery) "
+						+ "OR FREETEXT((people.name, people.biography), :freetextQuery))");
 			}
 			sqlArgs.put("containsQuery", Utils.getSqlServerFullTextQuery(query.getText()));
 			sqlArgs.put("freetextQuery", query.getText());
