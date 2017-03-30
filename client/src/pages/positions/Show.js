@@ -235,7 +235,7 @@ export default class PositionShow extends Page {
 
 	@autobind
 	deletePosition() {
-		if (!confirm("Are you sure you want to delete this position? This cannot be undon")) {
+		if (!confirm("Are you sure you want to delete this position? This cannot be undone")) {
 			return
 		}
 
