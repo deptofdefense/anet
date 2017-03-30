@@ -93,7 +93,8 @@ export default class Home extends Page {
 			title: currentUser.position.organization.shortName + "'s upcoming engagements",
 			query: {
 				advisorOrgId: currentUser.position.organization.id,
-				state: ["FUTURE"]
+				state: ["FUTURE"],
+				sortOrder: 'ASC'
 			}
 		}
 	}
@@ -101,7 +102,7 @@ export default class Home extends Page {
 	allUpcoming() {
 		return {
 			title: "All upcoming engagements",
-			query: { state: ["FUTURE"] }
+			query: { state: ["FUTURE"], sortOrder: 'ASC' }
 		}
 	}
 
