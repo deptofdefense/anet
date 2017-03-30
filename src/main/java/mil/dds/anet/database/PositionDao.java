@@ -60,6 +60,9 @@ public class PositionDao implements IAnetDao<Position> {
 	public Position insert(Position p) {
 		p.setCreatedAt(DateTime.now());
 		p.setUpdatedAt(p.getCreatedAt());
+		//prevent code conflicts
+		if (p.getCode() != null && p.getCode().trim().length() == 0) { p.setCode(null); }
+		
 		try { 
 			GeneratedKeys<Map<String,Object>> keys = dbHandle.createStatement(
 					"/* positionInsert */ INSERT INTO positions (name, code, type, status, organizationId, locationId, createdAt, updatedAt) " 
@@ -108,6 +111,9 @@ public class PositionDao implements IAnetDao<Position> {
 	 */
 	public int update(Position p) { 
 		p.setUpdatedAt(DateTime.now());
+		//prevent code conflicts
+		if (p.getCode() != null && p.getCode().trim().length() == 0) { p.setCode(null); }
+		
 		try {
 			return dbHandle.createStatement("/* positionUpdate */ UPDATE positions SET name = :name, "
 					+ "code = :code, organizationId = :organizationId, type = :type, status = :status, "
