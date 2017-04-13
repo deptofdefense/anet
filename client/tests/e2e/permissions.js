@@ -19,12 +19,12 @@ test('checking super user permissions', async t => {
 
     await $jacobLink.click()
     await validateUserCanEditUserForCurrentPage(t)
-    
+
     await editAndSavePositionFromCurrentUserPage(t)
 })
 
 validateUserCannotEditOtherUser(
-    'super user cannot edit administrator', 'rebecca', 
+    'super user cannot edit administrator', 'rebecca',
     'arthur', 'CIV Arthur Dmin', 'ANET Administrator'
 )
 
@@ -35,7 +35,7 @@ test('checking regular user permissions', async t => {
 
     await t.context.get('/', 'jack')
     await t.context.pageHelpers.clickMyOrgLink()
-    await pageHelpers.clickPersonNameFromSupportedPositionsFieldset('OF-9 Jack Jackson', 'EF 2.1 Advisor B')
+    await pageHelpers.clickPersonNameFromSupportedPositionsFieldset('OF-9 Jack Jackson')
 
     await validateUserCanEditUserForCurrentPage(t)
 
@@ -45,7 +45,7 @@ test('checking regular user permissions', async t => {
 })
 
 validateUserCannotEditOtherUser(
-    'Regular user cannot edit super user people or positions', 'jack', 'rebecca', 
+    'Regular user cannot edit super user people or positions', 'jack', 'rebecca',
     'CTR Rebecca Beccabon', 'EF 2.2 Final Reviewer'
 )
 
@@ -70,12 +70,12 @@ test('admins can edit superusers and their positions', async t => {
 
     await t.context.get('/', 'arthur')
 
-    let [$rebeccaPersonLink] = 
+    let [$rebeccaPersonLink] =
         await getUserPersonAndPositionFromSearchResults(t, 'rebecca', 'CTR Rebecca Beccabon', 'EF 2.2 Final Reviewer')
     await $rebeccaPersonLink.click()
     await validateUserCanEditUserForCurrentPage(t)
 
-    let $rebeccaPositionLink = 
+    let $rebeccaPositionLink =
         (await getUserPersonAndPositionFromSearchResults(t, 'rebecca', 'CTR Rebecca Beccabon', 'EF 2.2 Final Reviewer'))[1]
     await $rebeccaPositionLink.click()
     await validatePositionCanBeEditedOnCurrentPage(t)
@@ -89,15 +89,15 @@ function validateUserCannotEditOtherUser(testTitle, user, searchQuery, otherUser
 
         await t.context.get('/', user)
 
-        let [$arthurPersonLink] = 
+        let [$arthurPersonLink] =
             await getUserPersonAndPositionFromSearchResults(t, searchQuery, otherUserName, otherUserPosition)
         await $arthurPersonLink.click()
-        await assertElementNotPresent(t, '.edit-person', 'Jack should not be able edit an administrator', shortWaitMs)
+        await assertElementNotPresent(t, '.edit-person', `${user} should not be able to edit ${otherUserName}`, shortWaitMs)
 
-        let $arthurPositionLink = 
+        let $arthurPositionLink =
             (await getUserPersonAndPositionFromSearchResults(t, searchQuery, otherUserName, otherUserPosition))[1]
         await $arthurPositionLink.click()
-        await assertElementNotPresent(t, '.edit-position', 'Jack should not be able edit the "ANET Administrator" position', shortWaitMs)
+        await assertElementNotPresent(t, '.edit-position', `${user} should not be able edit the "${otherUserPosition}" position`, shortWaitMs)
     })
 }
 
@@ -131,8 +131,8 @@ async function validateUserCanEditUserForCurrentPage(t) {
         async () => {
             let originalBioText = await $bioTextArea.getText()
             return originalBioText !== ''
-        }, 
-        moment.duration(5, 'seconds').asMilliseconds(), 
+        },
+        moment.duration(5, 'seconds').asMilliseconds(),
         'This test assumes that the current user has a non-empty biography.'
     )
     let originalBioText = await $bioTextArea.getText()

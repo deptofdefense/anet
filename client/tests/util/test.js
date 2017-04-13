@@ -40,7 +40,7 @@ test.beforeEach(t => {
 
     // This method is a helper so we don't have to keep repeating the hostname.
     // Passing the authentication through the querystring is a hack so we can
-    // pass the information along via window.fetch. 
+    // pass the information along via window.fetch.
     t.context.get = async (pathname, userPw) => {
         let credentials = userPw || 'erin'
         let urlToGet = `http://localhost:3000${pathname}?user=${credentials}&pass=${credentials}`
@@ -51,14 +51,14 @@ test.beforeEach(t => {
         try {
             await t.context.driver.wait(
                 until.elementTextIs(
-                    await t.context.$('.not-found-text', shortWaitMs), 
-                    'There was an error processing this request. Please contact an administrator.'), 
+                    await t.context.$('.not-found-text', shortWaitMs),
+                    'There was an error processing this request. Please contact an administrator.'),
                 shortWaitMs
             )
             throw new Error('The API returned a 500. Do you need to restart the server?')
         } catch (e) {
             // NoSuchElementError: If we didn't find the "not found text" element, then we are not seeing a page-wide failure.
-            // StaleElementReferenceError: If we found the "not found text" element but it's no longer on the page, 
+            // StaleElementReferenceError: If we found the "not found text" element but it's no longer on the page,
             //      then we are not seeing a page-wide failure.
             // TimeoutError: If we found the "not found text" element, but the text was never the backend error message,
             //      then we are not seeing a page-wide failure.
@@ -80,7 +80,7 @@ test.beforeEach(t => {
         let waitTimeoutMs = timeoutMs || longWaitMs
         let locator = By.css(cssSelector)
         await t.context.driver.wait(
-            until.elementLocated(locator), 
+            until.elementLocated(locator),
             waitTimeoutMs,
             `Could not find element by css selector ${cssSelector} within ${waitTimeoutMs} milliseconds`
         )
@@ -92,7 +92,7 @@ test.beforeEach(t => {
         let locator = By.css(cssSelector)
         await t.context.driver.wait(
             until.elementsLocated(locator),
-            waitTimeoutMs, 
+            waitTimeoutMs,
             `Could not find elements by css selector ${cssSelector} within ${waitTimeoutMs} milliseconds`
         )
         return t.context.driver.findElements(locator)
@@ -101,7 +101,7 @@ test.beforeEach(t => {
     // A helper function to combine waiting for an element to have rendered and then asserting on its contents.
     t.context.assertElementText = async (t, $elem, expectedText, message) => {
         try {
-            let untilCondition = _isRegExp(expectedText) ? 
+            let untilCondition = _isRegExp(expectedText) ?
                     until.elementTextMatches($elem, expectedText) : until.elementTextIs($elem, expectedText)
 
             await t.context.driver.wait(untilCondition, longWaitMs)
@@ -138,12 +138,12 @@ test.beforeEach(t => {
                         throw e
                     }
                 },
-                waitTimeoutMs, 
+                waitTimeoutMs,
                 `Element was still present after ${waitTimeoutMs} milliseconds`
             )
         } catch (e) {
             if (e.name === 'TimeoutError') {
-                t.fail(`Element with css selector '${cssSelector}' was still present after ${waitTimeoutMs} milliseconds`)
+                t.fail(`Element with css selector '${cssSelector}' was still present after ${waitTimeoutMs} milliseconds: ${message}`)
             } else {
                 throw e
             }
@@ -191,14 +191,14 @@ test.beforeEach(t => {
             await t.context.driver.wait(t.context.until.elementIsVisible($formBottomSubmit))
             await $formBottomSubmit.click()
         },
-        async clickPersonNameFromSupportedPositionsFieldset(personName, positionName) {
+        async clickPersonNameFromSupportedPositionsFieldset(personName) {
             let $supportedPositionsRows = await t.context.$$('#supportedPositions table tbody tr')
             for (let $row of $supportedPositionsRows) {
                 let [$billetCell, $advisorCell] = await $row.findElements(By.css('td'))
                 let billetText = await $billetCell.getText()
                 let advisorText = await $advisorCell.getText()
 
-                if (billetText === positionName && advisorText === personName) {
+                if (advisorText === personName) {
                     await t.context.driver.wait(until.elementIsVisible($advisorCell))
                     let $advisorLink = await $advisorCell.findElement(By.css('a'))
                     await $advisorLink.click()
@@ -206,7 +206,7 @@ test.beforeEach(t => {
                 }
             }
             t.fail(`Could not find a row with person name = '${personName}'` +
-                `and position name = '${positionName}' in the supported positions table. ` +
+                'in the supported positions table. ' +
                 'Please fix the database to be the way this test expects.')
         }
     }
@@ -224,7 +224,7 @@ test.afterEach.always(async t => {
  * the the browser time to run JS to update the page. In practice, this does not
  * always seem to be necessary, since the JS can run very fast. If the tests are flaky,
  * this would be a good thing to investigate.
- * 
+ *
  * Also, I suspect that we may see a bunch of stale element errors as React replaces
  * DOM nodes. To fix this, we should use a model of passing around CSS selectors instead
  * of element references, and always query for the element at the last possible moment.

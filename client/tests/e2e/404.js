@@ -44,3 +44,4 @@ test('Positions 404', async t => {
     await t.context.get('/positions/555')
     await assertElementText(t, await $('.not-found-text'), 'Position #555 not found.')
 })
+
