@@ -26,8 +26,8 @@ import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Person.PersonStatus;
 import mil.dds.anet.beans.Person.Role;
-import mil.dds.anet.beans.Poam.PoamStatus;
 import mil.dds.anet.beans.Poam;
+import mil.dds.anet.beans.Poam.PoamStatus;
 import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Position.PositionStatus;
 import mil.dds.anet.beans.Position.PositionType;
@@ -46,7 +46,6 @@ import mil.dds.anet.beans.search.ISearchQuery.SortOrder;
 import mil.dds.anet.beans.search.ReportSearchQuery;
 import mil.dds.anet.beans.search.ReportSearchQuery.ReportSearchSortBy;
 import mil.dds.anet.database.AdminDao.AdminSettingKeys;
-import mil.dds.anet.test.beans.CommentTest;
 import mil.dds.anet.test.beans.OrganizationTest;
 import mil.dds.anet.test.beans.PersonTest;
 
@@ -284,13 +283,13 @@ public class ReportsResourceTest extends AbstractResourceTest {
 
 		//Post a comment on the report because it's awesome
 		Comment commentOne = httpQuery(String.format("/api/reports/%d/comments", created.getId()), author)
-				.post(Entity.json(CommentTest.fromText("This is a test comment one")), Comment.class);
+				.post(Entity.json(commentFromText("This is a test comment one")), Comment.class);
 		assertThat(commentOne.getId()).isNotNull();
 		assertThat(commentOne.getReportId()).isEqualTo(created.getId());
 		assertThat(commentOne.getAuthor().getId()).isEqualTo(author.getId());
 
 		Comment commentTwo = httpQuery(String.format("/api/reports/%d/comments", created.getId()), approver1)
-				.post(Entity.json(CommentTest.fromText("This is a test comment two")), Comment.class);
+				.post(Entity.json(commentFromText("This is a test comment two")), Comment.class);
 		assertThat(commentTwo.getId()).isNotNull();
 
 		List<Comment> commentsReturned = httpQuery(String.format("/api/reports/%d/comments", created.getId()), approver1)
@@ -325,6 +324,12 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		assertThat(updatedOrg.loadApprovalSteps()).hasSize(0);
 	}
 
+	public static Comment commentFromText(String string) {
+		Comment c = new Comment();
+		c.setText(string);
+		return c;
+	}
+	
 	@Test
 	public void testDefaultApprovalFlow() {
 		final Person jack = getJackJackson();
