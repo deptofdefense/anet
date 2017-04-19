@@ -8,8 +8,6 @@ When you submit a pull request to this repository for the first time, you need t
 
 You can submit contributions anonymously or under a pseudonym if you'd like, but we need to be able to reach you at the email address you list when you agree to the DCO. 
 
-If you're a U.S. Federal government employee and use a *.mil or *.gov email address to agree to the DCO, we interpret your signed DCO to mean that the contribution was created in whole or in part by you as part of your job with the U.S. Federal government and that your contribution is not subject to copyright protections.
-
 It probably goes without saying, but contributions you make to this public Deparment of Defense ("DoD") repository are completely voluntary. When you submit a pull request, you're offering your contribution to DoD without expectation of payment and you expressly waive any future pay claims against the U.S. Federal government related to your contribution. 
 
 ## The technical stuff
