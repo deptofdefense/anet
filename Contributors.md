@@ -16,7 +16,7 @@ Copyright 2016-2017 U.S. Federal Government (in countries where recognized) \
 2017 Nick Heiner nicholas_t_heiner@omb.eop.gov \
 2017 Andrew Lovett-Barron andrew@dds.mil \
 2017 Lori Thomas lori@dds.mil \
-Copyright 2017 Vassil Iordanov \
+Copyright 2017 Vassil Iordanov vassil.iordanov@ncia.nato.int \
 Copyright 2017 NATO Communications and Information Agency \
 
 **U.S. Federal Employees**
