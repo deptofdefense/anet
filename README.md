@@ -22,7 +22,7 @@ We recommend reading through the documentation in the following order:
 
 ## Contributing
 
-As part of the Defense Digital Service's goal of bringing technology industry practices to the Department of Defense, we welcome contributions to this repository from the open source community. If you are interested in contributing to this project, please review `CONTRIBUTING.md` and `LICENSE.md`. Those files describe how to contribute to this work.
+As part of the Defense Digital Service's goal of bringing technology industry practices to the U.S. Department of Defense, we welcome contributions to this repository from the open source community. If you are interested in contributing to this project, please review `CONTRIBUTING.md` and `LICENSE.md`. Those files describe how to contribute to this work.
 
 Works created by U.S. Federal employees as part of their jobs typically are not eligible for copyright in the United States. In places where the contributions of U.S. Federal employees are not eligible for copyright, this work is in the public domain. In places where it is eligible for copyright, such as some foreign jurisdictions, this work is licensed as described in `LICENSE.md`.
 
