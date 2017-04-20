@@ -9,7 +9,7 @@
 Copyright 2016-2017 U.S. Federal Government (in countries where recognized) \
 2017 Hunter Pitelka hunter@dds.mil \
 2017 Nick Small nick@dds.mil \
-2017 Tom Bereknyei, MAJ USMC tomberek@dds.mil \
+2017 Tom Bereknyei, Maj USMC tom@dds.mil \
 2017 Brandon Bourier brandon@dds.mil \
 2017 Erin Delaney erin@dds.mil \
 2017 Eduardo Ortiz eduardo@dds.mil \
