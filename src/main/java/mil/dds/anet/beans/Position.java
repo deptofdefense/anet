@@ -12,7 +12,7 @@ import mil.dds.anet.views.AbstractAnetBean;
 public class Position extends AbstractAnetBean {
 
 	public static enum PositionType { ADVISOR, PRINCIPAL, SUPER_USER, ADMINISTRATOR }
-	public static enum PositionStatus {ACTIVE, INACTIVE} 
+	public static enum PositionStatus { ACTIVE, INACTIVE } 
 	
 	String name;
 	String code;

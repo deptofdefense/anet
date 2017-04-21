@@ -52,7 +52,7 @@ public class MssqlPositionSearcher implements IPositionSearcher {
 		
 		if (query.getType() != null) { 
 			List<String> argNames = new LinkedList<String>();
-			for (int i=0;i<query.getType().size();i++) { 
+			for (int i = 0;i < query.getType().size();i++) { 
 				argNames.add(":state" + i);
 				sqlArgs.put("state" + i, DaoUtils.getEnumId(query.getType().get(i)));
 			}

@@ -56,7 +56,8 @@ public class FutureEngagementWorker implements Runnable {
 				email.setToAddresses(Collections.singletonList(r.loadAuthor().getEmailAddress()));
 				AnetEmailWorker.sendEmailAsync(email);
 						
-				handle.execute("/* UpdateFutureEngagement */ UPDATE reports SET state = ? WHERE id = ?", DaoUtils.getEnumId(ReportState.DRAFT), r.getId());
+				handle.execute("/* UpdateFutureEngagement */ UPDATE reports SET state = ? "
+						+ "WHERE id = ?", DaoUtils.getEnumId(ReportState.DRAFT), r.getId());
 			} catch (Exception e) { 
 				e.printStackTrace();
 			}

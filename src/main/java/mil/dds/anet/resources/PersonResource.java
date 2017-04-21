@@ -204,7 +204,7 @@ public class PersonResource implements IGraphQLResource {
 	}
 	
 	/**
-	 * Searches people in the ANET database 
+	 * Searches people in the ANET database.
 	 * @param query the search term
 	 * @return a list of people objects
 	 */

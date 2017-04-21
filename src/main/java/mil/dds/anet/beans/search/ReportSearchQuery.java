@@ -157,7 +157,7 @@ public class ReportSearchQuery implements ISearchQuery {
 	}
 
 	public boolean getIncludePrincipalOrgChildren() {
-		return (includePrincipalOrgChildren == null) ? false: includePrincipalOrgChildren;
+		return (includePrincipalOrgChildren == null) ? false : includePrincipalOrgChildren;
 	}
 
 	public void setIncludePrincipalOrgChildren(Boolean includePrincipalOrgChildren) {

@@ -52,7 +52,8 @@ public class MssqlReportSearcher implements IReportSearcher {
 		String text = query.getText();
 		if (text != null && text.trim().length() > 0) {
 			String cleanText = Utils.getSqlServerFullTextQuery(text);
-			whereClauses.add("(CONTAINS ((text, intent, keyOutcomes, nextSteps), :containsQuery) OR FREETEXT((text, intent, keyOutcomes, nextSteps), :freetextQuery))");
+			whereClauses.add("(CONTAINS ((text, intent, keyOutcomes, nextSteps), :containsQuery) "
+					+ "OR FREETEXT((text, intent, keyOutcomes, nextSteps), :freetextQuery))");
 			args.put("containsQuery", cleanText);
 			args.put("freetextQuery", query.getText());
 		}
@@ -109,7 +110,8 @@ public class MssqlReportSearcher implements IReportSearcher {
 					+ "UNION ALL "
 						+ "SELECT o.id from parent_orgs po, organizations o WHERE o.parentOrgId = po.id "
 					+ ")";
-				whereClauses.add("(reports.advisorOrganizationId IN (SELECT id from parent_orgs) OR reports.principalOrganizationId IN (SELECT id from parent_orgs))");
+				whereClauses.add("(reports.advisorOrganizationId IN (SELECT id from parent_orgs) "
+						+ "OR reports.principalOrganizationId IN (SELECT id from parent_orgs))");
 			} else { 
 				whereClauses.add("(reports.advisorOrganizationId = :orgId OR reports.principalOrganizationId = :orgId)");
 			}
@@ -167,7 +169,7 @@ public class MssqlReportSearcher implements IReportSearcher {
 				args.put("state", DaoUtils.getEnumId(query.getState().get(0)));
 			} else {
 				List<String> argNames = new LinkedList<String>();
-				for (int i=0;i<query.getState().size();i++) { 
+				for (int i = 0;i < query.getState().size();i++) { 
 					argNames.add(":state" + i);
 					args.put("state" + i, DaoUtils.getEnumId(query.getState().get(i)));
 				}
@@ -189,7 +191,7 @@ public class MssqlReportSearcher implements IReportSearcher {
 			args.put("draftState", DaoUtils.getEnumId(ReportState.DRAFT));
 			args.put("rejectedState", DaoUtils.getEnumId(ReportState.REJECTED));
 		} else { 
-	 		whereClauses.add("((reports.state != :draftState AND reports.state != :rejectedState) OR (reports.authorId = :userId))");
+			whereClauses.add("((reports.state != :draftState AND reports.state != :rejectedState) OR (reports.authorId = :userId))");
 			args.put("draftState", DaoUtils.getEnumId(ReportState.DRAFT));
 			args.put("rejectedState", DaoUtils.getEnumId(ReportState.REJECTED));
 			args.put("userId", user.getId());

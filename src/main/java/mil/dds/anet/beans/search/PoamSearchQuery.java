@@ -34,7 +34,7 @@ public class PoamSearchQuery implements ISearchQuery {
 	}
 
 	public Boolean getIncludeChildrenOrgs() {
-		return includeChildrenOrgs == null ? false: includeChildrenOrgs;
+		return includeChildrenOrgs == null ? false : includeChildrenOrgs;
 	}
 
 	public void setIncludeChildrenOrgs(Boolean includeChildrenOrgs) {

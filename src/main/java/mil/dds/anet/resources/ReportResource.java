@@ -490,11 +490,11 @@ public class ReportResource implements IGraphQLResource {
 	}
 
 	private void sendReportRejectEmail(Report r, Person rejector, Comment rejectionComment) {
-		AnetEmail email = new AnetEmail();
 		ReportRejectionEmail action = new ReportRejectionEmail();
 		action.setReport(r);
 		action.setRejector(rejector);
 		action.setComment(rejectionComment);
+		AnetEmail email = new AnetEmail();
 		email.setToAddresses(Collections.singletonList(r.loadAuthor().getEmailAddress()));
 		email.setAction(action);
 		AnetEmailWorker.sendEmailAsync(email);
@@ -605,7 +605,6 @@ public class ReportResource implements IGraphQLResource {
 	 * @param engagementDateStart minimum date on reports to include 
 	 * @param orgType  If orgId is NULL then the type of organization (ADVISOR_ORG or PRINCIPAL_ORG) that the chart should filter on
 	 * @param orgId if orgType is NULL then the parent org to create the graph off of. All reports will be by/about this org or a child org. 
-	 * @return
 	 */
 	@GET
 	@Timed

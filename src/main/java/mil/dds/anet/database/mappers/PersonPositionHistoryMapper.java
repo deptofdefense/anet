@@ -33,7 +33,8 @@ public class PersonPositionHistoryMapper implements ResultSetMapper<PersonPositi
 		//This only returns an entry on rows that are the completion of a person's history in a position. 
 		// On a new person placed in a position row: it will create the first half of the History
 		// On a person removed from a position row, it will complete the history and return it
-		// After we're totally done you can call the getCurrentPerson() which will return the un-completed record (ie no end-time) for the current person. 
+		// After we're totally done you can call the getCurrentPerson() which will return the 
+		// un-completed record (ie no end-time) for the current person. 
 		
 		Integer personId = MapperUtils.getInteger(rs, "personId");
 		DateTime createdAt = new DateTime(rs.getTimestamp("pph_createdAt"));

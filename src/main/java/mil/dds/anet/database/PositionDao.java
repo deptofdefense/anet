@@ -46,7 +46,8 @@ public class PositionDao implements IAnetDao<Position> {
 	public PositionList getAll(int pageNum, int pageSize) {
 		String sql;
 		if (DaoUtils.isMsSql(dbHandle)) { 
-			sql = "/* positionGetAll */ SELECT " + POSITIONS_FIELDS + ", COUNT(*) OVER() AS totalCount FROM positions ORDER BY createdAt ASC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY";
+			sql = "/* positionGetAll */ SELECT " + POSITIONS_FIELDS + ", COUNT(*) OVER() AS totalCount "
+					+ "FROM positions ORDER BY createdAt ASC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY";
 		} else { 
 			sql = "/* positionGetAll */ SELECT " + POSITIONS_FIELDS + " from positions ORDER BY createdAt ASC LIMIT :limit OFFSET :offset";
 		}
@@ -65,7 +66,8 @@ public class PositionDao implements IAnetDao<Position> {
 		
 		try { 
 			GeneratedKeys<Map<String,Object>> keys = dbHandle.createStatement(
-					"/* positionInsert */ INSERT INTO positions (name, code, type, status, organizationId, locationId, createdAt, updatedAt) " 
+					"/* positionInsert */ INSERT INTO positions (name, code, type, "
+					+ "status, organizationId, locationId, createdAt, updatedAt) " 
 					+ "VALUES (:name, :code, :type, :status, :organizationId, :locationId, :createdAt, :updatedAt)")
 				.bindFromProperties(p)
 				.bind("type", DaoUtils.getEnumId(p.getType()))
@@ -88,7 +90,8 @@ public class PositionDao implements IAnetDao<Position> {
 			SQLException cause = (SQLException) e.getCause();
 			if (cause.getErrorCode() == 2601) { // Unique Key Violation constant for SQL Server
 				if (cause.getMessage().contains("UniquePositionCodes")) { 
-					throw new WebApplicationException("Another position is already using this code and each position must have its own code. "
+					throw new WebApplicationException("Another position is already using this "
+							+ "code and each position must have its own code. "
 							+ "Please double check that you entered the right code. ", Status.CONFLICT);	
 				}
 			}
@@ -189,12 +192,15 @@ public class PositionDao implements IAnetDao<Position> {
 					sql = "/*positionRemovePerson.insert1 */INSERT INTO peoplePositions "
 						+ "(positionId, personId, createdAt) "
 						+ "VALUES(null, " 
-							+ "(SELECT TOP(1)personId FROM peoplePositions WHERE positionId = :positionId ORDER BY createdAt DESC), "
+							+ "(SELECT TOP(1)personId FROM peoplePositions "
+							+ "WHERE positionId = :positionId ORDER BY createdAt DESC), "
 						+ ":createdAt)";
 				} else { 
-					sql = "/*positionRemovePerson.insert1 */INSERT INTO peoplePositions (positionId, personId, createdAt) "
+					sql = "/*positionRemovePerson.insert1 */INSERT INTO peoplePositions "
+							+ "(positionId, personId, createdAt) "
 						+ "VALUES(null, " 
-							+ "(SELECT personId FROM peoplePositions WHERE positionId = :positionId ORDER BY createdAt DESC LIMIT 1), " 
+							+ "(SELECT personId FROM peoplePositions WHERE positionId = :positionId "
+							+ "ORDER BY createdAt DESC LIMIT 1), " 
 						+ ":createdAt)";
 				}
 				dbHandle.createStatement(sql)

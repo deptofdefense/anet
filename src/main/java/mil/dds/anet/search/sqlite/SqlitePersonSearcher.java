@@ -10,8 +10,8 @@ import org.skife.jdbi.v2.Handle;
 import jersey.repackaged.com.google.common.base.Joiner;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.PersonList;
-import mil.dds.anet.beans.search.PersonSearchQuery;
 import mil.dds.anet.beans.search.ISearchQuery.SortOrder;
+import mil.dds.anet.beans.search.PersonSearchQuery;
 import mil.dds.anet.beans.search.PersonSearchQuery.PersonSearchSortBy;
 import mil.dds.anet.database.PersonDao;
 import mil.dds.anet.database.mappers.PersonMapper;
@@ -64,7 +64,7 @@ public class SqlitePersonSearcher implements IPersonSearcher {
 				sqlArgs.put("status", DaoUtils.getEnumId(query.getStatus().get(0)));
 			} else {
 				List<String> argNames = new LinkedList<String>();
-				for (int i=0;i<query.getStatus().size();i++) { 
+				for (int i = 0;i < query.getStatus().size();i++) { 
 					argNames.add(":status" + i);
 					sqlArgs.put("status" + i, DaoUtils.getEnumId(query.getStatus().get(i)));
 				}

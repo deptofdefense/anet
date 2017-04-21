@@ -9,8 +9,8 @@ import org.skife.jdbi.v2.Handle;
 
 import jersey.repackaged.com.google.common.base.Joiner;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.PositionList;
-import mil.dds.anet.beans.search.PositionSearchQuery;
 import mil.dds.anet.beans.search.ISearchQuery.SortOrder;
+import mil.dds.anet.beans.search.PositionSearchQuery;
 import mil.dds.anet.beans.search.PositionSearchQuery.PositionSearchSortBy;
 import mil.dds.anet.database.PositionDao;
 import mil.dds.anet.database.mappers.PositionMapper;
@@ -52,7 +52,7 @@ public class SqlitePositionSearcher implements IPositionSearcher {
 		
 		if (query.getType() != null) { 
 			List<String> argNames = new LinkedList<String>();
-			for (int i=0;i<query.getType().size();i++) { 
+			for (int i = 0;i < query.getType().size();i++) { 
 				argNames.add(":state" + i);
 				sqlArgs.put("state" + i, DaoUtils.getEnumId(query.getType().get(i)));
 			}

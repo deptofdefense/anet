@@ -30,7 +30,8 @@ public class PoamDao implements IAnetDao<Poam> {
 	public PoamList getAll(int pageNum, int pageSize) { 
 		String sql;
 		if (DaoUtils.isMsSql(dbHandle)) { 
-			sql = "/* getAllPoams */ SELECT poams.*, COUNT(*) OVER() AS totalCount FROM poams ORDER BY createdAt ASC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY";
+			sql = "/* getAllPoams */ SELECT poams.*, COUNT(*) OVER() AS totalCount "
+					+ "FROM poams ORDER BY createdAt ASC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY";
 		} else { 
 			sql = "/* getAllPoams */ SELECT * from poams ORDER BY createdAt ASC LIMIT :limit OFFSET :offset";
 		}
@@ -106,8 +107,10 @@ public class PoamDao implements IAnetDao<Poam> {
 		} else { 
 			sql.append("WITH RECURSIVE");
 		}
-		sql.append(" parent_poams(id, shortName, longName, category, parentPoamId, organizationId, createdAt, updatedAt, status) AS ("
-				+ "SELECT id, shortName, longName, category, parentPoamId, organizationId, createdAt, updatedAt, status FROM poams WHERE id = :poamId "
+		sql.append(" parent_poams(id, shortName, longName, category, parentPoamId, "
+				+ "organizationId, createdAt, updatedAt, status) AS ("
+				+ "SELECT id, shortName, longName, category, parentPoamId, "
+				+ "organizationId, createdAt, updatedAt, status FROM poams WHERE id = :poamId "
 			+ "UNION ALL "
 				+ "SELECT p.id, p.shortName, p.longName, p.category, p.parentPoamId, p.organizationId, p.createdAt, p.updatedAt, p.status "
 				+ "from parent_poams pp, poams p WHERE p.parentPoamId = pp.id "

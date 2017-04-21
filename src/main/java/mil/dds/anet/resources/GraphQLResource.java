@@ -217,7 +217,8 @@ public class GraphQLResource {
 			result.put("errors", executionResult.getErrors().stream()
 					.map(e -> e.getMessage())
 					.collect(Collectors.toList()));
-			Status status = (actual != null) ? 
+			Status status = (actual != null) 
+				? 
 				Status.fromStatusCode(actual.getResponse().getStatus()) 
 				: 
 				Status.INTERNAL_SERVER_ERROR;

@@ -145,7 +145,7 @@ public class PositionResource implements IGraphQLResource {
 					//Intentionally remove the person
 					dao.removePersonFromPosition(current);
 					AnetAuditLogger.log("Person {} removed from position {} by {}", pos.getPerson(), current, user);
-				} else if ( Utils.idEqual(pos.getPerson(), current.getPerson()) == false) {
+				} else if (Utils.idEqual(pos.getPerson(), current.getPerson()) == false) {
 					dao.setPersonInPosition(pos.getPerson(), pos);
 					AnetAuditLogger.log("Person {} put in position {} by {}", pos.getPerson(), current, user);
 				}
@@ -153,14 +153,19 @@ public class PositionResource implements IGraphQLResource {
 
 			if (pos.getAssociatedPositions() != null) {
 				Utils.addRemoveElementsById(current.loadAssociatedPositions(), pos.getAssociatedPositions(),
-						newPosition -> { System.out.println("adding " + newPosition);; dao.associatePosition(newPosition, pos); } ,
-						oldPositionId -> { System.out.println("deleting " + oldPositionId); dao.deletePositionAssociation(pos, Position.createWithId(oldPositionId));});
+						newPosition -> { 
+							dao.associatePosition(newPosition, pos);
+						},
+						oldPositionId -> { 
+							dao.deletePositionAssociation(pos, Position.createWithId(oldPositionId));
+						});
 				AnetAuditLogger.log("Person {} associations changed to {} by {}", current, pos.getAssociatedPositions(), user);
 			}
 			
 			if (PositionStatus.INACTIVE.equals(pos.getStatus()) && current.getPerson() != null) { 
 				//Remove this person from this position. 
-				AnetAuditLogger.log("Person {} removed from position {} by {} because the position is now inactive", current.getPerson(), current, user);
+				AnetAuditLogger.log("Person {} removed from position {} by {} because the position is now inactive", 
+						current.getPerson(), current, user);
 				dao.removePersonFromPosition(current);
 			}
 		}

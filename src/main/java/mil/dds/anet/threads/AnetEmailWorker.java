@@ -66,7 +66,7 @@ public class AnetEmailWorker implements Runnable {
 		this.scheduler = scheduler;
 		this.mapper = new ObjectMapper();
 		mapper.registerModule(new JodaModule());
-//		mapper.enableDefaultTyping();
+		//mapper.enableDefaultTyping();
 		this.emailMapper = new AnetEmailMapper();
 		this.fromAddr = config.getEmailFromAddr();
 		this.serverUrl = config.getServerUrl();
@@ -145,7 +145,7 @@ public class AnetEmailWorker implements Runnable {
 		Map<String,Object> context;
 		try { 
 			context = email.getAction().execute();
-		}catch (Throwable t) { 
+		} catch (Throwable t) { 
 			//This email will never complete, just kill it. 
 			t.printStackTrace();
 			return;
@@ -267,7 +267,7 @@ public class AnetEmailWorker implements Runnable {
 		public AnetEmailMapper() { 
 			this.mapper = new ObjectMapper();
 			mapper.registerModule(new JodaModule());
-//			mapper.enableDefaultTyping();
+			//mapper.enableDefaultTyping();
 		}
 		
 		@Override

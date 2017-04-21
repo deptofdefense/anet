@@ -30,9 +30,12 @@ public class LocationDao implements IAnetDao<Location> {
 	public LocationList getAll(int pageNum, int pageSize) { 
 		String sql;
 		if (DaoUtils.isMsSql(dbHandle)) { 
-			sql = "/* getAllLocations */ SELECT locations.*, COUNT(*) OVER() AS totalCount from locations ORDER BY createdAt DESC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY";
+			sql = "/* getAllLocations */ SELECT locations.*, COUNT(*) OVER() AS totalCount "
+					+ "FROM locations ORDER BY createdAt DESC "
+					+ "OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY";
 		} else {
-			sql = "/* getAllLocations */ SELECT * from locations ORDER BY createdAt ASC LIMIT :limit OFFSET :offset";
+			sql = "/* getAllLocations */ SELECT * from locations "
+					+ "ORDER BY createdAt ASC LIMIT :limit OFFSET :offset";
 		}
 		
 		Query<Location> query = dbHandle.createQuery(sql)
@@ -71,7 +74,8 @@ public class LocationDao implements IAnetDao<Location> {
 	
 	@Override
 	public int update(Location l) {
-		return dbHandle.createStatement("/* updateLocation */ UPDATE locations SET name = :name, lat = :lat, lng = :lng, updatedAt = :updatedAt WHERE id = :id")
+		return dbHandle.createStatement("/* updateLocation */ UPDATE locations "
+					+ "SET name = :name, lat = :lat, lng = :lng, updatedAt = :updatedAt WHERE id = :id")
 				.bind("id", l.getId())
 				.bind("name", l.getName())
 				.bind("lat", l.getLat())

@@ -65,7 +65,7 @@ public class MssqlPersonSearcher implements IPersonSearcher {
 				sqlArgs.put("status", DaoUtils.getEnumId(query.getStatus().get(0)));
 			} else {
 				List<String> argNames = new LinkedList<String>();
-				for (int i=0;i<query.getStatus().size();i++) { 
+				for (int i = 0;i < query.getStatus().size();i++) { 
 					argNames.add(":status" + i);
 					sqlArgs.put("status" + i, DaoUtils.getEnumId(query.getStatus().get(i)));
 				}

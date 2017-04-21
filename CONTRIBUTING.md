@@ -12,3 +12,9 @@ It probably goes without saying, but contributions you make to this public Depar
 
 ## The technical stuff
 
+- Work in a branch
+- Checkstyle `./gradlew check`
+- JS Lint `cd client; npm run lint` 
+- Backend Unit Tests `export DB_DRIVER='sqlserver'; ./gradlew test`
+- Frontend Integration Tests `cd client; npm run test`
+- A Good Commit Message

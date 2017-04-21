@@ -288,7 +288,9 @@ public class ReportDao implements IAnetDao<Report> {
 
 	private DateTime getRollupEngagmentStart(DateTime start) { 
 		String maxReportAgeStr = AnetObjectEngine.getInstance().getAdminSetting(AdminSettingKeys.DAILY_ROLLUP_MAX_REPORT_AGE_DAYS);
-		if (maxReportAgeStr == null) { throw new WebApplicationException("Missing Admin Setting for " + AdminSettingKeys.DAILY_ROLLUP_MAX_REPORT_AGE_DAYS); } 
+		if (maxReportAgeStr == null) { 
+			throw new WebApplicationException("Missing Admin Setting for " + AdminSettingKeys.DAILY_ROLLUP_MAX_REPORT_AGE_DAYS); 
+		} 
 		Integer maxReportAge = Integer.parseInt(maxReportAgeStr);
 		return start.minusDays(maxReportAge);
 	}
@@ -333,7 +335,11 @@ public class ReportDao implements IAnetDao<Report> {
 	 * @param orgs: the list of orgs for whose reports to find, null means all
 	 * @param missingOrgReports: true if we want to look for reports specifically with NULL org Ids. 
 	 */
-	private List<Map<String,Object>> rollupQuery(DateTime start, DateTime end, OrganizationType orgType, List<Organization> orgs, boolean missingOrgReports) { 
+	private List<Map<String,Object>> rollupQuery(DateTime start, 
+			DateTime end, 
+			OrganizationType orgType, 
+			List<Organization> orgs, 
+			boolean missingOrgReports) { 
 		String orgColumn = orgType == OrganizationType.ADVISOR_ORG ? "advisorOrganizationId" : "principalOrganizationId";
 		Map<String,Object> sqlArgs = new HashMap<String,Object>();
 		

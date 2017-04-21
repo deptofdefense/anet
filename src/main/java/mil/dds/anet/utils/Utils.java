@@ -82,7 +82,7 @@ public class Utils {
 	
 	
 	/**
-	 * Just remove the * 
+	 * Just remove the * at the end. 
 	 */
 	public static String getSqliteFullTextQuery(String text) { 
 		return text.trim().replaceAll("[\"*]", "");
@@ -99,7 +99,6 @@ public class Utils {
 	/**
 	 * Given a list of organizations and a topParentId, this function maps all of the organizations to their highest parent
 	 * within this list excluding the topParent.  This is used to generate graphs/tables that bubble things up to their highest parent
-	 * 
 	 * This is used in the daily rollup graphs. 
 	 */
 	public static Map<Integer, Organization> buildParentOrgMapping(List<Organization> orgs, @Nullable Integer topParentId) {
@@ -153,7 +152,8 @@ public class Utils {
 	 * Relative times should be milliseconds less than one year.  Since it doesn't 
 	 * make sense to look for any data between 1968 and 1971. 
 	 */
-	public static final long MILLIS_IN_YEAR = 1000 * 60 * 60 *24 * 365;
+	public static final long MILLIS_IN_YEAR = 1000 * 60 * 60 * 24 * 365;
+	
 	public static DateTime handleRelativeDate(DateTime input) { 
 		Long millis = input.getMillis();
 		if (millis < MILLIS_IN_YEAR)  { 

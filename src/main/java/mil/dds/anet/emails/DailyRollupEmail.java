@@ -80,7 +80,8 @@ public class DailyRollupEmail extends AnetEmailAction {
 			outerGrouping = allReports.getByGrouping(chartOrgType);
 		}
 		
-		context.put("innerOrgType", (OrganizationType.ADVISOR_ORG.equals(chartOrgType)) ? OrganizationType.PRINCIPAL_ORG : OrganizationType.ADVISOR_ORG);
+		context.put("innerOrgType", 
+			(OrganizationType.ADVISOR_ORG.equals(chartOrgType)) ? OrganizationType.PRINCIPAL_ORG : OrganizationType.ADVISOR_ORG);
 		context.put("outerGrouping", outerGrouping);
 		context.put(SHOW_REPORT_TEXT_FLAG, false);
 		return context;

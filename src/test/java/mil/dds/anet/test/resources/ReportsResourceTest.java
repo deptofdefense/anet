@@ -3,6 +3,7 @@ package mil.dds.anet.test.resources;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
@@ -816,8 +817,8 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		
 		//Authur's organization should have one more report RELEASED!
 		int authurOrgId = authur.loadPosition().loadOrganization().getId();
-		RollupGraph adminOrg = startGraph.stream().filter(rg -> rg.getOrg() != null && rg.getOrg().getId().equals(authurOrgId)).findFirst().get();
-		int startCt = adminOrg.getReleased();
+		Optional<RollupGraph> adminOrg = startGraph.stream().filter(rg -> rg.getOrg() != null && rg.getOrg().getId().equals(authurOrgId)).findFirst();
+		int startCt = adminOrg.isPresent() ? (adminOrg.get().getReleased()) : 0;
 		int endCt = endGraph.stream().filter(rg -> rg.getOrg() != null && rg.getOrg().getId().equals(authurOrgId)).findFirst().get().getReleased();
 		assertThat(startCt).isEqualTo(endCt - 1);
 	}
