@@ -4,7 +4,7 @@ Thanks for thinking about using or contributing to this software and its documen
 
 ## The legal stuff
 
-When you submit a pull request to this repository for the first time, you need to sign a Developer Certificate of Origin ("DCO"). To read and agree to the DCO, visit `Contributors.md`. At a high level, it tells us that you have the right to submit the work you're contributing in your pull requests and says that you consent to us treating the contribution in a way consistent with the license associated with the Project. You can read the license associated with this project in `LICENSE.md`. 
+When you submit a pull request to this repository for the first time, you need to sign a Developer Certificate of Origin ("DCO"). To read and agree to the DCO, visit `Contributors.md`. At a high level, it tells us that you have the right to submit the work you're contributing in your pull requests and says that you consent to us treating the contribution in a way consistent with the license associated with this Project. You can read the license associated with this project in `LICENSE.md`. 
 
 You can submit contributions anonymously or under a pseudonym if you'd like, but we need to be able to reach you at the email address you list when you agree to the DCO. 
 
