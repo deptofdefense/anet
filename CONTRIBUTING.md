@@ -10,5 +10,3 @@ You can submit contributions anonymously or under a pseudonym if you'd like, but
 
 It probably goes without saying, but contributions you make to this public Department of Defense repository are completely voluntary. When you submit a pull request, you're offering your contribution without expectation of payment and you expressly waive any future pay claims against the U.S. Federal government related to your contribution. 
 
-## The technical stuff
-
