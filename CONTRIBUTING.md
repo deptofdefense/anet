@@ -1,8 +1,29 @@
 # Contributing to this project
 
-Thanks for thinking about using or contributing to this software and its documentation (“Project”)!
+Anybody is welcome to create a branch on this repository and make edits.  If you'd like to have your code merged back into the master branch, please ensure you do the following before opening the pull request:
+
+### Code Style
+
+Our code style conventions are automatically checked on both the Java server side and the Javascript client side.  You can run these checks with: 
+
+- Checkstyle `./gradlew check`
+- JS Lint `cd client; npm run lint` 
+
+### Testing
+
+Before we merge any code into master we verify that all tests run.  You can run these yourself with: 
+
+- Backend Unit Tests `export DB_DRIVER='sqlserver'; ./gradlew test`
+- Frontend Integration Tests `cd client; npm run test`
+
+If you are adding any new features, please write test cases that cover your features. 
+
+### Open a Pull Request
+
+Once your branch is ready to be merged please open a pull request and assign it to one of the repository admins.  (Currently @hunterp and @nickjs).  
 
 ## The legal stuff
+Thanks for thinking about using or contributing to this software and its documentation (“Project”)!
 
 When you submit a pull request to this repository for the first time, you need to sign a Developer Certificate of Origin ("DCO"). To read and agree to the DCO, visit `Contributors.md`. At a high level, it tells us that you have the right to submit the work you're contributing in your pull requests and says that you consent to us treating the contribution in a way consistent with the license associated with this Project. You can read the license associated with this project in `LICENSE.md`. 
 
@@ -10,11 +31,4 @@ You can submit contributions anonymously or under a pseudonym if you'd like, but
 
 It probably goes without saying, but contributions you make to this public Department of Defense repository are completely voluntary. When you submit a pull request, you're offering your contribution without expectation of payment and you expressly waive any future pay claims against the U.S. Federal government related to your contribution. 
 
-## The technical stuff
 
-- Work in a branch
-- Checkstyle `./gradlew check`
-- JS Lint `cd client; npm run lint` 
-- Backend Unit Tests `export DB_DRIVER='sqlserver'; ./gradlew test`
-- Frontend Integration Tests `cd client; npm run test`
-- A Good Commit Message
