@@ -6,7 +6,7 @@ Anybody is welcome to create a branch on this repository and make edits.  If you
 
 Our code style conventions are automatically checked on both the Java server side and the Javascript client side.  You can run these checks with: 
 
-- Checkstyle `./gradlew check`
+- Java Checkstyle `./gradlew check`
 - JS Lint `cd client; npm run lint` 
 
 ### Testing
@@ -14,7 +14,7 @@ Our code style conventions are automatically checked on both the Java server sid
 Before we merge any code into master we verify that all tests run.  You can run these yourself with: 
 
 - Backend Unit Tests `export DB_DRIVER='sqlserver'; ./gradlew test`
-- Frontend Integration Tests `cd client; npm run test`
+- Front-end Integration Tests `cd client; npm run test`
 
 If you are adding any new features, please write test cases that cover your features. 
 
