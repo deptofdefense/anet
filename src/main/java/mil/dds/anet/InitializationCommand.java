@@ -54,7 +54,7 @@ public class InitializationCommand extends ConfiguredCommand<AnetConfiguration> 
 		
 		List<AdminSetting> currSettings = engine.getAdminDao().getAllSettings();
 		List<Person> currPeople = engine.getPersonDao().getAll(0, 100).getList();
-		if (currSettings.size() > 0 || currPeople.size() > 0) { 
+		if (currPeople.size() > 0) { 
 			System.out.println("ERROR: Data detected in database");
 			System.out.println("\tThis task can only be run on an empty database");
 			return;
