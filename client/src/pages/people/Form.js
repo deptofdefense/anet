@@ -95,6 +95,8 @@ export default class PersonForm extends ValidatableFormWrapper {
 					required={isAdvisor}>
 
 					<option />
+					<option value="CIV">CIV</option>
+					<option value="CTR">CTR</option>
 					<option value="OR-1">OR-1</option>
 					<option value="OR-2">OR-2</option>
 					<option value="OR-3">OR-3</option>
@@ -104,6 +106,11 @@ export default class PersonForm extends ValidatableFormWrapper {
 					<option value="OR-7">OR-7</option>
 					<option value="OR-8">OR-8</option>
 					<option value="OR-9">OR-9</option>
+					<option value="OR-1">WO-1</option>
+					<option value="OR-1">WO-2</option>
+					<option value="OR-1">WO-3</option>
+					<option value="OR-1">WO-4</option>
+					<option value="OR-1">WO-5</option>
 					<option value="OF-1">OF-1</option>
 					<option value="OF-2">OF-2</option>
 					<option value="OF-3">OF-3</option>
@@ -114,8 +121,6 @@ export default class PersonForm extends ValidatableFormWrapper {
 					<option value="OF-8">OF-8</option>
 					<option value="OF-9">OF-9</option>
 					<option value="OF-10">OF-10</option>
-					<option value="CIV">CIV</option>
-					<option value="CTR">CTR</option>
 				</RequiredField>
 
 				<RequiredField id="gender" componentClass="select"
