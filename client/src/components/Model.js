@@ -4,8 +4,9 @@ import utils from 'utils'
 export default class Model {
 	static schema = {}
 
+
 	static resourceName = null
-	static displayName = null
+	static displayName(appSettings)  { return null }
 	static listName = null
 
 	static fromArray(array) {

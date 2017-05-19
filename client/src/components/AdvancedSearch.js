@@ -16,178 +16,188 @@ import {Person, Poam} from 'models'
 
 import REMOVE_ICON from 'resources/delete.png'
 
-const OBJECT_TYPES = {
-	Reports: {
-		filters: {
-			Author: <AutocompleteFilter
-				queryKey="authorId"
-				objectType={Person}
-				valueKey="name"
-				fields={Person.autocompleteQuery}
-				template={Person.autocompleteTemplate}
-				queryParams={{role: 'ADVISOR'}}
-				placeholder="Filter reports by author..."
-			/>,
-
-			Attendee: <AutocompleteFilter
-				queryKey="attendeeId"
-				objectType={Person}
-				valueKey="name"
-				fields={Person.autocompleteQuery}
-				template={Person.autocompleteTemplate}
-				placeholder="Filter reports by attendee..."
-			/>,
-
-			Organization: <OrganizationFilter
-				queryKey="orgId"
-				queryIncludeChildOrgsKey="includeOrgChildren"
-			/>,
-
-			"Engagement Date": <DateRangeSearch queryKey="engagementDate" />,
-			"Release Date": <DateRangeSearch queryKey="releasedAt" />,
-
-			Location: <AutocompleteFilter
-				queryKey="locationId"
-				valueKey="name"
-				placeholder="Filter reports by location..."
-				url="/api/locations/search"
-			/>,
-
-			PoAM: <AutocompleteFilter
-				queryKey="poamId"
-				objectType={Poam}
-				fields={Poam.autocompleteQuery}
-				template={Poam.autocompleteTemplate}
-				valueKey="shortName"
-				placeholder="Filter reports by PoAM..."
-			/>,
-
-			State: <ReportStateSearch />,
-			Atmosphere: <SelectSearchFilter
-				queryKey="atmosphere"
-				values={["POSITIVE","NEUTRAL","NEGATIVE"]}
-			/>
-		}
-	},
-
-	People: {
-		filters: {
-			Organization: <OrganizationFilter
-				queryKey="orgId"
-				queryIncludeChildOrgsKey="includeChildOrgs"
-			/>,
-			Role: <SelectSearchFilter
-				queryKey="role"
-				values={["ADVISOR","PRINCIPAL"]}
-				labels={["NATO Member", "Afghan Principal"]}
-			/>,
-			Status: <SelectSearchFilter
-				queryKey="status"
-				values={["ACTIVE","INACTIVE","NEW_USER"]}
-			/>,
-			Location: <AutocompleteFilter
-				queryKey="locationId"
-				valueKey="name"
-				placeholder="Filter by location..."
-				url="/api/locations/search"
-			/>,
-			Country: <SelectSearchFilter
-				queryKey="country"
-				values={Person.COUNTRIES}
-				labels={Person.COUNTRIES}
-			/>,
-		}
-	},
-	Organizations: {
-		filters: {
-			"Organization type": <SelectSearchFilter
-				queryKey="type"
-				values={["ADVISOR_ORG", "PRINCIPAL_ORG"]}
-				labels={["NATO", "Afghan"]}
-			  />,
-		}
-	},
-	Positions: {
-		filters: {
-			"Position type": <SelectSearchFilter
-				queryKey="type"
-				values={["ADVISOR", "PRINCIPAL"]}
-				labels={["Billet", "Tashkil"]}
-			/>,
-			Organization: <OrganizationFilter
-				queryKey="organizationId"
-				queryIncludeChildOrgsKey="includeChildrenOrgs"
-			/>,
-			Status: <SelectSearchFilter
-				queryKey="status"
-				values={["ACTIVE","INACTIVE"]}
-			/>,
-			Location: <AutocompleteFilter
-				queryKey="locationId"
-				valueKey="name"
-				placeholder="Filter by location..."
-				url="/api/locations/search"
-			/>,
-			"Is filled?": <SelectSearchFilter
-				queryKey="isFilled"
-				values={["true","false"]}
-				labels={["Yes","No"]}
-			/>,
-		}
-	},
-	Locations: {
-		filters: {
-
-		}
-	},
-	PoAMs: {
-		filters: {
-			Organization: <OrganizationFilter
-				queryKey="responsibleOrgId"
-				queryIncludeChildOrgsKey="includeChildrenOrgs"
-			/>,
-			Status: <SelectSearchFilter
-				queryKey="status"
-				values={["ACTIVE", "INACTIVE"]}
-				labels={["Active", "Inactive"]}
-			/>,
-		}
-	},
-}
-
 export default class AdvancedSearch extends Component {
 	static propTypes = {
 		onSearch: PropTypes.func,
 	}
 
-	constructor(props) {
-		super(props)
+	static contextTypes = {
+		app: PropTypes.object.isRequired
+	}
+
+	@autobind
+	getFilters(context) {
+		let appSettings = context.app.state.settings
+		let filters = {}
+		filters.Reports = {
+			filters: {
+				Author: <AutocompleteFilter
+					queryKey="authorId"
+					objectType={Person}
+					valueKey="name"
+					fields={Person.autocompleteQuery}
+					template={Person.autocompleteTemplate}
+					queryParams={{role: 'ADVISOR'}}
+					placeholder="Filter reports by author..."
+				/>,
+				Attendee: <AutocompleteFilter
+					queryKey="attendeeId"
+					objectType={Person}
+					valueKey="name"
+					fields={Person.autocompleteQuery}
+					template={Person.autocompleteTemplate}
+					placeholder="Filter reports by attendee..."
+				/>,
+				Organization: <OrganizationFilter
+					queryKey="orgId"
+					queryIncludeChildOrgsKey="includeOrgChildren"
+				/>,
+				"Engagement Date": <DateRangeSearch queryKey="engagementDate" />,
+				"Release Date": <DateRangeSearch queryKey="releasedAt" />,
+				Location: <AutocompleteFilter
+					queryKey="locationId"
+					valueKey="name"
+					placeholder="Filter reports by location..."
+					url="/api/locations/search"
+				/>,
+					State: <ReportStateSearch />,
+				Atmosphere: <SelectSearchFilter
+					queryKey="atmosphere"
+					values={["POSITIVE","NEUTRAL","NEGATIVE"]}
+				/>
+			}
+		}
+		filters.Reports.filters[appSettings.POAM_SHORT_NAME] =
+			<AutocompleteFilter
+				queryKey="poamId"
+				objectType={Poam}
+				fields={Poam.autocompleteQuery}
+				template={Poam.autocompleteTemplate}
+				valueKey="shortName"
+				placeholder={`Filter reports by ${appSettings.POAM_SHORT_NAME}...`}
+			/>
+
+
+		filters.People = {
+			filters: {
+				Organization: <OrganizationFilter
+					queryKey="orgId"
+					queryIncludeChildOrgsKey="includeChildOrgs"
+				/>,
+				Role: <SelectSearchFilter
+					queryKey="role"
+					values={["ADVISOR","PRINCIPAL"]}
+					labels={["NATO Member", "Afghan Principal"]}
+				/>,
+				Status: <SelectSearchFilter
+					queryKey="status"
+					values={["ACTIVE","INACTIVE","NEW_USER"]}
+				/>,
+				Location: <AutocompleteFilter
+					queryKey="locationId"
+					valueKey="name"
+					placeholder="Filter by location..."
+					url="/api/locations/search"
+				/>,
+				Country: <SelectSearchFilter
+					queryKey="country"
+					values={Person.COUNTRIES}
+					labels={Person.COUNTRIES}
+				/>,
+			}
+		}
+
+		filters.Organizations = {
+			filters: {
+				"Organization type": <SelectSearchFilter
+					queryKey="type"
+					values={["ADVISOR_ORG", "PRINCIPAL_ORG"]}
+					labels={["NATO", "Afghan"]}
+				  />,
+			}
+		}
+
+		filters.Positions = {
+			filters: {
+				"Position type": <SelectSearchFilter
+					queryKey="type"
+					values={["ADVISOR", "PRINCIPAL"]}
+					labels={["Billet", "Tashkil"]}
+				/>,
+				Organization: <OrganizationFilter
+					queryKey="organizationId"
+					queryIncludeChildOrgsKey="includeChildrenOrgs"
+				/>,
+				Status: <SelectSearchFilter
+					queryKey="status"
+					values={["ACTIVE","INACTIVE"]}
+				/>,
+				Location: <AutocompleteFilter
+					queryKey="locationId"
+					valueKey="name"
+					placeholder="Filter by location..."
+					url="/api/locations/search"
+				/>,
+				"Is filled?": <SelectSearchFilter
+					queryKey="isFilled"
+					values={["true","false"]}
+					labels={["Yes","No"]}
+				/>,
+			}
+		}
+
+		//No filters on Location
+		filters.Locations = {filters: {}}
+
+		//Poam filters
+		filters[appSettings.POAM_SHORT_NAME + 's'] = {
+			filters: {
+				Organization: <OrganizationFilter
+					queryKey="responsibleOrgId"
+					queryIncludeChildOrgsKey="includeChildrenOrgs"
+				/>,
+				Status: <SelectSearchFilter
+					queryKey="status"
+					values={["ACTIVE", "INACTIVE"]}
+					labels={["Active", "Inactive"]}
+				/>,
+			}
+		}
+		return filters
+	}
+
+	constructor(props, context) {
+		super(props, context)
 
 		let query = props || {}
+		this.ALL_FILTERS = this.getFilters(context)
 		this.state = {
 			objectType: query.objectType || "Reports",
 			text: query.text || "",
-			filters: query.filters || [{key: "Author"}],
+			filters: query.filters || [],
 		}
 	}
 
-	componentWillReceiveProps(props) {
+	componentWillReceiveProps(props, nextContext) {
 		if (props.query) {
 			this.setState(props.query)
+		}
+		if (nextContext !== this.context) {
+			this.ALL_FILTERS = this.getFilters(nextContext)
 		}
 	}
 
 	render() {
 		let {objectType, text, filters} = this.state
 		//console.log("RENDER AdvancedSearch", objectType, text, filters)
-		let filterDefs = OBJECT_TYPES[this.state.objectType].filters
+		let filterDefs = this.ALL_FILTERS[this.state.objectType].filters
 		let existingKeys = filters.map(f => f.key)
 		let moreFiltersAvailable = existingKeys.length < Object.keys(filterDefs).length
 
 		return <div className="advanced-search form-horizontal">
 			<FormGroup style={{textAlign: "center"}}>
 				<ButtonToggleGroup value={objectType} onChange={this.changeObjectType}>
-					{Object.keys(OBJECT_TYPES).map(type =>
+					{Object.keys(this.ALL_FILTERS).map(type =>
 						<Button key={type} value={type}>{type}</Button>
 					)}
 				</ButtonToggleGroup>
@@ -198,7 +208,7 @@ export default class AdvancedSearch extends Component {
 			</SearchFilter>
 
 			{filters.map(filter =>
-				<SearchFilter key={filter.key} query={this.state} filter={filter} onRemove={this.removeFilter} />
+				<SearchFilter key={filter.key} query={this.state} filter={filter} onRemove={this.removeFilter} element={filterDefs[filter.key]} />
 			)}
 
 			<Row>
@@ -232,8 +242,9 @@ export default class AdvancedSearch extends Component {
 	@autobind
 	addFilter(filterKey) {
 		let filters = this.state.filters
+		let filterDefs = this.ALL_FILTERS[this.state.objectType].filters
 		if (!filterKey) {
-			filterKey = Object.keys(OBJECT_TYPES[this.state.objectType].filters)[0]
+			filterKey = Object.keys(filterDefs)[0]
 		}
 
 		if (filterKey) {
@@ -273,16 +284,16 @@ class SearchFilter extends Component {
 	}
 
 	render() {
-		let {label, onRemove, query, filter, children} = this.props
+		let {label, onRemove, query, filter, children, element} = this.props
 
 		if (query) {
-			let filterDefs = OBJECT_TYPES[query.objectType].filters
 			label = filter.key
 			children = React.cloneElement(
-				filterDefs[filter.key],
+				element,
 				{value: filter.value || "", onChange: this.onChange}
 			)
 		}
+
 
 		return <FormGroup>
 			<Col xs={3}><ControlLabel>{label}</ControlLabel></Col>

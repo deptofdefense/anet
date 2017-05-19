@@ -15,6 +15,7 @@ import {Poam} from 'models'
 export default class PoamShow extends Page {
 	static contextTypes = {
 		currentUser: PropTypes.object.isRequired,
+		app: PropTypes.object.isRequired,
 	}
 
 	static modelName = 'PoAM'
@@ -67,24 +68,26 @@ export default class PoamShow extends Page {
 		let {poam, reports} = this.state
 		// Admins can edit poams, or super users if this poam is assigned to their org.
 		let currentUser = this.context.currentUser
+		let appSettings = this.context.app.state.settings
+
 		let canEdit = currentUser.isAdmin() ||
 			(poam.responsibleOrg && currentUser.isSuperUserForOrg(poam.responsibleOrg))
 
 		return (
 			<div>
-				<Breadcrumbs items={[[`PoAM ${poam.shortName}`, Poam.pathFor(poam)]]} />
+				<Breadcrumbs items={[[`${appSettings.POAM_SHORT_NAME} ${poam.shortName}`, Poam.pathFor(poam)]]} />
 				<Messages success={this.state.success} error={this.state.error} />
 
 				<Form static formFor={poam} horizontal>
-					<Fieldset title={`PoAM ${poam.shortName}`} action={canEdit && <LinkTo poam={poam} edit button="primary">Edit</LinkTo>}>
-						<Form.Field id="shortName" label="PoAM number" />
-						<Form.Field id="longName" label="PoAM description" />
+					<Fieldset title={`${appSettings.POAM_SHORT_NAME} ${poam.shortName}`} action={canEdit && <LinkTo poam={poam} edit button="primary">Edit</LinkTo>}>
+						<Form.Field id="shortName" label={`${appSettings.POAM_SHORT_NAME} number`} />
+						<Form.Field id="longName" label={`${appSettings.POAM_SHORT_NAME} description`} />
 						<Form.Field id="status" />
 						{poam.responsibleOrg && poam.responsibleOrg.id && this.renderOrg()}
 					</Fieldset>
 				</Form>
 
-				<Fieldset title="Reports for this PoAM">
+				<Fieldset title={`Reports for this ${appSettings.POAM_SHORT_NAME}`}>
 					<ReportCollection paginatedReports={reports} goToPage={this.goToReportsPage} />
 				</Fieldset>
 			</div>

@@ -9,11 +9,12 @@ import {Poam} from 'models'
 
 export default class OrganizationPoams extends Component {
 	static contextTypes = {
-		currentUser: PropTypes.object.isRequired,
+		app: PropTypes.object.isRequired,
 	}
 
 	render() {
-		let currentUser = this.context.currentUser
+		let currentUser = this.context.app.state.currentUser
+		let appSettings = this.context.app.state.settings
 
 		let org = this.props.organization
 		if (!org.isAdvisorOrg()) {
@@ -23,8 +24,8 @@ export default class OrganizationPoams extends Component {
 		let poams = this.props.poams.list || []
 		let isSuperUser = currentUser && currentUser.isSuperUserForOrg(org)
 
-		return <Fieldset id="poams" title="PoAMs / Pillars" action={
-			isSuperUser && <LinkTo poam={Poam.pathForNew({responsibleOrgId: org.id})} button>Create PoAM</LinkTo>
+		return <Fieldset id="poams" title={appSettings.POAM_LONG_NAME} action={
+			isSuperUser && <LinkTo poam={Poam.pathForNew({responsibleOrgId: org.id})} button>Create {appSettings.POAM_SHORT_NAME}</LinkTo>
 		}>
 			{this.pagination()}
 			<Table>
@@ -45,7 +46,7 @@ export default class OrganizationPoams extends Component {
 				</tbody>
 			</Table>
 
-			{poams.length === 0 && <em>This organization doesn't have any PoAMs</em>}
+			{poams.length === 0 && <em>This organization doesn't have any {appSettings.POAM_SHORT_NAME}s</em>}
 		</Fieldset>
 	}
 

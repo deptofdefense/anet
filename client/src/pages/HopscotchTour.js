@@ -96,7 +96,7 @@ let superUserTour = (currentUser) => { return {
 	]
 }}
 
-let reportTour = (currentUser) => { return {
+let reportTour = (currentUser, appSettings) => { return {
 	id: 'report',
 	steps: [
 		{
@@ -132,7 +132,7 @@ let reportTour = (currentUser) => { return {
 		},
 			{
 			title: 'Recents',
-			content: "If you've written reports in the past, your recent selections of attendees, PoAMs, and locations will display to the right in a section called \"Recents\". You can click on one of the shortcuts to quickly add it to your report.",
+			content: "If you've written reports in the past, your recent selections of attendees, " + appSettings.POAM_SHORT_NAME + "s, and locations will display to the right in a section called \"Recents\". You can click on one of the shortcuts to quickly add it to your report.",
 			target: '#attendees',
 			placement: 'bottom',
 		},
@@ -143,8 +143,8 @@ let reportTour = (currentUser) => { return {
 			placement: 'bottom',
 		},
 		{
-			title: 'PoAMs',
-			content: 'Search for the PoAMs that apply to this engagement. You can search for PoAMs in any organization, including your organization and its sub-organizations. PoAMs are not required.',
+			title: appSettings.POAM_SHORT_NAME + 's',
+			content: 'Search for the ' + appSettings.POAM_SHORT_NAME + 's that apply to this engagement. You can search for ' + appSettings.POAM_SHORT_NAME + 's in any organization, including your organization and its sub-organizations. ' + appSettings.POAM_SHORT_NAME + 's are not required.',
 			target: '#poams',
 			placement: 'right',
 		},
@@ -181,7 +181,7 @@ let reportTour = (currentUser) => { return {
 	]
 }}
 
-let orgTour = (currentUser) => { return {
+let orgTour = (currentUser, appSettings) => { return {
 	id: 'org',
 	steps: [
 		{
@@ -215,8 +215,8 @@ let orgTour = (currentUser) => { return {
 			placement: 'top',
 		},
 		{
-			title: 'PoAMs',
-			content: 'The PoAMs or Pillars that your organization is responsible for will be displayed in this section. If you need to make changes, or if PoAMs change, you can update that information by clicking on the PoAM.',
+			title: appSettings.POAM_SHOT_NAME + 's',
+			content: 'The ' + appSettings.POAM_LONG_NAME + ' that your organization is responsible for will be displayed in this section. If you need to make changes, or if ' + appSettings.POAM_SHORT_NAME + 's change, you can update that information by clicking on the ' + appSettings.POAM_SHORT_NAME + '.',
 			target: '#poams h2',
 			placement: 'top',
 		},
@@ -241,7 +241,7 @@ let orgTour = (currentUser) => { return {
 	]
 }}
 
-let positionTour = (currentUser) => { return {
+let positionTour = (currentUser, appSettings) => { return {
 	id: 'position',
 	steps: [
 		{
@@ -252,7 +252,7 @@ let positionTour = (currentUser) => { return {
 		},
 		{
 			title: "Type of user",
-			content: "There are three types of users: user, super user, and administrator. Super users can give other positions either user or super user privileges. Users are able to take basic actions, like submitting reports, using search, and reviewing the daily rollup. Super users are able to edit positions, people, and PoAMs in their organization, as well as locations. This section isn't visible if you're looking at a tashkil position.",
+			content: "There are three types of users: user, super user, and administrator. Super users can give other positions either user or super user privileges. Users are able to take basic actions, like submitting reports, using search, and reviewing the daily rollup. Super users are able to edit positions, people, and " + appSettings.POAM_SHORT_NAME + "s in their organization, as well as locations. This section isn't visible if you're looking at a tashkil position.",
 			target: '#type',
 			placement: 'bottom',
 		},
