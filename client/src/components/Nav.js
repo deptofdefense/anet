@@ -21,6 +21,7 @@ class Nav extends Component {
 
 		let appData = this.context.app.state
 		let currentUser = appData.currentUser
+		let appSettings = appData.settings
 		let organizations = appData.organizations || []
 		let path = this.context.app.props.location.pathname
 
@@ -47,7 +48,7 @@ class Nav extends Component {
 				<AnchorLink scrollTo="info">Info</AnchorLink>
 				<AnchorLink scrollTo="laydown">Laydown</AnchorLink>
 				<AnchorLink scrollTo="approvals">Approvals</AnchorLink>
-				<AnchorLink scrollTo="poams">PoAMs</AnchorLink>
+				<AnchorLink scrollTo="poams">{appSettings.POAM_SHORT_NAME}s</AnchorLink>
 				<AnchorLink scrollTo="reports">Reports</AnchorLink>
 			</SubNav>
 		)

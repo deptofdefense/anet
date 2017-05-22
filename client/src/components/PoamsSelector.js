@@ -21,16 +21,21 @@ export default class PoamsSelector extends Component {
 		optional: PropTypes.bool,
 	}
 
+	static contextTypes = {
+		app: PropTypes.object.isRequired,
+	}
+
 	render() {
 		let {poams, shortcuts, validationState, optional} = this.props
+		let appSettings = this.context.app.state.settings
 
-		return <Fieldset title="Plans of Action and Milestones / Pillars" action={optional && "(Optional)"} className="poams-selector">
-			<Form.Field id="poams" label="PoAMs" validationState={validationState} >
+		return <Fieldset title={appSettings.POAM_LONG_NAME} action={optional && "(Optional)"} className="poams-selector">
+			<Form.Field id="poams" label={appSettings.POAM_SHORT_NAME} validationState={validationState} >
 				<Autocomplete
 					objectType={Poam}
 					fields={Poam.autocompleteQuery}
 					queryParams={{status: 'ACTIVE'}}
-					placeholder="Start typing to search for PoAMs..."
+					placeholder={`Start typing to search for ${appSettings.POAM_SHORT_NAME}...`}
 					template={Poam.autocompleteTemplate}
 					onChange={this.addPoam}
 					onErrorChange={this.props.onErrorChange}
@@ -38,7 +43,7 @@ export default class PoamsSelector extends Component {
 
 				{validationState && <HelpBlock>
 					<img src={WARNING_ICON} role="presentation" height="20px" />
-					PoAM not found in Database
+					{appSettings.POAM_SHORT_NAME} not found in Database
 				</HelpBlock>}
 
 				<Table hover striped>
@@ -61,8 +66,8 @@ export default class PoamsSelector extends Component {
 				</Table>
 
 				{poams.length === 0 && <p style={{textAlign: 'center'}}><em>
-					No PoAMs selected
-					{this.props.optional && ' (this is fine if no PoAMs were discussed)'}
+					No {appSettings.POAM_SHORT_NAME} selected
+					{this.props.optional && ' (this is fine if no ' + appSettings.POAM_SHORT_NAME + 's were discussed)'}
 					.
 				</em></p>}
 
@@ -73,8 +78,9 @@ export default class PoamsSelector extends Component {
 
 	renderShortcuts() {
 		let shortcuts = this.props.shortcuts || []
+		let poamShortName = this.context.app.state.settings.POAM_SHORT_NAME
 		return <Form.Field.ExtraCol className="shortcut-list">
-			<h5>Recent PoAMs</h5>
+			<h5>Recent {poamShortName}</h5>
 			{shortcuts.map(poam =>
 				<Button key={poam.id} bsStyle="link" onClick={this.addPoam.bind(this, poam)}>Add "{poam.shortName} {poam.longName.substr(0,80)}{poam.longName.length > 80 ? '...' : ''}"</Button>
 			)}

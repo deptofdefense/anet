@@ -21,10 +21,12 @@ const ADMIN_ACTIONS = [
 export default class CreateButton extends Component {
 	static contextTypes = {
 		currentUser: PropTypes.object,
+		app: PropTypes.object.isRequired,
 	}
 
 	render() {
 		const currentUser = this.context.currentUser
+		let appSettings = this.context.app.state.settings
 
 		const modelClasses = DEFAULT_ACTIONS.concat(
 			currentUser.isSuperUser() && SUPER_USER_ACTIONS,
@@ -35,7 +37,7 @@ export default class CreateButton extends Component {
 			return (
 				<DropdownButton title="Create" bsStyle="primary" id="createButton" onSelect={this.onSelect}>
 					{modelClasses.map((modelClass, i) =>
-						<MenuItem key={modelClass.resourceName} eventKey={modelClass}>New {modelClass.displayName || modelClass.resourceName}</MenuItem>
+						<MenuItem key={modelClass.resourceName} eventKey={modelClass}>New {modelClass.displayName(appSettings) || modelClass.resourceName}</MenuItem>
 					)}
 				</DropdownButton>
 			)
@@ -43,7 +45,7 @@ export default class CreateButton extends Component {
 			let modelClass = modelClasses[0]
 			return (
 				<Button bsStyle="primary" onClick={this.onSelect.bind(this, modelClass)} id="createButton">
-					New {(modelClass.displayName || modelClass.resourceName).toLowerCase()}
+					New {(modelClass.displayName(appSettings) || modelClass.resourceName).toLowerCase()}
 				</Button>
 			)
 		}

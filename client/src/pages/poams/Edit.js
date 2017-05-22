@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 
 import Breadcrumbs from 'components/Breadcrumbs'
@@ -13,6 +13,10 @@ import {Poam} from 'models'
 export default class PoamEdit extends Page {
 	static pageProps = {
 		useNavigation: false
+	}
+
+	static contextTypes = {
+		app: PropTypes.object.isRequired,
 	}
 
 	static modelName = 'PoAM'
@@ -39,10 +43,11 @@ export default class PoamEdit extends Page {
 
 	render() {
 		let poam = this.state.poam
+		let appSettings = this.context.app.state.settings
 
 		return (
 			<div>
-				<Breadcrumbs items={[[`PoAM ${poam.shortName}`, Poam.pathFor(poam)], ["Edit", Poam.pathForEdit(poam)]]} />
+				<Breadcrumbs items={[[`${appSettings.POAM_SHORT_NAME} ${poam.shortName}`, Poam.pathFor(poam)], ["Edit", Poam.pathForEdit(poam)]]} />
 
 				<Messages error={this.state.error} success={this.state.success} />
 

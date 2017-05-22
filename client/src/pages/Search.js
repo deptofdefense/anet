@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 import {Alert, Table, Modal, Button, Nav, NavItem, Badge, Pagination} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
@@ -69,6 +69,11 @@ const SEARCH_CONFIG = {
 }
 
 export default class Search extends Page {
+
+	static contextTypes = {
+		app: PropTypes.object.isRequired
+	}
+
 	constructor(props) {
 		super(props)
 
@@ -196,6 +201,8 @@ export default class Search extends Page {
 		let queryString = QUERY_STRINGS[query.type] || query.text || 'TODO'
 		let queryType = this.state.queryType || query.type || 'everything'
 
+		let appSettings = this.context.app.state.settings
+
 		if (typeof queryString === 'object') {
 			queryString = queryString[Object.keys(query)[1]]
 		}
@@ -235,7 +242,7 @@ export default class Search extends Page {
 							</NavItem>
 
 							<NavItem eventKey="poams" disabled={!numPoams}>
-								<img src={POAMS_ICON} role="presentation" /> PoAMs
+								<img src={POAMS_ICON} role="presentation" /> {appSettings.POAM_SHORT_NAME}s
 								{numPoams > 0 && <Badge pullRight>{numPoams}</Badge>}
 							</NavItem>
 
@@ -286,7 +293,7 @@ export default class Search extends Page {
 				}
 
 				{numPoams > 0 && (queryType === 'everything' || queryType === 'poams') &&
-					<Fieldset title="PoAMs">
+					<Fieldset title={appSettings.POAM_SHORT_NAME + 's'}>
 						{this.renderPoams()}
 					</Fieldset>
 				}

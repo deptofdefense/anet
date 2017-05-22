@@ -26,6 +26,7 @@ export default class GuidedTour extends Component {
 
 	static contextTypes = {
 		currentUser: PropTypes.object.isRequired,
+		app: PropTypes.object.isRequired,
 	}
 
 	componentDidMount() {
@@ -63,7 +64,8 @@ export default class GuidedTour extends Component {
 
 	startTour(stepId) {
 		let currentUser = this.context.currentUser
-		let tour = this.props.tour(currentUser)
+		let appSettings = this.context.app.state.settings
+		let tour = this.props.tour(currentUser, appSettings)
 
 		// I don't know why hopscotch requires itself to be reconfigured
 		// EVERY TIME you start a tour, but it does. so this does that.

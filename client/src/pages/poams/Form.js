@@ -21,12 +21,13 @@ export default class PoamForm extends ValidatableFormWrapper {
 	}
 
 	static contextTypes = {
-		currentUser: PropTypes.object.isRequired,
+		app: PropTypes.object.isRequired,
 	}
 
 	render() {
 		let {poam, edit} = this.props
-		let {currentUser} = this.context
+		let {currentUser} = this.context.app.state
+		let appSettings = this.context.app.state.settings
 
 		let orgSearchQuery = {}
 		orgSearchQuery.type = 'ADVISOR_ORG'
@@ -45,12 +46,16 @@ export default class PoamForm extends ValidatableFormWrapper {
 					formFor={poam}
 					onChange={this.onChange}
 					onSubmit={this.onSubmit}
-					submitText="Save PoAM"
+					submitText={`Save ${appSettings.POAM_SHORT_NAME}`}
 					horizontal>
 
-					<Fieldset title={edit ? `Edit PoAM ${poam.shortName}` : "Create a new PoAM"}>
-						<RequiredField id="shortName" label="PoAM number" />
-						<RequiredField id="longName" label="PoAM description" />
+					<Fieldset title={edit ?
+						`Edit ${appSettings.POAM_SHORT_NAME} ${poam.shortName}`
+						:
+						`Create a new ${appSettings.POAM_SHORT_NAME}`
+					}>
+						<RequiredField id="shortName" label={`${appSettings.POAM_SHORT_NAME} number`} />
+						<RequiredField id="longName" label={`${appSettings.POAM_SHORT_NAME} description`} />
 
 						<Form.Field id="status" >
 							<ButtonToggleGroup>
@@ -61,7 +66,7 @@ export default class PoamForm extends ValidatableFormWrapper {
 
 						<Form.Field id="responsibleOrg" label="Responsible organization">
 							<Autocomplete valueKey="shortName"
-								placeholder="Select a responsible organization for this PoAM"
+								placeholder={`Select a responsible organization for this ${appSettings.POAM_SHORT_NAME}`}
 								url="/api/organizations/search"
 								queryParams={orgSearchQuery}
 							/>
@@ -96,7 +101,7 @@ export default class PoamForm extends ValidatableFormWrapper {
 				}
 
 				History.replace(Poam.pathForEdit(poam), false)
-				History.push(Poam.pathFor(poam), {success: 'PoAM saved successfully', skipPageLeaveWarning: true})
+				History.push(Poam.pathFor(poam), {success: 'Saved successfully', skipPageLeaveWarning: true})
 			}).catch(error => {
 				this.setState({error: error})
 				window.scrollTo(0, 0)
