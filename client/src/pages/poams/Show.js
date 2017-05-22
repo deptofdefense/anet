@@ -9,7 +9,7 @@ import LinkTo from 'components/LinkTo'
 import Messages, {setMessages} from 'components/Messages'
 import ReportCollection from 'components/ReportCollection'
 
-import GQL from 'graphql'
+import GQL from 'graphqlapi'
 import {Poam} from 'models'
 
 export default class PoamShow extends Page {

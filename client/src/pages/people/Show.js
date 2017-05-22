@@ -17,7 +17,7 @@ import {personTour} from 'pages/HopscotchTour'
 
 import {Person, Position} from 'models'
 import autobind from 'autobind-decorator'
-import GQL from 'graphql'
+import GQL from 'graphqlapi'
 
 export default class PersonShow extends Page {
 	static contextTypes = {

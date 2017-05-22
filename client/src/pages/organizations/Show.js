@@ -18,7 +18,7 @@ import OrganizationLaydown from './Laydown'
 import OrganizationApprovals from './Approvals'
 
 import {Organization} from 'models'
-import GQL from 'graphql'
+import GQL from 'graphqlapi'
 
 export default class OrganizationShow extends Page {
 	static contextTypes = {
