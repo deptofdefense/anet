@@ -14,7 +14,7 @@ import Messages from 'components/Messages'
 import AdvancedSearch from 'components/AdvancedSearch'
 
 import API from 'api'
-import GQL from 'graphql'
+import GQL from 'graphqlapi'
 import {Person, Organization, Position, Poam} from 'models'
 
 import EVERYTHING_ICON from 'resources/search-alt.png'

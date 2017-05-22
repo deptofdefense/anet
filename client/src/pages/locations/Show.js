@@ -10,7 +10,7 @@ import Leaflet from 'components/Leaflet'
 import LinkTo from 'components/LinkTo'
 import ReportCollection from 'components/ReportCollection'
 
-import GQL from 'graphql'
+import GQL from 'graphqlapi'
 import {Location} from 'models'
 
 export default class LocationShow extends Page {

@@ -150,7 +150,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 					</Form.Field>
 
 					{!isCancelled &&
-						<Form.Field id="atmosphere" className="atmosphere-form-group">
+						<Form.Field id="atmosphere" className="atmosphere-form-group" label="Atmospherics"> 
 							<ButtonToggleGroup>
 								<Button value="POSITIVE" id="positiveAtmos">Positive</Button>
 								<Button value="NEUTRAL" id="neutralAtmos">Neutral</Button>

@@ -106,6 +106,12 @@ export default class ReportSummary extends Component {
 			</Row>
 			<Row>
 				<Col md={12}>
+					{report.poams.length > 0 && <span><strong>PoAMs:</strong> {report.poams.map((poam,i) =>
+    {return poam.shortName + (i < report.poams.length - 1 ? ", " : "")})}</span> }
+				</Col>
+			</Row>
+			<Row>
+				<Col md={12}>
 					{report.keyOutcomes && <span><strong>Key outcomes:</strong> {report.keyOutcomes}</span> }
 				</Col>
 			</Row>

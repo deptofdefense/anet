@@ -178,7 +178,7 @@ export default class ReportShow extends Page {
 							<p><strong>Next steps:</strong> {report.nextSteps}</p>
 						</Form.Field>
 
-						<Form.Field id="engagementDate" label="Date" getter={date => date && moment(date).format('D MMMM, YYYY')} />
+						<Form.Field id="engagementDate" label="Engagement Date" getter={date => date && moment(date).format('D MMMM, YYYY')} />
 
 						<Form.Field id="location" label="Location">
 							{report.location && <LinkTo location={report.location} />}
