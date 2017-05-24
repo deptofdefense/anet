@@ -2,7 +2,7 @@ import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 import Breadcrumbs from 'components/Breadcrumbs'
 import ReportCollection from 'components/ReportCollection'
-import GQL from 'graphql'
+import GQL from 'graphqlapi'
 import Fieldset from 'components/Fieldset'
 import autobind from 'autobind-decorator'
 

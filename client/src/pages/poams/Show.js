@@ -10,7 +10,7 @@ import Messages, {setMessages} from 'components/Messages'
 import ReportCollection from 'components/ReportCollection'
 
 import dict from 'dictionary'
-import GQL from 'graphql'
+import GQL from 'graphqlapi'
 import {Poam} from 'models'
 
 export default class PoamShow extends Page {
