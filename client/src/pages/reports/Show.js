@@ -199,10 +199,10 @@ export default class ReportShow extends Page {
 						<Form.Field id="author" label="Report author">
 							<LinkTo person={report.author} />
 						</Form.Field>
-						<Form.Field id="advisorOrg" label="Advisor Org">
+						<Form.Field id="advisorOrg" label={dict.lookup('ADVISOR_ORG_NAME')}>
 							<LinkTo organization={report.advisorOrg} />
 						</Form.Field>
-						<Form.Field id="principalOrg" label="Principal Org">
+						<Form.Field id="principalOrg" label={dict.lookup('PRINCIPAL_ORG_NAME')}>
 							<LinkTo organization={report.principalOrg} />
 						</Form.Field>
 					</Fieldset>

@@ -7,9 +7,11 @@ function Dictionary() {
 		let dictEntry = this._dictionary[key] || ""
 
 		//Replace each replacement key based on the 'with' object.
-		Object.keys(scope).forEach(key =>
-			dictEntry = dictEntry.replace('%{' + key + '}', scope[key])
-		)
+		if (typeof dictEntry === 'string') {
+			Object.keys(scope).forEach(key =>
+				dictEntry = dictEntry.replace('%{' + key + '}', scope[key])
+			)
+		}
 
 		return dictEntry
 	}

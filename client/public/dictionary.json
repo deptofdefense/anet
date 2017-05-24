@@ -1,4 +1,37 @@
 {
-	"POAM_LONG_NAME": "Plan of Actions and Milestones / not OKRS",
-	"POAM_SHORT_NAME": "PoAM from local.json"
+	"PRINCIPAL_PERSON_TITLE" : "Martian Partner",
+	"ADVISOR_PERSON_TITLE" : "NASA Member",
+	
+	"PRINCIPAL_POSITION_NAME": "Martian Position",
+	"ADVISOR_POSITION_NAME" : "NASA Billet",
+
+	"PRINCIPAL_POSITION_CODE_NAME" : "Not the Tashkil Code",
+	"ADVISOR_POSITION_CODE_NAME" : "Not the Billet Code",
+
+	"ADVISOR_POSITION_TYPE_TITLE" : "NASA Advisor",
+	"SUPER_USER_POSITION_TYPE_TITLE" : "ANET Super User",
+	"ADMINISTRATOR_POSITION_TYPE_TITLE" : "ANET Administrator",
+
+	"PRINCIPAL_ORG_NAME" : "Martian Government Organization",
+	"ADVISOR_ORG_NAME" : "Advisor Organization",
+
+	"POAM_LONG_NAME": "Objectives and Key Results / DICT.JSON",
+	"POAM_SHORT_NAME": "OKR",
+	"NAV_BAR_ALL_ADVISOR_ORGS" : "All EFs / AOs",
+
+	"countries": [
+		"Australia",
+		"Germany",
+		"United States of America",
+		"United Kingdom",
+		"Mars"
+	],
+	"ranks" : [
+		"CIV",
+		"CTR",
+		"ASTRO-1",
+		"ASTRO-2",
+		"ASTRO-3"
+	]
+	
 }

@@ -13,6 +13,7 @@ import History from 'components/History'
 import Messages from 'components/Messages'
 
 import API from 'api'
+import dict from 'dictionary'
 import {Position, Organization} from 'models'
 
 import REMOVE_ICON from 'resources/delete.png'
@@ -46,8 +47,8 @@ export default class OrganizationForm extends ValidatableFormWrapper {
 			<Fieldset title={edit ? `Edit Organization ${organization.shortName}` : "Create a new Organization"}>
 				<Form.Field id="type">
 					<ButtonToggleGroup>
-						<Button id="advisorOrgButton" value="ADVISOR_ORG">Advisor organization</Button>
-						<Button id="principalOrgButton" value="PRINCIPAL_ORG">Afghan Govt organization</Button>
+						<Button id="advisorOrgButton" value="ADVISOR_ORG">{dict.lookup('ADVISOR_ORG_NAME')}</Button>
+						<Button id="principalOrgButton" value="PRINCIPAL_ORG">{dict.lookup('PRINCIPAL_ORG_NAME')}</Button>
 					</ButtonToggleGroup>
 				</Form.Field>
 

@@ -1,5 +1,5 @@
 import Model from 'components/Model'
-import utils from 'utils'
+import dict from 'dictionary'
 
 import RS_ICON from 'resources/rs_small.png'
 import AFG_ICON from 'resources/afg_small.png'
@@ -21,9 +21,13 @@ export default class Position extends Model {
 
 	humanNameOfType() {
 		if (this.type === 'PRINCIPAL') {
-			return "Afghan principal"
-		} else {
-			return "NATO " + utils.noCase(this.type)
+			return dict.lookup('PRINCIPAL_POSITION_NAME')
+		} else if (this.type === 'ADVISOR') {
+			return dict.lookup('ADVISOR_POSITION_TYPE_TITLE')
+		} else if (this.type === 'SUPER_USER') {
+			return dict.lookup('SUPER_USER_POSITION_TYPE_TITLE')
+		} else if (this.type === 'ADMINISTRATOR') {
+			return dict.lookup('ADMINISTRATOR_POSITION_TYPE_TITLE')
 		}
 	}
 

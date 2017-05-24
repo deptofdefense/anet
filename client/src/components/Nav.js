@@ -84,7 +84,7 @@ class Nav extends Component {
 
 				{inOrg && orgId === myOrgId && orgSubNav}
 
-				<NavDropdown title="All EFs / AOs" id="organizations" active={inOrg && orgId !== myOrgId}>
+				<NavDropdown title={dict.lookup('NAV_BAR_ALL_ADVISOR_ORGS')} id="organizations" active={inOrg && orgId !== myOrgId}>
 					{Organization.map(organizations, org =>
 						<LinkTo organization={org} componentClass={Link} key={org.id}>
 							<MenuItem>{org.shortName}</MenuItem>
