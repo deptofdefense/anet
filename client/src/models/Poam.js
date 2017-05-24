@@ -1,6 +1,7 @@
 import React, {PropTypes} from 'react'
 
 import Model from 'components/Model'
+import dict from 'dictionary'
 
 export default class Poam extends Model {
 	static contextTypes = {
@@ -8,10 +9,9 @@ export default class Poam extends Model {
 	}
 
 	static resourceName = 'Poam'
-	static displayName(appSettings) {
-		return appSettings.POAM_SHORT_NAME
+	static displayName() {
+		return dict.lookup('POAM_SHORT_NAME')
 	}
-	//'PoAM'
 
 	static listName = 'poamList'
 

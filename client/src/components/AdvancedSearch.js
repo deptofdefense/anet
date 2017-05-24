@@ -2,6 +2,7 @@ import React, {Component, PropTypes} from 'react'
 import {Button, DropdownButton, MenuItem, Row, Col, FormGroup, FormControl, ControlLabel} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 import _isequal from 'lodash.isequal'
+import dict from 'dictionary'
 
 import ButtonToggleGroup from 'components/ButtonToggleGroup'
 import History from 'components/History'
@@ -21,13 +22,8 @@ export default class AdvancedSearch extends Component {
 		onSearch: PropTypes.func,
 	}
 
-	static contextTypes = {
-		app: PropTypes.object.isRequired
-	}
-
 	@autobind
 	getFilters(context) {
-		let appSettings = context.app.state.settings
 		let filters = {}
 		filters.Reports = {
 			filters: {
@@ -60,21 +56,23 @@ export default class AdvancedSearch extends Component {
 					placeholder="Filter reports by location..."
 					url="/api/locations/search"
 				/>,
-					State: <ReportStateSearch />,
+				State: <ReportStateSearch />,
 				Atmosphere: <SelectSearchFilter
 					queryKey="atmosphere"
 					values={["POSITIVE","NEUTRAL","NEGATIVE"]}
 				/>
 			}
 		}
-		filters.Reports.filters[appSettings.POAM_SHORT_NAME] =
+
+		let poamShortName = dict.lookup('POAM_SHORT_NAME')
+		filters.Reports.filters[poamShortName] =
 			<AutocompleteFilter
 				queryKey="poamId"
 				objectType={Poam}
 				fields={Poam.autocompleteQuery}
 				template={Poam.autocompleteTemplate}
 				valueKey="shortName"
-				placeholder={`Filter reports by ${appSettings.POAM_SHORT_NAME}...`}
+				placeholder={`Filter reports by ${poamShortName}...`}
 			/>
 
 
@@ -150,7 +148,7 @@ export default class AdvancedSearch extends Component {
 		filters.Locations = {filters: {}}
 
 		//Poam filters
-		filters[appSettings.POAM_SHORT_NAME + 's'] = {
+		filters[poamShortName + 's'] = {
 			filters: {
 				Organization: <OrganizationFilter
 					queryKey="responsibleOrgId"

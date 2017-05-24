@@ -9,6 +9,7 @@ import LinkTo from 'components/LinkTo'
 import Messages, {setMessages} from 'components/Messages'
 import ReportCollection from 'components/ReportCollection'
 
+import dict from 'dictionary'
 import GQL from 'graphql'
 import {Poam} from 'models'
 
@@ -68,26 +69,26 @@ export default class PoamShow extends Page {
 		let {poam, reports} = this.state
 		// Admins can edit poams, or super users if this poam is assigned to their org.
 		let currentUser = this.context.currentUser
-		let appSettings = this.context.app.state.settings
+		let poamShortName = dict.lookup("POAM_SHORT_NAME")
 
 		let canEdit = currentUser.isAdmin() ||
 			(poam.responsibleOrg && currentUser.isSuperUserForOrg(poam.responsibleOrg))
 
 		return (
 			<div>
-				<Breadcrumbs items={[[`${appSettings.POAM_SHORT_NAME} ${poam.shortName}`, Poam.pathFor(poam)]]} />
+				<Breadcrumbs items={[[`${poamShortName} ${poam.shortName}`, Poam.pathFor(poam)]]} />
 				<Messages success={this.state.success} error={this.state.error} />
 
 				<Form static formFor={poam} horizontal>
-					<Fieldset title={`${appSettings.POAM_SHORT_NAME} ${poam.shortName}`} action={canEdit && <LinkTo poam={poam} edit button="primary">Edit</LinkTo>}>
-						<Form.Field id="shortName" label={`${appSettings.POAM_SHORT_NAME} number`} />
-						<Form.Field id="longName" label={`${appSettings.POAM_SHORT_NAME} description`} />
+					<Fieldset title={`${poamShortName} ${poam.shortName}`} action={canEdit && <LinkTo poam={poam} edit button="primary">Edit</LinkTo>}>
+						<Form.Field id="shortName" label={`${poamShortName} number`} />
+						<Form.Field id="longName" label={`${poamShortName} description`} />
 						<Form.Field id="status" />
 						{poam.responsibleOrg && poam.responsibleOrg.id && this.renderOrg()}
 					</Fieldset>
 				</Form>
 
-				<Fieldset title={`Reports for this ${appSettings.POAM_SHORT_NAME}`}>
+				<Fieldset title={`Reports for this ${poamShortName}`}>
 					<ReportCollection paginatedReports={reports} goToPage={this.goToReportsPage} />
 				</Fieldset>
 			</div>

@@ -13,6 +13,7 @@ import Messages from 'components/Messages'
 import LinkTo from 'components/LinkTo'
 
 import API from 'api'
+import dict from 'dictionary'
 import {Report, Person, Poam, Comment, Position} from 'models'
 
 export default class ReportShow extends Page {
@@ -228,7 +229,7 @@ export default class ReportShow extends Page {
 						</Table>
 					</Fieldset>
 
-					<Fieldset title="Plan of Action and Milestones / Pillars">
+					<Fieldset title={dict.lookup('POAM_LONG_NAME')} >
 						<Table>
 							<thead>
 								<tr>

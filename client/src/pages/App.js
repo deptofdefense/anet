@@ -7,6 +7,7 @@ import Header from 'components/Header'
 import Nav from 'components/Nav'
 import NoPositionBanner from 'components/NoPositionBanner'
 import History from 'components/History'
+import dict from 'dictionary'
 
 import API from 'api'
 import {Person, Organization} from 'models'
@@ -24,12 +25,14 @@ export default class App extends Page {
 	static childContextTypes = {
 		app: PropTypes.object,
 		currentUser: PropTypes.instanceOf(Person),
+//		dictionary: PropTypes.object,
 	}
 
 	getChildContext() {
 		return {
 			app: this,
 			currentUser: this.state.currentUser,
+//			dictionary: this.state.dictionary,
 		}
 	}
 
@@ -40,6 +43,7 @@ export default class App extends Page {
 			currentUser: new Person(),
 			settings: {},
 			organizations: [],
+//			dictionary: {}
 		}
 
 		this.state = this.processData(window.ANET_DATA)
@@ -77,6 +81,11 @@ export default class App extends Page {
 				}
 			})
 		})
+
+		//Fetch the dictionary.
+		API.fetch('/dictionary.json').then(dictionary =>
+			dict.setDictionary(dictionary)
+		)
 	}
 
 	processData(data) {
@@ -87,8 +96,9 @@ export default class App extends Page {
 
 		let settings = this.state.settings
 		data.adminSettings.forEach(setting => settings[setting.key] = setting.value)
+		let dictionary = this.state.dictionary
 
-		return {currentUser, settings, organizations}
+		return {currentUser, settings, organizations, dictionary}
 	}
 
 	render() {
