@@ -94,6 +94,7 @@ export class CSVExport {
 	}
 
 
+
     export(type,query,progressfn) {
 
 		let keys = Object.keys(this.serializers[type])
@@ -101,9 +102,11 @@ export class CSVExport {
         let serializers = this.serializers[type]
 		GQL.run([this.getSearchAll(type, query) ]).then(function(data)  {
 	
-		let i = 0;
-
-		data[type].list.forEach(function (report) {
+		let counter = 0
+		let length = data[type].list.length
+		function iterator () {
+			let report = data[type].list[counter]	
+			
 			var results = []
 			keys.forEach(function (key) {
 				var result = report[key]
@@ -118,12 +121,18 @@ export class CSVExport {
 				results.push(result)
 			})
 			csvdata.push(results)
+			progressfn(counter,length)
 
-			progressfn(i++,data[type].list)
-		})
-
-		var blob = new Blob([csvdata.map(function (row) {return row.join(",")}).join("\n")], {type: "text/plain;charset=utf-8"})
-		FileSaver.saveAs(blob, type+".csv")
+			counter++;
+			if (counter < length) {
+				setTimeout(iterator, 1);
+			}
+			else {
+				var blob = new Blob([csvdata.map(function (row) {return row.join(",")}).join("\n")], {type: "text/plain;charset=utf-8"})
+				FileSaver.saveAs(blob, type+".csv")
+			}
+		} 
+		iterator ()
 
 		}).catch(response =>
 			console.log(response)

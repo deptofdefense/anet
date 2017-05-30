@@ -94,7 +94,7 @@ export default class ReportCollection extends Component {
 							<div className="pull-right">
 							
 								<Button  onClick={this.startCSVExportModal}><img src={DOWNLOAD_ICON} height={16} alt="Export" /></Button>
-								<LongActionModal showModal={this.state.showCSVExportModal&&(this.props.current < this.props.total -1 )} onCancel={this.cancelCSVExportModal} current={this.state.current} total={this.state.total} ></LongActionModal>
+								<LongActionModal showModal={this.state.showCSVExportModal && (this.state.current < this.state.total - 1)} onCancel={this.cancelCSVExportModal} current={this.state.current} total={this.state.total} ></LongActionModal>
 
 							</div>
 						}
@@ -143,11 +143,12 @@ export default class ReportCollection extends Component {
 	@autobind
 	startCSVExportModal() {
 		this.setState({showCSVExportModal: true})
+		let that = this;
 		this.props.downloadAll(
-			(count,total) =>
+			(current,total) =>
 			{
-				this.state.count = count
-				this.state.total = total
+				that.setState({current: current,
+					total : total})
 			}
 		 )
 	}

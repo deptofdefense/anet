@@ -21,15 +21,15 @@ export default class LongAction extends Component {
 
 
 	render() {
-		let percentage = this.props.current / this.props.total
+		let percentage = 100 * this.props.current / this.props.total
 		return (
 			<Modal show={this.props.showModal} onHide={this.close}>
 				<Modal.Header closeButton>
 					<Modal.Title> Export csv</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					<p>Processing {this.props.current+1} out of {this.props.total} </p>
-					<Line percent={percentage} strokeWidth="4" strokeColor="#D3D3D3" />
+					<p>Exporting {this.props.current+1} out of {this.props.total} </p>
+					<Line percent={percentage} strokeWidth="2" strokeColor="#3d5166" />
 				</Modal.Body>
 				<Modal.Footer>
 					<Button className="pull-left" onClick={this.close}>Cancel</Button>
