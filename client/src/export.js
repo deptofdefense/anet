@@ -97,6 +97,8 @@ export class CSVExport {
 
     export(type,query,progressfn) {
 
+		setTimeout(function(){
+
 		let keys = Object.keys(this.serializers[type])
 		let csvdata = [keys]
         let serializers = this.serializers[type]
@@ -137,6 +139,7 @@ export class CSVExport {
 		}).catch(response =>
 			console.log(response)
 		)
+		}, 1);
     }
 }
 
