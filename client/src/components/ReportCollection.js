@@ -2,6 +2,7 @@ import React, {Component, PropTypes} from 'react'
 import {Button, Pagination} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
+import LongActionModal from 'components/LongActionModal'
 import ReportSummary from 'components/ReportSummary'
 import ReportTable from 'components/ReportTable'
 import ButtonToggleGroup from 'components/ButtonToggleGroup'
@@ -44,7 +45,10 @@ export default class ReportCollection extends Component {
 		super(props)
 
 		this.state = {
-			viewFormat: 'summary'
+			viewFormat: 'summary',
+			showCSVExportModal: false,
+			current: 0,
+			total: 1
 		}
 	}
 
@@ -88,7 +92,10 @@ export default class ReportCollection extends Component {
 						{
 							this.props.downloadAll &&
 							<div className="pull-right">
-								<Button  onClick={this.props.downloadAll}><img src={DOWNLOAD_ICON} height={16} alt="Export" /></Button>
+							
+								<Button  onClick={this.startCSVExportModal}><img src={DOWNLOAD_ICON} height={16} alt="Export" /></Button>
+								<LongActionModal showModal={this.state.showCSVExportModal&&(this.props.current < this.props.total -1 )} onCancel={this.cancelCSVExportModal} current={this.state.current} total={this.state.total} ></LongActionModal>
+
 							</div>
 						}
 
@@ -132,6 +139,24 @@ export default class ReportCollection extends Component {
 	changeViewFormat(value) {
 		this.setState({viewFormat: value})
 	}
+
+	@autobind
+	startCSVExportModal() {
+		this.setState({showCSVExportModal: true})
+		this.props.downloadAll(
+			(count,total) =>
+			{
+				this.state.count = count
+				this.state.total = total
+			}
+		 )
+	}
+
+	@autobind
+	cancelCSVExportModal(success) {
+		this.setState({showCSVExportModal: false})
+		}
+	
 }
 
 ReportCollection.GQL_REPORT_FIELDS = GQL_REPORT_FIELDS

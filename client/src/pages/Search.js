@@ -310,7 +310,7 @@ export default class Search extends Page {
 
 				{numReports > 0 && (queryType === 'everything' || queryType === 'reports') &&
 					<Fieldset title="Reports">
-						<ReportCollection paginatedReports={results.reports} goToPage={this.goToPage.bind(this, 'reports') } downloadAll={this.downloadAll.bind(this, 'reports')} />
+						<ReportCollection paginatedReports={results.reports} goToPage={this.goToPage.bind(this, 'reports') } downloadAll={ ((progressfn) => {return this.downloadAll('reports',progressfn) }) }/>
 					</Fieldset>
 				}
 
@@ -353,10 +353,10 @@ export default class Search extends Page {
 	}
 
 	@autobind
-	downloadAll(type)
+	downloadAll(type,progressfn)
 	{
 		let query = (this.state.advancedSearch) ? this.getAdvancedSearchQuery() : Object.without(this.props.location.query, 'type')
-		Export.csvExport.export(type,query)
+		Export.csvExport.export(type,query,progressfn)
 	}
 
 	@autobind

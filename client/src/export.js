@@ -94,13 +94,15 @@ export class CSVExport {
 	}
 
 
-    export(type,query) {
+    export(type,query,progressfn) {
 
 		let keys = Object.keys(this.serializers[type])
 		let csvdata = [keys]
         let serializers = this.serializers[type]
 		GQL.run([this.getSearchAll(type, query) ]).then(function(data)  {
 	
+		let i = 0;
+
 		data[type].list.forEach(function (report) {
 			var results = []
 			keys.forEach(function (key) {
@@ -116,6 +118,8 @@ export class CSVExport {
 				results.push(result)
 			})
 			csvdata.push(results)
+
+			progressfn(i++,data[type].list)
 		})
 
 		var blob = new Blob([csvdata.map(function (row) {return row.join(",")}).join("\n")], {type: "text/plain;charset=utf-8"})
