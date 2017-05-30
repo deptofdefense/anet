@@ -8,6 +8,8 @@ import ButtonToggleGroup from 'components/ButtonToggleGroup'
 import Leaflet from 'components/Leaflet'
 import _get from 'lodash.get'
 
+import DOWNLOAD_ICON from 'resources/download.png'
+
 const FORMAT_SUMMARY = 'summary'
 const FORMAT_TABLE = 'table'
 const FORMAT_MAP = 'map'
@@ -35,6 +37,7 @@ export default class ReportCollection extends Component {
 			list: PropTypes.array.isRequired,
 		}),
 		goToPage: PropTypes.func,
+		downloadAll: PropTypes.func
 	}
 
 	constructor(props) {
@@ -81,6 +84,14 @@ export default class ReportCollection extends Component {
 								onSelect={(value) => {this.props.goToPage(value - 1)}}
 							/>
 						}
+
+						{
+							this.props.downloadAll &&
+							<div className="pull-right">
+								<Button  onClick={this.props.downloadAll}><img src={DOWNLOAD_ICON} height={16} alt="Export" /></Button>
+							</div>
+						}
+
 					</header>
 
 					<div>
