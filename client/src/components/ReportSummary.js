@@ -69,7 +69,7 @@ export default class ReportSummary extends Component {
 			<Row>
 				<Col md={12}>
 					{report.engagementDate &&
-						<Label bsStyle="default" className="engagement-date">
+						<Label bsStyle="warning" className="engagement-date">
 							{moment(report.engagementDate).format('D MMM YYYY')}
 						</Label>
 					}
