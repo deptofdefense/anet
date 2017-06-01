@@ -18,6 +18,7 @@ import {personTour} from 'pages/HopscotchTour'
 import {Person, Position} from 'models'
 import autobind from 'autobind-decorator'
 import GQL from 'graphqlapi'
+import dict from 'dictionary'
 
 export default class PersonShow extends Page {
 	static contextTypes = {
@@ -110,7 +111,9 @@ export default class PersonShow extends Page {
 	render() {
 		let {person,attendedReports,authoredReports} = this.state
 		let position = person.position
-		let assignedRole = position.type === 'PRINCIPAL' ? 'advisors' : 'Afghan principals'
+
+		// The position for this person's counterparts
+		let assignedRole = position.type === 'PRINCIPAL' ? dict.lookup('ADVISOR_PERSON_TITLE') : dict.lookup('PRINCIPAL_PERSON_TITLE')
 
 		//User can always edit themselves
 		//Admins can always edit anybody

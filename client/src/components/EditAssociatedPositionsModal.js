@@ -4,6 +4,8 @@ import Autocomplete from 'components/Autocomplete'
 import {Modal, Button, Table} from 'react-bootstrap'
 import {Position,Person} from 'models'
 import API from 'api'
+import dict from 'dictionary'
+
 import Messages from'components/Messages'
 
 import REMOVE_ICON from 'resources/delete.png'
@@ -36,7 +38,7 @@ export default class EditAssociatedPositionsModal extends Component {
 		let {position} = this.props
 		let {associatedPositions} = this.state
 		let currentUser = this.context.currentUser
-		let assignedRole = position.type === 'PRINCIPAL' ? 'advisors' : 'Afghan principals'
+		let assignedRole = position.type === 'PRINCIPAL' ? dict.lookup('ADVISOR_PERSON_TITLE') : dict.lookup('PRINCIPAL_PERSON_TITLE')
 
 		let positionSearchQuery = {matchPersonName: true}
 		if (position.type === 'PRINCIPAL') {
@@ -58,7 +60,7 @@ export default class EditAssociatedPositionsModal extends Component {
 				<Modal.Body>
 					<Messages error={this.state.error} success={this.state.success} />
 					<Autocomplete
-						placeholder={'Start typing to search for ' + (position.type === 'PRINCIPAL' ? 'an advisor' : 'a principal') + ' position...'}
+						placeholder={'Start typing to search for a ' + assignedRole + ' position...'}
 						objectType={Position}
 						fields={'id, name, code, type, person { id, name, rank }, organization { id, shortName, longName}'}
 						template={pos => {

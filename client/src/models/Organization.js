@@ -1,4 +1,5 @@
 import Model from 'components/Model'
+import dict from 'dictionary'
 
 export default class Organization extends Model {
 	static resourceName = 'Organization'
@@ -21,9 +22,9 @@ export default class Organization extends Model {
 
 	humanNameOfType() {
 		if (this.type === 'PRINCIPAL_ORG') {
-			return "Afghan organization"
+			return dict.lookup('PRINCIPAL_ORG_NAME')
 		} else {
-			return "NATO organization"
+			return dict.lookup('ADVISOR_ORG_NAME')
 		}
 	}
 

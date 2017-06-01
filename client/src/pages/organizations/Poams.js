@@ -4,6 +4,7 @@ import autobind from 'autobind-decorator'
 
 import Fieldset from 'components/Fieldset'
 import LinkTo from 'components/LinkTo'
+import dict from 'dictionary'
 
 import {Poam} from 'models'
 
@@ -14,7 +15,6 @@ export default class OrganizationPoams extends Component {
 
 	render() {
 		let currentUser = this.context.app.state.currentUser
-		let appSettings = this.context.app.state.settings
 
 		let org = this.props.organization
 		if (!org.isAdvisorOrg()) {
@@ -23,9 +23,10 @@ export default class OrganizationPoams extends Component {
 
 		let poams = this.props.poams.list || []
 		let isSuperUser = currentUser && currentUser.isSuperUserForOrg(org)
+		let poamShortName = dict.lookup('POAM_SHORT_NAME')
 
-		return <Fieldset id="poams" title={appSettings.POAM_LONG_NAME} action={
-			isSuperUser && <LinkTo poam={Poam.pathForNew({responsibleOrgId: org.id})} button>Create {appSettings.POAM_SHORT_NAME}</LinkTo>
+		return <Fieldset id="poams" title={poamShortName} action={
+			isSuperUser && <LinkTo poam={Poam.pathForNew({responsibleOrgId: org.id})} button>Create {poamShortName}</LinkTo>
 		}>
 			{this.pagination()}
 			<Table>
@@ -46,7 +47,7 @@ export default class OrganizationPoams extends Component {
 				</tbody>
 			</Table>
 
-			{poams.length === 0 && <em>This organization doesn't have any {appSettings.POAM_SHORT_NAME}s</em>}
+			{poams.length === 0 && <em>This organization doesn't have any {poamShortName}s</em>}
 		</Fieldset>
 	}
 

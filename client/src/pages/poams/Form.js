@@ -11,6 +11,7 @@ import History from 'components/History'
 import Messages from'components/Messages'
 import ButtonToggleGroup from 'components/ButtonToggleGroup'
 
+import dict from 'dictionary'
 import API from 'api'
 import {Poam} from 'models'
 
@@ -27,7 +28,7 @@ export default class PoamForm extends ValidatableFormWrapper {
 	render() {
 		let {poam, edit} = this.props
 		let {currentUser} = this.context.app.state
-		let appSettings = this.context.app.state.settings
+		let poamShortTitle = dict.lookup('POAM_SHORT_NAME')
 
 		let orgSearchQuery = {}
 		orgSearchQuery.type = 'ADVISOR_ORG'
@@ -46,16 +47,16 @@ export default class PoamForm extends ValidatableFormWrapper {
 					formFor={poam}
 					onChange={this.onChange}
 					onSubmit={this.onSubmit}
-					submitText={`Save ${appSettings.POAM_SHORT_NAME}`}
+					submitText={`Save ${poamShortTitle}`}
 					horizontal>
 
 					<Fieldset title={edit ?
-						`Edit ${appSettings.POAM_SHORT_NAME} ${poam.shortName}`
+						`Edit ${poamShortTitle} ${poam.shortName}`
 						:
-						`Create a new ${appSettings.POAM_SHORT_NAME}`
+						`Create a new ${poamShortTitle}`
 					}>
-						<RequiredField id="shortName" label={`${appSettings.POAM_SHORT_NAME} number`} />
-						<RequiredField id="longName" label={`${appSettings.POAM_SHORT_NAME} description`} />
+						<RequiredField id="shortName" label={`${poamShortTitle} number`} />
+						<RequiredField id="longName" label={`${poamShortTitle} description`} />
 
 						<Form.Field id="status" >
 							<ButtonToggleGroup>
@@ -66,7 +67,7 @@ export default class PoamForm extends ValidatableFormWrapper {
 
 						<Form.Field id="responsibleOrg" label="Responsible organization">
 							<Autocomplete valueKey="shortName"
-								placeholder={`Select a responsible organization for this ${appSettings.POAM_SHORT_NAME}`}
+								placeholder={`Select a responsible organization for this ${poamShortTitle}`}
 								url="/api/organizations/search"
 								queryParams={orgSearchQuery}
 							/>
