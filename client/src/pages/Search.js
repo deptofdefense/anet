@@ -16,6 +16,7 @@ import AdvancedSearch from 'components/AdvancedSearch'
 import API from 'api'
 import GQL from 'graphqlapi'
 import {Person, Organization, Position, Poam} from 'models'
+import Export from "export"
 
 import EVERYTHING_ICON from 'resources/search-alt.png'
 import REPORTS_ICON from 'resources/reports.png'
@@ -24,6 +25,7 @@ import LOCATIONS_ICON from 'resources/locations.png'
 import POAMS_ICON from 'resources/poams.png'
 import POSITIONS_ICON from 'resources/positions.png'
 import ORGANIZATIONS_ICON from 'resources/organizations.png'
+
 
 const QUERY_STRINGS = {
 	reports: {
@@ -128,6 +130,8 @@ export default class Search extends Page {
 			`).addVariable(type + "Query", config.variableType, query)
 		return part
 	}
+
+
 
 	@autobind
 	getAdvancedSearchQuery() {
@@ -306,7 +310,7 @@ export default class Search extends Page {
 
 				{numReports > 0 && (queryType === 'everything' || queryType === 'reports') &&
 					<Fieldset title="Reports">
-						<ReportCollection paginatedReports={results.reports} goToPage={this.goToPage.bind(this, 'reports')} />
+						<ReportCollection paginatedReports={results.reports} goToPage={this.goToPage.bind(this, 'reports') } downloadAll={ ((progressfn) => {return this.downloadAll('reports',progressfn) }) }/>
 					</Fieldset>
 				}
 
@@ -346,6 +350,13 @@ export default class Search extends Page {
 		}).catch(response =>
 			this.setState({error: response})
 		)
+	}
+
+	@autobind
+	downloadAll(type,progressfn)
+	{
+		let query = (this.state.advancedSearch) ? this.getAdvancedSearchQuery() : Object.without(this.props.location.query, 'type')
+		Export.csvExport.export(type,query,progressfn)
 	}
 
 	@autobind
