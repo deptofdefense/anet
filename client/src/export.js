@@ -97,8 +97,8 @@ export class CSVExport {
 
 	export(type,query,progressfn) {
 
-		setTimeout(function(){
-			let keys = Object.keys(serializers[type])
+		setTimeout(() => {
+			let keys = Object.keys(this.serializers[type])
 			let csvdata = [keys]
 			let serializers = this.serializers[type]
 
