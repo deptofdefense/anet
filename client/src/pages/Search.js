@@ -353,8 +353,7 @@ export default class Search extends Page {
 	}
 
 	@autobind
-	downloadAll(type,progressfn)
-	{
+	downloadAll(type,progressfn) {
 		let query = (this.state.advancedSearch) ? this.getAdvancedSearchQuery() : Object.without(this.props.location.query, 'type')
 		Export.csvExport.export(type,query,progressfn)
 	}

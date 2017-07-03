@@ -92,7 +92,7 @@ export default class ReportCollection extends Component {
 						{
 							this.props.downloadAll &&
 							<div className="pull-right">
-							
+
 								<Button  onClick={this.startCSVExportModal}><img src={DOWNLOAD_ICON} height={16} alt="Export" /></Button>
 								<LongActionModal showModal={this.state.showCSVExportModal && (this.state.current < this.state.total - 1)} onCancel={this.cancelCSVExportModal} current={this.state.current} total={this.state.total} ></LongActionModal>
 
@@ -145,8 +145,7 @@ export default class ReportCollection extends Component {
 		this.setState({showCSVExportModal: true})
 		let that = this;
 		this.props.downloadAll(
-			(current,total) =>
-			{
+			(current,total) => {
 				that.setState({current: current,
 					total : total})
 			}
@@ -156,8 +155,8 @@ export default class ReportCollection extends Component {
 	@autobind
 	cancelCSVExportModal(success) {
 		this.setState({showCSVExportModal: false})
-		}
-	
+	}
+
 }
 
 ReportCollection.GQL_REPORT_FIELDS = GQL_REPORT_FIELDS
