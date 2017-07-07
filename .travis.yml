@@ -1,1 +1,9 @@
 language: java
+
+before_install:
+  - touch localSettings.gradle
+
+before_script:
+  - cd client
+  - npm install
+  - npm run build
