@@ -10,3 +10,4 @@ before_install:
   - cd client
   - npm install
   - npm run build
+  - cd ..
