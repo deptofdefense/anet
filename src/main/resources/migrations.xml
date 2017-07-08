@@ -646,12 +646,4 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="35" author="hpitelka" >
-		<sql>
-			INSERT INTO adminSettings ([key], value) VALUES ('POAM_LONG_NAME', 'Plans of Action and Milestones / Pillars');
-			INSERT INTO adminSettings ([key], value) VALUES ('POAM_SHORT_NAME', 'PoAMs');
-		</sql>
-	</changeSet>
-
-
 </databaseChangeLog>

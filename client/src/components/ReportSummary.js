@@ -4,6 +4,7 @@ import utils from 'utils'
 
 import LinkTo from 'components/LinkTo'
 import {Report} from 'models'
+import dict from 'dictionary'
 
 import moment from 'moment'
 
@@ -106,7 +107,7 @@ export default class ReportSummary extends Component {
 			</Row>
 			<Row>
 				<Col md={12}>
-					{report.poams.length > 0 && <span><strong>PoAMs:</strong> {report.poams.map((poam,i) =>
+					{report.poams.length > 0 && <span><strong>{dict.lookup('POAM_SHORT_NAME')}s:</strong> {report.poams.map((poam,i) =>
     {return poam.shortName + (i < report.poams.length - 1 ? ", " : "")})}</span> }
 				</Col>
 			</Row>

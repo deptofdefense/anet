@@ -16,6 +16,7 @@ import GuidedTour from 'components/GuidedTour'
 import {positionTour} from 'pages/HopscotchTour'
 
 import API from 'api'
+import dict from 'dictionary'
 import History from 'components/History'
 import {Position, Organization} from 'models'
 import autobind from 'autobind-decorator'
@@ -61,7 +62,7 @@ export default class PositionShow extends Page {
 
 	render() {
 		let position = this.state.position
-		let assignedRole = position.type === 'PRINCIPAL' ? 'advisors' : 'Afghan principals'
+		let assignedRole = position.type === 'PRINCIPAL' ? dict.lookup('ADVISOR_PERSON_TITLE') : dict.lookup('PRINCIPAL_PERSON_TITLE')
 
 		let currentUser = this.context.currentUser
 		let canEdit =

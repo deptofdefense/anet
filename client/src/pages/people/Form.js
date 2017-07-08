@@ -12,6 +12,7 @@ import History from 'components/History'
 import ButtonToggleGroup from 'components/ButtonToggleGroup'
 
 import API from 'api'
+import dict from 'dictionary'
 import {Person} from 'models'
 
 import CALENDAR_ICON from 'resources/calendar.png'
@@ -43,6 +44,7 @@ export default class PersonForm extends ValidatableFormWrapper {
 		const {ValidatableForm, RequiredField} = this
 
 		let willAutoKickPosition = person.status === 'INACTIVE' && person.position && !!person.position.id
+		let ranks = dict.lookup('ranks') || []
 
 		return <ValidatableForm formFor={person} onChange={this.onChange} onSubmit={this.onSubmit} horizontal
 			submitText={this.props.saveText || 'Save person'}>
@@ -57,8 +59,8 @@ export default class PersonForm extends ValidatableFormWrapper {
 					:
 					<Form.Field id="role">
 						<ButtonToggleGroup>
-							<Button id="roleAdvisorButton" value="ADVISOR">NATO member</Button>
-							<Button id="rolePrincipalButton" value="PRINCIPAL">Afghan principal</Button>
+							<Button id="roleAdvisorButton" value="ADVISOR">{dict.lookup('ADVISOR_PERSON_TITLE')}</Button>
+							<Button id="rolePrincipalButton" value="PRINCIPAL">{dict.lookup('PRINCIPAL_PERSON_TITLE')}</Button>
 						</ButtonToggleGroup>
 					</Form.Field>
 				}
@@ -81,7 +83,7 @@ export default class PersonForm extends ValidatableFormWrapper {
 
 				{!edit && person.role === 'ADVISOR' &&
 					<Alert bsStyle="warning">
-						Creating a NATO member in ANET could result in duplicate accounts if this person logs in later. If you notice duplicate accounts, please contact an ANET administrator.
+						Creating a {dict.lookup('ADVISOR_PERSON_TITLE')} in ANET could result in duplicate accounts if this person logs in later. If you notice duplicate accounts, please contact an ANET administrator.
 					</Alert>
 				}
 			</Fieldset>
@@ -95,32 +97,9 @@ export default class PersonForm extends ValidatableFormWrapper {
 					required={isAdvisor}>
 
 					<option />
-					<option value="CIV">CIV</option>
-					<option value="CTR">CTR</option>
-					<option value="OR-1">OR-1</option>
-					<option value="OR-2">OR-2</option>
-					<option value="OR-3">OR-3</option>
-					<option value="OR-4">OR-4</option>
-					<option value="OR-5">OR-5</option>
-					<option value="OR-6">OR-6</option>
-					<option value="OR-7">OR-7</option>
-					<option value="OR-8">OR-8</option>
-					<option value="OR-9">OR-9</option>
-					<option value="WO-1">WO-1</option>
-					<option value="WO-2">WO-2</option>
-					<option value="WO-3">WO-3</option>
-					<option value="WO-4">WO-4</option>
-					<option value="WO-5">WO-5</option>
-					<option value="OF-1">OF-1</option>
-					<option value="OF-2">OF-2</option>
-					<option value="OF-3">OF-3</option>
-					<option value="OF-4">OF-4</option>
-					<option value="OF-5">OF-5</option>
-					<option value="OF-6">OF-6</option>
-					<option value="OF-7">OF-7</option>
-					<option value="OF-8">OF-8</option>
-					<option value="OF-9">OF-9</option>
-					<option value="OF-10">OF-10</option>
+					{ranks.map(rank =>
+						<option key={rank} value={rank}>{rank}</option>
+					)}
 				</RequiredField>
 
 				<RequiredField id="gender" componentClass="select"

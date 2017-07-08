@@ -11,6 +11,7 @@ import ButtonToggleGroup from 'components/ButtonToggleGroup'
 import History from 'components/History'
 
 import API from 'api'
+import dict from 'dictionary'
 import {Position, Organization} from 'models'
 
 
@@ -62,8 +63,8 @@ export default class PositionForm extends ValidatableFormWrapper {
 				<Fieldset title={edit ? `Edit Position ${position.name}` : "Create a new Position"}>
 					<Form.Field id="type" disabled={this.props.edit}>
 						<ButtonToggleGroup>
-							<Button id="typeAdvisorButton" value="ADVISOR">NATO (Billet)</Button>
-							<Button id="typePrincipalButton" value="PRINCIPAL">Principal (Tashkil)</Button>
+							<Button id="typeAdvisorButton" value="ADVISOR">{dict.lookup('ADVISOR_POSITION_NAME')}</Button>
+							<Button id="typePrincipalButton" value="PRINCIPAL">{dict.lookup('PRINCIPAL_POSITION_NAME')}</Button>
 						</ButtonToggleGroup>
 					</Form.Field>
 
@@ -90,7 +91,7 @@ export default class PositionForm extends ValidatableFormWrapper {
 					</Form.Field>
 
 					<Form.Field id="code"
-						label={position.type === 'PRINCIPAL' ? 'Tashkil Code' : 'Billet Code'}
+						label={position.type === 'PRINCIPAL' ? dict.lookup('PRINCIPAL_POSITION_CODE_NAME') : dict.lookup('ADVISOR_POSITION_CODE_NAME')}
 						placeholder="Postion ID or Number" />
 
 					<RequiredField id="name" label="Position Name" placeholder="Name/Description of Position"/>
@@ -98,10 +99,10 @@ export default class PositionForm extends ValidatableFormWrapper {
 					{position.type !== 'PRINCIPAL' &&
 						<Form.Field id="permissions">
 							<ButtonToggleGroup>
-								<Button id="permsAdvisorButton" value="ADVISOR">User</Button>
-								<Button id="permsSuperUserButton" value="SUPER_USER">Super User</Button>
+								<Button id="permsAdvisorButton" value="ADVISOR">{dict.lookup('ADVISOR_POSITION_TYPE_TITLE')}</Button>
+								<Button id="permsSuperUserButton" value="SUPER_USER">{dict.lookup('SUPER_USER_POSITION_TYPE_TITLE')}</Button>
 								{currentUser && currentUser.isAdmin() &&
-									<Button id="permsAdminButton" value="ADMINISTRATOR">Administrator</Button>
+									<Button id="permsAdminButton" value="ADMINISTRATOR">{dict.lookup('ADMINISTRATOR_POSITION_TYPE_TITLE')}</Button>
 								}
 							</ButtonToggleGroup>
 						</Form.Field>

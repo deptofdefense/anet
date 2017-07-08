@@ -4,6 +4,7 @@ import autobind from 'autobind-decorator'
 
 import Fieldset from 'components/Fieldset'
 import LinkTo from 'components/LinkTo'
+import dict from 'dictionary'
 
 import {Position, Person} from 'models'
 
@@ -61,15 +62,15 @@ export default class OrganizationLaydown extends Component {
 		let org = this.props.organization
 		let posNameHeader, posPersonHeader, otherNameHeader, otherPersonHeader
 		if (org.isAdvisorOrg()) {
-			posNameHeader = 'Billet'
-			posPersonHeader = 'Advisor'
-			otherNameHeader = 'TASHKIL'
-			otherPersonHeader = 'Afghan'
+			posNameHeader = dict.lookup('ADVISOR_POSITION_NAME')
+			posPersonHeader = dict.lookup('ADVISOR_PERSON_TITLE')
+			otherNameHeader = dict.lookup('PRINCIPAL_POSITION_NAME')
+			otherPersonHeader = dict.lookup('PRINCIPAL_PERSON_TITLE')
 		} else {
-			otherNameHeader = 'Billet'
-			otherPersonHeader = 'Advisor'
-			posNameHeader = 'TASHKIL'
-			posPersonHeader = 'Afghan'
+			otherNameHeader = dict.lookup('ADVISOR_POSITION_NAME')
+			otherPersonHeader = dict.lookup('ADVISOR_PERSON_TITLE')
+			posNameHeader = dict.lookup('PRINCIPAL_POSITION_NAME')
+			posPersonHeader = dict.lookup('PRINCIPAL_PERSON_TITLE')
 		}
 		return <Table>
 			<thead>
