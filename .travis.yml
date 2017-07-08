@@ -4,8 +4,9 @@ jdk:
   - oraclejdk8
 
 env:
-- ACCEPT_EULA=Y
-- SA_PASSWORD=P@ssw0rd
+  global:
+    - ACCEPT_EULA=Y
+    - SA_PASSWORD=P@ssw0rd
 
 before_install:
   - nvm install node
