@@ -17,7 +17,6 @@ before_install:
   - npm run build
   - cd ..
   - docker exec -ti mssql-server /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P P@ssw0rd -Q "CREATE DATABASE testanet"
-  - docker exec -ti mssql-server /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P P@ssw0rd -d testanet -i /hostdata/insertBaseData.sql
   - touch localSettings.gradle
   - echo "run.environment(\"DB_DRIVER\",\"sqlserver\")" >> localSettings.gradle
   - echo "run.environment(\"ANET_DB_SERVER\",\"localhost\")"  >> localSettings.gradle
@@ -25,4 +24,6 @@ before_install:
   - echo "run.environment(\"ANET_DB_USERNAME\",\"SA\")" >> localSettings.gradle
   - echo "run.environment(\"ANET_DB_PASSWORD\",\"P@ssw0rd\")" >> localSettings.gradle
   - ./gradlew dbMigrate
+  - docker exec -ti mssql-server /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P P@ssw0rd -d testanet -i /hostdata/insertBaseData.sql
+
 
