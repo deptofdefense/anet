@@ -4,6 +4,7 @@ import autobind from 'autobind-decorator'
 import Fieldset from 'components/Fieldset'
 import Autocomplete from 'components/Autocomplete'
 import Form from 'components/Form'
+import dict from 'dictionary'
 import {Table, Button, HelpBlock} from 'react-bootstrap'
 
 import {Poam} from 'models'
@@ -22,20 +23,22 @@ export default class PoamsSelector extends Component {
 	}
 
 	static contextTypes = {
-		app: PropTypes.object.isRequired,
+		app: PropTypes.object.isRequired
 	}
 
 	render() {
 		let {poams, shortcuts, validationState, optional} = this.props
-		let appSettings = this.context.app.state.settings
 
-		return <Fieldset title={appSettings.POAM_LONG_NAME} action={optional && "(Optional)"} className="poams-selector">
-			<Form.Field id="poams" label={appSettings.POAM_SHORT_NAME} validationState={validationState} >
+		let poamLong = dict.lookup('POAM_LONG_NAME')
+		let poamShort = dict.lookup("POAM_SHORT_NAME")
+
+		return <Fieldset title={poamLong} action={optional && "(Optional)"} className="poams-selector">
+			<Form.Field id="poams" label={poamShort} validationState={validationState} >
 				<Autocomplete
 					objectType={Poam}
 					fields={Poam.autocompleteQuery}
 					queryParams={{status: 'ACTIVE'}}
-					placeholder={`Start typing to search for ${appSettings.POAM_SHORT_NAME}...`}
+					placeholder={`Start typing to search for ${poamShort}...`}
 					template={Poam.autocompleteTemplate}
 					onChange={this.addPoam}
 					onErrorChange={this.props.onErrorChange}
@@ -43,7 +46,7 @@ export default class PoamsSelector extends Component {
 
 				{validationState && <HelpBlock>
 					<img src={WARNING_ICON} role="presentation" height="20px" />
-					{appSettings.POAM_SHORT_NAME} not found in Database
+					{poamShort} not found in Database
 				</HelpBlock>}
 
 				<Table hover striped>
@@ -66,8 +69,8 @@ export default class PoamsSelector extends Component {
 				</Table>
 
 				{poams.length === 0 && <p style={{textAlign: 'center'}}><em>
-					No {appSettings.POAM_SHORT_NAME} selected
-					{this.props.optional && ' (this is fine if no ' + appSettings.POAM_SHORT_NAME + 's were discussed)'}
+					No {poamShort} selected
+					{this.props.optional && ' (this is fine if no ' + poamShort + 's were discussed)'}
 					.
 				</em></p>}
 
@@ -78,7 +81,7 @@ export default class PoamsSelector extends Component {
 
 	renderShortcuts() {
 		let shortcuts = this.props.shortcuts || []
-		let poamShortName = this.context.app.state.settings.POAM_SHORT_NAME
+		let poamShortName = dict.lookup("POAM_SHORT_NAME")
 		return <Form.Field.ExtraCol className="shortcut-list">
 			<h5>Recent {poamShortName}</h5>
 			{shortcuts.map(poam =>

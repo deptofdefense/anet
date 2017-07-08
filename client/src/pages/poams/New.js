@@ -1,4 +1,4 @@
-import React, {PropTypes} from 'react'
+import React from 'react'
 import Page from 'components/Page'
 
 import PoamForm from './Form'
@@ -6,6 +6,7 @@ import Breadcrumbs from 'components/Breadcrumbs'
 import NavigationWarning from 'components/NavigationWarning'
 
 import API from 'api'
+import dict from 'dictionary'
 import {Poam,Organization} from 'models'
 
 export default class PoamNew extends Page {
@@ -13,9 +14,6 @@ export default class PoamNew extends Page {
 		useNavigation: false
 	}
 
-	static contextTypes = {
-		app: PropTypes.object.isRequired,
-	}
 
 	constructor(props) {
 		super(props)
@@ -43,12 +41,10 @@ export default class PoamNew extends Page {
 
 	render() {
 		let poam = this.state.poam
-		let appSettings = this.context.app.state.settings
 
 		return (
 			<div>
-				<Breadcrumbs items={[['Create new ' + appSettings.POAM_SHORT_NAME, Poam.pathForNew()]]} />
-
+				<Breadcrumbs items={[['Create new ' + dict.lookup('POAM_SHORT_NAME'), Poam.pathForNew()]]} />
 
 				<NavigationWarning original={this.state.originalPoam} current={poam} />
 				<PoamForm poam={poam} />

@@ -1,5 +1,6 @@
 import History from 'components/History'
 import {Organization} from 'models'
+import dict from 'dictionary'
 
 let userTour = (currentUser) => { return {
 	id: 'home',
@@ -96,7 +97,9 @@ let superUserTour = (currentUser) => { return {
 	]
 }}
 
-let reportTour = (currentUser, appSettings) => { return {
+let reportTour = (currentUser) => {
+	let poamShortTitle = dict.lookup("POAM_SHORT_NAME")
+	return {
 	id: 'report',
 	steps: [
 		{
@@ -132,7 +135,7 @@ let reportTour = (currentUser, appSettings) => { return {
 		},
 			{
 			title: 'Recents',
-			content: "If you've written reports in the past, your recent selections of attendees, " + appSettings.POAM_SHORT_NAME + "s, and locations will display to the right in a section called \"Recents\". You can click on one of the shortcuts to quickly add it to your report.",
+			content: "If you've written reports in the past, your recent selections of attendees, " + poamShortTitle + "s, and locations will display to the right in a section called \"Recents\". You can click on one of the shortcuts to quickly add it to your report.",
 			target: '#attendees',
 			placement: 'bottom',
 		},
@@ -143,8 +146,8 @@ let reportTour = (currentUser, appSettings) => { return {
 			placement: 'bottom',
 		},
 		{
-			title: appSettings.POAM_SHORT_NAME + 's',
-			content: 'Search for the ' + appSettings.POAM_SHORT_NAME + 's that apply to this engagement. You can search for ' + appSettings.POAM_SHORT_NAME + 's in any organization, including your organization and its sub-organizations. ' + appSettings.POAM_SHORT_NAME + 's are not required.',
+			title: poamShortTitle + 's',
+			content: 'Search for the ' + poamShortTitle + 's that apply to this engagement. You can search for ' + poamShortTitle + 's in any organization, including your organization and its sub-organizations. ' + poamShortTitle + 's are not required.',
 			target: '#poams',
 			placement: 'right',
 		},
@@ -181,7 +184,9 @@ let reportTour = (currentUser, appSettings) => { return {
 	]
 }}
 
-let orgTour = (currentUser, appSettings) => { return {
+let orgTour = (currentUser) => {
+	let poamShortTitle = dict.lookup("POAM_SHORT_NAME")
+	return {
 	id: 'org',
 	steps: [
 		{
@@ -215,8 +220,8 @@ let orgTour = (currentUser, appSettings) => { return {
 			placement: 'top',
 		},
 		{
-			title: appSettings.POAM_SHOT_NAME + 's',
-			content: 'The ' + appSettings.POAM_LONG_NAME + ' that your organization is responsible for will be displayed in this section. If you need to make changes, or if ' + appSettings.POAM_SHORT_NAME + 's change, you can update that information by clicking on the ' + appSettings.POAM_SHORT_NAME + '.',
+			title: poamShortTitle + 's',
+			content: 'The ' + dict.lookup('POAM_LONG_NAME') + ' that your organization is responsible for will be displayed in this section. If you need to make changes, or if ' + poamShortTitle + 's change, you can update that information by clicking on the ' + poamShortTitle + '.',
 			target: '#poams h2',
 			placement: 'top',
 		},
@@ -241,53 +246,56 @@ let orgTour = (currentUser, appSettings) => { return {
 	]
 }}
 
-let positionTour = (currentUser, appSettings) => { return {
-	id: 'position',
-	steps: [
-		{
-			title: "Positions",
-			content: "This section allows you to quickly review this position's detailed information, such as the position's billet or tashkil code, status, and organization.",
-			target: '.persistent-tour-launcher',
-			placement: 'left',
-		},
-		{
-			title: "Type of user",
-			content: "There are three types of users: user, super user, and administrator. Super users can give other positions either user or super user privileges. Users are able to take basic actions, like submitting reports, using search, and reviewing the daily rollup. Super users are able to edit positions, people, and " + appSettings.POAM_SHORT_NAME + "s in their organization, as well as locations. This section isn't visible if you're looking at a tashkil position.",
-			target: '#type',
-			placement: 'bottom',
-		},
-		{
-			title: "Active/inactive status",
-			content: "Positions can be either active or inactive. Changing the status to \"Inactive\" means that your organization no longer supports that position / function. This is different than a vacant position, which is one that does not have a person assigned to it. Positions will move to the \"Vacant\" section of your organization's page automatically when no one is assigned to it.",
-			target: '#status',
-			placement: 'bottom',
-		},
-		{
-			title: "Current assigned person",
-			content: "This section shows you who is currently assigned to this position. For billet positions, you'll see the NATO member in this position. For taskhil positions, you'll see the current Afghan principal in that position. You can click the \"Change assigned person\" button to quickly change who is in this position.",
-			target: '#assigned-advisor h2',
-			placement: 'top',
-		},
-		{
-			title: "Assigned Afghan principal or Advisor",
-			content: "If you're looking at a NATO billet position, you'll see the people this position is responisble for advising. If you're looking at a tashkil position, you'll see the advisors advising that Afghan tashkil here. You can update this information by clicking the \"Change assigned advisors\" or \"Change assigned Afghan principals\" button, depending on what type of position you're looking at.",
-			target: '#assigned-principal h2',
-			placement: 'top',
-		},
-		{
-			title: "Previous position holders",
-			content: "The previous position holders section will show you other people who have previously held this position.",
-			target: '#previous-people h2',
-			placement: 'top',
-		},
-		{
-			title: 'Take a guided tour',
-			content: 'Click on this button to take this page\'s tour again.',
-			target: '.persistent-tour-launcher',
-			placement: 'left',
-		},
-	]
-}}
+let positionTour = (currentUser) => {
+	let poamShortTitle = dict.lookup("POAM_SHORT_NAME")
+	return {
+		id: 'position',
+		steps: [
+			{
+				title: "Positions",
+				content: "This section allows you to quickly review this position's detailed information, such as the position's billet or tashkil code, status, and organization.",
+				target: '.persistent-tour-launcher',
+				placement: 'left',
+			},
+			{
+				title: "Type of user",
+				content: "There are three types of users: user, super user, and administrator. Super users can give other positions either user or super user privileges. Users are able to take basic actions, like submitting reports, using search, and reviewing the daily rollup. Super users are able to edit positions, people, and " + poamShortTitle + "s in their organization, as well as locations. This section isn't visible if you're looking at a tashkil position.",
+				target: '#type',
+				placement: 'bottom',
+			},
+			{
+				title: "Active/inactive status",
+				content: "Positions can be either active or inactive. Changing the status to \"Inactive\" means that your organization no longer supports that position / function. This is different than a vacant position, which is one that does not have a person assigned to it. Positions will move to the \"Vacant\" section of your organization's page automatically when no one is assigned to it.",
+				target: '#status',
+				placement: 'bottom',
+			},
+			{
+				title: "Current assigned person",
+				content: "This section shows you who is currently assigned to this position. For billet positions, you'll see the NATO member in this position. For taskhil positions, you'll see the current Afghan principal in that position. You can click the \"Change assigned person\" button to quickly change who is in this position.",
+				target: '#assigned-advisor h2',
+				placement: 'top',
+			},
+			{
+				title: "Assigned Afghan principal or Advisor",
+				content: "If you're looking at a NATO billet position, you'll see the people this position is responisble for advising. If you're looking at a tashkil position, you'll see the advisors advising that Afghan tashkil here. You can update this information by clicking the \"Change assigned advisors\" or \"Change assigned Afghan principals\" button, depending on what type of position you're looking at.",
+				target: '#assigned-principal h2',
+				placement: 'top',
+			},
+			{
+				title: "Previous position holders",
+				content: "The previous position holders section will show you other people who have previously held this position.",
+				target: '#previous-people h2',
+				placement: 'top',
+			},
+			{
+				title: 'Take a guided tour',
+				content: 'Click on this button to take this page\'s tour again.',
+				target: '.persistent-tour-launcher',
+				placement: 'left',
+			},
+		]
+	}
+}
 
 let personTour = (currentUser) => { return {
 	id: 'person',

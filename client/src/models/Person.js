@@ -2,6 +2,7 @@ import React from 'react'
 
 import Model from 'components/Model'
 import utils from 'utils'
+import dict from 'dictionary'
 
 import RS_ICON from 'resources/rs_small.png'
 import AFG_ICON from 'resources/afg_small.png'
@@ -82,10 +83,10 @@ export default class Person extends Model {
 
 	static humanNameOfRole(role) {
 		if (role === 'ADVISOR') {
-			return 'NATO member'
+			return dict.lookup('ADVISOR_PERSON_TITLE')
 		}
 		if (role === 'PRINCIPAL') {
-			return 'Afghan principal'
+			return dict.lookup('PRINCIPAL_PERSON_TITLE')
 		}
 
 

@@ -1,4 +1,4 @@
-import React, {PropTypes} from 'react'
+import React from 'react'
 import Page from 'components/Page'
 import {Alert, Table, Modal, Button, Nav, NavItem, Badge, Pagination} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
@@ -14,6 +14,7 @@ import Messages from 'components/Messages'
 import AdvancedSearch from 'components/AdvancedSearch'
 
 import API from 'api'
+import dict from 'dictionary'
 import GQL from 'graphqlapi'
 import {Person, Organization, Position, Poam} from 'models'
 import Export from "export"
@@ -71,10 +72,6 @@ const SEARCH_CONFIG = {
 }
 
 export default class Search extends Page {
-
-	static contextTypes = {
-		app: PropTypes.object.isRequired
-	}
 
 	constructor(props) {
 		super(props)
@@ -205,7 +202,7 @@ export default class Search extends Page {
 		let queryString = QUERY_STRINGS[query.type] || query.text || 'TODO'
 		let queryType = this.state.queryType || query.type || 'everything'
 
-		let appSettings = this.context.app.state.settings
+		let poamShortTitle = dict.lookup('POAM_SHORT_NAME')
 
 		if (typeof queryString === 'object') {
 			queryString = queryString[Object.keys(query)[1]]
@@ -246,7 +243,7 @@ export default class Search extends Page {
 							</NavItem>
 
 							<NavItem eventKey="poams" disabled={!numPoams}>
-								<img src={POAMS_ICON} role="presentation" /> {appSettings.POAM_SHORT_NAME}s
+								<img src={POAMS_ICON} role="presentation" /> {poamShortTitle}s
 								{numPoams > 0 && <Badge pullRight>{numPoams}</Badge>}
 							</NavItem>
 
@@ -297,7 +294,7 @@ export default class Search extends Page {
 				}
 
 				{numPoams > 0 && (queryType === 'everything' || queryType === 'poams') &&
-					<Fieldset title={appSettings.POAM_SHORT_NAME + 's'}>
+					<Fieldset title={poamShortTitle + 's'}>
 						{this.renderPoams()}
 					</Fieldset>
 				}
