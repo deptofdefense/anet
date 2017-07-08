@@ -3,23 +3,20 @@ language: java
 jdk:
   - oraclejdk8
 
-env:
-  global:
-    - ACCEPT_EULA=Y
-    - SA_PASSWORD=P@ssw0rd
+sudo: required
+
+services:
+  - docker
 
 before_install:
+  - docker run --name mssql-server -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=P@ssw0rd' -p 1433:1433 -d microsoft/mssql-server-linux bin/sh -c "export DEBIAN_FRONTEND=noninteractive && apt-get update && apt-get install -y curl && curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && curl https://packages.microsoft.com/config/ubuntu/16.04/mssql-server.list | tee /etc/apt/sources.list.d/mssql-server.list && apt-get update && apt-get install -y mssql-server-fts && /opt/mssql/bin/sqlservr"
   - nvm install node
   - nvm use node
   - cd client
   - npm install
   - npm run build
   - cd ..
-  - curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
-  - curl https://packages.microsoft.com/config/ubuntu/16.04/mssql-server.list | sudo tee /etc/apt/sources.list.d/mssql-server.list
-  - sudo apt-get update 
-  - sudo apt-get install -y mssql-server
-  - sudo apt-get install -y mssql-server-fts
+  - docker exec -ti mssql-server /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P P@ssw0rd -Q "CREATE DATABASE testanet"
   - touch localSettings.gradle
   - echo run.environment("DB_DRIVER","sqlserver") >> localSettings.gradle
   - echo run.environment("ANET_DB_SERVER","localhost")  >> localSettings.gradle
