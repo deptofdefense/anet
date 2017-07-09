@@ -46,6 +46,9 @@ export default class PersonForm extends ValidatableFormWrapper {
 		let willAutoKickPosition = person.status === 'INACTIVE' && person.position && !!person.position.id
 		let ranks = dict.lookup('ranks') || []
 
+		let currentUser = this.context.currentUser
+		let isAdmin = currentUser && currentUser.isAdmin()
+
 		return <ValidatableForm formFor={person} onChange={this.onChange} onSubmit={this.onSubmit} horizontal
 			submitText={this.props.saveText || 'Save person'}>
 
@@ -59,7 +62,7 @@ export default class PersonForm extends ValidatableFormWrapper {
 					:
 					<Form.Field id="role">
 						<ButtonToggleGroup>
-							<Button id="roleAdvisorButton" value="ADVISOR">{dict.lookup('ADVISOR_PERSON_TITLE')}</Button>
+							<Button id="roleAdvisorButton" disabled={!isAdmin} value="ADVISOR">{dict.lookup('ADVISOR_PERSON_TITLE')}</Button>
 							<Button id="rolePrincipalButton" value="PRINCIPAL">{dict.lookup('PRINCIPAL_PERSON_TITLE')}</Button>
 						</ButtonToggleGroup>
 					</Form.Field>
