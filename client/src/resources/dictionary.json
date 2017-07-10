@@ -16,6 +16,8 @@
 	"POAM_SHORT_NAME": "PoAM",
 	"NAV_BAR_ALL_ADVISOR_ORGS" : "All EFs / AOs",
 
+	"pinned_ORGs" : ["Key Leader Engagement"],
+
 	"countries": [
 		"Afghanistan",
 		"Albania",
