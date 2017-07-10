@@ -133,7 +133,7 @@ export default class RollupShow extends Page {
 				reports: values[0].reportList,
 				graphData: values[1]
 					.map(d => {d.org = d.org || {id: -1, shortName: "Other"}; return d})
-					.sort((a, b) => a.org.shortName - b.org.shortName)
+					.sort((a, b) => a.org.shortName.localeCompare(b.org.shortName))
 			})
 		})
 	}
