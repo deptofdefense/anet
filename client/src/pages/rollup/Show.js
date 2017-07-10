@@ -12,6 +12,7 @@ import ButtonToggleGroup from 'components/ButtonToggleGroup'
 import Form from 'components/Form'
 import History from 'components/History'
 import Messages from 'components/Messages'
+import dict from 'dictionary'
 
 import API from 'api'
 
@@ -128,12 +129,21 @@ export default class RollupShow extends Page {
 			}
 		`, {rollupQuery}, '($rollupQuery: ReportSearchQuery)')
 
+		let pinned_ORGs = dict.lookup('pinned_ORGs')
+
 		Promise.all([reportQuery, graphQuery]).then(values => {
 			this.setState({
 				reports: values[0].reportList,
 				graphData: values[1]
 					.map(d => {d.org = d.org || {id: -1, shortName: "Other"}; return d})
-					.sort((a, b) => a.org.shortName - b.org.shortName)
+					.sort((a, b) => {
+						let a_i = pinned_ORGs.indexOf(a.org.shortName)
+						let b_i = pinned_ORGs.indexOf(b.org.shortName)
+						if (a_i<0)
+							return (b_i<0) ?  a.org.shortName.localeCompare(b.org.shortName) : 1
+						else
+							return (b_i<0) ? -1 : a-b
+					})
 			})
 		})
 	}

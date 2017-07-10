@@ -12,6 +12,8 @@ import dict from 'dictionary'
 import API from 'api'
 import {Person, Organization} from 'models'
 
+import dictionary from 'resources/dictionary.json'
+
 export default class App extends Page {
 	static PagePropTypes = {
 		useNavigation: PropTypes.bool,
@@ -83,9 +85,10 @@ export default class App extends Page {
 		})
 
 		//Fetch the dictionary.
-		API.fetch('/dictionary.json').then(dictionary =>
+		// @vassil dictionary.json temporarily moved to resouces. Difficulties to load from /dictionary.json when deployed as the files is moved under PUBLIC_URL
+//		API.fetch('/dictonary.json').then(dictionary =>
 			dict.setDictionary(dictionary)
-		)
+//		)
 	}
 
 	processData(data) {
