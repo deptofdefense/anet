@@ -36,7 +36,7 @@ The frontend is run with `npm`.  We recommend running the backend via `eclipse` 
       1. Arguments includes `server anet.yml`
       1. Environment variables include anything set in build.gradle or localSettings.gradle.  If you are using sqlite as your database, this will include: `ANET_DB_DRIVER=org.sqlite.JDBC`, `ANET_DB_URL=jdbc:sqlite:development.db`, `ANET_DB_DATE_STRING_FORMAT=yyyy-MM-dd hh:mm:ss.SSS Z"`, `ANET_DB_DATE_CLASS=text`
    1. Ensure there are no compile errors. If there are, you are probably missing dependencies or forgot to set environment variables in Eclipse. Try re-running `./gradlew eclipse` or checking the Eclipse run configuration vs gradle configs.
-1. Update the settings in `anet.yml` for your environment.  See the [ANET Configuration documentation](https://github.com/deptofdefense/anet/blob/master/DOCUMENTATION.md#anet-configuration) for more details on these configuration options. You are most likely to change:
+1. Update the settings in `anet.yml` for your environment.  See the [ANET Configuration documentation](https://github.com/deptofdefense/anet/blob/master/docs/DOCUMENTATION.md#anet-configuration) for more details on these configuration options. You are most likely to change:
    1. `emailFromAddr` - use your own email address for testing.
 
 ## Java Backend
