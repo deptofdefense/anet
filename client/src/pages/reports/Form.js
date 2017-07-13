@@ -54,7 +54,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 			locationList(f:recents) {
 				list { id, name }
 			}
-			personList(f:recents) {
+			personList(f:recents, maxResults:6) {
 				list { id, name, rank, role, position { id, name, organization {id, shortName}} }
 			}
 			poamList(f:recents) {
