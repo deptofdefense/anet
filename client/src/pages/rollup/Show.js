@@ -137,12 +137,12 @@ export default class RollupShow extends Page {
 				graphData: values[1]
 					.map(d => {d.org = d.org || {id: -1, shortName: "Other"}; return d})
 					.sort((a, b) => {
-						let a_i = pinned_ORGs.indexOf(a.org.shortName)
-						let b_i = pinned_ORGs.indexOf(b.org.shortName)
-						if (a_i<0)
-							return (b_i<0) ?  a.org.shortName.localeCompare(b.org.shortName) : 1
+						let a_index = pinned_ORGs.indexOf(a.org.shortName)
+						let b_index = pinned_ORGs.indexOf(b.org.shortName)
+						if (a_index<0)
+							return (b_index<0) ?  a.org.shortName.localeCompare(b.org.shortName) : 1
 						else
-							return (b_i<0) ? -1 : a-b
+							return (b_index<0) ? -1 : a_index-b_index
 					})
 			})
 		})
