@@ -84,11 +84,11 @@ public class LocationDao implements IAnetDao<Location> {
 				.execute();
 	}
 	
-	public List<Location> getRecentLocations(Person author) {
+	public List<Location> getRecentLocations(Person author, int maxResults) {
 		String sql;
 		if (DaoUtils.isMsSql(dbHandle)) {
 			sql = "/* recentLocations */ SELECT locations.* FROM locations WHERE id IN ( "
-					+ "SELECT TOP(3) reports.locationId "
+					+ "SELECT TOP(:maxResults) reports.locationId "
 					+ "FROM reports "
 					+ "WHERE authorid = :authorId "
 					+ "GROUP BY locationId "
@@ -100,11 +100,13 @@ public class LocationDao implements IAnetDao<Location> {
 					+ "FROM reports "
 					+ "WHERE authorid = :authorId "
 					+ "GROUP BY locationId "
-					+ "ORDER BY MAX(reports.createdAt) DESC LIMIT 3"
+					+ "ORDER BY MAX(reports.createdAt) DESC "
+					+ "LIMIT :maxResults"
 				+ ")";
 		}
 		return dbHandle.createQuery(sql)
 				.bind("authorId", author.getId())
+				.bind("maxResults", maxResults)
 				.map(new LocationMapper())
 				.list();
 	}
