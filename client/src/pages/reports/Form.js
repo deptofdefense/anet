@@ -57,7 +57,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 			personList(f:recents, maxResults:6) {
 				list { id, name, rank, role, position { id, name, organization {id, shortName}} }
 			}
-			poamList(f:recents) {
+			poamList(f:recents, maxResults:6) {
 				list { id, shortName, longName }
 			}
 		`).then(data => {
