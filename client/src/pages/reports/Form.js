@@ -51,7 +51,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 
 	componentDidMount() {
 		API.query(/* GraphQL */`
-			locationList(f:recents) {
+			locationList(f:recents, maxResults:6) {
 				list { id, name }
 			}
 			personList(f:recents, maxResults:6) {
