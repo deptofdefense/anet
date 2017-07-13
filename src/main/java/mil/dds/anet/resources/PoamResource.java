@@ -184,10 +184,15 @@ public class PoamResource implements IGraphQLResource {
 		}
 	}
 	
+	/**
+	 * Returns the most recent PoAMs that this user listed in reports.
+	 * @param maxResults maximum number of results to return, defaults to 3
+	 */
 	@GET
 	@GraphQLFetcher
 	@Path("/recents")
-	public PoamList recents(@Auth Person user) { 
-		return new PoamList(dao.getRecentPoams(user));
+	public PoamList recents(@Auth Person user,
+			@DefaultValue("3") @QueryParam("maxResults") int maxResults) {
+		return new PoamList(dao.getRecentPoams(user, maxResults));
 	}
 }
