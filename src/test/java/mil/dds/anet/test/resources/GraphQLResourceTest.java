@@ -49,6 +49,7 @@ public class GraphQLResourceTest extends AbstractResourceTest {
 		variables.put("reportId", jack.loadAttendedReports(0, 20).getList().get(0).getId());
 		variables.put("pageNum", 0);
 		variables.put("pageSize", 10);
+		variables.put("maxResults", 6);
 		logger.info("Using variables {}", variables);
 		
 		for (File f : testDir.listFiles()) { 

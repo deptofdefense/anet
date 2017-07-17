@@ -132,11 +132,11 @@ public class PoamDao implements IAnetDao<Poam> {
 				.getPoamSearcher().runSearch(query, dbHandle);
 	}
 	
-	public List<Poam> getRecentPoams(Person author) {
+	public List<Poam> getRecentPoams(Person author, int maxResults) {
 		String sql;
 		if (DaoUtils.isMsSql(dbHandle)) {
 			sql = "/* getRecentPoams */ SELECT poams.* FROM poams WHERE poams.id IN ("
-					+ "SELECT TOP(3) reportPoams.poamId "
+					+ "SELECT TOP(:maxResults) reportPoams.poamId "
 					+ "FROM reports JOIN reportPoams ON reports.id = reportPoams.reportId "
 					+ "WHERE authorId = :authorId "
 					+ "GROUP BY poamId "
@@ -149,11 +149,12 @@ public class PoamDao implements IAnetDao<Poam> {
 					+ "WHERE authorId = :authorId "
 					+ "GROUP BY poamId "
 					+ "ORDER BY MAX(reports.createdAt) DESC "
-					+ "LIMIT 3"
+					+ "LIMIT :maxResults"
 				+ ")";
 		}
 		return dbHandle.createQuery(sql)
 				.bind("authorId", author.getId())
+				.bind("maxResults", maxResults)
 				.map(new PoamMapper())
 				.list();
 	}
