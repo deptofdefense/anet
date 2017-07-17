@@ -60,7 +60,7 @@ The frontend is run with `npm`.  We recommend running the backend via `eclipse` 
    - The database schema is stored in `src/main/resources/migrations.xml`.
 1. Seed the initial data:
    - SQLite: `cat insertBaseData.sql | ./mssql2sqlite.sh | sqlite3 development.db`
-   - MSSQL: You'll need to manually connect to your sqlserver instance and run `insertBaseData.sql`
+   - MSSQL: You'll need to manually connect to your sqlserver instance and run `insertBaseData.sql` through the GUI or run 'sqlcmd -S <servername> -U <username> -P <password> -d testanet -i insertBaseData.sql'
 1. Run `./gradlew build` to download all dependencies and build the project.
    - Some tests will fail if you are using SQLite, because it has a bad implementation of some timezone stuff. You'll need to use MSSQL to see all the tests passing.
 

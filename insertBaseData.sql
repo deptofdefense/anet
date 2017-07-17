@@ -1,3 +1,5 @@
+SET QUOTED_IDENTIFIER ON
+
 --DROP TABLE approvers;
 --DROP TABLE approvalActions;
 --DROP TABLE positionRelationships;
