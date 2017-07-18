@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -64,19 +65,29 @@ public class GraphQLResourceTest extends AbstractResourceTest {
 					query.put("variables", ImmutableMap.of());
 					logger.info("Processing file {}", f);
 
+					// Test POST request
 					Map<String,Object> resp = httpQuery("/graphql", arthur)
 							.post(Entity.json(query), new GenericType<Map<String,Object>>() {});
-					assertThat(resp).isNotNull();
-					assertThat(resp.containsKey("errors"))
-						.as("Has Errors on %s : %s, %s",f.getName(),resp.get("errors"), resp.values().toString())
-						.isFalse();
-					assertThat(resp.containsKey("data")).as("Missing Data on " + f.getName(), resp).isTrue();
+					doAsserts(f, resp);
+
+					// Test GET request
+					resp = httpQuery("/graphql?query=" + URLEncoder.encode("{" + raw + "}", "UTF-8"), arthur)
+							.get(new GenericType<Map<String,Object>>() {});
+					doAsserts(f, resp);
 					
 				} catch (IOException e) { 
 					Assertions.fail("Unable to read file ", e);
 				}
 			}
 		}
+	}
+
+	private void doAsserts(File f, Map<String, Object> resp) {
+		assertThat(resp).isNotNull();
+		assertThat(resp.containsKey("errors"))
+			.as("Has Errors on %s : %s, %s",f.getName(),resp.get("errors"), resp.values().toString())
+			.isFalse();
+		assertThat(resp.containsKey("data")).as("Missing Data on " + f.getName(), resp).isTrue();
 	}
 	
 }

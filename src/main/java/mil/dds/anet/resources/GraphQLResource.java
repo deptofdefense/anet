@@ -9,9 +9,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.PermitAll;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -184,18 +186,28 @@ public class GraphQLResource {
 		return builder.build();
 	}
 
-	
 	@POST
 	@Timed
-	public Response graphql(@Auth Person user, Map<String,Object> body) {
-		if (developmentMode) {
-			buildGraph();
-		}
+	public Response graphqlPost(@Auth Person user, Map<String,Object> body) {
 		String query = (String) body.get("query");
 		
 		@SuppressWarnings("unchecked")
 		Map<String, Object> variables = (Map<String, Object>) body.get("variables");
 		if (variables == null) { variables = new HashMap<String,Object>(); }
+
+		return graphql(user, query, variables);
+	}
+
+	@GET
+	@Timed
+	public Response graphqlGet(@Auth Person user, @QueryParam("query") String query) {
+		return graphql(user, query, new HashMap<String,Object>());
+	}
+
+	protected Response graphql(@Auth Person user, String query, Map<String, Object> variables) {
+		if (developmentMode) {
+			buildGraph();
+		}
 
 		Map<String, Object> context = new HashMap<String,Object>();
 		context.put("auth", user);
