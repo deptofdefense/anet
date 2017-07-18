@@ -198,18 +198,14 @@ public class AnetResourceDataFetcher implements DataFetcher {
 				}
 			}
 			
-			//Verify the types are correct. (ignore primitives) 
-			if ((!param.getType().isPrimitive()) && param.getType().isAssignableFrom(arg.getClass()) == false) {
-				//If the argument passed was a Map, but we need a bean, try to convert it? 
-				if (Map.class.isAssignableFrom(arg.getClass())) {
-					try { 
-						arg = mapper.convertValue(arg, param.getType());
-					} catch (IllegalArgumentException e) {
-						throw new WebApplicationException("Unable to convert Map into " + param.getType() + ": " + e.getMessage(), e);
-					}
-				} else {
+			//Verify the types are correct.
+			if (!param.getType().isAssignableFrom(arg.getClass())) {
+				//Try to convert it
+				try {
+					arg = mapper.convertValue(arg, param.getType());
+				} catch (IllegalArgumentException e) {
 					System.out.println("c: Arg is " + arg.getClass() + " and param is " + param.getType());
-					throw new WebApplicationException(String.format("Type mismatch on arg, wanted %s got %s on %s", 
+					throw new WebApplicationException(String.format("Type mismatch on arg, wanted %s got %s on %s",
 							param.getType(), arg.getClass(), method.getName()));
 				}
 			}

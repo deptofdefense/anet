@@ -14,6 +14,8 @@ import javax.ws.rs.core.GenericType;
 import org.apache.commons.io.IOUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -21,6 +23,8 @@ import io.dropwizard.client.JerseyClientBuilder;
 import mil.dds.anet.beans.Person;
 
 public class GraphQLResourceTest extends AbstractResourceTest {
+
+	private Logger logger = LoggerFactory.getLogger(GraphQLResourceTest.class);
 
 	public GraphQLResourceTest() { 
 		if (client == null) { 
@@ -43,6 +47,10 @@ public class GraphQLResourceTest extends AbstractResourceTest {
 		variables.put("orgId", steve.loadPosition().loadOrganization().getId());
 		variables.put("searchQuery", "hospital");
 		variables.put("reportId", jack.loadAttendedReports(0, 20).getList().get(0).getId());
+		variables.put("pageNum", 0);
+		variables.put("pageSize", 10);
+		variables.put("maxResults", 6);
+		logger.info("Using variables {}", variables);
 		
 		for (File f : testDir.listFiles()) { 
 			if (f.isFile()) { 
@@ -54,8 +62,8 @@ public class GraphQLResourceTest extends AbstractResourceTest {
 					}
 					query.put("query", "query { " + raw + "}");
 					query.put("variables", ImmutableMap.of());
-					System.out.println(f.getName());
-					
+					logger.info("Processing file {}", f);
+
 					Map<String,Object> resp = httpQuery("/graphql", arthur)
 							.post(Entity.json(query), new GenericType<Map<String,Object>>() {});
 					assertThat(resp).isNotNull();

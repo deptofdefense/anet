@@ -1,0 +1,3 @@
+locationList(f:recents, maxResults:${maxResults}) {
+	list { id, name }
+}

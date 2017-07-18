@@ -240,13 +240,15 @@ public class PersonResource implements IGraphQLResource {
 	
 	/** 
 	 * Returns the most recent people that this user listed as attendees in reports. 
+	 * @param maxResults maximum number of results to return, defaults to 3
 	 */
 	@GET
 	@Timed
 	@GraphQLFetcher
 	@Path("/recents")
-	public PersonList recents(@Auth Person user) { 
-		return new PersonList(dao.getRecentPeople(user));
+	public PersonList recents(@Auth Person user,
+			@DefaultValue("3") @QueryParam("maxResults") int maxResults) {
+		return new PersonList(dao.getRecentPeople(user, maxResults));
 	}
 	
 	/**

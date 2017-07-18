@@ -92,11 +92,16 @@ public class LocationResource implements IGraphQLResource {
 		return (numRows == 1) ? Response.ok().build() : Response.status(Status.NOT_FOUND).build();
 	}
 
+	/**
+	 * Returns the most recent locations that this user listed in reports.
+	 * @param maxResults maximum number of results to return, defaults to 3
+	 */
 	@GET
 	@GraphQLFetcher
 	@Path("/recents")
-	public LocationList recents(@Auth Person user) { 
-		return new LocationList(dao.getRecentLocations(user));
+	public LocationList recents(@Auth Person user,
+			@DefaultValue("3") @QueryParam("maxResults") int maxResults) {
+		return new LocationList(dao.getRecentLocations(user, maxResults));
 	}
 	
 	@Override
