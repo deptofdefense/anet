@@ -143,7 +143,7 @@ export default class ReportCollection extends Component {
 	@autobind
 	startCSVExportModal() {
 		this.setState({showCSVExportModal: true})
-		let that = this;
+		let that = this
 		this.props.downloadAll(
 			(current,total) => {
 				that.setState({current: current,
