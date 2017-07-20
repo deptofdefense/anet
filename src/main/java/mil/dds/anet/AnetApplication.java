@@ -1,5 +1,6 @@
 package mil.dds.anet;
 
+import java.lang.invoke.MethodHandles;
 import java.sql.Connection;
 import java.util.EnumSet;
 import java.util.Map;
@@ -17,6 +18,8 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
 
@@ -56,6 +59,9 @@ import mil.dds.anet.views.ViewResponseFilter;
 import waffle.servlet.NegotiateSecurityFilter;
 
 public class AnetApplication extends Application<AnetConfiguration> {
+
+	private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
 	public static void main(String[] args) throws Exception {
 		new AnetApplication().run(args);
 	}
@@ -79,7 +85,7 @@ public class AnetApplication extends Application<AnetConfiguration> {
 		bootstrap.addBundle(new MigrationsBundle<AnetConfiguration>() {
 			@Override
 			public DataSourceFactory getDataSourceFactory(AnetConfiguration configuration) {
-				System.out.println(configuration.getDataSourceFactory().getUrl());
+				logger.info("datasource url: {}", configuration.getDataSourceFactory().getUrl());
 				return configuration.getDataSourceFactory();
 	        }
 	    });
@@ -104,7 +110,7 @@ public class AnetApplication extends Application<AnetConfiguration> {
 	@Override
 	public void run(AnetConfiguration configuration, Environment environment) {
 		//Get the Database connection up and running
-		System.out.println(configuration.getDataSourceFactory().getUrl());
+		logger.info("datasource url: {}", configuration.getDataSourceFactory().getUrl());
 		final DBIFactory factory = new DBIFactory();
 		final DBI jdbi = factory.build(environment, configuration.getDataSourceFactory(), "mssql");
 

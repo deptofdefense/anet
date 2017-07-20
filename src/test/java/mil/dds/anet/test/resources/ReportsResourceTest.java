@@ -2,6 +2,7 @@ package mil.dds.anet.test.resources;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.lang.invoke.MethodHandles;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,6 +13,8 @@ import javax.ws.rs.core.Response.Status;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -51,6 +54,8 @@ import mil.dds.anet.test.beans.OrganizationTest;
 import mil.dds.anet.test.beans.PersonTest;
 
 public class ReportsResourceTest extends AbstractResourceTest {
+
+	private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 	public ReportsResourceTest() {
 		if (client == null) {
@@ -194,8 +199,8 @@ public class ReportsResourceTest extends AbstractResourceTest {
 
 		Report returned = httpQuery(String.format("/api/reports/%d", created.getId()), author).get(Report.class);
 		assertThat(returned.getState()).isEqualTo(ReportState.PENDING_APPROVAL);
-		System.out.println(String.format("Expecting report %d in step %d because of org %d on author %d",
-				returned.getId(), approval.getId(), advisorOrg.getId(), author.getId()));
+		logger.debug("Expecting report {} in step {} because of org {} on author {}",
+				new Object[] { returned.getId(), approval.getId(), advisorOrg.getId(), author.getId() });
 		assertThat(returned.getApprovalStep().getId()).isEqualTo(approval.getId());
 
 		//verify the location on this report
