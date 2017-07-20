@@ -66,15 +66,17 @@ public class GraphQLResourceTest extends AbstractResourceTest {
 					logger.info("Processing file {}", f);
 
 					// Test POST request
-					Map<String,Object> resp = httpQuery("/graphql", arthur)
+					Map<String,Object> respPost = httpQuery("/graphql", arthur)
 							.post(Entity.json(query), new GenericType<Map<String,Object>>() {});
-					doAsserts(f, resp);
+					doAsserts(f, respPost);
 
 					// Test GET request
-					resp = httpQuery("/graphql?query=" + URLEncoder.encode("{" + raw + "}", "UTF-8"), arthur)
+					Map<String,Object> respGet = httpQuery("/graphql?query=" + URLEncoder.encode("{" + raw + "}", "UTF-8"), arthur)
 							.get(new GenericType<Map<String,Object>>() {});
-					doAsserts(f, resp);
-					
+					doAsserts(f, respGet);
+
+					// POST and GET responses should be equal
+					assertThat(respPost.get("data")).isEqualTo(respGet.get("data"));
 				} catch (IOException e) { 
 					Assertions.fail("Unable to read file ", e);
 				}
