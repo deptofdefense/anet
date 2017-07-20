@@ -1,5 +1,6 @@
 package mil.dds.anet.resources;
 
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -19,8 +20,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.eclipse.jetty.util.log.Log;
-import org.eclipse.jetty.util.log.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.codahale.metrics.annotation.Timed;
 
@@ -52,7 +53,8 @@ import mil.dds.anet.utils.GraphQLUtils;
 @PermitAll
 public class GraphQLResource {
 
-	private static Logger log = Log.getLogger(GraphQLResource.class);
+	private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
 	private GraphQL graphql;
 	private List<IGraphQLResource> resources;
 	private boolean developmentMode;
@@ -234,7 +236,7 @@ public class GraphQLResource {
 				Status.fromStatusCode(actual.getResponse().getStatus()) 
 				: 
 				Status.INTERNAL_SERVER_ERROR;
-			log.warn("Errors: {}", executionResult.getErrors());
+			logger.warn("Errors: {}", executionResult.getErrors());
 			return Response.status(status).entity(result).build();
 		}
 		result.put("data", executionResult.getData());

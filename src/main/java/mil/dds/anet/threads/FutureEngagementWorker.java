@@ -1,5 +1,6 @@
 package mil.dds.anet.threads;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Collections;
 import java.util.List;
 
@@ -18,9 +19,9 @@ import mil.dds.anet.utils.DaoUtils;
 
 public class FutureEngagementWorker implements Runnable {
 
+	private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
 	Handle handle;
-	
-	private Logger logger = LoggerFactory.getLogger(FutureEngagementWorker.class);
 	
 	public FutureEngagementWorker(Handle dbHandle) { 
 		this.handle = dbHandle;

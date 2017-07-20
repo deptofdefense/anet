@@ -2,6 +2,7 @@ package mil.dds.anet.threads;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.lang.invoke.MethodHandles;
 import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -48,6 +49,10 @@ import mil.dds.anet.emails.AnetEmailAction;
 
 public class AnetEmailWorker implements Runnable {
 
+	private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
+	private static AnetEmailWorker instance;
+
 	private Handle handle;
 	private ObjectMapper mapper;
 	private AnetEmailMapper emailMapper;
@@ -57,9 +62,6 @@ public class AnetEmailWorker implements Runnable {
 	private String serverUrl;
 	private Configuration freemarkerConfig;
 	private ScheduledExecutorService scheduler;
-	
-	private static AnetEmailWorker instance;
-	private Logger logger = LoggerFactory.getLogger(AnetEmailWorker.class);
 	
 	public AnetEmailWorker(Handle dbHandle, AnetConfiguration config, ScheduledExecutorService scheduler) { 
 		this.handle = dbHandle;
