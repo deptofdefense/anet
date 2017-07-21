@@ -110,6 +110,7 @@ public class AnetConfiguration extends Configuration {
 		private String username;
 		private String password;
 		private Boolean startTls = true;
+		private boolean disabled = false;
 		
 		public String getHostname() {
 			return hostname;
@@ -149,6 +150,14 @@ public class AnetConfiguration extends Configuration {
 		
 		public void setStartTls(Boolean startTls) {
 			this.startTls = startTls;
+		}
+
+		public boolean isDisabled() {
+			return disabled;
+		}
+
+		public void setDisabled(boolean disabled) {
+			this.disabled = disabled;
 		}
 	}
 

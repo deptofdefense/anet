@@ -30,6 +30,7 @@ smtp:
   username: ${ANET_SMTP_USERNAME}
   password: ${ANET_SMTP_PASSWORD}
   startTls: true
+  disabled: true
 
 # The email address that all automated emails should come from. 
 # ex: "ANET <anet@example.com>"
