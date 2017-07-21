@@ -1,6 +1,7 @@
 package mil.dds.anet.resources;
 
 import java.io.StringWriter;
+import java.lang.invoke.MethodHandles;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
@@ -25,8 +26,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.eclipse.jetty.util.log.Log;
-import org.eclipse.jetty.util.log.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.joda.time.DateTime;
 
 import com.codahale.metrics.annotation.Timed;
@@ -77,11 +78,11 @@ import mil.dds.anet.utils.Utils;
 @PermitAll
 public class ReportResource implements IGraphQLResource {
 
+	private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
 	ReportDao dao;
 	AnetObjectEngine engine;
 	AnetConfiguration config;
-
-	private static Logger log = Log.getLogger(ReportResource.class);
 
 	public ReportResource(AnetObjectEngine engine, AnetConfiguration config) {
 		this.engine = engine;
@@ -345,7 +346,7 @@ public class ReportResource implements IGraphQLResource {
 		r.setState(ReportState.PENDING_APPROVAL);
 		int numRows = dao.update(r);
 		sendApprovalNeededEmail(r);
-		log.info("Putting report {} into step {} because of org {} on author {}",
+		logger.info("Putting report {} into step {} because of org {} on author {}",
 				r.getId(), steps.get(0).getId(), org.getId(), r.getAuthor().getId());
 
 		if (numRows != 1) {
@@ -383,7 +384,7 @@ public class ReportResource implements IGraphQLResource {
 			throw new WebApplicationException("Report not found", Status.NOT_FOUND);
 		}
 		if (r.getApprovalStep() == null) {
-			log.info("Report ID {} does not currently need an approval", r.getId());
+			logger.info("Report ID {} does not currently need an approval", r.getId());
 			throw new WebApplicationException("This report is not pending approval", Status.BAD_REQUEST);
 		}
 		ApprovalStep step = r.loadApprovalStep();
@@ -392,7 +393,7 @@ public class ReportResource implements IGraphQLResource {
 
 		boolean canApprove = engine.canUserApproveStep(approver.getId(), step.getId());
 		if (canApprove == false) {
-			log.info("User ID {} cannot approve report ID {} for step ID {}",approver.getId(), r.getId(), step.getId());
+			logger.info("User ID {} cannot approve report ID {} for step ID {}",approver.getId(), r.getId(), step.getId());
 			throw new WebApplicationException("User cannot approve report", Status.FORBIDDEN);
 		}
 
@@ -452,14 +453,14 @@ public class ReportResource implements IGraphQLResource {
 		if (r == null) { throw new WebApplicationException(Status.NOT_FOUND); } 
 		ApprovalStep step = r.loadApprovalStep();
 		if (step == null) {
-			log.info("Report ID {} does not currently need an approval", r.getId());
+			logger.info("Report ID {} does not currently need an approval", r.getId());
 			throw new WebApplicationException("This report is not pending approval", Status.BAD_REQUEST); 
 		} 
 
 		//Verify that this user can reject for this step.
 		boolean canApprove = engine.canUserApproveStep(approver.getId(), step.getId());
 		if (canApprove == false) {
-			log.info("User ID {} cannot reject report ID {} for step ID {}",approver.getId(), r.getId(), step.getId());
+			logger.info("User ID {} cannot reject report ID {} for step ID {}",approver.getId(), r.getId(), step.getId());
 			throw new WebApplicationException("User cannot approve report", Status.FORBIDDEN);
 		}
 

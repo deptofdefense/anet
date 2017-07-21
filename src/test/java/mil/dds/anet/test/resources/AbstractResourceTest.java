@@ -1,6 +1,7 @@
 package mil.dds.anet.test.resources;
 
 import java.io.InputStream;
+import java.lang.invoke.MethodHandles;
 import java.util.Base64;
 import java.util.List;
 
@@ -12,6 +13,8 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.ClassRule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.testing.junit.DropwizardAppRule;
@@ -24,6 +27,8 @@ import mil.dds.anet.config.AnetConfiguration;
 import mil.dds.anet.test.beans.PersonTest;
 
 public abstract class AbstractResourceTest {
+
+	private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 	@ClassRule
 	public static final DropwizardAppRule<AnetConfiguration> RULE =
@@ -121,7 +126,7 @@ public abstract class AbstractResourceTest {
 			InputStream is = (InputStream) resp.getEntity();
 			return IOUtils.toString(is);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Exception getting repsonse entity", e);
 			return null;
 		}
 	}
