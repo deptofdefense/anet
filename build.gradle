@@ -42,6 +42,9 @@ dependencies {
 	compile 'org.jvnet.com4j.typelibs:active-directory:1.0'
 	compile 'org.jvnet.com4j.typelibs:ado20:1.0'
 
+	// Used for converting GraphQL GET request output to XML:
+	compile 'org.json:json:20170516'
+
 	compile files('lib/sqljdbc42.jar')
 	
 	testCompile group: 'io.dropwizard', name: 'dropwizard-testing', version: '1.0.2'

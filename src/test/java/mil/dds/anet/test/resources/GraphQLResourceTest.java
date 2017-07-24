@@ -78,6 +78,17 @@ public class GraphQLResourceTest extends AbstractResourceTest {
 
 					// POST and GET responses should be equal
 					assertThat(respPost.get("data")).isEqualTo(respGet.get("data"));
+
+					// Test GET request over XML
+					String respGetXml = httpQuery("/graphql?output=xml&query=" + URLEncoder.encode("{" + raw + "}", "UTF-8"), arthur)
+							.get(new GenericType<String>() {});
+					assertThat(respGetXml).isNotNull();
+					int len = respGetXml.length();
+					assertThat(len).isGreaterThan(0);
+					assertThat(respGetXml.substring(0, 1)).isEqualTo("<");
+					String xmlHeader = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>";
+					assertThat(respGetXml.substring(0, xmlHeader.length())).isEqualTo(xmlHeader);
+					assertThat(respGetXml.substring(len - 2 , len)).isEqualTo(">\n");
 				} catch (IOException e) { 
 					Assertions.fail("Unable to read file ", e);
 				}

@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.PermitAll;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -20,6 +21,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.json.JSONObject;
+import org.json.XML;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +50,7 @@ import mil.dds.anet.graphql.GraphQLIgnore;
 import mil.dds.anet.graphql.IGraphQLBean;
 import mil.dds.anet.graphql.IGraphQLResource;
 import mil.dds.anet.utils.GraphQLUtils;
+import mil.dds.anet.utils.ResponseUtils;
 
 @Path("/graphql")
 @Produces(MediaType.APPLICATION_JSON)
@@ -54,6 +58,8 @@ import mil.dds.anet.utils.GraphQLUtils;
 public class GraphQLResource {
 
 	private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+	private static final String OUTPUT_JSON = "json";
+	private static final String OUTPUT_XML = "xml";
 
 	private GraphQL graphql;
 	private List<IGraphQLResource> resources;
@@ -197,16 +203,19 @@ public class GraphQLResource {
 		Map<String, Object> variables = (Map<String, Object>) body.get("variables");
 		if (variables == null) { variables = new HashMap<String,Object>(); }
 
-		return graphql(user, query, variables);
+		return graphql(user, query, OUTPUT_JSON, variables);
 	}
 
 	@GET
 	@Timed
-	public Response graphqlGet(@Auth Person user, @QueryParam("query") String query) {
-		return graphql(user, query, new HashMap<String,Object>());
+	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+	public Response graphqlGet(@Auth Person user,
+			@QueryParam("query") String query,
+			@DefaultValue(OUTPUT_JSON) @QueryParam("output") String output) {
+		return graphql(user, query, output, new HashMap<String,Object>());
 	}
 
-	protected Response graphql(@Auth Person user, String query, Map<String, Object> variables) {
+	protected Response graphql(@Auth Person user, String query, String output, Map<String, Object> variables) {
 		if (developmentMode) {
 			buildGraph();
 		}
@@ -240,6 +249,14 @@ public class GraphQLResource {
 			return Response.status(status).entity(result).build();
 		}
 		result.put("data", executionResult.getData());
-		return Response.ok().entity(result).build();
+		if (OUTPUT_XML.equals(output)) {
+			JSONObject json = new JSONObject(result);
+			// TODO: Decide if we indeed want pretty-printed XML:
+			String xml = ResponseUtils.toPrettyString(XML.toString(json, "result"), 2);
+			return Response.ok(xml, MediaType.APPLICATION_XML).build();
+		}
+		else {
+			return Response.ok(result, MediaType.APPLICATION_JSON).build();
+		}
 	}
 }
