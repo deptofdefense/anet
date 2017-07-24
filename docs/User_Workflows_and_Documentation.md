@@ -34,15 +34,14 @@ Here’s how you draft and submit a report:
 1. From the home page, find the “New Report” button. It’ll be towards the top right of the page. If you’re a Super User or Administrator, you’ll need to click onto the “Create” button and select “New Report” from the options. 
 2. This button will take you to a page called “Create a new report”. You’ll enter information in the fields on the page. Some fields are required, while others (like PoAMs) are optional. 
 3. Meeting Goal: First, fill out what the goal of the meeting was. This field will be used to populate the executive summary used in the daily rollup, so it’s best to complete the sentence “The goal of the is meeting is to”. 
-Engagement date: Next you’ll select the engagement date. When you click into the field, a calendar will display showing the current month. You can press the “today” button at the bottom to easily select the current day, or select another date. 
-4.Engagement date: Next you’ll select the engagement date. When you click into the field, a calendar will display showing the current month. You can press the “today” button at the bottom to easily select the current day, or select another date.
+4. Engagement date: Next you’ll select the engagement date. When you click into the field, a calendar will display showing the current month. You can press the “today” button at the bottom to easily select the current day, or select another date.
 5. Location: As you being to type the location where the engagement happened, results that match what you’ve typed will begin to appear. You can keep typing, or select one of the options from the dropdown. If what you’ve entered has no matches, the box will turn red. If you’ve typed in your location properly and it does not appear, ask your Super User to add that location to ANET. 
 6. Cancelled engagements: If your engagement was cancelled, select the checkbox next to “This engagement was cancelled”. When you select that option, you’ll be prompted to select the reason for why the engagement was cancelled. Some fields on the form will no longer be visible. You’ll only need to fill out meeting attendance and next steps after this point. You can add detailed comments if you’d like. 
 7. Atmosphere: You can record the engagement’s atmosphere, by selecting the thumbs up icon for a positive atmosphere during your engagement, the neutral face for engagements that were neither positive nor negative, and the thumbs down icon for negative engagement. If you select either neutral or negative icons, you’ll be prompted to add details explaining why it was not positive.
 8. Meeting Attendance: In this section, you can add the advisors and principals who attended your engagements. By default, you will be listed in this section. People you have added in recent reports will appear in the “Shortcuts” section on the right-hand side of Attendees. To add one of them, just click on their name. For others, start typing their name into the text field next to “Attendees” and select their name from among the results. If you don’t see the person you are trying to add, ask your Super User to add them to ANET. In this section, you can also select who the primary advisor and principal in the meeting were. By default, the first advisor and principal added will be selected as the primary. To select someone else, just select the check mark to the left of their name.
 9. PoAMs: If your meeting related to one of your advising organization’s PoAMs or Pillars, you can select it by searching for it in the text field to the right of “PoAMs”. If your meeting did not relate to a PoAM, it’s okay to leave this part blank. 
 10. Key outcomes: In the field next to “Key outcomes”, you have 250 characters to provide a summary of the most important points of the engagement. This will appear in your report’s executive summary, so make sure it’s the most impactful information for leadership and other advisors to see. 
-11.Next Steps: In the next steps field, you have 250 characters to describe the next steps you’ll be taking on this issue or with this principal. This will appear in the executive summary. 
+11. Next Steps: In the next steps field, you have 250 characters to describe the next steps you’ll be taking on this issue or with this principal. This will appear in the executive summary. 
 12. Add detailed comments: If you feel that there is more information to include in your report, click on the “Add detailed comments” button. When you click on it, an open text field will appear where you can write as much as you’d like. 
 13. Saving your report: To save the draft version of the report, you can click on the “Save report” button at the top, or very bottom, of the page. This will create a draft of your report. You can click save at anytime to hold onto the work you’ve already completed. On this page, you can preview what your report’s executive summary will look like and see if there are any required fields that you still need to fill out. If you’d like to edit your saved draft, click on the “Actions” button on the top of the page, then select “Edit”. You’ll be able to edit and resave your report. 
 14. Submitting your report: When you’re happy with your draft report and are ready to submit it, scroll down to the bottom of your draft, and click on the “Submit report” button. This will send the report to the first person(s) in your approval chain. 
@@ -125,8 +124,8 @@ When you read a report that you think someone else may want to read, you can qui
 3. You’ll be prompted to search for the name of the person you’d like to send the report to. 
 4. You also have the option to include a comment in the email. Once you’ve added the comment, click the “Send Email” button and you’re all set.
 
-##Workflows for Super Users
-*These workflows are the ones that will be most helpful for Super Users. Admins are also able to complete these workflows. Super Users and Admins have advanced capabilities within ANET. Super Users are able to manage information for their organization, and admins are able to manage information across the system. *
+## Workflows for Super Users
+*These workflows are the ones that will be most helpful for Super Users. Admins are also able to complete these workflows. Super Users and Admins have advanced capabilities within ANET. Super Users are able to manage information for their organization, and admins are able to manage information across the system.*
 
 **Approving and Rejecting Reports**
 
@@ -149,16 +148,16 @@ To create a new person in ANET:
 1. Click on the “Create” button on the top right-hand side of the page.
 2. Then, select “New Person” from the options. 
 3. You’ll be prompted to fill out information about that person.
-  1. Name: fill out their name (first and last). 
-  2. Role: Select advisor or principal from the dropdown menu of options. 
-  3. Email: You can optionally add an email address for that advisor or principal
-  4. Phone number: You can optionally add a phone number for this person
-  5. Rank: You can select the military rank of the person, or identify that they are a civilian or contractor.
-  6. Gender: You can select the person’s gender. 
-  7. Country: You can add which country the person is from  
-  8. End of tour date: You can add their end of tour date. 
-  9. Biography: This is an open text field where you can record helpful information about this person.
-  10. Position: You can identify which position this person is filling by searching for the position (by name or billet/tashkill number). If their position does not already exist in the system, you can leave this blank and create the position for them. 
+    1. Name: fill out their name (first and last). 
+    2. Role: Select advisor or principal from the dropdown menu of options. 
+    3. Email: You can optionally add an email address for that advisor or principal
+    4. Phone number: You can optionally add a phone number for this person
+    5. Rank: You can select the military rank of the person, or identify that they are a civilian or contractor.
+    6. Gender: You can select the person’s gender. 
+    7. Country: You can add which country the person is from. 
+    8. End of tour date: You can add their end of tour date. 
+    9. Biography: This is an open text field where you can record helpful information about this person.
+    10. Position: You can identify which position this person is filling by searching for the position (by name or billet/tashkill number). If their position does not already exist in the system, you can leave this blank and create the position for them. 
 4. Once those fields have been completed, click the “Save person” button at the bottom of the page. 
 
 **Creating a new position**
@@ -168,14 +167,14 @@ To create a new person in ANET:
 1. Click on the “Create” button on the top right-hand side of the page.
 2. Then select “New Position” from the dropdown menu of options. 
 3. Begin filling in the information requested on the page: 
-  1. Type: choose whether the position is for an advisor / billet, or a principal / tashkill.
-  2. Organization: Search for the organization that the position is for by searching in this field. 
-  3. Code: You can add the billet / tashkill code here. 
-  4. Position Name: Enter the name of the position here. 
-  5. Person: You can search for the person who fills this position in this field. 
-  6. Permissions: This drop down menu lets you choose what permission someone with this role should have in ANET. Super Users can assign positions the permissions of an advisor or Super User. Admins have the added ability to assign positions administrative permissions. 
-  7. Assigned Position Relationships: You can list which advisees an advisor in this role is responsible for advising. If you’re creating a new Afghan principal, you can identify which position is responsible for advising them by searching in this bar and adding that role. 
-  8. Location: You can optionally add where this person is located by searching for that location in this field. 
+    1. Type: choose whether the position is for an advisor / billet, or a principal / tashkill.
+    2. Organization: Search for the organization that the position is for by searching in this field. 
+    3. Code: You can add the billet / tashkill code here. 
+    4. Position Name: Enter the name of the position here. 
+    5. Person: You can search for the person who fills this position in this field. 
+    6. Permissions: This drop down menu lets you choose what permission someone with this role should have in ANET. Super Users can assign positions the permissions of an advisor or Super User. Admins have the added ability to assign positions administrative permissions. 
+    7. Assigned Position Relationships: You can list which advisees an advisor in this role is responsible for advising. If you’re creating a new Afghan principal, you can identify which position is responsible for advising them by searching in this bar and adding that role. 
+    8. Location: You can optionally add where this person is located by searching for that location in this field. 
 4. Once you’ve filled in the information on this page, click the “Save position” button on the bottom of the page. 
 
 **Creating a new location**
@@ -241,7 +240,7 @@ The approval chain is a series of steps. In each step, you can add one or more p
 
 After the report has been approved by someone in the final step, their report will go to the daily rollup. If, along the way, one of the reviewers rejects the report, the report will be returned to the author for corrections. The report will then need to be resubmitted. 
 
-##Workflows for Admins
+## Workflows for Admins
 *These workflows are the ones that will be most helpful for Admins. Admins are able to complete all of the workflows available to Advisors and Super Users. They also have a few additional capabilities within the ANET front end outlined here.* 
 
 **Setting a Default Approval Organization**
@@ -255,16 +254,3 @@ To set the default approval organization, start by selecting “Admins” from t
 **Updating the Security Banner Text and Color**
 
 Admins have the ability to modify the color and text of the security banner. To modify these settings, start by clicking on “Admins” on the left-hand menu on the home screen. From there, you can change the text of the security banner by entering your desired text in the “Security banner text” field. Similarly, you can change the color by entering your desired color in the “Security banner color” field. 
-
-
-
-
-
-
-
-
-
-
-
-
-
