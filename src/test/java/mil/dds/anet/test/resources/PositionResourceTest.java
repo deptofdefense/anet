@@ -46,6 +46,8 @@ public class PositionResourceTest extends AbstractResourceTest {
 		Person jack = getJackJackson();
 		Person admin = getArthurDmin();
 		assertThat(jack.getId()).isNotNull();
+		assertThat(jack.getPosition()).isNotNull();
+		Position jacksOldPosition = jack.getPosition();
 		
 		//Create Position
 		Position test = new Position();
@@ -181,6 +183,13 @@ public class PositionResourceTest extends AbstractResourceTest {
 	
 		resp = httpQuery(String.format("/api/positions/%d",tashkil.getId()), jack).get();
 		assertThat(resp.getStatus()).isEqualTo(Status.NOT_FOUND.getStatusCode());
+
+		//Put jack back in his old position
+		resp = httpQuery(String.format("/api/positions/%d/person", jacksOldPosition.getId()), admin).post(Entity.json(jack));
+		assertThat(resp.getStatus()).isEqualTo(200);
+
+		curr = httpQuery(String.format("/api/positions/%d/person", jacksOldPosition.getId()), admin).get(Person.class);
+		assertThat(curr.getId()).isEqualTo(jack.getId());
 	}
 		
 	
