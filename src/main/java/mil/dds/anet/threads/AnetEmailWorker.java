@@ -62,6 +62,7 @@ public class AnetEmailWorker implements Runnable {
 	private String serverUrl;
 	private Configuration freemarkerConfig;
 	private ScheduledExecutorService scheduler;
+	private final boolean disabled;
 	
 	public AnetEmailWorker(Handle dbHandle, AnetConfiguration config, ScheduledExecutorService scheduler) { 
 		this.handle = dbHandle;
@@ -89,7 +90,9 @@ public class AnetEmailWorker implements Runnable {
 				}
 			};
 		}
-		
+
+		disabled = smtpConfig.isDisabled();
+
 		freemarkerConfig = new Configuration(Configuration.getVersion());
 		freemarkerConfig.setObjectWrapper(new DefaultObjectWrapperBuilder(Configuration.getVersion()).build());
 		freemarkerConfig.loadBuiltInEncodingMap();
@@ -119,8 +122,13 @@ public class AnetEmailWorker implements Runnable {
 		List<Integer> sentEmails = new LinkedList<Integer>();
 		for (AnetEmail email : emails) { 
 			try {
-				logger.info("Sending email to {} re: {}",email.getToAddresses(), email.getAction().getSubject());
-				sendEmail(email);
+				if (disabled) {
+					logger.info("Disabled, not sending email to {} re: {}",email.getToAddresses(), email.getAction().getSubject());
+				}
+				else {
+					logger.info("Sending email to {} re: {}",email.getToAddresses(), email.getAction().getSubject());
+					sendEmail(email);
+				}
 				sentEmails.add(email.getId());
 			} catch (Exception e) { 
 				logger.error("Error sending email", e);
