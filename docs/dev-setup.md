@@ -97,7 +97,7 @@ To log in as one of the base data users, when prompted for a username and passwo
 1. Run `./gradlew dbMigrate` whenever you pull new changes to migrate the database.
    - You may need to occasionally destroy, re-migrate, and re-seed your database if it has fallen too far out of sync with master. TODO: How do you destroy the database?
 1. Run `./gradlew run` to run the server via Gradle, or hit Run in Eclipse
-   - You can ignore exceptions like the following, because the SMTP server is not necessary for local development:
+   - If you have set **smtp: disabled** to **true** in `anet.yml`, you're good to go; otherwise, you can ignore exceptions like the following, because the SMTP server is not necessary for local development:
     ```
     ERROR [2017-02-10 16:39:38,044] mil.dds.anet.AnetEmailWorker: Sending email to [hunter+liz@dds.mil] re: ANET Report Approved
     javax.mail.MessagingException: Unknown SMTP host: ${ANET_SMTP_SERVER};
