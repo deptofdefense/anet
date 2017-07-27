@@ -27,6 +27,7 @@ export default class PersonForm extends ValidatableFormWrapper {
 
 	static contextTypes = {
 		app: PropTypes.object.isRequired,
+		currentUser: PropTypes.object.isRequired,
 	}
 
 	constructor(props) {
@@ -48,6 +49,7 @@ export default class PersonForm extends ValidatableFormWrapper {
 
 		let currentUser = this.context.currentUser
 		let isAdmin = currentUser && currentUser.isAdmin()
+		let isSelf = Person.isEqual(currentUser, person)
 
 		return <ValidatableForm formFor={person} onChange={this.onChange} onSubmit={this.onSubmit} horizontal
 			submitText={this.props.saveText || 'Save person'}>
@@ -68,20 +70,23 @@ export default class PersonForm extends ValidatableFormWrapper {
 					</Form.Field>
 				}
 
-				{person.isNewUser() ?
-					<Form.Field type="static" id="status" value="New user" />
+				{isSelf ?
+					<Form.Field type="static" id="status" value={person.humanNameOfStatus()} />
 					:
-					<Form.Field id="status" >
-						<ButtonToggleGroup>
-							<Button id="statusActiveButton" value="ACTIVE">Active</Button>
-							<Button id="statusInactiveButton" value="INACTIVE">Inactive</Button>
-						</ButtonToggleGroup>
+					person.isNewUser() ?
+						<Form.Field type="static" id="status" value="New user" />
+						:
+						<Form.Field id="status" >
+							<ButtonToggleGroup>
+								<Button id="statusActiveButton" value="ACTIVE">Active</Button>
+								<Button id="statusInactiveButton" value="INACTIVE">Inactive</Button>
+							</ButtonToggleGroup>
 
-						{willAutoKickPosition && <HelpBlock>
-							<span className="text-danger">Setting this person to inactive will automatically remove them from the <strong>{person.position.name}</strong> position.</span>
-						</HelpBlock> }
+							{willAutoKickPosition && <HelpBlock>
+								<span className="text-danger">Setting this person to inactive will automatically remove them from the <strong>{person.position.name}</strong> position.</span>
+							</HelpBlock> }
 
-					</Form.Field>
+						</Form.Field>
 				}
 
 				{!edit && person.role === 'ADVISOR' &&
