@@ -33,7 +33,8 @@ export default class PersonForm extends ValidatableFormWrapper {
 	constructor(props) {
 		super(props)
 		this.state = {
-			error: null
+			error: null,
+			originalStatus: props.person.status
 		}
 	}
 
@@ -50,7 +51,7 @@ export default class PersonForm extends ValidatableFormWrapper {
 
 		let currentUser = this.context.currentUser
 		let isAdmin = currentUser && currentUser.isAdmin()
-		let isSelf = Person.isEqual(currentUser, person)
+		let disableStatusChange = this.state.originalStatus === 'INACTIVE' || Person.isEqual(currentUser, person)
 
 		return <ValidatableForm formFor={person} onChange={this.onChange} onSubmit={this.onSubmit} horizontal
 			submitText={this.props.saveText || 'Save person'}>
@@ -71,7 +72,7 @@ export default class PersonForm extends ValidatableFormWrapper {
 					</Form.Field>
 				}
 
-				{isSelf ?
+				{disableStatusChange ?
 					<Form.Field type="static" id="status" value={person.humanNameOfStatus()} />
 					:
 					person.isNewUser() ?
