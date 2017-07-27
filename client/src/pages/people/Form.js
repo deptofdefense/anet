@@ -45,6 +45,7 @@ export default class PersonForm extends ValidatableFormWrapper {
 		const {ValidatableForm, RequiredField} = this
 
 		let willAutoKickPosition = person.status === 'INACTIVE' && person.position && !!person.position.id
+		let warnDomainUsername = person.status === 'INACTIVE' && person.domainUsername
 		let ranks = dict.lookup('ranks') || []
 
 		let currentUser = this.context.currentUser
@@ -86,6 +87,9 @@ export default class PersonForm extends ValidatableFormWrapper {
 								<span className="text-danger">Setting this person to inactive will automatically remove them from the <strong>{person.position.name}</strong> position.</span>
 							</HelpBlock> }
 
+							{warnDomainUsername && <HelpBlock>
+								<span className="text-danger">Setting this person to inactive means the next person to logon with the user name <strong>{person.domainUsername}</strong> will have to create a new profile. Do you want the next person to login with this user name to create a new profile?</span>
+							</HelpBlock> }
 						</Form.Field>
 				}
 
