@@ -65,13 +65,13 @@ export default class Report extends Model {
 		if (!primaryPrincipal) {
 			errors.push('You must provide the primary Principal for the Engagement')
 		} else if (!primaryPrincipal.position) {
-			errors.push('The primary Principal needs to be assigned to a position')
+			errors.push('The primary Principal - ' + primaryPrincipal.name + ' - needs to be assigned to a position')
 		}
 
 		if (!primaryAdvisor) {
 			errors.push('You must provide the primary Advisor for the Engagement')
 		} else if (!primaryAdvisor.position) {
-			errors.push('The primary Advisor needs to be assigned to a position')
+			errors.push('The primary Advisor - ' + primaryAdvisor.name + ' - needs to be assigned to a position')
 		}
 
 		if (!this.intent) {
