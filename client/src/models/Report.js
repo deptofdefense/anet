@@ -65,7 +65,7 @@ export default class Report extends Model {
 		if (!primaryPrincipal) {
 			errors.push('You must provide the primary Principal for the Engagement')
 		}
-		if (!primaryPrincipal.position) {
+		else if (!primaryPrincipal.position) {
 			errors.push('The primary Principal needs to be assigned to a position')
 		}
 		if (!primaryAdvisor) {
