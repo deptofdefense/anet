@@ -122,7 +122,7 @@ export default class PersonForm extends ValidatableFormWrapper {
 					<option value="FEMALE" >Female</option>
 				</RequiredField>
 
-				<RequiredField id="country" componentClass="select"
+				<RequiredField id="country" label="Nationality" componentClass="select"
 					required={isAdvisor}>
 					<option />
 					{Person.COUNTRIES.map(country => <option key={country} value={country}>{country}</option>)}

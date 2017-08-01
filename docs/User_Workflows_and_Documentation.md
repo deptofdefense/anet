@@ -154,7 +154,7 @@ To create a new person in ANET:
     4. Phone: You can optionally add a phone number for this person.
     5. Rank: You can select the military rank of the person, or identify that they are a civilian or contractor.
     6. Gender: You can select the person’s gender. 
-    7. Country: You can add which country the person is from. 
+    7. Nationality: You can add which country the person is from (their nationality, not the country they are currently working in).
     8. End of tour: You can add their end of tour date.
     9. Biography: This is an open text field where you can record helpful information about this person.
     10. Position: You can identify which position this person is filling by searching for the position (by name or billet/tashkill number). If their position does not already exist in the system, you can leave this blank and create the position for them. 
