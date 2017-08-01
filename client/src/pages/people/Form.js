@@ -105,7 +105,7 @@ export default class PersonForm extends ValidatableFormWrapper {
 				<RequiredField id="emailAddress" label="Email" required={isAdvisor}
 					humanName="Valid email address"
 					type="email" />
-				<Form.Field id="phoneNumber" label="Phone Number" />
+				<Form.Field id="phoneNumber" label="Phone" />
 				<RequiredField id="rank"  componentClass="select"
 					required={isAdvisor}>
 
@@ -128,7 +128,7 @@ export default class PersonForm extends ValidatableFormWrapper {
 					{Person.COUNTRIES.map(country => <option key={country} value={country}>{country}</option>)}
 				</RequiredField>
 
-				<Form.Field id="endOfTourDate" addon={CALENDAR_ICON}>
+				<Form.Field id="endOfTourDate" label="End of tour" addon={CALENDAR_ICON}>
 					<DatePicker placeholder="End of Tour Date" dateFormat="DD/MM/YYYY" showClearButton={false} />
 				</Form.Field>
 
