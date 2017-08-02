@@ -40,11 +40,11 @@ CREATE LOGIN $DB_USER WITH PASSWORD = '$DB_USER_PASSWORD';
 GO
 CREATE USER $DB_USER FOR LOGIN $DB_USER;
 GO
-ALTER SERVER ROLE sysadmin ADD MEMBER [$DB_USER];
+ALTER SERVER ROLE sysadmin ADD MEMBER $DB_USER;
 GO
 EOSQL
 
-/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P $SA_PASSWORD -t 30 -i"/var/opt/mssql/init.sql" 
+/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "$SA_PASSWORD" -t 30 -i /var/opt/mssql/init.sql
 
 #trap 
 while [ "$END" == '' ]; do
