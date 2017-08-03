@@ -16,8 +16,8 @@ RUN export DEBIAN_FRONTEND=noninteractive ACCEPT_EULA=Y && \
     locale-gen en_US.UTF-8
     
 
-ADD entrypoint.sh /var/opt/mssql/
+ADD entrypoint.sh /opt/
 
 EXPOSE 1433
 
-ENTRYPOINT /var/opt/mssql/entrypoint.sh
+ENTRYPOINT /opt/entrypoint.sh
