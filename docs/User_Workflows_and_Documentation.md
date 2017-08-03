@@ -150,12 +150,12 @@ To create a new person in ANET:
 3. You’ll be prompted to fill out information about that person.
     1. Name: fill out their name (first and last). 
     2. Role: Select advisor or principal from the dropdown menu of options. 
-    3. Email: You can optionally add an email address for that advisor or principal
-    4. Phone number: You can optionally add a phone number for this person
+    3. Email: You can optionally add an email address for that advisor or principal.
+    4. Phone: You can optionally add a phone number for this person.
     5. Rank: You can select the military rank of the person, or identify that they are a civilian or contractor.
     6. Gender: You can select the person’s gender. 
-    7. Country: You can add which country the person is from. 
-    8. End of tour date: You can add their end of tour date. 
+    7. Nationality: You can add which country the person is from (their nationality, not the country they are currently working in).
+    8. End of tour: You can add their end of tour date.
     9. Biography: This is an open text field where you can record helpful information about this person.
     10. Position: You can identify which position this person is filling by searching for the position (by name or billet/tashkill number). If their position does not already exist in the system, you can leave this blank and create the position for them. 
 4. Once those fields have been completed, click the “Save person” button at the bottom of the page. 

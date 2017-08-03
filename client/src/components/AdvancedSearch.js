@@ -98,7 +98,7 @@ export default class AdvancedSearch extends Component {
 					placeholder="Filter by location..."
 					url="/api/locations/search"
 				/>,
-				Country: <SelectSearchFilter
+				Nationality: <SelectSearchFilter
 					queryKey="country"
 					values={countries}
 					labels={countries}
