@@ -90,6 +90,26 @@ task dbMigrate(dependsOn: 'compileJava', type: JavaExec) {
 	environment(run.environment)
 	main = 'mil.dds.anet.AnetApplication'
 	args = ["db","migrate","anet.yml"]
+	if (project.hasProperty("dry-run")) {
+		args += "--dry-run"
+	}
+}
+
+task dbTest(dependsOn: 'compileJava', type: JavaExec) {
+	classpath =  sourceSets.main.runtimeClasspath
+	environment(run.environment)
+	main = 'mil.dds.anet.AnetApplication'
+	args = ["db","test","anet.yml"]
+}
+
+task dbRollback(dependsOn: 'compileJava', type: JavaExec) {
+	classpath =  sourceSets.main.runtimeClasspath
+	environment(run.environment)
+	main = 'mil.dds.anet.AnetApplication'
+	args = ["db","rollback","anet.yml","--count","1"]
+	if (project.hasProperty("dry-run")) {
+		args += "--dry-run"
+	}
 }
 
 task dbDrop(dependsOn: 'compileJava', type: JavaExec) {
