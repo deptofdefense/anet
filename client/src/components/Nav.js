@@ -25,6 +25,9 @@ class Nav extends Component {
 		let organizations = appData.organizations || []
 		let path = this.context.app.props.location.pathname
 
+		let {settings} = appData || {}
+		let externalDocumentationUrl = settings.EXTERNAL_DOCUMENTATION_LINK_URL
+
 		let inAdmin = path.indexOf('/admin') === 0
 		let inOrg = path.indexOf('/organizations') === 0
 		let inMyReports = path.indexOf('/reports/mine') === 0
@@ -114,6 +117,12 @@ class Nav extends Component {
 					<SubNav>
 						<Link to={"/admin/mergePeople"}><NavItem>Merge people</NavItem></Link>
 					</SubNav>
+				}
+				
+				{externalDocumentationUrl &&
+					<li role="presentation">
+						<a href={externalDocumentationUrl} target="_blank">External documentation</a>
+					</li>
 				}
 
 				<Link to="/help">
