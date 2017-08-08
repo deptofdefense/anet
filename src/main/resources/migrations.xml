@@ -647,7 +647,7 @@
 	</changeSet>
 
 	<changeSet id="35" author="evdhoudt" dbms="mssql" >
-		<sql dbms="mssql">
+		<sql dbms="">
 			INSERT INTO adminSettings ([key], value) VALUES ('EXTERNAL_DOCUMENTATION_LINK_URL', '');
 		</sql>
 	</changeSet>
@@ -691,6 +691,17 @@
 		<sql dbms="mssql">
 			INSERT INTO adminSettings ([key], value) VALUES ('GENERAL_BANNER_TEXT', '');
 		</sql>
+	</changeset>
+
+	<changeSet  id="add-banner-text" author="evdhoudt">
+		<insert tableName="adminSettings">
+			<column name="key" value="GENERAL_BANNER_TEXT" />
+		</insert>
+		<rollback>
+			<delete tableName="adminSettings">
+				<where>[key] = 'GENERAL_BANNER_TEXT'</where>
+			</delete>
+		</rollback>
 	</changeSet>
 
 	<changeSet id="add-banner-text" author="evdhoudt">
