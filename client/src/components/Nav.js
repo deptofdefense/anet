@@ -121,7 +121,7 @@ class Nav extends Component {
 				
 				{externalDocumentationUrl &&
 					<li role="presentation">
-						<a href={externalDocumentationUrl} target="_blank">External documentation</a>
+						<a href={externalDocumentationUrl} target="_extdocs">External documentation</a>
 					</li>
 				}
 
