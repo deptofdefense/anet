@@ -686,5 +686,11 @@
 			constraintName="fk_reportTags_tag" onDelete="NO ACTION" onUpdate="NO ACTION"
 			referencedColumnNames="id" referencedTableName="tags" />
 	</changeSet>
+	
+	<changeSet id="36" author="evdhoudt" dbms="mssql" >
+		<sql dbms="mssql">
+			INSERT INTO adminSettings ([key], value) VALUES ('GENERAL_BANNER_TEXT', '');
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
