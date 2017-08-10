@@ -16,7 +16,7 @@ import LinkTo from 'components/LinkTo'
 
 import API from 'api'
 import dict from 'dictionary'
-import {Report, Person, Poam, Comment, Position, Tag} from 'models'
+import {Report, Person, Poam, Comment, Position} from 'models'
 
 export default class ReportShow extends Page {
 	static contextTypes = {
