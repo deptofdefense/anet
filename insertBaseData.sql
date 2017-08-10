@@ -5,6 +5,7 @@ SET QUOTED_IDENTIFIER ON
 --DROP TABLE positionRelationships;
 --DROP TABLE reportPoams;
 --DROP TABLE reportPeople;
+--DROP TABLE reportTags;
 --DROP TABLE peoplePositions;
 --DROP TABLE savedSearches;
 --DROP TABLE positions;
@@ -17,6 +18,7 @@ SET QUOTED_IDENTIFIER ON
 --DROP TABLE organizations;
 --DROP TABLE adminSettings;
 --DROP TABLE pendingEmails;
+--DROP TABLE tags;
 --DROP TABLE DATABASECHANGELOG;
 --DROP TABLE DATABASECHANGELOGLOCK;
 
@@ -26,6 +28,7 @@ TRUNCATE TABLE approvalActions;
 TRUNCATE TABLE positionRelationships;
 TRUNCATE TABLE reportPoams;
 TRUNCATE TABLE reportPeople;
+TRUNCATE TABLE reportTags;
 TRUNCATE TABLE comments;
 TRUNCATE TABLE savedSearches;
 DELETE FROM positions;
@@ -37,6 +40,7 @@ DELETE FROM approvalSteps;
 DELETE FROM locations;
 DELETE FROM organizations;
 DELETE FROM adminSettings;
+DELETE FROM tags;
 
 --Advisors
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, domainUsername, country, gender, createdAt, updatedAt)
@@ -576,3 +580,18 @@ INSERT INTO adminSettings ([key], value) VALUES ('HELP_LINK_URL', 'http://google
 INSERT INTO adminSettings ([key], value) VALUES ('CONTACT_EMAIL', 'team-anet@dds.mil');
 INSERT INTO adminsettings ([key], value) VALUES ('DAILY_ROLLUP_MAX_REPORT_AGE_DAYS', '14');
 INSERT INTO adminsettings ([key], value) VALUES ('EXTERNAL_DOCUMENTATION_LINK_URL', '');
+
+-- Tags
+INSERT INTO tags (name, description, createdAt, updatedAt) VALUES
+  ('bribery', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('clientelism', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('collusion', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('embezzlement', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('extortion', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('fraud', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('grand corruption', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('nepotism', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('patronage', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('state capture', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('petty corruption', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('facilitation payment', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
