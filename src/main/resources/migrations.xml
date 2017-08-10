@@ -652,4 +652,18 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="add_tags" author="gjvoosten">
+		<createTable tableName="tags">
+		   <column name="id" type="int" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="name" type="nvarchar(100)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="description" type="nvarchar(512)" />
+			<column name="createdAt" type="datetime" />
+			<column name="updatedAt" type="datetime" />
+		</createTable>
+	</changeSet>
+
 </databaseChangeLog>
