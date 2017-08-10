@@ -12,6 +12,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +42,14 @@ public abstract class AbstractResourceTest {
 		config.setTimeout(Duration.seconds(30L));
 		config.setConnectionTimeout(Duration.seconds(10));
 	}
-	
+
+	protected Person admin;
+
+	@Before
+	public void setUp() {
+		admin = findOrPutPersonInDb(PersonTest.getArthurDmin());
+	}
+
 	/* 
 	 * Constructs a httpQuery to the localhost server for the specified path. 
 	 */
@@ -86,7 +94,7 @@ public abstract class AbstractResourceTest {
 		}
 
 		//Create insert into DB
-		Person newPerson = httpQuery("/api/people/new", PersonTest.getArthurDmin()).post(Entity.json(stub), Person.class);
+		Person newPerson = httpQuery("/api/people/new", admin).post(Entity.json(stub), Person.class);
 		return newPerson;
 	}
 	
@@ -114,10 +122,6 @@ public abstract class AbstractResourceTest {
 		return findOrPutPersonInDb(PersonTest.getBobBobtown());
 	}
 	
-	public Person getArthurDmin() { 
-		return findOrPutPersonInDb(PersonTest.getArthurDmin());
-	}
-	
 	/**
 	 * Reads the entire Entity off the HTTP Response. 
 	 */
@@ -130,4 +134,5 @@ public abstract class AbstractResourceTest {
 			return null;
 		}
 	}
+
 }

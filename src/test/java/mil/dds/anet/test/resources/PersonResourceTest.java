@@ -39,7 +39,6 @@ public class PersonResourceTest extends AbstractResourceTest {
 	@Test
 	public void testCreatePerson() {
 		final Person jack = getJackJackson();
-		final Person admin = getArthurDmin();
 
 		Person retPerson = httpQuery(String.format("/api/people/%d", jack.getId()), jack).get(Person.class);
 		assertThat(retPerson).isEqualTo(jack);
@@ -242,8 +241,6 @@ public class PersonResourceTest extends AbstractResourceTest {
 	
 	@Test
 	public void mergePeopleTest() { 
-		final Person admin = getArthurDmin();
-
 		//Create a person
 		Person loser = new Person();
 		loser.setRole(Role.ADVISOR);
