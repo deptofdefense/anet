@@ -4,6 +4,8 @@ import {Alert, Table, Button, Col, Modal, Checkbox} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 import moment from 'moment'
 import utils from 'utils'
+import { WithContext as ReactTags } from 'react-tag-input'
+import 'components/reactTags.css'
 
 import History from 'components/History'
 import Fieldset from 'components/Fieldset'
@@ -14,7 +16,7 @@ import LinkTo from 'components/LinkTo'
 
 import API from 'api'
 import dict from 'dictionary'
-import {Report, Person, Poam, Comment, Position} from 'models'
+import {Report, Person, Poam, Comment, Position, Tag} from 'models'
 
 export default class ReportShow extends Page {
 	static contextTypes = {
@@ -85,6 +87,8 @@ export default class ReportShow extends Page {
 				}
 
 				approvalStep { name, approvers { id }, nextStepId }
+
+				tags { id, name, description }
 			}
 		`).then(data => {
 			this.setState({report: new Report(data.report)})
@@ -196,6 +200,11 @@ export default class ReportShow extends Page {
 								{utils.sentenceCase(report.cancelledReason)}
 							</Form.Field>
 						}
+						<Form.Field id="tags" label="Tags">
+							<ReactTags tags={report.tags}
+								labelField={'name'}
+								readOnly={true} />
+						</Form.Field>
 						<Form.Field id="author" label="Report author">
 							<LinkTo person={report.author} />
 						</Form.Field>
