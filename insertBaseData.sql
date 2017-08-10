@@ -595,3 +595,28 @@ INSERT INTO tags (name, description, createdAt, updatedAt) VALUES
   ('state capture', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
   ('petty corruption', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
   ('facilitation payment', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+-- Tag some reports
+INSERT INTO reportTags (reportId, tagId)
+  SELECT r.id, t.id
+  FROM reports r, tags t
+  WHERE r.id % 2 = 0
+  AND t.name = 'bribery';
+
+INSERT INTO reportTags (reportId, tagId)
+  SELECT r.id, t.id
+  FROM reports r, tags t
+  WHERE r.id % 3 = 0
+  AND t.name = 'embezzlement';
+
+INSERT INTO reportTags (reportId, tagId)
+  SELECT r.id, t.id
+  FROM reports r, tags t
+  WHERE r.id % 2 = 1
+  AND t.name = 'patronage';
+
+INSERT INTO reportTags (reportId, tagId)
+  SELECT r.id, t.id
+  FROM reports r, tags t
+  WHERE r.id % 3 = 1
+  AND t.name = 'facilitation payment';
