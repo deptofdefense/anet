@@ -51,6 +51,7 @@ import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
 import mil.dds.anet.beans.RollupGraph;
+import mil.dds.anet.beans.Tag;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.ReportList;
 import mil.dds.anet.beans.search.ReportSearchQuery;
 import mil.dds.anet.config.AnetConfiguration;
@@ -246,6 +247,22 @@ public class ReportResource implements IGraphQLResource {
 			}
 			for (Integer id : existingPoamIds) {
 				dao.removePoamFromReport(Poam.createWithId(id), r);
+			}
+		}
+
+		// Update Tags:
+		if (r.getTags() != null) {
+			List<Tag> existingTags = dao.getTagsForReport(r.getId());
+			for (final Tag t : r.getTags()) {
+				Optional<Tag> existingTag = existingTags.stream().filter(el -> el.getId().equals(t.getId())).findFirst();
+				if (existingTag.isPresent()) {
+					existingTags.remove(existingTag.get());
+				} else {
+					dao.addTagToReport(t, r);
+				}
+			}
+			for (Tag t : existingTags) {
+				dao.removeTagFromReport(t, r);
 			}
 		}
 		

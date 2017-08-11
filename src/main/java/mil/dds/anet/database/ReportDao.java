@@ -1,5 +1,6 @@
 package mil.dds.anet.database;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,6 +16,9 @@ import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.Query;
 import org.skife.jdbi.v2.TransactionCallback;
 import org.skife.jdbi.v2.TransactionStatus;
+import org.skife.jdbi.v2.sqlobject.Bind;
+import org.skife.jdbi.v2.sqlobject.BindBean;
+import org.skife.jdbi.v2.sqlobject.SqlBatch;
 
 import com.google.common.base.Joiner;
 
@@ -27,6 +31,7 @@ import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
 import mil.dds.anet.beans.RollupGraph;
+import mil.dds.anet.beans.Tag;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.ReportList;
 import mil.dds.anet.beans.search.OrganizationSearchQuery;
 import mil.dds.anet.beans.search.ReportSearchQuery;
@@ -34,6 +39,7 @@ import mil.dds.anet.database.AdminDao.AdminSettingKeys;
 import mil.dds.anet.database.mappers.PoamMapper;
 import mil.dds.anet.database.mappers.ReportMapper;
 import mil.dds.anet.database.mappers.ReportPersonMapper;
+import mil.dds.anet.database.mappers.TagMapper;
 import mil.dds.anet.search.sqlite.SqliteReportSearcher;
 import mil.dds.anet.utils.DaoUtils;
 import mil.dds.anet.utils.Utils;
@@ -112,33 +118,37 @@ public class ReportDao implements IAnetDao<Report> {
 					.executeAndReturnGeneratedKeys();
 				r.setId(DaoUtils.getGeneratedId(keys));
 
+				final ReportBatch rb = dbHandle.attach(ReportBatch.class);
 				if (r.getAttendees() != null) {
 					//Setify based on attendeeId to prevent violations of unique key constraint. 
 					Map<Integer,ReportPerson> attendeeMap = new HashMap<Integer,ReportPerson>();
 					r.getAttendees().stream().forEach(rp -> attendeeMap.put(rp.getId(), rp));
-					for (ReportPerson p : attendeeMap.values()) {
-						//TODO: batch this
-						dbHandle.createStatement("/* insertReport.attendee */ INSERT INTO reportPeople "
-								+ "(personId, reportId, isPrimary) VALUES (:personId, :reportId, :isPrimary)")
-							.bind("personId", p.getId())
-							.bind("reportId", r.getId())
-							.bind("isPrimary", p.isPrimary())
-							.execute();
-					}
+					rb.insertReportAttendees(r.getId(), new ArrayList<ReportPerson>(attendeeMap.values()));
 				}
 				if (r.getPoams() != null) {
-					for (Poam p : r.getPoams()) {
-						//TODO: batch this.
-						dbHandle.createStatement("/* insertReport.poam */ INSERT INTO reportPoams " 
-								+ "(reportId, poamId) VALUES (:reportId, :poamId)")
-							.bind("reportId", r.getId())
-							.bind("poamId", p.getId())
-							.execute();
-					}
+					rb.insertReportPoams(r.getId(), r.getPoams());
+				}
+				if (r.getTags() != null) {
+					rb.insertReportTags(r.getId(), r.getTags());
 				}
 				return r;
 			}
 		});
+	}
+
+	public interface ReportBatch
+	{
+		@SqlBatch("INSERT INTO reportPeople (reportId, personId, isPrimary) VALUES (:reportId, :id, :primary)")
+		void insertReportAttendees(@Bind("reportId") Integer reportId,
+				@BindBean List<ReportPerson> reportPeople);
+
+		@SqlBatch("INSERT INTO reportPoams (reportId, poamId) VALUES (:reportId, :id)")
+		void insertReportPoams(@Bind("reportId") Integer reportId,
+				@BindBean List<Poam> poams);
+
+		@SqlBatch("INSERT INTO reportTags (reportId, tagId) VALUES (:reportId, :id)")
+		void insertReportTags(@Bind("reportId") Integer reportId,
+				@BindBean List<Tag> tags);
 	}
 
 	@Override
@@ -229,6 +239,22 @@ public class ReportDao implements IAnetDao<Report> {
 				.execute();
 	}
 
+	public int addTagToReport(Tag t, Report r) {
+		return dbHandle.createStatement("/* addTagToReport */ INSERT INTO reportTags (reportId, tagId) "
+				+ "VALUES (:reportId, :tagId)")
+			.bind("reportId", r.getId())
+			.bind("tagId", t.getId())
+			.execute();
+	}
+
+	public int removeTagFromReport(Tag t, Report r) {
+		return dbHandle.createStatement("/* removeTagFromReport */ DELETE FROM reportTags "
+				+ "WHERE reportId = :reportId AND tagId = :tagId")
+				.bind("reportId", r.getId())
+				.bind("tagId", t.getId())
+				.execute();
+	}
+
 	public List<ReportPerson> getAttendeesForReport(int reportId) {
 		return dbHandle.createQuery("/* getAttendeesForReport */ SELECT " + PersonDao.PERSON_FIELDS 
 				+ ", reportPeople.isPrimary FROM reportPeople "
@@ -248,6 +274,16 @@ public class ReportDao implements IAnetDao<Report> {
 				.list();
 	}
 
+	public List<Tag> getTagsForReport(int reportId) {
+		return dbHandle.createQuery("/* getTagsForReport */ SELECT * FROM reportTags "
+				+ "INNER JOIN tags ON reportTags.tagId = tags.id "
+				+ "WHERE reportTags.reportId = :reportId "
+				+ "ORDER BY tags.name")
+			.bind("reportId", reportId)
+			.map(new TagMapper())
+			.list();
+	}
+
 	//Does an unauthenticated search. This will never return any DRAFT or REJECTED reports
 	public ReportList search(ReportSearchQuery query) { 
 		return search(query, null);
@@ -265,6 +301,9 @@ public class ReportDao implements IAnetDao<Report> {
 	public void deleteReport(final Report report) {
 		dbHandle.inTransaction(new TransactionCallback<Void>() {
 			public Void inTransaction(Handle conn, TransactionStatus status) throws Exception {
+				// Delete tags
+				dbHandle.execute("/* deleteReport.tags */ DELETE FROM reportTags where reportId = ?", report.getId());
+
 				//Delete poams
 				dbHandle.execute("/* deleteReport.poams */ DELETE FROM reportPoams where reportId = ?", report.getId());
 				
