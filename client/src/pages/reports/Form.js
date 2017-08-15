@@ -204,6 +204,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 							labelField={'name'}
 							minQueryLength={1}
 							autocomplete={true}
+							autofocus={false}
 							handleDelete={this.handleTagDelete}
 							handleAddition={this.handleTagAddition} />
 					</Form.Field>
