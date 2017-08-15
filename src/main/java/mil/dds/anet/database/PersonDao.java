@@ -155,6 +155,7 @@ public class PersonDao implements IAnetDao<Person> {
 					+ "SELECT top(:maxResults) reportPeople.personId "
 					+ "FROM reports JOIN reportPeople ON reports.id = reportPeople.reportId "
 					+ "WHERE authorId = :authorId "
+					+ "AND personId != :authorId "
 					+ "GROUP BY personId "
 					+ "ORDER BY MAX(reports.createdAt) DESC"
 				+ ")";
@@ -164,6 +165,7 @@ public class PersonDao implements IAnetDao<Person> {
 					+ "SELECT reportPeople.personId "
 					+ "FROM reports JOIN reportPeople ON reports.id = reportPeople.reportId "
 					+ "WHERE authorId = :authorId "
+					+ "AND personId != :authorId "
 					+ "GROUP BY personId "
 					+ "ORDER BY MAX(reports.createdAt) DESC "
 					+ "LIMIT :maxResults"
