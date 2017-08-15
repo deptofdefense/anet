@@ -38,6 +38,7 @@ public class ReportSearchQuery implements ISearchQuery {
 	Integer pendingApprovalOf;
 	List<ReportState> state;
 	ReportCancelledReason cancelledReason;
+	private Integer tagId;
 
 	ReportSearchSortBy sortBy;
 	SortOrder sortOrder;
@@ -218,6 +219,14 @@ public class ReportSearchQuery implements ISearchQuery {
 
 	public void setCancelledReason(ReportCancelledReason cancelledReason) {
 		this.cancelledReason = cancelledReason;
+	}
+
+	public Integer getTagId() {
+		return tagId;
+	}
+
+	public void setTagId(Integer tagId) {
+		this.tagId = tagId;
 	}
 
 	public ReportSearchSortBy getSortBy() {
