@@ -74,13 +74,13 @@ This section displays how many future engagements you have created. Future engag
 
 Searching in ANET is the best way to quickly find information. At the top of the home page, there’s a search button where you can enter a keyword. Keywords are things like people’s names, locations, topics, and others.
 
-Once you’ve entered your search, you’ll be taken to a page of search results. These results will show you any reports, people, positions, locations, or organizations that contain that keyword. 
+Once you’ve entered your search, you’ll be taken to a page of search results. These results will show you any reports, people, positions, locations, PoAMs, or organizations that contain that keyword.
 
 **Saved Search**
 
-If you want to be able to quickly check the results of a search, you have the ability to save your searches. For example, if you were interested in seeing all reports that use the word “corruption”, you could search for it as described above. To easily check the search results, you can save that search by [BLANK]. 
+If you want to be able to quickly check the results of a search, you have the ability to save your searches. For example, if you were interested in seeing all reports that use the word “corruption”, you could search for it as described above. To easily check the search results, you can save that search by clicking the “Save search” button at the top. Give your saved search a meaningful name so you will be able to find it.
 
-When you’ve saved your search this way, the results will display on the homepage under “Saved Searches”. You can also toggle between multiple saved searches by clicking on the dropdown menu under “Saved Searches” and selecting the search results you’d like to view. 
+When you’ve saved your search this way, the results will display on the homepage under “Saved Searches”. You can also toggle between multiple saved searches by clicking on the dropdown menu under “Saved Searches” and selecting the search results you’d like to view. Should you no longer be interested in that saved search, you can remove it by clicking the “Delete Search” button. You can also view the complete search results for a saved search by clicking the “Show Search” button. In addition to the top matching reports, this will also show you additional pages of results, as well as possible results for other types of information.
 
 **Daily Rollup**
 
@@ -150,12 +150,12 @@ To create a new person in ANET:
 3. You’ll be prompted to fill out information about that person.
     1. Name: fill out their name (first and last). 
     2. Role: Select advisor or principal from the dropdown menu of options. 
-    3. Email: You can optionally add an email address for that advisor or principal
-    4. Phone number: You can optionally add a phone number for this person
+    3. Email: You can optionally add an email address for that advisor or principal.
+    4. Phone: You can optionally add a phone number for this person.
     5. Rank: You can select the military rank of the person, or identify that they are a civilian or contractor.
     6. Gender: You can select the person’s gender. 
-    7. Country: You can add which country the person is from. 
-    8. End of tour date: You can add their end of tour date. 
+    7. Nationality: You can add which country the person is from (their nationality, not the country they are currently working in).
+    8. End of tour: You can add their end of tour date.
     9. Biography: This is an open text field where you can record helpful information about this person.
     10. Position: You can identify which position this person is filling by searching for the position (by name or billet/tashkill number). If their position does not already exist in the system, you can leave this blank and create the position for them. 
 4. Once those fields have been completed, click the “Save person” button at the bottom of the page. 

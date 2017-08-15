@@ -35,7 +35,7 @@ if [ -z "$DB_USER_PASSWORD" ]; then
     exit 1
 fi  
 
-cat <<-EOSQL > /var/opt/mssql/init.sql
+cat <<-EOSQL > /var/mssql-init.sql
 CREATE DATABASE $DB_NAME;
 GO
 USE $DB_NAME;
@@ -48,7 +48,7 @@ ALTER SERVER ROLE sysadmin ADD MEMBER $DB_USER;
 GO
 EOSQL
 
-/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "$SA_PASSWORD" -t 30 -i /var/opt/mssql/init.sql
+/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "$SA_PASSWORD" -t 30 -i /var/mssql-init.sql
 
 #trap 
 while [ "$END" == '' ]; do

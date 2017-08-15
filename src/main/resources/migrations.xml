@@ -646,4 +646,45 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="35" author="evdhoudt" dbms="mssql" >
+		<sql dbms="mssql">
+			INSERT INTO adminSettings ([key], value) VALUES ('EXTERNAL_DOCUMENTATION_LINK_URL', '');
+		</sql>
+	</changeSet>
+
+	<changeSet id="add_tags" author="gjvoosten">
+		<createTable tableName="tags">
+		   <column name="id" type="int" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="name" type="nvarchar(100)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="description" type="nvarchar(512)" />
+			<column name="createdAt" type="datetime" />
+			<column name="updatedAt" type="datetime" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="add_report_tags" author="gjvoosten">
+		<createTable tableName="reportTags">
+			<column name="reportId" type="int">
+				<constraints nullable="false"/>
+			</column>
+			<column name="tagId" type="int">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="add_report_tags_constraints" author="gjvoosten" dbms="mssql">
+		<addUniqueConstraint tableName="reportTags" columnNames="reportId, tagId" constraintName="uniqueReportTag" />
+		<addForeignKeyConstraint baseColumnNames="reportId" baseTableName="reportTags"
+			constraintName="fk_reportTags_report" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="reports" />
+		<addForeignKeyConstraint baseColumnNames="tagId" baseTableName="reportTags"
+			constraintName="fk_reportTags_tag" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="tags" />
+	</changeSet>
+
 </databaseChangeLog>

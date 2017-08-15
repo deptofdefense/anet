@@ -11,6 +11,16 @@ services:
 notifications:
     slack: nci-agency:TvRV22whtaRGflaCPPfv2G1v
 
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+    - client/node_modules
+
 before_install:
   - docker run --name mssql-server -v ${PWD}:/hostdata -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=P@ssw0rd" -e "DB_NAME=testAnet" -e "DB_USER=anetUser" -e "DB_USER_PASSWORD=P@ssw0rd" -d -p 1433:1433 ncia/anet-mssql-linux
   - nvm install node

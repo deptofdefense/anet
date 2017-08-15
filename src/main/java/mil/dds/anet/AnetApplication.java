@@ -1,7 +1,6 @@
 package mil.dds.anet;
 
 import java.lang.invoke.MethodHandles;
-import java.sql.Connection;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -17,7 +16,6 @@ import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.skife.jdbi.v2.DBI;
-import org.skife.jdbi.v2.Handle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,6 +49,7 @@ import mil.dds.anet.resources.PoamResource;
 import mil.dds.anet.resources.PositionResource;
 import mil.dds.anet.resources.ReportResource;
 import mil.dds.anet.resources.SavedSearchResource;
+import mil.dds.anet.resources.TagResource;
 import mil.dds.anet.threads.AnetEmailWorker;
 import mil.dds.anet.threads.FutureEngagementWorker;
 import mil.dds.anet.utils.AnetDbLogger;
@@ -180,6 +179,7 @@ public class AnetApplication extends Application<AnetConfiguration> {
 		AdminResource adminResource = new AdminResource(engine);
 		HomeResource homeResource = new HomeResource(engine);
 		SavedSearchResource savedSearchResource = new SavedSearchResource(engine);
+		final TagResource tagResource = new TagResource(engine);
 
 		//Register all of the HTTP Resources
 		environment.jersey().register(personResource);
@@ -192,12 +192,13 @@ public class AnetApplication extends Application<AnetConfiguration> {
 		environment.jersey().register(adminResource);
 		environment.jersey().register(homeResource);
 		environment.jersey().register(savedSearchResource);
+		environment.jersey().register(tagResource);
 		environment.jersey().register(new ViewResponseFilter(configuration));
 		environment.jersey().register(new GraphQLResource(
-			ImmutableList.of(reportResource, personResource, 
+			ImmutableList.of(reportResource, personResource,
 				positionResource, locationResource,
-				orgResource, asResource, poamResource, 
-				adminResource, savedSearchResource), 
+				orgResource, asResource, poamResource,
+				adminResource, savedSearchResource, tagResource),
 			configuration.isDevelopmentMode()));
 	}
 
