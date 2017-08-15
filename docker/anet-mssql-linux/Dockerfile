@@ -17,6 +17,7 @@ RUN export DEBIAN_FRONTEND=noninteractive ACCEPT_EULA=Y && \
     
 
 ADD entrypoint.sh /var/opt/mssql/
+ADD waitTillServiceStarted.sh /var/opt/mssql/
 
 EXPOSE 1433
 
