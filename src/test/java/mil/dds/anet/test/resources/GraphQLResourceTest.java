@@ -36,7 +36,6 @@ public class GraphQLResourceTest extends AbstractResourceTest {
 	
 	@Test
 	public void test() {
-		Person arthur = getArthurDmin();
 		Person jack = getJackJackson();
 		Person steve = getSteveSteveson();
 		File testDir = new File("src/test/resources/graphQLTests/");
@@ -67,12 +66,12 @@ public class GraphQLResourceTest extends AbstractResourceTest {
 					logger.info("Processing file {}", f);
 
 					// Test POST request
-					Map<String,Object> respPost = httpQuery("/graphql", arthur)
+					Map<String,Object> respPost = httpQuery("/graphql", admin)
 							.post(Entity.json(query), new GenericType<Map<String,Object>>() {});
 					doAsserts(f, respPost);
 
 					// Test GET request
-					Map<String,Object> respGet = httpQuery("/graphql?query=" + URLEncoder.encode("{" + raw + "}", "UTF-8"), arthur)
+					Map<String,Object> respGet = httpQuery("/graphql?query=" + URLEncoder.encode("{" + raw + "}", "UTF-8"), admin)
 							.get(new GenericType<Map<String,Object>>() {});
 					doAsserts(f, respGet);
 
@@ -80,7 +79,7 @@ public class GraphQLResourceTest extends AbstractResourceTest {
 					assertThat(respPost.get("data")).isEqualTo(respGet.get("data"));
 
 					// Test GET request over XML
-					String respGetXml = httpQuery("/graphql?output=xml&query=" + URLEncoder.encode("{" + raw + "}", "UTF-8"), arthur)
+					String respGetXml = httpQuery("/graphql?output=xml&query=" + URLEncoder.encode("{" + raw + "}", "UTF-8"), admin)
 							.get(new GenericType<String>() {});
 					assertThat(respGetXml).isNotNull();
 					int len = respGetXml.length();
