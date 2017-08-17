@@ -14,8 +14,12 @@ apply plugin: 'idea'
 apply plugin: 'application'
 apply plugin: 'checkstyle'
 apply plugin: 'org.kordamp.markdown.convert'
+apply plugin: 'com.bmuschko.docker-java-application'
+apply plugin: "se.bjurr.gitchangelog.git-changelog-gradle-plugin"
 
 apply from: 'localSettings.gradle'
+
+sourceCompatibility = 1.8
 
 // In this section you declare where to find the dependencies of your project
 repositories {
@@ -56,6 +60,7 @@ dependencies {
 def proc = "git describe".execute(null, projectDir);
 proc.waitFor();
 project.version = proc.text.trim();
+project.group = "ncia"
 
 mainClassName = "mil.dds.anet.AnetApplication"
 
@@ -79,14 +84,14 @@ test.environment = run.environment
 run.args = ["server","anet.yml"]
 
 task dbStatus(dependsOn: 'compileJava', type: JavaExec) {
-	classpath =  sourceSets.main.runtimeClasspath
+	classpath = sourceSets.main.runtimeClasspath
 	environment(run.environment)
 	main = 'mil.dds.anet.AnetApplication'
 	args = ["db","status","anet.yml"]
 }
 
 task dbMigrate(dependsOn: 'compileJava', type: JavaExec) {
-	classpath =  sourceSets.main.runtimeClasspath
+	classpath = sourceSets.main.runtimeClasspath
 	environment(run.environment)
 	main = 'mil.dds.anet.AnetApplication'
 	args = ["db","migrate","anet.yml"]
@@ -96,14 +101,14 @@ task dbMigrate(dependsOn: 'compileJava', type: JavaExec) {
 }
 
 task dbTest(dependsOn: 'compileJava', type: JavaExec) {
-	classpath =  sourceSets.main.runtimeClasspath
+	classpath = sourceSets.main.runtimeClasspath
 	environment(run.environment)
 	main = 'mil.dds.anet.AnetApplication'
 	args = ["db","test","anet.yml"]
 }
 
 task dbRollback(dependsOn: 'compileJava', type: JavaExec) {
-	classpath =  sourceSets.main.runtimeClasspath
+	classpath = sourceSets.main.runtimeClasspath
 	environment(run.environment)
 	main = 'mil.dds.anet.AnetApplication'
 	args = ["db","rollback","anet.yml","--count","1"]
@@ -113,13 +118,55 @@ task dbRollback(dependsOn: 'compileJava', type: JavaExec) {
 }
 
 task dbDrop(dependsOn: 'compileJava', type: JavaExec) {
-	classpath =  sourceSets.main.runtimeClasspath
+	classpath = sourceSets.main.runtimeClasspath
 	environment(run.environment)
 	main = 'mil.dds.anet.AnetApplication'
 	args = ["db","drop-all","--confirm-delete-everything","anet.yml"]
 }
 
-//Configure the Java Checkstyle settings.  Run with ./gradlew check
+task dockerPullDB(type: com.bmuschko.gradle.docker.tasks.image.DockerPullImage) {
+	repository = "ncia/anet-mssql-linux"
+	description = "Pulls a docker image for the ANET DB from " + repository
+	tag = "latest"
+}
+
+task dockerCreateDB(dependsOn: dockerPullDB, type: com.bmuschko.gradle.docker.tasks.container.DockerCreateContainer) {
+	imageId = dockerPullDB.getImageId()
+	containerName = "anet-mssql-server"
+	description = "Creates an ANET MS SQL DB container named " + containerName
+	binds = ["${projectDir}":"/hostdata"]
+	if (project.hasProperty("mounts")) {
+		project.properties["mounts"].tokenize(",").each {
+			def (source, target) = it.split(":")
+			binds[source] = target
+		}
+	}
+	env = ["ACCEPT_EULA=Y","SA_PASSWORD="+run.environment["ANET_SA_PASSWORD"],"DB_NAME="+run.environment["ANET_DB_NAME"],"DB_USER="+run.environment["ANET_DB_USERNAME"],"DB_USER_PASSWORD="+run.environment["ANET_DB_PASSWORD"]]
+	portBindings = ["1433:"+run.environment["ANET_DB_PORT"]]
+}
+
+// need to make this invoke dbCreateContainer if there is no anet-mssql-server and possibly get newer image if available
+task dockerStartDB(type: com.bmuschko.gradle.docker.tasks.container.DockerStartContainer) {
+	description = "Starts anet-mssql-server container"
+	targetContainerId { "anet-mssql-server" }
+}
+
+task dockerStopDB(type: com.bmuschko.gradle.docker.tasks.container.DockerStopContainer) {
+	description = "Stops anet-mssql-server container"
+	targetContainerId { "anet-mssql-server" }
+}
+
+task dockerRemoveDB(type: com.bmuschko.gradle.docker.tasks.container.DockerRemoveContainer) {
+	description = "Removes anet-mssql-server container"
+	targetContainerId { "anet-mssql-server" }
+}
+
+task changelog (type: se.bjurr.gitchangelog.plugin.gradle.GitChangelogTask) {
+	file = new File("${buildDir}/resources/main/assets/client/changelog.html");
+	templateContent = file('docs/changelog.mustache').getText('UTF-8');
+}
+
+//Configure the Java Checkstyle settings. Run with ./gradlew check
 checkstyle {
 	configFile = rootProject.file('gradle/checkstyle.xml')
 	toolVersion = '7.5'
@@ -142,14 +189,28 @@ distributions {
 
 //Add gradle plugin repos
 buildscript {
-  repositories {
-    maven {
-      url "https://plugins.gradle.org/m2/"
-    }
-  }
-  dependencies {
-    classpath "org.kordamp:markdown-gradle-plugin:1.1.0"
- }
+	repositories {
+		maven {
+			url "https://plugins.gradle.org/m2/"
+		}
+	}
+	dependencies {
+		classpath "org.kordamp:markdown-gradle-plugin:1.1.0"
+		classpath 'com.bmuschko:gradle-docker-plugin:3.0.12'
+		classpath "gradle.plugin.se.bjurr.gitchangelog:git-changelog-gradle-plugin:1.50"
+	}
+}
+
+docker {
+	javaApplication {
+		baseImage = 'openjdk:8-jre'
+		maintainer = 'Vassil Iordanov "vassil.iordanov@gmail.com"'
+		ports = [80, 443]
+		tag = 'ncia/anet-app-server'
+		exec {
+			entryPoint "/$project.name-$project.version/bin/anet server anet.yaml"
+		}
+	}
 }
 
 startScripts {
@@ -161,8 +222,8 @@ startScripts {
 
 //Configure Markdown plugin
 allprojects {
-  markdownToHtml.sourceDir = file("docs")
-  markdownToHtml.outputDir = file("$buildDir/documentation")
-  markdownToHtml.hardwraps = true
+	markdownToHtml.sourceDir = file("docs")
+	markdownToHtml.outputDir = file("$buildDir/documentation")
+	markdownToHtml.hardwraps = true
 }
 
