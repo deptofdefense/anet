@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ "$ACCEPT_EULA" -ne "Y" ]; then
+if [ "$ACCEPT_EULA" != "y" ] && [ "$ACCEPT_EULA" != "Y" ]; then
     echo "Need to accept MS SQL's EULA and set ACCEPT_EULA to Y"
     exit 1
 fi  
@@ -13,8 +13,12 @@ fi
 mkdir -p /var/opt/mssql
 /opt/mssql/bin/sqlservr &
 
-#fixme to something better than a sleep
-sleep 10
+for i in {60..0}; do
+  if /opt/mssql-tools/bin/sqlcmd -U SA -P "$SA_PASSWORD" -Q 'SELECT 1;' &> /dev/null; then
+    break
+  fi
+  sleep 1
+done
 
 if [ -z "$DB_NAME" ]; then
     echo "Need to set DB_NAME"
@@ -48,6 +52,6 @@ EOSQL
 
 #trap 
 while [ "$END" == '' ]; do
-			sleep 1
-			trap "/opt/mssql/bin/sqlservr stop && END=1" INT TERM
+    sleep 1
+    trap "/opt/mssql/bin/sqlservr stop && END=1" INT TERM
 done
