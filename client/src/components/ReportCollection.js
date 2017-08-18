@@ -24,7 +24,8 @@ const GQL_REPORT_FIELDS =  /* GraphQL */`
 	advisorOrg { id, shortName},
 	principalOrg { id, shortName},
 	location { id, name, lat, lng},
-	poams {id, shortName, longName}
+	poams {id, shortName, longName},
+	tags {id, name, description}
 `
 
 
