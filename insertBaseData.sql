@@ -580,7 +580,9 @@ INSERT INTO adminSettings ([key], value) VALUES ('HELP_LINK_URL', 'http://google
 INSERT INTO adminSettings ([key], value) VALUES ('CONTACT_EMAIL', 'team-anet@dds.mil');
 INSERT INTO adminsettings ([key], value) VALUES ('DAILY_ROLLUP_MAX_REPORT_AGE_DAYS', '14');
 INSERT INTO adminsettings ([key], value) VALUES ('EXTERNAL_DOCUMENTATION_LINK_URL', '');
-<<<<<<< HEAD
+INSERT INTO adminsettings ([key], value) VALUES ('GENERAL_BANNER_TEXT', '');
+INSERT INTO adminsettings ([key], value) VALUES ('GENERAL_BANNER_LEVEL', 'notice');
+INSERT INTO adminsettings ([key], value) VALUES ('GENERAL_BANNER_VISIBILITY', '1');
 
 -- Tags
 INSERT INTO tags (name, description, createdAt, updatedAt) VALUES
@@ -621,6 +623,3 @@ INSERT INTO reportTags (reportId, tagId)
   FROM reports r, tags t
   WHERE r.id % 3 = 1
   AND t.name = 'facilitation payment';
-=======
-INSERT INTO adminsettings ([key], value) VALUES ('GENERAL_BANNER_TEXT', '');
->>>>>>> Add General Banner Text variable to admin settings for to show general notifications
