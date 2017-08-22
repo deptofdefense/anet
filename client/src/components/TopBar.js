@@ -7,8 +7,8 @@ import Header from 'components/Header'
 
 const GENERAL_BANNER_LEVEL = 'GENERAL_BANNER_LEVEL'
 const GENERAL_BANNER_TEXT = 'GENERAL_BANNER_TEXT'
+const GENERAL_BANNER_VISIBILITY = 'GENERAL_BANNER_VISIBILITY'
 const GENERAL_BANNER_TITLE = 'Announcement'
-const GENERAL_BANNER_VISIBILITY = 3
 const visible = {
     USERS: 1,
     SUPER_USERS: 2,
@@ -19,7 +19,8 @@ export default class TopBar extends Component {
     constructor(props) {
         super(props)
         this.state = { 
-            bodyPaddingTop: 0 
+            bodyPaddingTop: 0,
+            bannerVisibility: false
         }
         this.updateBodyPaddingTop = this.updateBodyPaddingTop.bind(this)
     }
@@ -27,6 +28,7 @@ export default class TopBar extends Component {
     componentDidMount() {
         this.updateBodyPaddingTop()
         window.addEventListener("resize", this.updateBodyPaddingTop)
+        this.updateBannerVisibility()
     }
 
     componentWillUnmount() {
@@ -35,6 +37,7 @@ export default class TopBar extends Component {
 
     componentDidUpdate() {
         this.updateBodyPaddingTop()
+        this.updateBannerVisibility()
     }
 
     updateBodyPaddingTop() {
@@ -45,17 +48,20 @@ export default class TopBar extends Component {
         }
     }
 
-    showBanner(){
-        if(GENERAL_BANNER_VISIBILITY === visible.USERS && this.props.currentUser && !this.props.currentUser.isSuperUser()){
-            return true
+    updateBannerVisibility(){
+        let visibilitySetting = parseInt(this.props.settings[GENERAL_BANNER_VISIBILITY], 10)
+        let output = false
+        if(visibilitySetting === visible.USERS && this.props.currentUser && !this.props.currentUser.isSuperUser()){
+            output = true
         }
-        if(GENERAL_BANNER_VISIBILITY === visible.SUPER_USERS && this.props.currentUser && this.props.currentUser.isSuperUser()){
-            return true
+        if(visibilitySetting === visible.SUPER_USERS && this.props.currentUser && this.props.currentUser.isSuperUser()){
+            output = true
         }
-        if(GENERAL_BANNER_VISIBILITY === visible.USERS_AND_SUPER_USERS && (this.props.currentUser || this.props.currentUser.isSuperUser()) ){
-            return true
-        } else {
-            return false
+        if(visibilitySetting === visible.USERS_AND_SUPER_USERS && (this.props.currentUser || this.props.currentUser.isSuperUser()) ){
+            output = true
+        } 
+        if(this.state.bannerVisibility !== output){
+            this.setState({ bannerVisibility: output})
         }
     }
 
@@ -64,7 +70,7 @@ export default class TopBar extends Component {
             level: this.props.settings[GENERAL_BANNER_LEVEL],
             message: this.props.settings[GENERAL_BANNER_TEXT],
             title: GENERAL_BANNER_TITLE,
-            visibility: GENERAL_BANNER_VISIBILITY
+            visible: this.state.bannerVisibility
         } || {}
     }
 
@@ -72,7 +78,7 @@ export default class TopBar extends Component {
         return (
             <div id="topbar" className="navbar navbar-fixed-top">
                 {this.props.currentUser && this.props.position && this.props.position.id === 0 && !this.props.isNewUser() && <NoPositionBanner />}
-                <GeneralBanner showBanner={this.showBanner()} banner={this.bannerOptions()} />
+                <GeneralBanner options={this.bannerOptions()} />
                 <SecurityBanner location={this.props.location} />
                 <Header minimalHeader={this.props.minimalHeader} />
             </div>
