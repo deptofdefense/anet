@@ -699,9 +699,10 @@
 	</changeSet>
 
 	<changeSet id="add-banner-level" author="evdhoudt">
-		<sql>
-			INSERT INTO adminSettings ([key], value) VALUES ('GENERAL_BANNER_LEVEL', 'notice');
-		</sql>
+		<insert tableName="adminSettings">
+			<column name="key" value="GENERAL_BANNER_LEVEL" />
+			<column name="value" value="notice" />
+		</insert>
 		<rollback>
 			<delete tableName="adminSettings">
 				<where>[key] = 'GENERAL_BANNER_LEVEL'</where>
@@ -710,9 +711,10 @@
 	</changeSet>
 
 	<changeSet id="add-banner-visibility" author="evdhoudt">
-		<sql>
-			INSERT INTO adminSettings ([key], value) VALUES ('GENERAL_BANNER_VISIBILITY', '1');
-		</sql>
+		<insert tableName="adminSettings">
+			<column name="key" value="GENERAL_BANNER_VISIBILITY" />
+			<column name="value" value="1" />
+		</insert>
 		<rollback>
 			<delete tableName="adminSettings">
 				<where>[key] = 'GENERAL_BANNER_VISIBILITY'</where>
