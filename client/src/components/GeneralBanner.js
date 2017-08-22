@@ -12,9 +12,8 @@ function bannerClassName(level) {
 }
 
 const GeneralBanner = (props) => {
-    const banner = props.banner
-    const showBanner = props.showBanner
-    if (showBanner && banner.message){
+    const banner = props.options
+    if (banner.visible && banner.message){
         return (
             <div className={bannerClassName(banner.level)}>
                 <div className="messsage"><strong>{banner.title}:</strong> {banner.message}</div>
