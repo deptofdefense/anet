@@ -686,8 +686,13 @@
 			constraintName="fk_reportTags_tag" onDelete="NO ACTION" onUpdate="NO ACTION"
 			referencedColumnNames="id" referencedTableName="tags" />
 	</changeSet>
+<<<<<<< HEAD
 
 	<changeSet id="add-banner-text" author="evdhoudt">
+=======
+  
+  	<changeSet id="add-banner-text" author="evdhoudt">
+>>>>>>> Fixed closing statement for add banner text rollback changeset
 		<insert tableName="adminSettings">
 			<column name="key" value="GENERAL_BANNER_TEXT" />
 		</insert>
@@ -742,6 +747,15 @@
 			<delete tableName="adminSettings">
 				<where>[key] = 'EXTERNAL_DOCUMENTATION_LINK_URL'</where>
 			</delete>
+		</rollback>
+	</changeSet>
+
+	<changeSet id="add_tags_fulltext_index" author="maradragan" dbms="mssql" runInTransaction="false">
+		<sql>
+			CREATE FULLTEXT INDEX ON tags(name, description) KEY INDEX PK_TAGS;
+		</sql>
+		<rollback>
+			DROP FULLTEXT INDEX ON tags;
 		</rollback>
 	</changeSet>
 
