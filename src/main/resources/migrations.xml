@@ -686,8 +686,8 @@
 			constraintName="fk_reportTags_tag" onDelete="NO ACTION" onUpdate="NO ACTION"
 			referencedColumnNames="id" referencedTableName="tags" />
 	</changeSet>
-
-	<changeSet id="add-banner-text" author="evdhoudt">
+  
+  <changeSet id="add-banner-text" author="evdhoudt">
 		<insert tableName="adminSettings">
 			<column name="key" value="GENERAL_BANNER_TEXT" />
 		</insert>
@@ -719,6 +719,14 @@
 			<delete tableName="adminSettings">
 				<where>[key] = 'GENERAL_BANNER_VISIBILITY'</where>
 			</delete>
+  </changeSet>
+
+	<changeSet id="add_tags_fulltext_index" author="maradragan" dbms="mssql" runInTransaction="false">
+		<sql>
+			CREATE FULLTEXT INDEX ON tags(name, description) KEY INDEX PK_TAGS;
+		</sql>
+		<rollback>
+			DROP FULLTEXT INDEX ON tags;
 		</rollback>
 	</changeSet>
 
