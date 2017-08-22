@@ -687,4 +687,16 @@
 			referencedColumnNames="id" referencedTableName="tags" />
 	</changeSet>
 
+	<changeSet id="add_external_documentation_link_text" author="evdhoudt">
+		<insert tableName="adminSettings">
+			<column name="key" value="EXTERNAL_DOCUMENTATION_LINK_TEXT" />
+			<column name="value" value="External documentation" />
+		</insert>
+		<rollback>
+			<delete tableName="adminSettings">
+				<where>[key] = 'EXTERNAL_DOCUMENTATION_LINK_URL'</where>
+			</delete>
+		</rollback>
+	</changeSet>
+
 </databaseChangeLog>
