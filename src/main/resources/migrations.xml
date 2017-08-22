@@ -686,14 +686,8 @@
 			constraintName="fk_reportTags_tag" onDelete="NO ACTION" onUpdate="NO ACTION"
 			referencedColumnNames="id" referencedTableName="tags" />
 	</changeSet>
-	
-	<changeSet id="36" author="evdhoudt" dbms="mssql" >
-		<sql dbms="mssql">
-			INSERT INTO adminSettings ([key], value) VALUES ('GENERAL_BANNER_TEXT', '');
-		</sql>
-	</changeset>
 
-	<changeSet  id="add-banner-text" author="evdhoudt">
+	<changeSet id="add-banner-text" author="evdhoudt">
 		<insert tableName="adminSettings">
 			<column name="key" value="GENERAL_BANNER_TEXT" />
 		</insert>
@@ -704,13 +698,24 @@
 		</rollback>
 	</changeSet>
 
-	<changeSet  id="37" author="evdhoudt">
+	<changeSet id="add-banner-level" author="evdhoudt">
 		<sql>
 			INSERT INTO adminSettings ([key], value) VALUES ('GENERAL_BANNER_LEVEL', 'notice');
 		</sql>
 		<rollback>
 			<delete tableName="adminSettings">
 				<where>[key] = 'GENERAL_BANNER_LEVEL'</where>
+			</delete>
+		</rollback>
+	</changeSet>
+
+	<changeSet id="add-banner-visibility" author="evdhoudt">
+		<sql>
+			INSERT INTO adminSettings ([key], value) VALUES ('GENERAL_BANNER_VISIBILITY', '1');
+		</sql>
+		<rollback>
+			<delete tableName="adminSettings">
+				<where>[key] = 'GENERAL_BANNER_VISIBILITY'</where>
 			</delete>
 		</rollback>
 	</changeSet>
