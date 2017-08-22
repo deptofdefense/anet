@@ -647,7 +647,7 @@
 	</changeSet>
 
 	<changeSet id="35" author="evdhoudt" dbms="mssql" >
-		<sql dbms="">
+		<sql dbms="mssql">
 			INSERT INTO adminSettings ([key], value) VALUES ('EXTERNAL_DOCUMENTATION_LINK_URL', '');
 		</sql>
 	</changeSet>
