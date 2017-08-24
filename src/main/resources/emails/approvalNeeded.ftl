@@ -48,6 +48,15 @@ Dear ${approvalStepName},
 	</#if>
 	</div>
 
+  <#assign tags = report.loadTags()>
+  <#list tags as tag>
+  <div class="row">
+    <div class="col-xs-12">
+      <strong>Tag:</strong> ${(tag.name)!} ${(tag.description)!}
+    </div>
+  </div>
+  </#list>
+  
 	<div >
 		<strong>Time and Place:</strong> ${(report.engagementDate.toString('dd MMM yyyy'))!} @ ${(report.loadLocation().name)!}
 </div>
