@@ -696,6 +696,14 @@
 			<delete tableName="adminSettings">
 				<where>[key] = 'EXTERNAL_DOCUMENTATION_LINK_URL'</where>
 			</delete>
+	</changeSet
+
+	<changeSet id="add_tags_fulltext_index" author="maradragan" dbms="mssql" runInTransaction="false">
+		<sql>
+			CREATE FULLTEXT INDEX ON tags(name, description) KEY INDEX PK_TAGS;
+		</sql>
+		<rollback>
+			DROP FULLTEXT INDEX ON tags;
 		</rollback>
 	</changeSet>
 
