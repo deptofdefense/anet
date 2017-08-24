@@ -27,6 +27,7 @@ class Nav extends Component {
 
 		let {settings} = appData || {}
 		let externalDocumentationUrl = settings.EXTERNAL_DOCUMENTATION_LINK_URL
+		let externalDocumentationUrlText = settings.EXTERNAL_DOCUMENTATION_LINK_TEXT
 
 		let inAdmin = path.indexOf('/admin') === 0
 		let inOrg = path.indexOf('/organizations') === 0
@@ -119,9 +120,9 @@ class Nav extends Component {
 					</SubNav>
 				}
 				
-				{externalDocumentationUrl &&
+				{externalDocumentationUrl && externalDocumentationUrlText &&
 					<li role="presentation">
-						<a href={externalDocumentationUrl} target="_extdocs">External documentation</a>
+						<a href={externalDocumentationUrl} target="_extdocs">{externalDocumentationUrlText}</a>
 					</li>
 				}
 
