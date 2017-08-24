@@ -259,7 +259,7 @@ Admins have the ability to modify the color and text of the security banner. To 
 
 Admins have the ability to modify the color and text of the general anouncement banner. To modify these settings, start by clicking on “Admins” on the left-hand menu on the home screen.
 
-From there, you can change the text of the general banner by entering your desired text in the General banner text” field.
+From there, you can change the text of the general banner by entering your desired text in the "General banner text” field.
 
 The Announcement level can be changed by entering one of the following announcement levels.
 * notice - shows a blue banner on top of the page, the default value
