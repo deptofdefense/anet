@@ -697,7 +697,7 @@
 				<where>[key] = 'EXTERNAL_DOCUMENTATION_LINK_URL'</where>
 			</delete>
 		</rollback>
-	</changeSet
+	</changeSet>
 
 	<changeSet id="add_tags_fulltext_index" author="maradragan" dbms="mssql" runInTransaction="false">
 		<sql>
