@@ -686,13 +686,8 @@
 			constraintName="fk_reportTags_tag" onDelete="NO ACTION" onUpdate="NO ACTION"
 			referencedColumnNames="id" referencedTableName="tags" />
 	</changeSet>
-<<<<<<< HEAD
 
 	<changeSet id="add-banner-text" author="evdhoudt">
-=======
-  
-  	<changeSet id="add-banner-text" author="evdhoudt">
->>>>>>> Fixed closing statement for add banner text rollback changeset
 		<insert tableName="adminSettings">
 			<column name="key" value="GENERAL_BANNER_TEXT" />
 		</insert>
