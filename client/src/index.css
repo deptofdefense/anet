@@ -621,10 +621,11 @@ header.searchPagination {
 	display: none;
 }
 
-.alert.general-banner {
+.general-banner {
 	padding: 7px;
+	margin-bottom: 0;	
 	border-radius: 0;
-	margin-bottom: 0;
+	border: 1px solid transparent;
 }
 
 @media print {
