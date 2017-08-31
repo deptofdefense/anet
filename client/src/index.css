@@ -626,6 +626,28 @@ header.searchPagination {
 	margin-bottom: 0;	
 	border-radius: 0;
 	border: 1px solid transparent;
+	animation: flash 1s forwards ease-in 0.5s 3 normal;
+}
+
+.general-banner.alert-info {
+	background-color: #359aef;
+	color:#fff;
+}
+.general-banner.alert-success {
+	background-color: #85e160;
+}
+.general-banner.alert-warning {
+	background-color: #fce469;
+}
+.general-banner.alert-danger {
+	background-color: #f22a2a;
+	color: #fff;
+}
+
+@keyframes flash {
+	50% {
+		background: #fff;
+	}
 }
 
 @media print {
