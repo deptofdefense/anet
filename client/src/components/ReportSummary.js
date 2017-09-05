@@ -1,10 +1,9 @@
 import React, {Component, PropTypes} from 'react'
 import {Grid, Row, Col, Label} from 'react-bootstrap'
 import utils from 'utils'
-import { WithContext as ReactTags } from 'react-tag-input'
-import 'components/reactTags.css'
 
 import LinkTo from 'components/LinkTo'
+import Tag from 'components/Tag'
 import {Report} from 'models'
 import dict from 'dictionary'
 
@@ -125,11 +124,7 @@ export default class ReportSummary extends Component {
 			</Row>
       <Row>
         <Col md={12}>
-          {report.tags &&
-            <ReactTags tags={report.tags}
-              labelField={'name'}
-              readOnly={true} />
-          }
+        {report.tags && <Row><Col md={12}>{report.tags.map((tag,i) => <Tag key={tag.id} tag={tag} />)}</Col></Row>}
         </Col>
       </Row>
 			<Row className="hide-for-print">
