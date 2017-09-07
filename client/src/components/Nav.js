@@ -129,7 +129,14 @@ class Nav extends Component {
 				<Link to="/help">
 					<NavItem>Help</NavItem>
 				</Link>
-			</BSNav>
+
+        {(currentUser.isAdmin() || currentUser.isSuperUser()) &&
+          <Link to="/insights">
+            <NavItem>Insights</NavItem>
+          </Link>
+        }
+
+				</BSNav>
 		)
 	}
 }
