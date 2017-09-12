@@ -1,6 +1,5 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
-import {Modal, Alert, Button, Popover, Overlay} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 import moment from 'moment'
 
@@ -8,9 +7,8 @@ import Fieldset from 'components/Fieldset'
 import Breadcrumbs from 'components/Breadcrumbs'
 import CalendarButton from 'components/CalendarButton'
 import Messages from 'components/Messages'
-import dict from 'dictionary'
+import NotApprovedReports from 'components/NotApprovedReports'
 
-import API from 'api'
 
 const calendarButtonCss = {
   marginLeft: '20px',
@@ -58,6 +56,8 @@ export default class InsightsShow extends Page {
             <CalendarButton onChange={this.changeRollupDate} value={this.state.date.toISOString()} style={calendarButtonCss} />
           </span>
         } />
+        <p className="help-text">Number of reports not approved after 15 days</p>
+        <NotApprovedReports daysCount="15"/>
       </div>
     )
   }
