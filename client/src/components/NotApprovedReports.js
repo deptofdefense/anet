@@ -20,7 +20,7 @@ export default class NotApprovedReports extends Component {
   get rollupEnd() { return moment(this.state.date).endOf('day').hour(18) } // 6:59:59pm today.
 
   render() {
-    return <BarChart data={this.state.graphData} size={[500,500]} />
+    return <BarChart data={this.state.graphData} size={[500,500]} xProp='org.shortName' yProp='released' />
   }
 
   fetchData() {
