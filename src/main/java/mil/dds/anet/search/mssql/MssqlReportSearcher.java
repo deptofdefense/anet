@@ -30,7 +30,7 @@ import mil.dds.anet.utils.Utils;
 public class MssqlReportSearcher implements IReportSearcher {
 	
 	public ReportList runSearch(ReportSearchQuery query, Handle dbHandle, Person user) { 
-		StringBuffer sql = new StringBuffer();
+		StringBuilder sql = new StringBuilder();
 		sql.append("/* MssqlReportSearch */ SELECT DISTINCT " + ReportDao.REPORT_FIELDS + "," + PersonDao.PERSON_FIELDS);
 		sql.append(", count(*) OVER() AS totalCount "
 				+ "FROM reports "
@@ -246,16 +246,11 @@ public class MssqlReportSearcher implements IReportSearcher {
 				break;
 		}
 		
-		sql.append(" OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY");
-		
 		if (commonTableExpression != null) { 
 			sql.insert(0, commonTableExpression);
 		}
-		
-		Query<Report> map = dbHandle.createQuery(sql.toString())
-				.bindFromMap(args)
-				.bind("offset", query.getPageSize() * query.getPageNum())
-				.bind("limit", query.getPageSize())
+
+		final Query<Report> map = MssqlSearcher.addPagination(query, dbHandle, sql, args)
 				.map(new ReportMapper());
 		return ReportList.fromQuery(map, query.getPageNum(), query.getPageSize());
 		

@@ -122,16 +122,11 @@ public class MssqlPositionSearcher implements IPositionSearcher {
 				break;
 		}
 		
-		sql.append(" OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY");
-		
 		if (commonTableExpression != null) { 
 			sql.insert(0, commonTableExpression);
 		}
-		
-		Query<Position> sqlQuery = dbHandle.createQuery(sql.toString())
-			.bindFromMap(sqlArgs)
-			.bind("offset", query.getPageSize() * query.getPageNum())
-			.bind("limit", query.getPageSize())
+
+		final Query<Position> sqlQuery = MssqlSearcher.addPagination(query, dbHandle, sql, sqlArgs)
 			.map(new PositionMapper());
 		return PositionList.fromQuery(sqlQuery, query.getPageNum(), query.getPageSize());
 	}
