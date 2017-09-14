@@ -82,6 +82,15 @@ public class MssqlReportSearcher implements IReportSearcher {
 			args.put("endCreatedAt", Utils.handleRelativeDate(query.getCreatedAtEnd()));
 		}
 		
+		if (query.getUpdatedAtStart() != null) {
+			whereClauses.add("reports.updatedAt >= :updatedAtStart");
+			args.put("updatedAtStart", Utils.handleRelativeDate(query.getUpdatedAtStart()));
+		}
+		if (query.getUpdatedAtEnd() != null) {
+			whereClauses.add("reports.updatedAt <= :updatedAtEnd");
+			args.put("updatedAtEnd", Utils.handleRelativeDate(query.getUpdatedAtEnd()));
+		}
+
 		if (query.getReleasedAtStart() != null) { 
 			whereClauses.add("reports.releasedAt >= :releasedAtStart");
 			args.put("releasedAtStart", Utils.handleRelativeDate(query.getReleasedAtStart()));
@@ -90,7 +99,7 @@ public class MssqlReportSearcher implements IReportSearcher {
 			whereClauses.add("reports.releasedAt <= :releasedAtEnd");
 			args.put("releasedAtEnd", Utils.handleRelativeDate(query.getReleasedAtEnd()));
 		}
-		
+
 		if (query.getAttendeeId() != null) { 
 			whereClauses.add("reports.id IN (SELECT reportId from reportPeople where personId = :attendeeId)");
 			args.put("attendeeId", query.getAttendeeId());
