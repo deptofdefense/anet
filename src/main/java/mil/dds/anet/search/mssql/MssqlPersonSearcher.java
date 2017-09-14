@@ -133,24 +133,13 @@ public class MssqlPersonSearcher implements IPersonSearcher {
 				break;
 		}
 		
-		sql.append(" OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY");
-		
 		if (commonTableExpression != null) { 
 			sql.insert(0, commonTableExpression);
 		}
-		
-		Query<Person> sqlQuery = dbHandle.createQuery(sql.toString())
-			.bindFromMap(sqlArgs)
-			.bind("offset", query.getPageSize() * query.getPageNum())
-			.bind("limit", query.getPageSize())
+
+		final Query<Person> sqlQuery = MssqlSearcher.addPagination(query, dbHandle, sql, sqlArgs)
 			.map(new PersonMapper());
-		result.setList(sqlQuery.list());
-		if (result.getList().size() >  0) { 
-			result.setTotalCount((Integer) sqlQuery.getContext().getAttribute("totalCount"));
-		} else { 
-			result.setTotalCount(0);
-		}
-		return result;
+		return PersonList.fromQuery(sqlQuery, query.getPageNum(), query.getPageSize());
 	}
 
 	
