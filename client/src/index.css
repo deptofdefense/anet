@@ -362,6 +362,11 @@ a.home-tile {
 	font-size: 1.4rem;
 }
 
+.report-summary h2 {
+	font-size: 14px;
+	font-weight: bold;
+}
+
 .not-found section.container {
 	width: 100%;
 	max-width: none;
@@ -642,6 +647,10 @@ header.searchPagination {
 .general-banner.alert-danger {
 	background-color: #f22a2a;
 	color: #fff;
+}
+
+.reports-filter {
+	padding-top: 18px;
 }
 
 @keyframes flash {
