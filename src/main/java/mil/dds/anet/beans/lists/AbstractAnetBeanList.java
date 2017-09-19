@@ -88,7 +88,7 @@ public abstract class AbstractAnetBeanList<T extends IGraphQLBean> implements IG
 			if (results.getList().size() == 0) { 
 				results.setTotalCount(0);
 			} else {
-				//This value gets set by the ReportMapper on each row. 
+				//This value gets set by the ReportMapper on each row.
 				results.setTotalCount((Integer) query.getContext().getAttribute("totalCount"));
 			}
 			return results;
@@ -170,7 +170,7 @@ public abstract class AbstractAnetBeanList<T extends IGraphQLBean> implements IG
 			if (results.getList().size() == 0) { 
 				results.setTotalCount(0);
 			} else {
-				//This value gets set by the ReportMapper on each row. 
+				//This value gets set by the PositionMapper on each row.
 				results.setTotalCount((Integer) query.getContext().getAttribute("totalCount"));
 			}
 			return results;
@@ -198,7 +198,7 @@ public abstract class AbstractAnetBeanList<T extends IGraphQLBean> implements IG
 			if (results.getList().size() == 0) { 
 				results.setTotalCount(0);
 			} else {
-				//This value gets set by the ReportMapper on each row. 
+				//This value gets set by the PoamMapper on each row.
 				results.setTotalCount((Integer) query.getContext().getAttribute("totalCount"));
 			}
 			return results;
@@ -226,7 +226,7 @@ public abstract class AbstractAnetBeanList<T extends IGraphQLBean> implements IG
 			if (results.getList().size() == 0) { 
 				results.setTotalCount(0);
 			} else {
-				//This value gets set by the ReportMapper on each row. 
+				//This value gets set by the LocationMapper on each row.
 				results.setTotalCount((Integer) query.getContext().getAttribute("totalCount"));
 			}
 			return results;
@@ -254,7 +254,7 @@ public abstract class AbstractAnetBeanList<T extends IGraphQLBean> implements IG
 			if (results.getList().size() == 0) {
 				results.setTotalCount(0);
 			} else {
-				// This value gets set by the ReportMapper on each row.
+				// This value gets set by the TagMapper on each row.
 				results.setTotalCount((Integer) query.getContext().getAttribute("totalCount"));
 			}
 			return results;
