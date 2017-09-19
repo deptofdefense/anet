@@ -7,6 +7,10 @@ import BarChart from 'components/BarChart'
 import ReportCollection from 'components/ReportCollection'
 
 
+/*
+ * Component displaying a chart with reports submitted for approval 15 days or
+ * earlier but which have not been approved yet.
+ */
 export default class NotApprovedReports extends Component {
 
   constructor(props) {
@@ -18,13 +22,18 @@ export default class NotApprovedReports extends Component {
   }
 
   render() {
-    return <BarChart data={this.state.graphData} size={[500,500]} xProp='advisorOrg.id' yProp='notApproved' xLabel='advisorOrg.shortName' />
+    if (this.state.graphData.length) {
+      return <BarChart data={this.state.graphData} size={[500,500]} xProp='advisorOrg.id' yProp='notApproved' xLabel='advisorOrg.shortName' />
+    }
+    else {
+      return <div>No such reports.</div>
+    }
   }
 
   fetchData() {
     const insightQuery = {
       state: ['PENDING_APPROVAL'],
-      updatedAtEnd: -1*24*3600,
+      updatedAtEnd: moment().subtract(15, 'days').valueOf(), // reports being last updated 15 days or earlier
       pageNum: this.state.reportsPageNum,
     }
 

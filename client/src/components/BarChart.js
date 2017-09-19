@@ -50,35 +50,32 @@ export default class BarChart extends Component {
     let chartData = this.props.data
     let width = this.props.size[0] - MARGIN.left - MARGIN.right
     let height = this.props.size[1] - MARGIN.top - MARGIN.bottom
-    let xProp = this.props.xProp
-    let yProp = this.props.yProp
-    let xLabel = this.props.xLabel || this.props.xProp
+    let xProp = this.props.xProp  // data property to use for the x-axis domain
+    let yProp = this.props.yProp  // data property to use for the y-axis domain
+    let xLabel = this.props.xLabel || this.props.xProp  // data property to use for the x-axis ticks label
     var xLabels = {}
+
     let xScale = d3.scaleBand()
       .domain(chartData.map(function(d) { xLabels[getPropValue(d, xProp)] = getPropValue(d, xLabel); return getPropValue(d, xProp) }))
       .range([0, width])
-
     let yScale = d3.scaleLinear()
       .domain([0, d3.max(chartData, function(d) { return getPropValue(d, yProp) })])
       .range([height, 0])
 
+    let xAxis = d3.axisBottom(xScale)
+      .tickFormat(function(d) { return xLabels[d] })
+    let yAxis = d3.axisLeft(yScale)
+
     let chart = d3.select(this.node)
     chart.selectAll('*').remove()
-
     chart = chart.attr('width', width + MARGIN.left + MARGIN.right)
       .attr('height', height + MARGIN.top + MARGIN.bottom)
       .append('g')
       .attr('transform', `translate(${MARGIN.left}, ${MARGIN.top})`)
 
-    let xAxis = d3.axisBottom(xScale)
-      .tickFormat(function(d) { return xLabels[d] })
-
-    let yAxis = d3.axisLeft(yScale)
-
     chart.append('g')
       .attr('transform', `translate(0, ${height})`)
       .call(xAxis)
-
     chart.append('g').call(yAxis)
 
     let bar = chart.selectAll('.bar')
