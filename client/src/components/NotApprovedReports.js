@@ -1,5 +1,4 @@
 import React, {Component} from 'react'
-import moment from 'moment'
 import API from 'api'
 import dict from 'dictionary'
 
@@ -12,11 +11,15 @@ import ReportCollection from 'components/ReportCollection'
  * earlier but which have not been approved yet.
  */
 export default class NotApprovedReports extends Component {
+  static propTypes = {
+    date: React.PropTypes.object,
+  }
 
   constructor(props) {
     super(props)
 
     this.state = {
+      date: props.date,
       graphData: [],
     }
   }
@@ -33,7 +36,7 @@ export default class NotApprovedReports extends Component {
   fetchData() {
     const insightQuery = {
       state: ['PENDING_APPROVAL'],
-      updatedAtEnd: moment().subtract(15, 'days').valueOf(), // reports being last updated 15 days or earlier
+      updatedAtEnd: this.state.date.valueOf(),
       pageSize: 0,  // retrieve all the filtered reports
     }
 
@@ -65,11 +68,17 @@ export default class NotApprovedReports extends Component {
   
   componentWillReceiveProps(nextProps, nextContext) {
     if (nextProps !== this.props) {
-      this.fetchData()
+      this.setState({date: nextProps.date})
     }
   }
 
   componentDidMount() {
     this.fetchData()
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.date.valueOf() !== this.state.date.valueOf()) {
+      this.fetchData()
+    }
   }
 }
