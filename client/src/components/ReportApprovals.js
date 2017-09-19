@@ -18,7 +18,6 @@ export default class ReportApprovals extends Component {
         this.closeApproversModal = this.closeApproversModal.bind(this)
     }
 
-    
     render() {
         let report = this.props.report
         let title = "Approval State"
@@ -107,7 +106,6 @@ export default class ReportApprovals extends Component {
         let status = (action.type) ? this.approvalType(action.type).text : 'Pending'
         return <div className="approval-details">{status}</div>
     }
-
 
     renderApprovalStatus(action){
         let pending = <span className="text-danger">Pending</span>
