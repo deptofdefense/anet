@@ -34,12 +34,12 @@ export default class NotApprovedReports extends Component {
     const insightQuery = {
       state: ['PENDING_APPROVAL'],
       updatedAtEnd: moment().subtract(15, 'days').valueOf(), // reports being last updated 15 days or earlier
-      pageNum: this.state.reportsPageNum,
+      pageSize: 0,  // retrieve all the filtered reports
     }
 
     let reportQuery = API.query(/* GraphQL */`
         reportList(f:search, query:$insightQuery) {
-          pageNum, pageSize, totalCount, list {
+          totalCount, list {
             ${ReportCollection.GQL_REPORT_FIELDS}
           }
         }
