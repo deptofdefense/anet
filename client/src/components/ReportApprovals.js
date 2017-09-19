@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import {Button, Modal} from 'react-bootstrap'
-import 'components/reactTags.css'
 
 import Fieldset from 'components/Fieldset'
 import moment from 'moment'
@@ -18,11 +17,20 @@ export default class ReportApprovals extends Component {
 
     render() {
         let report = this.props.report
-        return <Fieldset id="approvals" title="Approvals">
-        {report.approvalStatus.map(action =>
+        let title = "Approval State"
+        let fieldset = null
+        if(this.props.fullReport) {
+            fieldset = this.renderFullApprovalView(report, title)
+        } else {
+            fieldset = this.renderCompactApprovalView(report, title)
+        }
+        return fieldset
+    }
+
+    mapApprovalStatusToAction(report) {
+        return report.approvalStatus.map(action =>
             this.renderApprovalAction(action)
-        )}
-        </Fieldset>
+        )
     }
 
     showApproversModal(step) {
@@ -34,13 +42,25 @@ export default class ReportApprovals extends Component {
         step.showModal = false
         this.setState(this.state)
     }
+
+    renderFullApprovalView(report, title){
+        return (
+            <Fieldset id="approvals" className="approval-fieldset" title={title}>
+                { this.mapApprovalStatusToAction(report) }
+            </Fieldset>
+        )
+    }
+
+    renderCompactApprovalView(report, title){
+        return (
+            <Fieldset className="approval-fieldset" title={title}>
+                { this.mapApprovalStatusToAction(report) }
+            </Fieldset>
+        )
+    }
     
-    renderApprovalAction(action) {
-        let step = action.step
-        return <div key={step.id}>
-            <Button onClick={this.showApproversModal.bind(this, step)}>
-                {step.name}
-            </Button>
+    renderApprovalModal(step) {
+        return (
             <Modal show={step.showModal} onHide={this.closeApproversModal.bind(this, step)}>
                 <Modal.Header closeButton>
                     <Modal.Title>Approvers for {step.name}</Modal.Title>
@@ -53,11 +73,35 @@ export default class ReportApprovals extends Component {
                     </ul>
                 </Modal.Body>
             </Modal>
-        {action.type ?
-                <span> {action.type} by {action.person.name} <small>{moment(action.createdAt).format('D MMM YYYY')}</small></span>
-                :
-                <span className="text-danger"> Pending</span>
-            }
-        </div>
+        )
+    }
+
+    renderApprovalButton(action) {
+        let step = action.step
+        let buttonColor = (action.type) ? 'btn-success' : 'btn-danger'
+        return (
+            <Button className={buttonColor} onClick={this.showApproversModal.bind(this, step)}>
+                <span>{step.name}</span>
+            </Button>
+        )
+    }
+
+    renderApprovalAction(action) {
+        let step = action.step
+        let approvalButton = this.renderApprovalButton(action)
+        let approvalModal = this.renderApprovalModal(step)
+        return (
+            <div key={step.id}>
+                { approvalButton }
+                { approvalModal }
+                {action.type ?
+                    <span> {action.type} by {action.person.name}
+                        <small>{moment(action.createdAt).format('D MMM YYYY')}</small>
+                    </span>
+                    :
+                    <span className="text-danger"> Pending</span>
+                }
+            </div>
+        )
     }
 }

@@ -266,7 +266,7 @@ export default class ReportShow extends Page {
 					}
 
 					{report.isPending() &&
-						<ReportApprovals report={report} />
+						<ReportApprovals report={report} fullReport={true} />
 					}
 
 					{canSubmit &&
