@@ -11,8 +11,6 @@ import dict from 'dictionary'
 
 import moment from 'moment'
 
-const PENDING_APPROVAL = 'PENDING_APPROVAL'
-
 export default class ReportSummary extends Component {
 	static propTypes = {
 		report: PropTypes.object.isRequired,
@@ -71,6 +69,11 @@ export default class ReportSummary extends Component {
 				</p>
 			}
 
+			{report.isPending() &&
+				<Row>
+					<Col md={12}><ReportApprovals report={report} /></Col>
+				</Row>
+			}
 			<Row>
 				<Col md={12}>
 					{report.engagementDate &&
@@ -124,13 +127,6 @@ export default class ReportSummary extends Component {
 			<Row>
 				<Col md={12}>
 					{report.nextSteps && <span><strong>Next steps:</strong> {report.nextSteps}</span> }
-				</Col>
-			</Row>
-			<Row>
-				<Col md={12}>
-					{report.state === PENDING_APPROVAL &&
-						<ReportApprovals report={report} />
-					}
 				</Col>
 			</Row>
 			<Row>
