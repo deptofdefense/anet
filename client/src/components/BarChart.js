@@ -57,7 +57,8 @@ export default class BarChart extends Component {
 
     let xScale = d3.scaleBand()
       .domain(chartData.map(function(d) { xLabels[getPropValue(d, xProp)] = getPropValue(d, xLabel); return getPropValue(d, xProp) }))
-      .range([0, width])
+      .rangeRound([0, width])
+      .padding(0.1)
     let yScale = d3.scaleLinear()
       .domain([0, d3.max(chartData, function(d) { return getPropValue(d, yProp) })])
       .range([height, 0])
