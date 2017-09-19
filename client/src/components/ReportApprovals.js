@@ -1,9 +1,12 @@
 import React, {Component} from 'react'
 import {Button, Modal} from 'react-bootstrap'
+import 'components/ReportApprovals.css'
 
 import Fieldset from 'components/Fieldset'
 import moment from 'moment'
 
+const APPROVE = 'APPROVE'
+const REJECT = 'REJECT'
 
 export default class ReportApprovals extends Component {
 
@@ -15,6 +18,7 @@ export default class ReportApprovals extends Component {
         this.closeApproversModal = this.closeApproversModal.bind(this)
     }
 
+    
     render() {
         let report = this.props.report
         let title = "Approval State"
@@ -27,9 +31,105 @@ export default class ReportApprovals extends Component {
         return fieldset
     }
 
-    mapApprovalStatusToAction(report) {
-        return report.approvalStatus.map(action =>
-            this.renderApprovalAction(action)
+    approvalType(type) {
+        switch(type) {
+            case APPROVE:
+                return {text: 'Approved', cssClass: 'approved'}
+            case REJECT:
+                return {text: 'Rejected', cssClass: 'rejected'}
+            default:
+                return {text: 'Unknown', cssClass: 'default'}
+        }
+    }
+
+    renderFullApprovalView(report, title){
+        return (
+            <Fieldset id="approvals" className="approval-fieldset" title={title}>
+                { report.approvalStatus.map(action =>
+                    this.renderApprovalAction(action)
+                )}
+            </Fieldset>
+        )
+    }
+
+    renderCompactApprovalView(report, title){
+        return (
+            <Fieldset className="approval-fieldset compact" title={title}>
+                { report.approvalStatus.map(action =>
+                    this.renderCompactApprovalAction(action)
+                )}
+            </Fieldset>
+        )
+    }
+
+    renderApprovalAction(action) {
+        let step = action.step
+        let approvalButton = this.renderApprovalButton(action)
+        let approvalModal = this.renderApprovalModal(action)
+        let approvalDetails = this.renderApprovalDetails(action)
+        return (
+            <div className="approval-action" key={step.id}>
+                { approvalDetails }
+                { approvalButton }
+                { approvalModal }
+            </div>
+        )
+    }
+
+    renderCompactApprovalAction(action) {
+        let approvalButton = this.renderApprovalButton(action, 'btn-sm')
+        let approvalModal = this.renderApprovalModal(action)
+        let approvalStatus = this.renderCompactApprovalDetails(action)
+        return (
+            <div className="approval-action" key={action.step.id}>
+                { approvalStatus }
+                { approvalButton }
+                { approvalModal }
+            </div>
+        )
+    }
+
+    renderApprovalDetails(action){
+        if(action.type){
+            return(
+                <div className="approval-details">
+                    <small> {moment(action.createdAt).format('D MMM YYYY')}</small><br/>
+                    <strong>{this.approvalType(action.type).text}</strong><br/>
+                    <span>By {action.person.name}</span>
+                </div>
+            )
+        } else {
+            return <div className="approval-details"><span className="text-danger">Pending</span></div>
+        }
+    }
+
+    renderCompactApprovalDetails(action){
+        let status = (action.type) ? this.approvalType(action.type).text : 'Pending'
+        return <div className="approval-details">{status}</div>
+    }
+
+
+    renderApprovalStatus(action){
+        let pending = <span className="text-danger">Pending</span>
+        if(action.type){
+            let approvalType = this.approvalType(action.type)
+            let cssClass = 'label ' + approvalType.cssClass
+            return (
+                <span className={cssClass}> {approvalType.text} by {action.person.name} on
+                    <small> {moment(action.createdAt).format('D MMM YYYY')}</small>
+                </span>
+            )
+        }
+        return pending
+    }
+
+    renderApprovalButton(action, btnSize) {
+        let step = action.step
+        let buttonColor = (action.type) ? 'btn-success ' : 'btn-danger '
+        return (
+            <Button className={buttonColor + btnSize} onClick={this.showApproversModal.bind(this, step)}>
+                <span>{step.name}</span>
+            </Button>
         )
     }
 
@@ -43,23 +143,9 @@ export default class ReportApprovals extends Component {
         this.setState(this.state)
     }
 
-    renderFullApprovalView(report, title){
-        return (
-            <Fieldset id="approvals" className="approval-fieldset" title={title}>
-                { this.mapApprovalStatusToAction(report) }
-            </Fieldset>
-        )
-    }
-
-    renderCompactApprovalView(report, title){
-        return (
-            <Fieldset className="approval-fieldset" title={title}>
-                { this.mapApprovalStatusToAction(report) }
-            </Fieldset>
-        )
-    }
-    
-    renderApprovalModal(step) {
+    renderApprovalModal(action) {
+        let step = action.step
+        let approvalStatus = this.renderApprovalStatus(action)
         return (
             <Modal show={step.showModal} onHide={this.closeApproversModal.bind(this, step)}>
                 <Modal.Header closeButton>
@@ -72,36 +158,8 @@ export default class ReportApprovals extends Component {
                     )}
                     </ul>
                 </Modal.Body>
+                <Modal.Footer>{ approvalStatus }</Modal.Footer>
             </Modal>
-        )
-    }
-
-    renderApprovalButton(action) {
-        let step = action.step
-        let buttonColor = (action.type) ? 'btn-success' : 'btn-danger'
-        return (
-            <Button className={buttonColor} onClick={this.showApproversModal.bind(this, step)}>
-                <span>{step.name}</span>
-            </Button>
-        )
-    }
-
-    renderApprovalAction(action) {
-        let step = action.step
-        let approvalButton = this.renderApprovalButton(action)
-        let approvalModal = this.renderApprovalModal(step)
-        return (
-            <div key={step.id}>
-                { approvalButton }
-                { approvalModal }
-                {action.type ?
-                    <span> {action.type} by {action.person.name}
-                        <small>{moment(action.createdAt).format('D MMM YYYY')}</small>
-                    </span>
-                    :
-                    <span className="text-danger"> Pending</span>
-                }
-            </div>
         )
     }
 }

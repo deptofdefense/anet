@@ -1,0 +1,47 @@
+fieldset.approval-fieldset .approval-details{
+	text-align: center;
+	padding: 0 3px;
+	margin-right: 15px;
+}
+
+fieldset.approval-fieldset .approval-action{
+	display: inline-block;
+	padding-right: 3px;
+	margin-top: 3px;
+}
+
+fieldset.approval-fieldset .approval-action:after {
+	position: relative;
+    top: 4px;
+    display: inline-block;
+    font-family: 'Glyphicons Halflings';
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+	content: "\e092";
+	padding-left: 4px;	
+	color: #777;
+}
+
+fieldset.approval-fieldset .approval-action:last-child:after {
+	content: "";
+}
+
+fieldset.approval-fieldset.compact{
+	border: 0;
+	border-bottom: 1px solid #ccc;
+	margin-bottom: 1rem;
+	padding: 0.25em 0.75em 0.75em 0em
+}
+
+.modal-content .modal-footer .label {
+	font-size: 90% !important;
+}
+
+.modal-content .modal-footer .approved {
+	background-color: #5cb85c;
+}
+.modal-content .modal-footer .rejected {
+	background-color: #c23030;
+}
