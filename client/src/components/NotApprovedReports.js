@@ -18,8 +18,7 @@ export default class NotApprovedReports extends Component {
   }
 
   render() {
-    // FIXME: xProp should be advisorOrg.id and the xLabel should be advisorOrg.shortName
-    return <BarChart data={this.state.graphData} size={[500,500]} xProp='advisorOrg.shortName' yProp='notApproved' />
+    return <BarChart data={this.state.graphData} size={[500,500]} xProp='advisorOrg.id' yProp='notApproved' xLabel='advisorOrg.shortName' />
   }
 
   fetchData() {
@@ -42,7 +41,7 @@ export default class NotApprovedReports extends Component {
     Promise.all([reportQuery]).then(values => {
       this.setState({
         graphData: values[0].reportList.list
-          .map(d => {d.notApproved = values[0].reportList.list.filter(item => item.advisorOrg.shortName === d.advisorOrg.shortName).length; return d})
+          .map(d => {d.notApproved = values[0].reportList.list.filter(item => item.advisorOrg.id === d.advisorOrg.id).length; return d})
           .sort((a, b) => {
             let a_index = pinned_ORGs.indexOf(a.advisorOrg.shortName)
             let b_index = pinned_ORGs.indexOf(b.advisorOrg.shortName)

@@ -24,6 +24,7 @@ export default class BarChart extends Component {
     size: PropTypes.array,
     xProp: PropTypes.string.isRequired,
     yProp: PropTypes.string.isRequired,
+    xLabel: PropTypes.string,
     barColor: PropTypes.string,
   }
 
@@ -51,8 +52,10 @@ export default class BarChart extends Component {
     let height = this.props.size[1] - MARGIN.top - MARGIN.bottom
     let xProp = this.props.xProp
     let yProp = this.props.yProp
+    let xLabel = this.props.xLabel || this.props.xProp
+    var xLabels = {}
     let xScale = d3.scaleBand()
-      .domain(chartData.map(function(d) { return getPropValue(d, xProp) }))
+      .domain(chartData.map(function(d) { xLabels[getPropValue(d, xProp)] = getPropValue(d, xLabel); return getPropValue(d, xProp) }))
       .range([0, width])
 
     let yScale = d3.scaleLinear()
@@ -68,6 +71,8 @@ export default class BarChart extends Component {
       .attr('transform', `translate(${MARGIN.left}, ${MARGIN.top})`)
 
     let xAxis = d3.axisBottom(xScale)
+      .tickFormat(function(d) { return xLabels[d] })
+
     let yAxis = d3.axisLeft(yScale)
 
     chart.append('g')
