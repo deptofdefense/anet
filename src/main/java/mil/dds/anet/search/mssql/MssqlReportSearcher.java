@@ -31,9 +31,9 @@ public class MssqlReportSearcher implements IReportSearcher {
 	
 	public ReportList runSearch(ReportSearchQuery query, Handle dbHandle, Person user) { 
 		StringBuilder sql = new StringBuilder();
-		sql.append("/* MssqlReportSearch */ SELECT DISTINCT " + ReportDao.REPORT_FIELDS + "," + PersonDao.PERSON_FIELDS);
-		sql.append(", count(*) OVER() AS totalCount "
-				+ "FROM reports "
+		sql.append("/* MssqlReportSearch */ SELECT *, count(*) OVER() AS totalCount FROM ( ");
+		sql.append("SELECT DISTINCT " + ReportDao.REPORT_FIELDS + ", " + PersonDao.PERSON_FIELDS + " ");
+		sql.append("FROM reports "
 				+ "LEFT JOIN reportTags ON reportTags.reportId = reports.id "
 				+ "LEFT JOIN tags ON reportTags.tagId = tags.id "
 				+ ", people "
@@ -218,20 +218,22 @@ public class MssqlReportSearcher implements IReportSearcher {
 		}
 		
 		sql.append(Joiner.on(" AND ").join(whereClauses));
+		sql.append(" ) l");
 		
 		//Sort Ordering
 		sql.append(" ORDER BY ");
 		if (query.getSortBy() == null) { query.setSortBy(ReportSearchSortBy.ENGAGEMENT_DATE); }
+		// Beware of the sort field names, they have to match what's in the selected fields!
 		switch (query.getSortBy()) {
 			case ENGAGEMENT_DATE:
-				sql.append("reports.engagementDate");
+				sql.append("reports_engagementDate");
 				break;
 			case RELEASED_AT:
-				sql.append("reports.releasedAt");
+				sql.append("reports_releasedAt");
 				break;
 			case CREATED_AT:
 			default:
-				sql.append("reports.createdAt");
+				sql.append("reports_createdAt");
 				break;
 		}
 		
