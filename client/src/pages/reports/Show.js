@@ -13,6 +13,7 @@ import Breadcrumbs from 'components/Breadcrumbs'
 import Form from 'components/Form'
 import Messages from 'components/Messages'
 import LinkTo from 'components/LinkTo'
+import ReportApprovals from 'components/ReportApprovals'
 
 import API from 'api'
 import dict from 'dictionary'
@@ -264,7 +265,9 @@ export default class ReportShow extends Page {
 						</Fieldset>
 					}
 
-					{report.isPending() && this.renderApprovals()}
+					{report.isPending() &&
+						<ReportApprovals report={report} fullReport={true} />
+					}
 
 					{canSubmit &&
 						<Fieldset>
@@ -346,16 +349,6 @@ export default class ReportShow extends Page {
 				<LinkTo report={this.state.report} edit button>Edit report</LinkTo>
 				<Button bsStyle="primary" onClick={this.approveReport} className="approve-button"><strong>Approve</strong></Button>
 			</div>
-		</Fieldset>
-	}
-
-	@autobind
-	renderApprovals(canApprove) {
-		let report = this.state.report
-		return <Fieldset id="approvals" title="Approvals">
-			{report.approvalStatus.map(action =>
-				this.renderApprovalAction(action)
-			)}
 		</Fieldset>
 	}
 
@@ -516,32 +509,6 @@ export default class ReportShow extends Page {
 		window.scrollTo(0, 0)
 	}
 
-	@autobind
-	renderApprovalAction(action) {
-		let step = action.step
-		return <div key={step.id}>
-			<Button onClick={this.showApproversModal.bind(this, step)}>
-				{step.name}
-			</Button>
-			<Modal show={step.showModal} onHide={this.closeApproversModal.bind(this, step)}>
-				<Modal.Header closeButton>
-					<Modal.Title>Approvers for {step.name}</Modal.Title>
-				</Modal.Header>
-				<Modal.Body>
-					<ul>
-					{step.approvers.map(p =>
-						<li key={p.id}>{p.name} - {p.person && p.person.name}</li>
-					)}
-					</ul>
-				</Modal.Body>
-			</Modal>
-	 	{action.type ?
-				<span> {action.type} by {action.person.name} <small>{moment(action.createdAt).format('D MMM YYYY')}</small></span>
-				:
-				<span className="text-danger"> Pending</span>
-			}
-		</div>
-	}
 
 	renderValidationErrors(errors) {
 		let warning = this.state.report.isFuture() ?
@@ -559,17 +526,6 @@ export default class ReportShow extends Page {
 		</Alert>
 	}
 
-	@autobind
-	showApproversModal(step) {
-		step.showModal = true
-		this.setState(this.state)
-	}
-
-	@autobind
-	closeApproversModal(step) {
-		step.showModal = false
-		this.setState(this.state)
-	}
 
 	@autobind
 	deleteReport() {
