@@ -7,8 +7,8 @@ import ReportCollection from 'components/ReportCollection'
 
 
 /*
- * Component displaying a chart with reports submitted for approval 15 days or
- * earlier but which have not been approved yet.
+ * Component displaying a chart with reports submitted for approval up to
+ * the given date but which have not been approved yet.
  */
 export default class NotApprovedReports extends Component {
   static propTypes = {
