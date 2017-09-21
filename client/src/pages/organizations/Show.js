@@ -156,7 +156,7 @@ export default class OrganizationShow extends Page {
 							{org.humanNameOfType()}
 						</Form.Field>
 
-						<Form.Field id="longName" label="Description"/>
+						<Form.Field id="longName" label={org.type === "PRINCIPAL_ORG" ? "Official Organization Name" : "Description"}/>
 
 						{org.parentOrg && org.parentOrg.id &&
 							<Form.Field id="parentOrg" label="Parent organization">
