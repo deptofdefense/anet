@@ -32,6 +32,7 @@ class Nav extends Component {
 		let inAdmin = path.indexOf('/admin') === 0
 		let inOrg = path.indexOf('/organizations') === 0
 		let inMyReports = path.indexOf('/reports/mine') === 0
+		let inInsights = path.indexOf('/insights') === 0
 
 		let myOrg = currentUser.position.organization
 		let orgId, myOrgId
@@ -134,6 +135,16 @@ class Nav extends Component {
           <Link to="/insights">
             <NavItem>Insights</NavItem>
           </Link>
+        }
+        {(currentUser.isAdmin() || currentUser.isSuperUser()) && inInsights &&
+          <SubNav
+            componentClass={Scrollspy}
+            className="nav"
+            offset={-152}
+          >
+            <AnchorLink scrollTo="not-approved-reports">Not approved reports</AnchorLink>
+            <AnchorLink scrollTo="cancelled-reports">Cancelled reports</AnchorLink>
+          </SubNav>
         }
 
 				</BSNav>

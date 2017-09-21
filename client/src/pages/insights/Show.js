@@ -1,6 +1,7 @@
 import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 import NotApprovedReports from 'components/NotApprovedReports'
+import CancelledReports from 'components/CancelledReports'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Messages from 'components/Messages'
 import Fieldset from 'components/Fieldset'
@@ -19,21 +20,31 @@ export default class InsightsShow extends Page {
     app: PropTypes.object.isRequired,
   }
 
-  get dateLongStr() { return this.state.date.format('DD MMMM YYYY') }
+  get notApprovedDateLongStr() { return this.state.notApprovedDate.format('DD MMMM YYYY') }
+  get cancelledDateLongStr() { return this.state.cancelledDate.format('DD MMMM YYYY') }
 
   constructor(props) {
     super(props)
 
     this.state = {
-      date: moment().subtract(15, 'days')
+      notApprovedDate: moment().subtract(15, 'days'),
+      cancelledDate: moment().subtract(15, 'days')
     }
   }
 
   @autobind
-  changeDate(newDate) {
+  changeNotApprovedDate(newDate) {
     let date = moment(newDate)
-    if (date.valueOf() !== this.state.date.valueOf()) {
-      this.setState({date: date})
+    if (date.valueOf() !== this.state.notApprovedDate.valueOf()) {
+      this.setState({notApprovedDate: date})
+    }
+  }
+
+  @autobind
+  changeCancelledDate(newDate) {
+    let date = moment(newDate)
+    if (date.valueOf() !== this.state.cancelledDate.valueOf()) {
+      this.setState({cancelledDate: date})
     }
   }
 
@@ -42,14 +53,24 @@ export default class InsightsShow extends Page {
       <div>
         <Breadcrumbs items={[[`Insights`, 'insights/']]} />
         <Messages error={this.state.error} success={this.state.success} />
-        <Fieldset title={
+        <Fieldset id="not-approved-reports" data-jumptarget title={
           <span>
-            Not Approved Reports - {this.dateLongStr}
-            <CalendarButton onChange={this.changeDate} value={this.state.date.toISOString()} style={calendarButtonCss} />
+            Not Approved Reports - {this.notApprovedDateLongStr}
+            <CalendarButton onChange={this.changeNotApprovedDate} value={this.state.notApprovedDate.toISOString()} style={calendarButtonCss} />
           </span>
           }>
-            <p className="help-text">Number of reports not approved since {this.dateLongStr}</p>
-            <NotApprovedReports date={this.state.date} />
+            <p className="help-text">Number of reports not approved since {this.notApprovedDateLongStr}</p>
+            <NotApprovedReports date={this.state.notApprovedDate} />
+        </Fieldset>
+
+        <Fieldset id="cancelled-reports" data-jumptarget title={
+          <span>
+            Cancelled Reports - {this.cancelledDateLongStr}
+            <CalendarButton onChange={this.changeCancelledDate} value={this.state.cancelledDate.toISOString()} style={calendarButtonCss} />
+          </span>
+          }>
+            <p className="help-text">Number of reports cancelled since {this.cancelledDateLongStr}</p>
+            <CancelledReports date={this.state.cancelledDate} />
         </Fieldset>
       </div>
     )
