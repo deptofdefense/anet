@@ -1,30 +1,49 @@
-fieldset.approval-fieldset .approval-details{
+.report-summary h2.legend {
+	display: none;
+}
+
+fieldset.approval-fieldset .approval-details {
 	text-align: center;
-	padding: 0 3px;
-	margin-right: 15px;
 }
 
-fieldset.approval-fieldset .approval-action{
-	display: inline-block;
-	padding-right: 3px;
-	margin-top: 3px;
-}
-
-fieldset.approval-fieldset .approval-action:after {
+fieldset.approval-fieldset .approval-action {
 	position: relative;
-    top: 4px;
-    display: inline-block;
+	display: inline-block;
+	padding-right: 18px;
+	margin-top: 3px;
+	vertical-align: top;
+}
+
+fieldset.approval-fieldset .approval-action .btn-pending {
+	background-color: #969696;
+	color: #fff;
+}
+
+fieldset.approval-fieldset .approval-action .btn-pending:hover {
+	background-color: #777;
+	color: #fff;
+}
+
+fieldset.approval-fieldset .approval-action .btn {
+	border-radius: 30px;
+}
+
+fieldset.approval-fieldset .approval-action button::after {
+	position: relative;
     font-family: 'Glyphicons Halflings';
     font-style: normal;
     font-weight: 400;
     line-height: 1;
-    -webkit-font-smoothing: antialiased;
+	-webkit-font-smoothing: antialiased;
 	content: "\e092";
-	padding-left: 4px;	
 	color: #777;
+	width: 18px;
+	height: 18px;
+	top: 3px;
+	right: -26px;
 }
 
-fieldset.approval-fieldset .approval-action:last-child:after {
+fieldset.approval-fieldset :last-child button::after {
 	content: "";
 }
 
@@ -42,6 +61,17 @@ fieldset.approval-fieldset.compact{
 .modal-content .modal-footer .approved {
 	background-color: #5cb85c;
 }
+
+.modal-content .modal-footer .pending {
+	background-color: #777;
+}
+
 .modal-content .modal-footer .rejected {
 	background-color: #c23030;
+}
+
+.approval-status{
+	text-transform: uppercase;
+	font-weight: bold;
+	text-align: center;
 }
