@@ -66,8 +66,8 @@ public class MssqlPoamSearcher implements IPoamSearcher {
 		if (whereClauses.size() == 0) { return result; }
 		
 		sql.append(Joiner.on(" AND ").join(whereClauses));
-		sql.append(" ORDER BY shortName ASC");
-		
+		sql.append(" ORDER BY shortName ASC, longName ASC, id ASC");
+
 		if (commonTableExpression != null) { 
 			sql.insert(0, commonTableExpression);
 		}

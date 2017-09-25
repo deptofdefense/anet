@@ -30,7 +30,7 @@ public class MssqlTagSearcher implements ITagSearcher {
 						+ "FROM tags "
 						+ "WHERE CONTAINS((name, description), :containsQuery) "
 						+ "OR FREETEXT((name, description), :freetextQuery) "
-						+ "ORDER BY name ASC");
+						+ "ORDER BY name ASC, id ASC");
 		final Map<String,Object> sqlArgs = new HashMap<String,Object>();
 		sqlArgs.put("containsQuery", Utils.getSqlServerFullTextQuery(text));
 		sqlArgs.put("freetextQuery", text);

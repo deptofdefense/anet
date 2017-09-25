@@ -66,7 +66,7 @@ public class MssqlOrganizationSearcher implements IOrganizationSearcher {
 		}
 		
 		sql.append(Joiner.on(" AND ").join(whereClauses));
-		sql.append(" ORDER BY createdAt DESC");
+		sql.append(" ORDER BY shortName ASC, longName ASC, id ASC");
 		
 		if (commonTableExpression != null) { 
 			sql.insert(0, commonTableExpression);

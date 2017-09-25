@@ -121,7 +121,8 @@ public class MssqlPositionSearcher implements IPositionSearcher {
 				sql.append(" DESC ");
 				break;
 		}
-		
+		sql.append(", positions.id ASC ");
+
 		if (commonTableExpression != null) { 
 			sql.insert(0, commonTableExpression);
 		}
