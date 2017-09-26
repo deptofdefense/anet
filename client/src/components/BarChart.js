@@ -77,6 +77,11 @@ export default class BarChart extends Component {
     chart.append('g')
       .attr('transform', `translate(0, ${height})`)
       .call(xAxis)
+      .selectAll('text')
+      .style('text-anchor', 'start')
+      .attr('dy', '0.35em')
+      .attr('transform', 'rotate(45)');
+
     chart.append('g').call(yAxis)
 
     let bar = chart.selectAll('.bar')
