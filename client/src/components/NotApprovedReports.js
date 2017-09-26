@@ -53,6 +53,7 @@ export default class NotApprovedReports extends Component {
     Promise.all([reportQuery]).then(values => {
       this.setState({
         graphData: values[0].reportList.list
+          .filter((item, index, d) => d.findIndex(t => {return t.advisorOrg.id === item.advisorOrg.id }) === index)
           .map(d => {d.notApproved = values[0].reportList.list.filter(item => item.advisorOrg.id === d.advisorOrg.id).length; return d})
           .sort((a, b) => {
             let a_index = pinned_ORGs.indexOf(a.advisorOrg.shortName)
