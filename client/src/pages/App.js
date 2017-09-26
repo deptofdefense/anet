@@ -10,7 +10,6 @@ import dict from 'dictionary'
 import API from 'api'
 import {Person, Organization} from 'models'
 
-import dictionary from 'resources/dictionary.json'
 
 export default class App extends Page {
 	static PagePropTypes = {
@@ -25,14 +24,12 @@ export default class App extends Page {
 	static childContextTypes = {
 		app: PropTypes.object,
 		currentUser: PropTypes.instanceOf(Person),
-//		dictionary: PropTypes.object,
 	}
 
 	getChildContext() {
 		return {
 			app: this,
 			currentUser: this.state.currentUser,
-//			dictionary: this.state.dictionary,
 		}
 	}
 
@@ -43,7 +40,6 @@ export default class App extends Page {
 			currentUser: new Person(),
 			settings: {},
 			organizations: [],
-//			dictionary: {}
 		}
 
 		this.state = this.processData(window.ANET_DATA)
@@ -83,10 +79,9 @@ export default class App extends Page {
 		})
 
 		//Fetch the dictionary.
-		// @vassil dictionary.json temporarily moved to resouces. Difficulties to load from /dictionary.json when deployed as the files is moved under PUBLIC_URL
-//		API.fetch('/dictonary.json').then(dictionary =>
+		API.fetch('/api/admin/dictionary').then(dictionary =>
 			dict.setDictionary(dictionary)
-//		)
+		)
 	}
 
 	processData(data) {
