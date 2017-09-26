@@ -71,7 +71,7 @@ export default class InsightsShow extends Page {
             </span>
             }>
               <p className="help-text">Number of reports not approved since {this.notApprovedDateLongStr}</p>
-              <NotApprovedReports date={this.state.notApprovedDate} />
+              <NotApprovedReports date={this.state.notApprovedDate.clone().startOf('day')} />
           </Fieldset>
         }
 
@@ -83,7 +83,7 @@ export default class InsightsShow extends Page {
             </span>
             }>
               <p className="help-text">Number of reports cancelled since {this.cancelledDateLongStr}</p>
-              <CancelledReports date={this.state.cancelledDate} />
+              <CancelledReports date={this.state.cancelledDate.clone().startOf('day')} />
           </Fieldset>
         }
       </div>
