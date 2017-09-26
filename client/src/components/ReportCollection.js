@@ -26,6 +26,13 @@ const GQL_REPORT_FIELDS =  /* GraphQL */`
 	location { id, name, lat, lng},
 	poams {id, shortName, longName},
 	tags {id, name, description}
+	approvalStatus {
+		type, createdAt
+		step { id , name
+			approvers { id, name, person { id, name, rank } }
+		},
+		person { id, name, rank}
+	}
 `
 
 
@@ -99,7 +106,11 @@ export default class ReportCollection extends Component {
 
 							</div>
 						}
-
+						{this.props.isSuperUser &&
+							<div className="reports-filter">
+								Filter: {this.renderToggleFilterButton(this.props)}
+							</div>
+						}
 					</header>
 
 					<div>
@@ -112,6 +123,14 @@ export default class ReportCollection extends Component {
 				<em>No reports found</em>
 			}
 		</div>
+	}
+
+	renderToggleFilterButton(props) {
+		let showAll = 'Show all reports'
+		let showPendingApproval = 'Show pending approval'
+		let buttonText = (props.filterIsSet) ? showAll: showPendingApproval
+		let button = <Button value="toggle-filter" className="btn btn-sm" onClick={props.setReportsFilter}>{buttonText}</Button>
+		return button
 	}
 
 	renderTable(reports) {

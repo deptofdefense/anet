@@ -5,6 +5,7 @@ import { WithContext as ReactTags } from 'react-tag-input'
 import 'components/reactTags.css'
 
 import LinkTo from 'components/LinkTo'
+import ReportApprovals from 'components/ReportApprovals'
 import {Report} from 'models'
 import dict from 'dictionary'
 
@@ -68,6 +69,11 @@ export default class ReportSummary extends Component {
 				</p>
 			}
 
+			{report.isPending() &&
+				<Row>
+					<Col md={12}><ReportApprovals report={report} /></Col>
+				</Row>
+			}
 			<Row>
 				<Col md={12}>
 					{report.engagementDate &&
@@ -123,15 +129,15 @@ export default class ReportSummary extends Component {
 					{report.nextSteps && <span><strong>Next steps:</strong> {report.nextSteps}</span> }
 				</Col>
 			</Row>
-      <Row>
-        <Col md={12}>
-          {report.tags &&
-            <ReactTags tags={report.tags}
-              labelField={'name'}
-              readOnly={true} />
-          }
-        </Col>
-      </Row>
+			<Row>
+				<Col md={12}>
+				{report.tags &&
+					<ReactTags tags={report.tags}
+					labelField={'name'}
+					readOnly={true} />
+				}
+				</Col>
+			</Row>
 			<Row className="hide-for-print">
 				<Col mdOffset={9} md={3}>
 					<LinkTo report={report} button className="pull-right read-report-button">Read report</LinkTo>
