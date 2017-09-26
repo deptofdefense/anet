@@ -28,8 +28,8 @@ export default class CancelledReports extends Component {
   render() {
     if (this.state.graphDataByOrg.length) {
       return <div>
-          <BarChart data={this.state.graphDataByOrg} size={[500,500]} xProp='advisorOrg.id' yProp='notApproved' xLabel='advisorOrg.shortName' />
-          <BarChart data={this.state.graphDataByReason} size={[500,500]} xProp='reason' yProp='cancelled' />
+          <BarChart data={this.state.graphDataByOrg} xProp='advisorOrg.id' yProp='notApproved' xLabel='advisorOrg.shortName' />
+          <BarChart data={this.state.graphDataByReason} xProp='reason' yProp='cancelled' />
         </div>
     }
     else {
