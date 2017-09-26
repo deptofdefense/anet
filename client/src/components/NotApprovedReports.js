@@ -26,7 +26,7 @@ export default class NotApprovedReports extends Component {
 
   render() {
     if (this.state.graphData.length) {
-      return <BarChart data={this.state.graphData} size={[500,500]} xProp='advisorOrg.id' yProp='notApproved' xLabel='advisorOrg.shortName' />
+      return <BarChart data={this.state.graphData} xProp='advisorOrg.id' yProp='notApproved' xLabel='advisorOrg.shortName' />
     }
     else {
       return <div>No such reports.</div>
