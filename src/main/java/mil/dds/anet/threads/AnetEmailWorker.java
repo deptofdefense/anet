@@ -124,8 +124,7 @@ public class AnetEmailWorker implements Runnable {
 			try {
 				if (disabled) {
 					logger.info("Disabled, not sending email to {} re: {}",email.getToAddresses(), email.getAction().getSubject());
-				}
-				else {
+				} else {
 					logger.info("Sending email to {} re: {}",email.getToAddresses(), email.getAction().getSubject());
 					sendEmail(email);
 				}

@@ -254,8 +254,7 @@ public class GraphQLResource {
 			// TODO: Decide if we indeed want pretty-printed XML:
 			String xml = ResponseUtils.toPrettyString(XML.toString(json, "result"), 2);
 			return Response.ok(xml, MediaType.APPLICATION_XML).build();
-		}
-		else {
+		} else {
 			return Response.ok(result, MediaType.APPLICATION_JSON).build();
 		}
 	}

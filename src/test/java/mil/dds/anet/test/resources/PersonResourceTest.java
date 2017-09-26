@@ -156,7 +156,8 @@ public class PersonResourceTest extends AbstractResourceTest {
 		query.setStatus(ImmutableList.of(PersonStatus.INACTIVE));
 		searchResults = httpQuery("/api/people/search", jack).post(Entity.json(query), PersonList.class);
 		assertThat(searchResults.getList()).isNotEmpty();
-		assertThat(searchResults.getList().stream().filter(p -> p.getStatus()== PersonStatus.INACTIVE).count()).isEqualTo(searchResults.getList().size());
+		assertThat(searchResults.getList().stream().filter(p -> p.getStatus() == PersonStatus.INACTIVE).count())
+			.isEqualTo(searchResults.getList().size());
 		
 		//Search with children orgs
 		org = orgs.getList().stream().filter(o -> o.getShortName().equalsIgnoreCase("EF 1")).findFirst().get();
