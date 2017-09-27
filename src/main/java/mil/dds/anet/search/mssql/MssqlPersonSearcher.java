@@ -132,7 +132,8 @@ public class MssqlPersonSearcher implements IPersonSearcher {
 				sql.append(" DESC ");
 				break;
 		}
-		
+		sql.append(", people.id ASC ");
+
 		if (commonTableExpression != null) { 
 			sql.insert(0, commonTableExpression);
 		}
