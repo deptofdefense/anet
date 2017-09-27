@@ -48,6 +48,7 @@ export default class PersonForm extends ValidatableFormWrapper {
 		let willAutoKickPosition = person.status === 'INACTIVE' && person.position && !!person.position.id
 		let warnDomainUsername = person.status === 'INACTIVE' && person.domainUsername
 		let ranks = dict.lookup('ranks') || []
+		let countries = dict.lookup('countries') || []
 
 		let currentUser = this.context.currentUser
 		let isAdmin = currentUser && currentUser.isAdmin()
@@ -125,7 +126,9 @@ export default class PersonForm extends ValidatableFormWrapper {
 				<RequiredField id="country" label="Nationality" componentClass="select"
 					required={isAdvisor}>
 					<option />
-					{Person.COUNTRIES.map(country => <option key={country} value={country}>{country}</option>)}
+					{countries.map(country =>
+						<option key={country} value={country}>{country}</option>
+					)}
 				</RequiredField>
 
 				<Form.Field id="endOfTourDate" label="End of tour" addon={CALENDAR_ICON}>
