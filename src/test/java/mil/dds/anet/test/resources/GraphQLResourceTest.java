@@ -36,8 +36,8 @@ public class GraphQLResourceTest extends AbstractResourceTest {
 	
 	@Test
 	public void test() {
-		Person jack = getJackJackson();
-		Person steve = getSteveSteveson();
+		final Person jack = getJackJackson();
+		final Person steve = getSteveSteveson();
 		File testDir = new File("src/test/resources/graphQLTests/");
 		testDir.getAbsolutePath();
 		assertThat(testDir.isDirectory()).isTrue();

@@ -619,7 +619,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		query.setState(ImmutableList.of(ReportState.CANCELLED));
 		searchResults = httpQuery("/api/reports/search", jack).post(Entity.json(query), ReportList.class);
 		assertThat(searchResults.getList()).isNotEmpty();
-		int numCancelled = searchResults.getTotalCount();
+		final int numCancelled = searchResults.getTotalCount();
 		
 		query.setState(ImmutableList.of(ReportState.CANCELLED, ReportState.RELEASED));
 		searchResults = httpQuery("/api/reports/search", jack).post(Entity.json(query), ReportList.class);
@@ -787,7 +787,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		//Pull the daily rollup graph
 		DateTime startDate = DateTime.now().minusDays(1);
 		DateTime endDate = DateTime.now().plusDays(1);
-		List<RollupGraph> startGraph = httpQuery(
+		final List<RollupGraph> startGraph = httpQuery(
 				String.format("/api/reports/rollupGraph?startDate=%d&endDate=%d", startDate.getMillis(), endDate.getMillis()), admin)
 				.get(new GenericType<List<RollupGraph>>() {});
 		

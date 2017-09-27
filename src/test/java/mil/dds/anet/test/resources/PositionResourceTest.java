@@ -43,10 +43,10 @@ public class PositionResourceTest extends AbstractResourceTest {
 	
 	@Test
 	public void positionTest() { 
-		Person jack = getJackJackson();
+		final Person jack = getJackJackson();
 		assertThat(jack.getId()).isNotNull();
 		assertThat(jack.getPosition()).isNotNull();
-		Position jacksOldPosition = jack.getPosition();
+		final Position jacksOldPosition = jack.getPosition();
 		
 		//Create Position
 		Position test = new Position();
