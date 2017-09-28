@@ -25,6 +25,7 @@ export default class BarChart extends Component {
     yProp: PropTypes.string.isRequired,
     xLabel: PropTypes.string,
     barColor: PropTypes.string,
+    onBarClick: PropTypes.func,
   }
 
   static defaultProps = {
@@ -51,6 +52,7 @@ export default class BarChart extends Component {
     let yProp = this.props.yProp  // data property to use for the y-axis domain
     let xLabel = this.props.xLabel || this.props.xProp  // data property to use for the x-axis ticks label
     var xLabels = {}  // dict containing x-value and corresponding tick label
+    let onBarClick = this.props.onBarClick
 
     let xScale = d3.scaleBand()
       .domain(chartData.map(function(d) { xLabels[getPropValue(d, xProp)] = getPropValue(d, xLabel); return getPropValue(d, xProp) }))
@@ -126,14 +128,16 @@ export default class BarChart extends Component {
       .enter()
       .append('g')
       .classed('bar', true)
-
-    bar.append('rect')
+      .append('rect')
       .attr('x', function(d) { return xScale(getPropValue(d, xProp)) })
       .attr('y', function(d) { return yScale(getPropValue(d, yProp)) })
       .attr('width', xScale.bandwidth())
       .attr('height', function(d) { return yHeight - yScale(getPropValue(d, yProp)) })
       .attr('fill', this.props.barColor)
-   }
+    if (this.props.onBarClick) {
+      bar.on('click', function(d, rect) { onBarClick(d, rect) })
+    }
+  }
 
   render() {
     return <svg ref={node => this.node = node} width="100%"></svg>
