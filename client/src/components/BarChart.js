@@ -7,7 +7,7 @@ var d3 = require('d3')
  * Given an object and a property of the type prop1.prop2.prop3,
  * return obj[prop1][prop2][prop3]
  */
-function getPropValue(obj, prop) {  
+function getPropValue(obj, prop) {
   var getterDetails = [obj]
   var objProps = prop.split('.')
   for (var i = 0; i < objProps.length; i++) {
@@ -15,7 +15,7 @@ function getPropValue(obj, prop) {
   }
   return getterDetails.reduce(function(d, v) {
     return d[v]
-  })  
+  })
 }
 
 export default class BarChart extends Component {
@@ -30,7 +30,7 @@ export default class BarChart extends Component {
   static defaultProps = {
     barColor: '#EC971F',
   }
-  
+
   constructor(props){
     super(props)
     this.createBarChart = this.createBarChart.bind(this)
