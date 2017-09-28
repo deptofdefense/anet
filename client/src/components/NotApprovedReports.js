@@ -66,7 +66,7 @@ export default class NotApprovedReports extends Component {
       })
     })
   }  
-  
+
   componentWillReceiveProps(nextProps, nextContext) {
     if (nextProps !== this.props) {
       this.setState({date: nextProps.date})
