@@ -57,6 +57,7 @@ export default class CancelledReports extends Component {
     Promise.all([reportQuery]).then(values => {
       this.setState({
         graphDataByOrg: values[0].reportList.list
+          .filter((item, index, d) => d.findIndex(t => {return t.advisorOrg.id === item.advisorOrg.id }) === index)
           .map(d => {d.cancelledByOrg = values[0].reportList.list.filter(item => item.advisorOrg.id === d.advisorOrg.id).length; return d})
           .sort((a, b) => {
             let a_index = pinned_ORGs.indexOf(a.advisorOrg.shortName)
@@ -67,6 +68,7 @@ export default class CancelledReports extends Component {
               return (b_index < 0) ? -1 : a_index-b_index
           }),
         graphDataByReason: values[0].reportList.list
+          .filter((item, index, d) => d.findIndex(t => {return t.cancelledReason === item.cancelledReason }) === index)
           .map(d => {d.cancelledByReason = values[0].reportList.list.filter(item => item.cancelledReason === d.cancelledReason).length; return d})
           .map(d => {d.reason = d.cancelledReason.replace("CANCELLED_", "").replace(/_/g, " ").toLocaleLowerCase().replace(/(\b\w)/gi, function(m) {return m.toUpperCase()}); return d})
           .sort((a, b) => {
