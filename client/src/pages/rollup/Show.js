@@ -102,6 +102,7 @@ export default class RollupShow extends Page {
 			sortBy: "ENGAGEMENT_DATE",
 			sortOrder: "DESC",
 			pageNum: this.state.reportsPageNum,
+			pageSize: 10,
 		}
 
 		let graphQueryUrl = `/api/reports/rollupGraph?startDate=${rollupQuery.releasedAtStart}&endDate=${rollupQuery.releasedAtEnd}`
