@@ -1,6 +1,6 @@
 ## What is ANET?
 
-The Advisor Network ("ANET") is a tool to track relationships between advisors and advisees. ANET was built by the Defense Digital Service in support of the the USFOR-A and Resolute Support mission to train, advise, and assist the Afghan government. 
+The Advisor Network ("ANET") is a tool to track relationships between advisors and advisees. ANET was initially built by the [Defense Digital Service](https://www.dds.mil/) in support of the USFOR-A and Resolute Support mission to train, advise, and assist the Afghan government. ANET is currently further developed by the [NATO Communication and Information Agency](https://www.ncia.nato.int/) and published over [here](https://github.com/NCI-Agency/anet). 
 
 Although this tool was built in a very specific context, ANET has many potential applications. At its core, ANET is a way of tracking  reports and tying them to authors, organizations, and goals. It also simplifies relationships between members of an organization, and members of different organizations -- like NATO and the Afghan government. 
 

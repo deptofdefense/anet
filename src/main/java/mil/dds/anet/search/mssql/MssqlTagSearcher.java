@@ -1,5 +1,8 @@
 package mil.dds.anet.search.mssql;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.Query;
 
@@ -22,24 +25,19 @@ public class MssqlTagSearcher implements ITagSearcher {
 			return result;
 		}
 
-		final Query<Tag> sqlQuery = dbHandle.createQuery("/* MssqlTagSearch */ SELECT *, count(*) over() as totalCount "
-				+ "FROM tags "
-				+ "WHERE CONTAINS((name, description), :containsQuery) "
-				+ "OR FREETEXT((name, description), :freetextQuery) "
-				+ "ORDER BY name ASC OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY")
-			.bind("containsQuery", Utils.getSqlServerFullTextQuery(text))
-			.bind("freetextQuery", text)
-			.bind("offset", query.getPageSize() * query.getPageNum())
-			.bind("limit", query.getPageSize())
-			.map(new TagMapper());
+		final StringBuilder sql = new StringBuilder(
+				"/* MssqlTagSearch */ SELECT *, count(*) over() as totalCount "
+						+ "FROM tags "
+						+ "WHERE CONTAINS((name, description), :containsQuery) "
+						+ "OR FREETEXT((name, description), :freetextQuery) "
+						+ "ORDER BY name ASC, id ASC");
+		final Map<String,Object> sqlArgs = new HashMap<String,Object>();
+		sqlArgs.put("containsQuery", Utils.getSqlServerFullTextQuery(text));
+		sqlArgs.put("freetextQuery", text);
 
-		result.setList(sqlQuery.list());
-		if (result.getList().size() > 0) {
-			result.setTotalCount((Integer) sqlQuery.getContext().getAttribute("totalCount"));
-		} else {
-			result.setTotalCount(0);
-		}
-		return result;
+		final Query<Tag> sqlQuery = MssqlSearcher.addPagination(query, dbHandle, sql, sqlArgs)
+			.map(new TagMapper());
+		return TagList.fromQuery(sqlQuery, query.getPageNum(), query.getPageSize());
 	}
 
 }

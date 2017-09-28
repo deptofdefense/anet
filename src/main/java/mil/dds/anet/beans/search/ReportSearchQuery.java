@@ -17,6 +17,8 @@ public class ReportSearchQuery extends AbstractSearchQuery {
 	DateTime engagementDateEnd;
 	DateTime createdAtStart;
 	DateTime createdAtEnd;
+	DateTime updatedAtStart;
+	DateTime updatedAtEnd;
 	DateTime releasedAtStart;
 	DateTime releasedAtEnd;
 	Integer attendeeId;
@@ -86,6 +88,22 @@ public class ReportSearchQuery extends AbstractSearchQuery {
 
 	public void setCreatedAtEnd(DateTime createdAtEnd) {
 		this.createdAtEnd = createdAtEnd;
+	}
+
+	public DateTime getUpdatedAtStart() {
+		return updatedAtStart;
+	}
+
+	public void setUpdatedAtStart(DateTime updatedAtStart) {
+		this.updatedAtStart = updatedAtStart;
+	}
+
+	public DateTime getUpdatedAtEnd() {
+		return updatedAtEnd;
+	}
+
+	public void setUpdatedAtEnd(DateTime updatedAtEnd) {
+		this.updatedAtEnd = updatedAtEnd;
 	}
 
 	public DateTime getReleasedAtStart() {

@@ -3,6 +3,7 @@ import {Grid, Row, Col, Label} from 'react-bootstrap'
 import utils from 'utils'
 
 import LinkTo from 'components/LinkTo'
+import ReportApprovals from 'components/ReportApprovals'
 import Tag from 'components/Tag'
 import {Report} from 'models'
 import dict from 'dictionary'
@@ -67,6 +68,11 @@ export default class ReportSummary extends Component {
 				</p>
 			}
 
+			{report.isPending() &&
+				<Row>
+					<Col md={12}><ReportApprovals report={report} /></Col>
+				</Row>
+			}
 			<Row>
 				<Col md={12}>
 					{report.engagementDate &&

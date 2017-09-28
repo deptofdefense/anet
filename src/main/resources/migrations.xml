@@ -647,7 +647,7 @@
 	</changeSet>
 
 	<changeSet id="35" author="evdhoudt" dbms="mssql" >
-		<sql dbms="mssql">
+		<sql dbms="">
 			INSERT INTO adminSettings ([key], value) VALUES ('EXTERNAL_DOCUMENTATION_LINK_URL', '');
 		</sql>
 	</changeSet>
@@ -687,6 +687,52 @@
 			referencedColumnNames="id" referencedTableName="tags" />
 	</changeSet>
 
+	<changeSet id="add-banner-text" author="evdhoudt">
+		<insert tableName="adminSettings">
+			<column name="key" value="GENERAL_BANNER_TEXT" />
+		</insert>
+		<rollback>
+			<delete tableName="adminSettings">
+				<where>[key] = 'GENERAL_BANNER_TEXT'</where>
+			</delete>
+		</rollback>
+	</changeSet>
+
+	<changeSet id="add-banner-text" author="evdhoudt">
+		<insert tableName="adminSettings">
+			<column name="key" value="GENERAL_BANNER_TEXT" />
+		</insert>
+		<rollback>
+			<delete tableName="adminSettings">
+				<where>[key] = 'GENERAL_BANNER_TEXT'</where>
+			</delete>
+		</rollback>
+	</changeSet>
+
+	<changeSet id="add-banner-level" author="evdhoudt">
+		<insert tableName="adminSettings">
+			<column name="key" value="GENERAL_BANNER_LEVEL" />
+			<column name="value" value="notice" />
+		</insert>
+		<rollback>
+			<delete tableName="adminSettings">
+				<where>[key] = 'GENERAL_BANNER_LEVEL'</where>
+			</delete>
+		</rollback>
+	</changeSet>
+
+	<changeSet id="add-banner-visibility" author="evdhoudt">
+		<insert tableName="adminSettings">
+			<column name="key" value="GENERAL_BANNER_VISIBILITY" />
+			<column name="value" value="1" />
+		</insert>
+		<rollback>
+			<delete tableName="adminSettings">
+				<where>[key] = 'GENERAL_BANNER_VISIBILITY'</where>
+			</delete>
+		</rollback>
+	</changeSet>
+
 	<changeSet id="add_external_documentation_link_text" author="evdhoudt">
 		<insert tableName="adminSettings">
 			<column name="key" value="EXTERNAL_DOCUMENTATION_LINK_TEXT" />
@@ -696,6 +742,15 @@
 			<delete tableName="adminSettings">
 				<where>[key] = 'EXTERNAL_DOCUMENTATION_LINK_URL'</where>
 			</delete>
+		</rollback>
+	</changeSet>
+
+	<changeSet id="add_tags_fulltext_index" author="maradragan" dbms="mssql" runInTransaction="false">
+		<sql>
+			CREATE FULLTEXT INDEX ON tags(name, description) KEY INDEX PK_TAGS;
+		</sql>
+		<rollback>
+			DROP FULLTEXT INDEX ON tags;
 		</rollback>
 	</changeSet>
 
