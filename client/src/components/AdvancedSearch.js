@@ -132,6 +132,7 @@ export default class AdvancedSearch extends Component {
 				Organization: <OrganizationFilter
 					queryKey="organizationId"
 					queryIncludeChildOrgsKey="includeChildrenOrgs"
+					queryParams={{type: 'ADVISOR_ORG'}}
 				/>,
 				Status: <SelectSearchFilter
 					queryKey="status"
