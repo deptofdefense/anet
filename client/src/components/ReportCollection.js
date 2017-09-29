@@ -65,7 +65,7 @@ export default class ReportCollection extends Component {
 
 		if (this.props.paginatedReports) {
 			var {pageSize, pageNum, totalCount} = this.props.paginatedReports
-			var numPages = Math.ceil(totalCount / pageSize)
+			var numPages = (pageSize <= 0) ? 1 : Math.ceil(totalCount / pageSize)
 			reports = this.props.paginatedReports.list
 			pageNum++
 		} else {
