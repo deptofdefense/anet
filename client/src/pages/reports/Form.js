@@ -202,6 +202,10 @@ export default class ReportForm extends ValidatableFormWrapper {
 						<ReactTags tags={report.tags}
 							suggestions={suggestionList}
 							labelField={'name'}
+							classNames={{
+								tag: 'reportTag label label-info',
+								remove: 'reportTagRemove label-info',
+							}}
 							minQueryLength={1}
 							autocomplete={true}
 							autofocus={false}
