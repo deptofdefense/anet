@@ -144,6 +144,7 @@ class Nav extends Component {
           >
             <AnchorLink scrollTo="not-approved-reports">Not approved reports</AnchorLink>
             <AnchorLink scrollTo="cancelled-reports">Cancelled reports</AnchorLink>
+            <AnchorLink scrollTo="advisor-reports">Advisor reports</AnchorLink>
           </SubNav>
         }
 
