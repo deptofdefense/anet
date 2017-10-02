@@ -27,6 +27,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -710,5 +711,22 @@ public class ReportResource implements IGraphQLResource {
 		} catch (Exception e) { 
 			throw new WebApplicationException(e);
 		}
+	}
+
+	/**
+	 *
+	 * @param weeksAgo Weeks ago integer for the amount of weeks before the current week
+	 *
+	 */
+	@GET
+	@Timed
+	@Path("/insights/advisors")
+	public List<Map<String,Object>> getAdvisorReportInsights(
+		@DefaultValue("3") @QueryParam("weeksAgo") int weeksAgo) {
+		DateTime now = DateTime.now();
+		DateTime weekStart = now.withDayOfWeek( DateTimeConstants.MONDAY ).withTimeAtStartOfDay();
+		DateTime startDate = weekStart.minusWeeks(weeksAgo);
+
+		return dao.getOrgAdvisorReportInsights(startDate, now);
 	}
 }
