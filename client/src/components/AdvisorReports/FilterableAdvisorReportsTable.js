@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import OrganizationAdvisorsTable from 'components/AdvisorReports/OrganizationAdvisorsTable'
 import Toolbar from 'components/AdvisorReports/Toolbar'
+import _debounce from 'lodash.debounce'
 
 const WEEK_NUMBERS = [32, 31, 30]
 const ORGANIZATIONS = [
@@ -35,11 +36,12 @@ class FilterableAdvisorReportsTable extends Component {
     }
 
     render() {
+        const handleFilterTextInput = _debounce( (filterText) => {this.handleFilterTextInput(filterText) }, 300)
         return (
             <div>
                 <Toolbar 
                     filterText={ this.state.filterText }
-                    onFilterTextInput={ this.handleFilterTextInput }
+                    onFilterTextInput={ handleFilterTextInput }
                     onExportButtonClick={ this.handleExportButtonClick } />
                 <OrganizationAdvisorsTable
                     data={ ORGANIZATIONS }
