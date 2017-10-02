@@ -88,15 +88,6 @@ export default class InsightsShow extends Page {
               <CancelledReports date={this.state.cancelledDate.clone().startOf('day')} />
           </Fieldset>
         }
-        <Fieldset id="cancelled-reports" data-jumptarget title={
-          <span>
-            Cancelled Reports - {this.cancelledDateLongStr}
-            <CalendarButton onChange={this.changeCancelledDate} value={this.state.cancelledDate.toISOString()} style={calendarButtonCss} />
-          </span>
-          }>
-            <p className="help-text">Number of reports cancelled since {this.cancelledDateLongStr}</p>
-            <CancelledReports date={this.state.cancelledDate} />
-        </Fieldset>
 
         <Fieldset id="advisor-reports" data-jumptarget title={
           <span>
