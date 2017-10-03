@@ -9,6 +9,14 @@ import Fieldset from 'components/Fieldset'
 import ReportCollection from 'components/ReportCollection'
 
 
+const d3 = require('d3')
+const colors = {
+  barColor: '#F5CA8D',
+  selectedBarColor: '#EC971F'
+}
+const chartId = 'not_approved_reports_chart'
+
+
 /*
  * Component displaying reports submitted for approval up to the given date but
  * which have not been approved yet. They are displayed in different
@@ -35,11 +43,13 @@ export default class NotApprovedReports extends Component {
     let chartPart = ''
     if (this.state.graphData.length) {
       chartPart = <BarChart
+        chartId={chartId}
         data={this.state.graphData}
         xProp='advisorOrg.id'
         yProp='notApproved'
         xLabel='advisorOrg.shortName'
         onBarClick={this.goToOrg}
+        barColor={colors.barColor}
       />
     }
     return (
@@ -126,9 +136,19 @@ export default class NotApprovedReports extends Component {
     this.setState({reportsPageNum: newPage}, () => this.fetchOrgData())
   }
 
+  resetChartSelection() {
+    d3.selectAll('#' + chartId + ' rect').attr('fill', colors.barColor)
+  }
+
   @autobind
   goToOrg(item) {
     this.setState({reportsPageNum: 0, focusedOrg: (item ? item.advisorOrg : '')}, () => this.fetchOrgData())
+    // remove highlighting of the bars
+    this.resetChartSelection()
+    if (item) {
+      // highlight the bar corresponding to the selected organisation
+      d3.select('#' + chartId + ' #bar_' + item.advisorOrg.id).attr('fill', colors.selectedBarColor)
+    }
   }
 
   componentWillReceiveProps(nextProps, nextContext) {
@@ -146,4 +166,5 @@ export default class NotApprovedReports extends Component {
       this.fetchData()
     }
   }
+
 }
