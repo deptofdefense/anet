@@ -1,14 +1,26 @@
 import React, {Component} from 'react'
 import API from 'api'
 import dict from 'dictionary'
+import autobind from 'autobind-decorator'
+import {Button} from 'react-bootstrap'
 
 import BarChart from 'components/BarChart'
+import Fieldset from 'components/Fieldset'
 import ReportCollection from 'components/ReportCollection'
 
 
+const d3 = require('d3')
+const colors = {
+  barColor: '#F5CA8D',
+  selectedBarColor: '#EC971F'
+}
+const chartId = 'not_approved_reports_chart'
+
+
 /*
- * Component displaying a chart with reports submitted for approval up to
- * the given date but which have not been approved yet.
+ * Component displaying reports submitted for approval up to the given date but
+ * which have not been approved yet. They are displayed in different
+ * presentation forms: chart, summary, table and map.
  */
 export default class NotApprovedReports extends Component {
   static propTypes = {
@@ -21,38 +33,64 @@ export default class NotApprovedReports extends Component {
     this.state = {
       date: props.date,
       graphData: [],
+      reports: {list: []},
+      reportsPageNum: 0,
+      focusedOrg: ''
     }
   }
 
   render() {
+    let chartPart = ''
     if (this.state.graphData.length) {
-      return <BarChart data={this.state.graphData} size={[500,500]} xProp='advisorOrg.id' yProp='notApproved' xLabel='advisorOrg.shortName' />
+      chartPart = <BarChart
+        chartId={chartId}
+        data={this.state.graphData}
+        xProp='advisorOrg.id'
+        yProp='notApproved'
+        xLabel='advisorOrg.shortName'
+        onBarClick={this.goToOrg}
+        barColor={colors.barColor}
+      />
     }
-    else {
-      return <div>No such reports.</div>
-    }
+    return (
+      <div>
+        {chartPart}
+        <Fieldset
+            title={`Not approved reports ${this.state.focusedOrg ? `for ${this.state.focusedOrg.shortName}` : ''}`}
+            id='not-approved-reports-details'
+            action={!this.state.focusedOrg
+              ? '' : <Button onClick={() => this.goToOrg()}>All organizations</Button>
+            }
+          >
+          <ReportCollection paginatedReports={this.state.reports} goToPage={this.goToReportsPage} />
+        </Fieldset>
+      </div>
+    )
   }
 
   fetchData() {
-    const insightQuery = {
+    let pinned_ORGs = dict.lookup('pinned_ORGs')
+    const commonQueryParams = {
       state: ['PENDING_APPROVAL'],
       updatedAtEnd: this.state.date.valueOf(),
-      pageSize: 0,  // retrieve all the filtered reports
     }
-
-    let reportQuery = API.query(/* GraphQL */`
-        reportList(f:search, query:$insightQuery) {
+    const chartQueryParams = {}
+    Object.assign(chartQueryParams, commonQueryParams)
+    Object.assign(chartQueryParams, {
+      pageSize: 0,  // retrieve all the filtered reports
+    })
+    // Query used by the chart
+    let chartQuery = API.query(/* GraphQL */`
+        reportList(f:search, query:$chartQueryParams) {
           totalCount, list {
             ${ReportCollection.GQL_REPORT_FIELDS}
           }
         }
-      `, {insightQuery}, '($insightQuery: ReportSearchQuery)')
-
-    let pinned_ORGs = dict.lookup('pinned_ORGs')
-
-    Promise.all([reportQuery]).then(values => {
+      `, {chartQueryParams}, '($chartQueryParams: ReportSearchQuery)')
+    Promise.all([chartQuery]).then(values => {
       this.setState({
         graphData: values[0].reportList.list
+          .filter((item, index, d) => d.findIndex(t => {return t.advisorOrg.id === item.advisorOrg.id }) === index)
           .map(d => {d.notApproved = values[0].reportList.list.filter(item => item.advisorOrg.id === d.advisorOrg.id).length; return d})
           .sort((a, b) => {
             let a_index = pinned_ORGs.indexOf(a.advisorOrg.shortName)
@@ -64,8 +102,55 @@ export default class NotApprovedReports extends Component {
           })
       })
     })
-  }  
-  
+    this.fetchOrgData()
+  }
+
+  fetchOrgData() {
+    const commonQueryParams = {
+      state: ['PENDING_APPROVAL'],
+      updatedAtEnd: this.state.date.valueOf(),
+    }
+    const reportsQueryParams = {}
+    Object.assign(reportsQueryParams, commonQueryParams)
+    Object.assign(reportsQueryParams, {pageNum: this.state.reportsPageNum})
+    if (this.state.focusedOrg) {
+      Object.assign(reportsQueryParams, {advisorOrgId: this.state.focusedOrg.id})
+    }
+    // Query used by the reports collection
+    let reportsQuery = API.query(/* GraphQL */`
+        reportList(f:search, query:$reportsQueryParams) {
+          pageNum, pageSize, totalCount, list {
+            ${ReportCollection.GQL_REPORT_FIELDS}
+          }
+        }
+      `, {reportsQueryParams}, '($reportsQueryParams: ReportSearchQuery)')
+    Promise.all([reportsQuery]).then(values => {
+      this.setState({
+        reports: values[0].reportList
+      })
+    })
+  }
+
+  @autobind
+  goToReportsPage(newPage) {
+    this.setState({reportsPageNum: newPage}, () => this.fetchOrgData())
+  }
+
+  resetChartSelection() {
+    d3.selectAll('#' + chartId + ' rect').attr('fill', colors.barColor)
+  }
+
+  @autobind
+  goToOrg(item) {
+    this.setState({reportsPageNum: 0, focusedOrg: (item ? item.advisorOrg : '')}, () => this.fetchOrgData())
+    // remove highlighting of the bars
+    this.resetChartSelection()
+    if (item) {
+      // highlight the bar corresponding to the selected organisation
+      d3.select('#' + chartId + ' #bar_' + item.advisorOrg.id).attr('fill', colors.selectedBarColor)
+    }
+  }
+
   componentWillReceiveProps(nextProps, nextContext) {
     if (nextProps !== this.props) {
       this.setState({date: nextProps.date})
@@ -81,4 +166,5 @@ export default class NotApprovedReports extends Component {
       this.fetchData()
     }
   }
+
 }
