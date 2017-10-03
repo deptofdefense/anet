@@ -40,7 +40,6 @@ class FilterableAdvisorReportsTable extends Component {
         return (
             <div>
                 <Toolbar 
-                    filterText={ this.state.filterText }
                     onFilterTextInput={ handleFilterTextInput }
                     onExportButtonClick={ this.handleExportButtonClick } />
                 <OrganizationAdvisorsTable

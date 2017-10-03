@@ -26,7 +26,6 @@ class Toolbar extends Component {
                                 id="advisorSearch"
                                 type="text"
                                 placeholder="Search organizations..."
-                                value={ this.props.filterText }
                                 onChange={ this.handleFilterTextInputChange } />
                         </div>
                         <div className="col-sm-2">
