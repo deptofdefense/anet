@@ -23,7 +23,6 @@ import org.skife.jdbi.v2.sqlobject.SqlBatch;
 import com.google.common.base.Joiner;
 
 import mil.dds.anet.AnetObjectEngine;
-import mil.dds.anet.beans.AdvisorReport;
 import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Organization.OrganizationType;
 import mil.dds.anet.beans.Person;
