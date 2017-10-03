@@ -27,6 +27,7 @@ import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Organization.OrganizationType;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.Poam;
+import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
@@ -477,7 +478,10 @@ public class ReportDao implements IAnetDao<Report> {
 
 			sql.append(" WHERE positions.currentPersonId = reports.authorId");
 			sql.append(" AND reports.advisorOrganizationId = organizations.id");
-			sql.append(" AND positions.type = 0");
+			sql.append(" AND positions.type = :positionAdvisor");
+			sql.append(" AND ( reports.state = :reportReleased");
+				sql.append(" OR reports.state = :reportPending");
+				sql.append(" OR reports.state = :reportDraft )");
 			sql.append(" AND reports.createdAt BETWEEN :startDate and :endDate");
 
 			sql.append(" GROUP BY ");
@@ -499,8 +503,8 @@ public class ReportDao implements IAnetDao<Report> {
 			sql.append(" WHERE positions.currentPersonId = reportPeople.personId");
 			sql.append(" AND reportPeople.reportId = reports.id");
 			sql.append(" AND reports.advisorOrganizationId = organizations.id");
-			sql.append(" AND positions.type = 0");
-			sql.append(" AND reports.state = 2");
+			sql.append(" AND positions.type = :positionAdvisor");
+			sql.append(" AND reports.state = :reportReleased");
 			sql.append(" AND reports.engagementDate BETWEEN :startDate and :endDate");
 
 			sql.append(" GROUP BY organizations.id, organizations.shortName,");
@@ -514,6 +518,10 @@ public class ReportDao implements IAnetDao<Report> {
 
 		sqlArgs.put("startDate", start);
 		sqlArgs.put("endDate", end);
+		sqlArgs.put("positionAdvisor", Position.PositionType.ADVISOR.ordinal());
+		sqlArgs.put("reportDraft", ReportState.DRAFT.ordinal());
+		sqlArgs.put("reportPending", ReportState.PENDING_APPROVAL.ordinal());
+		sqlArgs.put("reportReleased", ReportState.RELEASED.ordinal());
 
 		return dbHandle.createQuery(sql.toString())
 			.bindFromMap(sqlArgs)
