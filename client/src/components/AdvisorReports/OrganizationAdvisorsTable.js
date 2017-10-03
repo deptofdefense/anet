@@ -110,6 +110,7 @@ class OrganizationAdvisorsTable extends Component {
         return(
             <div className="organization-advisors-table">
                 <Table striped bordered condensed hover responsive>
+                    <caption>Shows reports submitted and engagements attended per week by an organizations' advisors</caption>
                     <AdvisorReportsTableHead
                         columnGroups={ this.props.columnGroups } 
                         title="Organization name" 
