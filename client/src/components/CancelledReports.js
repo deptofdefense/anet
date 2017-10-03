@@ -6,6 +6,12 @@ import BarChart from 'components/BarChart'
 import ReportCollection from 'components/ReportCollection'
 
 
+const colors = {
+    barColor: '#F5CA8D',
+    selectedBarColor: '#EC971F'
+  }
+
+
 /*
  * Component displaying a chart with reports cancelled since
  * the given date.
@@ -28,8 +34,8 @@ export default class CancelledReports extends Component {
   render() {
     if (this.state.graphDataByOrg.length) {
       return <div>
-          <BarChart data={this.state.graphDataByOrg} xProp='advisorOrg.id' yProp='cancelledByOrg' xLabel='advisorOrg.shortName' />
-          <BarChart data={this.state.graphDataByReason} xProp='reason' yProp='cancelledByReason' />
+          <BarChart data={this.state.graphDataByOrg} xProp='advisorOrg.id' yProp='cancelledByOrg' xLabel='advisorOrg.shortName' barColor={colors.barColor} />
+          <BarChart data={this.state.graphDataByReason} xProp='reason' yProp='cancelledByReason' barColor={colors.barColor} />
         </div>
     }
     else {
