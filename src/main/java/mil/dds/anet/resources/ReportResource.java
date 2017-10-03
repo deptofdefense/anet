@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -723,6 +724,7 @@ public class ReportResource implements IGraphQLResource {
 	@GET
 	@Timed
 	@Path("/insights/advisors")
+	@RolesAllowed("SUPER_USER")
 	public List<Map<String, Object>> getAdvisorReportInsights(
 		@DefaultValue("3") @QueryParam("weeksAgo") int weeksAgo) {
 		DateTime now = DateTime.now();
