@@ -22,6 +22,8 @@ public class AnetConfiguration extends Configuration {
 	private String emailFromAddr;
 	private String serverUrl;
 
+	private Map<String, Object> dictionary;
+
 	@NotNull
 	private Map<String,String> waffleConfig = new HashMap<String,String>();
 
@@ -102,6 +104,14 @@ public class AnetConfiguration extends Configuration {
 
 	public void setServerUrl(String serverUrl) {
 		this.serverUrl = serverUrl;
+	}
+
+	public Map<String, Object> getDictionary() {
+		return dictionary;
+	}
+
+	public void setDictionary(Map<String, Object> dictionary) {
+		this.dictionary = dictionary;
 	}
 
 	public static class SmtpConfiguration {

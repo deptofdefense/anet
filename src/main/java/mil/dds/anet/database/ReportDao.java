@@ -136,8 +136,7 @@ public class ReportDao implements IAnetDao<Report> {
 		});
 	}
 
-	public interface ReportBatch
-	{
+	public interface ReportBatch {
 		@SqlBatch("INSERT INTO reportPeople (reportId, personId, isPrimary) VALUES (:reportId, :id, :primary)")
 		void insertReportAttendees(@Bind("reportId") Integer reportId,
 				@BindBean List<ReportPerson> reportPeople);

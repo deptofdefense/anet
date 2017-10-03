@@ -586,18 +586,18 @@ INSERT INTO adminsettings ([key], value) VALUES ('GENERAL_BANNER_VISIBILITY', '1
 
 -- Tags
 INSERT INTO tags (name, description, createdAt, updatedAt) VALUES
-  ('bribery', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  ('clientelism', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  ('collusion', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  ('embezzlement', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  ('extortion', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  ('fraud', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  ('grand corruption', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  ('nepotism', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  ('patronage', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  ('state capture', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  ('petty corruption', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  ('facilitation payment', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+  ('bribery', 'Giving/Promising money or something valuable to corrupt the behavior of a public official', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('clientelism', 'Exhange of goods or services for political support; involves quid-pro-quo', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('collusion', 'A secret agreement that involves fraud', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('embezzlement', 'Steal or misappropriate money from the organization the person works for', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('extortion', 'Using force or threats to obtain money or a service', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('fraud', 'Criminal deception resulting in financial personal gain', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('grand corruption', 'Abuse of high level power that benefits a few people at the expense of many', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('nepotism', 'Leaders favoring relatives or friends usually by giving them jobs', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('patronage', 'Leaders illegally appointing someone to a position', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('state capture', 'Private interests that significantly influence a decision-making process for private gain', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('petty corruption', 'Every day abuse of entrusted power by low- to mid-level public officials', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('facilitation payment', 'Payment made to a government official that acts as an incentive to complete an action quickly', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Tag some reports
 INSERT INTO reportTags (reportId, tagId)

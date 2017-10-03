@@ -247,7 +247,8 @@ public class MssqlReportSearcher implements IReportSearcher {
 				sql.append(" DESC ");
 				break;
 		}
-		
+		sql.append(", reports_id DESC ");
+
 		if (commonTableExpression != null) { 
 			sql.insert(0, commonTableExpression);
 		}

@@ -18,8 +18,8 @@ import javax.ws.rs.core.Response.Status;
 
 import io.dropwizard.auth.Auth;
 import mil.dds.anet.AnetObjectEngine;
-import mil.dds.anet.beans.Tag;
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.Tag;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.TagList;
 import mil.dds.anet.beans.search.TagSearchQuery;
 import mil.dds.anet.database.TagDao;

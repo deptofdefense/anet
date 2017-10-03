@@ -4,8 +4,6 @@ import {Alert, Table, Button, Col, Modal, Checkbox} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 import moment from 'moment'
 import utils from 'utils'
-import { WithContext as ReactTags } from 'react-tag-input'
-import 'components/reactTags.css'
 
 import History from 'components/History'
 import Fieldset from 'components/Fieldset'
@@ -14,6 +12,7 @@ import Form from 'components/Form'
 import Messages from 'components/Messages'
 import LinkTo from 'components/LinkTo'
 import ReportApprovals from 'components/ReportApprovals'
+import Tag from 'components/Tag'
 
 import API from 'api'
 import dict from 'dictionary'
@@ -202,9 +201,7 @@ export default class ReportShow extends Page {
 							</Form.Field>
 						}
 						<Form.Field id="tags" label="Tags">
-							<ReactTags tags={report.tags}
-								labelField={'name'}
-								readOnly={true} />
+							{report.tags && report.tags.map((tag,i) => <Tag key={tag.id} tag={tag} />)}
 						</Form.Field>
 						<Form.Field id="author" label="Report author">
 							<LinkTo person={report.author} />

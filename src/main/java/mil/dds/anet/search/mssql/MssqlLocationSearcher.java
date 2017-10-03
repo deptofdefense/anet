@@ -28,7 +28,7 @@ public class MssqlLocationSearcher implements ILocationSearcher {
 		final StringBuilder sql = new StringBuilder(
 				"/* MssqlLocationSearch */ SELECT *, count(*) over() as totalCount "
 						+ "FROM locations WHERE CONTAINS (name, :name) "
-						+ "ORDER BY name ASC");
+						+ "ORDER BY name ASC, id ASC");
 		args.put("name", Utils.getSqlServerFullTextQuery(query.getText()));
 
 		final Query<Location> map = MssqlSearcher.addPagination(query, dbHandle, sql, args)

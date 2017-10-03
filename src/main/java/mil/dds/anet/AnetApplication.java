@@ -15,6 +15,7 @@ import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
+import org.json.JSONObject;
 import org.skife.jdbi.v2.DBI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -113,6 +114,7 @@ public class AnetApplication extends Application<AnetConfiguration> {
 		final DBIFactory factory = new DBIFactory();
 		final DBI jdbi = factory.build(environment, configuration.getDataSourceFactory(), "mssql");
 
+		logger.info("dictionary: {}", new JSONObject(configuration.getDictionary()).toString(2));
 		
 		//We want to use our own custom DB logger in order to clean up the logs a bit. 
 		jdbi.setSQLLog(new AnetDbLogger());
@@ -176,7 +178,7 @@ public class AnetApplication extends Application<AnetConfiguration> {
 		PositionResource positionResource = new PositionResource(engine);
 		ApprovalStepResource asResource = new ApprovalStepResource(engine);
 		ReportResource reportResource = new ReportResource(engine, configuration);
-		AdminResource adminResource = new AdminResource(engine);
+		AdminResource adminResource = new AdminResource(engine, configuration);
 		HomeResource homeResource = new HomeResource(engine);
 		SavedSearchResource savedSearchResource = new SavedSearchResource(engine);
 		final TagResource tagResource = new TagResource(engine);
