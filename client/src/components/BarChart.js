@@ -20,6 +20,7 @@ function getPropValue(obj, prop) {
 
 export default class BarChart extends Component {
   static propTypes = {
+    chartId: PropTypes.string,
     data: PropTypes.array,
     xProp: PropTypes.string.isRequired,
     yProp: PropTypes.string.isRequired,
@@ -29,7 +30,7 @@ export default class BarChart extends Component {
   }
 
   static defaultProps = {
-    barColor: '#EC971F',
+    barColor: '#F5CA8D'
   }
 
   constructor(props){
@@ -122,24 +123,38 @@ export default class BarChart extends Component {
 
     chart.append('g')
       .call(yAxis)
-
+    let barColor = this.props.barColor
     let bar = chart.selectAll('.bar')
       .data(chartData)
       .enter()
       .append('g')
       .classed('bar', true)
       .append('rect')
+      .attr('id', function(d, i) { return 'bar_' + getPropValue(d, xProp) })
       .attr('x', function(d) { return xScale(getPropValue(d, xProp)) })
       .attr('y', function(d) { return yScale(getPropValue(d, yProp)) })
       .attr('width', xScale.bandwidth())
       .attr('height', function(d) { return yHeight - yScale(getPropValue(d, yProp)) })
-      .attr('fill', this.props.barColor)
-    if (this.props.onBarClick) {
-      bar.on('click', function(d, rect) { onBarClick(d, rect) })
+      .attr('fill', barColor)
+    if (onBarClick) {
+      bar.on('click', function(d) {
+        onBarClick(d)
+      })
     }
   }
 
   render() {
-    return <svg ref={node => this.node = node} width="100%"></svg>
+    return <svg id={this.props.chartId} ref={node => this.node = node} width="100%"></svg>
   }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    // Make sure the chart is only rerendered if the state or properties have
+    // changed. This because we do not want to reender the chart only in order
+    // to highlight a bar in the chart.
+    if ((this.state !== nextState) || (this.props !== nextProps)) {
+      return false
+    }
+    return true
+  }
+
 }
