@@ -8,7 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.security.PermitAll;
 import javax.servlet.http.HttpServletRequest;
@@ -721,12 +723,14 @@ public class ReportResource implements IGraphQLResource {
 	@GET
 	@Timed
 	@Path("/insights/advisors")
-	public List<Map<String,Object>> getAdvisorReportInsights(
+	public List<Map<String, Object>> getAdvisorReportInsights(
 		@DefaultValue("3") @QueryParam("weeksAgo") int weeksAgo) {
 		DateTime now = DateTime.now();
-		DateTime weekStart = now.withDayOfWeek( DateTimeConstants.MONDAY ).withTimeAtStartOfDay();
+		DateTime weekStart = now.withDayOfWeek(DateTimeConstants.MONDAY).withTimeAtStartOfDay();
 		DateTime startDate = weekStart.minusWeeks(weeksAgo);
 
-		return dao.getOrgAdvisorReportInsights(startDate, now);
+		final List<Map<String, Object>> list = dao.getOrgAdvisorReportInsights(startDate, now);
+		final Set<String> tlf = Stream.of("organizationshortname").collect(Collectors.toSet());
+		return Utils.resultGrouper(list, "stats", "organizationid", tlf);
 	}
 }
