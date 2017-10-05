@@ -367,7 +367,7 @@ public class ReportDao implements IAnetDao<Report> {
 		return generateRollupGraphFromResults(results, orgMap);
 	}
 
-	/* Generates Advisor Report Insights for a particular Organization */
+	/* Generates Advisor Report Insights for Organizations */
 	public List<Map<String,Object>> getAdvisorReportInsights(DateTime start, DateTime end, int orgId) {
 		Map<String,Object> sqlArgs = new HashMap<String,Object>();
 		StringBuilder sql = new StringBuilder();
@@ -376,8 +376,8 @@ public class ReportDao implements IAnetDao<Report> {
 		sql.append("SELECT ");
 		sql.append("CASE WHEN a.organizationId IS NULL THEN b.organizationId ELSE a.organizationId END AS organizationId,");
 		sql.append("CASE WHEN a.organizationShortName IS NULL THEN b.organizationShortName ELSE a.organizationShortName END AS organizationShortName,");
-		sql.append("CASE WHEN a.personId IS NULL THEN b.personId ELSE a.personId END AS personId,");
-		sql.append("CASE WHEN a.name IS NULL THEN b.name ELSE a.name END AS name,");
+		sql.append("%1$s");
+		sql.append("%2$s");
 		sql.append("CASE WHEN a.week IS NULL THEN b.week ELSE a.week END AS week,");
 		sql.append("CASE WHEN a.nrReportsSubmitted IS NULL THEN 0 ELSE a.nrReportsSubmitted END AS nrReportsSubmitted,");
 		sql.append("CASE WHEN b.nrEngagementsAttended IS NULL THEN 0 ELSE b.nrEngagementsAttended END AS nrEngagementsAttended");
@@ -387,138 +387,106 @@ public class ReportDao implements IAnetDao<Report> {
 			sql.append("SELECT ");
 			sql.append("organizations.id AS organizationId,");
 			sql.append("organizations.shortName AS organizationShortName,");
-			sql.append("people.id AS personId,");
-			sql.append("people.name AS name,");
+			sql.append("%3$s");
+			sql.append("%4$s");
 			sql.append("DATEPART(week, reports.createdAt) AS week,");
 			sql.append("COUNT(reports.authorId) AS nrReportsSubmitted");
 
 			sql.append(" FROM ");
 			sql.append("positions,");
 			sql.append("reports,");
-			sql.append("people,");
+			sql.append("%5$s");
 			sql.append("organizations");
 
 			sql.append(" WHERE positions.currentPersonId = reports.authorId");
-			sql.append(" AND positions.currentPersonId = people.id");
+			sql.append(" %6$s");
 			sql.append(" AND reports.advisorOrganizationId = organizations.id");
-			sql.append(" AND positions.type = 0");
+			sql.append(" AND positions.type = :positionAdvisor");
+			sql.append(" AND reports.state IN ( :reportReleased, :reportPending, :reportDraft )");
 			sql.append(" AND reports.createdAt BETWEEN :startDate and :endDate");
-			sql.append(" AND organizations.id = :orgId");
+			sql.append(" %11$s");
 
 			sql.append(" GROUP BY ");
 			sql.append("organizations.id,");
 			sql.append("organizations.shortName,");
-			sql.append("people.id,");
-			sql.append("people.name,");
+			sql.append("%7$s");
+			sql.append("%8$s");
 			sql.append("DATEPART(week, reports.createdAt)");
 		sql.append(") a");
 
 		sql.append(" FULL OUTER JOIN (");
-			sql.append(" SELECT ");
-			sql.append("organizations.id AS organizationId,");
-			sql.append("organizations.shortName AS organizationShortName,");
-			sql.append("people.id AS personId,");
-			sql.append("people.name AS name,");
-			sql.append("DATEPART(week, reports.engagementDate) AS week,");
-			sql.append("COUNT(reportPeople.personId) AS nrEngagementsAttended");
-
-			sql.append(" FROM ");
-			sql.append("positions, people, reports, reportPeople, organizations");
-
-			sql.append(" WHERE positions.currentPersonId = reportPeople.personId");
-			sql.append(" AND positions.currentPersonId = people.id");
-			sql.append(" AND reportPeople.reportId = reports.id");
-			sql.append(" AND reports.advisorOrganizationId = organizations.id");
-			sql.append(" AND positions.type = 0");
-			sql.append(" AND reports.state = 2");
-			sql.append(" AND reports.engagementDate BETWEEN :startDate and :endDate");
-			sql.append(" AND organizations.id = :orgId");
-
-			sql.append(" GROUP BY organizations.id, organizations.shortName, people.id, people.name,");
-			sql.append(" DATEPART(week, reports.engagementDate)");
-		sql.append(") b");
-
-		sql.append(" ON ");
-		sql.append(" a.organizationId = b.organizationId");
-		sql.append(" AND a.personId = b.personId");
-		sql.append(" AND a.week = b.week");
-		sql.append(" ORDER BY organizationShortName, name, week;");
-
-		sqlArgs.put("startDate", start);
-		sqlArgs.put("endDate", end);
-		sqlArgs.put("orgId", orgId);
-
-
-		return dbHandle.createQuery(sql.toString())
-			.bindFromMap(sqlArgs)
-			.list();
-	}
-
-	/* Generates Aggregate Advisor Report Insights for a particular Organization */
-	public List<Map<String,Object>> getOrgAdvisorReportInsights(DateTime start, DateTime end) {
-		Map<String,Object> sqlArgs = new HashMap<String,Object>();
-		StringBuilder sql = new StringBuilder();
-
-		sql.append("/* AdvisorReportInsightsQuery Org */");
-		sql.append("SELECT ");
-		sql.append("CASE WHEN a.organizationId IS NULL THEN b.organizationId ELSE a.organizationId END AS organizationId,");
-		sql.append("CASE WHEN a.organizationShortName IS NULL THEN b.organizationShortName ELSE a.organizationShortName END AS organizationShortName,");
-		sql.append("CASE WHEN a.week IS NULL THEN b.week ELSE a.week END AS week,");
-		sql.append("CASE WHEN a.nrReportsSubmitted IS NULL THEN 0 ELSE a.nrReportsSubmitted END AS nrReportsSubmitted,");
-		sql.append("CASE WHEN b.nrEngagementsAttended IS NULL THEN 0 ELSE b.nrEngagementsAttended END AS nrEngagementsAttended");
-
-		sql.append(" FROM (");
-
 			sql.append("SELECT ");
 			sql.append("organizations.id AS organizationId,");
 			sql.append("organizations.shortName AS organizationShortName,");
-			sql.append("DATEPART(week, reports.createdAt) AS week,");
-			sql.append("COUNT(reports.authorId) AS nrReportsSubmitted");
-
-			sql.append(" FROM ");
-			sql.append("positions,");
-			sql.append("reports,");
-			sql.append("organizations");
-
-			sql.append(" WHERE positions.currentPersonId = reports.authorId");
-			sql.append(" AND reports.advisorOrganizationId = organizations.id");
-			sql.append(" AND positions.type = :positionAdvisor");
-			sql.append(" AND ( reports.state = :reportReleased");
-				sql.append(" OR reports.state = :reportPending");
-				sql.append(" OR reports.state = :reportDraft )");
-			sql.append(" AND reports.createdAt BETWEEN :startDate and :endDate");
-
-			sql.append(" GROUP BY ");
-			sql.append("organizations.id,");
-			sql.append("organizations.shortName,");
-			sql.append("DATEPART(week, reports.createdAt)");
-		sql.append(") a");
-
-		sql.append(" FULL OUTER JOIN (");
-			sql.append(" SELECT ");
-			sql.append("organizations.id AS organizationId,");
-			sql.append("organizations.shortName AS organizationShortName,");
+			sql.append("%3$s");
+			sql.append("%4$s");
 			sql.append("DATEPART(week, reports.engagementDate) AS week,");
 			sql.append("COUNT(reportPeople.personId) AS nrEngagementsAttended");
 
 			sql.append(" FROM ");
-			sql.append("positions, reports, reportPeople, organizations");
+			sql.append("positions,");
+			sql.append("%5$s");
+			sql.append("reports,");
+			sql.append("reportPeople,");
+			sql.append("organizations");
 
 			sql.append(" WHERE positions.currentPersonId = reportPeople.personId");
+			sql.append(" %6$s");
 			sql.append(" AND reportPeople.reportId = reports.id");
 			sql.append(" AND reports.advisorOrganizationId = organizations.id");
 			sql.append(" AND positions.type = :positionAdvisor");
-			sql.append(" AND reports.state = :reportReleased");
+			sql.append(" AND reports.state IN ( :reportReleased, :reportPending, :reportDraft )");
 			sql.append(" AND reports.engagementDate BETWEEN :startDate and :endDate");
+			sql.append(" %11$s");
 
-			sql.append(" GROUP BY organizations.id, organizations.shortName,");
-			sql.append(" DATEPART(week, reports.engagementDate)");
+			sql.append(" GROUP BY ");
+			sql.append("organizations.id,");
+			sql.append("organizations.shortName,");
+			sql.append("%7$s");
+			sql.append("%8$s");
+			sql.append("DATEPART(week, reports.engagementDate)");
 		sql.append(") b");
 
 		sql.append(" ON ");
 		sql.append(" a.organizationId = b.organizationId");
+		sql.append(" %9$s");
 		sql.append(" AND a.week = b.week");
-		sql.append(" ORDER BY organizationShortName, week;");
+
+		sql.append(" ORDER BY ");
+		sql.append("organizationShortName,");
+		sql.append("%10$s");
+		sql.append("week;");
+
+		final Object[] fmtArgs;
+		if (orgId > -1) {
+			String selectOrg = " AND organizations.id = " + orgId;
+			fmtArgs = new String[] {
+					"CASE WHEN a.personId IS NULL THEN b.personId ELSE a.personId END AS personId,",
+					"CASE WHEN a.name IS NULL THEN b.name ELSE a.name END AS name,",
+					"people.id AS personId,",
+					"people.name AS name,",
+					"people,",
+					"AND positions.currentPersonId = people.id",
+					"people.id,",
+					"people.name,",
+					"AND a.personId = b.personId",
+					"name,",
+					selectOrg};
+		}
+		else {
+			fmtArgs = new String[] {
+					"",
+					"",
+					"",
+					"",
+					"",
+					"",
+					"",
+					"",
+					"",
+					"",
+					""};
+		}
 
 		sqlArgs.put("startDate", start);
 		sqlArgs.put("endDate", end);
@@ -527,7 +495,7 @@ public class ReportDao implements IAnetDao<Report> {
 		sqlArgs.put("reportPending", ReportState.PENDING_APPROVAL.ordinal());
 		sqlArgs.put("reportReleased", ReportState.RELEASED.ordinal());
 
-		return dbHandle.createQuery(sql.toString())
+		return dbHandle.createQuery(String.format(sql.toString(), fmtArgs))
 			.bindFromMap(sqlArgs)
 			.list();
 	}

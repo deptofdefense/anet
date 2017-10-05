@@ -734,13 +734,12 @@ public class ReportResource implements IGraphQLResource {
 		DateTime now = DateTime.now();
 		DateTime weekStart = now.withDayOfWeek(DateTimeConstants.MONDAY).withTimeAtStartOfDay();
 		DateTime startDate = weekStart.minusWeeks(weeksAgo);
+		final List<Map<String, Object>> list = dao.getAdvisorReportInsights(startDate, now, orgId);
 
 		if(orgId < 0){
-			final List<Map<String, Object>> list = dao.getOrgAdvisorReportInsights(startDate, now);
 			final Set<String> tlf = Stream.of("organizationshortname").collect(Collectors.toSet());
 			return Utils.resultGrouper(list, "stats", "organizationid", tlf);
 		} else {
-			final List<Map<String, Object>> list = dao.getAdvisorReportInsights(startDate, now, orgId);
 			final Set<String> tlf = Stream.of("name").collect(Collectors.toSet());
 			return Utils.resultGrouper(list, "stats", "personId", tlf);
 		}
