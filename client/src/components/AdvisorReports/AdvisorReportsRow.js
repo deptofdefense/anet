@@ -1,19 +1,20 @@
 import React from 'react'
 import Checkbox from 'components/Checkbox'
+import _uniqueId from 'lodash.uniqueid'
 
 const _advisorStats = (columnGroups, statistics) => {
     let stats = []
     columnGroups.forEach( (group, index) => {
         let rowCell = statistics[index]
+        let keySubmitted = _uniqueId('submitted_')
+        let keyAttended = _uniqueId('attended_')
         if(rowCell){
-            let keySubmitted = 1 //`submitted-${statistic.hash}`
-            let keyAttended = 2 //`attended-${statistic.hash}`
             stats.push(<td key={ keySubmitted }>{ rowCell.nrreportssubmitted }</td>)
             stats.push(<td key={ keyAttended }>{ rowCell.nrengagementsattended }</td>)
         }
         else {
-            stats.push(<td>0</td>)
-            stats.push(<td>0</td>)
+            stats.push(<td key={ keySubmitted }>0</td>)
+            stats.push(<td key={ keyAttended }>0</td>)
         }
     })
     return stats
