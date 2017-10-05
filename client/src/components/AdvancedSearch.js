@@ -23,6 +23,11 @@ export default class AdvancedSearch extends Component {
 	}
 
 	@autobind
+	setOrganizationFilter(el) {
+		this.setState({organizationFilter: el})
+	}
+
+	@autobind
 	getFilters(context) {
 		let filters = {}
 		filters.Reports = {
@@ -132,7 +137,7 @@ export default class AdvancedSearch extends Component {
 				Organization: <OrganizationFilter
 					queryKey="organizationId"
 					queryIncludeChildOrgsKey="includeChildrenOrgs"
-					queryParams={{type: 'ADVISOR_ORG'}}
+					ref={this.setOrganizationFilter}
 				/>,
 				Status: <SelectSearchFilter
 					queryKey="status"
@@ -214,7 +219,7 @@ export default class AdvancedSearch extends Component {
 			</SearchFilter>
 
 			{filters.map(filter =>
-				<SearchFilter key={filter.key} query={this.state} filter={filter} onRemove={this.removeFilter} element={filterDefs[filter.key]} />
+				<SearchFilter key={filter.key} query={this.state} filter={filter} onRemove={this.removeFilter} element={filterDefs[filter.key]} organizationFilter={this.state.organizationFilter} />
 			)}
 
 			<Row>
@@ -264,6 +269,15 @@ export default class AdvancedSearch extends Component {
 		let filters = this.state.filters
 		filters.splice(filters.indexOf(filter), 1)
 		this.setState({filters})
+
+		if (filter.key === "Organization") {
+			this.setOrganizationFilter(null)
+		} else if (filter.key === "Position type") {
+			let organizationFilter = this.state.organizationFilter
+			if (organizationFilter) {
+				organizationFilter.setState({queryParams: {}})
+			}
+		}
 	}
 
 	@autobind
@@ -316,5 +330,19 @@ class SearchFilter extends Component {
 	onChange(value) {
 		let filter = this.props.filter
 		filter.value = value
+
+		if (filter.key === "Position type") {
+			let organizationFilter = this.props.organizationFilter
+			if (organizationFilter) {
+				let positionType = filter.value.value || ""
+				if (positionType === "PRINCIPAL") {
+					organizationFilter.setState({queryParams: {type: "PRINCIPAL_ORG"}})
+				} else if (positionType === "ADVISOR") {
+					organizationFilter.setState({queryParams: {type: "ADVISOR_ORG"}})
+				} else {
+					organizationFilter.setState({queryParams: {}})
+				}
+			}
+		}
 	}
 }
