@@ -2,13 +2,14 @@ import React from 'react'
 import { Table } from 'react-bootstrap'
 import AdvisorReportsTableHead from 'components/AdvisorReports/AdvisorReportsTableHead'
 import AdvisorReportsRow from 'components/AdvisorReports/AdvisorReportsRow'
+import _uniqueId from 'lodash.uniqueid'
 
 const AdvisorReportsTable = (props) => {
     let rows = props.data.map( (advisor) => {
         return (<AdvisorReportsRow 
             row={ advisor }
             columnGroups={ props.columnGroups }
-            key={ advisor.id } />)
+            key={ _uniqueId(`${advisor.id}_`) } />)
     })
     return(
         <Table striped bordered condensed hover responsive>
