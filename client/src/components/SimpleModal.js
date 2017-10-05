@@ -17,6 +17,7 @@ class SimpleModal extends Component {
 
     open() {
         this.setState({ showModal: true })
+        this.props.onClickModalOpen()
     }
 
     render() {

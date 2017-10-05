@@ -718,6 +718,8 @@ public class ReportResource implements IGraphQLResource {
 
 	/**
 	 *
+	 * Gets aggregated data per organization for engagements attended and reports submitted
+	 * for each advisor in a given organization.
 	 * @param weeksAgo Weeks ago integer for the amount of weeks before the current week
 	 *
 	 */
@@ -726,13 +728,21 @@ public class ReportResource implements IGraphQLResource {
 	@Path("/insights/advisors")
 	@RolesAllowed("SUPER_USER")
 	public List<Map<String, Object>> getAdvisorReportInsights(
-		@DefaultValue("3") @QueryParam("weeksAgo") int weeksAgo) {
+		@DefaultValue("3") 	@QueryParam("weeksAgo") int weeksAgo,
+		@DefaultValue("-1") @QueryParam("orgId") int orgId) {
+
 		DateTime now = DateTime.now();
 		DateTime weekStart = now.withDayOfWeek(DateTimeConstants.MONDAY).withTimeAtStartOfDay();
 		DateTime startDate = weekStart.minusWeeks(weeksAgo);
 
-		final List<Map<String, Object>> list = dao.getOrgAdvisorReportInsights(startDate, now);
-		final Set<String> tlf = Stream.of("organizationshortname").collect(Collectors.toSet());
-		return Utils.resultGrouper(list, "stats", "organizationid", tlf);
+		if(orgId < 0){
+			final List<Map<String, Object>> list = dao.getOrgAdvisorReportInsights(startDate, now);
+			final Set<String> tlf = Stream.of("organizationshortname").collect(Collectors.toSet());
+			return Utils.resultGrouper(list, "stats", "organizationid", tlf);
+		} else {
+			final List<Map<String, Object>> list = dao.getAdvisorReportInsights(startDate, now, orgId);
+			final Set<String> tlf = Stream.of("name").collect(Collectors.toSet());
+			return Utils.resultGrouper(list, "stats", "personId", tlf);
+		}
 	}
 }

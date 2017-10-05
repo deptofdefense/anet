@@ -368,7 +368,7 @@ public class ReportDao implements IAnetDao<Report> {
 	}
 
 	/* Generates Advisor Report Insights for a particular Organization */
-	public List<Map<String,Object>> getAdvisorReportInsights(DateTime start, DateTime end) {
+	public List<Map<String,Object>> getAdvisorReportInsights(DateTime start, DateTime end, int orgId) {
 		Map<String,Object> sqlArgs = new HashMap<String,Object>();
 		StringBuilder sql = new StringBuilder();
 
@@ -403,6 +403,7 @@ public class ReportDao implements IAnetDao<Report> {
 			sql.append(" AND reports.advisorOrganizationId = organizations.id");
 			sql.append(" AND positions.type = 0");
 			sql.append(" AND reports.createdAt BETWEEN :startDate and :endDate");
+			sql.append(" AND organizations.id = :orgId");
 
 			sql.append(" GROUP BY ");
 			sql.append("organizations.id,");
@@ -431,6 +432,7 @@ public class ReportDao implements IAnetDao<Report> {
 			sql.append(" AND positions.type = 0");
 			sql.append(" AND reports.state = 2");
 			sql.append(" AND reports.engagementDate BETWEEN :startDate and :endDate");
+			sql.append(" AND organizations.id = :orgId");
 
 			sql.append(" GROUP BY organizations.id, organizations.shortName, people.id, people.name,");
 			sql.append(" DATEPART(week, reports.engagementDate)");
@@ -444,6 +446,8 @@ public class ReportDao implements IAnetDao<Report> {
 
 		sqlArgs.put("startDate", start);
 		sqlArgs.put("endDate", end);
+		sqlArgs.put("orgId", orgId);
+
 
 		return dbHandle.createQuery(sql.toString())
 			.bindFromMap(sqlArgs)

@@ -12,7 +12,7 @@ const advisorReportsQueryUrl = `/api/reports/insights/advisors` // ?weeksAgo=3 d
 class FilterableAdvisorReportsTable extends Component {
     constructor(props) {
         super(props)
-        this.state = { 
+        this.state = {
             filterText: '',
             data: []
         }

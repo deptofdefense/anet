@@ -5,33 +5,6 @@ import AdvisorReportsRow from 'components/AdvisorReports/AdvisorReportsRow'
 import AdvisorReportsTableHead from 'components/AdvisorReports/AdvisorReportsTableHead'
 import './OrganizationAdvisorsTable.css'
 
-const ADVISORS = [
-    {name: 'Derrick Hancock', stats: [
-        {hash:1233, week: 32, nrreportssubmitted: 35, nrengagementsattended: 5},
-        {hash:1234, week: 31, nrreportssubmitted: 3, nrengagementsattended: 15},
-        {hash:1235, week: 30, nrreportssubmitted: 32, nrengagementsattended: 22}], id: 1},
-    {name: 'Abbey Scott', stats: [
-        {hash:1236, week: 32, nrreportssubmitted: 2, nrengagementsattended: 8},
-        {hash:1237, week: 31, nrreportssubmitted: 3, nrengagementsattended: 15},
-        {hash:1238, week: 30, nrreportssubmitted: 32, nrengagementsattended: 22}], id: 2},
-    {name: 'John Smith', stats: [
-        {hash:1239, week:32, nrreportssubmitted: 12, nrengagementsattended: 35},
-        {hash:12310, week: 31, nrreportssubmitted: 3, nrengagementsattended: 15},
-        {hash:12311, week: 30, nrreportssubmitted: 32, nrengagementsattended: 22}], id: 3},
-    {name: 'Chad Choo', stats: [
-        {hash:12312, week: 32, nrreportssubmitted: 10, nrengagementsattended: 5},
-        {hash:12313, week: 31, nrreportssubmitted: 3, nrengagementsattended: 15},
-        {hash:12314, week: 30, nrreportssubmitted: 32, nrengagementsattended: 22}], id: 4},
-    {name: 'Simon Says', stats: [
-        {hash:12315, week: 32,nrreportssubmitted: 21, nrengagementsattended: 45},
-        {hash:12316, week: 31, nrreportssubmitted: 3, nrengagementsattended: 15},
-        {hash:12317, week: 30, nrreportssubmitted: 32, nrengagementsattended: 22}], id: 5},
-    {name: 'Bob Alice', stats: [
-        {hash:12318, week: 32,nrreportssubmitted: 33, nrengagementsattended: 3},
-        {hash:12319, week: 31, nrreportssubmitted: 3, nrengagementsattended: 15},
-        {hash:12320, week: 30, nrreportssubmitted: 32, nrengagementsattended: 22}], id: 6}
-  ] //TODO implement dynamic data
-
 class OrganizationAdvisorsTable extends Component {
     constructor(props) {
         super(props)
@@ -56,7 +29,7 @@ class OrganizationAdvisorsTable extends Component {
     handleSelectAllRows() {
         let toggleSelect = !this.state.selectedAll
         let rows =  this.toggleSelectAllRows(toggleSelect)
-        this.setState({ 
+        this.setState({
             data: rows,
             selectedAll: toggleSelect 
         })
@@ -90,7 +63,7 @@ class OrganizationAdvisorsTable extends Component {
             let checked = (organization.selected === undefined) ? false : organization.selected
             let modalLink = <AdvisorReportsModal 
                                 name={ organization.organizationshortname }
-                                data={ ADVISORS }
+                                id={ organization.organizationid }
                                 columnGroups={ this.props.columnGroups } />
 
             return <AdvisorReportsRow
@@ -112,7 +85,7 @@ class OrganizationAdvisorsTable extends Component {
                 <Table striped bordered condensed hover responsive>
                     <caption>Shows reports submitted and engagements attended per week by an organizations' advisors</caption>
                     <AdvisorReportsTableHead
-                        columnGroups={ this.props.columnGroups } 
+                        columnGroups={ this.props.columnGroups }
                         title="Organization name" 
                         onSelectAllRows={ this.handleSelectAllRows } />
                     <tbody>
@@ -120,7 +93,7 @@ class OrganizationAdvisorsTable extends Component {
                     </tbody>
                 </Table>
             </div>
-        ) 
+        )
     }
 }
 

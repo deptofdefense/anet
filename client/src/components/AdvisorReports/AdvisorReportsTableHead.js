@@ -17,7 +17,7 @@ const AdvisorReportsTableHead = (props) => {
     return (
         <thead>
             <tr key="advisor-heading">
-                { props.onSelectAllRows && 
+                { props.onSelectAllRows &&
                 <th rowSpan="2">
                     <Checkbox onChange={ props.onSelectAllRows } />
                 </th> 
