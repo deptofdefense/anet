@@ -154,8 +154,8 @@ export default class BarChart extends Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    // Make sure the chart is only rerendered if the state or properties have
-    // changed. This because we do not want to rerender the chart only in order
+    // Make sure the chart is only re-rendered if the state or properties have
+    // changed. This because we do not want to re-render the chart only in order
     // to highlight a bar in the chart.
     if (nextProps && !nextProps.updateChart) {
       return false
