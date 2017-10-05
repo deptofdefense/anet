@@ -27,10 +27,12 @@ export default class BarChart extends Component {
     xLabel: PropTypes.string,
     barColor: PropTypes.string,
     onBarClick: PropTypes.func,
+    updateChart: PropTypes.bool
   }
 
   static defaultProps = {
-    barColor: '#F5CA8D'
+    barColor: '#F5CA8D',
+    updateChart: true
   }
 
   constructor(props){
@@ -64,23 +66,27 @@ export default class BarChart extends Component {
     let maxXLabelWidth = 0
     let maxYLabelWidth = 0
     let tmpSVG = d3.select("#tmp_svg").data([1]).enter().append('svg')
+    let xText = function(d) { return xLabels[getPropValue(d, xProp)] }
+    let yText = function(d) { return getPropValue(d, yProp) }
+    let xLabelWidth = function() {
+      if (this.getBBox().width > maxXLabelWidth) maxXLabelWidth = this.getBBox().width
+    }
+    let yLabelWidth = function(d) {
+      if (this.getBBox().width > maxYLabelWidth) maxYLabelWidth = this.getBBox().width
+    }
     for (let i = 0; i < chartData.length; i++) {
       tmpSVG.selectAll('.get_max_width_x_label')
         .data(chartData)
         .enter().append('text')
-        .text(function(d) { return xLabels[getPropValue(d, xProp)] })
-        .each(function() {
-          if (this.getBBox().width > maxXLabelWidth) maxXLabelWidth = this.getBBox().width
-        })
+        .text(xText)
+        .each(xLabelWidth)
         .remove()
       tmpSVG.selectAll('.get_max_width_y_label')
         .data(chartData)
         .enter().append('text')
         .attr('class', 'y-axis')
-        .text(function(d) { return getPropValue(d, yProp) })
-        .each(function(d) {
-          if (this.getBBox().width > maxYLabelWidth) maxYLabelWidth = this.getBBox().width
-        })
+        .text(yText)
+        .each(yLabelWidth)
         .remove()
     }
     tmpSVG.remove()
@@ -148,10 +154,10 @@ export default class BarChart extends Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    // Make sure the chart is only rerendered if the state or properties have
-    // changed. This because we do not want to reender the chart only in order
+    // Make sure the chart is only re-rendered if the state or properties have
+    // changed. This because we do not want to re-render the chart only in order
     // to highlight a bar in the chart.
-    if ((this.state !== nextState) || (this.props !== nextProps)) {
+    if (nextProps && !nextProps.updateChart) {
       return false
     }
     return true

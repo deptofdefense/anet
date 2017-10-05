@@ -35,7 +35,8 @@ export default class NotApprovedReports extends Component {
       graphData: [],
       reports: {list: []},
       reportsPageNum: 0,
-      focusedOrg: ''
+      focusedOrg: '',
+      updateChart: true  // whether the chart needs to be updated
     }
   }
 
@@ -50,6 +51,7 @@ export default class NotApprovedReports extends Component {
         xLabel='advisorOrg.shortName'
         onBarClick={this.goToOrg}
         barColor={colors.barColor}
+        updateChart={this.state.updateChart}
       />
     }
     return (
@@ -89,6 +91,7 @@ export default class NotApprovedReports extends Component {
       `, {chartQueryParams}, '($chartQueryParams: ReportSearchQuery)')
     Promise.all([chartQuery]).then(values => {
       this.setState({
+        updateChart: true,  // update chart after fetching the data
         graphData: values[0].reportList.list
           .filter((item, index, d) => d.findIndex(t => {return t.advisorOrg.id === item.advisorOrg.id }) === index)
           .map(d => {d.notApproved = values[0].reportList.list.filter(item => item.advisorOrg.id === d.advisorOrg.id).length; return d})
@@ -126,6 +129,7 @@ export default class NotApprovedReports extends Component {
       `, {reportsQueryParams}, '($reportsQueryParams: ReportSearchQuery)')
     Promise.all([reportsQuery]).then(values => {
       this.setState({
+        updateChart: false,  // only update the report list
         reports: values[0].reportList
       })
     })
@@ -133,7 +137,7 @@ export default class NotApprovedReports extends Component {
 
   @autobind
   goToReportsPage(newPage) {
-    this.setState({reportsPageNum: newPage}, () => this.fetchOrgData())
+    this.setState({updateChart: false, reportsPageNum: newPage}, () => this.fetchOrgData())
   }
 
   resetChartSelection() {
@@ -142,7 +146,9 @@ export default class NotApprovedReports extends Component {
 
   @autobind
   goToOrg(item) {
-    this.setState({reportsPageNum: 0, focusedOrg: (item ? item.advisorOrg : '')}, () => this.fetchOrgData())
+    // Note: we set updateChart to false as we do not want to rerender the chart
+    // when changing the focus organisation.
+    this.setState({updateChart: false, reportsPageNum: 0, focusedOrg: (item ? item.advisorOrg : '')}, () => this.fetchOrgData())
     // remove highlighting of the bars
     this.resetChartSelection()
     if (item) {
@@ -152,8 +158,8 @@ export default class NotApprovedReports extends Component {
   }
 
   componentWillReceiveProps(nextProps, nextContext) {
-    if (nextProps !== this.props) {
-      this.setState({date: nextProps.date})
+    if (nextProps.date.valueOf() !== this.props.date.valueOf()) {
+      this.setState({date: nextProps.date, focusedOrg: ''})  // reset focus when changing the date
     }
   }
 
