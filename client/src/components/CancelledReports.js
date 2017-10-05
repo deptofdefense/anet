@@ -34,7 +34,9 @@ export default class CancelledReports extends Component {
       date: props.date,
       graphDataByOrg: [],
       graphDataByReason: [],
-      focusedOrg: ''
+      focusedOrg: '',
+      focusedReason: '',
+      updateChart: true  // whether the chart needs to be updated
     }
   }
 
@@ -50,30 +52,63 @@ export default class CancelledReports extends Component {
         xLabel='advisorOrg.shortName'
         onBarClick={this.goToOrg}
         barColor={colors.barColor}
+        updateChart={this.state.updateChart}
       />
       chartByReason = <BarChart
         chartId={chartByReasonId}
         data={this.state.graphDataByReason}
-        xProp='reason'
+        xProp='cancelledReason'
         yProp='cancelledByReason'
+        xLabel='reason'
+        onBarClick={this.goToReason}
         barColor={colors.barColor}
+        updateChart={this.state.updateChart}
       />
     }
+    let focusDetails = this.getFocusDetails()
     return (
       <div>
         {chartByOrg}
         {chartByReason}
         <Fieldset
-            title={`Cancelled reports ${this.state.focusedOrg ? `for ${this.state.focusedOrg.shortName}` : ''}`}
+            title={`Cancelled reports ${focusDetails.titlePrefix}`}
             id='cancelled-reports-details'
-            action={!this.state.focusedOrg
-              ? '' : <Button onClick={() => this.goToOrg()}>All organizations</Button>
+            action={!focusDetails.resetFnc
+              ? '' : <Button onClick={() => this[focusDetails.resetFnc]()}>{focusDetails.resetButtonLabel}</Button>
             }
           >
           <ReportCollection paginatedReports={this.state.reports} goToPage={this.goToReportsPage} />
         </Fieldset>
       </div>
     )
+  }
+
+  getReasonDisplayName(reason) {
+    return reason.replace("CANCELLED_", "")
+      .replace(/_/g, " ")
+      .toLocaleLowerCase()
+      .replace(/(\b\w)/gi, function(m) {return m.toUpperCase()})
+  }
+
+  getFocusDetails() {
+    let titlePrefix = ''
+    let resetFnc = ''
+    let resetButtonLabel = ''
+    if (this.state.focusedOrg) {
+      titlePrefix = `for ${this.state.focusedOrg.shortName}`
+      resetFnc = 'goToOrg'
+      resetButtonLabel = 'All organisations'
+    }
+    else if (this.state.focusedReason) {
+      titlePrefix = `by ${this.getReasonDisplayName(this.state.focusedReason)}`
+      resetFnc = 'goToReason'
+      resetButtonLabel = 'All reasons'
+    }
+    return {
+      titlePrefix: titlePrefix,
+      resetFnc: resetFnc,
+      resetButtonLabel: resetButtonLabel
+    }
   }
 
   fetchData() {
@@ -97,6 +132,7 @@ export default class CancelledReports extends Component {
       `, {chartQueryParams}, '($chartQueryParams: ReportSearchQuery)')
     Promise.all([chartQuery]).then(values => {
       this.setState({
+        updateChart: true,  // update chart after fetching the data
         graphDataByOrg: values[0].reportList.list
         .filter((item, index, d) => d.findIndex(t => {return t.advisorOrg.id === item.advisorOrg.id }) === index)
         .map(d => {d.cancelledByOrg = values[0].reportList.list.filter(item => item.advisorOrg.id === d.advisorOrg.id).length; return d})
@@ -111,7 +147,7 @@ export default class CancelledReports extends Component {
         graphDataByReason: values[0].reportList.list
           .filter((item, index, d) => d.findIndex(t => {return t.cancelledReason === item.cancelledReason }) === index)
           .map(d => {d.cancelledByReason = values[0].reportList.list.filter(item => item.cancelledReason === d.cancelledReason).length; return d})
-          .map(d => {d.reason = d.cancelledReason.replace("CANCELLED_", "").replace(/_/g, " ").toLocaleLowerCase().replace(/(\b\w)/gi, function(m) {return m.toUpperCase()}); return d})
+          .map(d => {d.reason = this.getReasonDisplayName(d.cancelledReason); return d})
           .sort((a, b) => {
             return a.reason.localeCompare(b.reason)
         })
@@ -141,6 +177,33 @@ export default class CancelledReports extends Component {
       `, {reportsQueryParams}, '($reportsQueryParams: ReportSearchQuery)')
     Promise.all([reportsQuery]).then(values => {
       this.setState({
+        updateChart: false,  // only update the report list
+        reports: values[0].reportList
+      })
+    })
+  }
+
+  fetchReasonData() {
+    const commonQueryParams = {
+      state: ['CANCELLED'],
+      releasedAtStart: this.state.date.valueOf(),
+    }
+    const reportsQueryParams = {}
+    Object.assign(reportsQueryParams, commonQueryParams)
+    Object.assign(reportsQueryParams, {pageNum: this.state.reportsPageNum})
+    if (this.state.focusedReason) {
+      Object.assign(reportsQueryParams, {cancelledReason: this.state.focusedReason})
+    }
+    // Query used by the reports collection
+    let reportsQuery = API.query(/* GraphQL */`
+        reportList(f:search, query:$reportsQueryParams) {
+          pageNum, pageSize, totalCount, list {
+            ${ReportCollection.GQL_REPORT_FIELDS}
+          }
+        }
+      `, {reportsQueryParams}, '($reportsQueryParams: ReportSearchQuery)')
+    Promise.all([reportsQuery]).then(values => {
+      this.setState({
         reports: values[0].reportList
       })
     })
@@ -148,7 +211,7 @@ export default class CancelledReports extends Component {
 
   @autobind
   goToReportsPage(newPage) {
-    this.setState({reportsPageNum: newPage}, () => this.fetchOrgData())
+    this.setState({updateChart: false, reportsPageNum: newPage}, () => this.state.focusedOrg ? this.fetchOrgData() : this.fetchReasonData())
   }
 
   resetChartSelection(chartId) {
@@ -157,12 +220,29 @@ export default class CancelledReports extends Component {
 
   @autobind
   goToOrg(item) {
-    this.setState({reportsPageNum: 0, focusedOrg: (item ? item.advisorOrg : '')}, () => this.fetchOrgData())
+    // Note: we set updateChart to false as we do not want to re-render the chart
+    // when changing the focus organisation.
+    this.setState({updateChart: false, reportsPageNum: 0, focusedReason: '', focusedOrg: (item ? item.advisorOrg : '')}, () => this.fetchOrgData())
     // remove highlighting of the bars
+    this.resetChartSelection(chartByReasonId)
     this.resetChartSelection(chartByOrgId)
     if (item) {
       // highlight the bar corresponding to the selected organisation
       d3.select('#' + chartByOrgId + ' #bar_' + item.advisorOrg.id).attr('fill', colors.selectedBarColor)
+    }
+  }
+
+  @autobind
+  goToReason(item) {
+    // Note: we set updateChart to false as we do not want to re-render the chart
+    // when changing the focus reason.
+    this.setState({updateChart: false, reportsPageNum: 0, focusedReason: (item ? item.cancelledReason : ''), focusedOrg: ''}, () => this.fetchReasonData())
+    // remove highlighting of the bars
+    this.resetChartSelection(chartByReasonId)
+    this.resetChartSelection(chartByOrgId)
+    if (item) {
+      // highlight the bar corresponding to the selected organisation
+      d3.select('#' + chartByReasonId + ' #bar_' + item.cancelledReason).attr('fill', colors.selectedBarColor)
     }
   }
 
