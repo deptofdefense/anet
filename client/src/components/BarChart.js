@@ -27,10 +27,12 @@ export default class BarChart extends Component {
     xLabel: PropTypes.string,
     barColor: PropTypes.string,
     onBarClick: PropTypes.func,
+    updateChart: PropTypes.bool
   }
 
   static defaultProps = {
-    barColor: '#F5CA8D'
+    barColor: '#F5CA8D',
+    updateChart: true
   }
 
   constructor(props){
@@ -149,9 +151,9 @@ export default class BarChart extends Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     // Make sure the chart is only rerendered if the state or properties have
-    // changed. This because we do not want to reender the chart only in order
+    // changed. This because we do not want to rerender the chart only in order
     // to highlight a bar in the chart.
-    if ((this.state !== nextState) || (this.props !== nextProps)) {
+    if (nextProps && !nextProps.updateChart) {
       return false
     }
     return true
