@@ -247,8 +247,8 @@ export default class CancelledReports extends Component {
   }
 
   componentWillReceiveProps(nextProps, nextContext) {
-    if (nextProps !== this.props) {
-      this.setState({date: nextProps.date})
+    if (nextProps.date.valueOf() !== this.props.date.valueOf()) {
+      this.setState({date: nextProps.date, focusedReason: '', focusedOrg: ''})  // reset focus when changing the date
     }
   }
 

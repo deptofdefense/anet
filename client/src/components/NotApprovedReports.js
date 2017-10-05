@@ -159,7 +159,7 @@ export default class NotApprovedReports extends Component {
 
   componentWillReceiveProps(nextProps, nextContext) {
     if (nextProps.date.valueOf() !== this.props.date.valueOf()) {
-      this.setState({date: nextProps.date})
+      this.setState({date: nextProps.date, focusedOrg: ''})  // reset focus when changing the date
     }
   }
 
