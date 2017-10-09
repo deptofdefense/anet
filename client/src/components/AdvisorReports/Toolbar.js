@@ -29,7 +29,7 @@ class Toolbar extends Component {
                                 onChange={ this.handleFilterTextInputChange } />
                         </div>
                         <div className="col-sm-2">
-                            <Button onClick={ this.handleExportButtonClick }>Export to excel</Button>
+                            <Button onClick={ this.handleExportButtonClick }>Export to CSV</Button>
                         </div>
                 </div>
             </form>
