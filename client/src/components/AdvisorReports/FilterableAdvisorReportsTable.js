@@ -40,7 +40,8 @@ class FilterableAdvisorReportsTable extends Component {
         let selectedData = this.state.selectedData
         let allData = this.state.data
         let exportData = (selectedData.length > 0) ? selectedData : allData
-        console.log(exportData)
+        console.log(this.convertArrayOfObjectsToCSV({ data: exportData }))
+        this.downloadCSV( { data: exportData } )
     }
 
     handleRowSelection(data) {
@@ -57,6 +58,85 @@ class FilterableAdvisorReportsTable extends Component {
             currentDate = currentDate.add(1, 'weeks')
         }
         return weekColumns
+    }
+
+    convertArrayOfObjectsToCSV(args) {
+        let result, ctr, csvGroupCols, csvCols, columnDelimiter, lineDelimiter, data
+
+        data = args.data || null
+        if (data == null || !data.length) {
+            return null
+        }
+
+        columnDelimiter = args.columnDelimiter || ','
+        lineDelimiter = args.lineDelimiter || '\n'
+
+        let weekColumns = this.getWeekColumns()
+        csvGroupCols = ['']
+        weekColumns.forEach( (column) => {
+            csvGroupCols.push(column)
+            csvGroupCols.push('')
+        })
+
+        result = ''
+        result += csvGroupCols.join(columnDelimiter)
+        result += lineDelimiter
+
+        csvCols = ['Organization name']
+        weekColumns.forEach( (column) => {
+            csvCols.push('Reports submitted')
+            csvCols.push('Engagements attended')
+        })
+
+        result += csvCols.join(columnDelimiter)
+        result += lineDelimiter
+
+        data.forEach( (item) => {
+            let stats = item.stats
+            ctr = 0
+            result += item.organizationshortname
+            weekColumns.forEach( (column, index) => {
+                if (ctr > 0) result += columnDelimiter
+
+                if (stats[index]) {
+                    result += stats[index].nrreportssubmitted
+                    result += columnDelimiter
+                    result += stats[index].nrengagementsattended
+                } else {
+                    result += '0,0'
+                }
+                ctr++
+            })
+            result += lineDelimiter
+        })
+        return result
+    }
+
+    downloadCSV(args) {
+        let filename
+        let csv = this.convertArrayOfObjectsToCSV({
+            data: args.data
+        })
+        if (csv == null) return
+
+        filename = args.filename || 'export-advisor-report.csv'
+        var blob = new Blob([csv], {type: "text/csv;charset=utf-8;"})
+
+        if (navigator.msSaveBlob) { // IE 10+
+            navigator.msSaveBlob(blob, filename)
+        } else {
+            var link = document.createElement("a")
+            if (link.download !== undefined) {
+                // feature detection, Browsers that support HTML5 download attribute
+                var url = URL.createObjectURL(blob)
+                link.setAttribute("href", url)
+                link.setAttribute("download", filename)
+                link.style = "visibility:hidden"
+                document.body.appendChild(link)
+                link.click()
+                document.body.removeChild(link)
+            }
+        }
     }
 
     render() {
