@@ -2,11 +2,11 @@ import React, { Component } from 'react'
 import OrganizationAdvisorsTable from 'components/AdvisorReports/OrganizationAdvisorsTable'
 import Toolbar from 'components/AdvisorReports/Toolbar'
 import _debounce from 'lodash.debounce'
+import moment from 'moment'
 
 import API from 'api'
 
-const WEEK_NUMBERS = [32, 31, 30]
-
+const DEFAULT_WEEKS_AGO = 3
 const advisorReportsQueryUrl = `/api/reports/insights/advisors` // ?weeksAgo=3 default set at 3 weeks ago
 
 class FilterableAdvisorReportsTable extends Component {
@@ -47,8 +47,21 @@ class FilterableAdvisorReportsTable extends Component {
         this.setState({ selectedData: data })
     }
 
+    getWeekColumns() {
+        const dateEnd = moment().startOf('week')
+        const dateStart = moment().startOf('week').subtract(DEFAULT_WEEKS_AGO, 'weeks')
+        let currentDate = dateStart
+        let weekColumns = []
+        while(currentDate.isBefore(dateEnd)) {
+            weekColumns.push(currentDate.week())
+            currentDate = currentDate.add(1, 'weeks')
+        }
+        return weekColumns
+    }
+
     render() {
         const handleFilterTextInput = _debounce( (filterText) => {this.handleFilterTextInput(filterText) }, 300)
+        const columnGroups = this.getWeekColumns()
         return (
             <div>
                 <Toolbar 
@@ -56,7 +69,7 @@ class FilterableAdvisorReportsTable extends Component {
                     onExportButtonClick={ this.handleExportButtonClick } />
                 <OrganizationAdvisorsTable
                     data={ this.state.data }
-                    columnGroups={ WEEK_NUMBERS }
+                    columnGroups={ columnGroups }
                     filterText={ this.state.filterText }
                     onRowSelection={ this.handleRowSelection } />
             </div>
