@@ -31,11 +31,13 @@ class AdvisorReportsModal extends Component {
 
     render() {
         return (
-            <SimpleModal title={ this.props.name } onClickModalOpen={ this.handleModalOpen }>
+            <SimpleModal title={ this.props.name }
+                onClickModalOpen={ this.handleModalOpen }
+                size="large">
                 <AdvisorReportsTable
                     data={ this.state.advisors }
                     columnGroups={ this.props.columnGroups}
-                    size="large" />
+                    />
             </SimpleModal >
         )
     }
