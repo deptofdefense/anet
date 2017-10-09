@@ -24,6 +24,7 @@ class OrganizationAdvisorsTable extends Component {
         let data = this.state.data.slice()
         data[index].selected =  this.toggleRowSelection(index)
         this.setState({ data: data })
+        this.handleSelectRowData(this.state.data)
     }
 
     handleSelectAllRows() {
@@ -33,6 +34,12 @@ class OrganizationAdvisorsTable extends Component {
             data: rows,
             selectedAll: toggleSelect 
         })
+        this.handleSelectRowData(this.state.data)
+    }
+
+    handleSelectRowData() {
+        let selectedData = this.state.data.filter( (row) => { return row.selected } )
+        this.props.onRowSelection(selectedData)
     }
 
     toggleRowSelection(index) {

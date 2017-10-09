@@ -14,10 +14,13 @@ class FilterableAdvisorReportsTable extends Component {
         super(props)
         this.state = {
             filterText: '',
-            data: []
+            export: false,
+            data: [],
+            selectedData: []
         }
         this.handleFilterTextInput = this.handleFilterTextInput.bind(this)
         this.handleExportButtonClick = this.handleExportButtonClick.bind(this)
+        this.handleRowSelection = this.handleRowSelection.bind(this)
     }
 
     componentDidMount() {
@@ -34,7 +37,14 @@ class FilterableAdvisorReportsTable extends Component {
     }
 
     handleExportButtonClick() {
-        console.log('Clicked Export')
+        let selectedData = this.state.selectedData
+        let allData = this.state.data
+        let exportData = (selectedData.length > 0) ? selectedData : allData
+        console.log(exportData)
+    }
+
+    handleRowSelection(data) {
+        this.setState({ selectedData: data })
     }
 
     render() {
@@ -47,7 +57,8 @@ class FilterableAdvisorReportsTable extends Component {
                 <OrganizationAdvisorsTable
                     data={ this.state.data }
                     columnGroups={ WEEK_NUMBERS }
-                    filterText={ this.state.filterText } />
+                    filterText={ this.state.filterText }
+                    onRowSelection={ this.handleRowSelection } />
             </div>
         )
     }
