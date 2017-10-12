@@ -58,7 +58,7 @@ export default class NotApprovedReports extends Component {
       <div>
         {chartPart}
         <Fieldset
-            title={`Not approved reports ${this.state.focusedOrg ? `for ${this.state.focusedOrg.shortName}` : ''}`}
+            title={`Not Approved Reports ${this.state.focusedOrg ? `for ${this.state.focusedOrg.shortName}` : ''}`}
             id='not-approved-reports-details'
             action={!this.state.focusedOrg
               ? '' : <Button onClick={() => this.goToOrg()}>All organizations</Button>
@@ -147,12 +147,12 @@ export default class NotApprovedReports extends Component {
   @autobind
   goToOrg(item) {
     // Note: we set updateChart to false as we do not want to rerender the chart
-    // when changing the focus organisation.
+    // when changing the focus organization.
     this.setState({updateChart: false, reportsPageNum: 0, focusedOrg: (item ? item.advisorOrg : '')}, () => this.fetchOrgData())
     // remove highlighting of the bars
     this.resetChartSelection()
     if (item) {
-      // highlight the bar corresponding to the selected organisation
+      // highlight the bar corresponding to the selected organization
       d3.select('#' + chartId + ' #bar_' + item.advisorOrg.id).attr('fill', colors.selectedBarColor)
     }
   }

@@ -106,7 +106,7 @@ export default class ReportsByPoam extends Component {
       poams = [].concat.apply([], poams)
         .filter((item, index, d) => d.findIndex(t => {return t.id === item.id }) === index)
         .sort((a, b) => a.shortName.localeCompare(b.shortName))
-      // add NO PoAM item, in order to relate to reports without PoAMs
+      // add No PoAM item, in order to relate to reports without PoAMs
       poams.push({id: null, shortName: 'No PoAM', longName: 'No PoAM'})
       this.setState({
         updateChart: true,  // update chart after fetching the data

@@ -71,7 +71,7 @@ export default class CancelledReports extends Component {
         {chartByOrg}
         {chartByReason}
         <Fieldset
-            title={`Cancelled reports ${focusDetails.titlePrefix}`}
+            title={`Cancelled Reports ${focusDetails.titlePrefix}`}
             id='cancelled-reports-details'
             action={!focusDetails.resetFnc
               ? '' : <Button onClick={() => this[focusDetails.resetFnc]()}>{focusDetails.resetButtonLabel}</Button>
@@ -97,7 +97,7 @@ export default class CancelledReports extends Component {
     if (this.state.focusedOrg) {
       titlePrefix = `for ${this.state.focusedOrg.shortName}`
       resetFnc = 'goToOrg'
-      resetButtonLabel = 'All organisations'
+      resetButtonLabel = 'All organizations'
     }
     else if (this.state.focusedReason) {
       titlePrefix = `by ${this.getReasonDisplayName(this.state.focusedReason)}`
@@ -221,13 +221,13 @@ export default class CancelledReports extends Component {
   @autobind
   goToOrg(item) {
     // Note: we set updateChart to false as we do not want to re-render the chart
-    // when changing the focus organisation.
+    // when changing the focus organization.
     this.setState({updateChart: false, reportsPageNum: 0, focusedReason: '', focusedOrg: (item ? item.advisorOrg : '')}, () => this.fetchOrgData())
     // remove highlighting of the bars
     this.resetChartSelection(chartByReasonId)
     this.resetChartSelection(chartByOrgId)
     if (item) {
-      // highlight the bar corresponding to the selected organisation
+      // highlight the bar corresponding to the selected organization
       d3.select('#' + chartByOrgId + ' #bar_' + item.advisorOrg.id).attr('fill', colors.selectedBarColor)
     }
   }
@@ -241,7 +241,7 @@ export default class CancelledReports extends Component {
     this.resetChartSelection(chartByReasonId)
     this.resetChartSelection(chartByOrgId)
     if (item) {
-      // highlight the bar corresponding to the selected organisation
+      // highlight the bar corresponding to the selected organization
       d3.select('#' + chartByReasonId + ' #bar_' + item.cancelledReason).attr('fill', colors.selectedBarColor)
     }
   }

@@ -25,7 +25,7 @@ const insightDetails = {
   'reports-by-poam': {
     component: ReportsByPoam,
     title: 'Reports by PoAM',
-    help: 'Number of reports per PoAM'
+    help: 'Number of reports by PoAM'
   },
 }
 const calendarButtonCss = {
