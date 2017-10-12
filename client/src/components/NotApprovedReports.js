@@ -54,20 +54,37 @@ export default class NotApprovedReports extends Component {
         updateChart={this.state.updateChart}
       />
     }
+    let focusDetails = this.getFocusDetails()
     return (
       <div>
         {chartPart}
         <Fieldset
-            title={`Not Approved Reports ${this.state.focusedOrg ? `for ${this.state.focusedOrg.shortName}` : ''}`}
+            title={`Not Approved Reports ${focusDetails.titleSuffix}`}
             id='not-approved-reports-details'
-            action={!this.state.focusedOrg
-              ? '' : <Button onClick={() => this.goToOrg()}>All organizations</Button>
+            action={!focusDetails.resetFnc
+              ? '' : <Button onClick={() => this[focusDetails.resetFnc]()}>{focusDetails.resetButtonLabel}</Button>
             }
           >
           <ReportCollection paginatedReports={this.state.reports} goToPage={this.goToReportsPage} />
         </Fieldset>
       </div>
     )
+  }
+
+  getFocusDetails() {
+    let titleSuffix = ''
+    let resetFnc = ''
+    let resetButtonLabel = ''
+    if (this.state.focusedOrg) {
+      titleSuffix = `for ${this.state.focusedOrg.shortName}`
+      resetFnc = 'goToOrg'
+      resetButtonLabel = 'All organizations'
+    }
+    return {
+      titleSuffix: titleSuffix,
+      resetFnc: resetFnc,
+      resetButtonLabel: resetButtonLabel
+    }
   }
 
   fetchData() {
