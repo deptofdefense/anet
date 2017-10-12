@@ -40,7 +40,6 @@ class FilterableAdvisorReportsTable extends Component {
         let selectedData = this.state.selectedData
         let allData = this.state.data
         let exportData = (selectedData.length > 0) ? selectedData : allData
-        console.log(this.convertArrayOfObjectsToCSV({ data: exportData }))
         this.downloadCSV( { data: exportData } )
     }
 
