@@ -185,14 +185,14 @@ public class Utils {
 	 * will return the list:
 	 * <code>
 	 * [{"id": 3, "name": "alice", "someprop": "x",
-	 *    [{"week": 39, "nrdone": 2, "nrtodo": 0},
-	 *     {"week": 40, "nrdone": 1, "nrtodo": 3},
-	 *     {"week": 41, "nrdone": 0, "nrtodo": 5}]},
+	 *    "stats": [{"week": 39, "nrdone": 2, "nrtodo": 0},
+	 *                    {"week": 40, "nrdone": 1, "nrtodo": 3},
+	 *                    {"week": 41, "nrdone": 0, "nrtodo": 5}]},
 	 *  {"id": 5, "name": "bob",   "someprop": "y",
-	 *    [{"week": 39, "nrdone": 8, "nrtodo": 2},
-	 *     {"week": 41, "nrdone": 3, "nrtodo": 0}]},
+	 *    "stats": [{"week": 39, "nrdone": 8, "nrtodo": 2},
+	 *                    {"week": 41, "nrdone": 3, "nrtodo": 0}]},
 	 *  {"id": 6, "name": "eve",   "someprop": "z",
-	 *    [{"week": 39, "nrdone": 6, "nrtodo": 1}]}]
+	 *     "stats": [{"week": 39, "nrdone": 6, "nrtodo": 1}]}]
 	 * </code>
 	 *
 	 * @param results a result list from a database query
