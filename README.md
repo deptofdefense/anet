@@ -6,6 +6,7 @@ Although this tool was built in a very specific context, ANET has many potential
 
 In making this software available to the open source community, it is our hope that other groups are able to use ANET to meet their needs. We would also welcome contributions that help improve functionality, add features, and mature this work. 
 
+[![BrowserStack Status](https://www.browserstack.com/automate/badge.svg?badge_key=<badge_key>)](https://www.browserstack.com/automate/public-build/ZG1KRzlQZFBkakFTSzBTYjlidlRtcGdvQjNzRjZQSFdmSVVtTk5Hc0ZJcz0tLUs5YkpiKy9DYmEvRThLUm42T0JQQmc9PQ==--00e43bf7b03b26a1b04c2ed54981a1075de69d0)
 
 ## Setting up your development environment
 This repository is structured in two main, disparate components: the frontend and the backend. The frontend is a react.js based JavaScript application that communicates with the backend via XMLHttpRequest (ajax). The backend is a Java application based the Dropwizard framework that runs on a JVM and utilizes Microsoft SQL Server for its database.
