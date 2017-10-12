@@ -163,5 +163,9 @@ public class Utils {
 		return input;
 	}
 	
+	public static String trimStringReturnNull(String input) {
+		if (input == null) { return null; }
+		return input.trim();
+	}
 	
 }
