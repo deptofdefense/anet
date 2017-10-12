@@ -35,6 +35,13 @@ export default class ReportsByPoam extends Component {
     }
   }
 
+  get queryParams() {
+    return {
+      state: ['RELEASED'],
+      releasedAtStart: this.state.date.valueOf(),
+    }
+  }
+
   render() {
     let chartByPoam = ''
     if (this.state.graphDataByPoam.length) {
@@ -83,12 +90,8 @@ export default class ReportsByPoam extends Component {
   }
 
   fetchData() {
-    const commonQueryParams = {
-      state: ['RELEASED'],
-      releasedAtStart: this.state.date.valueOf(),
-    }
     const chartQueryParams = {}
-    Object.assign(chartQueryParams, commonQueryParams)
+    Object.assign(chartQueryParams, this.queryParams)
     Object.assign(chartQueryParams, {
       pageSize: 0,  // retrieve all the filtered reports
     })
@@ -122,12 +125,8 @@ export default class ReportsByPoam extends Component {
   }
 
   fetchPoamData() {
-    const commonQueryParams = {
-      state: ['RELEASED'],
-      releasedAtStart: this.state.date.valueOf(),
-    }
     const reportsQueryParams = {}
-    Object.assign(reportsQueryParams, commonQueryParams)
+    Object.assign(reportsQueryParams, this.queryParams)
     Object.assign(reportsQueryParams, {pageNum: this.state.reportsPageNum})
     if (this.state.focusedPoam) {
       Object.assign(reportsQueryParams, {poamId: this.state.focusedPoam.id})

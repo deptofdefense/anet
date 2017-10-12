@@ -40,6 +40,13 @@ export default class NotApprovedReports extends Component {
     }
   }
 
+  get queryParams() {
+    return {
+      state: ['PENDING_APPROVAL'],
+      updatedAtEnd: this.state.date.valueOf(),
+    }
+  }
+
   render() {
     let chartPart = ''
     if (this.state.graphData.length) {
@@ -89,12 +96,8 @@ export default class NotApprovedReports extends Component {
 
   fetchData() {
     let pinned_ORGs = dict.lookup('pinned_ORGs')
-    const commonQueryParams = {
-      state: ['PENDING_APPROVAL'],
-      updatedAtEnd: this.state.date.valueOf(),
-    }
     const chartQueryParams = {}
-    Object.assign(chartQueryParams, commonQueryParams)
+    Object.assign(chartQueryParams, this.queryParams)
     Object.assign(chartQueryParams, {
       pageSize: 0,  // retrieve all the filtered reports
     })
@@ -126,12 +129,8 @@ export default class NotApprovedReports extends Component {
   }
 
   fetchOrgData() {
-    const commonQueryParams = {
-      state: ['PENDING_APPROVAL'],
-      updatedAtEnd: this.state.date.valueOf(),
-    }
     const reportsQueryParams = {}
-    Object.assign(reportsQueryParams, commonQueryParams)
+    Object.assign(reportsQueryParams, this.queryParams)
     Object.assign(reportsQueryParams, {pageNum: this.state.reportsPageNum})
     if (this.state.focusedOrg) {
       Object.assign(reportsQueryParams, {advisorOrgId: this.state.focusedOrg.id})

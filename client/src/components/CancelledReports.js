@@ -40,6 +40,13 @@ export default class CancelledReports extends Component {
     }
   }
 
+  get queryParams() {
+    return {
+      state: ['CANCELLED'],
+      releasedAtStart: this.state.date.valueOf(),
+    }
+  }
+
   render() {
     let chartByOrg = ''
     let chartByReason = ''
@@ -113,12 +120,8 @@ export default class CancelledReports extends Component {
 
   fetchData() {
     let pinned_ORGs = dict.lookup('pinned_ORGs')
-    const commonQueryParams = {
-      state: ['CANCELLED'],
-      releasedAtStart: this.state.date.valueOf(),
-    }
     const chartQueryParams = {}
-    Object.assign(chartQueryParams, commonQueryParams)
+    Object.assign(chartQueryParams, this.queryParams)
     Object.assign(chartQueryParams, {
       pageSize: 0,  // retrieve all the filtered reports
     })
@@ -157,12 +160,8 @@ export default class CancelledReports extends Component {
   }
 
   fetchOrgData() {
-    const commonQueryParams = {
-      state: ['CANCELLED'],
-      releasedAtStart: this.state.date.valueOf(),
-    }
     const reportsQueryParams = {}
-    Object.assign(reportsQueryParams, commonQueryParams)
+    Object.assign(reportsQueryParams, this.queryParams)
     Object.assign(reportsQueryParams, {pageNum: this.state.reportsPageNum})
     if (this.state.focusedOrg) {
       Object.assign(reportsQueryParams, {advisorOrgId: this.state.focusedOrg.id})
@@ -184,12 +183,8 @@ export default class CancelledReports extends Component {
   }
 
   fetchReasonData() {
-    const commonQueryParams = {
-      state: ['CANCELLED'],
-      releasedAtStart: this.state.date.valueOf(),
-    }
     const reportsQueryParams = {}
-    Object.assign(reportsQueryParams, commonQueryParams)
+    Object.assign(reportsQueryParams, this.queryParams)
     Object.assign(reportsQueryParams, {pageNum: this.state.reportsPageNum})
     if (this.state.focusedReason) {
       Object.assign(reportsQueryParams, {cancelledReason: this.state.focusedReason})
