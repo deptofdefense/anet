@@ -78,7 +78,7 @@ public class Person extends AbstractAnetBean implements Principal {
 	}
 
 	public String getEmailAddress() {
-		return Utils.trimStringReturnNull(emailAddress);
+		return emailAddress;
 	}
 	
 	public void setEmailAddress(String emailAddress) {
@@ -138,7 +138,7 @@ public class Person extends AbstractAnetBean implements Principal {
 	}
 
 	public void setDomainUsername(String domainUsername) {
-		this.domainUsername = Utils.trimStringReturnNull(domainUsername);
+		this.domainUsername = domainUsername;
 	}
 
 	@GraphQLFetcher("position")
