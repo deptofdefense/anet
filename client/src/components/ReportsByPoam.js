@@ -54,7 +54,7 @@ export default class ReportsByPoam extends Component {
       <div>
         {chartByPoam}
         <Fieldset
-            title={`Reports by PoAM ${focusDetails.titlePrefix}`}
+            title={`Reports by PoAM ${focusDetails.titleSuffix}`}
             id='cancelled-reports-details'
             action={!focusDetails.resetFnc
               ? '' : <Button onClick={() => this[focusDetails.resetFnc]()}>{focusDetails.resetButtonLabel}</Button>
@@ -67,16 +67,16 @@ export default class ReportsByPoam extends Component {
   }
 
   getFocusDetails() {
-    let titlePrefix = ''
+    let titleSuffix = ''
     let resetFnc = ''
     let resetButtonLabel = ''
     if (this.state.focusedPoam) {
-      titlePrefix = `for ${this.state.focusedPoam.shortName}`
+      titleSuffix = `for ${this.state.focusedPoam.shortName}`
       resetFnc = 'goToPoam'
       resetButtonLabel = 'All PoAMs'
     }
     return {
-      titlePrefix: titlePrefix,
+      titleSuffix: titleSuffix,
       resetFnc: resetFnc,
       resetButtonLabel: resetButtonLabel
     }

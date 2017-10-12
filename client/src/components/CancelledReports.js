@@ -71,7 +71,7 @@ export default class CancelledReports extends Component {
         {chartByOrg}
         {chartByReason}
         <Fieldset
-            title={`Cancelled Reports ${focusDetails.titlePrefix}`}
+            title={`Cancelled Reports ${focusDetails.titleSuffix}`}
             id='cancelled-reports-details'
             action={!focusDetails.resetFnc
               ? '' : <Button onClick={() => this[focusDetails.resetFnc]()}>{focusDetails.resetButtonLabel}</Button>
@@ -91,21 +91,21 @@ export default class CancelledReports extends Component {
   }
 
   getFocusDetails() {
-    let titlePrefix = ''
+    let titleSuffix = ''
     let resetFnc = ''
     let resetButtonLabel = ''
     if (this.state.focusedOrg) {
-      titlePrefix = `for ${this.state.focusedOrg.shortName}`
+      titleSuffix = `for ${this.state.focusedOrg.shortName}`
       resetFnc = 'goToOrg'
       resetButtonLabel = 'All organizations'
     }
     else if (this.state.focusedReason) {
-      titlePrefix = `by ${this.getReasonDisplayName(this.state.focusedReason)}`
+      titleSuffix = `by ${this.getReasonDisplayName(this.state.focusedReason)}`
       resetFnc = 'goToReason'
       resetButtonLabel = 'All reasons'
     }
     return {
-      titlePrefix: titlePrefix,
+      titleSuffix: titleSuffix,
       resetFnc: resetFnc,
       resetButtonLabel: resetButtonLabel
     }
