@@ -55,6 +55,12 @@ Look up your settings and put them in `client/config/default.json`:
 	"browserstack_key": "mYbRoWsErStAcKkEy"
 }
 ```
+If you want step-by-step screenshots from your tests (_Visual Logs_ on BrowserStack) you can also add:
+```
+	"browserstack_debug": "true"
+```
+to your `default.json`.
+
 Then download the appropriate `BrowserStackLocal`, unpack it, and run it with your key.
 When all is set up, run the remote tests with:
 ```

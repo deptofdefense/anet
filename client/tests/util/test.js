@@ -22,7 +22,7 @@ if (testEnv === 'local') {
         browser_version: '61.0', // or '11.0'
         os: 'Windows',
         os_version: '7',
-        resolution: '1024x768',
+        resolution: '2048x1536',
         project: 'ANET',
         build: '%s %s: %s %s',
         // Will be replaced for each test:
@@ -32,6 +32,9 @@ if (testEnv === 'local') {
         'browserstack.key': config.get('browserstack_key'),
         // This requires that BrowserStackLocal is running!
         'browserstack.local': 'true'
+    }
+    if (config.has('browserstack_debug')) {
+        capabilities['browserstack.debug'] = config.get('browserstack_debug')
     }
     let util = require('util')
     capabilities.build = util.format(capabilities.build,
