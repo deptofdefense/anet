@@ -184,7 +184,7 @@ export default class FormField extends Component {
 		}
 
 		return (
-			<FormGroup controlId={id} className={className} validationState={validationState} onBlur={this.onBlur}>
+			<FormGroup controlId={id} className={className} validationState={validationState} >
 				{horizontal
 					? <Col sm={2} componentClass={ControlLabel}>{label} {icon}</Col>
 					: <ControlLabel>{label} {icon}</ControlLabel> }
