@@ -72,7 +72,7 @@
     "file-saver": "1.3.3",
     "graphiql": "0.8.1",
     "graphql": "0.8.2",
-    "hopscotch": "nickjs/hopscotch",
+    "hopscotch": "0.3.1",
     "immutability-helper": "kolodny/immutability-helper",
     "leaflet": "1.2.0",
     "locale-compare-polyfill": "0.0.2",
