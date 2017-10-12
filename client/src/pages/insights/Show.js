@@ -2,6 +2,7 @@ import React, {PropTypes} from 'react'
 import Page from 'components/Page'
 import NotApprovedReports from 'components/NotApprovedReports'
 import CancelledReports from 'components/CancelledReports'
+import ReportsByPoam from 'components/ReportsByPoam'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Messages from 'components/Messages'
 import Fieldset from 'components/Fieldset'
@@ -20,6 +21,11 @@ const insightDetails = {
     component: CancelledReports,
     title: 'Cancelled Reports',
     help: 'Number of reports cancelled since'
+  },
+  'reports-by-poam': {
+    component: ReportsByPoam,
+    title: 'Reports by PoAM',
+    help: 'Number of reports per PoAM'
   },
 }
 const calendarButtonCss = {

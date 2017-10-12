@@ -139,9 +139,11 @@ class Nav extends Component {
 						<Link to="/insights/cancelled-reports">
 							<MenuItem>Cancelled reports</MenuItem>
 						</Link>
+						<Link to="/insights/reports-by-poam">
+							<MenuItem>Reports by PoAM</MenuItem>
+						</Link>
 					</NavDropdown>
 				}
-
 				</BSNav>
 		)
 	}
