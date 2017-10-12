@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import SimpleModal from 'components/SimpleModal'
 import AdvisorReportsTable from 'components/AdvisorReports/AdvisorReportsTable'
 
@@ -41,6 +42,11 @@ class AdvisorReportsModal extends Component {
             </SimpleModal >
         )
     }
+}
+
+AdvisorReportsModal.propTypes = {
+    columnGroups: PropTypes.array,
+    name: PropTypes.string,
 }
 
 export default AdvisorReportsModal

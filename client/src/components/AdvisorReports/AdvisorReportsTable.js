@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { Table } from 'react-bootstrap'
 import AdvisorReportsTableHead from 'components/AdvisorReports/AdvisorReportsTableHead'
 import AdvisorReportsRow from 'components/AdvisorReports/AdvisorReportsRow'
@@ -22,6 +23,11 @@ const AdvisorReportsTable = (props) => {
             </tbody>
         </Table>
     )
+}
+
+AdvisorReportsTable.propTypes = {
+    columnGroups: PropTypes.array,
+    data: PropTypes.array,
 }
 
 export default AdvisorReportsTable

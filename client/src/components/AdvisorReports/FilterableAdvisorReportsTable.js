@@ -10,8 +10,8 @@ const DEFAULT_WEEKS_AGO = 3
 const advisorReportsQueryUrl = `/api/reports/insights/advisors` // ?weeksAgo=3 default set at 3 weeks ago
 
 class FilterableAdvisorReportsTable extends Component {
-    constructor(props) {
-        super(props)
+    constructor() {
+        super()
         this.state = {
             filterText: '',
             export: false,

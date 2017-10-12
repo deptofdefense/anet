@@ -1,4 +1,6 @@
 import React from 'react'
+import PropTypes from 'prop-types'
+
 import Checkbox from 'components/Checkbox'
 
 const AdvisorReportsTableHead = (props) => {
@@ -30,6 +32,12 @@ const AdvisorReportsTableHead = (props) => {
             </tr>
         </thead>
     )
+}
+
+AdvisorReportsTableHead.propTypes = {
+    title: PropTypes.string,
+    columnGroups: PropTypes.array,
+    onSelectAllRows: PropTypes.func,
 }
 
 export default AdvisorReportsTableHead

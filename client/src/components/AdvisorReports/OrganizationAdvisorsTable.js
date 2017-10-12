@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import { Table } from 'react-bootstrap'
 import AdvisorReportsModal from 'components/AdvisorReports/AdvisorReportsModal'
 import AdvisorReportsRow from 'components/AdvisorReports/AdvisorReportsRow'
@@ -102,6 +103,12 @@ class OrganizationAdvisorsTable extends Component {
             </div>
         )
     }
+}
+
+OrganizationAdvisorsTable.propTypes = {
+    columnGroups: PropTypes.array.isRequired,
+    filterText: PropTypes.string,
+    onRowSelection: PropTypes.func,
 }
 
 export default OrganizationAdvisorsTable

@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import Checkbox from 'components/Checkbox'
 import _uniqueId from 'lodash.uniqueid'
 
@@ -31,6 +32,15 @@ const AdvisorReportsRow = (props) => {
             {statistics}
         </tr>
     )
+}
+
+AdvisorReportsRow.propTypes = {
+    checked: PropTypes.bool.isRequired,
+    columnGroups: PropTypes.array,
+    handleOrganizationClick: PropTypes.func,
+    link: PropTypes.object,
+    onSelectRow: PropTypes.func,
+    row: PropTypes.object,
 }
 
 export default AdvisorReportsRow
