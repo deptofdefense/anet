@@ -150,9 +150,23 @@ export default class PersonForm extends ValidatableFormWrapper {
 	handleEmailValidation(value) {
 		if(!this.props.person.isAdvisor()) return true
 		let dict = ['google.com', 'amazon.com']
-		let emailDomain = value.split('@')[1]
-		let isValid = dict.includes(emailDomain)
-		return { isValid: isValid, message: 'Email domain name is not valid', domainNames: dict }
+		let email = value.split('@')
+		let from =  email[0]
+		let emailDomain = email[1]
+		let isValid = from.length > 0 && dict.includes(emailDomain)
+		return { isValid: isValid, message: this.emailErrorMessage(dict) }
+	}
+
+	emailErrorMessage(validDomainNames) {
+		let items = validDomainNames.map((name) => [
+			<li>{name}</li>
+		])
+		return (
+			<div>
+				<p>Email address is invalid, only the following email domain names are allowed</p>
+				<ul>{items}</ul>
+			</div>
+		)
 	}
 
 	@autobind
