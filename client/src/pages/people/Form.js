@@ -105,7 +105,8 @@ export default class PersonForm extends ValidatableFormWrapper {
 			<Fieldset title="Additional information">
 				<RequiredField id="emailAddress" label="Email" required={isAdvisor}
 					humanName="Valid email address"
-					type="email" />
+					type="email"
+					validate={ this.handleEmailValidation } />
 				<Form.Field id="phoneNumber" label="Phone" />
 				<RequiredField id="rank"  componentClass="select"
 					required={isAdvisor}>
@@ -143,6 +144,15 @@ export default class PersonForm extends ValidatableFormWrapper {
 	@autobind
 	onChange() {
 		this.forceUpdate()
+	}
+
+	@autobind
+	handleEmailValidation(value) {
+		if(!this.props.person.isAdvisor()) return true
+		let dict = ['google.com', 'amazon.com']
+		let emailDomain = value.split('@')[1]
+		let isValid = dict.includes(emailDomain)
+		return { isValid: isValid, message: 'Email domain name is not valid', domainNames: dict }
 	}
 
 	@autobind
