@@ -257,7 +257,7 @@ export default class FormField extends Component {
 	}
 
 	setStateIsRequiredField(props) {
-		this.setState({ 
+		this.setState({
 			isValid: !this.isMissingRequiredField(props),
 			errorMessage: `${this.props.humanName} is required`
 		})
@@ -267,7 +267,7 @@ export default class FormField extends Component {
 		let notMissingField = !this.isMissingRequiredField(props)
 		if(notMissingField && this.props.validate) {
 			let customValidation = this.props.validate(this.state.value)
-			this.setState({ 
+			this.setState({
 				isValid: customValidation.isValid,
 				errorMessage: customValidation.message
 			})
@@ -307,10 +307,6 @@ export default class FormField extends Component {
 
 	@autobind
 	onChange(event) {
-		if (this.props.onError || this.props.onValid || this.props.required) {
-			this.onUserTouchedField(event)
-		}
-
 		if (this.props.onChange) {
 			this.props.onChange(event)
 			return
