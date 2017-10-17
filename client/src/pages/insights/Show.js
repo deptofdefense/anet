@@ -3,6 +3,7 @@ import Page from 'components/Page'
 import NotApprovedReports from 'components/NotApprovedReports'
 import CancelledReports from 'components/CancelledReports'
 import ReportsByPoam from 'components/ReportsByPoam'
+import ReportsByDayOfWeek from 'components/ReportsByDayOfWeek'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Messages from 'components/Messages'
 import Fieldset from 'components/Fieldset'
@@ -26,6 +27,11 @@ const insightDetails = {
     component: ReportsByPoam,
     title: 'Reports by PoAM',
     help: 'Number of reports by PoAM'
+  },
+  'reports-by-day-of-week': {
+    component: ReportsByDayOfWeek,
+    title: 'Reports by day of the week',
+    help: 'Number of reports by day of the week'
   },
 }
 const calendarButtonCss = {

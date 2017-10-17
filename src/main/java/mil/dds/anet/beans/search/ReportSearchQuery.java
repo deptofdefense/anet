@@ -15,6 +15,8 @@ public class ReportSearchQuery extends AbstractSearchQuery {
 	Integer authorId;
 	DateTime engagementDateStart;
 	DateTime engagementDateEnd;
+	Integer engagementDayOfWeek;
+	Boolean includeEngagementDayOfWeek;
 	DateTime createdAtStart;
 	DateTime createdAtEnd;
 	DateTime updatedAtStart;
@@ -72,6 +74,22 @@ public class ReportSearchQuery extends AbstractSearchQuery {
 
 	public void setEngagementDateEnd(DateTime engagementDateEnd) {
 		this.engagementDateEnd = engagementDateEnd;
+	}
+
+	public Integer getEngagementDayOfWeek() {
+		return engagementDayOfWeek;
+	}
+
+	public void setEngagementDayOfWeek(Integer engagementDayOfWeek) {
+		this.engagementDayOfWeek = engagementDayOfWeek;
+	}
+
+	public boolean getIncludeEngagementDayOfWeek() {
+		return (includeEngagementDayOfWeek == null) ? false : includeEngagementDayOfWeek;
+	}
+
+	public void setIncludeEngagementDayOfWeek(Boolean includeEngagementDayOfWeek) {
+		this.includeEngagementDayOfWeek = includeEngagementDayOfWeek;
 	}
 
 	public DateTime getCreatedAtStart() {
