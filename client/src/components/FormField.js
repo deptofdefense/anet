@@ -16,6 +16,7 @@ export default class FormField extends Component {
 		this.state = {
 			value: '',
 			userHasTouchedField: false,
+			defaultValidation: null,
 			isValid: null,
 			errorMessage: ''
 		}
@@ -256,52 +257,69 @@ export default class FormField extends Component {
 		}
 	}
 
-	setStateIsRequiredField(props) {
+	setStateDefaultInvalidField(props) {
 		this.setState({
-			isValid: !this.isMissingRequiredField(props),
-			errorMessage: `${this.props.humanName} is required`
+			isValid: false,
+			errorMessage: `${props.humanName} is required`
 		})
 	}
 
 	setStateCustomValidationField(props) {
-		let notMissingField = !this.isMissingRequiredField(props)
-		if(notMissingField && this.props.validate) {
-			let customValidation = this.props.validate(this.state.value)
+		if(this.state.value.length === 0) return
+
+		let customValidation = props.validate(this.state.value)
+		if(customValidation.isValid !== null) {
 			this.setState({
 				isValid: customValidation.isValid,
 				errorMessage: customValidation.message
 			})
+		} else if(this.state.defaultValidation) {
+			this.setState({ isValid: null, errorMessage: ''})
+		} else {
+			this.setStateDefaultInvalidField(props)
+		}
+	}
+
+	setValidationState(props) {
+		if(this.isMissingRequiredField(props) || this.state.defaultValidation === false){
+			this.setStateDefaultInvalidField(props)
+		}
+		if(props.validate) {
+			this.setStateCustomValidationField(props)
 		}
 	}
 
 	@autobind
 	updateValidationState(props) {
 		if (!this.state.userHasTouchedField) {
-			return
+			if ((!this.isMissingRequiredField(props) && this.state.value.length === 0)) {
+				this.setState({ isValid: null, errorMessage: ''})
+				return
+			}
+			if (!this.isMissingRequiredField(props) && this.state.defaultValidation === true) {
+				this.setValidationState(props)
+				return
+			}
 		}
-		this.setStateIsRequiredField(props)
-		this.setStateCustomValidationField(props)
+
+		this.setValidationState(props)
 		if (this.isMissingRequiredField(props) || this.state.isValid === false) {
 			props.onError()
 		} else if (props.onValid && !this.isMissingRequiredField(props) && this.state.isValid !== false) {
 			props.onValid()
 		}
-	}
-
-	isFieldValid(event) {
-		if( !(event && event.target)) return null
-		let checkValidity = event.target.checkValidity()
-		if(this.props.validate) {
-			checkValidity = checkValidity && this.props.validate(event.target.value).isValid
-		}
-		return checkValidity
+		this.setState( { userHasTouchedField: false })
 	}
 
 	@autobind
 	onUserTouchedField(event) {
+		if( !(event && event.target)) return null
+		let defaultValidation = event.target.checkValidity()
 		this.setState({
-			isValid: this.isFieldValid(event),
-			userHasTouchedField: true
+			defaultValidation: defaultValidation,
+			isValid: defaultValidation,
+			errorMessage: `${this.props.humanName} is required`,
+			userHasTouchedField: true,
 		}, () => this.updateValidationState(this.props))
 	}
 

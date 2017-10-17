@@ -148,10 +148,13 @@ export default class PersonForm extends ValidatableFormWrapper {
 
 	@autobind
 	handleEmailValidation(value) {
-		if(!this.props.person.isAdvisor()) return true
+		if(!this.props.person.isAdvisor()) {
+			return { isValid: null, message: 'No custom validator is set' }
+		}
+
 		let dict = ['google.com', 'amazon.com']
 		let email = value.split('@')
-		let from =  email[0]
+		let from =  email[0].trim()
 		let emailDomain = email[1]
 		let isValid = from.length > 0 && dict.includes(emailDomain)
 		return { isValid: isValid, message: this.emailErrorMessage(dict) }
