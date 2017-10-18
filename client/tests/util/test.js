@@ -15,7 +15,7 @@ if (testEnv === 'local') {
     require('chromedriver')
 } else {
     // Set capabilities for BrowserStack
-	require('./keep-alive.js')
+    require('./keep-alive.js')
     let config = require('config')
     capabilities = {
         browserName: 'Chrome',   // or 'IE'
@@ -67,7 +67,7 @@ test.beforeEach(t => {
         builder = builder
             .forBrowser('chrome')
     } else {
-        capabilities.name = t.title
+        capabilities.name = t.title.replace(/^beforeEach for /, '')
         builder = builder
             .usingServer('http://hub-cloud.browserstack.com/wd/hub')
             .withCapabilities(capabilities)
