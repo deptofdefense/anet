@@ -268,12 +268,12 @@ export default class FormField extends Component {
 		if(this.state.value.length === 0) return
 
 		let customValidation = props.validate(this.state.value)
-		if(customValidation.isValid !== null) {
+		if (customValidation.isValid !== null) {
 			this.setState({
 				isValid: customValidation.isValid,
 				errorMessage: customValidation.message
 			})
-		} else if(this.state.defaultValidation) {
+		} else if (this.state.defaultValidation) {
 			this.setState({ isValid: null, errorMessage: ''})
 		} else {
 			this.setStateDefaultInvalidField(props)
@@ -281,10 +281,10 @@ export default class FormField extends Component {
 	}
 
 	setValidationState(props) {
-		if(this.isMissingRequiredField(props) || this.state.defaultValidation === false){
+		if (this.isMissingRequiredField(props) || this.state.defaultValidation === false){
 			this.setStateDefaultInvalidField(props)
 		}
-		if(props.validate) {
+		if (props.validate) {
 			this.setStateCustomValidationField(props)
 		}
 	}
@@ -313,7 +313,7 @@ export default class FormField extends Component {
 
 	@autobind
 	onUserTouchedField(event) {
-		if( !(event && event.target)) return null
+		if ( !(event && event.target)) return null
 		let defaultValidation = event.target.checkValidity()
 		this.setState({
 			defaultValidation: defaultValidation,

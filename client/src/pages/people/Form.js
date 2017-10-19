@@ -186,7 +186,7 @@ export default class PersonForm extends ValidatableFormWrapper {
 	}
 
 	getWildcardDomains(domainList, token) {
-		let wildcardDomains =  domainList.filter(domain => {
+		let wildcardDomains = domainList.filter(domain => {
 			return domain[0] === token
 		})
 		return wildcardDomains
