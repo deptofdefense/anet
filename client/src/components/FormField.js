@@ -315,6 +315,9 @@ export default class FormField extends Component {
 	onUserTouchedField(event) {
 		if ( !(event && event.target)) return null
 		let defaultValidation = event.target.checkValidity()
+		let id = this.props.id
+		let value = this.sanitizeInput(this.getEventValue(event))
+		this.setFormContextWith(id, value)
 		this.setState({
 			defaultValidation: defaultValidation,
 			isValid: defaultValidation,
@@ -331,15 +334,12 @@ export default class FormField extends Component {
 		}
 
 		let id = this.props.id
-		let value = event && event.target ? event.target.value : event
+		let value = this.getEventValue(event)
+		this.setFormContextWith(id, value)
 
 		if (this.props.maxCharacters && value.length > this.props.maxCharacters) {
 			return
 		}
-
-		let formContext = this.context.formFor
-		if (formContext)
-			formContext[id] = value
 
 		let form = this.context.form
 		if (form && form.props.onChange) {
@@ -356,6 +356,24 @@ export default class FormField extends Component {
 		if (element && element.focus) {
 			element.focus()
 		}
+	}
+
+	getEventValue(event) {
+		return event && event.target ? event.target.value : event
+	}
+
+	setFormContextWith(id, value) {
+		let formContext = this.context.formFor
+		if (formContext)
+			formContext[id] = value
+		return formContext
+	}
+
+	sanitizeInput(value) {
+		if (typeof value === 'string' || value instanceof String) {
+			return value.trim()
+		}
+		return value
 	}
 }
 
