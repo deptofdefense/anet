@@ -165,6 +165,10 @@ public class Utils {
 		return input;
 	}
 	
+  public static String trimStringReturnNull(String input) {
+		if (input == null) { return null; }
+		return input.trim();
+	}
 
 	/**
 	 * Transform a result list from a database query by grouping. For example,
@@ -236,5 +240,4 @@ public class Utils {
 		}
 		return groupedResults;
 	}
-
 }
