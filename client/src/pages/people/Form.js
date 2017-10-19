@@ -17,6 +17,8 @@ import {Person} from 'models'
 
 import CALENDAR_ICON from 'resources/calendar.png'
 
+const WILDCARD = '*'
+
 export default class PersonForm extends ValidatableFormWrapper {
 	static propTypes = {
 		person: PropTypes.object.isRequired,
@@ -148,20 +150,50 @@ export default class PersonForm extends ValidatableFormWrapper {
 
 	@autobind
 	handleEmailValidation(value) {
-		if(!this.props.person.isAdvisor()) {
+		let domainNames = dict.lookup('domainNames')
+		if (!this.props.person.isAdvisor() || domainNames.length === 0) {
 			return { isValid: null, message: 'No custom validator is set' }
 		}
 
-		let dict = ['google.com', 'amazon.com']
-		let email = value.split('@')
+		let wildcardDomains = this.getWildcardDomains(domainNames, WILDCARD)
+		let isValid = this.validateEmail(value, domainNames, wildcardDomains)
+
+		return { isValid: isValid, message: this.emailErrorMessage(domainNames) }
+	}
+
+	validateEmail(emailValue, domainNames, wildcardDomains) {
+		let email = emailValue.split('@')
 		let from =  email[0].trim()
-		let emailDomain = email[1]
-		let isValid = from.length > 0 && dict.includes(emailDomain)
-		return { isValid: isValid, message: this.emailErrorMessage(dict) }
+		let domain = email[1]
+		return (
+			this.validateWithWhitelist(from, domain, domainNames) ||
+			this.validateWithWildcard(domain, wildcardDomains)
+		)
+	}
+
+	validateWithWhitelist(from, domain, whitelist) {
+		return from.length > 0 && whitelist.includes(domain)
+	}
+
+	validateWithWildcard(domain, wildcardDomains) {
+		let isValid = false
+		if (domain) {
+			isValid = wildcardDomains.some(wildcard => {
+				return domain[0] !== '.' && domain.endsWith(wildcard.substr(1))
+			})
+		}
+		return isValid
+	}
+
+	getWildcardDomains(domainList, token) {
+		let wildcardDomains =  domainList.filter(domain => {
+			return domain[0] === token
+		})
+		return wildcardDomains
 	}
 
 	emailErrorMessage(validDomainNames) {
-		let items = validDomainNames.map((name) => [
+		let items = validDomainNames.map(name => [
 			<li>{name}</li>
 		])
 		return (
