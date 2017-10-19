@@ -39,7 +39,10 @@ dependencies {
 
 	compile 'org.xerial:sqlite-jdbc:3.14.2.1' //If using SQLite
 	compile 'javax.mail:mail:1.4.7'
-	compile 'com.github.dblock.waffle:waffle-distro:1.8.1'
+	compile 'ch.qos.logback:logback-classic:1.2.3'
+	compile 'ch.qos.logback:logback-core:1.2.3'
+	compile 'ch.qos.logback:logback-access:1.2.3'
+	compile 'com.github.waffle:waffle-distro:1.8.3'
 	compile 'com.graphql-java:graphql-java:2.2.0'
 	compile 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20160924.1'
 

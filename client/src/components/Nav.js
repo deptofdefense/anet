@@ -46,8 +46,6 @@ class Nav extends Component {
 			<SubNav
 				componentClass={Scrollspy}
 				className="nav"
-				items={['info', 'laydown', 'approvals', 'poams', 'reports']}
-				currentClassName="active"
 				offset={-152}
 			>
 				<AnchorLink scrollTo="info">Info</AnchorLink>
@@ -72,8 +70,6 @@ class Nav extends Component {
 					<SubNav
 						componentClass={Scrollspy}
 						className="nav"
-						items={['draft-reports', 'pending-approval', 'published-reports']}
-						currentClassName="active"
 						offset={-152}
 					>
 						<AnchorLink scrollTo="draft-reports">Draft reports</AnchorLink>
