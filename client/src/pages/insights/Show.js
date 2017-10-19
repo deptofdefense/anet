@@ -9,6 +9,8 @@ import CalendarButton from 'components/CalendarButton'
 import autobind from 'autobind-decorator'
 import moment from 'moment'
 
+import FilterableAdvisorReportsTable from 'components/AdvisorReports/FilterableAdvisorReportsTable'
+
 
 const calendarButtonCss = {
   marginLeft: '20px',
@@ -86,6 +88,14 @@ export default class InsightsShow extends Page {
               <CancelledReports date={this.state.cancelledDate.clone().startOf('day')} />
           </Fieldset>
         }
+
+        <Fieldset id="advisor-reports" data-jumptarget title={
+          <span>
+            Advisor Reports
+          </span>
+          }>
+          <FilterableAdvisorReportsTable />
+        </Fieldset>
       </div>
     )
   }
