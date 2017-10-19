@@ -157,7 +157,7 @@ export default class FormField extends Component {
 
 			children = <div>
 				{formControl}
-				<HelpBlock className={validationState === 'error' || validationState === 'warning' ? '' : 'hidden'} >
+				<HelpBlock className={validationState === 'error' || validationState === 'warning' ? '' : 'hidden'}>
 					{this.props.humanName} is required
 				</HelpBlock>
 			</div>
@@ -184,7 +184,7 @@ export default class FormField extends Component {
 		}
 
 		return (
-			<FormGroup controlId={id} className={className} validationState={validationState} >
+			<FormGroup controlId={id} className={className} validationState={validationState}>
 				{horizontal
 					? <Col sm={2} componentClass={ControlLabel}>{label} {icon}</Col>
 					: <ControlLabel>{label} {icon}</ControlLabel> }
