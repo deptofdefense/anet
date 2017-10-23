@@ -342,7 +342,7 @@ public class ReportDao implements IAnetDao<Report> {
 		return generateRollupGraphFromResults(results, orgMap);
 	}
 	
-	/* Generates a Rollup graph for a particular organiztaion.  Starting with a given parent Organization */
+	/* Generates a Rollup graph for a particular organization.  Starting with a given parent Organization */
 	public List<RollupGraph> getDailyRollupGraph(DateTime start, DateTime end, Integer parentOrgId, OrganizationType orgType) {
 		List<Organization> orgList = null;
 		Map<Integer,Organization> orgMap;
@@ -571,11 +571,23 @@ public class ReportDao implements IAnetDao<Report> {
 			Map<ReportState,Integer> orgBar = rollup.get(parentOrgId);
 			if (orgBar == null) { 
 				orgBar = new HashMap<ReportState,Integer>();
-				rollup.put(parentOrgId,  orgBar);
+				rollup.put(parentOrgId, orgBar);
 			}
 			orgBar.put(state,  Utils.orIfNull(orgBar.get(state), 0) + count);
 		}
-		
+
+		// Add all (top-level) organizations without any reports
+		for (final Map.Entry<Integer, Organization> entry : orgMap.entrySet()) {
+			final Integer orgId = entry.getKey();
+			final Integer parentOrgId = (orgId== null) ? null : DaoUtils.getId(orgMap.get(orgId));
+			if (!rollup.keySet().contains(parentOrgId)) {
+				final Map<ReportState, Integer> orgBar = new HashMap<ReportState, Integer>();
+				orgBar.put(ReportState.RELEASED, 0);
+				orgBar.put(ReportState.CANCELLED, 0);
+				rollup.put(parentOrgId, orgBar);
+			}
+		}
+
 		List<RollupGraph> result = new LinkedList<RollupGraph>();
 		for (Map.Entry<Integer, Map<ReportState,Integer>> entry : rollup.entrySet()) { 
 			Map<ReportState,Integer> values = entry.getValue();
