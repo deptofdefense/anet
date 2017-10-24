@@ -1,5 +1,6 @@
 package mil.dds.anet.database;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -82,6 +83,9 @@ public class OrganizationDao implements IAnetDao<Organization> {
 	}
 
 	public List<Organization> getOrgsByShortNames(List<String> shortNames) {
+		if (shortNames == null || shortNames.isEmpty()) {
+			return Collections.emptyList();
+		}
 		return dbHandle.attach(OrgListQueries.class).getOrgsByShortNames(shortNames);
 	}
 
