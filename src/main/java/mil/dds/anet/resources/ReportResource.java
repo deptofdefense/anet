@@ -10,9 +10,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -29,6 +32,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -734,6 +738,35 @@ public class ReportResource implements IGraphQLResource {
 			return Response.ok(writer.toString(), MediaType.TEXT_HTML_TYPE).build();
 		} catch (Exception e) { 
 			throw new WebApplicationException(e);
+		}
+	}
+	
+	/**
+	 *
+	 * Gets aggregated data per organization for engagements attended and reports submitted
+	 * for each advisor in a given organization.
+	 * @param weeksAgo Weeks ago integer for the amount of weeks before the current week
+	 *
+	 */
+	@GET
+	@Timed
+	@Path("/insights/advisors")
+	@RolesAllowed("SUPER_USER")
+	public List<Map<String, Object>> getAdvisorReportInsights(
+		@DefaultValue("3") 	@QueryParam("weeksAgo") int weeksAgo,
+		@DefaultValue("-1") @QueryParam("orgId") int orgId) {
+
+		DateTime now = DateTime.now();
+		DateTime weekStart = now.withDayOfWeek(DateTimeConstants.MONDAY).withTimeAtStartOfDay();
+		DateTime startDate = weekStart.minusWeeks(weeksAgo);
+		final List<Map<String, Object>> list = dao.getAdvisorReportInsights(startDate, now, orgId);
+
+		if(orgId < 0){
+			final Set<String> tlf = Stream.of("organizationshortname").collect(Collectors.toSet());
+			return Utils.resultGrouper(list, "stats", "organizationid", tlf);
+		} else {
+			final Set<String> tlf = Stream.of("name").collect(Collectors.toSet());
+			return Utils.resultGrouper(list, "stats", "personId", tlf);
 		}
 	}
 	

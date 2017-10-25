@@ -1,3 +1,6 @@
+global:
+  - secure: "iY51eqiP95SXqekd7BA7NVwaManWVy+1x7+3TZev1JhiqjGyE9cOBRkjziL3TByTNsdYnXvsvaHMTLuF7UT79CX+iOpkeKaIPylmW+SADx/IbDswj6JRPxUkBkFfGaw4TcAe1MaSWSckSVgeJKqLqIf6bLwldumYVXo4RFpbCXPGCHIxxh2jBA38eb1QQtRLenjPF+eMkjHH8S3RTA1yf7dCrAjETKfCxWr6VI7pQLW0IoLLWGt7jj/NOrmHirKCcmFDZtpotAC999VzCeMbz7urKmLGg73gFYnc6WrOvmqIV5e4LgzbuY/V12JvhyYkMzyVfbckT6zvi2bvVUgJT4XVEYdgxDZV41nuEwcbSivC+26NsxnuXlJqnFRruqKR0qf5hHEkJxOO+KQm3JHmkIzTr5Wnf31ivtMbrL4hr4Ogkb1NqdckhAOM6gtMJ9DFM3IG5YBaL9nWQArUVz6ZyoBqTOPHtCTGcnuwWKY0YopgBGAtuKA4QAepaWO+47ibC5ZDOGWcIyEO55qE3soG02isaZc+uzRQOJm32sYViVHcRc6HbsQXGKgOlA5MqtBJ8vqXq255EUSo98Sgwz/Du5HL05m459nNcfHVPJ1FU1mvKVLm2lyLOTQMuz+2aOcS7Gkb4/mi1wrlTBjk6TrvC+P+SCddXVPmgczhUdBsS44="
+
 language: java
 
 jdk:
@@ -22,6 +25,7 @@ cache:
     - client/node_modules
 
 before_install:
+  - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-  
   - echo "run.environment(\"DB_DRIVER\", \"sqlserver\")" > localSettings.gradle
   - echo "run.environment(\"ANET_SA_PASSWORD\", \"SA-P@ssw0rd\")" >> localSettings.gradle
   - echo "run.environment(\"ANET_DB_SERVER\", \"localhost\")"  >> localSettings.gradle
@@ -43,3 +47,13 @@ script:
 
 after_script:
   - docker logs anet-mssql-server
+
+addons:
+  coverity_scan:
+    project:
+      name: "NCI-Agency/anet"
+      description: "ANET Build from Travis CI"
+    notification_email: vassil.iordanov@gmail.com
+    build_command_prepend: "./gradlew clean"
+    build_command:   "./gradlew build -x test"
+    branch_pattern: candidate
