@@ -58,6 +58,7 @@ public class Report extends AbstractAnetBean {
 	ReportPerson primaryPrincipal;
 
 	List<Comment> comments;
+	private List<Tag> tags;
 
 	@GraphQLIgnore
 	public ApprovalStep getApprovalStep() {
@@ -402,7 +403,24 @@ public class Report extends AbstractAnetBean {
 		}
 		return workflow;
 	}
-	
+
+	@GraphQLFetcher("tags")
+	public List<Tag> loadTags() {
+		if (tags == null && id != null) {
+			tags = AnetObjectEngine.getInstance().getReportDao().getTagsForReport(id);
+		}
+		return tags;
+	}
+
+	@GraphQLIgnore
+	public List<Tag> getTags() {
+		return tags;
+	}
+
+	public void setTags(List<Tag> tags) {
+		this.tags = tags;
+	}
+
 	@Override
 	public boolean equals(Object other) { 
 		if (other == null || other.getClass() != Report.class) { 
@@ -425,14 +443,16 @@ public class Report extends AbstractAnetBean {
 				&& Objects.equals(r.getReportText(), reportText)
 				&& Objects.equals(r.getNextSteps(), nextSteps)
 				&& idEqual(r.getAuthor(), author)
-				&& Objects.equals(r.getComments(), comments);
+				&& Objects.equals(r.getComments(), comments)
+				&& Objects.equals(r.getTags(), tags);
 	}
 	
 	@Override
 	public int hashCode() { 
 		return Objects.hash(id, state, approvalStep, createdAt, updatedAt, 
 			location, intent, exsum, attendees, poams, reportText, 
-			nextSteps, author, comments, atmosphere, atmosphereDetails, engagementDate);
+			nextSteps, author, comments, atmosphere, atmosphereDetails, engagementDate,
+			tags);
 	}
 
 	public static Report createWithId(Integer id) {

@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,7 +26,7 @@ import mil.dds.anet.beans.Person;
 
 public class GraphQLResourceTest extends AbstractResourceTest {
 
-	private Logger logger = LoggerFactory.getLogger(GraphQLResourceTest.class);
+	private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 	public GraphQLResourceTest() { 
 		if (client == null) { 
@@ -34,9 +36,8 @@ public class GraphQLResourceTest extends AbstractResourceTest {
 	
 	@Test
 	public void test() {
-		Person arthur = getArthurDmin();
-		Person jack = getJackJackson();
-		Person steve = getSteveSteveson();
+		final Person jack = getJackJackson();
+		final Person steve = getSteveSteveson();
 		File testDir = new File("src/test/resources/graphQLTests/");
 		testDir.getAbsolutePath();
 		assertThat(testDir.isDirectory()).isTrue();
@@ -64,19 +65,42 @@ public class GraphQLResourceTest extends AbstractResourceTest {
 					query.put("variables", ImmutableMap.of());
 					logger.info("Processing file {}", f);
 
-					Map<String,Object> resp = httpQuery("/graphql", arthur)
+					// Test POST request
+					Map<String,Object> respPost = httpQuery("/graphql", admin)
 							.post(Entity.json(query), new GenericType<Map<String,Object>>() {});
-					assertThat(resp).isNotNull();
-					assertThat(resp.containsKey("errors"))
-						.as("Has Errors on %s : %s, %s",f.getName(),resp.get("errors"), resp.values().toString())
-						.isFalse();
-					assertThat(resp.containsKey("data")).as("Missing Data on " + f.getName(), resp).isTrue();
-					
+					doAsserts(f, respPost);
+
+					// Test GET request
+					Map<String,Object> respGet = httpQuery("/graphql?query=" + URLEncoder.encode("{" + raw + "}", "UTF-8"), admin)
+							.get(new GenericType<Map<String,Object>>() {});
+					doAsserts(f, respGet);
+
+					// POST and GET responses should be equal
+					assertThat(respPost.get("data")).isEqualTo(respGet.get("data"));
+
+					// Test GET request over XML
+					String respGetXml = httpQuery("/graphql?output=xml&query=" + URLEncoder.encode("{" + raw + "}", "UTF-8"), admin)
+							.get(new GenericType<String>() {});
+					assertThat(respGetXml).isNotNull();
+					int len = respGetXml.length();
+					assertThat(len).isGreaterThan(0);
+					assertThat(respGetXml.substring(0, 1)).isEqualTo("<");
+					String xmlHeader = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>";
+					assertThat(respGetXml.substring(0, xmlHeader.length())).isEqualTo(xmlHeader);
+					assertThat(respGetXml.substring(len - 2 , len)).isEqualTo(">\n");
 				} catch (IOException e) { 
 					Assertions.fail("Unable to read file ", e);
 				}
 			}
 		}
+	}
+
+	private void doAsserts(File f, Map<String, Object> resp) {
+		assertThat(resp).isNotNull();
+		assertThat(resp.containsKey("errors"))
+			.as("Has Errors on %s : %s, %s",f.getName(),resp.get("errors"), resp.values().toString())
+			.isFalse();
+		assertThat(resp.containsKey("data")).as("Missing Data on " + f.getName(), resp).isTrue();
 	}
 	
 }
