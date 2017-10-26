@@ -265,7 +265,7 @@ export default class FormField extends Component {
 	}
 
 	setStateCustomValidationField(props) {
-		if(this.state.value.length === 0) return
+		if (this.state.value.length === 0) return
 
 		let customValidation = props.validate(this.state.value)
 		if (customValidation.isValid !== null) {
