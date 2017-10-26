@@ -140,10 +140,13 @@ export default class RollupShow extends Page {
 					.sort((a, b) => {
 						let a_index = pinned_ORGs.indexOf(a.org.shortName)
 						let b_index = pinned_ORGs.indexOf(b.org.shortName)
-						if (a_index<0)
-							return (b_index<0) ?  a.org.shortName.localeCompare(b.org.shortName) : 1
-						else
+						if (a_index<0) {
+							let nameOrder = a.org.shortName.localeCompare(b.org.shortName)
+							return (b_index<0) ?  (nameOrder === 0 ? a.org.id - b.org.id : nameOrder)  : 1
+						}
+						else {
 							return (b_index<0) ? -1 : a_index-b_index
+						}
 					})
 			})
 		})
