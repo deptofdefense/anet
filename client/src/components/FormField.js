@@ -77,6 +77,7 @@ export default class FormField extends Component {
 		let {
 			id,
 			className,
+			display,
 			label,
 			icon,
 			addon,
@@ -183,12 +184,15 @@ export default class FormField extends Component {
 			</div>
 		}
 
+		const inline = display && display === 'inline'
+		const hidden = inline ? 'sr-only' : ''
+
 		return (
 			<FormGroup controlId={id} className={className} validationState={validationState}>
-				{horizontal
-					? <Col sm={2} componentClass={ControlLabel}>{label} {icon}</Col>
-					: <ControlLabel>{label} {icon}</ControlLabel> }
-				{horizontal
+				{horizontal && !hidden
+					? <Col sm={2} className={hidden} componentClass={ControlLabel}>{label} {icon}</Col>
+					: <ControlLabel className={hidden}>{label} {icon}</ControlLabel> }
+				{horizontal && !hidden
 					? <Col sm={7}>{children}</Col>
 					: children }
 				{extra}
