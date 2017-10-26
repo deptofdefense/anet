@@ -172,7 +172,9 @@ export default class PersonForm extends ValidatableFormWrapper {
 
 	componentWillReceiveProps(nextProps) {
 		const { person } = nextProps
-		const parsedName = this.parseFullName(person.name)
+		const emptyName = { lastName: '', firstName: ''}
+
+		const parsedName = person.name ? this.parseFullName(person.name) : emptyName
 
 		this.savePersonWithFullName(person, parsedName)
 	}
