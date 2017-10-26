@@ -244,8 +244,12 @@ export default class RollupShow extends Page {
 						.domain([0, maxNumberOfReports])
 						.range([0, width])
 
+		let yLabels = {}
 		let yScale = d3.scaleBand()
-						.domain(graphData.map(d => d.org.shortName))
+						.domain(graphData.map(function(d) {
+							yLabels[d.org.id] = d.org.shortName
+							return d.org.id
+						}))
 						.range([0, height])
 
 		let graph = d3.select(this.graph)
@@ -258,6 +262,9 @@ export default class RollupShow extends Page {
 
 		let xAxis = d3.axisBottom(xScale).ticks(Math.min(maxNumberOfReports, 10), 'd')
 		let yAxis = d3.axisLeft(yScale)
+						.tickFormat(function(d) {
+							return yLabels[d]
+						})
 
 		graph.append('g').call(yAxis)
 		graph.append('g')
