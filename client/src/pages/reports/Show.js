@@ -96,10 +96,10 @@ export default class ReportShow extends Page {
 	}
 
 	render() {
-		let {report} = this.state
-		let {currentUser} = this.context
+		const {report} = this.state
+		const {currentUser} = this.context
 
-		let canApprove = report.isPending() && currentUser.position &&
+		const canApprove = report.isPending() && currentUser.position &&
 			report.approvalStep.approvers.find(member => Position.isEqual(member, currentUser.position))
 
 		if (canApprove && this.props.location.query.autoApprove) {
@@ -113,8 +113,8 @@ export default class ReportShow extends Page {
 		//Approvers can edit.
 		canEdit = canEdit || canApprove
 
-		//Only the author can submit when report is in Draft or rejected
-		let canSubmit = (report.isDraft() || report.isRejected()) && Person.isEqual(currentUser, report.author)
+		//Only the author can submit when report is in Draft or rejected AND author has a position
+		const canSubmit = (report.isDraft() || report.isRejected()) && Person.isEqual(currentUser, report.author) && currentUser.hasAsignedPosition()
 
 		//Anbody can email a report as long as it's not in draft.
 		let canEmail = !report.isDraft()
