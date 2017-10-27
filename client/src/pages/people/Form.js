@@ -65,32 +65,32 @@ export default class PersonForm extends ValidatableFormWrapper {
 			<Messages error={this.state.error} />
 
 			<Fieldset title={legendText}>
-					<FormGroup>
-						<Col sm={2} componentClass={ControlLabel}>Name</Col>
-						<Col sm={8}>
-								<Col sm={5}>
-									<RequiredField
-										id="lastName"
-										type="text"
-										display="inline"
-										placeholder="LAST NAME"
-										onChange={this.handleOnChangeLastName}
-										onKeyDown={this.handleOnKeyDown}
-										/>
-								</Col>
-								<Col sm={1} className="name-input">,</Col>
-								<Col sm={6}>
-									<RequiredField
-										id="firstName"
-										type="text"
-										display="inline"
-										placeholder="First name(s)"
-										onChange={this.handleOnChangeFirstName}
-										/>
-								</Col>
-								<RequiredField className="hidden" id="name" value={this.fullName(this.state.person)} />
+				<FormGroup>
+					<Col sm={2} componentClass={ControlLabel}>Name</Col>
+					<Col sm={8}>
+						<Col sm={5}>
+							<RequiredField
+								id="lastName"
+								type="text"
+								display="inline"
+								placeholder="LAST NAME"
+								onChange={this.handleOnChangeLastName}
+								onKeyDown={this.handleOnKeyDown}
+								/>
 						</Col>
-					</FormGroup>
+						<Col sm={1} className="name-input">,</Col>
+						<Col sm={6}>
+							<RequiredField
+								id="firstName"
+								type="text"
+								display="inline"
+								placeholder="First name(s)"
+								onChange={this.handleOnChangeFirstName}
+								/>
+						</Col>
+						<RequiredField className="hidden" id="name" value={this.fullName(this.state.person)} />
+					</Col>
+				</FormGroup>
 
 				{edit ?
 					<Form.Field type="static" id="role" value={person.humanNameOfRole()} />
