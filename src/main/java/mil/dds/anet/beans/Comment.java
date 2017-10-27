@@ -39,7 +39,7 @@ public class Comment extends AbstractAnetBean {
 	
 	@Override
 	public boolean equals(Object o) { 
-		if (o == null || o.getClass() != Comment.class) { 
+		if (o == null || o.getClass() != this.getClass()) {
 			return false;
 		}
 		Comment c = (Comment) o;
