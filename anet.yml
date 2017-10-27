@@ -225,3 +225,8 @@ dictionary:
     - OF-8
     - OF-9
     - OF-10
+  domainNames:
+    - cmil.mil
+    - mission.ita
+    - nato.int
+    - "*.isaf.nato.int"
