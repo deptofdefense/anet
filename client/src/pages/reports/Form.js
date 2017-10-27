@@ -30,6 +30,10 @@ export default class ReportForm extends ValidatableFormWrapper {
 		edit: PropTypes.bool
 	}
 
+	static contextTypes = {
+		currentUser: PropTypes.object,
+	}
+
 	constructor(props) {
 		super(props)
 
@@ -111,6 +115,7 @@ export default class ReportForm extends ValidatableFormWrapper {
     }
 
 	render() {
+		const { currentUser } = this.context
 		let {report, onDelete} = this.props
 		let {recents, suggestionList, errors, isCancelled, showAutoSaveBanner} = this.state
 
@@ -128,6 +133,8 @@ export default class ReportForm extends ValidatableFormWrapper {
 
 		const {ValidatableForm, RequiredField} = this
 
+		const submitText = currentUser.hasAssignedPosition() ? 'Preview and submit' : 'Save draft'
+
 		return <div className="report-form">
 			<Collapse in={showAutoSaveBanner}>
 				<div className="banner" style={{top:132, background: '#DFF0D8', color: '#3c763d'}}>
@@ -137,7 +144,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 
 			<ValidatableForm formFor={report} horizontal onSubmit={this.onSubmit} onChange={this.onChange}
 				onDelete={onDelete} deleteText="Delete this report"
-				submitDisabled={hasErrors} submitText="Preview and submit"
+				submitDisabled={hasErrors} submitText={submitText}
 				bottomAccessory={this.state.autoSavedAt && <div>Last autosaved at {this.state.autoSavedAt.format('hh:mm:ss')}</div>}
 			>
 
