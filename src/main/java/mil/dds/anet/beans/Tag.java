@@ -1,6 +1,7 @@
 package mil.dds.anet.beans;
 
 import java.util.Objects;
+
 import mil.dds.anet.utils.Utils;
 import mil.dds.anet.views.AbstractAnetBean;
 

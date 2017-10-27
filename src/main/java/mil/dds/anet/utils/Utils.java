@@ -165,7 +165,7 @@ public class Utils {
 		return input;
 	}
 	
-  public static String trimStringReturnNull(String input) {
+	public static String trimStringReturnNull(String input) {
 		if (input == null) { return null; }
 		return input.trim();
 	}
@@ -183,7 +183,7 @@ public class Utils {
 	 * </code>
 	 * then transforming it like so:
 	 * <code>
-	 * final Set<String> tlf = Stream.of("name", "someprop").collect(Collectors.toSet());
+	 * final Set&lt;String&gt; tlf = Stream.of("name", "someprop").collect(Collectors.toSet());
 	 * return resultGrouper(list, "stats", "id", tlf);
 	 * </code>
 	 * will return the list:
