@@ -73,7 +73,7 @@ export default class Person extends Model {
 		)
 	}
 
-	hasAsignedPosition() {
+	hasAssignedPosition() {
 		return  typeof this.position !== 'undefined' && this.position !== {}
 	}
 

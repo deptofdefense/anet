@@ -95,6 +95,10 @@ export default class ReportShow extends Page {
 		})
 	}
 
+	renderNoPositionAssignedText() {
+		return <p>Notice: This report cannot be submitted because you do not have an assigned position.<br /> -- Please contact your administrator --</p>
+	}
+
 	render() {
 		const {report} = this.state
 		const {currentUser} = this.context
@@ -114,7 +118,8 @@ export default class ReportShow extends Page {
 		canEdit = canEdit || canApprove
 
 		//Only the author can submit when report is in Draft or rejected AND author has a position
-		const canSubmit = (report.isDraft() || report.isRejected()) && Person.isEqual(currentUser, report.author) && currentUser.hasAsignedPosition()
+		const hasAssignedPosition = currentUser.hasAssignedPosition()
+		const canSubmit = (report.isDraft() || report.isRejected()) && Person.isEqual(currentUser, report.author) && hasAssignedPosition
 
 		//Anbody can email a report as long as it's not in draft.
 		let canEmail = !report.isDraft()
@@ -140,6 +145,9 @@ export default class ReportShow extends Page {
 					<Fieldset style={{textAlign: 'center'}}>
 						<h4 className="text-danger">This is a DRAFT report and hasn't been submitted.</h4>
 						<p>You can review the draft below to make sure all the details are correct.</p>
+						{!hasAssignedPosition &&
+							this.renderNoPositionAssignedText()
+						}
 						<div style={{textAlign: 'left'}}>
 							{errors && errors.length > 0 &&
 								this.renderValidationErrors(errors)
