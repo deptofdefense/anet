@@ -424,7 +424,7 @@ public class Report extends AbstractAnetBean {
 
 	@Override
 	public boolean equals(Object other) { 
-		if (other == null || other.getClass() != Report.class) { 
+		if (other == null || other.getClass() != this.getClass()) {
 			return false;
 		}
 		Report r = (Report) other;

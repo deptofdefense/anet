@@ -83,7 +83,7 @@ public class OrganizationResourceTest extends AbstractResourceTest {
 
 		OrganizationSearchQuery query = new OrganizationSearchQuery();
 		query.setParentOrgId(created.getId());
-		OrganizationList children = httpQuery(String.format("/api/organizations/search", created.getId()), admin)
+		OrganizationList children = httpQuery("/api/organizations/search", admin)
 			.post(Entity.json(query), OrganizationList.class);
 		assertThat(children.getList()).hasSize(1).contains(child);
 		
