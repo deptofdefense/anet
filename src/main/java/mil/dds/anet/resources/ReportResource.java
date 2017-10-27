@@ -717,7 +717,6 @@ public class ReportResource implements IGraphQLResource {
 	}
 
 	/**
-	 *
 	 * Gets aggregated data per organization for engagements attended and reports submitted
 	 * for each advisor in a given organization.
 	 * @param weeksAgo Weeks ago integer for the amount of weeks before the current week
@@ -736,7 +735,7 @@ public class ReportResource implements IGraphQLResource {
 		DateTime startDate = weekStart.minusWeeks(weeksAgo);
 		final List<Map<String, Object>> list = dao.getAdvisorReportInsights(startDate, now, orgId);
 
-		if(orgId < 0){
+		if (orgId < 0) {
 			final Set<String> tlf = Stream.of("organizationshortname").collect(Collectors.toSet());
 			return Utils.resultGrouper(list, "stats", "organizationid", tlf);
 		} else {

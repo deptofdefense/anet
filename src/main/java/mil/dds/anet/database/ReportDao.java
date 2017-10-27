@@ -369,7 +369,7 @@ public class ReportDao implements IAnetDao<Report> {
 
 	/* Generates Advisor Report Insights for Organizations */
 	public List<Map<String,Object>> getAdvisorReportInsights(DateTime start, DateTime end, int orgId) {
-		Map<String,Object> sqlArgs = new HashMap<String,Object>();
+		final Map<String,Object> sqlArgs = new HashMap<String,Object>();
 		StringBuilder sql = new StringBuilder();
 
 		sql.append("/* AdvisorReportInsightsQuery */");
@@ -472,8 +472,7 @@ public class ReportDao implements IAnetDao<Report> {
 					"AND a.personId = b.personId",
 					"name,",
 					selectOrg};
-		}
-		else {
+		} else {
 			fmtArgs = new String[] {
 					"",
 					"",
