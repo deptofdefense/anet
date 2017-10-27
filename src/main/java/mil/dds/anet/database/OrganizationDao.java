@@ -1,5 +1,6 @@
 package mil.dds.anet.database;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -7,6 +8,10 @@ import org.joda.time.DateTime;
 import org.skife.jdbi.v2.GeneratedKeys;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.Query;
+import org.skife.jdbi.v2.sqlobject.SqlQuery;
+import org.skife.jdbi.v2.sqlobject.customizers.Mapper;
+import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLocator;
+import org.skife.jdbi.v2.unstable.BindIn;
 
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.beans.Organization;
@@ -62,7 +67,28 @@ public class OrganizationDao implements IAnetDao<Organization> {
 			.map(new OrganizationMapper())
 			.list();
 	}
-	
+
+	@UseStringTemplate3StatementLocator
+	public interface OrgListQueries {
+		@Mapper(OrganizationMapper.class)
+		@SqlQuery("SELECT id AS organizations_id" +
+				", shortName AS organizations_shortName" +
+				", longName AS organizations_longName" +
+				", type AS organizations_type" +
+				", parentOrgId AS organizations_parentOrgId" +
+				", createdAt AS organizations_createdAt" +
+				", updatedAt AS organizations_updatedAt" +
+				" FROM organizations WHERE shortName IN ( <shortNames> )")
+		public List<Organization> getOrgsByShortNames(@BindIn("shortNames") List<String> shortNames);
+	}
+
+	public List<Organization> getOrgsByShortNames(List<String> shortNames) {
+		if (shortNames == null || shortNames.isEmpty()) {
+			return Collections.emptyList();
+		}
+		return dbHandle.attach(OrgListQueries.class).getOrgsByShortNames(shortNames);
+	}
+
 	public Organization insert(Organization org) {
 		org.setCreatedAt(DateTime.now());
 		org.setUpdatedAt(org.getCreatedAt());

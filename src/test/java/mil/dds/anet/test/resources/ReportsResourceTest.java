@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.lang.invoke.MethodHandles;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.ws.rs.client.Entity;
@@ -52,6 +53,7 @@ import mil.dds.anet.beans.search.ReportSearchQuery.ReportSearchSortBy;
 import mil.dds.anet.database.AdminDao.AdminSettingKeys;
 import mil.dds.anet.test.beans.OrganizationTest;
 import mil.dds.anet.test.beans.PersonTest;
+import mil.dds.anet.views.AbstractAnetBean.LoadLevel;
 
 public class ReportsResourceTest extends AbstractResourceTest {
 
@@ -771,9 +773,9 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		Report returned2 = httpQuery("/api/reports/" + saved.getId(), liz).get(Report.class);
 		assertThat(returned2.getState()).isEqualTo(ReportState.CANCELLED);
 	}
-	
+
 	@Test
-	public void dailyRollupGraphTest() { 
+	public void dailyRollupGraphNonReportingTest() {
 		Person steve = getSteveSteveson();
 		
 		Report r = new Report();
@@ -804,7 +806,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		resp = httpQuery("/api/reports/" + r.getId() + "/submit", admin).post(null);
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
-		//Authur can approve his own reports. 
+		//Admin can approve his own reports.
 		resp = httpQuery("/api/reports/" + r.getId() + "/approve", admin).post(null);
 		assertThat(resp.getStatus()).isEqualTo(200);
 		
@@ -817,12 +819,83 @@ public class ReportsResourceTest extends AbstractResourceTest {
 				String.format("/api/reports/rollupGraph?startDate=%d&endDate=%d", startDate.getMillis(), endDate.getMillis()), admin)
 				.get(new GenericType<List<RollupGraph>>() {});
 		
-		//Authur's organization should have one more report RELEASED!
-		int authurOrgId = admin.loadPosition().loadOrganization().getId();
-		Optional<RollupGraph> adminOrg = startGraph.stream().filter(rg -> rg.getOrg() != null && rg.getOrg().getId().equals(authurOrgId)).findFirst();
-		int startCt = adminOrg.isPresent() ? (adminOrg.get().getReleased()) : 0;
-		int endCt = endGraph.stream().filter(rg -> rg.getOrg() != null && rg.getOrg().getId().equals(authurOrgId)).findFirst().get().getReleased();
-		assertThat(startCt).isEqualTo(endCt - 1);
+		final Position pos = admin.loadPosition();
+		pos.getOrganization().setLoadLevel(LoadLevel.ID_ONLY);
+		final Organization org = pos.loadOrganization();
+		final Map<String, Object> dictionary = RULE.getConfiguration().getDictionary();
+		@SuppressWarnings("unchecked")
+		final List<String> nro = (List<String>) dictionary.get("non_reporting_ORGs");
+		//Admin's organization should have one more report RELEASED only if it is not in the non-reporting orgs
+		final int diff = (nro == null || !nro.contains(org.getShortName())) ? 1 : 0;
+		final int orgId = org.getId();
+		Optional<RollupGraph> orgReportsStart = startGraph.stream().filter(rg -> rg.getOrg() != null && rg.getOrg().getId().equals(orgId)).findFirst();
+		final int startCt = orgReportsStart.isPresent() ? (orgReportsStart.get().getReleased()) : 0;
+		Optional<RollupGraph> orgReportsEnd = endGraph.stream().filter(rg -> rg.getOrg() != null && rg.getOrg().getId().equals(orgId)).findFirst();
+		final int endCt = orgReportsEnd.isPresent() ? (orgReportsEnd.get().getReleased()) : 0;
+		assertThat(startCt).isEqualTo(endCt - diff);
+	}
+
+	@Test
+	public void dailyRollupGraphReportingTest() {
+		final Person elizabeth = getElizabethElizawell();
+		final Person bob = getBobBobtown();
+		Person steve = getSteveSteveson();
+
+		Report r = new Report();
+		r.setAuthor(elizabeth);
+		r.setIntent("Test the Daily rollup graph");
+		r.setNextSteps("Check for a change in the rollup graph");
+		r.setKeyOutcomes("Foobar the bazbiz");
+		r.setAttendees(ImmutableList.of(PersonTest.personToPrimaryReportPerson(elizabeth), PersonTest.personToPrimaryReportPerson(steve)));
+		r = httpQuery("/api/reports/new", elizabeth).post(Entity.json(r), Report.class);
+
+		//Pull the daily rollup graph
+		DateTime startDate = DateTime.now().minusDays(1);
+		DateTime endDate = DateTime.now().plusDays(1);
+		final List<RollupGraph> startGraph = httpQuery(
+				String.format("/api/reports/rollupGraph?startDate=%d&endDate=%d", startDate.getMillis(), endDate.getMillis()), elizabeth)
+				.get(new GenericType<List<RollupGraph>>() {});
+
+		//Submit the report
+		Response resp = httpQuery("/api/reports/" + r.getId() + "/submit", elizabeth).post(null);
+		assertThat(resp.getStatus()).isEqualTo(Status.BAD_REQUEST.getStatusCode());
+
+		//Oops set the engagementDate.
+		r.setEngagementDate(DateTime.now());
+		resp = httpQuery("/api/reports/update", elizabeth).post(Entity.json(r));
+		assertThat(resp.getStatus()).isEqualTo(200);
+
+		//Re-submit the report, it should work.
+		resp = httpQuery("/api/reports/" + r.getId() + "/submit", elizabeth).post(null);
+		assertThat(resp.getStatus()).isEqualTo(200);
+
+		//Approve report.
+		resp = httpQuery("/api/reports/" + r.getId() + "/approve", bob).post(null);
+		assertThat(resp.getStatus()).isEqualTo(200);
+
+		//Verify report is in RELEASED state.
+		r = httpQuery("/api/reports/" + r.getId(), elizabeth).get(Report.class);
+		assertThat(r.getState()).isEqualTo(ReportState.RELEASED);
+
+		//Check on the daily rollup graph now.
+		List<RollupGraph> endGraph = httpQuery(
+				String.format("/api/reports/rollupGraph?startDate=%d&endDate=%d", startDate.getMillis(), endDate.getMillis()), elizabeth)
+				.get(new GenericType<List<RollupGraph>>() {});
+
+		final Position pos = elizabeth.loadPosition();
+		pos.getOrganization().setLoadLevel(LoadLevel.ID_ONLY);
+		final Organization org = pos.loadOrganization();
+		final Map<String, Object> dictionary = RULE.getConfiguration().getDictionary();
+		@SuppressWarnings("unchecked")
+		final List<String> nro = (List<String>) dictionary.get("non_reporting_ORGs");
+		//Elizabeth's organization should have one more report RELEASED only if it is not in the non-reporting orgs
+		final int diff = (nro == null || !nro.contains(org.getShortName())) ? 1 : 0;
+		final int orgId = org.loadParentOrg().getId();
+		Optional<RollupGraph> orgReportsStart = startGraph.stream().filter(rg -> rg.getOrg() != null && rg.getOrg().getId().equals(orgId)).findFirst();
+		final int startCt = orgReportsStart.isPresent() ? (orgReportsStart.get().getReleased()) : 0;
+		Optional<RollupGraph> orgReportsEnd = endGraph.stream().filter(rg -> rg.getOrg() != null && rg.getOrg().getId().equals(orgId)).findFirst();
+		final int endCt = orgReportsEnd.isPresent() ? (orgReportsEnd.get().getReleased()) : 0;
+		assertThat(startCt).isEqualTo(endCt - diff);
 	}
 
 	@Test

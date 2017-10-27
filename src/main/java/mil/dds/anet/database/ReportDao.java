@@ -335,15 +335,15 @@ public class ReportDao implements IAnetDao<Report> {
 	}
 	
 	/* Generates the Rollup Graph for a particular Organization Type, starting at the root of the org hierarchy */
-	public List<RollupGraph> getDailyRollupGraph(DateTime start, DateTime end, OrganizationType orgType) {
+	public List<RollupGraph> getDailyRollupGraph(DateTime start, DateTime end, OrganizationType orgType, Map<Integer, Organization> nonReportingOrgs) {
 		List<Map<String, Object>> results = rollupQuery(start, end, orgType, null, false);
 		Map<Integer,Organization> orgMap = AnetObjectEngine.getInstance().buildTopLevelOrgHash(orgType);
 		
-		return generateRollupGraphFromResults(results, orgMap);
+		return generateRollupGraphFromResults(results, orgMap, nonReportingOrgs);
 	}
 	
-	/* Generates a Rollup graph for a particular organiztaion.  Starting with a given parent Organization */
-	public List<RollupGraph> getDailyRollupGraph(DateTime start, DateTime end, Integer parentOrgId, OrganizationType orgType) {
+	/* Generates a Rollup graph for a particular organization.  Starting with a given parent Organization */
+	public List<RollupGraph> getDailyRollupGraph(DateTime start, DateTime end, Integer parentOrgId, OrganizationType orgType, Map<Integer, Organization> nonReportingOrgs) {
 		List<Organization> orgList = null;
 		Map<Integer,Organization> orgMap;
 		if (parentOrgId.equals(-1) == false) { // -1 is code for no parent org.  
@@ -364,7 +364,7 @@ public class ReportDao implements IAnetDao<Report> {
 		
 		List<Map<String,Object>> results = rollupQuery(start, end, orgType, orgList, parentOrgId.equals(-1));
 		
-		return generateRollupGraphFromResults(results, orgMap);
+		return generateRollupGraphFromResults(results, orgMap, nonReportingOrgs);
 	}
 
 	/* Generates Advisor Report Insights for Organizations */
@@ -558,23 +558,43 @@ public class ReportDao implements IAnetDao<Report> {
 	 * And the map of each organization to the organization that their reports roll up to
 	 * this method returns the final rollup graph information. 
 	 */
-	private List<RollupGraph> generateRollupGraphFromResults(List<Map<String,Object>> dbResults, Map<Integer, Organization> orgMap) { 
+	private List<RollupGraph> generateRollupGraphFromResults(List<Map<String,Object>> dbResults, Map<Integer, Organization> orgMap, Map<Integer, Organization> nonReportingOrgs) {
 		Map<Integer,Map<ReportState,Integer>> rollup = new HashMap<Integer,Map<ReportState,Integer>>();
 		
 		for (Map<String,Object> result : dbResults) { 
 			Integer orgId = (Integer) result.get("orgId");
+			if (nonReportingOrgs.containsKey(orgId)) {
+				// Skip non-reporting organizations
+				continue;
+			}
 			Integer count = (Integer) result.get("count");
 			ReportState state = ReportState.values()[(Integer) result.get("state")];
 		
-			Integer parentOrgId = (orgId == null) ? null : DaoUtils.getId(orgMap.get(orgId));
+			Integer parentOrgId = DaoUtils.getId(orgMap.get(orgId));
 			Map<ReportState,Integer> orgBar = rollup.get(parentOrgId);
 			if (orgBar == null) { 
 				orgBar = new HashMap<ReportState,Integer>();
-				rollup.put(parentOrgId,  orgBar);
+				rollup.put(parentOrgId, orgBar);
 			}
 			orgBar.put(state,  Utils.orIfNull(orgBar.get(state), 0) + count);
 		}
-		
+
+		// Add all (top-level) organizations without any reports
+		for (final Map.Entry<Integer, Organization> entry : orgMap.entrySet()) {
+			final Integer orgId = entry.getKey();
+			if (nonReportingOrgs.containsKey(orgId)) {
+				// Skip non-reporting organizations
+				continue;
+			}
+			final Integer parentOrgId = DaoUtils.getId(orgMap.get(orgId));
+			if (!rollup.keySet().contains(parentOrgId)) {
+				final Map<ReportState, Integer> orgBar = new HashMap<ReportState, Integer>();
+				orgBar.put(ReportState.RELEASED, 0);
+				orgBar.put(ReportState.CANCELLED, 0);
+				rollup.put(parentOrgId, orgBar);
+			}
+		}
+
 		List<RollupGraph> result = new LinkedList<RollupGraph>();
 		for (Map.Entry<Integer, Map<ReportState,Integer>> entry : rollup.entrySet()) { 
 			Map<ReportState,Integer> values = entry.getValue();
