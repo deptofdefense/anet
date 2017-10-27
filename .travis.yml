@@ -1,5 +1,6 @@
-global:
-  - secure: "iY51eqiP95SXqekd7BA7NVwaManWVy+1x7+3TZev1JhiqjGyE9cOBRkjziL3TByTNsdYnXvsvaHMTLuF7UT79CX+iOpkeKaIPylmW+SADx/IbDswj6JRPxUkBkFfGaw4TcAe1MaSWSckSVgeJKqLqIf6bLwldumYVXo4RFpbCXPGCHIxxh2jBA38eb1QQtRLenjPF+eMkjHH8S3RTA1yf7dCrAjETKfCxWr6VI7pQLW0IoLLWGt7jj/NOrmHirKCcmFDZtpotAC999VzCeMbz7urKmLGg73gFYnc6WrOvmqIV5e4LgzbuY/V12JvhyYkMzyVfbckT6zvi2bvVUgJT4XVEYdgxDZV41nuEwcbSivC+26NsxnuXlJqnFRruqKR0qf5hHEkJxOO+KQm3JHmkIzTr5Wnf31ivtMbrL4hr4Ogkb1NqdckhAOM6gtMJ9DFM3IG5YBaL9nWQArUVz6ZyoBqTOPHtCTGcnuwWKY0YopgBGAtuKA4QAepaWO+47ibC5ZDOGWcIyEO55qE3soG02isaZc+uzRQOJm32sYViVHcRc6HbsQXGKgOlA5MqtBJ8vqXq255EUSo98Sgwz/Du5HL05m459nNcfHVPJ1FU1mvKVLm2lyLOTQMuz+2aOcS7Gkb4/mi1wrlTBjk6TrvC+P+SCddXVPmgczhUdBsS44="
+env:
+  global:
+    - secure: "RhX0c51DkTgr4ub347If+KsjWJU+zGt3dshGknnmgrCOCuDkuBN0vjD4gLNMVH1K8Z+tmC8ESyW4duBuRkY4B/t2PRmEddCo7+t6gfmylq659LhGa3KUEEQd9vOuI+cN5NEGSN6GP6ckU11tiCmiomzTApLnNxWgqDBI7CQkezZl1DpNQ7cShhmYjPSBtFfQcfepZvOM7pY7oYvijvPsBmy0GsYu6RixxkBS42LgSY7FtBL7N2sdG80e+E9A1GThMUHJMAMpprpxPtd7BV2mQ3PwRcyWp11pZt+wCUFNDSnYb/h+5MI45JKIzzwvnOHZr4/rUByi6Qiw0RSh5k0sGZtNw+NcOjrtlS1g1XVxYBD5bzNxn7BgIg3nqNGiHYti/uIIG/AdwzHCG964Yqlww2jZ1UoyxNSb6ms1gKM8Rwx/gDO46pM0l750hwAjR25yDSW+w5xyW0YC+WKyHAoweSY1wsfzqchwJ9bP8qk5cwPrqGgiXsKU5N9SKfqJM4TKDE2DCDAE1NEWwglqnZTuQNjloCdl6KmctdSAHvF6o/t8sIcpIWs0zfhBoRAj3yZh/W7gQbXstyT1NGAswIMl1Rf9SspIm0noOUOObDMLkUhJWvxA/7zMoe3DaXgTAiSh1Xdm0FxdhmRkZFvGm74s9mGpyUvH6ePjwRNTM4CdfvI="
 
 language: java
 
@@ -41,8 +42,7 @@ install:
 
 script:
   - docker exec -ti -e "DB_NAME=testAnet" -e "DB_USER=anetUser" -e "DB_USER_PASSWORD=Test-P@ssw0rd" anet-mssql-server /opt/waitTillServiceStarted.sh
-  - ./gradlew dbMigrate
-  - docker exec -ti anet-mssql-server /opt/mssql-tools/bin/sqlcmd -S localhost -U anetUser -P 'Test-P@ssw0rd' -d testAnet -i /hostdata/insertBaseData.sql
+  - ./gradlew dbMigrate dockerLoadDB
   - ./gradlew check
 
 after_script:
@@ -52,7 +52,6 @@ addons:
   coverity_scan:
     project:
       name: "NCI-Agency/anet"
-      description: "ANET Build from Travis CI"
     notification_email: vassil.iordanov@gmail.com
     build_command_prepend: "./gradlew clean"
     build_command:   "./gradlew build -x test"
