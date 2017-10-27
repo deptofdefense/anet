@@ -161,7 +161,7 @@ public class Position extends AbstractAnetBean {
 	
 	@Override
 	public boolean equals(Object o) { 
-		if (o == null || o.getClass() != Position.class) { 
+		if (o == null || o.getClass() != this.getClass()) {
 			return false; 
 		}
 		Position other = (Position) o;

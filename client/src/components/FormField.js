@@ -16,7 +16,9 @@ export default class FormField extends Component {
 		this.state = {
 			value: '',
 			userHasTouchedField: false,
-			isValid: null
+			defaultValidation: null,
+			isValid: null,
+			errorMessage: ''
 		}
 	}
 	static contextTypes = {
@@ -51,6 +53,7 @@ export default class FormField extends Component {
 		required: PropTypes.bool,
 		onError: PropTypes.func,
 		onValid: PropTypes.func,
+		validate: PropTypes.func,
 
 		// If you don't pass children, we will automatically create a FormControl.
 		// You can use componentClass to override its type (for example, for a select).
@@ -88,7 +91,7 @@ export default class FormField extends Component {
 
 		childProps = Object.without(
 			childProps,
-			'getter', 'horizontal', 'onError', 'onValid', 'humanName', 'maxCharacters', 'validateBeforeUserTouches'
+			'getter', 'horizontal', 'onError', 'onValid', 'humanName', 'maxCharacters', 'validateBeforeUserTouches', 'validate'
 		)
 		if (canSubmitWithError) {
 			childProps = Object.without(childProps, 'required')
@@ -157,8 +160,8 @@ export default class FormField extends Component {
 
 			children = <div>
 				{formControl}
-				<HelpBlock className={validationState === 'error' || validationState === 'warning' ? '' : 'hidden'}>
-					{this.props.humanName} is required
+				<HelpBlock className={validationState === 'error' || validationState === 'warning' ? '' : 'hidden'} >
+					{this.state.errorMessage}
 				</HelpBlock>
 			</div>
 		}
@@ -254,38 +257,77 @@ export default class FormField extends Component {
 		}
 	}
 
+	setStateDefaultInvalidField(props) {
+		this.setState({
+			isValid: false,
+			errorMessage: `${props.humanName} is required`
+		})
+	}
+
+	setStateCustomValidationField(props) {
+		if (this.state.value.length === 0) return
+
+		let customValidation = props.validate(this.state.value)
+		if (customValidation.isValid !== null) {
+			this.setState({
+				isValid: customValidation.isValid,
+				errorMessage: customValidation.message
+			})
+		} else if (this.state.defaultValidation) {
+			this.setState({ isValid: null, errorMessage: ''})
+		} else {
+			this.setStateDefaultInvalidField(props)
+		}
+	}
+
+	setValidationState(props) {
+		if (this.isMissingRequiredField(props) || this.state.defaultValidation === false){
+			this.setStateDefaultInvalidField(props)
+		}
+		if (props.validate) {
+			this.setStateCustomValidationField(props)
+		}
+	}
+
 	@autobind
 	updateValidationState(props) {
 		if (!this.state.userHasTouchedField) {
-			return
+			if ((!this.isMissingRequiredField(props) && this.state.value.length === 0)) {
+				this.setState({ isValid: null, errorMessage: ''})
+				return
+			}
+			if (!this.isMissingRequiredField(props) && this.state.defaultValidation === true) {
+				this.setValidationState(props)
+				return
+			}
 		}
 
-		this.setState({isValid: !this.isMissingRequiredField(props)})
-
+		this.setValidationState(props)
 		if (this.isMissingRequiredField(props) || this.state.isValid === false) {
 			props.onError()
 		} else if (props.onValid && !this.isMissingRequiredField(props) && this.state.isValid !== false) {
 			props.onValid()
 		}
+		this.setState( { userHasTouchedField: false })
 	}
 
 	@autobind
 	onUserTouchedField(event) {
+		if ( !(event && event.target)) return null
+		let defaultValidation = event.target.checkValidity()
 		let id = this.props.id
 		let value = this.sanitizeInput(this.getEventValue(event))
 		this.setFormContextWith(id, value)
 		this.setState({
-			isValid: event && event.target ? event.target.checkValidity() : null,
-			userHasTouchedField: true
+			defaultValidation: defaultValidation,
+			isValid: defaultValidation,
+			errorMessage: `${this.props.humanName} is required`,
+			userHasTouchedField: true,
 		}, () => this.updateValidationState(this.props))
 	}
 
 	@autobind
 	onChange(event) {
-		if (this.props.onError || this.props.onValid || this.props.required) {
-			this.onUserTouchedField(event)
-		}
-
 		if (this.props.onChange) {
 			this.props.onChange(event)
 			return

@@ -18,7 +18,8 @@ import {Person} from 'models'
 import CALENDAR_ICON from 'resources/calendar.png'
 
 const ADVISOR = 'ADVISOR'
-const PRINCIPAL = 'PRINCIPAL'
+const PRINCIPAL = 'PRINCIPAL
+const WILDCARD = '*'
 
 export default class PersonForm extends ValidatableFormWrapper {
 	static propTypes = {
@@ -131,7 +132,8 @@ export default class PersonForm extends ValidatableFormWrapper {
 			<Fieldset title="Additional information">
 				<RequiredField id="emailAddress" label="Email" required={isAdvisor}
 					humanName="Valid email address"
-					type="email" />
+					type="email"
+					validate={ this.handleEmailValidation } />
 				<Form.Field id="phoneNumber" label="Phone" />
 				<RequiredField id="rank"  componentClass="select"
 					required={isAdvisor}>
@@ -168,6 +170,62 @@ export default class PersonForm extends ValidatableFormWrapper {
 	@autobind
 	onChange() {
 		this.forceUpdate()
+	}
+
+	@autobind
+	handleEmailValidation(value) {
+		let domainNames = dict.lookup('domainNames')
+		if (!this.props.person.isAdvisor() || domainNames.length === 0) {
+			return { isValid: null, message: 'No custom validator is set' }
+		}
+
+		let wildcardDomains = this.getWildcardDomains(domainNames, WILDCARD)
+		let isValid = this.validateEmail(value, domainNames, wildcardDomains)
+
+		return { isValid: isValid, message: this.emailErrorMessage(domainNames) }
+	}
+
+	validateEmail(emailValue, domainNames, wildcardDomains) {
+		let email = emailValue.split('@')
+		let from =  email[0].trim()
+		let domain = email[1]
+		return (
+			this.validateWithWhitelist(from, domain, domainNames) ||
+			this.validateWithWildcard(domain, wildcardDomains)
+		)
+	}
+
+	validateWithWhitelist(from, domain, whitelist) {
+		return from.length > 0 && whitelist.includes(domain)
+	}
+
+	validateWithWildcard(domain, wildcardDomains) {
+		let isValid = false
+		if (domain) {
+			isValid = wildcardDomains.some(wildcard => {
+				return domain[0] !== '.' && domain.endsWith(wildcard.substr(1))
+			})
+		}
+		return isValid
+	}
+
+	getWildcardDomains(domainList, token) {
+		let wildcardDomains = domainList.filter(domain => {
+			return domain[0] === token
+		})
+		return wildcardDomains
+	}
+
+	emailErrorMessage(validDomainNames) {
+		let items = validDomainNames.map(name => [
+			<li>{name}</li>
+		])
+		return (
+			<div>
+				<p>Email address is invalid, only the following email domain names are allowed</p>
+				<ul>{items}</ul>
+			</div>
+		)
 	}
 
 	@autobind

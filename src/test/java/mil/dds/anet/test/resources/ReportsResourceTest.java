@@ -219,7 +219,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		ReportList pending = httpQuery("/api/reports/search", approver1).post(Entity.json(pendingQuery), ReportList.class);
 		int id = returned.getId();
 		Report expected = pending.getList().stream().filter(re -> re.getId().equals(id)).findFirst().get();
-		expected.equals(returned);
+		assertThat(expected).isEqualTo(returned);
 		assertThat(pending.getList()).contains(returned);
 
 		//Run a search for this users pending approvals
