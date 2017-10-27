@@ -198,6 +198,8 @@ dictionary:
     - Ukraine
     - United Kingdom
     - United States of America
+  principal_countries:
+    - Afghanistan
   ranks:
     - CIV
     - CTR

@@ -17,6 +17,9 @@ import {Person} from 'models'
 
 import CALENDAR_ICON from 'resources/calendar.png'
 
+const ADVISOR = 'ADVISOR'
+const PRINCIPAL = 'PRINCIPAL'
+
 export default class PersonForm extends ValidatableFormWrapper {
 	static propTypes = {
 		person: PropTypes.object.isRequired,
@@ -38,6 +41,27 @@ export default class PersonForm extends ValidatableFormWrapper {
 		}
 	}
 
+	countries = person => {
+		switch(person.role) {
+			case ADVISOR:
+				return this.lookupCountries('countries')
+			case PRINCIPAL:
+				return this.lookupCountries('principal_countries')
+			default:
+				return []
+		}
+	}
+
+	lookupCountries = key => {
+		return dict.lookup(key) || []
+	}
+
+	renderCountrySelectOptions = (countries) => {
+		return countries.map(country =>
+			<option key={country} value={country}>{country}</option>
+		)
+	}
+
 	render() {
 		let {person, edit} = this.props
 		const isAdvisor = person.role === 'ADVISOR'
@@ -48,7 +72,9 @@ export default class PersonForm extends ValidatableFormWrapper {
 		let willAutoKickPosition = person.status === 'INACTIVE' && person.position && !!person.position.id
 		let warnDomainUsername = person.status === 'INACTIVE' && person.domainUsername
 		let ranks = dict.lookup('ranks') || []
-		let countries = dict.lookup('countries') || []
+
+		const countries = this.countries(person)
+		const nationalityDefaultValue = countries.length === 1 ? countries[0] : ''
 
 		let currentUser = this.context.currentUser
 		let isAdmin = currentUser && currentUser.isAdmin()
@@ -124,11 +150,10 @@ export default class PersonForm extends ValidatableFormWrapper {
 				</RequiredField>
 
 				<RequiredField id="country" label="Nationality" componentClass="select"
+					value={nationalityDefaultValue}
 					required={isAdvisor}>
 					<option />
-					{countries.map(country =>
-						<option key={country} value={country}>{country}</option>
-					)}
+					{this.renderCountrySelectOptions(countries)}
 				</RequiredField>
 
 				<Form.Field id="endOfTourDate" label="End of tour" addon={CALENDAR_ICON}>
