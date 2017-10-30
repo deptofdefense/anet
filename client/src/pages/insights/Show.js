@@ -12,6 +12,7 @@ import autobind from 'autobind-decorator'
 import moment from 'moment'
 
 import FilterableAdvisorReportsTable from 'components/AdvisorReports/FilterableAdvisorReportsTable'
+<<<<<<< HEAD
 import DateRangeSearch from 'components/advancedSearch/DateRangeSearch'
 
 const insightDetails = {
@@ -50,6 +51,10 @@ const insightDetails = {
     showCalendar: false
   },
 }
+=======
+import FutureEngagementInsights from 'components/FutureEngagementInsights'
+
+>>>>>>> 5e054ab... NCI-Agency/anet#161 Add empty Future Engagement Insights component
 
 const calendarButtonCss = {
   marginLeft: '20px',
