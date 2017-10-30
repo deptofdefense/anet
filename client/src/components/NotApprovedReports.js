@@ -61,7 +61,7 @@ export default class NotApprovedReports extends Component {
         updateChart={this.state.updateChart}
       />
     }
-    let focusDetails = this.getFocusDetails()
+    let focusDetails = this.focusDetails
     return (
       <div>
         {chartPart}
@@ -78,7 +78,7 @@ export default class NotApprovedReports extends Component {
     )
   }
 
-  getFocusDetails() {
+  get focusDetails() {
     let titleSuffix = ''
     let resetFnc = ''
     let resetButtonLabel = ''

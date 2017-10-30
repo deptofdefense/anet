@@ -1,3 +1,7 @@
+env:
+  global:
+    - secure: "RhX0c51DkTgr4ub347If+KsjWJU+zGt3dshGknnmgrCOCuDkuBN0vjD4gLNMVH1K8Z+tmC8ESyW4duBuRkY4B/t2PRmEddCo7+t6gfmylq659LhGa3KUEEQd9vOuI+cN5NEGSN6GP6ckU11tiCmiomzTApLnNxWgqDBI7CQkezZl1DpNQ7cShhmYjPSBtFfQcfepZvOM7pY7oYvijvPsBmy0GsYu6RixxkBS42LgSY7FtBL7N2sdG80e+E9A1GThMUHJMAMpprpxPtd7BV2mQ3PwRcyWp11pZt+wCUFNDSnYb/h+5MI45JKIzzwvnOHZr4/rUByi6Qiw0RSh5k0sGZtNw+NcOjrtlS1g1XVxYBD5bzNxn7BgIg3nqNGiHYti/uIIG/AdwzHCG964Yqlww2jZ1UoyxNSb6ms1gKM8Rwx/gDO46pM0l750hwAjR25yDSW+w5xyW0YC+WKyHAoweSY1wsfzqchwJ9bP8qk5cwPrqGgiXsKU5N9SKfqJM4TKDE2DCDAE1NEWwglqnZTuQNjloCdl6KmctdSAHvF6o/t8sIcpIWs0zfhBoRAj3yZh/W7gQbXstyT1NGAswIMl1Rf9SspIm0noOUOObDMLkUhJWvxA/7zMoe3DaXgTAiSh1Xdm0FxdhmRkZFvGm74s9mGpyUvH6ePjwRNTM4CdfvI="
+
 language: java
 
 jdk:
@@ -22,6 +26,7 @@ cache:
     - client/node_modules
 
 before_install:
+  - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-  
   - echo "run.environment(\"DB_DRIVER\", \"sqlserver\")" > localSettings.gradle
   - echo "run.environment(\"ANET_SA_PASSWORD\", \"SA-P@ssw0rd\")" >> localSettings.gradle
   - echo "run.environment(\"ANET_DB_SERVER\", \"localhost\")"  >> localSettings.gradle
@@ -37,9 +42,17 @@ install:
 
 script:
   - docker exec -ti -e "DB_NAME=testAnet" -e "DB_USER=anetUser" -e "DB_USER_PASSWORD=Test-P@ssw0rd" anet-mssql-server /opt/waitTillServiceStarted.sh
-  - ./gradlew dbMigrate
-  - docker exec -ti anet-mssql-server /opt/mssql-tools/bin/sqlcmd -S localhost -U anetUser -P 'Test-P@ssw0rd' -d testAnet -i /hostdata/insertBaseData.sql
+  - ./gradlew dbMigrate dockerLoadDB
   - ./gradlew check
 
 after_script:
   - docker logs anet-mssql-server
+
+addons:
+  coverity_scan:
+    project:
+      name: "NCI-Agency/anet"
+    notification_email: vassil.iordanov@gmail.com
+    build_command_prepend: "./gradlew clean"
+    build_command:   "./gradlew build -x test"
+    branch_pattern: candidate
