@@ -800,17 +800,17 @@ public class ReportResource implements IGraphQLResource {
 		@Override
 		public int compare(final RollupGraph o1, final RollupGraph o2) {
 
-			if (pinnedOrgNames.contains(o1.getOrg().getLongName())) {
-				if (pinnedOrgNames.contains(o2.getOrg().getLongName())) {
-					return pinnedOrgNames.indexOf(o1.getOrg().getLongName())
-							- pinnedOrgNames.indexOf(o2.getOrg().getLongName());
+			if (pinnedOrgNames.contains(o1.getOrg().getShortName())) {
+				if (pinnedOrgNames.contains(o2.getOrg().getShortName())) {
+					return pinnedOrgNames.indexOf(o1.getOrg().getShortName())
+							- pinnedOrgNames.indexOf(o2.getOrg().getShortName());
 				} else {
 					return -1;
 				}
-			} else if (pinnedOrgNames.contains(o2.getOrg().getLongName())) {
+			} else if (pinnedOrgNames.contains(o2.getOrg().getShortName())) {
 				return 1;
 			} else {
-				return 0;
+				return o1.getOrg().getShortName().compareTo(o2.getOrg().getShortName());
 			}
 
 		}

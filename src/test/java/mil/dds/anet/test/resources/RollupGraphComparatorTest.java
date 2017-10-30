@@ -20,27 +20,27 @@ public class RollupGraphComparatorTest {
 		List<RollupGraph> rollupGraphs = new ArrayList<>();
 		
 		RollupGraph rollupGraph1 = TestData.createRollupGraph();
-		rollupGraph1.getOrg().setLongName("a name");
+		rollupGraph1.getOrg().setShortName("d name");
 		rollupGraphs.add(rollupGraph1);
 		
 		RollupGraph rollupGraph2 = TestData.createRollupGraph();
-		rollupGraph2.getOrg().setLongName("b name");
+		rollupGraph2.getOrg().setShortName("b name");
 		rollupGraphs.add(rollupGraph2);
 		
 		RollupGraph rollupGraph3 = TestData.createRollupGraph();
-		rollupGraph3.getOrg().setLongName("c name");
+		rollupGraph3.getOrg().setShortName("c name");
 		rollupGraphs.add(rollupGraph3);
 		
 		RollupGraph rollupGraph4 = TestData.createRollupGraph();
-		rollupGraph4.getOrg().setLongName("d name");
+		rollupGraph4.getOrg().setShortName("a name");
 		rollupGraphs.add(rollupGraph4);
 		
 		Collections.sort(rollupGraphs, new RollupGraphComparator(Arrays.asList("c name", "xxx", "yyy", "b name")));
 		
-		Assert.assertEquals("incorrect name", "c name", rollupGraphs.get(0).getOrg().getLongName());
-		Assert.assertEquals("incorrect name", "b name", rollupGraphs.get(1).getOrg().getLongName());
-		Assert.assertEquals("incorrect name", "a name", rollupGraphs.get(2).getOrg().getLongName());
-		Assert.assertEquals("incorrect name", "d name", rollupGraphs.get(3).getOrg().getLongName());
+		Assert.assertEquals("incorrect name", "c name", rollupGraphs.get(0).getOrg().getShortName());
+		Assert.assertEquals("incorrect name", "b name", rollupGraphs.get(1).getOrg().getShortName());
+		Assert.assertEquals("incorrect name", "a name", rollupGraphs.get(2).getOrg().getShortName());
+		Assert.assertEquals("incorrect name", "d name", rollupGraphs.get(3).getOrg().getShortName());
 		
 	}
 	
@@ -50,22 +50,22 @@ public class RollupGraphComparatorTest {
 		List<RollupGraph> rollupGraphs = new ArrayList<>();
 		
 		RollupGraph rollupGraph1 = TestData.createRollupGraph();
-		rollupGraph1.getOrg().setLongName("a name");
+		rollupGraph1.getOrg().setShortName("a name");
 		rollupGraphs.add(rollupGraph1);
 		
 		RollupGraph rollupGraph2 = TestData.createRollupGraph();
-		rollupGraph2.getOrg().setLongName("b name");
+		rollupGraph2.getOrg().setShortName("c name");
 		rollupGraphs.add(rollupGraph2);
 		
 		RollupGraph rollupGraph3 = TestData.createRollupGraph();
-		rollupGraph3.getOrg().setLongName("c name");
+		rollupGraph3.getOrg().setShortName("b name");
 		rollupGraphs.add(rollupGraph3);
 		
 		Collections.sort(rollupGraphs, new RollupGraphComparator(new ArrayList<>()));
 		
-		Assert.assertEquals("incorrect name", "a name", rollupGraphs.get(0).getOrg().getLongName());
-		Assert.assertEquals("incorrect name", "b name", rollupGraphs.get(1).getOrg().getLongName());
-		Assert.assertEquals("incorrect name", "c name", rollupGraphs.get(2).getOrg().getLongName());
+		Assert.assertEquals("incorrect name", "a name", rollupGraphs.get(0).getOrg().getShortName());
+		Assert.assertEquals("incorrect name", "b name", rollupGraphs.get(1).getOrg().getShortName());
+		Assert.assertEquals("incorrect name", "c name", rollupGraphs.get(2).getOrg().getShortName());
 		
 	}
 }
