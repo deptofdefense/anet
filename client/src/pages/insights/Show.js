@@ -10,6 +10,8 @@ import CalendarButton from 'components/CalendarButton'
 import autobind from 'autobind-decorator'
 import moment from 'moment'
 
+import FilterableAdvisorReportsTable from 'components/AdvisorReports/FilterableAdvisorReportsTable'
+
 
 const insightDetails = {
   'not-approved-reports': {
@@ -94,6 +96,14 @@ export default class InsightsShow extends Page {
               <InsightComponent date={this.state.referenceDate.clone().startOf('day')} />
           </Fieldset>
         }
+
+        <Fieldset id="advisor-reports" data-jumptarget title={
+          <span>
+            Advisor Reports
+          </span>
+          }>
+          <FilterableAdvisorReportsTable />
+        </Fieldset>
       </div>
     )
   }

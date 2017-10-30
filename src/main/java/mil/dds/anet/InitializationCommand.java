@@ -52,7 +52,6 @@ public class InitializationCommand extends ConfiguredCommand<AnetConfiguration> 
 		System.out.println();
 		System.out.println("Detecting state of database...");
 		
-		List<AdminSetting> currSettings = engine.getAdminDao().getAllSettings();
 		List<Person> currPeople = engine.getPersonDao().getAll(0, 100).getList();
 		if (currPeople.size() > 0) { 
 			System.out.println("ERROR: Data detected in database");

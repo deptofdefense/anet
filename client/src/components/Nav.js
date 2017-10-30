@@ -140,7 +140,7 @@ class Nav extends Component {
 						</Link>
 					</NavDropdown>
 				}
-				</BSNav>
+			</BSNav>
 		)
 	}
 }

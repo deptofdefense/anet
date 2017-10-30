@@ -26,7 +26,7 @@ public class PositionSearchQuery extends AbstractSearchQuery {
 	}
 
 	public Boolean getMatchPersonName() {
-		return matchPersonName == null ? false : matchPersonName;
+		return Boolean.TRUE.equals(matchPersonName);
 	}
 	
 	public void setMatchPersonName(Boolean matchPersonName) {

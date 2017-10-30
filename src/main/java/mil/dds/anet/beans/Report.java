@@ -18,6 +18,7 @@ import mil.dds.anet.database.AdminDao.AdminSettingKeys;
 import mil.dds.anet.graphql.GraphQLFetcher;
 import mil.dds.anet.graphql.GraphQLIgnore;
 import mil.dds.anet.utils.DaoUtils;
+import mil.dds.anet.utils.Utils;
 import mil.dds.anet.views.AbstractAnetBean;
 
 public class Report extends AbstractAnetBean {
@@ -131,7 +132,7 @@ public class Report extends AbstractAnetBean {
 	}
 
 	public void setExsum(String exsum) {
-		this.exsum = exsum;
+		this.exsum = Utils.trimStringReturnNull(exsum);
 	}
 
 	public Atmosphere getAtmosphere() {
@@ -147,7 +148,7 @@ public class Report extends AbstractAnetBean {
 	}
 
 	public void setAtmosphereDetails(String atmosphereDetails) {
-		this.atmosphereDetails = atmosphereDetails;
+		this.atmosphereDetails = Utils.trimStringReturnNull(atmosphereDetails);
 	}
 
 	public ReportCancelledReason getCancelledReason() {
@@ -159,7 +160,7 @@ public class Report extends AbstractAnetBean {
 	}
 
 	public void setIntent(String intent) {
-		this.intent = intent;
+		this.intent = Utils.trimStringReturnNull(intent);
 	}
 
 	public void loadAll() {
@@ -242,7 +243,7 @@ public class Report extends AbstractAnetBean {
 	}
 
 	public void setKeyOutcomes(String keyOutcomes) {
-		this.keyOutcomes = keyOutcomes;
+		this.keyOutcomes = Utils.trimStringReturnNull(keyOutcomes);
 	}
 
 	public String getReportText() {
@@ -250,7 +251,7 @@ public class Report extends AbstractAnetBean {
 	}
 
 	public void setReportText(String reportText) {
-		this.reportText = reportText;
+		this.reportText = Utils.trimStringReturnNull(reportText);
 	}
 
 	public String getNextSteps() {
@@ -258,7 +259,7 @@ public class Report extends AbstractAnetBean {
 	}
 
 	public void setNextSteps(String nextSteps) {
-		this.nextSteps = nextSteps;
+		this.nextSteps = Utils.trimStringReturnNull(nextSteps);
 	}
 
 	@GraphQLFetcher("author")
@@ -423,7 +424,7 @@ public class Report extends AbstractAnetBean {
 
 	@Override
 	public boolean equals(Object other) { 
-		if (other == null || other.getClass() != Report.class) { 
+		if (other == null || other.getClass() != this.getClass()) {
 			return false;
 		}
 		Report r = (Report) other;

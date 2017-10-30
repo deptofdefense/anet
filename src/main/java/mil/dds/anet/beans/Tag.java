@@ -2,6 +2,7 @@ package mil.dds.anet.beans;
 
 import java.util.Objects;
 
+import mil.dds.anet.utils.Utils;
 import mil.dds.anet.views.AbstractAnetBean;
 
 public class Tag extends AbstractAnetBean {
@@ -14,7 +15,7 @@ public class Tag extends AbstractAnetBean {
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		this.name = Utils.trimStringReturnNull(name);
 	}
 
 	public String getDescription() {
@@ -22,12 +23,12 @@ public class Tag extends AbstractAnetBean {
 	}
 
 	public void setDescription(String description) {
-		this.description = description;
+		this.description = Utils.trimStringReturnNull(description);
 	}
 
 	@Override
 	public boolean equals(Object o) {
-		if (o == null || o.getClass() != Tag.class) {
+		if (o == null || o.getClass() != this.getClass()) {
 			return false;
 		}
 		Tag t = (Tag) o;
