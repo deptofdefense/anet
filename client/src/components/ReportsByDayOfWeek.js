@@ -38,8 +38,6 @@ export default class ReportsByDayOfWeek extends Component {
   }
 
   get queryParams() {
-    console.log(this.props.startDate)
-    console.log(this.props.endDate)
     return {
       state: ['RELEASED'],
       releasedAtStart: this.props.startDate.valueOf(),
@@ -96,19 +94,8 @@ export default class ReportsByDayOfWeek extends Component {
   }
 
   fetchData() {
-    const chartQueryParams = {}
-    Object.assign(chartQueryParams, this.queryParams)
-    Object.assign(chartQueryParams, {
-      pageSize: 0,  // retrieve all the filtered reports
-    })
     // Query used by the chart
-    let chartQuery = API.query(/* GraphQL */`
-        reportList(f:search, query:$chartQueryParams) {
-          totalCount, list {
-            ${ReportCollection.GQL_REPORT_FIELDS}
-          }
-        }
-      `, {chartQueryParams}, '($chartQueryParams: ReportSearchQuery)')
+    const chartQuery = this.runChartQuery(this.chartQueryParams())
     Promise.all([chartQuery]).then(values => {
       // The server returns values from 1 to 7
       let daysOfWeekInt = [1, 2, 3, 4, 5, 6, 7]
@@ -125,33 +112,58 @@ export default class ReportsByDayOfWeek extends Component {
             r.dayOfWeekInt = daysOfWeekInt[daysOfWeek.indexOf(d)]
             r.dayOfWeekString = d
             r.reportsCount = simplifiedValues.filter(item => item.dayOfWeek === r.dayOfWeekInt).length
-            return r}),
+            return r})
       })
     })
     this.fetchDayOfWeekData()
   }
 
   fetchDayOfWeekData() {
-    const reportsQueryParams = {}
-    Object.assign(reportsQueryParams, this.queryParams)
-    Object.assign(reportsQueryParams, {pageNum: this.state.reportsPageNum})
-    if (this.state.focusedDayOfWeek) {
-      Object.assign(reportsQueryParams, {engagementDayOfWeek: this.state.focusedDayOfWeek.dayOfWeekInt})
-    }
     // Query used by the reports collection
-    let reportsQuery = API.query(/* GraphQL */`
-        reportList(f:search, query:$reportsQueryParams) {
-          pageNum, pageSize, totalCount, list {
-            ${ReportCollection.GQL_REPORT_FIELDS}
-          }
-        }
-      `, {reportsQueryParams}, '($reportsQueryParams: ReportSearchQuery)')
+    const reportsQuery = this.runReportsQuery(this.reportsQueryParams())
     Promise.all([reportsQuery]).then(values => {
       this.setState({
         updateChart: false,  // only update the report list
         reports: values[0].reportList
       })
     })
+  }
+
+  chartQueryParams = () => {
+    const chartQueryParams = {}
+    Object.assign(chartQueryParams, this.queryParams)
+    Object.assign(chartQueryParams, {
+      pageSize: 0,  // retrieve all the filtered reports
+    })
+    return chartQueryParams
+  }
+
+  runChartQuery = (chartQueryParams) => {
+    return API.query(/* GraphQL */`
+      reportList(f:search, query:$chartQueryParams) {
+        totalCount, list {
+          ${ReportCollection.GQL_REPORT_FIELDS}
+        }
+      }`, {chartQueryParams}, '($chartQueryParams: ReportSearchQuery)')
+  }
+
+  reportsQueryParams = () => {
+    const reportsQueryParams = {}
+    Object.assign(reportsQueryParams, this.queryParams)
+    Object.assign(reportsQueryParams, {pageNum: this.state.reportsPageNum})
+    if (this.state.focusedDayOfWeek) {
+      Object.assign(reportsQueryParams, {engagementDayOfWeek: this.state.focusedDayOfWeek.dayOfWeekInt})
+    }
+    return reportsQueryParams
+  }
+
+  runReportsQuery = (reportsQueryParams) => {
+    return API.query(/* GraphQL */`
+      reportList(f:search, query:$reportsQueryParams) {
+        pageNum, pageSize, totalCount, list {
+          ${ReportCollection.GQL_REPORT_FIELDS}
+        }
+      }`, {reportsQueryParams}, '($reportsQueryParams: ReportSearchQuery)')
   }
 
   @autobind
@@ -174,12 +186,6 @@ export default class ReportsByDayOfWeek extends Component {
       // highlight the bar corresponding to the selected day of the week
       d3.select('#' + chartByDayOfWeekId + ' #bar_' + item.dayOfWeekInt).attr('fill', colors.selectedBarColor)
     }
-  }
-
-  componentWillReceiveProps(nextProps, nextContext) {
-    // if (nextProps.date.valueOf() !== this.props.date.valueOf()) {
-    //   this.setState({date: nextProps.date, focusedDayOfWeek: ''})  // reset focus when changing the date
-    // }
   }
 
   componentDidMount() {

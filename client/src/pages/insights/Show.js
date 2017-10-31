@@ -117,27 +117,19 @@ export default class InsightsShow extends Page {
 
   updateDateRange = (value) => {
     if (value.start !== null) {
-      this.updateStartDate(moment(value.start))
+      this.updateDate("startDate", moment(value.start))
     }
 
     if (value.end !== null) {
-      this.updateEndDate(moment(value.end))
+      this.updateDate("endDate", moment(value.start))
     }
   }
 
-  updateStartDate = (newDate) => {
-    const { startDate } = this.state
-    const startDateChanged = newDate.valueOf() !== startDate.valueOf()
-    if (startDateChanged) {
-      this.setState({ startDate: newDate })
-    }
-  }
-
-  updateEndDate = (newDate) => {
-    const { endDate } = this.state
-    const endDateChanged = newDate.valueOf() !== endDate.valueOf()
-    if (endDateChanged) {
-      this.setState({ endDate: newDate })
+  updateDate = (key, newDate) => {
+    const oldDate = this.state[key]
+    const dateChaged = newDate.valueOf() !== oldDate.valueOf()
+    if (dateChaged) {
+      this.setState( { [key]: newDate } )
     }
   }
 
