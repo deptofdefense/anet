@@ -18,24 +18,24 @@ const insightDetails = {
     component: NotApprovedReports,
     title: 'Not Approved Reports',
     help: 'Number of reports not approved since',
-    showCalander: true
+    showCalendar: true
   },
   'cancelled-reports': {
     component: CancelledReports,
     title: 'Cancelled Reports',
     help: 'Number of reports cancelled since',
-    showCalander: true
+    showCalendar: true
   },
   'reports-by-poam': {
     component: ReportsByPoam,
     title: 'Reports by PoAM',
     help: 'Number of reports by PoAM',
-    showCalander: true
+    showCalendar: true
   },
   'advisor-reports': {
     component: FilterableAdvisorReportsTable,
     title: 'Advisor Reports',
-    showCalander: false
+    showCalendar: false
   },
 }
 const calendarButtonCss = {
@@ -90,7 +90,7 @@ export default class InsightsShow extends Page {
     let insightPath = '/insights/' + this.state.insight
 
     const help = insightDetails[this.state.insight].help
-    const showCalander = insightDetails[this.state.insight].showCalander
+    const showCalendar = insightDetails[this.state.insight].showCalendar
     return (
       <div>
         <Breadcrumbs items={[['Insights ' + insightTitle, insightPath]]} />
@@ -100,7 +100,7 @@ export default class InsightsShow extends Page {
           <Fieldset id={this.state.insight} data-jumptarget title={
             <span>
               {insightTitle} - {this.referenceDateLongStr}
-            {showCalander &&
+            {showCalendar &&
               <CalendarButton onChange={this.changeReferenceDate} value={this.state.referenceDate.toISOString()} style={calendarButtonCss} />
             }
             </span>
