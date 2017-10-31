@@ -17,17 +17,25 @@ const insightDetails = {
   'not-approved-reports': {
     component: NotApprovedReports,
     title: 'Not Approved Reports',
-    help: 'Number of reports not approved since'
+    help: 'Number of reports not approved since',
+    showCalendar: true
   },
   'cancelled-reports': {
     component: CancelledReports,
     title: 'Cancelled Reports',
-    help: 'Number of reports cancelled since'
+    help: 'Number of reports cancelled since',
+    showCalendar: true
   },
   'reports-by-poam': {
     component: ReportsByPoam,
     title: 'Reports by PoAM',
-    help: 'Number of reports by PoAM'
+    help: 'Number of reports by PoAM',
+    showCalendar: true
+  },
+  'advisor-reports': {
+    component: FilterableAdvisorReportsTable,
+    title: 'Advisor Reports',
+    showCalendar: false
   },
 }
 const calendarButtonCss = {
@@ -80,6 +88,9 @@ export default class InsightsShow extends Page {
     let InsightComponent = insightDetails[this.state.insight].component
     let insightTitle = insightDetails[this.state.insight].title
     let insightPath = '/insights/' + this.state.insight
+
+    const help = insightDetails[this.state.insight].help
+    const showCalendar = insightDetails[this.state.insight].showCalendar
     return (
       <div>
         <Breadcrumbs items={[['Insights ' + insightTitle, insightPath]]} />
@@ -89,21 +100,15 @@ export default class InsightsShow extends Page {
           <Fieldset id={this.state.insight} data-jumptarget title={
             <span>
               {insightTitle} - {this.referenceDateLongStr}
+            {showCalendar &&
               <CalendarButton onChange={this.changeReferenceDate} value={this.state.referenceDate.toISOString()} style={calendarButtonCss} />
+            }
             </span>
             }>
-              <p className="help-text">{insightDetails[this.state.insight].help} {this.referenceDateLongStr}</p>
+              {help && <p className="help-text">{help} {this.referenceDateLongStr}</p> }
               <InsightComponent date={this.state.referenceDate.clone().startOf('day')} />
           </Fieldset>
         }
-
-        <Fieldset id="advisor-reports" data-jumptarget title={
-          <span>
-            Advisor Reports
-          </span>
-          }>
-          <FilterableAdvisorReportsTable />
-        </Fieldset>
       </div>
     )
   }
