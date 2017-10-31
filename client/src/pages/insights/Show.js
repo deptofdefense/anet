@@ -4,6 +4,7 @@ import NotApprovedReports from 'components/NotApprovedReports'
 import CancelledReports from 'components/CancelledReports'
 import ReportsByPoam from 'components/ReportsByPoam'
 import ReportsByDayOfWeek from 'components/ReportsByDayOfWeek'
+import FutureEngagementsByLocation from 'components/FutureEngagementsByLocation'
 import Breadcrumbs from 'components/Breadcrumbs'
 import Messages from 'components/Messages'
 import Fieldset from 'components/Fieldset'
@@ -12,7 +13,6 @@ import autobind from 'autobind-decorator'
 import moment from 'moment'
 
 import FilterableAdvisorReportsTable from 'components/AdvisorReports/FilterableAdvisorReportsTable'
-<<<<<<< HEAD
 import DateRangeSearch from 'components/advancedSearch/DateRangeSearch'
 
 const insightDetails = {
@@ -50,11 +50,13 @@ const insightDetails = {
     dateRange: false,
     showCalendar: false
   },
+  'future-engagements-by-location': {
+    component: FutureEngagementsByLocation,
+    title: 'Future Engagements by Location',
+    help: 'Number of future engagements by location'
+  },
 }
-=======
-import FutureEngagementInsights from 'components/FutureEngagementInsights'
 
->>>>>>> 5e054ab... NCI-Agency/anet#161 Add empty Future Engagement Insights component
 
 const calendarButtonCss = {
   marginLeft: '20px',
