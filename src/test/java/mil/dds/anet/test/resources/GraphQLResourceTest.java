@@ -39,7 +39,7 @@ public class GraphQLResourceTest extends AbstractResourceTest {
 		final Person jack = getJackJackson();
 		final Person steve = getSteveSteveson();
 		File testDir = new File("src/test/resources/graphQLTests/");
-		testDir.getAbsolutePath();
+		assertThat(testDir.getAbsolutePath()).isNotNull();
 		assertThat(testDir.isDirectory()).isTrue();
 		
 		Map<String,Object> variables = new HashMap<String,Object>();
@@ -53,10 +53,13 @@ public class GraphQLResourceTest extends AbstractResourceTest {
 		variables.put("maxResults", 6);
 		logger.info("Using variables {}", variables);
 		
-		for (File f : testDir.listFiles()) { 
-			if (f.isFile()) { 
+		final File[] fileList = testDir.listFiles();
+		assertThat(fileList).isNotNull();
+		for (File f : fileList) {
+			if (f.isFile()) {
 				try { 
-					String raw = IOUtils.toString(new FileInputStream(f));
+					final FileInputStream  input = new FileInputStream(f);
+					String raw = IOUtils.toString(input);
 					Map<String,Object> query = new HashMap<String,Object>();
 					for (Map.Entry<String, Object> entry : variables.entrySet()) { 
 						raw = raw.replace("${" + entry.getKey() + "}", entry.getValue().toString());
@@ -88,6 +91,7 @@ public class GraphQLResourceTest extends AbstractResourceTest {
 					String xmlHeader = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>";
 					assertThat(respGetXml.substring(0, xmlHeader.length())).isEqualTo(xmlHeader);
 					assertThat(respGetXml.substring(len - 2 , len)).isEqualTo(">\n");
+					input.close();
 				} catch (IOException e) { 
 					Assertions.fail("Unable to read file ", e);
 				}

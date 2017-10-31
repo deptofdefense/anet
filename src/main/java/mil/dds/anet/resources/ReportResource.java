@@ -4,6 +4,7 @@ import java.io.StringWriter;
 import java.lang.invoke.MethodHandles;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -638,14 +639,17 @@ public class ReportResource implements IGraphQLResource {
 			@QueryParam("principalOrganizationId") Integer principalOrgId) {
 		DateTime startDate = new DateTime(start);
 		DateTime endDate = new DateTime(end);
+		@SuppressWarnings("unchecked")
+		final List<String> nonReportingOrgsShortNames = (List<String>) config.getDictionary().get("non_reporting_ORGs");
+		final Map<Integer, Organization> nonReportingOrgs = getOrgsByShortNames(nonReportingOrgsShortNames);
 		if (principalOrgId != null) { 
-			return dao.getDailyRollupGraph(startDate, endDate, principalOrgId, OrganizationType.PRINCIPAL_ORG);
+			return dao.getDailyRollupGraph(startDate, endDate, principalOrgId, OrganizationType.PRINCIPAL_ORG, nonReportingOrgs);
 		} else if (advisorOrgId != null) { 
-			return dao.getDailyRollupGraph(startDate, endDate, advisorOrgId, OrganizationType.ADVISOR_ORG);
+			return dao.getDailyRollupGraph(startDate, endDate, advisorOrgId, OrganizationType.ADVISOR_ORG, nonReportingOrgs);
 		}
 		
 		if (orgType == null) { orgType = OrganizationType.ADVISOR_ORG; } 
-		return dao.getDailyRollupGraph(startDate, endDate, orgType);
+		return dao.getDailyRollupGraph(startDate, endDate, orgType, nonReportingOrgs);
 	}
 
 	@POST
@@ -717,7 +721,6 @@ public class ReportResource implements IGraphQLResource {
 	}
 
 	/**
-	 *
 	 * Gets aggregated data per organization for engagements attended and reports submitted
 	 * for each advisor in a given organization.
 	 * @param weeksAgo Weeks ago integer for the amount of weeks before the current week
@@ -736,12 +739,20 @@ public class ReportResource implements IGraphQLResource {
 		DateTime startDate = weekStart.minusWeeks(weeksAgo);
 		final List<Map<String, Object>> list = dao.getAdvisorReportInsights(startDate, now, orgId);
 
-		if(orgId < 0){
+		if (orgId < 0) {
 			final Set<String> tlf = Stream.of("organizationshortname").collect(Collectors.toSet());
 			return Utils.resultGrouper(list, "stats", "organizationid", tlf);
 		} else {
 			final Set<String> tlf = Stream.of("name").collect(Collectors.toSet());
 			return Utils.resultGrouper(list, "stats", "personId", tlf);
 		}
+	}
+
+	private Map<Integer, Organization> getOrgsByShortNames(List<String> orgShortNames) {
+		final Map<Integer, Organization> result = new HashMap<>();
+		for (final Organization organization : engine.getOrganizationDao().getOrgsByShortNames(orgShortNames)) {
+			result.put(organization.getId(), organization);
+		}
+		return result;
 	}
 }

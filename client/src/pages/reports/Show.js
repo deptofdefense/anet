@@ -95,11 +95,15 @@ export default class ReportShow extends Page {
 		})
 	}
 
-	render() {
-		let {report} = this.state
-		let {currentUser} = this.context
+	renderNoPositionAssignedText() {
+		return <p>Notice: This report cannot be submitted because you do not have an assigned position.<br /> -- Please contact your administrator --</p>
+	}
 
-		let canApprove = report.isPending() && currentUser.position &&
+	render() {
+		const {report} = this.state
+		const {currentUser} = this.context
+
+		const canApprove = report.isPending() && currentUser.position &&
 			report.approvalStep.approvers.find(member => Position.isEqual(member, currentUser.position))
 
 		if (canApprove && this.props.location.query.autoApprove) {
@@ -113,8 +117,9 @@ export default class ReportShow extends Page {
 		//Approvers can edit.
 		canEdit = canEdit || canApprove
 
-		//Only the author can submit when report is in Draft or rejected
-		let canSubmit = (report.isDraft() || report.isRejected()) && Person.isEqual(currentUser, report.author)
+		//Only the author can submit when report is in Draft or rejected AND author has a position
+		const hasAssignedPosition = currentUser.hasAssignedPosition()
+		const canSubmit = (report.isDraft() || report.isRejected()) && Person.isEqual(currentUser, report.author) && hasAssignedPosition
 
 		//Anbody can email a report as long as it's not in draft.
 		let canEmail = !report.isDraft()
@@ -140,6 +145,9 @@ export default class ReportShow extends Page {
 					<Fieldset style={{textAlign: 'center'}}>
 						<h4 className="text-danger">This is a DRAFT report and hasn't been submitted.</h4>
 						<p>You can review the draft below to make sure all the details are correct.</p>
+						{!hasAssignedPosition &&
+							this.renderNoPositionAssignedText()
+						}
 						<div style={{textAlign: 'left'}}>
 							{errors && errors.length > 0 &&
 								this.renderValidationErrors(errors)

@@ -82,6 +82,10 @@ export default class Person extends Model {
 		)
 	}
 
+	hasAssignedPosition() {
+		return  typeof this.position !== 'undefined' && this.position !== {}
+	}
+
 	//Checks if this user is a valid super user for a particular organization
 	//Must be either
 	// - An Administrator
