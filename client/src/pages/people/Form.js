@@ -17,9 +17,6 @@ import {Person} from 'models'
 
 import CALENDAR_ICON from 'resources/calendar.png'
 
-const ADVISOR = 'ADVISOR'
-const PRINCIPAL = 'PRINCIPAL'
-
 export default class PersonForm extends ValidatableFormWrapper {
 	static propTypes = {
 		person: PropTypes.object.isRequired,
@@ -43,9 +40,9 @@ export default class PersonForm extends ValidatableFormWrapper {
 
 	countries = person => {
 		switch(person.role) {
-			case ADVISOR:
+			case Person.ROLE.ADVISOR:
 				return this.lookupCountries('countries')
-			case PRINCIPAL:
+			case Person.ROLE.PRINCIPAL:
 				return this.lookupCountries('principal_countries')
 			default:
 				return []
@@ -64,7 +61,7 @@ export default class PersonForm extends ValidatableFormWrapper {
 
 	render() {
 		let {person, edit} = this.props
-		const isAdvisor = person.role === 'ADVISOR'
+		const isAdvisor = person.isAdvisor()
 		const legendText = this.props.legendText || (edit ? `Edit Person ${person.name}` : 'Create a new Person')
 
 		const {ValidatableForm, RequiredField} = this
@@ -93,8 +90,8 @@ export default class PersonForm extends ValidatableFormWrapper {
 					:
 					<Form.Field id="role">
 						<ButtonToggleGroup>
-							<Button id="roleAdvisorButton" disabled={!isAdmin} value="ADVISOR">{dict.lookup('ADVISOR_PERSON_TITLE')}</Button>
-							<Button id="rolePrincipalButton" value="PRINCIPAL">{dict.lookup('PRINCIPAL_PERSON_TITLE')}</Button>
+							<Button id="roleAdvisorButton" disabled={!isAdmin} value={Person.ROLE.ADVISOR}>{dict.lookup('ADVISOR_PERSON_TITLE')}</Button>
+							<Button id="rolePrincipalButton" value={Person.ROLE.PRINCIPAL}>{dict.lookup('PRINCIPAL_PERSON_TITLE')}</Button>
 						</ButtonToggleGroup>
 					</Form.Field>
 				}
@@ -121,7 +118,7 @@ export default class PersonForm extends ValidatableFormWrapper {
 						</Form.Field>
 				}
 
-				{!edit && person.role === 'ADVISOR' &&
+				{!edit && isAdvisor &&
 					<Alert bsStyle="warning">
 						Creating a {dict.lookup('ADVISOR_PERSON_TITLE')} in ANET could result in duplicate accounts if this person logs in later. If you notice duplicate accounts, please contact an ANET administrator.
 					</Alert>
