@@ -37,7 +37,7 @@ public class Report extends AbstractAnetBean {
 	DateTime releasedAt;
 	
 	DateTime engagementDate;
-	Integer engagementDayOfWeek;
+	private Integer engagementDayOfWeek;
 	Location location;
 	String intent;
 	String exsum; //can be null to autogenerate

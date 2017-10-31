@@ -15,8 +15,8 @@ public class ReportSearchQuery extends AbstractSearchQuery {
 	Integer authorId;
 	DateTime engagementDateStart;
 	DateTime engagementDateEnd;
-	Integer engagementDayOfWeek;
-	Boolean includeEngagementDayOfWeek;
+	private Integer engagementDayOfWeek;
+	private Boolean includeEngagementDayOfWeek;
 	DateTime createdAtStart;
 	DateTime createdAtEnd;
 	DateTime updatedAtStart;
@@ -85,7 +85,7 @@ public class ReportSearchQuery extends AbstractSearchQuery {
 	}
 
 	public boolean getIncludeEngagementDayOfWeek() {
-		return (includeEngagementDayOfWeek == null) ? false : includeEngagementDayOfWeek;
+		return Boolean.TRUE.equals(includeEngagementDayOfWeek);
 	}
 
 	public void setIncludeEngagementDayOfWeek(Boolean includeEngagementDayOfWeek) {
@@ -165,7 +165,7 @@ public class ReportSearchQuery extends AbstractSearchQuery {
 	}
 
 	public boolean getIncludeAdvisorOrgChildren() {
-		return (includeAdvisorOrgChildren == null) ? false : includeAdvisorOrgChildren;
+		return Boolean.TRUE.equals(includeAdvisorOrgChildren);
 	}
 
 	public void setIncludeAdvisorOrgChildren(Boolean includeAdvisorOrgChildren) {
@@ -181,7 +181,7 @@ public class ReportSearchQuery extends AbstractSearchQuery {
 	}
 
 	public boolean getIncludePrincipalOrgChildren() {
-		return (includePrincipalOrgChildren == null) ? false : includePrincipalOrgChildren;
+		return Boolean.TRUE.equals(includePrincipalOrgChildren);
 	}
 
 	public void setIncludePrincipalOrgChildren(Boolean includePrincipalOrgChildren) {
@@ -197,10 +197,10 @@ public class ReportSearchQuery extends AbstractSearchQuery {
 	}
 
 	public boolean getIncludeOrgChildren() {
-		return (includeOrgChildren == null) ? false : includeOrgChildren;
+		return Boolean.TRUE.equals(includeOrgChildren);
 	}
 
-	public void setIncludeOrgChildren(boolean includeOrgChildren) {
+	public void setIncludeOrgChildren(Boolean includeOrgChildren) {
 		this.includeOrgChildren = includeOrgChildren;
 	}
 
