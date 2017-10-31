@@ -121,7 +121,7 @@ export default class InsightsShow extends Page {
     }
 
     if (value.end !== null) {
-      this.updateDate("endDate", moment(value.start))
+      this.updateDate("endDate", moment(value.end))
     }
   }
 
