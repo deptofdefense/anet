@@ -108,7 +108,6 @@ export default class InsightsShow extends Page {
   }
 
   updateRelativeDateTime = (value) => {
-    console.log('update relative')
     const startDate = moment(parseInt(value.relative, 10) + this.currentDateTime.valueOf())
     this.setState({
       startDate: startDate,
