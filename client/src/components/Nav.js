@@ -138,6 +138,9 @@ class Nav extends Component {
 						<Link to="/insights/reports-by-poam">
 							<MenuItem>Reports by PoAM</MenuItem>
 						</Link>
+						<Link to="/insights/advisor-reports">
+							<MenuItem>Advisor reports</MenuItem>
+						</Link>
 					</NavDropdown>
 				}
 			</BSNav>
