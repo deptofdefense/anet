@@ -19,25 +19,35 @@ const insightDetails = {
     component: NotApprovedReports,
     title: 'Not Approved Reports',
     help: 'Number of reports not approved since',
-    dateRange: false
+    dateRange: false,
+    showCalendar: true
   },
   'cancelled-reports': {
     component: CancelledReports,
     title: 'Cancelled Reports',
     help: 'Number of reports cancelled since',
-    dateRange: false
+    dateRange: false,
+    showCalendar: true
   },
   'reports-by-poam': {
     component: ReportsByPoam,
     title: 'Reports by PoAM',
     help: 'Number of reports by PoAM',
-    dateRange: false
+    dateRange: false,
+    showCalendar: true
   },
   'reports-by-day-of-week': {
     component: ReportsByDayOfWeek,
     title: 'Reports by day of the week',
     help: 'Number of reports by day of the week',
-    dateRange: true
+    dateRange: true,
+    showCalendar: false
+  },
+  'advisor-reports': {
+    component: FilterableAdvisorReportsTable,
+    title: 'Advisor Reports',
+    dateRange: false,
+    showCalendar: false
   },
 }
 
@@ -78,9 +88,10 @@ export default class InsightsShow extends Page {
   }
 
   getFilters = () => {
-    const calenderFilter = <CalendarButton onChange={this.changeReferenceDate} value={this.state.referenceDate.toISOString()} style={calendarButtonCss} />
-    const dateRangeFilter = <DateRangeSearch queryKey="engagementDate" value="" onChange={this.handleChangeDateRange} style={dateRangeFilterCss} />
-    return (insightDetails[this.state.insight].dateRange) ? dateRangeFilter : calenderFilter
+    const insight = insightDetails[this.state.insight]
+    const calenderFilter = (insight.showCalendar) ? <CalendarButton onChange={this.changeReferenceDate} value={this.state.referenceDate.toISOString()} style={calendarButtonCss} /> : null
+    const dateRangeFilter = (insight.dateRange) ? <DateRangeSearch queryKey="engagementDate" value="" onChange={this.handleChangeDateRange} style={dateRangeFilterCss} /> : null
+    return <span>{dateRangeFilter}{calenderFilter}</span>
   }
 
   componentWillReceiveProps(nextProps) {
@@ -145,6 +156,8 @@ export default class InsightsShow extends Page {
     let InsightComponent = insightDetails[this.state.insight].component
     let insightTitle = insightDetails[this.state.insight].title
     let insightPath = '/insights/' + this.state.insight
+
+    const help = insightDetails[this.state.insight].help
     return (
       <div>
         <Breadcrumbs items={[['Insights ' + insightTitle, insightPath]]} />
@@ -157,21 +170,13 @@ export default class InsightsShow extends Page {
               {this.getFilters()}
             </span>
             }>
-              <p className="help-text">{insightDetails[this.state.insight].help} {this.referenceDateLongStr}</p>
+              <p className="help-text">{help} {this.referenceDateLongStr}</p>
               <InsightComponent
                 date={this.state.referenceDate.clone().startOf('day')}
                 startDate={this.state.startDate}
                 endDate={this.state.endDate.clone().startOf('day')} />
           </Fieldset>
         }
-
-        <Fieldset id="advisor-reports" data-jumptarget title={
-          <span>
-            Advisor Reports
-          </span>
-          }>
-          <FilterableAdvisorReportsTable />
-        </Fieldset>
       </div>
     )
   }
