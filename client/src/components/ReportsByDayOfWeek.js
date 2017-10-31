@@ -1,4 +1,5 @@
 import React, {Component} from 'react'
+import PropTypes from 'prop-types'
 import API from 'api'
 import autobind from 'autobind-decorator'
 import {Button} from 'react-bootstrap'
@@ -22,14 +23,14 @@ const chartByDayOfWeekId = 'reports_by_day_of_week'
  */
 export default class ReportsByDayOfWeek extends Component {
   static propTypes = {
-    date: React.PropTypes.object,
+    startDate: PropTypes.object,
+    endDate: PropTypes.object
   }
 
   constructor(props) {
     super(props)
 
     this.state = {
-      date: props.date,
       graphDataByDayOfWeek: [],
       focusedDayOfWeek: '',
       updateChart: true  // whether the chart needs to be updated
@@ -37,9 +38,12 @@ export default class ReportsByDayOfWeek extends Component {
   }
 
   get queryParams() {
+    console.log(this.props.startDate)
+    console.log(this.props.endDate)
     return {
       state: ['RELEASED'],
-      releasedAtStart: this.state.date.valueOf(),
+      releasedAtStart: this.props.startDate.valueOf(),
+      releasedAtEnd: this.props.endDate.valueOf(),
       includeEngagementDayOfWeek: 1,
     }
   }
@@ -173,9 +177,9 @@ export default class ReportsByDayOfWeek extends Component {
   }
 
   componentWillReceiveProps(nextProps, nextContext) {
-    if (nextProps.date.valueOf() !== this.props.date.valueOf()) {
-      this.setState({date: nextProps.date, focusedDayOfWeek: ''})  // reset focus when changing the date
-    }
+    // if (nextProps.date.valueOf() !== this.props.date.valueOf()) {
+    //   this.setState({date: nextProps.date, focusedDayOfWeek: ''})  // reset focus when changing the date
+    // }
   }
 
   componentDidMount() {
@@ -183,7 +187,10 @@ export default class ReportsByDayOfWeek extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.date.valueOf() !== this.state.date.valueOf()) {
+    const startDateChanged = prevProps.startDate.valueOf() !== this.props.startDate.valueOf()
+    const endDateChanged = prevProps.endDate.valueOf() !== this.props.endDate.valueOf()
+
+    if (startDateChanged || endDateChanged) {
       this.fetchData()
     }
   }
