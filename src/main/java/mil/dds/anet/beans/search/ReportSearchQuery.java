@@ -42,6 +42,8 @@ public class ReportSearchQuery extends AbstractSearchQuery {
 	List<ReportState> state;
 	ReportCancelledReason cancelledReason;
 	private Integer tagId;
+	private Integer authorPositionId;
+	private Integer attendeePositionId;
 
 	ReportSearchSortBy sortBy;
 	SortOrder sortOrder;
@@ -250,6 +252,22 @@ public class ReportSearchQuery extends AbstractSearchQuery {
 
 	public void setTagId(Integer tagId) {
 		this.tagId = tagId;
+	}
+
+	public Integer getAuthorPositionId() {
+		return authorPositionId;
+	}
+
+	public void setAuthorPositionId(Integer authorPositionId) {
+		this.authorPositionId = authorPositionId;
+	}
+
+	public Integer getAttendeePositionId() {
+		return attendeePositionId;
+	}
+
+	public void setAttendeePositionId(Integer attendeePositionId) {
+		this.attendeePositionId = attendeePositionId;
 	}
 
 	public ReportSearchSortBy getSortBy() {

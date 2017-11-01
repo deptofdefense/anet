@@ -209,6 +209,33 @@ public class MssqlReportSearcher implements IReportSearcher {
 			args.put("tagId", query.getTagId());
 		}
 
+		if (query.getAuthorPositionId() != null) {
+			// Search for reports authored by people serving in that position at the report's creation date
+			whereClauses.add("reports.id IN ( SELECT r.id FROM reports r "
+							+ "JOIN peoplePositions pp ON pp.personId = r.authorId "
+							+ "  AND pp.createdAt <= r.createdAt "
+							+ "LEFT JOIN peoplePositions maxPp ON maxPp.positionId = pp.positionId "
+							+ "  AND maxPp.createdAt > pp.createdAt "
+							+ "  AND maxPp.createdAt <= r.createdAt "
+							+ "WHERE pp.positionId = :authorPositionId "
+							+ "  AND maxPp.createdAt IS NULL )");
+			args.put("authorPositionId", query.getAuthorPositionId());
+		}
+
+		if (query.getAttendeePositionId() != null) {
+			// Search for reports attended by people serving in that position at the engagement date
+			whereClauses.add("reports.id IN ( SELECT r.id FROM reports r "
+							+ "JOIN reportPeople rp ON rp.reportId = r.id "
+							+ "JOIN peoplePositions pp ON pp.personId = rp.personId "
+							+ "  AND pp.createdAt <= r.engagementDate "
+							+ "LEFT JOIN peoplePositions maxPp ON maxPp.positionId = pp.positionId "
+							+ "  AND maxPp.createdAt > pp.createdAt "
+							+ "  AND maxPp.createdAt <= r.engagementDate "
+							+ "WHERE pp.positionId = :attendeePositionId "
+							+ "  AND maxPp.createdAt IS NULL )");
+			args.put("attendeePositionId", query.getAttendeePositionId());
+		}
+
 		if (whereClauses.size() == 0) { return results; }
 		
 		//Apply a filter to restrict access to other's draft reports
