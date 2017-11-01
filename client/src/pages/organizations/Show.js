@@ -17,6 +17,7 @@ import OrganizationPoams from './Poams'
 import OrganizationLaydown from './Laydown'
 import OrganizationApprovals from './Approvals'
 
+import dict from 'dictionary'
 import {Organization, Position} from 'models'
 import GQL from 'graphqlapi'
 
@@ -101,9 +102,9 @@ export default class OrganizationShow extends Page {
 	fetchData(props) {
 		let orgPart = new GQL.Part(/* GraphQL */`
 			organization(id:${props.params.id}) {
-				id, shortName, longName, type
-				parentOrg { id, shortName, longName }
-				childrenOrgs { id, shortName, longName },
+				id, shortName, longName, identificationCode, type
+				parentOrg { id, shortName, longName, identificationCode }
+				childrenOrgs { id, shortName, longName, identificationCode },
 				positions {
 					id, name, code, status, type,
 					person { id, name, status, rank }
@@ -160,6 +161,11 @@ export default class OrganizationShow extends Page {
 		let isAdmin = currentUser && currentUser.isAdmin()
 
 		let superUsers = org.positions.filter(pos => pos.status !== 'INACTIVE' && (!pos.person || pos.person.status !== 'INACTIVE') && (pos.type === Position.TYPE.SUPER_USER || pos.type === Position.TYPE.ADMINISTRATOR))
+		let [labelLongName, labelIdentificationCode] = (org.type === "PRINCIPAL_ORG")
+			? [dict.lookup('PRINCIPAL_ORG_LABEL_LONGNAME'),
+			   dict.lookup('PRINCIPAL_ORG_LABEL_IDENTIFICATIONCODE')]
+			: [dict.lookup('ADVISOR_ORG_LABEL_LONGNAME'),
+			   dict.lookup('ADVISOR_ORG_LABEL_IDENTIFICATIONCODE')]
 
 		return (
 			<div>
@@ -191,11 +197,13 @@ export default class OrganizationShow extends Page {
 							{org.humanNameOfType()}
 						</Form.Field>
 
-						<Form.Field id="longName" label={org.type === "PRINCIPAL_ORG" ? "Official Organization Name" : "Description"}/>
+						<Form.Field id="longName" label={labelLongName} />
+
+						<Form.Field id="identificationCode" label={labelIdentificationCode} />
 
 						{org.parentOrg && org.parentOrg.id &&
 							<Form.Field id="parentOrg" label="Parent organization">
-								<LinkTo organization={org.parentOrg} >{org.parentOrg.shortName} {org.parentOrg.longName}</LinkTo>
+								<LinkTo organization={org.parentOrg} >{org.parentOrg.shortName} {org.parentOrg.longName} {org.parentOrg.identificationCode}</LinkTo>
 							</Form.Field>
 						}
 
@@ -218,7 +226,7 @@ export default class OrganizationShow extends Page {
 							<ListGroup>
 								{org.childrenOrgs.map(org =>
 									<ListGroupItem key={org.id} >
-										<LinkTo organization={org} >{org.shortName} {org.longName}</LinkTo>
+										<LinkTo organization={org} >{org.shortName} {org.longName} {org.identificationCode}</LinkTo>
 									</ListGroupItem>
 								)}
 							</ListGroup>
