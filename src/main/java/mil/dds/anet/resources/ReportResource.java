@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -647,6 +648,7 @@ public class ReportResource implements IGraphQLResource {
 	@GET
 	@Timed
 	@Path("/rollupGraph")
+	@SuppressWarnings("unchecked")
 	public List<RollupGraph> getDailyRollupGraph(@QueryParam("startDate") Long start, 
 			@QueryParam("endDate") Long end, 
 			@QueryParam("orgType") OrganizationType orgType, 
@@ -656,21 +658,25 @@ public class ReportResource implements IGraphQLResource {
 		DateTime endDate = new DateTime(end);
 		
 		List<RollupGraph> dailyRollupGraph;
+
+		final List<String> nonReportingOrgsShortNames = (List<String>) config.getDictionary().get("non_reporting_ORGs");
+		final Map<Integer, Organization> nonReportingOrgs = getOrgsByShortNames(nonReportingOrgsShortNames);
 		
 		if (principalOrgId != null) { 
-			dailyRollupGraph = dao.getDailyRollupGraph(startDate, endDate, principalOrgId, OrganizationType.PRINCIPAL_ORG);
+			dailyRollupGraph = dao.getDailyRollupGraph(startDate, endDate, principalOrgId, OrganizationType.PRINCIPAL_ORG, nonReportingOrgs);
 		} else if (advisorOrgId != null) { 
-			dailyRollupGraph = dao.getDailyRollupGraph(startDate, endDate, advisorOrgId, OrganizationType.ADVISOR_ORG);
+			dailyRollupGraph = dao.getDailyRollupGraph(startDate, endDate, advisorOrgId, OrganizationType.ADVISOR_ORG, nonReportingOrgs);
 		} else {
 			if (orgType == null) {
 				orgType = OrganizationType.ADVISOR_ORG;
 			} 
-			dailyRollupGraph = dao.getDailyRollupGraph(startDate, endDate, orgType);	
+			dailyRollupGraph = dao.getDailyRollupGraph(startDate, endDate, orgType, nonReportingOrgs);	
 		}
 		
 		Collections.sort(dailyRollupGraph, rollupGraphComparator);
 		
 		return dailyRollupGraph;
+		
 	}
 
 	@POST
@@ -742,7 +748,6 @@ public class ReportResource implements IGraphQLResource {
 	}
 	
 	/**
-	 *
 	 * Gets aggregated data per organization for engagements attended and reports submitted
 	 * for each advisor in a given organization.
 	 * @param weeksAgo Weeks ago integer for the amount of weeks before the current week
@@ -761,7 +766,7 @@ public class ReportResource implements IGraphQLResource {
 		DateTime startDate = weekStart.minusWeeks(weeksAgo);
 		final List<Map<String, Object>> list = dao.getAdvisorReportInsights(startDate, now, orgId);
 
-		if(orgId < 0){
+		if (orgId < 0) {
 			final Set<String> tlf = Stream.of("organizationshortname").collect(Collectors.toSet());
 			return Utils.resultGrouper(list, "stats", "organizationid", tlf);
 		} else {
@@ -770,6 +775,13 @@ public class ReportResource implements IGraphQLResource {
 		}
 	}
 	
+	private Map<Integer, Organization> getOrgsByShortNames(List<String> orgShortNames) {
+			final Map<Integer, Organization> result = new HashMap<>();
+			for (final Organization organization : engine.getOrganizationDao().getOrgsByShortNames(orgShortNames)) {
+				result.put(organization.getId(), organization);
+			}
+			return result;
+		}
 	/**
 	 * The comparator to be used when ordering the roll up graph results to ensure
 	 * that any pinned organisation names are returned at the start of the list.
@@ -814,6 +826,5 @@ public class ReportResource implements IGraphQLResource {
 			}
 
 		}
-
 	}
 }

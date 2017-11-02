@@ -33,6 +33,9 @@ public class MssqlReportSearcher implements IReportSearcher {
 		StringBuilder sql = new StringBuilder();
 		sql.append("/* MssqlReportSearch */ SELECT *, count(*) OVER() AS totalCount FROM ( ");
 		sql.append("SELECT DISTINCT " + ReportDao.REPORT_FIELDS + ", " + PersonDao.PERSON_FIELDS + " ");
+		if (query.getIncludeEngagementDayOfWeek()) {
+			sql.append(", DATEPART(dw, reports.engagementDate) as engagementDayOfWeek ");
+		}
 		sql.append("FROM reports "
 				+ "LEFT JOIN reportTags ON reportTags.reportId = reports.id "
 				+ "LEFT JOIN tags ON reportTags.tagId = tags.id "
@@ -71,6 +74,10 @@ public class MssqlReportSearcher implements IReportSearcher {
 		if (query.getEngagementDateEnd() != null) { 
 			whereClauses.add("reports.engagementDate <= :endDate");
 			args.put("endDate", Utils.handleRelativeDate(query.getEngagementDateEnd()));	
+		}
+		if (query.getEngagementDayOfWeek() != null) {
+			whereClauses.add("DATEPART(dw, reports.engagementDate) = :engagementDayOfWeek");
+			args.put("engagementDayOfWeek", query.getEngagementDayOfWeek());
 		}
 		
 		if (query.getCreatedAtStart() != null) { 
@@ -200,6 +207,33 @@ public class MssqlReportSearcher implements IReportSearcher {
 		if (query.getTagId() != null) {
 			whereClauses.add("reports.id IN (SELECT reportId from reportTags where tagId = :tagId)");
 			args.put("tagId", query.getTagId());
+		}
+
+		if (query.getAuthorPositionId() != null) {
+			// Search for reports authored by people serving in that position at the report's creation date
+			whereClauses.add("reports.id IN ( SELECT r.id FROM reports r "
+							+ "JOIN peoplePositions pp ON pp.personId = r.authorId "
+							+ "  AND pp.createdAt <= r.createdAt "
+							+ "LEFT JOIN peoplePositions maxPp ON maxPp.positionId = pp.positionId "
+							+ "  AND maxPp.createdAt > pp.createdAt "
+							+ "  AND maxPp.createdAt <= r.createdAt "
+							+ "WHERE pp.positionId = :authorPositionId "
+							+ "  AND maxPp.createdAt IS NULL )");
+			args.put("authorPositionId", query.getAuthorPositionId());
+		}
+
+		if (query.getAttendeePositionId() != null) {
+			// Search for reports attended by people serving in that position at the engagement date
+			whereClauses.add("reports.id IN ( SELECT r.id FROM reports r "
+							+ "JOIN reportPeople rp ON rp.reportId = r.id "
+							+ "JOIN peoplePositions pp ON pp.personId = rp.personId "
+							+ "  AND pp.createdAt <= r.engagementDate "
+							+ "LEFT JOIN peoplePositions maxPp ON maxPp.positionId = pp.positionId "
+							+ "  AND maxPp.createdAt > pp.createdAt "
+							+ "  AND maxPp.createdAt <= r.engagementDate "
+							+ "WHERE pp.positionId = :attendeePositionId "
+							+ "  AND maxPp.createdAt IS NULL )");
+			args.put("attendeePositionId", query.getAttendeePositionId());
 		}
 
 		if (whereClauses.size() == 0) { return results; }

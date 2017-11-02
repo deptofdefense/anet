@@ -13,7 +13,7 @@ import AutocompleteFilter from 'components/advancedSearch/AutocompleteFilter'
 import OrganizationFilter from 'components/advancedSearch/OrganizationFilter'
 import SelectSearchFilter from 'components/advancedSearch/SelectSearchFilter'
 
-import {Person, Poam} from 'models'
+import {Person, Poam, Position} from 'models'
 
 import REMOVE_ICON from 'resources/delete.png'
 
@@ -48,6 +48,23 @@ export default class AdvancedSearch extends Component {
 					fields={Person.autocompleteQuery}
 					template={Person.autocompleteTemplate}
 					placeholder="Filter reports by attendee..."
+				/>,
+				"Author Position": <AutocompleteFilter
+					queryKey="authorPositionId"
+					objectType={Position}
+					valueKey="name"
+					fields={Position.autocompleteQuery}
+					template={Position.autocompleteTemplate}
+					queryParams={{type: [Position.TYPE.ADVISOR, Position.TYPE.SUPER_USER, Position.TYPE.ADMINISTRATOR]}}
+					placeholder="Filter reports by author position..."
+				/>,
+				"Attendee Position": <AutocompleteFilter
+					queryKey="attendeePositionId"
+					objectType={Position}
+					valueKey="name"
+					fields={Position.autocompleteQuery}
+					template={Position.autocompleteTemplate}
+					placeholder="Filter reports by attendee position..."
 				/>,
 				Organization: <OrganizationFilter
 					queryKey="orgId"
@@ -87,7 +104,7 @@ export default class AdvancedSearch extends Component {
 			/>
 
 
-		let countries = dict.lookup('countries')
+		let countries = dict.lookup('countries') || []
 		filters.People = {
 			filters: {
 				Organization: <OrganizationFilter
@@ -131,7 +148,7 @@ export default class AdvancedSearch extends Component {
 			filters: {
 				"Position type": <SelectSearchFilter
 					queryKey="type"
-					values={["ADVISOR", "PRINCIPAL"]}
+					values={[Position.TYPE.ADVISOR, Position.TYPE.PRINCIPAL]}
 					labels={[dict.lookup('ADVISOR_POSITION_NAME'), dict.lookup('PRINCIPAL_POSITION_NAME')]}
 				/>,
 				Organization: <OrganizationFilter
@@ -335,9 +352,9 @@ class SearchFilter extends Component {
 			let organizationFilter = this.props.organizationFilter
 			if (organizationFilter) {
 				let positionType = filter.value.value || ""
-				if (positionType === "PRINCIPAL") {
+				if (positionType === Position.TYPE.PRINCIPAL) {
 					organizationFilter.setState({queryParams: {type: "PRINCIPAL_ORG"}})
-				} else if (positionType === "ADVISOR") {
+				} else if (positionType === Position.TYPE.ADVISOR) {
 					organizationFilter.setState({queryParams: {type: "ADVISOR_ORG"}})
 				} else {
 					organizationFilter.setState({queryParams: {}})

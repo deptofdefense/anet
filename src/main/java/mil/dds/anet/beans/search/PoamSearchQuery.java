@@ -18,7 +18,7 @@ public class PoamSearchQuery extends AbstractSearchQuery {
 	}
 
 	public Boolean getIncludeChildrenOrgs() {
-		return includeChildrenOrgs == null ? false : includeChildrenOrgs;
+		return Boolean.TRUE.equals(includeChildrenOrgs);
 	}
 
 	public void setIncludeChildrenOrgs(Boolean includeChildrenOrgs) {

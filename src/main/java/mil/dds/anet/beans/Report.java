@@ -37,6 +37,7 @@ public class Report extends AbstractAnetBean {
 	DateTime releasedAt;
 	
 	DateTime engagementDate;
+	private Integer engagementDayOfWeek;
 	Location location;
 	String intent;
 	String exsum; //can be null to autogenerate
@@ -102,6 +103,14 @@ public class Report extends AbstractAnetBean {
 
 	public void setEngagementDate(DateTime engagementDate) {
 		this.engagementDate = engagementDate;
+	}
+
+	public Integer getEngagementDayOfWeek() {
+		return engagementDayOfWeek;
+	}
+
+	public void setEngagementDayOfWeek(Integer engagementDayOfWeek) {
+		this.engagementDayOfWeek = engagementDayOfWeek;
 	}
 
 	@GraphQLFetcher("location")
@@ -424,7 +433,7 @@ public class Report extends AbstractAnetBean {
 
 	@Override
 	public boolean equals(Object other) { 
-		if (other == null || other.getClass() != Report.class) { 
+		if (other == null || other.getClass() != this.getClass()) {
 			return false;
 		}
 		Report r = (Report) other;

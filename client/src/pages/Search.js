@@ -67,7 +67,7 @@ const SEARCH_CONFIG = {
 	organizations : {
 		listName: 'organizations: organizationList',
 		variableType: 'OrganizationSearchQuery',
-		fields: 'id, shortName, longName, type'
+		fields: 'id, shortName, longName, identificationCode, type'
 	}
 }
 
@@ -400,6 +400,7 @@ export default class Search extends Page {
 					<tr>
 						<th>Name</th>
 						<th>Description</th>
+						<th>Code</th>
 						<th>Type</th>
 					</tr>
 				</thead>
@@ -408,6 +409,7 @@ export default class Search extends Page {
 						<tr key={org.id}>
 							<td><LinkTo organization={org} /></td>
 							<td>{org.longName}</td>
+							<td>{org.identificationCode}</td>
 							<td>{org.humanNameOfType()}</td>
 						</tr>
 					)}

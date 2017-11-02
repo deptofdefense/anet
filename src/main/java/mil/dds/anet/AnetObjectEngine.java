@@ -28,7 +28,6 @@ import mil.dds.anet.database.PositionDao;
 import mil.dds.anet.database.ReportDao;
 import mil.dds.anet.database.SavedSearchDao;
 import mil.dds.anet.database.TagDao;
-import mil.dds.anet.database.TestingDao;
 import mil.dds.anet.search.ISearcher;
 import mil.dds.anet.search.mssql.MssqlSearcher;
 import mil.dds.anet.search.sqlite.SqliteSearcher;
@@ -37,7 +36,6 @@ import mil.dds.anet.utils.Utils;
 
 public class AnetObjectEngine {
 
-	TestingDao dao;
 	PersonDao personDao;
 	PoamDao poamDao;
 	LocationDao locationDao;

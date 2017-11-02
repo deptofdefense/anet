@@ -48,7 +48,7 @@ export default class PositionShow extends Page {
 		API.query(/* GraphQL */`
 			position(id:${props.params.id}) {
 				id, name, type, status, code,
-				organization { id, shortName, longName },
+				organization { id, shortName, longName, identificationCode },
 				person { id, name, rank },
 				associatedPositions {
 					id, name,
@@ -62,12 +62,12 @@ export default class PositionShow extends Page {
 
 	render() {
 		let position = this.state.position
-		let assignedRole = position.type === 'PRINCIPAL' ? dict.lookup('ADVISOR_PERSON_TITLE') : dict.lookup('PRINCIPAL_PERSON_TITLE')
+		let assignedRole = position.type === Position.TYPE.PRINCIPAL ? dict.lookup('ADVISOR_PERSON_TITLE') : dict.lookup('PRINCIPAL_PERSON_TITLE')
 
 		let currentUser = this.context.currentUser
 		let canEdit =
 			//Super Users can edit any Principal
-			(currentUser.isSuperUser() && position.type === 'PRINCIPAL') ||
+			(currentUser.isSuperUser() && position.type === Position.TYPE.PRINCIPAL) ||
 			//Admins can edit anybody
 			(currentUser.isAdmin()) ||
 			//Super users can edit positions within their own organization
@@ -104,7 +104,7 @@ export default class PositionShow extends Page {
 
 						{position.organization && <Form.Field id="organization" label="Organization" value={position.organization && position.organization.shortName} >
 							<Link to={Organization.pathFor(position.organization)}>
-								{position.organization.shortName} {position.organization.longName}
+								{position.organization.shortName} {position.organization.longName} {position.organization.identificationCode}
 							</Link>
 						</Form.Field>}
 

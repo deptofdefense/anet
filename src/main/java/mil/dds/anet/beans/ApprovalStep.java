@@ -58,7 +58,7 @@ public class ApprovalStep extends AbstractAnetBean {
 
 	@Override
 	public boolean equals(Object o) { 
-		if (o == null || o.getClass() != ApprovalStep.class) { 
+		if (o == null || o.getClass() != this.getClass()) {
 			return false;
 		}
 		ApprovalStep as = (ApprovalStep) o;

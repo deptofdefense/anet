@@ -478,7 +478,7 @@
 
 	<changeSet id="19" author="hpitelka" >
 		<createTable tableName="savedSearches">
-		   <column name="id" type="int" autoIncrement="true">
+			<column name="id" type="int" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false"/>
 			</column>
 			<column name="name" type="varchar(512)" />
@@ -654,7 +654,7 @@
 
 	<changeSet id="add_tags" author="gjvoosten">
 		<createTable tableName="tags">
-		   <column name="id" type="int" autoIncrement="true">
+			<column name="id" type="int" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false"/>
 			</column>
 			<column name="name" type="nvarchar(100)">
@@ -754,12 +754,31 @@
 		</rollback>
 	</changeSet>
 
-	<changeSet id="add_tags_fulltext_index" author="maradragan" dbms="mssql" runInTransaction="false">
+	<changeSet id="add_organizations_identificationCode" author="gjvoosten">
+		<addColumn tableName="organizations">
+			<column name="identificationCode" type="nvarchar(100)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="add_organizations_identificationCode_constraints" author="gjvoosten" dbms="mssql">
+		<!-- Use SQL because we want to allow NULLs while still requiring non-NULL and non-empty columns to be unique -->
 		<sql>
-			CREATE FULLTEXT INDEX ON tags(name, description) KEY INDEX PK_TAGS;
+			CREATE UNIQUE NONCLUSTERED INDEX uniqueOrganizationIdentificationCode
+			ON organizations ( identificationCode )
+			WHERE identificationCode IS NOT NULL
+			AND identificationCode != '';
 		</sql>
 		<rollback>
-			DROP FULLTEXT INDEX ON tags;
+			DROP INDEX uniqueOrganizationIdentificationCode ON organizations;
+		</rollback>
+	</changeSet>
+
+	<changeSet id="add_organizations_identificationCode_to_fulltext_index" author="gjvoosten" dbms="mssql">
+		<sql>
+			ALTER FULLTEXT INDEX ON organizations ADD ( identificationCode );
+		</sql>
+		<rollback>
+			ALTER FULLTEXT INDEX ON organizations DROP ( identificationCode );
 		</rollback>
 	</changeSet>
 
