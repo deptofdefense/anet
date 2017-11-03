@@ -5,17 +5,18 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import mil.dds.anet.beans.RollupGraph;
 import mil.dds.anet.resources.ReportResource.RollupGraphComparator;
 import mil.dds.anet.test.TestData;
 
+import static org.junit.Assert.assertEquals;
+
 public class RollupGraphComparatorTest {
 
 	@Test
-	public void performTest() {
+	public void performComparisonTest() {
 		
 		List<RollupGraph> rollupGraphs = new ArrayList<>();
 		
@@ -37,15 +38,15 @@ public class RollupGraphComparatorTest {
 		
 		Collections.sort(rollupGraphs, new RollupGraphComparator(Arrays.asList("c name", "xxx", "yyy", "b name")));
 		
-		Assert.assertEquals("incorrect name", "c name", rollupGraphs.get(0).getOrg().getShortName());
-		Assert.assertEquals("incorrect name", "b name", rollupGraphs.get(1).getOrg().getShortName());
-		Assert.assertEquals("incorrect name", "a name", rollupGraphs.get(2).getOrg().getShortName());
-		Assert.assertEquals("incorrect name", "d name", rollupGraphs.get(3).getOrg().getShortName());
+		assertEquals("incorrect name", "c name", rollupGraphs.get(0).getOrg().getShortName());
+		assertEquals("incorrect name", "b name", rollupGraphs.get(1).getOrg().getShortName());
+		assertEquals("incorrect name", "a name", rollupGraphs.get(2).getOrg().getShortName());
+		assertEquals("incorrect name", "d name", rollupGraphs.get(3).getOrg().getShortName());
 		
 	}
 	
 	@Test
-	public void performTestEmptyList() {
+	public void performComparisonTestEmptyList() {
 		
 		List<RollupGraph> rollupGraphs = new ArrayList<>();
 		
@@ -63,9 +64,9 @@ public class RollupGraphComparatorTest {
 		
 		Collections.sort(rollupGraphs, new RollupGraphComparator(new ArrayList<>()));
 		
-		Assert.assertEquals("incorrect name", "a name", rollupGraphs.get(0).getOrg().getShortName());
-		Assert.assertEquals("incorrect name", "b name", rollupGraphs.get(1).getOrg().getShortName());
-		Assert.assertEquals("incorrect name", "c name", rollupGraphs.get(2).getOrg().getShortName());
+		assertEquals("incorrect name", "a name", rollupGraphs.get(0).getOrg().getShortName());
+		assertEquals("incorrect name", "b name", rollupGraphs.get(1).getOrg().getShortName());
+		assertEquals("incorrect name", "c name", rollupGraphs.get(2).getOrg().getShortName());
 		
 	}
 }

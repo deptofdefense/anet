@@ -9,13 +9,13 @@ public class TestData {
 		
 		RollupGraph rollupGraph = new RollupGraph();
 		rollupGraph.setCancelled(0);
-		rollupGraph.setOrg(createOrganziation());
+		rollupGraph.setOrg(createOrganization());
 		rollupGraph.setReleased(1);
 		
 		return rollupGraph;
 	}
 
-	public static Organization createOrganziation() {
+	public static Organization createOrganization() {
 		Organization org = new Organization();
 		
 		org.setLongName("longName");

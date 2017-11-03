@@ -3,7 +3,6 @@ package mil.dds.anet.resources;
 import java.io.StringWriter;
 import java.lang.invoke.MethodHandles;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -94,20 +93,14 @@ public class ReportResource implements IGraphQLResource {
 	
 	private final RollupGraphComparator rollupGraphComparator;
 
-	@SuppressWarnings({ "unchecked", "rawtypes" }) // cast to list of strings
 	public ReportResource(AnetObjectEngine engine, AnetConfiguration config) {
 		this.engine = engine;
 		this.dao = engine.getReportDao();
 		this.config = config;
 
-		List<String> pinnedOrgNames = new ArrayList<>();
-
-		Object pinnedOrgNamesObj = this.config.getDictionary().get("pinnedOrgNames");
-
-		if (pinnedOrgNamesObj instanceof List) {
-			pinnedOrgNames = (List) pinnedOrgNamesObj;
-		}
-
+		@SuppressWarnings("unchecked")
+		List<String> pinnedOrgNames = (List<String>)this.config.getDictionary().get("pinned_ORGs");
+		
 		this.rollupGraphComparator = new RollupGraphComparator(pinnedOrgNames);
 
 	}
@@ -648,7 +641,6 @@ public class ReportResource implements IGraphQLResource {
 	@GET
 	@Timed
 	@Path("/rollupGraph")
-	@SuppressWarnings("unchecked")
 	public List<RollupGraph> getDailyRollupGraph(@QueryParam("startDate") Long start, 
 			@QueryParam("endDate") Long end, 
 			@QueryParam("orgType") OrganizationType orgType, 
@@ -657,8 +649,9 @@ public class ReportResource implements IGraphQLResource {
 		DateTime startDate = new DateTime(start);
 		DateTime endDate = new DateTime(end);
 		
-		List<RollupGraph> dailyRollupGraph;
+		final List<RollupGraph> dailyRollupGraph;
 
+		@SuppressWarnings("unchecked")
 		final List<String> nonReportingOrgsShortNames = (List<String>) config.getDictionary().get("non_reporting_ORGs");
 		final Map<Integer, Organization> nonReportingOrgs = getOrgsByShortNames(nonReportingOrgsShortNames);
 		
@@ -746,7 +739,7 @@ public class ReportResource implements IGraphQLResource {
 			throw new WebApplicationException(e);
 		}
 	}
-	
+
 	/**
 	 * Gets aggregated data per organization for engagements attended and reports submitted
 	 * for each advisor in a given organization.
@@ -774,7 +767,7 @@ public class ReportResource implements IGraphQLResource {
 			return Utils.resultGrouper(list, "stats", "personId", tlf);
 		}
 	}
-	
+
 	private Map<Integer, Organization> getOrgsByShortNames(List<String> orgShortNames) {
 			final Map<Integer, Organization> result = new HashMap<>();
 			for (final Organization organization : engine.getOrganizationDao().getOrgsByShortNames(orgShortNames)) {
@@ -785,8 +778,6 @@ public class ReportResource implements IGraphQLResource {
 	/**
 	 * The comparator to be used when ordering the roll up graph results to ensure
 	 * that any pinned organisation names are returned at the start of the list.
-	 * 
-	 * @author timothy.ward
 	 *
 	 */
 	public static class RollupGraphComparator implements Comparator<RollupGraph> {
@@ -804,10 +795,15 @@ public class ReportResource implements IGraphQLResource {
 			this.pinnedOrgNames = pinnedOrgNames;
 		}
 
-		/*
-		 * (non-Javadoc)
+		/**
+		 * Compare the suppled objects, based on whether they are in the list of pinned
+		 * org names and their short names.
 		 * 
-		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+		 * @param o1
+		 *            the first object
+		 * @param o2
+		 *            the second object
+		 * @return the result of the comparison.
 		 */
 		@Override
 		public int compare(final RollupGraph o1, final RollupGraph o2) {
@@ -822,9 +818,14 @@ public class ReportResource implements IGraphQLResource {
 			} else if (pinnedOrgNames.contains(o2.getOrg().getShortName())) {
 				return 1;
 			} else {
-				return o1.getOrg().getShortName().compareTo(o2.getOrg().getShortName());
+				final int c = o1.getOrg().getShortName().compareTo(o2.getOrg().getShortName());
+				
+				if (c != 0) {
+					return c;
+				} else {
+					return o1.getOrg().getId() - o2.getOrg().getId();
+				}
 			}
-
 		}
 	}
 }
