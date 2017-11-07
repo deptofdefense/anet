@@ -925,7 +925,8 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		final Report returned = httpQuery("/api/reports/new", elizabeth).post(Entity.json(r), Report.class);
 		assertThat(returned.getId()).isNotNull();
 		// elizabeth should be allowed to see it, as she's the author
-		assertThat(returned.getReportSensitiveInformation()).isEqualTo(r.getReportSensitiveInformation());
+		assertThat(returned.getReportSensitiveInformation()).isNotNull();
+		assertThat(returned.getReportSensitiveInformation().getText()).isEqualTo(rsi.getText());
 
 		final Person jack = getJackJackson();
 		final Report returned2 = httpQuery("/api/reports/" + returned.getId(), jack).get(Report.class);
