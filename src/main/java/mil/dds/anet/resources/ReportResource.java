@@ -115,18 +115,18 @@ public class ReportResource implements IGraphQLResource {
 	@Timed
 	@GraphQLFetcher
 	@Path("/")
-	public ReportList getAll(@Auth Person p, 
+	public ReportList getAll(@Auth Person user,
 			@DefaultValue("0") @QueryParam("pageNum") Integer pageNum, 
 			@DefaultValue("100") @QueryParam("pageSize") Integer pageSize) {
-		return dao.getAll(pageNum, pageSize);
+		return dao.getAll(pageNum, pageSize, user);
 	}
 
 	@GET
 	@Timed
 	@Path("/{id}")
 	@GraphQLFetcher
-	public Report getById(@PathParam("id") Integer id) {
-		Report r = dao.getById(id);
+	public Report getById(@Auth Person user, @PathParam("id") Integer id) {
+		final Report r = dao.getById(id, user);
 		if (r == null) { throw new WebApplicationException(Status.NOT_FOUND); } 
 		return r;
 	}
@@ -163,7 +163,7 @@ public class ReportResource implements IGraphQLResource {
 		}
 		
 		r.setReportText(Utils.sanitizeHtml(r.getReportText()));
-		r = dao.insert(r);
+		r = dao.insert(r, author);
 		AnetAuditLogger.log("Report {} created by author {} ", r, author);
 		return r;
 	}
@@ -181,7 +181,7 @@ public class ReportResource implements IGraphQLResource {
 	public Response editReport(@Auth Person editor, Report r, @DefaultValue("true") @QueryParam("sendEditEmail") Boolean sendEmail) {
 		//Verify this person has access to edit this report
 		//Either they are the author, or an approver for the current step.
-		Report existing = dao.getById(r.getId());
+		final Report existing = dao.getById(r.getId(), editor);
 		r.setState(existing.getState());
 		r.setApprovalStep(existing.getApprovalStep());
 		r.setAuthor(existing.getAuthor());
@@ -214,7 +214,7 @@ public class ReportResource implements IGraphQLResource {
 		}
 		
 		r.setReportText(Utils.sanitizeHtml(r.getReportText()));
-		dao.update(r);
+		dao.update(r, editor);
 		
 		//Update Attendees:
 		if (r.getAttendees() != null) { 
@@ -325,8 +325,8 @@ public class ReportResource implements IGraphQLResource {
 	@POST
 	@Timed
 	@Path("/{id}/submit")
-	public Report submitReport(@PathParam("id") int id) {
-		Report r = dao.getById(id);
+	public Report submitReport(@Auth Person user, @PathParam("id") int id) {
+		final Report r = dao.getById(id, user);
 		//TODO: this needs to be done by either the Author, a Superuser for the AO, or an Administrator
 
 		if (r.getAdvisorOrg() == null) {
@@ -366,7 +366,7 @@ public class ReportResource implements IGraphQLResource {
 		//Push the report into the first step of this workflow
 		r.setApprovalStep(steps.get(0));
 		r.setState(ReportState.PENDING_APPROVAL);
-		int numRows = dao.update(r);
+		final int numRows = dao.update(r, user);
 		sendApprovalNeededEmail(r);
 		logger.info("Putting report {} into step {} because of org {} on author {}",
 				r.getId(), steps.get(0).getId(), org.getId(), r.getAuthor().getId());
@@ -401,7 +401,7 @@ public class ReportResource implements IGraphQLResource {
 	@Timed
 	@Path("/{id}/approve")
 	public Report approveReport(@Auth Person approver, @PathParam("id") int id, Comment comment) {
-		Report r = dao.getById(id);
+		final Report r = dao.getById(id, approver);
 		if (r == null) {
 			throw new WebApplicationException("Report not found", Status.NOT_FOUND);
 		}
@@ -438,7 +438,7 @@ public class ReportResource implements IGraphQLResource {
 		} else {
 			sendApprovalNeededEmail(r);
 		}
-		dao.update(r);
+		dao.update(r, approver);
 		
 		//Add the comment
 		if (comment != null && comment.getText() != null && comment.getText().trim().length() > 0)  {
@@ -471,7 +471,7 @@ public class ReportResource implements IGraphQLResource {
 	@Timed
 	@Path("/{id}/reject")
 	public Report rejectReport(@Auth Person approver, @PathParam("id") int id, Comment reason) {
-		Report r = dao.getById(id);
+		final Report r = dao.getById(id, approver);
 		if (r == null) { throw new WebApplicationException(Status.NOT_FOUND); } 
 		ApprovalStep step = r.loadApprovalStep();
 		if (step == null) {
@@ -498,7 +498,7 @@ public class ReportResource implements IGraphQLResource {
 		//Update the report
 		r.setApprovalStep(null);
 		r.setState(ReportState.REJECTED);
-		dao.update(r);
+		dao.update(r, approver);
 
 		//Add the comment
 		reason.setReportId(r.getId());
@@ -530,7 +530,7 @@ public class ReportResource implements IGraphQLResource {
 		comment.setReportId(reportId);
 		comment.setAuthor(author);
 		comment = engine.getCommentDao().insert(comment);
-		sendNewCommentEmail(dao.getById(reportId), comment);
+		sendNewCommentEmail(dao.getById(reportId, author), comment);
 		return comment;
 	}
 
@@ -564,7 +564,7 @@ public class ReportResource implements IGraphQLResource {
 	@Timed
 	@Path("/{id}/email")
 	public Response emailReport(@Auth Person user, @PathParam("id") int reportId, AnetEmail email) { 
-		Report r = dao.getById(reportId);
+		final Report r = dao.getById(reportId, user);
 		if (r == null) { return Response.status(Status.NOT_FOUND).build(); }
 		
 		ReportEmail action = new ReportEmail();
@@ -583,7 +583,7 @@ public class ReportResource implements IGraphQLResource {
 	@Timed
 	@Path("/{id}/delete")
 	public Response deleteReport(@Auth Person user, @PathParam("id") int reportId) { 
-		Report report = dao.getById(reportId);
+		final Report report = dao.getById(reportId, user);
 		assertCanDeleteReport(report, user);
 
 		dao.deleteReport(report);
