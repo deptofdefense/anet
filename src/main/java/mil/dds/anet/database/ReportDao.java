@@ -62,7 +62,6 @@ public class ReportDao implements IAnetDao<Report> {
 	}
 
 	@Override
-	@Deprecated
 	public ReportList getAll(int pageNum, int pageSize) {
 		// Return the reports without sensitive information
 		return getAll(pageNum, pageSize, null);
@@ -89,7 +88,6 @@ public class ReportDao implements IAnetDao<Report> {
 	}
 
 	@Override
-	@Deprecated
 	public Report insert(Report r) {
 		// Create a report without sensitive information
 		return insert(r, null);
@@ -167,7 +165,6 @@ public class ReportDao implements IAnetDao<Report> {
 	}
 
 	@Override
-	@Deprecated
 	public Report getById(int id) {
 		// Return the report without sensitive information
 		return getById(id, null);
@@ -188,7 +185,6 @@ public class ReportDao implements IAnetDao<Report> {
 	}
 
 	@Override
-	@Deprecated
 	public int update(Report r) {
 		// Update the report without sensitive information
 		return update(r, null);
