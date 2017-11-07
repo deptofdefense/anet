@@ -20,6 +20,7 @@ export default class Report extends Model {
 		nextSteps: '',
 		keyOutcomes: '',
 		tags: [],
+		reportSensitiveInformation: null,
 	}
 
 	isDraft() {
