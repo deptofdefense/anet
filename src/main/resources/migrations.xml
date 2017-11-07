@@ -782,4 +782,26 @@
 		</rollback>
 	</changeSet>
 
+	<changeSet id="add_reports_sensitive_information" author="gjvoosten">
+		<createTable tableName="reportsSensitiveInformation">
+			<column name="id" type="int" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="text" type="nvarchar(max)" />
+			<column name="reportId" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="createdAt" type="datetime" />
+			<column name="updatedAt" type="datetime" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="add_reports_sensitive_information_constraints" author="gjvoosten" dbms="mssql">
+	    <!-- Add unique constraint because we want to enforce a one-to-one relationship between reports and reportsSensitiveInformation -->
+		<addUniqueConstraint tableName="reportsSensitiveInformation" columnNames="reportId" constraintName="uniqueReport" />
+		<addForeignKeyConstraint baseColumnNames="reportId" baseTableName="reportsSensitiveInformation"
+			constraintName="fk_reportsSensitiveInformation_report" onDelete="CASCADE" onUpdate="CASCADE"
+			referencedColumnNames="id" referencedTableName="reports" />
+	</changeSet>
+
 </databaseChangeLog>
