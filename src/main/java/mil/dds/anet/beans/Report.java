@@ -10,6 +10,7 @@ import javax.ws.rs.WebApplicationException;
 
 import org.joda.time.DateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
 import mil.dds.anet.AnetObjectEngine;
@@ -61,6 +62,9 @@ public class Report extends AbstractAnetBean {
 
 	List<Comment> comments;
 	private List<Tag> tags;
+	private ReportSensitiveInformation reportSensitiveInformation;
+	// The user who instantiated this; needed to determine access to sensitive information
+	private Person user;
 
 	@GraphQLIgnore
 	public ApprovalStep getApprovalStep() {
@@ -431,6 +435,35 @@ public class Report extends AbstractAnetBean {
 		this.tags = tags;
 	}
 
+	@GraphQLFetcher("reportSensitiveInformation")
+	public ReportSensitiveInformation loadReportSensitiveInformation() {
+		if (reportSensitiveInformation == null && id != null) {
+			reportSensitiveInformation = AnetObjectEngine.getInstance().getReportSensitiveInformationDao().getForReport(this, user);
+		}
+		return reportSensitiveInformation;
+	}
+
+	@GraphQLIgnore
+	public ReportSensitiveInformation getReportSensitiveInformation() {
+		return reportSensitiveInformation;
+	}
+
+	public void setReportSensitiveInformation(ReportSensitiveInformation reportSensitiveInformation) {
+		this.reportSensitiveInformation = reportSensitiveInformation;
+	}
+
+	@JsonIgnore
+	@GraphQLIgnore
+	public Person getUser() {
+		return user;
+	}
+
+	@JsonIgnore
+	@GraphQLIgnore
+	public void setUser(Person user) {
+		this.user = user;
+	}
+
 	@Override
 	public boolean equals(Object other) { 
 		if (other == null || other.getClass() != this.getClass()) {
@@ -454,7 +487,8 @@ public class Report extends AbstractAnetBean {
 				&& Objects.equals(r.getNextSteps(), nextSteps)
 				&& idEqual(r.getAuthor(), author)
 				&& Objects.equals(r.getComments(), comments)
-				&& Objects.equals(r.getTags(), tags);
+				&& Objects.equals(r.getTags(), tags)
+				&& Objects.equals(r.getReportSensitiveInformation(), reportSensitiveInformation);
 	}
 	
 	@Override
@@ -462,7 +496,7 @@ public class Report extends AbstractAnetBean {
 		return Objects.hash(id, state, approvalStep, createdAt, updatedAt, 
 			location, intent, exsum, attendees, poams, reportText, 
 			nextSteps, author, comments, atmosphere, atmosphereDetails, engagementDate,
-			tags);
+			tags, reportSensitiveInformation);
 	}
 
 	public static Report createWithId(Integer id) {
