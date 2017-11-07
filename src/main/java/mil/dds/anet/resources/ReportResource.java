@@ -808,24 +808,34 @@ public class ReportResource implements IGraphQLResource {
 		@Override
 		public int compare(final RollupGraph o1, final RollupGraph o2) {
 
-			if (pinnedOrgNames.contains(o1.getOrg().getShortName())) {
+			int result = 0;
+
+			if (o1.getOrg() != null && o2.getOrg() == null) {
+				result = -1;
+			} else if (o2.getOrg() != null && o1.getOrg() == null) {
+				result = 1;
+			} else if (o2.getOrg() == null && o1.getOrg() == null) {
+				result = 0;
+			} else if (pinnedOrgNames.contains(o1.getOrg().getShortName())) {
 				if (pinnedOrgNames.contains(o2.getOrg().getShortName())) {
-					return pinnedOrgNames.indexOf(o1.getOrg().getShortName())
+					result = pinnedOrgNames.indexOf(o1.getOrg().getShortName())
 							- pinnedOrgNames.indexOf(o2.getOrg().getShortName());
 				} else {
-					return -1;
+					result = -1;
 				}
 			} else if (pinnedOrgNames.contains(o2.getOrg().getShortName())) {
-				return 1;
+				result = 1;
 			} else {
 				final int c = o1.getOrg().getShortName().compareTo(o2.getOrg().getShortName());
-				
+
 				if (c != 0) {
-					return c;
+					result = c;
 				} else {
-					return o1.getOrg().getId() - o2.getOrg().getId();
+					result = o1.getOrg().getId() - o2.getOrg().getId();
 				}
 			}
+
+			return result;
 		}
 	}
 }
