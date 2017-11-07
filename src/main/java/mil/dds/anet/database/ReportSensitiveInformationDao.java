@@ -47,11 +47,8 @@ public class ReportSensitiveInformationDao implements IAnetDao<ReportSensitiveIn
 	}
 
 	public ReportSensitiveInformation insert(ReportSensitiveInformation rsi, Person user, Report report) {
-		if (!isAuthorized(user, report)) {
+		if (rsi == null || !isAuthorized(user, report)) {
 			return null;
-		}
-		if (rsi == null) {
-			rsi = new ReportSensitiveInformation();
 		}
 		rsi.setReportId(report.getId());
 		rsi.setCreatedAt(DateTime.now());
@@ -76,7 +73,7 @@ public class ReportSensitiveInformationDao implements IAnetDao<ReportSensitiveIn
 	}
 
 	public int update(ReportSensitiveInformation rsi, Person user, Report report) {
-		if (!isAuthorized(user, report) || rsi == null) {
+		if (rsi == null || !isAuthorized(user, report)) {
 			return 0;
 		}
 		// Do not allow the reportId to be updated!
@@ -92,7 +89,7 @@ public class ReportSensitiveInformationDao implements IAnetDao<ReportSensitiveIn
 	}
 
 	public Object insertOrUpdate(ReportSensitiveInformation rsi, Person user, Report report) {
-		return (DaoUtils.getId(rsi) != null)
+		return (DaoUtils.getId(rsi) == null)
 				? insert(rsi, user, report)
 				: update(rsi, user, report);
 	}
@@ -129,14 +126,14 @@ public class ReportSensitiveInformationDao implements IAnetDao<ReportSensitiveIn
 	 * @return true if the user is allowed to access the report's sensitive information
 	 */
 	private boolean isAuthorized(Person user, Report report) {
-		if (user == null || report == null) {
+		final Integer userId = DaoUtils.getId(user);
+		if (userId == null || DaoUtils.getId(report) == null) {
 			// No user and no report
 			return false;
 		}
 
-		final Integer userId = DaoUtils.getId(user);
 		final Integer authorId = DaoUtils.getId(report.getAuthor());
-		if (userId != null && userId == authorId) {
+		if (userId == authorId) {
 			// User is author of the report
 			return true;
 		}
