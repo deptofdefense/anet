@@ -31,6 +31,7 @@ import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
+import mil.dds.anet.beans.ReportSensitiveInformation;
 import mil.dds.anet.beans.RollupGraph;
 import mil.dds.anet.beans.Tag;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.ReportList;
@@ -130,7 +131,8 @@ public class ReportDao implements IAnetDao<Report> {
 				r.setId(DaoUtils.getGeneratedId(keys));
 
 				// Write sensitive information (if allowed)
-				AnetObjectEngine.getInstance().getReportSensitiveInformationDao().insertOrUpdate(r.getReportSensitiveInformation(), user, r);
+				final ReportSensitiveInformation rsi = AnetObjectEngine.getInstance().getReportSensitiveInformationDao().insert(r.getReportSensitiveInformation(), user, r);
+				r.setReportSensitiveInformation(rsi);
 
 				final ReportBatch rb = dbHandle.attach(ReportBatch.class);
 				if (r.getAttendees() != null) {
