@@ -85,5 +85,12 @@
 		"id": null,
 		"name": "name2",
 		"description": "desc2"
-	}]
+	}],
+	"reportSensitiveInformation": {
+		"id": null,
+		"text": "For your eyes only",
+		"reportId": null,
+		"createdAt": null,
+		"updatedAt": null
+	}
 }

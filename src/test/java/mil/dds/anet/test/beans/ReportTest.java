@@ -17,6 +17,7 @@ import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.Atmosphere;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
+import mil.dds.anet.beans.ReportSensitiveInformation;
 import mil.dds.anet.beans.Tag;
 import mil.dds.anet.views.AbstractAnetBean.LoadLevel;
 
@@ -76,6 +77,11 @@ public class ReportTest extends BeanTester<Report> {
 		t2.setDescription("desc2");
 		tags.add(t2);
 		r.setTags(tags);
+
+		final ReportSensitiveInformation rsi = new ReportSensitiveInformation();
+		rsi.setText("For your eyes only");
+		r.setReportSensitiveInformation(rsi);
+
 		return r;
 	}
 	
