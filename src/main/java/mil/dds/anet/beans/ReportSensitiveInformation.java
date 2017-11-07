@@ -30,7 +30,7 @@ public class ReportSensitiveInformation extends AbstractAnetBean {
 		if (o == null || o.getClass() != this.getClass()) {
 			return false;
 		}
-		ReportSensitiveInformation rsi = (ReportSensitiveInformation) o;
+		final ReportSensitiveInformation rsi = (ReportSensitiveInformation) o;
 		return Objects.equals(rsi.getId(), id)
 				&& Objects.equals(rsi.getText(), text)
 				&& Objects.equals(rsi.getReportId(), reportId);
