@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react'
-import {Button, HelpBlock} from 'react-bootstrap'
+import {Button, Checkbox, HelpBlock} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
 
 import ValidatableFormWrapper from 'components/ValidatableFormWrapper'
@@ -25,6 +25,19 @@ export default class PositionForm extends ValidatableFormWrapper {
 
 	static contextTypes = {
 		currentUser: PropTypes.object.isRequired,
+	}
+
+	constructor(props) {
+		super(props)
+
+		this.state = {
+			authorized: false,
+		}
+	}
+
+	componentWillReceiveProps(nextProps) {
+		let position = nextProps.position
+		this.setState({authorized: position.authorized})
 	}
 
 	render() {
@@ -77,6 +90,10 @@ export default class PositionForm extends ValidatableFormWrapper {
 						{willAutoKickPerson && <HelpBlock>
 							<span className="text-danger">Setting this position to inactive will automatically remove <strong>{position.person.name}</strong> from this position.</span>
 						</HelpBlock> }
+					</Form.Field>
+
+					<Form.Field id="authorized">
+						<Checkbox onChange={this.toggleAuthorized} checked={!!this.state.authorized} className="authorized-checkbox" />
 					</Form.Field>
 
 					<Form.Field id="organization">
@@ -151,5 +168,12 @@ export default class PositionForm extends ValidatableFormWrapper {
 				this.setState({error: error})
 				window.scrollTo(0, 0)
 			})
+	}
+
+	@autobind
+	toggleAuthorized() {
+		let authorized = !this.state.authorized
+		this.props.position.authorized = authorized
+		this.setState({authorized: authorized})
 	}
 }
