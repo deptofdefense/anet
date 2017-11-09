@@ -72,7 +72,7 @@ import mil.dds.anet.utils.ResponseUtils;
 @PermitAll
 public class GraphQLResource {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+	private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	private static final String OUTPUT_JSON = "json";
 	private static final String OUTPUT_XML = "xml";
 	private static final String OUTPUT_XLSX = "xlsx";
@@ -271,7 +271,7 @@ public class GraphQLResource {
 				Status.fromStatusCode(actual.getResponse().getStatus())
 				:
 				Status.INTERNAL_SERVER_ERROR;
-			LOGGER.warn("Errors: {}", executionResult.getErrors());
+			logger.warn("Errors: {}", executionResult.getErrors());
 			return Response.status(status).entity(result).build();
 		}
 		result.put("data", executionResult.getData());
