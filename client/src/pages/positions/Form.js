@@ -77,8 +77,8 @@ export default class PositionForm extends ValidatableFormWrapper {
 				<Fieldset title={edit ? `Edit Position ${position.name}` : "Create a new Position"}>
 					<Form.Field id="type" disabled={this.props.edit}>
 						<ButtonToggleGroup>
-							<Button id="typeAdvisorButton" value="{Position.TYPE.ADVISOR}">{dict.lookup('ADVISOR_POSITION_NAME')}</Button>
-							<Button id="typePrincipalButton" value="{Position.TYPE.PRINCIPAL}">{dict.lookup('PRINCIPAL_POSITION_NAME')}</Button>
+							<Button id="typeAdvisorButton" value={Position.TYPE.ADVISOR}>{dict.lookup('ADVISOR_POSITION_NAME')}</Button>
+							<Button id="typePrincipalButton" value={Position.TYPE.PRINCIPAL}>{dict.lookup('PRINCIPAL_POSITION_NAME')}</Button>
 						</ButtonToggleGroup>
 					</Form.Field>
 
@@ -117,10 +117,10 @@ export default class PositionForm extends ValidatableFormWrapper {
 					{position.type !== Position.TYPE.PRINCIPAL &&
 						<Form.Field id="permissions">
 							<ButtonToggleGroup>
-								<Button id="permsAdvisorButton" value="{Position.TYPE.ADVISOR}">{dict.lookup('ADVISOR_POSITION_TYPE_TITLE')}</Button>
-								<Button id="permsSuperUserButton" value="{Position.TYPE.SUPER_USER}">{dict.lookup('SUPER_USER_POSITION_TYPE_TITLE')}</Button>
+								<Button id="permsAdvisorButton" value={Position.TYPE.ADVISOR}>{dict.lookup('ADVISOR_POSITION_TYPE_TITLE')}</Button>
+								<Button id="permsSuperUserButton" value={Position.TYPE.SUPER_USER}>{dict.lookup('SUPER_USER_POSITION_TYPE_TITLE')}</Button>
 								{isAdmin &&
-									<Button id="permsAdminButton" value="{Position.TYPE.ADMINISTRATOR}">{dict.lookup('ADMINISTRATOR_POSITION_TYPE_TITLE')}</Button>
+									<Button id="permsAdminButton" value={Position.TYPE.ADMINISTRATOR}>{dict.lookup('ADMINISTRATOR_POSITION_TYPE_TITLE')}</Button>
 								}
 							</ButtonToggleGroup>
 						</Form.Field>
