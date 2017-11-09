@@ -4,6 +4,7 @@ import java.io.StringWriter;
 import java.lang.invoke.MethodHandles;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -89,11 +90,19 @@ public class ReportResource implements IGraphQLResource {
 	ReportDao dao;
 	AnetObjectEngine engine;
 	AnetConfiguration config;
+	
+	private final RollupGraphComparator rollupGraphComparator;
 
 	public ReportResource(AnetObjectEngine engine, AnetConfiguration config) {
 		this.engine = engine;
 		this.dao = engine.getReportDao();
 		this.config = config;
+
+		@SuppressWarnings("unchecked")
+		List<String> pinnedOrgNames = (List<String>)this.config.getDictionary().get("pinned_ORGs");
+		
+		this.rollupGraphComparator = new RollupGraphComparator(pinnedOrgNames);
+
 	}
 
 	@Override
@@ -639,17 +648,28 @@ public class ReportResource implements IGraphQLResource {
 			@QueryParam("principalOrganizationId") Integer principalOrgId) {
 		DateTime startDate = new DateTime(start);
 		DateTime endDate = new DateTime(end);
+		
+		final List<RollupGraph> dailyRollupGraph;
+
 		@SuppressWarnings("unchecked")
 		final List<String> nonReportingOrgsShortNames = (List<String>) config.getDictionary().get("non_reporting_ORGs");
 		final Map<Integer, Organization> nonReportingOrgs = getOrgsByShortNames(nonReportingOrgsShortNames);
+		
 		if (principalOrgId != null) { 
-			return dao.getDailyRollupGraph(startDate, endDate, principalOrgId, OrganizationType.PRINCIPAL_ORG, nonReportingOrgs);
+			dailyRollupGraph = dao.getDailyRollupGraph(startDate, endDate, principalOrgId, OrganizationType.PRINCIPAL_ORG, nonReportingOrgs);
 		} else if (advisorOrgId != null) { 
-			return dao.getDailyRollupGraph(startDate, endDate, advisorOrgId, OrganizationType.ADVISOR_ORG, nonReportingOrgs);
+			dailyRollupGraph = dao.getDailyRollupGraph(startDate, endDate, advisorOrgId, OrganizationType.ADVISOR_ORG, nonReportingOrgs);
+		} else {
+			if (orgType == null) {
+				orgType = OrganizationType.ADVISOR_ORG;
+			} 
+			dailyRollupGraph = dao.getDailyRollupGraph(startDate, endDate, orgType, nonReportingOrgs);	
 		}
 		
-		if (orgType == null) { orgType = OrganizationType.ADVISOR_ORG; } 
-		return dao.getDailyRollupGraph(startDate, endDate, orgType, nonReportingOrgs);
+		Collections.sort(dailyRollupGraph, rollupGraphComparator);
+		
+		return dailyRollupGraph;
+		
 	}
 
 	@POST
@@ -749,10 +769,73 @@ public class ReportResource implements IGraphQLResource {
 	}
 
 	private Map<Integer, Organization> getOrgsByShortNames(List<String> orgShortNames) {
-		final Map<Integer, Organization> result = new HashMap<>();
-		for (final Organization organization : engine.getOrganizationDao().getOrgsByShortNames(orgShortNames)) {
-			result.put(organization.getId(), organization);
+			final Map<Integer, Organization> result = new HashMap<>();
+			for (final Organization organization : engine.getOrganizationDao().getOrgsByShortNames(orgShortNames)) {
+				result.put(organization.getId(), organization);
+			}
+			return result;
 		}
-		return result;
+	/**
+	 * The comparator to be used when ordering the roll up graph results to ensure
+	 * that any pinned organisation names are returned at the start of the list.
+	 *
+	 */
+	public static class RollupGraphComparator implements Comparator<RollupGraph> {
+
+		private final List<String> pinnedOrgNames;
+
+		/**
+		 * Creates an instance of this comparator using the supplied pinned organisation
+		 * names.
+		 * 
+		 * @param pinnedOrgNames
+		 *            the pinned organisation names
+		 */
+		public RollupGraphComparator(final List<String> pinnedOrgNames) {
+			this.pinnedOrgNames = pinnedOrgNames;
+		}
+
+		/**
+		 * Compare the suppled objects, based on whether they are in the list of pinned
+		 * org names and their short names.
+		 * 
+		 * @param o1
+		 *            the first object
+		 * @param o2
+		 *            the second object
+		 * @return the result of the comparison.
+		 */
+		@Override
+		public int compare(final RollupGraph o1, final RollupGraph o2) {
+
+			int result = 0;
+
+			if (o1.getOrg() != null && o2.getOrg() == null) {
+				result = -1;
+			} else if (o2.getOrg() != null && o1.getOrg() == null) {
+				result = 1;
+			} else if (o2.getOrg() == null && o1.getOrg() == null) {
+				result = 0;
+			} else if (pinnedOrgNames.contains(o1.getOrg().getShortName())) {
+				if (pinnedOrgNames.contains(o2.getOrg().getShortName())) {
+					result = pinnedOrgNames.indexOf(o1.getOrg().getShortName())
+							- pinnedOrgNames.indexOf(o2.getOrg().getShortName());
+				} else {
+					result = -1;
+				}
+			} else if (pinnedOrgNames.contains(o2.getOrg().getShortName())) {
+				result = 1;
+			} else {
+				final int c = o1.getOrg().getShortName().compareTo(o2.getOrg().getShortName());
+
+				if (c != 0) {
+					result = c;
+				} else {
+					result = o1.getOrg().getId() - o2.getOrg().getId();
+				}
+			}
+
+			return result;
+		}
 	}
 }

@@ -3,6 +3,7 @@ package mil.dds.anet.test.resources;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.lang.invoke.MethodHandles;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -1000,4 +1001,69 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		assertThat(report.getReportSensitiveInformation().getText()).isEqualTo("Need to know only");
 	}
 
+	private ReportSearchQuery setupQueryEngagementDayOfWeek() {
+		final ReportSearchQuery query = new ReportSearchQuery();
+		query.setState(ImmutableList.of(ReportState.RELEASED));
+		return query;
+	}
+
+	private ReportList runSearchQuery(ReportSearchQuery query) {
+		return httpQuery("/api/reports/search", admin).post(Entity.json(query), ReportList.class);
+	}
+
+	@Test
+	public void testEngagementDayOfWeekNotIncludedInResults() {
+		final ReportSearchQuery query = setupQueryEngagementDayOfWeek();
+		final ReportList reportResults = runSearchQuery(query);
+
+		assertThat(reportResults).isNotNull();
+
+		final List<Report> reports = reportResults.getList();
+		for (Report rpt : reports) {
+			assertThat(rpt.getEngagementDayOfWeek()).isNull();
+		}
+	}
+
+	@Test
+	public void testEngagementDayOfWeekIncludedInResults() {
+		final ReportSearchQuery query = setupQueryEngagementDayOfWeek();
+		query.setIncludeEngagementDayOfWeek(true);
+
+		final ReportList reportResults = runSearchQuery(query);
+		assertThat(reportResults).isNotNull();
+
+		final List<Integer> daysOfWeek = Arrays.asList(1,2,3,4,5,6,7);
+		final List<Report> reports = reportResults.getList();
+		for (Report rpt : reports) {
+			assertThat(rpt.getEngagementDayOfWeek()).isIn(daysOfWeek);
+		}
+	}
+
+	@Test
+	public void testSetEngagementDayOfWeek() {
+		final ReportSearchQuery query = setupQueryEngagementDayOfWeek();
+		query.setEngagementDayOfWeek(1);
+		query.setIncludeEngagementDayOfWeek(true);
+
+		final ReportList reportResults = runSearchQuery(query);
+		assertThat(reportResults).isNotNull();
+
+		final List<Report> reports = reportResults.getList();
+		for (Report rpt : reports) {
+			assertThat(rpt.getEngagementDayOfWeek()).isEqualTo(1);
+		}
+	}
+
+	@Test
+	public void testSetEngagementDayOfWeekOutsideWeekRange() {
+		final ReportSearchQuery query = setupQueryEngagementDayOfWeek();
+		query.setEngagementDayOfWeek(0);
+		query.setIncludeEngagementDayOfWeek(true);
+
+		final ReportList reportResults = runSearchQuery(query);
+		assertThat(reportResults).isNotNull();
+
+		final List<Report> reports = reportResults.getList();
+		assertThat(reports.size()).isEqualTo(0);
+	}
 }

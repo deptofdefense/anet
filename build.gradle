@@ -6,7 +6,7 @@
  * For more details take a look at the Java Quickstart chapter in the Gradle
  * user guide available at https://docs.gradle.org/2.10/userguide/tutorial_java_projects.html
  */
-
+ 
 // Apply the java plugin to add support for Java
 apply plugin: 'java'
 apply plugin: 'eclipse'
@@ -56,6 +56,10 @@ dependencies {
 	compile 'org.json:json:20170516'
 
 	compile files('lib/sqljdbc42.jar')
+	
+	// used for writing Excel documents
+	compile group: 'org.apache.poi', name: 'poi', version: '3.17'
+	compile group: 'org.apache.poi', name: 'poi-ooxml', version: '3.17'
 	
 	testCompile group: 'io.dropwizard', name: 'dropwizard-testing', version: '1.0.2'
 	testCompile group: 'io.dropwizard', name: 'dropwizard-client', version: '1.0.2'
