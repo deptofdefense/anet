@@ -49,6 +49,7 @@ import mil.dds.anet.beans.lists.AbstractAnetBeanList.PersonList;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.PoamList;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.ReportList;
 import mil.dds.anet.beans.search.ISearchQuery.SortOrder;
+import mil.dds.anet.beans.search.PersonSearchQuery;
 import mil.dds.anet.beans.search.ReportSearchQuery;
 import mil.dds.anet.beans.search.ReportSearchQuery.ReportSearchSortBy;
 import mil.dds.anet.database.AdminDao.AdminSettingKeys;
@@ -914,7 +915,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 	}
 
 	@Test
-	public void testSensitiveInformation() {
+	public void testSensitiveInformationByAuthor() {
 		final Person elizabeth = getElizabethElizawell();
 		final Report r = new Report();
 		r.setAuthor(elizabeth);
@@ -924,14 +925,79 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		r.setReportSensitiveInformation(rsi);
 		final Report returned = httpQuery("/api/reports/new", elizabeth).post(Entity.json(r), Report.class);
 		assertThat(returned.getId()).isNotNull();
-		// elizabeth should be allowed to see it, as she's the author
+		// elizabeth should be allowed to see it returned, as she's the author
 		assertThat(returned.getReportSensitiveInformation()).isNotNull();
 		assertThat(returned.getReportSensitiveInformation().getText()).isEqualTo(rsi.getText());
 
+		final Report returned2 = httpQuery("/api/reports/" + returned.getId(), elizabeth).get(Report.class);
+		// elizabeth should be allowed to see it
+		returned2.setUser(elizabeth);
+		assertThat(returned2.loadReportSensitiveInformation()).isNotNull();
+		assertThat(returned2.getReportSensitiveInformation().getText()).isEqualTo(rsi.getText());
+
 		final Person jack = getJackJackson();
-		final Report returned2 = httpQuery("/api/reports/" + returned.getId(), jack).get(Report.class);
+		final Report returned3 = httpQuery("/api/reports/" + returned.getId(), jack).get(Report.class);
 		// jack should not be allowed to see it
-		assertThat(returned2.getReportSensitiveInformation()).isNull();
+		returned3.setUser(jack);
+		assertThat(returned3.loadReportSensitiveInformation()).isNull();
+	}
+
+	@Test
+	public void testSensitiveInformationByAuthorizedPosition() {
+		final PersonSearchQuery erinQuery = new PersonSearchQuery();
+		erinQuery.setText("erin");
+		final PersonList erinSearchResults = httpQuery("/api/people/search", admin).post(Entity.json(erinQuery), PersonList.class);
+		assertThat(erinSearchResults.getTotalCount()).isGreaterThan(0);
+		final Optional<Person> erinResult = erinSearchResults.getList().stream().filter(p -> p.getName().equals("ERINSON, Erin")).findFirst();
+		assertThat(erinResult).isNotEmpty();
+		final Person erin = erinResult.get();
+
+		final ReportSearchQuery reportQuery = new ReportSearchQuery();
+		reportQuery.setText("Test Cases are good");
+		final ReportList reportSearchResults = httpQuery("/api/reports/search", erin).post(Entity.json(reportQuery), ReportList.class);
+		assertThat(reportSearchResults.getTotalCount()).isGreaterThan(0);
+		final Optional<Report> reportResult = reportSearchResults.getList().stream().filter(r -> reportQuery.getText().equals(r.getKeyOutcomes())).findFirst();
+		assertThat(reportResult).isNotEmpty();
+		final Report report = reportResult.get();
+		report.setUser(erin);
+		// erin is the author, so should be able to see the sensitive information
+		assertThat(report.loadReportSensitiveInformation()).isNotNull();
+		assertThat(report.getReportSensitiveInformation().getText()).isEqualTo("Need to know only");
+
+		final PersonSearchQuery reinaQuery = new PersonSearchQuery();
+		reinaQuery.setText("reina");
+		final PersonList searchResults = httpQuery("/api/people/search", admin).post(Entity.json(reinaQuery), PersonList.class);
+		assertThat(searchResults.getTotalCount()).isGreaterThan(0);
+		final Optional<Person> reinaResult = searchResults.getList().stream().filter(p -> p.getName().equals("REINTON, Reina")).findFirst();
+		assertThat(reinaResult).isNotEmpty();
+		final Person reina = reinaResult.get();
+
+		final ReportList reportSearchResults2 = httpQuery("/api/reports/search", reina).post(Entity.json(reportQuery), ReportList.class);
+		assertThat(reportSearchResults2.getTotalCount()).isGreaterThan(0);
+		final Optional<Report> reportResult2 = reportSearchResults2.getList().stream().filter(r -> reportQuery.getText().equals(r.getKeyOutcomes())).findFirst();
+		assertThat(reportResult2).isNotEmpty();
+		final Report report2 = reportResult2.get();
+		report2.setUser(reina);
+		// reina is not authorized, so should not be able to see the sensitive information
+		assertThat(report2.loadReportSensitiveInformation()).isNull();
+
+		final PersonSearchQuery rebeccaQuery = new PersonSearchQuery();
+		rebeccaQuery.setText("rebecca");
+		final PersonList searchResults3 = httpQuery("/api/people/search", admin).post(Entity.json(rebeccaQuery), PersonList.class);
+		assertThat(searchResults3.getTotalCount()).isGreaterThan(0);
+		final Optional<Person> reinaResult3 = searchResults3.getList().stream().filter(p -> p.getName().equals("BECCABON, Rebecca")).findFirst();
+		assertThat(reinaResult3).isNotEmpty();
+		final Person rebecca = reinaResult3.get();
+
+		final ReportList reportSearchResults3 = httpQuery("/api/reports/search", rebecca).post(Entity.json(reportQuery), ReportList.class);
+		assertThat(reportSearchResults3.getTotalCount()).isGreaterThan(0);
+		final Optional<Report> reportResult3 = reportSearchResults3.getList().stream().filter(r -> reportQuery.getText().equals(r.getKeyOutcomes())).findFirst();
+		assertThat(reportResult3).isNotEmpty();
+		final Report report3 = reportResult3.get();
+		report3.setUser(rebecca);
+		// rebecca is authorized, so should be able to see the sensitive information
+		assertThat(report.loadReportSensitiveInformation()).isNotNull();
+		assertThat(report.getReportSensitiveInformation().getText()).isEqualTo("Need to know only");
 	}
 
 }
