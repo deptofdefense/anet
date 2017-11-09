@@ -1,12 +1,17 @@
 package mil.dds.anet.resources;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.PermitAll;
@@ -20,7 +25,17 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.StreamingOutput;
 
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONObject;
 import org.json.XML;
 import org.slf4j.Logger;
@@ -60,23 +75,28 @@ public class GraphQLResource {
 	private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	private static final String OUTPUT_JSON = "json";
 	private static final String OUTPUT_XML = "xml";
+	private static final String OUTPUT_XLSX = "xlsx";
 
 	private GraphQL graphql;
 	private List<IGraphQLResource> resources;
 	private boolean developmentMode;
-
+	private Set<String> graphqlListFieldNames;
+	
+	
 	public GraphQLResource(List<IGraphQLResource> resources, boolean developmentMode) {
 		this.resources = resources;
 		this.developmentMode = developmentMode;
+		
+		this.graphqlListFieldNames = new HashSet<>();
 
 		buildGraph();
 	}
 
 	/**
-	 * Constructs the GraphQL "Graph" of ANET. 
-	 * 1) Scans all Resources to find methods it can use as graph entry points.  
+	 * Constructs the GraphQL "Graph" of ANET.
+	 * 1) Scans all Resources to find methods it can use as graph entry points.
 	 *     These should all be annotated with @GraphQLFetcher
-	 * 2) For each of the types that the Resource can return, scans those to find methods annotated with 
+	 * 2) For each of the types that the Resource can return, scans those to find methods annotated with
 	 *     GraphQLFetcher
 	 */
 	private void buildGraph() {
@@ -101,8 +121,7 @@ public class GraphQLResource {
 				.dataFetcher(fetcher);
 			queryTypeBuilder.field(fieldBuilder.build());
 
-
-			//Build a field for returning lists from this resource. 
+			//Build a field for returning lists from this resource.
 			AnetResourceDataFetcher listFetcher = new AnetResourceDataFetcher(resource, true);
 			if (listFetcher.validArguments().size() > 0) {
 				Class<?> listClass = resource.getBeanListClass();
@@ -114,7 +133,7 @@ public class GraphQLResource {
 				} else if (AbstractAnetBeanList.class.isAssignableFrom(listClass)) {
 					listName = GraphQLUtils.lowerCaseFirstLetter(listClass.getSimpleName());
 					listType = buildTypeFromBean(listName, (Class<AbstractAnetBeanList>) listClass);
-				} else { 
+				} else {
 					throw new IllegalArgumentException("List Class from resource " + name + " is not a List or AbstractAnetBeanList");
 				}
 				GraphQLFieldDefinition listField = GraphQLFieldDefinition.newFieldDefinition()
@@ -124,6 +143,8 @@ public class GraphQLResource {
 					.dataFetcher(listFetcher)
 					.build();
 				queryTypeBuilder.field(listField);
+				
+				graphqlListFieldNames.add(listName);
 			}
 		}
 
@@ -198,12 +219,17 @@ public class GraphQLResource {
 	@Timed
 	public Response graphqlPost(@Auth Person user, Map<String,Object> body) {
 		String query = (String) body.get("query");
+		String output = (String) body.get("output");
 		
+		if (output == null) {
+			output = OUTPUT_JSON;
+		}
+
 		@SuppressWarnings("unchecked")
 		Map<String, Object> variables = (Map<String, Object>) body.get("variables");
 		if (variables == null) { variables = new HashMap<String,Object>(); }
 
-		return graphql(user, query, OUTPUT_JSON, variables);
+		return graphql(user, query, output, variables);
 	}
 
 	@GET
@@ -227,23 +253,23 @@ public class GraphQLResource {
 		Map<String, Object> result = new LinkedHashMap<>();
 		if (executionResult.getErrors().size() > 0) {
 			WebApplicationException actual = null;
-			for (GraphQLError error : executionResult.getErrors()) { 
-				if (error instanceof ExceptionWhileDataFetching) { 
+			for (GraphQLError error : executionResult.getErrors()) {
+				if (error instanceof ExceptionWhileDataFetching) {
 					ExceptionWhileDataFetching exception = (ExceptionWhileDataFetching) error;
-					if (exception.getException() instanceof WebApplicationException) { 
+					if (exception.getException() instanceof WebApplicationException) {
 						actual = (WebApplicationException) exception.getException();
 						break;
 					}
 				}
 			}
-			
+
 			result.put("errors", executionResult.getErrors().stream()
 					.map(e -> e.getMessage())
 					.collect(Collectors.toList()));
-			Status status = (actual != null) 
-				? 
-				Status.fromStatusCode(actual.getResponse().getStatus()) 
-				: 
+			Status status = (actual != null)
+				?
+				Status.fromStatusCode(actual.getResponse().getStatus())
+				:
 				Status.INTERNAL_SERVER_ERROR;
 			logger.warn("Errors: {}", executionResult.getErrors());
 			return Response.status(status).entity(result).build();
@@ -254,8 +280,184 @@ public class GraphQLResource {
 			// TODO: Decide if we indeed want pretty-printed XML:
 			String xml = ResponseUtils.toPrettyString(XML.toString(json, "result"), 2);
 			return Response.ok(xml, MediaType.APPLICATION_XML).build();
+		} else if (OUTPUT_XLSX.equals(output)) {
+			return Response.ok(new XSSFWorkbookStreamingOutput(createWorkbook(result)))
+					.header("Content-Disposition", "attachment; filename=" + "anet_export.xslx").build();
 		} else {
 			return Response.ok(result, MediaType.APPLICATION_JSON).build();
+		}
+	}
+	
+	/**
+	 * Converts the supplied result object to a {@link XSSFWorkbook}.
+	 * 
+	 * @param result
+	 *            the result
+	 * @return the workbook
+	 */
+	private XSSFWorkbook createWorkbook(final Map<String, Object> resultMap) {
+
+		XSSFWorkbook workbook = new XSSFWorkbook();
+
+		for (Entry<String, Object> entry : resultMap.entrySet()) {
+			if (entry.getValue() instanceof Map<?, ?>) {
+				locateData(workbook, entry.getKey(), (Map<?, ?>) entry.getValue());
+			}
+		}
+
+		return workbook;
+	}
+
+	/**
+	 * Locate the data is the map based on a set of keys and for each know key
+	 * create a sheet in the workbook.
+	 * 
+	 * @param workbook
+	 *            the workbook
+	 * @param name
+	 *            the name of the sheet process
+	 * @param data
+	 *            the map to obtain the data from to populate the workbook
+	 */
+	private void locateData(final XSSFWorkbook workbook, final String name, final Map<?, ?> data) {
+
+		if (graphqlListFieldNames.contains(name)) {
+			createSheet(workbook, name, data);
+		} else {
+			for (Entry<?, ?> entry : data.entrySet()) {
+				if (entry.getValue() instanceof Map<?, ?>) {
+					locateData(workbook, String.valueOf(entry.getKey()), (Map<?, ?>) entry.getValue());
+				}
+			}
+		}
+	}
+
+	/**
+	 * TODO: This should end up in a converter type class, perhaps lookup by annotations.
+	 * 
+	 * Create the sheet with the supplied name in the supplied workbook using the
+	 * supplied data.
+	 * 
+	 * @param workbook
+	 *            the workbook
+	 * @param name
+	 *            the name for the sheet
+	 * @param data
+	 *            the data used to populate the sheet
+	 */
+	private void createSheet(final XSSFWorkbook workbook, final String name, final Map<?, ?> data) {
+		
+		XSSFSheet sheet = workbook.createSheet(name);
+		
+		sheet.setDefaultColumnWidth(30);
+		
+		XSSFFont headerFont = workbook.createFont();
+		headerFont.setFontHeightInPoints((short)10);
+		headerFont.setFontName("Arial");
+		headerFont.setColor(IndexedColors.WHITE.getIndex());
+		headerFont.setBold(true);
+		headerFont.setItalic(false);
+		
+		CellStyle headerStyle = workbook.createCellStyle();
+		headerStyle.setFillBackgroundColor(IndexedColors.BLACK.getIndex());
+		headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		headerStyle.setAlignment(HorizontalAlignment.CENTER);
+		headerStyle.setFont(headerFont);
+		
+		XSSFRow header = sheet.createRow(0);
+		header.setRowStyle(headerStyle);
+
+		for (Entry<?, ?> entry : data.entrySet()) {
+			if (entry.getValue() instanceof List<?>) {
+				createRow(sheet, header, (List<?>) entry.getValue());
+			}
+		}
+	}
+
+	/**
+	 * Create a row in the supplied sheet using the supplied data.
+	 * 
+	 * @param sheet
+	 *            the sheet
+	 * @param header
+	 *            the header row
+	 * @param data
+	 *            the data
+	 */
+	private void createRow(final XSSFSheet sheet, final XSSFRow header, final List<?> data) {
+	
+		int rowCount = 1;
+	
+		for (Object value : data) {
+			if (value instanceof Map<?, ?>) {
+				createColumns(header, sheet.createRow(rowCount++), (Map<?, ?>) value);
+			}
+		}
+	}
+
+	/**
+	 * Create a column in a row of data.
+	 * 
+	 * @param header
+	 *            the header row
+	 * @param row
+	 *            the row of data
+	 * @param data
+	 *            the data
+	 */
+	private void createColumns(final XSSFRow header, final XSSFRow row, final Map<?, ?> data) {
+
+		int column = 0;
+
+		for (Entry<?, ?> entry : data.entrySet()) {
+			if (header.getCell(column) == null) {
+				header.createCell(column).setCellValue(String.valueOf(entry.getKey()).toUpperCase());
+				header.getCell(column).setCellStyle(header.getRowStyle());
+			}
+
+			if (entry.getValue() != null) {
+				if (entry.getValue() instanceof Integer) {
+					row.createCell(column).setCellValue((Integer) entry.getValue());
+					row.getCell(column).setCellType(CellType.NUMERIC);
+				} else {
+					row.createCell(column).setCellValue(String.valueOf(entry.getValue()));
+					row.getCell(column).setCellType(CellType.STRING);
+				}
+
+				row.getCell(column).setCellStyle(row.getRowStyle());
+			}
+			
+			column++;
+			
+		}
+	}
+
+	/**
+	 * {@link StreamingOutput} implementation that uses a {@link XSSFWorkbook} as
+	 * the source of the stream to be written.
+	 */
+	public static class XSSFWorkbookStreamingOutput implements StreamingOutput {
+
+		private final XSSFWorkbook workbook;
+
+		/**
+		 * Creates an instance of this class using the supplied workbook.
+		 * 
+		 * @param workbook
+		 *            the workbook
+		 */
+		public XSSFWorkbookStreamingOutput(final XSSFWorkbook workbook) {
+			this.workbook = workbook;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void write(final OutputStream output) throws IOException, WebApplicationException {
+			
+			// TODO: The performance of this operation, specifically with large files, should be tested.
+			workbook.write(output);
 		}
 	}
 }
