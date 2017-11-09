@@ -121,7 +121,7 @@ public class PositionResource implements IGraphQLResource {
 			}
 		}
 
-		AnetAuditLogger.log("Position {} created by {}", p, user);
+		AnetAuditLogger.log("Position {} created by {}; authorized={}", p, user, p.getAuthorized());
 		return created;
 	}
 
@@ -131,7 +131,7 @@ public class PositionResource implements IGraphQLResource {
 	public Response updatePosition(@Auth Person user, Position pos) {
 		if (pos.getType() == PositionType.ADMINISTRATOR) { AuthUtils.assertAdministrator(user); } 
 		final Position origPos = dao.getById(pos.getId());
-		if (pos.getAuthorized() != origPos.getAuthorized()) {
+		if (origPos.getAuthorized() != pos.getAuthorized()) {
 			AuthUtils.assertAdministrator(user);
 		}
 		if (DaoUtils.getId(pos.getOrganization()) == null) { 
@@ -176,7 +176,12 @@ public class PositionResource implements IGraphQLResource {
 			}
 		}
 
-		AnetAuditLogger.log("Position {} edited by {}", pos, user);
+		if (origPos.getAuthorized() != pos.getAuthorized()) {
+			AnetAuditLogger.log("Position {} edited by {}; authorized changed from {} to {}", pos, user, origPos.getAuthorized(), pos.getAuthorized());
+		}
+		else {
+			AnetAuditLogger.log("Position {} edited by {}", pos, user);
+		}
 		return (numRows == 1) ? Response.ok().build() : Response.status(Status.NOT_FOUND).build();
 	}
 
