@@ -46,6 +46,7 @@ export default class PositionForm extends ValidatableFormWrapper {
 		error = this.props.error || (this.state && this.state.error)
 
 		let currentUser = this.context.currentUser
+		let isAdmin = currentUser && currentUser.isAdmin()
 
 		let orgSearchQuery = {}
 		if (position.isPrincipal()) {
@@ -93,7 +94,7 @@ export default class PositionForm extends ValidatableFormWrapper {
 					</Form.Field>
 
 					<Form.Field id="authorized">
-						<Checkbox onChange={this.toggleAuthorized} checked={!!this.state.authorized} className="authorized-checkbox" />
+						<Checkbox disabled={!isAdmin} onChange={this.toggleAuthorized} checked={!!this.state.authorized} className="authorized-checkbox" />
 					</Form.Field>
 
 					<Form.Field id="organization">
@@ -118,7 +119,7 @@ export default class PositionForm extends ValidatableFormWrapper {
 							<ButtonToggleGroup>
 								<Button id="permsAdvisorButton" value="{Position.TYPE.ADVISOR}">{dict.lookup('ADVISOR_POSITION_TYPE_TITLE')}</Button>
 								<Button id="permsSuperUserButton" value="{Position.TYPE.SUPER_USER}">{dict.lookup('SUPER_USER_POSITION_TYPE_TITLE')}</Button>
-								{currentUser && currentUser.isAdmin() &&
+								{isAdmin &&
 									<Button id="permsAdminButton" value="{Position.TYPE.ADMINISTRATOR}">{dict.lookup('ADMINISTRATOR_POSITION_TYPE_TITLE')}</Button>
 								}
 							</ButtonToggleGroup>
