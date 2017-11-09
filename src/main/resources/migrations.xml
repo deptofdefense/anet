@@ -804,4 +804,12 @@
 			referencedColumnNames="id" referencedTableName="reports" />
 	</changeSet>
 
+	<changeSet id="add_positions_authorized" author="gjvoosten">
+		<addColumn tableName="positions">
+			<column name="authorized" type="boolean" defaultValue="false">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+
 </databaseChangeLog>
