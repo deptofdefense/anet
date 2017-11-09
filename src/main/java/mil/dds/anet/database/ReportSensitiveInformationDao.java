@@ -10,7 +10,9 @@ import org.skife.jdbi.v2.Query;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
+import mil.dds.anet.beans.Organization;
 import mil.dds.anet.beans.Person;
+import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.ReportSensitiveInformation;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList;
@@ -119,7 +121,7 @@ public class ReportSensitiveInformationDao implements IAnetDao<ReportSensitiveIn
 	/**
 	 * A user is allowed to access a report's sensitive information if either of the following holds true:
 	 * • the user is the author of the report
-	 * • TODO: the user currently holds a position that is in the list of authorizedPositions of the advisorOrg of the report
+	 * • the user holds an authorized position in the advisorOrg of the report
 	 *
 	 * @param user the user executing the request
 	 * @param report the report
@@ -135,6 +137,20 @@ public class ReportSensitiveInformationDao implements IAnetDao<ReportSensitiveIn
 		final Integer authorId = DaoUtils.getId(report.getAuthor());
 		if (userId == authorId) {
 			// User is author of the report
+			return true;
+		}
+
+		// Check authorization
+		final Position userPosition = user.loadPosition();
+		if (userPosition == null || !userPosition.getAuthorized()) {
+			// User has no position or is not authorized
+			return false;
+		}
+		// Check the organization for which the user is authorized
+		final Organization userOrg = userPosition.loadOrganization();
+		final Organization advisorOrg = report.loadAdvisorOrg();
+		if (userOrg != null && advisorOrg != null && DaoUtils.getId(userOrg) == DaoUtils.getId(advisorOrg)) {
+			// User holds an authorized position in the advisorOrg of the report
 			return true;
 		}
 
