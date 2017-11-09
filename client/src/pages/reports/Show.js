@@ -89,6 +89,7 @@ export default class ReportShow extends Page {
 				approvalStep { name, approvers { id }, nextStepId }
 
 				tags { id, name, description }
+				reportSensitiveInformation { id, text }
 			}
 		`).then(data => {
 			this.setState({report: new Report(data.report)})
@@ -267,6 +268,12 @@ export default class ReportShow extends Page {
 					{report.reportText &&
 						<Fieldset title="Meeting discussion">
 							<div dangerouslySetInnerHTML={{__html: report.reportText}} />
+						</Fieldset>
+					}
+
+					{report.reportSensitiveInformation && report.reportSensitiveInformation.text &&
+						<Fieldset title="Sensitive information">
+							<div dangerouslySetInnerHTML={{__html: report.reportSensitiveInformation.text}} />
 						</Fieldset>
 					}
 

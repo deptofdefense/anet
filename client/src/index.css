@@ -279,6 +279,10 @@ a.home-tile {
 	text-align: center;
 }
 
+.authorized-checkbox input[type=checkbox][readonly] {
+	margin-top: -4px;
+}
+
 .loading .anet section {
 	visibility: hidden;
 }

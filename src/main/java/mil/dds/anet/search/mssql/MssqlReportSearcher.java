@@ -289,7 +289,7 @@ public class MssqlReportSearcher implements IReportSearcher {
 
 		final Query<Report> map = MssqlSearcher.addPagination(query, dbHandle, sql, args)
 				.map(new ReportMapper());
-		return ReportList.fromQuery(map, query.getPageNum(), query.getPageSize());
+		return ReportList.fromQuery(user, map, query.getPageNum(), query.getPageSize());
 		
 	}
 	

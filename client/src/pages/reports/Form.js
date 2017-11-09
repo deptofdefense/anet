@@ -100,7 +100,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 		if (report.cancelledReason) {
 			this.setState({isCancelled: true})
 		}
-		this.setState({showReportText: !!report.reportText})
+		this.setState({showReportText: !!report.reportText || !!report.reportSensitiveInformation})
 	}
 
     handleTagDelete(i) {
@@ -117,6 +117,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 	render() {
 		const { currentUser } = this.context
 		let {report, onDelete} = this.props
+		const { edit } = this.props
 		let {recents, suggestionList, errors, isCancelled, showAutoSaveBanner} = this.state
 
 		let hasErrors = Object.keys(errors).length > 0
@@ -301,11 +302,26 @@ export default class ReportForm extends ValidatableFormWrapper {
 					</Button>
 
 					<Collapse in={this.state.showReportText}>
-						<Form.Field id="reportText" className="reportTextField" componentClass={TextEditor} />
+						<div>
+							<Form.Field id="reportText" className="reportTextField" componentClass={TextEditor} />
+
+							{(report.reportSensitiveInformation || !edit) &&
+								<Form.Field id="reportSensitiveInformation" className="reportSensitiveInformationField" componentClass={TextEditor}
+									value={report.reportSensitiveInformation && report.reportSensitiveInformation.text}
+									onChange={this.updateReportSensitiveInformation} />
+							}
+						</div>
 					</Collapse>
 				</Fieldset>
 			</ValidatableForm>
 		</div>
+	}
+
+	updateReportSensitiveInformation = (value) => {
+		if (!this.props.report.reportSensitiveInformation) {
+			this.props.report.reportSensitiveInformation = {}
+		}
+		this.props.report.reportSensitiveInformation.text = value
 	}
 
 	@autobind

@@ -83,13 +83,17 @@ public abstract class AbstractAnetBeanList<T extends IGraphQLBean> implements IG
 			return list; 
 		}
 
-		public static ReportList fromQuery(Query<Report> query, int pageNum, int pageSize) {
+		public static ReportList fromQuery(Person user, Query<Report> query, int pageNum, int pageSize) {
 			ReportList results = new ReportList(pageNum, pageSize, query.list()); 
 			if (results.getList().size() == 0) { 
 				results.setTotalCount(0);
 			} else {
 				//This value gets set by the ReportMapper on each row.
 				results.setTotalCount((Integer) query.getContext().getAttribute("totalCount"));
+			}
+			// Record the user who instantiated these
+			for (final Report report : results.getList()) {
+				report.setUser(user);
 			}
 			return results;
 		}

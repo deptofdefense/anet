@@ -58,6 +58,7 @@ import mil.dds.anet.beans.Comment;
 import mil.dds.anet.beans.Person;
 import mil.dds.anet.beans.PersonPositionHistory;
 import mil.dds.anet.beans.ReportPerson;
+import mil.dds.anet.beans.ReportSensitiveInformation;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList;
 import mil.dds.anet.graphql.AnetResourceDataFetcher;
 import mil.dds.anet.graphql.GraphQLFetcher;
@@ -164,6 +165,10 @@ public class GraphQLResource {
 		queryTypeBuilder.field(GraphQLFieldDefinition.newFieldDefinition()
 				.type(buildTypeFromBean("personPositionHistory", PersonPositionHistory.class))
 				.name("personPositionHistory")
+				.build());
+		queryTypeBuilder.field(GraphQLFieldDefinition.newFieldDefinition()
+				.type(buildTypeFromBean("reportSensitiveInformation", ReportSensitiveInformation.class))
+				.name("reportSensitiveInformation")
 				.build());
 
 		GraphQLObjectType queryType = queryTypeBuilder.build();

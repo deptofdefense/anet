@@ -31,6 +31,7 @@ import mil.dds.anet.beans.Position;
 import mil.dds.anet.beans.Report;
 import mil.dds.anet.beans.Report.ReportState;
 import mil.dds.anet.beans.ReportPerson;
+import mil.dds.anet.beans.ReportSensitiveInformation;
 import mil.dds.anet.beans.RollupGraph;
 import mil.dds.anet.beans.Tag;
 import mil.dds.anet.beans.lists.AbstractAnetBeanList.ReportList;
@@ -47,13 +48,13 @@ import mil.dds.anet.utils.Utils;
 
 public class ReportDao implements IAnetDao<Report> {
 
-	private static String[] fields = { "id", "state", "createdAt", "updatedAt", "engagementDate",
+	private static final String[] fields = { "id", "state", "createdAt", "updatedAt", "engagementDate",
 			"locationId", "approvalStepId", "intent", "exsum", "atmosphere", "cancelledReason",
 			"advisorOrganizationId", "principalOrganizationId", "releasedAt",
 			"atmosphereDetails", "text", "keyOutcomes",
 			"nextSteps", "authorId"};
-	private static String tableName = "reports";
-	public static String REPORT_FIELDS = DaoUtils.buildFieldAliases(tableName, fields);
+	private static final String tableName = "reports";
+	public static final String REPORT_FIELDS = DaoUtils.buildFieldAliases(tableName, fields);
 
 	Handle dbHandle;
 
@@ -63,6 +64,11 @@ public class ReportDao implements IAnetDao<Report> {
 
 	@Override
 	public ReportList getAll(int pageNum, int pageSize) {
+		// Return the reports without sensitive information
+		return getAll(pageNum, pageSize, null);
+	}
+
+	public ReportList getAll(int pageNum, int pageSize, Person user) {
 		String sql;
 		if (DaoUtils.isMsSql(dbHandle)) {
 			sql = "/* getAllReports */ SELECT " + REPORT_FIELDS + ", " + PersonDao.PERSON_FIELDS
@@ -79,11 +85,16 @@ public class ReportDao implements IAnetDao<Report> {
 			.bind("limit", pageSize)
 			.bind("offset", pageSize * pageNum)
 			.map(new ReportMapper());
-		return ReportList.fromQuery(query, pageNum, pageSize);
+		return ReportList.fromQuery(user, query, pageNum, pageSize);
 	}
 
 	@Override
 	public Report insert(Report r) {
+		// Create a report without sensitive information
+		return insert(r, null);
+	}
+
+	public Report insert(Report r, Person user) {
 		return dbHandle.inTransaction(new TransactionCallback<Report>() {
 			@Override
 			public Report inTransaction(Handle conn, TransactionStatus status) throws Exception {
@@ -119,6 +130,10 @@ public class ReportDao implements IAnetDao<Report> {
 					.executeAndReturnGeneratedKeys();
 				r.setId(DaoUtils.getGeneratedId(keys));
 
+				// Write sensitive information (if allowed)
+				final ReportSensitiveInformation rsi = AnetObjectEngine.getInstance().getReportSensitiveInformationDao().insert(r.getReportSensitiveInformation(), user, r);
+				r.setReportSensitiveInformation(rsi);
+
 				final ReportBatch rb = dbHandle.attach(ReportBatch.class);
 				if (r.getAttendees() != null) {
 					//Setify based on attendeeId to prevent violations of unique key constraint. 
@@ -153,6 +168,11 @@ public class ReportDao implements IAnetDao<Report> {
 
 	@Override
 	public Report getById(int id) {
+		// Return the report without sensitive information
+		return getById(id, null);
+	}
+
+	public Report getById(int id, Person user) {
 		Query<Report> query = dbHandle.createQuery("/* getReportById */ SELECT " + REPORT_FIELDS + ", " + PersonDao.PERSON_FIELDS
 				+ "FROM reports, people "
 				+ "WHERE reports.id = :id "
@@ -162,39 +182,53 @@ public class ReportDao implements IAnetDao<Report> {
 		List<Report> results = query.list();
 		if (results.size() == 0) { return null; }
 		Report r = results.get(0);
+		r.setUser(user);
 		return r;
 	}
 
 	@Override
 	public int update(Report r) {
-		r.setUpdatedAt(DateTime.now());
+		// Update the report without sensitive information
+		return update(r, null);
+	}
 
-		StringBuilder sql = new StringBuilder("/* updateReport */ UPDATE reports SET "
-				+ "state = :state, updatedAt = :updatedAt, locationId = :locationId, "
-				+ "intent = :intent, exsum = :exsum, text = :reportText, "
-				+ "keyOutcomes = :keyOutcomes, nextSteps = :nextSteps, "
-				+ "approvalStepId = :approvalStepId, ");
-		if (DaoUtils.isMsSql(dbHandle)) {
-			sql.append("engagementDate = CAST(:engagementDate AS datetime2), releasedAt = CAST(:releasedAt AS datetime2), ");
-		} else {
-			sql.append("engagementDate = :engagementDate, releasedAt = :releasedAt, ");
-		}
-		sql.append("atmosphere = :atmosphere, atmosphereDetails = :atmosphereDetails, "
-				+ "cancelledReason = :cancelledReason, " 
-				+ "principalOrganizationId = :principalOrgId, advisorOrganizationId = :advisorOrgId "
-				+ "WHERE id = :id");
+	public int update(Report r, Person user) {
+		return dbHandle.inTransaction(new TransactionCallback<Integer>() {
+			@Override
+			public Integer inTransaction(Handle conn, TransactionStatus status) throws Exception {
+				// Write sensitive information (if allowed)
+				AnetObjectEngine.getInstance().getReportSensitiveInformationDao().insertOrUpdate(r.getReportSensitiveInformation(), user, r);
 
-		return dbHandle.createStatement(sql.toString())
-			.bindFromProperties(r)
-			.bind("state", DaoUtils.getEnumId(r.getState()))
-			.bind("locationId", DaoUtils.getId(r.getLocation()))
-			.bind("authorId", DaoUtils.getId(r.getAuthor()))
-			.bind("approvalStepId", DaoUtils.getId(r.getApprovalStep()))
-			.bind("atmosphere", DaoUtils.getEnumId(r.getAtmosphere()))
-			.bind("cancelledReason", DaoUtils.getEnumId(r.getCancelledReason()))
-			.bind("advisorOrgId", DaoUtils.getId(r.getAdvisorOrg()))
-			.bind("principalOrgId", DaoUtils.getId(r.getPrincipalOrg()))
-			.execute();
+				r.setUpdatedAt(DateTime.now());
+
+				StringBuilder sql = new StringBuilder("/* updateReport */ UPDATE reports SET "
+						+ "state = :state, updatedAt = :updatedAt, locationId = :locationId, "
+						+ "intent = :intent, exsum = :exsum, text = :reportText, "
+						+ "keyOutcomes = :keyOutcomes, nextSteps = :nextSteps, "
+						+ "approvalStepId = :approvalStepId, ");
+				if (DaoUtils.isMsSql(dbHandle)) {
+					sql.append("engagementDate = CAST(:engagementDate AS datetime2), releasedAt = CAST(:releasedAt AS datetime2), ");
+				} else {
+					sql.append("engagementDate = :engagementDate, releasedAt = :releasedAt, ");
+				}
+				sql.append("atmosphere = :atmosphere, atmosphereDetails = :atmosphereDetails, "
+						+ "cancelledReason = :cancelledReason, "
+						+ "principalOrganizationId = :principalOrgId, advisorOrganizationId = :advisorOrgId "
+						+ "WHERE id = :id");
+
+				return dbHandle.createStatement(sql.toString())
+					.bindFromProperties(r)
+					.bind("state", DaoUtils.getEnumId(r.getState()))
+					.bind("locationId", DaoUtils.getId(r.getLocation()))
+					.bind("authorId", DaoUtils.getId(r.getAuthor()))
+					.bind("approvalStepId", DaoUtils.getId(r.getApprovalStep()))
+					.bind("atmosphere", DaoUtils.getEnumId(r.getAtmosphere()))
+					.bind("cancelledReason", DaoUtils.getEnumId(r.getCancelledReason()))
+					.bind("advisorOrgId", DaoUtils.getId(r.getAdvisorOrg()))
+					.bind("principalOrgId", DaoUtils.getId(r.getPrincipalOrg()))
+					.execute();
+					}
+		});
 	}
 
 	public int addAttendeeToReport(ReportPerson rp, Report r) {
@@ -607,5 +641,4 @@ public class ReportDao implements IAnetDao<Report> {
 		
 		return result;
 	}
-
 }

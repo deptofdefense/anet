@@ -26,6 +26,7 @@ import mil.dds.anet.database.PersonDao;
 import mil.dds.anet.database.PoamDao;
 import mil.dds.anet.database.PositionDao;
 import mil.dds.anet.database.ReportDao;
+import mil.dds.anet.database.ReportSensitiveInformationDao;
 import mil.dds.anet.database.SavedSearchDao;
 import mil.dds.anet.database.TagDao;
 import mil.dds.anet.search.ISearcher;
@@ -48,6 +49,7 @@ public class AnetObjectEngine {
 	AdminDao adminDao;
 	SavedSearchDao savedSearchDao;
 	private final TagDao tagDao;
+	private final ReportSensitiveInformationDao reportSensitiveInformationDao;
 
 	ISearcher searcher;
 	
@@ -70,6 +72,7 @@ public class AnetObjectEngine {
 		adminDao = new AdminDao(dbHandle);
 		savedSearchDao = new SavedSearchDao(dbHandle);
 		tagDao = new TagDao(dbHandle);
+		reportSensitiveInformationDao = new ReportSensitiveInformationDao(dbHandle);
 		
 		instance = this;
 		
@@ -127,6 +130,10 @@ public class AnetObjectEngine {
 
 	public TagDao getTagDao() {
 		return tagDao;
+	}
+
+	public ReportSensitiveInformationDao getReportSensitiveInformationDao() {
+		return reportSensitiveInformationDao;
 	}
 
 	public ISearcher getSearcher() {

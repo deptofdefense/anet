@@ -83,7 +83,7 @@ INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biograp
 INSERT INTO people (name, status, role, emailAddress, phoneNumber, rank, biography, createdAt, updatedAt)
 	VALUES ('SHARTON, Shardul', 1, 1, 'hunter+shardul@dds.mil', '+99-9999-9999', 'CIV', '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
-INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('ANET Administrator', 3, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, status, authorized, currentPersonId, createdAt, updatedAt) VALUES ('ANET Administrator', 3, 0, 1, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 1 Manager', 2, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 1.1 Advisor A', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 1.1 Advisor B', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
@@ -102,12 +102,12 @@ INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 2.1 Advisor for Kites', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 2.1 SuperUser', 2, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 2.2 Advisor C', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 2.2 Advisor D', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, status, authorized, currentPersonId, createdAt, updatedAt) VALUES ('EF 2.2 Advisor D', 0, 0, 1, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 2.2 Old and Inactive', 0, 1, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 2.2 Advisor Sewing Facilities', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 2.2 Advisor Local Kebabs', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 2.2 Super User', 2, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 2.2 Final Reviewer', 2, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO positions (name, type, status, authorized, currentPersonId, createdAt, updatedAt) VALUES ('EF 2.2 Final Reviewer', 2, 0, 1, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 4.1 Advisor E', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 4.1 Advisor for Coffee', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO positions (name, type, status, currentPersonId, createdAt, updatedAt) VALUES ('EF 4.1 Advisor on Software Engineering', 0, 0, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
@@ -515,7 +515,11 @@ INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 	(SELECT id FROM people where emailAddress='hunter+christopf@dds.mil'), (SELECT max(id) FROM reports), 1);
 INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
 	(SELECT id FROM people where emailAddress='hunter+erin@dds.mil'), (SELECT max(id) FROM reports), 1);
+INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
+	(SELECT id FROM people where emailAddress='hunter+reina@dds.mil'), (SELECT max(id) FROM reports), 0);
 INSERT INTO reportPoams (poamId, reportId) VALUES ((SELECT id from poams where shortName = '1.1.B'), (SELECT max(id) from reports));
+INSERT INTO reportsSensitiveInformation (createdAt, updatedAt, text, reportId) VALUES
+	(CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'Need to know only', (SELECT max(id) from reports));
 
 INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, nextSteps, keyOutcomes, authorId, state, engagementDate, atmosphere, advisorOrganizationId, principalOrganizationId) VALUES
 	(CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id from locations where name='General Hospital'), 'Look for Budget Controls Again',
