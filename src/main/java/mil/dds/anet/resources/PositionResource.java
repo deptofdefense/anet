@@ -102,6 +102,9 @@ public class PositionResource implements IGraphQLResource {
 			throw new WebApplicationException("A Position must belong to an organization", Status.BAD_REQUEST); 
 		}
 		if (p.getType() == PositionType.ADMINISTRATOR) { AuthUtils.assertAdministrator(user); } 
+		if (p.getAuthorized()) {
+			AuthUtils.assertAdministrator(user);
+		}
 		
 		AuthUtils.assertSuperUserForOrg(user, p.getOrganization());
 
@@ -127,6 +130,10 @@ public class PositionResource implements IGraphQLResource {
 	@RolesAllowed("SUPER_USER")
 	public Response updatePosition(@Auth Person user, Position pos) {
 		if (pos.getType() == PositionType.ADMINISTRATOR) { AuthUtils.assertAdministrator(user); } 
+		final Position origPos = dao.getById(pos.getId());
+		if (pos.getAuthorized() != origPos.getAuthorized()) {
+			AuthUtils.assertAdministrator(user);
+		}
 		if (DaoUtils.getId(pos.getOrganization()) == null) { 
 			throw new WebApplicationException("A Position must belong to an organization", Status.BAD_REQUEST); 
 		}
