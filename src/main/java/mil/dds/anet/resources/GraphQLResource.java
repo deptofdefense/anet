@@ -333,7 +333,7 @@ public class GraphQLResource {
 	}
 
 	/**
-	 * TODO: This should end up in a converter type class, perhaps lookup up by annotations.
+	 * TODO: This should end up in a converter type class, perhaps lookup by annotations.
 	 * 
 	 * Create the sheet with the supplied name in the supplied workbook using the
 	 * supplied data.
@@ -433,11 +433,8 @@ public class GraphQLResource {
 	}
 
 	/**
-	 * {@link StreamingOutput} implementation that used a {@link XSSFWorkbook} as
+	 * {@link StreamingOutput} implementation that uses a {@link XSSFWorkbook} as
 	 * the source of the stream to be written.
-	 * 
-	 * @author timothy.ward
-	 *
 	 */
 	public static class XSSFWorkbookStreamingOutput implements StreamingOutput {
 
@@ -453,10 +450,8 @@ public class GraphQLResource {
 			this.workbook = workbook;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see javax.ws.rs.core.StreamingOutput#write(java.io.OutputStream)
+		/**
+		 * {@inheritDoc}
 		 */
 		@Override
 		public void write(final OutputStream output) throws IOException, WebApplicationException {
