@@ -716,19 +716,19 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		ReportList results = httpQuery("/api/reports/search", admin).post(Entity.json(query), ReportList.class);
 		assertThat(results.getList().size()).isEqualTo(1);
 
-		// Greater than startDate and equal than endDate
+		// Greater than startDate and equal to endDate
 		query.setUpdatedAtStart(startDate);
 		query.setUpdatedAtEnd(endDate.minusDays(1));
 		results = httpQuery("/api/reports/search", admin).post(Entity.json(query), ReportList.class);
 		assertThat(results.getList().size()).isEqualTo(1);
 
-		// Equal than startDate and smaller than endDate
+		// Equal to startDate and smaller than endDate
 		query.setUpdatedAtStart(startDate.plusDays(1));
 		query.setUpdatedAtEnd(endDate);
 		results = httpQuery("/api/reports/search", admin).post(Entity.json(query), ReportList.class);
 		assertThat(results.getList().size()).isEqualTo(0);
 
-		// Equal than startDate and equal than endDate
+		// Equal to startDate and equal to endDate
 		query.setUpdatedAtStart(startDate.plusDays(1));
 		query.setUpdatedAtEnd(startDate.plusDays(1));
 		results = httpQuery("/api/reports/search", admin).post(Entity.json(query), ReportList.class);
@@ -754,7 +754,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		final Position adminPos = admin.loadPosition();
 		query.setAttendeePositionId(adminPos.getId());
 
-		//Search by author position
+		//Search by attendee position
 		final ReportList results = httpQuery("/api/reports/search", admin).post(Entity.json(query), ReportList.class);
 		assertThat(results).isNotNull();
 		assertThat(results.getList().size()).isGreaterThan(0);
