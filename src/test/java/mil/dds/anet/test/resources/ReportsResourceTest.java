@@ -703,6 +703,64 @@ public class ReportsResourceTest extends AbstractResourceTest {
 	}
 
 	@Test
+	public void searchUpdatedAtStartAndEndTest() {
+		// insertBaseData has 1 report that is updatedAt 2 days before current timestamp
+		final ReportSearchQuery query = new ReportSearchQuery();
+		final DateTime startDate = DateTime.now().minusDays(3);
+		final DateTime endDate = DateTime.now().minusDays(1);
+
+		// Greater than startDate and smaller than endDate
+		query.setUpdatedAtStart(startDate);
+		query.setUpdatedAtEnd(endDate);
+		query.setPageSize(0);
+		ReportList results = httpQuery("/api/reports/search", admin).post(Entity.json(query), ReportList.class);
+		assertThat(results.getList().size()).isEqualTo(1);
+
+		// Greater than startDate and equal to endDate
+		query.setUpdatedAtStart(startDate);
+		query.setUpdatedAtEnd(endDate.minusDays(1));
+		results = httpQuery("/api/reports/search", admin).post(Entity.json(query), ReportList.class);
+		assertThat(results.getList().size()).isEqualTo(1);
+
+		// Equal to startDate and smaller than endDate
+		query.setUpdatedAtStart(startDate.plusDays(1));
+		query.setUpdatedAtEnd(endDate);
+		results = httpQuery("/api/reports/search", admin).post(Entity.json(query), ReportList.class);
+		assertThat(results.getList().size()).isEqualTo(0);
+
+		// Equal to startDate and equal to endDate
+		query.setUpdatedAtStart(startDate.plusDays(1));
+		query.setUpdatedAtEnd(startDate.plusDays(1));
+		results = httpQuery("/api/reports/search", admin).post(Entity.json(query), ReportList.class);
+		assertThat(results.getList().size()).isEqualTo(0);
+	}
+
+	@Test
+	public void searchByAuthorPosition() {
+		final ReportSearchQuery query = new ReportSearchQuery();
+		final Position adminPos = admin.loadPosition();
+		query.setAuthorPositionId(adminPos.getId());
+
+		//Search by author position
+		final ReportList results = httpQuery("/api/reports/search", admin).post(Entity.json(query), ReportList.class);
+		assertThat(results).isNotNull();
+		assertThat(results.getList().size()).isGreaterThan(0);
+	}
+
+
+	@Test
+	public void searchAttendeePosition() {
+		final ReportSearchQuery query = new ReportSearchQuery();
+		final Position adminPos = admin.loadPosition();
+		query.setAttendeePositionId(adminPos.getId());
+
+		//Search by attendee position
+		final ReportList results = httpQuery("/api/reports/search", admin).post(Entity.json(query), ReportList.class);
+		assertThat(results).isNotNull();
+		assertThat(results.getList().size()).isGreaterThan(0);
+	}
+
+	@Test
 	public void reportDeleteTest() {
 		final Person jack = getJackJackson();
 		final Person liz = getElizabethElizawell();

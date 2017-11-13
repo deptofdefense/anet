@@ -627,3 +627,15 @@ INSERT INTO reportTags (reportId, tagId)
   FROM reports r, tags t
   WHERE r.id % 3 = 1
   AND t.name = 'facilitation payment';
+
+-- Insert report with created at and updated at date for two days before current timestamp
+INSERT INTO reports (createdAt, updatedAt, locationId, intent, text, nextSteps, authorId, state, engagementDate, atmosphere, advisorOrganizationId, principalOrganizationId) VALUES
+	(DATEADD (day, -2, CURRENT_TIMESTAMP), DATEADD (day, -2, CURRENT_TIMESTAMP), (SELECT id from locations where name='General Hospital'), 'Discuss improvements in Annual Budgeting process',
+	'Today I met with Edwin the dude to tell him all the great things that he can do to improve his budgeting process. I hope he listened to me',
+	'Meet with the dude again next week',
+	(SELECT id FROM people where emailAddress='hunter+jack@dds.mil'), 2, '2016-05-25', 0,
+	(SELECT id FROM organizations where shortName = 'EF 2.1'), (SELECT id FROM organizations WHERE longName LIKE 'Ministry of Defense'));
+INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
+	(SELECT id FROM people where emailAddress='hunter+steve@dds.mil'), (SELECT max(id) FROM reports), 1);
+INSERT INTO reportPeople (personId, reportId, isPrimary) VALUES (
+	(SELECT id FROM people where emailAddress='hunter+jack@dds.mil'), (SELECT max(id) FROM reports), 1);
