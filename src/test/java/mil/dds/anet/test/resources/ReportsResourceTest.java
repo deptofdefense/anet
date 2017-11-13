@@ -736,6 +736,31 @@ public class ReportsResourceTest extends AbstractResourceTest {
 	}
 
 	@Test
+	public void searchByAuthorPosition() {
+		final ReportSearchQuery query = new ReportSearchQuery();
+		final Position adminPos = admin.loadPosition();
+		query.setAuthorPositionId(adminPos.getId());
+
+		//Search by author position
+		final ReportList results = httpQuery("/api/reports/search", admin).post(Entity.json(query), ReportList.class);
+		assertThat(results).isNotNull();
+		assertThat(results.getList().size()).isGreaterThan(0);
+	}
+
+
+	@Test
+	public void searchAttendeePosition() {
+		final ReportSearchQuery query = new ReportSearchQuery();
+		final Position adminPos = admin.loadPosition();
+		query.setAttendeePositionId(adminPos.getId());
+
+		//Search by author position
+		final ReportList results = httpQuery("/api/reports/search", admin).post(Entity.json(query), ReportList.class);
+		assertThat(results).isNotNull();
+		assertThat(results.getList().size()).isGreaterThan(0);
+	}
+
+	@Test
 	public void reportDeleteTest() {
 		final Person jack = getJackJackson();
 		final Person liz = getElizabethElizawell();
