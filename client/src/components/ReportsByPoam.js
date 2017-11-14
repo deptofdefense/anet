@@ -38,22 +38,18 @@ export default class ReportsByPoam extends Component {
   }
 
   render() {
-    let chartByPoam = ''
-    if (this.state.graphDataByPoam.length) {
-      chartByPoam = <BarChart
-        chartId={chartByPoamId}
-        data={this.state.graphDataByPoam}
-        xProp='poam.id'
-        yProp='reportsCount'
-        xLabel='poam.shortName'
-        onBarClick={this.goToPoam}
-        updateChart={this.state.updateChart}
-      />
-    }
-    let focusDetails = this.getFocusDetails()
+    const focusDetails = this.getFocusDetails()
     return (
       <div>
-        {chartByPoam}
+        <BarChart
+          chartId={chartByPoamId}
+          data={this.state.graphDataByPoam}
+          xProp='poam.id'
+          yProp='reportsCount'
+          xLabel='poam.shortName'
+          onBarClick={this.goToPoam}
+          updateChart={this.state.updateChart}
+        />
         <Fieldset
             title={`Reports by PoAM ${focusDetails.titleSuffix}`}
             id='cancelled-reports-details'

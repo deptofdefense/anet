@@ -43,23 +43,19 @@ export default class NotApprovedReports extends Component {
   }
 
   render() {
-    let chartPart = ''
-    if (this.state.graphData.length) {
-      chartPart = <BarChart
-        chartId={chartId}
-        data={this.state.graphData}
-        xProp='advisorOrg.id'
-        yProp='notApproved'
-        xLabel='advisorOrg.shortName'
-        onBarClick={this.goToOrg}
-        updateChart={this.state.updateChart}
-      />
-    }
-    let focusDetails = this.focusDetails
+    const focusDetails = this.focusDetails
     return (
       <div>
-        {chartPart}
-        <Fieldset
+          <BarChart
+            chartId={chartId}
+            data={this.state.graphData}
+            xProp='advisorOrg.id'
+            yProp='notApproved'
+            xLabel='advisorOrg.shortName'
+            onBarClick={this.goToOrg}
+            updateChart={this.state.updateChart}
+          />
+          <Fieldset
             title={`Not Approved Reports ${focusDetails.titleSuffix}`}
             id='not-approved-reports-details'
             action={!focusDetails.resetFnc

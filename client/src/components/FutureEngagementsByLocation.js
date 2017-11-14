@@ -26,7 +26,7 @@ export default class FutureEngagementsByLocation extends Component {
     super(props)
 
     this.state = {
-      graphData: {data: []},
+      graphData: {},
       focusedDate: '',
       focusedLocation: '',
       updateChart: true,  // whether the chart needs to be updated
@@ -52,19 +52,15 @@ export default class FutureEngagementsByLocation extends Component {
   }
 
   render() {
-    let chart = ''
-    if (this.state.graphData.data.length) {
-      chart = <HorizontalBarChart
-        chartId={chartId}
-        data={this.state.graphData}
-        onBarClick={this.goToSelection}
-        updateChart={this.state.updateChart}
-      />
-    }
-    let focusDetails = this.getFocusDetails()
+    const focusDetails = this.getFocusDetails()
     return (
       <div>
-        {chart}
+        <HorizontalBarChart
+          chartId={chartId}
+          data={this.state.graphData}
+          onBarClick={this.goToSelection}
+          updateChart={this.state.updateChart}
+        />
         <Fieldset
             title={`Future Engagements ${focusDetails.titleSuffix}`}
             id='cancelled-reports-details'

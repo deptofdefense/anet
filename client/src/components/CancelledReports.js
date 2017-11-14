@@ -43,33 +43,27 @@ export default class CancelledReports extends Component {
   }
 
   render() {
-    let chartByOrg = ''
-    let chartByReason = ''
-    if (this.state.graphDataByOrg.length) {
-      chartByOrg = <BarChart
-        chartId={chartByOrgId}
-        data={this.state.graphDataByOrg}
-        xProp='advisorOrg.id'
-        yProp='cancelledByOrg'
-        xLabel='advisorOrg.shortName'
-        onBarClick={this.goToOrg}
-        updateChart={this.state.updateChart}
-      />
-      chartByReason = <BarChart
-        chartId={chartByReasonId}
-        data={this.state.graphDataByReason}
-        xProp='cancelledReason'
-        yProp='cancelledByReason'
-        xLabel='reason'
-        onBarClick={this.goToReason}
-        updateChart={this.state.updateChart}
-      />
-    }
-    let focusDetails = this.getFocusDetails()
+    const focusDetails = this.getFocusDetails()
     return (
       <div>
-        {chartByOrg}
-        {chartByReason}
+        <BarChart
+            chartId={chartByOrgId}
+            data={this.state.graphDataByOrg}
+            xProp='advisorOrg.id'
+            yProp='cancelledByOrg'
+            xLabel='advisorOrg.shortName'
+            onBarClick={this.goToOrg}
+            updateChart={this.state.updateChart}
+          />
+          <BarChart
+            chartId={chartByReasonId}
+            data={this.state.graphDataByReason}
+            xProp='cancelledReason'
+            yProp='cancelledByReason'
+            xLabel='reason'
+            onBarClick={this.goToReason}
+            updateChart={this.state.updateChart}
+          />
         <Fieldset
             title={`Cancelled Reports ${focusDetails.titleSuffix}`}
             id='cancelled-reports-details'

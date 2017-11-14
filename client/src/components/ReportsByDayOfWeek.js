@@ -43,22 +43,18 @@ export default class ReportsByDayOfWeek extends Component {
   }
 
   render() {
-    let chartByDayOfWeek = ''
-    if (this.state.graphDataByDayOfWeek.length) {
-      chartByDayOfWeek = <BarChart
-        chartId={chartByDayOfWeekId}
-        data={this.state.graphDataByDayOfWeek}
-        xProp='dayOfWeekInt'
-        yProp='reportsCount'
-        xLabel='dayOfWeekString'
-        onBarClick={this.goToDayOfWeek}
-        updateChart={this.state.updateChart}
-      />
-    }
-    let focusDetails = this.getFocusDetails()
+    const focusDetails = this.getFocusDetails()
     return (
       <div>
-        {chartByDayOfWeek}
+        <BarChart
+          chartId={chartByDayOfWeekId}
+          data={this.state.graphDataByDayOfWeek}
+          xProp='dayOfWeekInt'
+          yProp='reportsCount'
+          xLabel='dayOfWeekString'
+          onBarClick={this.goToDayOfWeek}
+          updateChart={this.state.updateChart}
+        />
         <Fieldset
             title={`Reports by day of the week ${focusDetails.titleSuffix}`}
             id='cancelled-reports-details'
