@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Page from 'components/Page'
 import NotApprovedReports from 'components/NotApprovedReports'
-import CancelledReports from 'components/CancelledReports'
+import CancelledEngagementReports from 'components/CancelledEngagementReports'
 import ReportsByPoam from 'components/ReportsByPoam'
 import ReportsByDayOfWeek from 'components/ReportsByDayOfWeek'
 import FutureEngagementsByLocation from 'components/FutureEngagementsByLocation'
@@ -24,7 +24,7 @@ const insightDetails = {
     showCalendar: true
   },
   'cancelled-reports': {
-    component: CancelledReports,
+    component: CancelledEngagementReports,
     title: 'Cancelled Engagement Reports',
     dateRange: false,
     showCalendar: true

@@ -18,7 +18,7 @@ const chartByReasonId = 'cancelled_reports_by_reason'
  * Component displaying a chart with reports cancelled since
  * the given date.
  */
-export default class CancelledReports extends Component {
+export default class CancelledEngagementReports extends Component {
   static propTypes = {
     date: React.PropTypes.object,
   }
