@@ -1,4 +1,6 @@
 import React, { Component, PropTypes } from 'react'
+import LoaderHOC from '../HOC/LoaderHOC'
+
 import './BarChart.css'
 
 var d3 = require('d3')
@@ -19,7 +21,7 @@ function getPropValue(obj, prop) {
   })
 }
 
-export default class BarChart extends Component {
+class BarChart extends Component {
   static propTypes = {
     chartId: PropTypes.string,
     data: PropTypes.array,
@@ -165,3 +167,5 @@ export default class BarChart extends Component {
   }
 
 }
+
+export default LoaderHOC('data')(BarChart)
