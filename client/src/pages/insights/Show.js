@@ -19,22 +19,20 @@ import DateRangeSearch from 'components/advancedSearch/DateRangeSearch'
 const insightDetails = {
   'not-approved-reports': {
     component: NotApprovedReports,
-    title: 'Not Approved Reports',
-    help: 'Number of reports not approved since',
+    title: 'Pending Approval Reports',
     dateRange: false,
     showCalendar: true
   },
   'cancelled-reports': {
     component: CancelledReports,
-    title: 'Cancelled Reports',
-    help: 'Number of reports cancelled since',
+    title: 'Cancelled Engagement Reports',
     dateRange: false,
     showCalendar: true
   },
   'reports-by-poam': {
     component: ReportsByPoam,
     title: 'Reports by PoAM',
-    help: 'Number of reports by PoAM since',
+    help: '',
     dateRange: false,
     showCalendar: true
   },
@@ -210,11 +208,10 @@ export default class InsightsShow extends Page {
               {this.getFilters()}
             </span>
             }>
-              <p className="help-text">{insightConfig.help} {insightConfig.showCalendar && this.referenceDateLongStr}</p>
-              <InsightComponent
-                date={this.state.referenceDate.clone()}
-                startDate={this.state.startDate.clone()}
-                endDate={this.state.endDate.clone()} />
+            <InsightComponent
+              date={this.state.referenceDate.clone()}
+              startDate={this.state.startDate.clone()}
+              endDate={this.state.endDate.clone()} />
           </Fieldset>
         }
       </div>
