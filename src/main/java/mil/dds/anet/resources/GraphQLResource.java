@@ -77,6 +77,7 @@ public class GraphQLResource {
 	private static final String OUTPUT_JSON = "json";
 	private static final String OUTPUT_XML = "xml";
 	private static final String OUTPUT_XLSX = "xlsx";
+	private static final String MEDIATYPE_XLSX = "application/vnd.ms-excel";
 
 	private GraphQL graphql;
 	private List<IGraphQLResource> resources;
@@ -222,6 +223,7 @@ public class GraphQLResource {
 
 	@POST
 	@Timed
+	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MEDIATYPE_XLSX})
 	public Response graphqlPost(@Auth Person user, Map<String,Object> body) {
 		String query = (String) body.get("query");
 		String output = (String) body.get("output");
@@ -239,7 +241,7 @@ public class GraphQLResource {
 
 	@GET
 	@Timed
-	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MEDIATYPE_XLSX})
 	public Response graphqlGet(@Auth Person user,
 			@QueryParam("query") String query,
 			@DefaultValue(OUTPUT_JSON) @QueryParam("output") String output) {
@@ -286,7 +288,7 @@ public class GraphQLResource {
 			String xml = ResponseUtils.toPrettyString(XML.toString(json, "result"), 2);
 			return Response.ok(xml, MediaType.APPLICATION_XML).build();
 		} else if (OUTPUT_XLSX.equals(output)) {
-			return Response.ok(new XSSFWorkbookStreamingOutput(createWorkbook(result)))
+			return Response.ok(new XSSFWorkbookStreamingOutput(createWorkbook(result)), MEDIATYPE_XLSX)
 					.header("Content-Disposition", "attachment; filename=" + "anet_export.xslx").build();
 		} else {
 			return Response.ok(result, MediaType.APPLICATION_JSON).build();
