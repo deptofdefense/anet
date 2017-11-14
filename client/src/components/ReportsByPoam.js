@@ -7,10 +7,12 @@ import BarChart from 'components/BarChart'
 import Fieldset from 'components/Fieldset'
 import ReportCollection from 'components/ReportCollection'
 
+import LoaderHOC from '../HOC/LoaderHOC'
 
 const d3 = require('d3')
 const chartByPoamId = 'reports_by_poam'
 
+const BarChartWithLoader = LoaderHOC('isLoading')('data')(BarChart)
 
 /*
  * Component displaying a chart with number of reports per PoAM.
@@ -26,7 +28,8 @@ export default class ReportsByPoam extends Component {
     this.state = {
       graphDataByPoam: [],
       focusedPoam: '',
-      updateChart: true  // whether the chart needs to be updated
+      updateChart: true,  // whether the chart needs to be updated
+      isLoading: false
     }
   }
 
@@ -41,7 +44,7 @@ export default class ReportsByPoam extends Component {
     const focusDetails = this.getFocusDetails()
     return (
       <div>
-        <BarChart
+        <BarChartWithLoader
           chartId={chartByPoamId}
           data={this.state.graphDataByPoam}
           xProp='poam.id'
@@ -49,6 +52,7 @@ export default class ReportsByPoam extends Component {
           xLabel='poam.shortName'
           onBarClick={this.goToPoam}
           updateChart={this.state.updateChart}
+          isLoading={this.state.isLoading}
         />
         <Fieldset
             title={`Reports by PoAM ${focusDetails.titleSuffix}`}
@@ -80,6 +84,7 @@ export default class ReportsByPoam extends Component {
   }
 
   fetchData() {
+    this.setState( {isLoading: true} )
     const chartQueryParams = {}
     Object.assign(chartQueryParams, this.queryParams)
     Object.assign(chartQueryParams, {
@@ -107,6 +112,7 @@ export default class ReportsByPoam extends Component {
       // add No PoAM item, in order to relate to reports without PoAMs
       poams.push(noPoam)
       this.setState({
+        isLoading: false,
         updateChart: true,  // update chart after fetching the data
         graphDataByPoam: poams
           .map(d => {

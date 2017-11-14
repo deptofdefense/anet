@@ -8,11 +8,13 @@ import BarChart from 'components/BarChart'
 import Fieldset from 'components/Fieldset'
 import ReportCollection from 'components/ReportCollection'
 
+import LoaderHOC from '../HOC/LoaderHOC'
 
 const d3 = require('d3')
 const chartByOrgId = 'cancelled_reports_by_org'
 const chartByReasonId = 'cancelled_reports_by_reason'
 
+const BarChartWithLoader = LoaderHOC('isLoading')('data')(BarChart)
 
 /*
  * Component displaying a chart with reports cancelled since
@@ -31,7 +33,8 @@ export default class CancelledReports extends Component {
       graphDataByReason: [],
       focusedOrg: '',
       focusedReason: '',
-      updateChart: true  // whether the chart needs to be updated
+      updateChart: true,  // whether the chart needs to be updated
+      isLoading: false
     }
   }
 
@@ -46,7 +49,7 @@ export default class CancelledReports extends Component {
     const focusDetails = this.getFocusDetails()
     return (
       <div>
-        <BarChart
+        <BarChartWithLoader
             chartId={chartByOrgId}
             data={this.state.graphDataByOrg}
             xProp='advisorOrg.id'
@@ -54,8 +57,9 @@ export default class CancelledReports extends Component {
             xLabel='advisorOrg.shortName'
             onBarClick={this.goToOrg}
             updateChart={this.state.updateChart}
+            isLoading={this.state.isLoading}
           />
-          <BarChart
+          <BarChartWithLoader
             chartId={chartByReasonId}
             data={this.state.graphDataByReason}
             xProp='cancelledReason'
@@ -63,6 +67,7 @@ export default class CancelledReports extends Component {
             xLabel='reason'
             onBarClick={this.goToReason}
             updateChart={this.state.updateChart}
+            isLoading={this.state.isLoading}
           />
         <Fieldset
             title={`Cancelled Reports ${focusDetails.titleSuffix}`}
@@ -106,6 +111,7 @@ export default class CancelledReports extends Component {
   }
 
   fetchData() {
+    this.setState( {isLoading: true} )
     let pinned_ORGs = dict.lookup('pinned_ORGs')
     const chartQueryParams = {}
     Object.assign(chartQueryParams, this.queryParams)
@@ -129,6 +135,7 @@ export default class CancelledReports extends Component {
       reportsList = reportsList
         .map(d => { if (!d.advisorOrg) d.advisorOrg = noAdvisorOrg; return d })
       this.setState({
+        isLoading: false,
         updateChart: true,  // update chart after fetching the data
         graphDataByOrg: reportsList
           .filter((item, index, d) => d.findIndex(t => {return t.advisorOrg.id === item.advisorOrg.id }) === index)

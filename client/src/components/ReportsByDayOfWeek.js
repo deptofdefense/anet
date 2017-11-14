@@ -8,10 +8,12 @@ import BarChart from 'components/BarChart'
 import Fieldset from 'components/Fieldset'
 import ReportCollection from 'components/ReportCollection'
 
+import LoaderHOC from '../HOC/LoaderHOC'
 
 const d3 = require('d3')
 const chartByDayOfWeekId = 'reports_by_day_of_week'
 
+const BarChartWithLoader = LoaderHOC('isLoading')('data')(BarChart)
 
 /*
  * Component displaying a chart with number of reports released within a certain
@@ -29,7 +31,8 @@ export default class ReportsByDayOfWeek extends Component {
     this.state = {
       graphDataByDayOfWeek: [],
       focusedDayOfWeek: '',
-      updateChart: true  // whether the chart needs to be updated
+      updateChart: true,  // whether the chart needs to be updated
+      isLoading: false
     }
   }
 
@@ -46,7 +49,7 @@ export default class ReportsByDayOfWeek extends Component {
     const focusDetails = this.getFocusDetails()
     return (
       <div>
-        <BarChart
+        <BarChartWithLoader
           chartId={chartByDayOfWeekId}
           data={this.state.graphDataByDayOfWeek}
           xProp='dayOfWeekInt'
@@ -54,6 +57,7 @@ export default class ReportsByDayOfWeek extends Component {
           xLabel='dayOfWeekString'
           onBarClick={this.goToDayOfWeek}
           updateChart={this.state.updateChart}
+          isLoading={this.state.isLoading}
         />
         <Fieldset
             title={`Reports by day of the week ${focusDetails.titleSuffix}`}
@@ -85,6 +89,7 @@ export default class ReportsByDayOfWeek extends Component {
   }
 
   fetchData() {
+    this.setState( {isLoading: true} )
     // Query used by the chart
     const chartQuery = this.runChartQuery(this.chartQueryParams())
     Promise.all([chartQuery]).then(values => {
@@ -96,6 +101,7 @@ export default class ReportsByDayOfWeek extends Component {
       let displayOrderDaysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
       let simplifiedValues = values[0].reportList.list.map(d => {return {reportId: d.id, dayOfWeek: d.engagementDayOfWeek}})
       this.setState({
+        isLoading: false,
         updateChart: true,  // update chart after fetching the data
         graphDataByDayOfWeek: displayOrderDaysOfWeek
           .map((d, i) => {

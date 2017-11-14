@@ -9,8 +9,13 @@ import Fieldset from 'components/Fieldset'
 import ReportCollection from 'components/ReportCollection'
 import moment from 'moment'
 
+import LoaderHOC from '../HOC/LoaderHOC'
+
 const d3 = require('d3')
 const chartId = 'future_engagements_by_location'
+
+const BarChartWithLoader = LoaderHOC('isLoading')('data')(HorizontalBarChart)
+
 
 /*
  * Component displaying a chart with number of future engagements per date and
@@ -30,6 +35,7 @@ export default class FutureEngagementsByLocation extends Component {
       focusedDate: '',
       focusedLocation: '',
       updateChart: true,  // whether the chart needs to be updated
+      isLoading: false
     }
   }
 
@@ -55,11 +61,12 @@ export default class FutureEngagementsByLocation extends Component {
     const focusDetails = this.getFocusDetails()
     return (
       <div>
-        <HorizontalBarChart
+        <BarChartWithLoader
           chartId={chartId}
           data={this.state.graphData}
           onBarClick={this.goToSelection}
           updateChart={this.state.updateChart}
+          isLoading={this.state.isLoading}
         />
         <Fieldset
             title={`Future Engagements ${focusDetails.titleSuffix}`}
@@ -92,6 +99,7 @@ export default class FutureEngagementsByLocation extends Component {
   }
 
   fetchData() {
+    this.setState( {isLoading: true} )
     // Query used by the chart
     const chartQuery = this.runChartQuery(this.chartQueryParams())
     const noLocation = {
@@ -136,7 +144,8 @@ export default class FutureEngagementsByLocation extends Component {
       )
       this.setState({
         updateChart: true,  // update chart after fetching the data
-        graphData: graphData
+        graphData: graphData,
+        isLoading: false
       })
     })
     this.fetchFocusData()

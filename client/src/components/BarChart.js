@@ -1,5 +1,4 @@
 import React, { Component, PropTypes } from 'react'
-import LoaderHOC from '../HOC/LoaderHOC'
 
 import './BarChart.css'
 
@@ -168,4 +167,4 @@ class BarChart extends Component {
 
 }
 
-export default LoaderHOC('data')(BarChart)
+export default BarChart

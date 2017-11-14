@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import './LoaderHOC.css'
 
-const LoaderHOC = (propName) => (WrappedComponent) => {
+const LoaderHOC = (isLoading) => (dataPropName) => (WrappedComponent) => {
     return class LoaderHOC extends Component {
         isEmpty(prop) {
             return (
@@ -12,8 +12,25 @@ const LoaderHOC = (propName) => (WrappedComponent) => {
             )
         }
 
+        isLoadingData(prop) {
+            return (
+                prop ||
+                prop === undefined
+            )
+        }
+
         render() {
-            return this.isEmpty(this.props[propName]) ? <div className='loader'></div> : <WrappedComponent {...this.props} />
+            const dataIsEmpty = this.isEmpty(this.props[dataPropName])
+            const showLoader =  dataIsEmpty && this.isLoadingData(this.props[isLoading])
+
+            if (showLoader) {
+                return <div className='loader'></div>
+            } else if (dataIsEmpty) {
+                return <div>...</div>
+            }
+            else {
+                return <WrappedComponent {...this.props} />
+            }
         }
     }
 }
