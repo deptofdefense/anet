@@ -111,7 +111,8 @@ public class Report extends AbstractAnetBean {
 
 	/**
 	 * Returns an Integer value from the set (1,2,3,4,5,6,7) in accordance with
-	 * week days [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday]
+	 * week days [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday].
+	 *
 	 * @return Integer engagement day of week
 	 */
 	public Integer getEngagementDayOfWeek() {

@@ -338,11 +338,10 @@ public class GraphQLResource {
 	}
 
 	/**
-	 * TODO: This should end up in a converter type class, perhaps lookup by annotations.
-	 * 
 	 * Create the sheet with the supplied name in the supplied workbook using the
 	 * supplied data.
-	 * 
+	 * TODO: This should end up in a converter type class, perhaps lookup by annotations.
+	 *
 	 * @param workbook
 	 *            the workbook
 	 * @param name

@@ -96,8 +96,7 @@ public class OrganizationResource implements IGraphQLResource {
 		final Organization created;
 		try {
 			created = dao.insert(org);
-		}
-		catch (UnableToExecuteStatementException e) {
+		} catch (UnableToExecuteStatementException e) {
 			throw handleSqlException(e);
 		}
 		
@@ -145,8 +144,7 @@ public class OrganizationResource implements IGraphQLResource {
 		final int numRows;
 		try {
 			numRows = dao.update(org);
-		}
-		catch (UnableToExecuteStatementException e) {
+		} catch (UnableToExecuteStatementException e) {
 			throw handleSqlException(e);
 		}
 

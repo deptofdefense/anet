@@ -769,16 +769,16 @@ public class ReportResource implements IGraphQLResource {
 	}
 
 	private Map<Integer, Organization> getOrgsByShortNames(List<String> orgShortNames) {
-			final Map<Integer, Organization> result = new HashMap<>();
-			for (final Organization organization : engine.getOrganizationDao().getOrgsByShortNames(orgShortNames)) {
-				result.put(organization.getId(), organization);
-			}
-			return result;
+		final Map<Integer, Organization> result = new HashMap<>();
+		for (final Organization organization : engine.getOrganizationDao().getOrgsByShortNames(orgShortNames)) {
+			result.put(organization.getId(), organization);
 		}
+		return result;
+	}
+
 	/**
 	 * The comparator to be used when ordering the roll up graph results to ensure
 	 * that any pinned organisation names are returned at the start of the list.
-	 *
 	 */
 	public static class RollupGraphComparator implements Comparator<RollupGraph> {
 
