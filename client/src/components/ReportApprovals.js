@@ -93,7 +93,10 @@ export default class ReportApprovals extends Component {
             return(
                 <div className="approval-details">
                     <span>By {action.person.name}</span><br/>
-                    <small>On {moment(action.createdAt).format('D MMM YYYY, h:mm a')}</small>
+                    <small>
+                        On {moment(action.createdAt).format('D MMM YYYY')}<br/>
+                        At {moment(action.createdAt).format('h:mm a')}
+                    </small>
                 </div>
             )
         }
