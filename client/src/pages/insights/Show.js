@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import Page from 'components/Page'
-import NotApprovedReports from 'components/NotApprovedReports'
+import PendingApprovalReports from 'components/PendingApprovalReports'
 import CancelledEngagementReports from 'components/CancelledEngagementReports'
 import ReportsByPoam from 'components/ReportsByPoam'
 import ReportsByDayOfWeek from 'components/ReportsByDayOfWeek'
@@ -18,7 +18,7 @@ import DateRangeSearch from 'components/advancedSearch/DateRangeSearch'
 
 const insightDetails = {
   'not-approved-reports': {
-    component: NotApprovedReports,
+    component: PendingApprovalReports,
     title: 'Pending Approval Reports',
     dateRange: false,
     showCalendar: true

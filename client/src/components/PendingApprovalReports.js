@@ -18,7 +18,7 @@ const chartId = 'not_approved_reports_chart'
  * which have not been approved yet. They are displayed in different
  * presentation forms: chart, summary, table and map.
  */
-export default class NotApprovedReports extends Component {
+export default class PendingApprovalReports extends Component {
   static propTypes = {
     date: React.PropTypes.object,
   }
