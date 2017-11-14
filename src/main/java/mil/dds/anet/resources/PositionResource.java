@@ -178,8 +178,7 @@ public class PositionResource implements IGraphQLResource {
 
 		if (origPos.getAuthorized() != pos.getAuthorized()) {
 			AnetAuditLogger.log("Position {} edited by {}; authorized changed from {} to {}", pos, user, origPos.getAuthorized(), pos.getAuthorized());
-		}
-		else {
+		} else {
 			AnetAuditLogger.log("Position {} edited by {}", pos, user);
 		}
 		return (numRows == 1) ? Response.ok().build() : Response.status(Status.NOT_FOUND).build();

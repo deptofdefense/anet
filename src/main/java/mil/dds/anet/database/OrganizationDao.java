@@ -71,15 +71,15 @@ public class OrganizationDao implements IAnetDao<Organization> {
 	@UseStringTemplate3StatementLocator
 	public interface OrgListQueries {
 		@Mapper(OrganizationMapper.class)
-		@SqlQuery("SELECT id AS organizations_id" +
-				", shortName AS organizations_shortName" +
-				", longName AS organizations_longName" +
-				", identificationCode AS organizations_identificationCode" +
-				", type AS organizations_type" +
-				", parentOrgId AS organizations_parentOrgId" +
-				", createdAt AS organizations_createdAt" +
-				", updatedAt AS organizations_updatedAt" +
-				" FROM organizations WHERE shortName IN ( <shortNames> )")
+		@SqlQuery("SELECT id AS organizations_id"
+				+ ", shortName AS organizations_shortName"
+				+ ", longName AS organizations_longName"
+				+ ", identificationCode AS organizations_identificationCode"
+				+ ", type AS organizations_type"
+				+ ", parentOrgId AS organizations_parentOrgId"
+				+ ", createdAt AS organizations_createdAt"
+				+ ", updatedAt AS organizations_updatedAt"
+				+ " FROM organizations WHERE shortName IN ( <shortNames> )")
 		public List<Organization> getOrgsByShortNames(@BindIn("shortNames") List<String> shortNames);
 	}
 

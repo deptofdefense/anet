@@ -110,8 +110,7 @@ public class ReportSensitiveInformationDao implements IAnetDao<ReportSensitiveIn
 		ReportSensitiveInformation rsi = (results.size() == 0) ? null : results.get(0);
 		if (rsi != null) {
 			AnetAuditLogger.log("ReportSensitiveInformation {} retrieved by {} ", rsi, user);
-		}
-		else {
+		} else {
 			rsi = new ReportSensitiveInformation();
 			rsi.setReportId(report.getId());
 		}
@@ -120,8 +119,8 @@ public class ReportSensitiveInformationDao implements IAnetDao<ReportSensitiveIn
 
 	/**
 	 * A user is allowed to access a report's sensitive information if either of the following holds true:
-	 * • the user is the author of the report
-	 * • the user holds an authorized position in the advisorOrg of the report
+	 * • the user is the author of the report;
+	 * • the user holds an authorized position in the advisorOrg of the report.
 	 *
 	 * @param user the user executing the request
 	 * @param report the report
