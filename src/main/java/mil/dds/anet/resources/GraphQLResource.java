@@ -77,7 +77,7 @@ public class GraphQLResource {
 	private static final String OUTPUT_JSON = "json";
 	private static final String OUTPUT_XML = "xml";
 	private static final String OUTPUT_XLSX = "xlsx";
-	private static final String MEDIATYPE_XLSX = "application/vnd.ms-excel";
+	private static final String MEDIATYPE_XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
 	private GraphQL graphql;
 	private List<IGraphQLResource> resources;
