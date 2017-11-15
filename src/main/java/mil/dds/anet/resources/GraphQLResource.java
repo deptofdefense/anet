@@ -5,13 +5,12 @@ import java.io.OutputStream;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.PermitAll;
@@ -28,10 +27,10 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.StreamingOutput;
 
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -42,6 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.codahale.metrics.annotation.Timed;
+import com.google.common.base.Joiner;
 
 import graphql.ExceptionWhileDataFetching;
 import graphql.ExecutionResult;
@@ -415,25 +415,66 @@ public class GraphQLResource {
 
 		for (Entry<?, ?> entry : data.entrySet()) {
 			if (header.getCell(column) == null) {
-				header.createCell(column).setCellValue(String.valueOf(entry.getKey()).toUpperCase());
-				header.getCell(column).setCellStyle(header.getRowStyle());
+				final XSSFCell headerCell = header.createCell(column);
+				headerCell.setCellValue(String.valueOf(entry.getKey()).toUpperCase());
+				headerCell.setCellStyle(header.getRowStyle());
 			}
 
-			if (entry.getValue() != null) {
-				if (entry.getValue() instanceof Integer) {
-					row.createCell(column).setCellValue((Integer) entry.getValue());
-					row.getCell(column).setCellType(CellType.NUMERIC);
+			final XSSFCell cell = row.createCell(column);
+			cell.setCellStyle(row.getRowStyle());
+
+			final Object repr = getValueRepr(entry.getValue());
+			if (repr != null) {
+				if (repr instanceof Integer) {
+					cell.setCellValue((Integer) repr);
+				} else if (repr instanceof Number) {
+					cell.setCellValue(((Number) repr).doubleValue());
 				} else {
-					row.createCell(column).setCellValue(String.valueOf(entry.getValue()));
-					row.getCell(column).setCellType(CellType.STRING);
+					cell.setCellValue(String.valueOf(repr));
 				}
-
-				row.getCell(column).setCellStyle(row.getRowStyle());
 			}
-			
+
 			column++;
-			
 		}
+	}
+
+	private Object getValueRepr(Object value) {
+		if (value == null) {
+			return null;
+		} else if (value instanceof List) {
+			return getListValueAsString((List<?>) value);
+		} else if (value instanceof Map) {
+			return getMapValueAsString((Map<?, ?>) value);
+		} else if (value instanceof Integer) {
+			return (Integer) value;
+		} else if (value instanceof Number) {
+			return (Number) value;
+		} else {
+			return String.valueOf(value);
+		}
+	}
+
+	private Object getListValueAsString(List<?> value) {
+		final List<String> entriesAsString = new ArrayList<>();
+		for (final Object entry : value) {
+			final Object repr = getValueRepr(entry);
+			entriesAsString.add(repr == null ? null : String.valueOf(repr));
+		}
+		final String result = Joiner.on("; ").skipNulls().join(entriesAsString);
+		return isEmptyOrNull(result) ? "" : "[" + result + "]";
+	}
+
+	private String getMapValueAsString(Map<?, ?> value) {
+		final List<String> entriesAsString = new ArrayList<>();
+		for (final Map.Entry<?, ?> entry : value.entrySet()) {
+			final Object repr = getValueRepr(entry.getValue());
+			entriesAsString.add(repr == null ? "" : String.valueOf(repr));
+		}
+		return Joiner.on(", ").useForNull("").join(entriesAsString);
+	}
+
+	private boolean isEmptyOrNull(String s) {
+		return s == null || s.isEmpty();
 	}
 
 	/**
