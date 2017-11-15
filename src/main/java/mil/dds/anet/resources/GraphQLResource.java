@@ -6,6 +6,7 @@ import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -27,6 +28,7 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.StreamingOutput;
 
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
@@ -35,6 +37,7 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.joda.time.DateTime;
 import org.json.JSONObject;
 import org.json.XML;
 import org.slf4j.Logger;
@@ -350,7 +353,7 @@ public class GraphQLResource {
 	 *            the data used to populate the sheet
 	 */
 	private void createSheet(final XSSFWorkbook workbook, final String name, final Map<?, ?> data) {
-		
+
 		XSSFSheet sheet = workbook.createSheet(name);
 		
 		sheet.setDefaultColumnWidth(30);
@@ -367,13 +370,19 @@ public class GraphQLResource {
 		headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 		headerStyle.setAlignment(HorizontalAlignment.CENTER);
 		headerStyle.setFont(headerFont);
+
+		final CellStyle dateStyle = workbook.createCellStyle();
+		final CreationHelper createHelper = workbook.getCreationHelper();
+		// TODO: Get the date format from the dictionary
+		final short dateFormat = createHelper.createDataFormat().getFormat("dd MMM yyyy");
+		dateStyle.setDataFormat(dateFormat);
 		
 		XSSFRow header = sheet.createRow(0);
 		header.setRowStyle(headerStyle);
 
 		for (Entry<?, ?> entry : data.entrySet()) {
 			if (entry.getValue() instanceof List<?>) {
-				createRow(sheet, header, (List<?>) entry.getValue());
+				createRow(sheet, header, dateStyle, (List<?>) entry.getValue());
 			}
 		}
 	}
@@ -385,16 +394,18 @@ public class GraphQLResource {
 	 *            the sheet
 	 * @param header
 	 *            the header row
+	 * @param dateStyle
+	 *            the style for date cells
 	 * @param data
 	 *            the data
 	 */
-	private void createRow(final XSSFSheet sheet, final XSSFRow header, final List<?> data) {
+	private void createRow(final XSSFSheet sheet, final XSSFRow header, final CellStyle dateStyle, final List<?> data) {
 	
 		int rowCount = 1;
 	
 		for (Object value : data) {
 			if (value instanceof Map<?, ?>) {
-				createColumns(header, sheet.createRow(rowCount++), (Map<?, ?>) value);
+				createColumns(header, sheet.createRow(rowCount++), dateStyle, (Map<?, ?>) value);
 			}
 		}
 	}
@@ -406,10 +417,12 @@ public class GraphQLResource {
 	 *            the header row
 	 * @param row
 	 *            the row of data
+	 * @param dateStyle
+	 *            the style for date cells
 	 * @param data
 	 *            the data
 	 */
-	private void createColumns(final XSSFRow header, final XSSFRow row, final Map<?, ?> data) {
+	private void createColumns(final XSSFRow header, final XSSFRow row, final CellStyle dateStyle, final Map<?, ?> data) {
 
 		int column = 0;
 
@@ -427,6 +440,9 @@ public class GraphQLResource {
 			if (repr != null) {
 				if (repr instanceof Integer) {
 					cell.setCellValue((Integer) repr);
+				} else if (repr instanceof Date) {
+					cell.setCellValue((Date) repr);
+					cell.setCellStyle(dateStyle);
 				} else if (repr instanceof Number) {
 					cell.setCellValue(((Number) repr).doubleValue());
 				} else {
@@ -447,6 +463,9 @@ public class GraphQLResource {
 			return getMapValueAsString((Map<?, ?>) value);
 		} else if (value instanceof Integer) {
 			return (Integer) value;
+		} else if (value instanceof Long) {
+			// FIXME: For now, assume that this is really a DateTime in disguise!
+			return new DateTime((Long) value).toDate();
 		} else if (value instanceof Number) {
 			return (Number) value;
 		} else {
