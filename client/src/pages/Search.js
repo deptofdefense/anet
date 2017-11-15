@@ -17,7 +17,6 @@ import API from 'api'
 import dict from 'dictionary'
 import GQL from 'graphqlapi'
 import {Person, Organization, Position, Poam} from 'models'
-import Export from "export"
 
 import FileSaver from 'file-saver'
 
@@ -320,12 +319,6 @@ export default class Search extends Page {
 					</Fieldset>
 				}
 
-				{numReports > 0 && (queryType === 'everything' || queryType === 'reports') &&
-					<Fieldset title="Reports">
-						<ReportCollection paginatedReports={results.reports} goToPage={this.goToPage.bind(this, 'reports') } downloadAll={ ((progressfn) => {return this.downloadAll('reports',progressfn) }) }/>
-					</Fieldset>
-				}
-
 				{this.renderSaveModal()}
 			</div>
 		)
@@ -362,12 +355,6 @@ export default class Search extends Page {
 		}).catch(response =>
 			this.setState({error: response})
 		)
-	}
-
-	@autobind
-	downloadAll(type,progressfn) {
-		let query = (this.state.advancedSearch) ? this.getAdvancedSearchQuery() : Object.without(this.props.location.query, 'type')
-		Export.csvExport.export(type,query,progressfn)
 	}
 
 	@autobind
