@@ -19,6 +19,9 @@ import GQL from 'graphqlapi'
 import {Person, Organization, Position, Poam} from 'models'
 import Export from "export"
 
+import FileSaver from 'file-saver'
+
+import DOWNLOAD_ICON from 'resources/download.png'
 import EVERYTHING_ICON from 'resources/search-alt.png'
 import REPORTS_ICON from 'resources/reports.png'
 import PEOPLE_ICON from 'resources/people.png'
@@ -149,21 +152,19 @@ export default class Search extends Page {
 		return query
 	}
 
-
-	fetchData(props) {
+	@autobind
+	_dataFetcher(queryDef, callback) {
 		let {advancedSearch} = this.state
 
 		if (advancedSearch) {
 			let query = this.getAdvancedSearchQuery()
 			let part = this.getSearchPart(advancedSearch.objectType.toLowerCase(), query)
-			GQL.run([part]).then(data => {
-				this.setState({results: data})
-			})
+			callback([part])
 
 			return
 		}
 
-		let {type, text, ...advQuery} = props.location.query
+		let {type, text, ...advQuery} = queryDef
 		//Any query with a field other than 'text' and 'type' is an advanced query.
 		let isAdvQuery = Object.keys(advQuery).length
 		advQuery.text = text
@@ -176,11 +177,20 @@ export default class Search extends Page {
 				parts.push(this.getSearchPart(key, advQuery))
 			})
 		}
+		callback(parts)
+	}
+
+	@autobind
+	_fetchDataCallback(parts) {
 		GQL.run(parts).then(data => {
 			this.setState({results: data})
 		}).catch(response =>
 			this.setState({error: response})
 		)
+	}
+
+	fetchData(props) {
+		this._dataFetcher(props.location.query, this._fetchDataCallback)
 	}
 
 	render() {
@@ -211,6 +221,11 @@ export default class Search extends Page {
 		return (
 			<div>
 				<div className="pull-right">
+					{!noResults &&
+						<Button onClick={this.exportSearchResults} id="exportSearchResultsButton" style={{marginRight: 12}} title="Export search results">
+							<img src={DOWNLOAD_ICON} height={16} alt="Export search results" />
+						</Button>
+					}
 					<Button onClick={this.showSaveModal} id="saveSearchButton" style={{marginRight: 12}}>Save search</Button>
 					{!this.state.advancedSearch && <Button onClick={this.showAdvancedSearch}>Advanced search</Button>}
 				</div>
@@ -541,6 +556,20 @@ export default class Search extends Page {
 	@autobind
 	showSaveModal() {
 		this.setState({saveSearch: {show: true, name: ''}})
+	}
+
+	@autobind
+	_exportSearchResultsCallback(parts) {
+		GQL.runExport(parts, "xlsx").then(blob => {
+			FileSaver.saveAs(blob, "anet_export.xlsx")
+		}).catch(response =>
+			this.setState({error: response})
+		)
+	}
+
+	@autobind
+	exportSearchResults() {
+		this._dataFetcher(this.props.location.query, this._exportSearchResultsCallback)
 	}
 
 	@autobind
