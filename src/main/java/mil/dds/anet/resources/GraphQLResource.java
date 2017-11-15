@@ -78,18 +78,17 @@ public class GraphQLResource {
 	private static final String OUTPUT_XML = "xml";
 	private static final String OUTPUT_XLSX = "xlsx";
 	private static final String MEDIATYPE_XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+	private static final String RESULT_KEY_DATA = "data";
+	private static final String RESULT_KEY_ERRORS = "errors";
 
 	private GraphQL graphql;
 	private List<IGraphQLResource> resources;
 	private boolean developmentMode;
-	private Set<String> graphqlListFieldNames;
 	
 	
 	public GraphQLResource(List<IGraphQLResource> resources, boolean developmentMode) {
 		this.resources = resources;
 		this.developmentMode = developmentMode;
-		
-		this.graphqlListFieldNames = new HashSet<>();
 
 		buildGraph();
 	}
@@ -145,8 +144,6 @@ public class GraphQLResource {
 					.dataFetcher(listFetcher)
 					.build();
 				queryTypeBuilder.field(listField);
-				
-				graphqlListFieldNames.add(listName);
 			}
 		}
 
@@ -270,7 +267,7 @@ public class GraphQLResource {
 				}
 			}
 
-			result.put("errors", executionResult.getErrors().stream()
+			result.put(RESULT_KEY_ERRORS, executionResult.getErrors().stream()
 					.map(e -> e.getMessage())
 					.collect(Collectors.toList()));
 			Status status = (actual != null)
@@ -281,7 +278,7 @@ public class GraphQLResource {
 			logger.warn("Errors: {}", executionResult.getErrors());
 			return Response.status(status).entity(result).build();
 		}
-		result.put("data", executionResult.getData());
+		result.put(RESULT_KEY_DATA, executionResult.getData());
 		if (OUTPUT_XML.equals(output)) {
 			JSONObject json = new JSONObject(result);
 			// TODO: Decide if we indeed want pretty-printed XML:
@@ -316,26 +313,27 @@ public class GraphQLResource {
 	}
 
 	/**
-	 * Locate the data is the map based on a set of keys and for each know key
-	 * create a sheet in the workbook.
+	 * Locate the data in the map and create sheets in the workbook.
 	 * 
 	 * @param workbook
 	 *            the workbook
 	 * @param name
-	 *            the name of the sheet process
+	 *            the name of the collection
 	 * @param data
 	 *            the map to obtain the data from to populate the workbook
 	 */
 	private void locateData(final XSSFWorkbook workbook, final String name, final Map<?, ?> data) {
 
-		if (graphqlListFieldNames.contains(name)) {
-			createSheet(workbook, name, data);
-		} else {
+		if (RESULT_KEY_DATA.equals(name)) {
+			// Go through all data collections
 			for (Entry<?, ?> entry : data.entrySet()) {
 				if (entry.getValue() instanceof Map<?, ?>) {
-					locateData(workbook, String.valueOf(entry.getKey()), (Map<?, ?>) entry.getValue());
+					createSheet(workbook, String.valueOf(entry.getKey()), (Map<?, ?>) entry.getValue());
 				}
 			}
+		} else {
+			// Errors
+			createSheet(workbook, name, data);
 		}
 	}
 
