@@ -14,7 +14,7 @@ import LoaderHOC from '../HOC/LoaderHOC'
 const d3 = require('d3')
 const chartId = 'future_engagements_by_location'
 
-const BarChartWithLoader = LoaderHOC('isLoading')('data')(HorizontalBarChart)
+const BarChartWithLoader = LoaderHOC('isLoading')('graphData')(HorizontalBarChart)
 
 
 /*
