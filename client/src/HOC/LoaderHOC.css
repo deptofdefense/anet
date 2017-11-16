@@ -6,7 +6,7 @@
     -ms-transform: translateX(-50%) translateY(-50%);
     transform: translateX(-50%) translateY(-50%);
   }
-  
+
   /* Static Shape */
   
   .loader:before {
@@ -19,9 +19,9 @@
     border-radius: 500rem;
     border: 0.2em solid rgba(0, 0, 0, 0.1);
   }
-  
+
   /* Active Shape */
-  
+
   .loader:after {
     position: absolute;
     content: '';
@@ -37,9 +37,9 @@
     border-width: 0.2em;
     box-shadow: 0px 0px 0px 1px transparent;
   }
-  
+
   /* Active Animation */
-  
+
   @-webkit-keyframes loader {
     from {
       -webkit-transform: rotate(0deg);
@@ -57,17 +57,16 @@
       -webkit-transform: rotate(0deg);
       transform: rotate(0deg);
     }
-  
+
     to {
       -webkit-transform: rotate(360deg);
       transform: rotate(360deg);
     }
   }
-  
+
   .loader:before,
   .loader:after {
     width: 2.28571429rem;
     height: 2.28571429rem;
     margin: 0em;
   }
-  
