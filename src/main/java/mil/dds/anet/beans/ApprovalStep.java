@@ -6,6 +6,7 @@ import java.util.Objects;
 import mil.dds.anet.AnetObjectEngine;
 import mil.dds.anet.graphql.GraphQLFetcher;
 import mil.dds.anet.graphql.GraphQLIgnore;
+import mil.dds.anet.utils.Utils;
 import mil.dds.anet.views.AbstractAnetBean;
 
 public class ApprovalStep extends AbstractAnetBean {
@@ -53,7 +54,7 @@ public class ApprovalStep extends AbstractAnetBean {
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		this.name = Utils.trimStringReturnNull(name);
 	}
 
 	@Override
