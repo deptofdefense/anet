@@ -79,6 +79,13 @@ export default class PersonForm extends ValidatableFormWrapper {
 
 		const countries = this.countries(person)
 		const nationalityDefaultValue = countries.length === 1 ? countries[0] : ''
+		const firstNameProps = {
+			id: "firstName",
+			type: "text",
+			display: "inline",
+			placeholder: "First name(s)",
+			onChange: this.handleOnChangeFirstName
+		}
 
 		let currentUser = this.context.currentUser
 		let isAdmin = currentUser && currentUser.isAdmin()
@@ -105,13 +112,11 @@ export default class PersonForm extends ValidatableFormWrapper {
 						</Col>
 						<Col sm={1} className="name-input">,</Col>
 						<Col sm={6}>
-							<Form.Field
-								id="firstName"
-								type="text"
-								display="inline"
-								placeholder="First name(s)"
-								onChange={this.handleOnChangeFirstName}
-								/>
+						{isAdvisor ?
+							<RequiredField {...firstNameProps} />
+							:
+							<Form.Field {...firstNameProps} />
+						}
 						</Col>
 						<RequiredField className="hidden" id="name" value={this.fullName(this.state.person)} />
 					</Col>
