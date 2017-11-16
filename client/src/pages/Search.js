@@ -116,9 +116,9 @@ export default class Search extends Page {
 		}
 	}
 
-	getSearchPart(type, query) {
+	getSearchPart(type, query, pageSize) {
 //		query = Object.without(query, 'type')
-		query.pageSize = 10
+		query.pageSize = (pageSize === undefined) ? 10 : pageSize
 		query.pageNum = this.state.pageNum[type]
 
 		let config = SEARCH_CONFIG[type]
@@ -152,12 +152,12 @@ export default class Search extends Page {
 	}
 
 	@autobind
-	_dataFetcher(queryDef, callback) {
+	_dataFetcher(queryDef, callback, pageSize) {
 		let {advancedSearch} = this.state
 
 		if (advancedSearch) {
 			let query = this.getAdvancedSearchQuery()
-			let part = this.getSearchPart(advancedSearch.objectType.toLowerCase(), query)
+			let part = this.getSearchPart(advancedSearch.objectType.toLowerCase(), query, pageSize)
 			callback([part])
 
 			return
@@ -170,10 +170,10 @@ export default class Search extends Page {
 
 		let parts = []
 		if (isAdvQuery) {
-			parts.push(this.getSearchPart(type, advQuery))
+			parts.push(this.getSearchPart(type, advQuery, pageSize))
 		} else {
 			Object.keys(SEARCH_CONFIG).forEach(key => {
-				parts.push(this.getSearchPart(key, advQuery))
+				parts.push(this.getSearchPart(key, advQuery, pageSize))
 			})
 		}
 		callback(parts)
@@ -332,7 +332,7 @@ export default class Search extends Page {
 	@autobind
 	paginationFor(type) {
 		let {pageSize, pageNum, totalCount} = this.state.results[type]
-		let numPages = Math.ceil(totalCount / pageSize)
+		let numPages = (pageSize <= 0) ? 1 : Math.ceil(totalCount / pageSize)
 		if (numPages === 1) { return }
 		return <header className="searchPagination" ><Pagination
 			className="pull-right"
@@ -561,7 +561,7 @@ export default class Search extends Page {
 
 	@autobind
 	exportSearchResults() {
-		this._dataFetcher(this.props.location.query, this._exportSearchResultsCallback)
+		this._dataFetcher(this.props.location.query, this._exportSearchResultsCallback, 0)
 	}
 
 	@autobind
