@@ -37,6 +37,8 @@ export default class ReportsByPoam extends Component {
     }
   }
 
+  get referenceDateLongStr() { return this.props.date.format('DD MMM YYYY') }
+
   render() {
     let chartByPoam = ''
     if (this.state.graphDataByPoam.length) {
@@ -53,6 +55,13 @@ export default class ReportsByPoam extends Component {
     let focusDetails = this.getFocusDetails()
     return (
       <div>
+        <p className="help-text">{`Number of published reports since ${this.referenceDateLongStr}, grouped by PoAM`}</p>
+        <p className="chart-description">
+          {`Displays the number of published reports which have been released
+            since ${this.referenceDateLongStr}. The reports are grouped by
+            PoAM. In order to see the list of published reports for a PoAM,
+            click on the bar corresponding to the PoAM.`}
+        </p>
         {chartByPoam}
         <Fieldset
             title={`Reports by PoAM ${focusDetails.titleSuffix}`}

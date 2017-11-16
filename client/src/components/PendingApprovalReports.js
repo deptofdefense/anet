@@ -18,7 +18,7 @@ const chartId = 'not_approved_reports_chart'
  * which have not been approved yet. They are displayed in different
  * presentation forms: chart, summary, table and map.
  */
-export default class NotApprovedReports extends Component {
+export default class PendingApprovalReports extends Component {
   static propTypes = {
     date: React.PropTypes.object,
   }
@@ -42,6 +42,8 @@ export default class NotApprovedReports extends Component {
     }
   }
 
+  get referenceDateLongStr() { return this.props.date.format('DD MMM YYYY') }
+
   render() {
     let chartPart = ''
     if (this.state.graphData.length) {
@@ -58,9 +60,17 @@ export default class NotApprovedReports extends Component {
     let focusDetails = this.focusDetails
     return (
       <div>
+        <p className="help-text">{`Number of reports pending approval since ${this.referenceDateLongStr}, grouped by advisor organization`}</p>
+        <p className="chart-description">
+          {`Displays the number of pending approval reports which have been
+            submitted up till ${this.referenceDateLongStr}. The reports are
+            grouped by advisor organization. In order to see the list of
+            pending approval reports for an organization, click on the bar
+            corresponding to the organization.`}
+        </p>
         {chartPart}
         <Fieldset
-            title={`Not Approved Reports ${focusDetails.titleSuffix}`}
+            title={`Pending Approval Reports ${focusDetails.titleSuffix}`}
             id='not-approved-reports-details'
             action={!focusDetails.resetFnc
               ? '' : <Button onClick={() => this[focusDetails.resetFnc]()}>{focusDetails.resetButtonLabel}</Button>

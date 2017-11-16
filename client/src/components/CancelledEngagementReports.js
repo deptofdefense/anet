@@ -18,7 +18,7 @@ const chartByReasonId = 'cancelled_reports_by_reason'
  * Component displaying a chart with reports cancelled since
  * the given date.
  */
-export default class CancelledReports extends Component {
+export default class CancelledEngagementReports extends Component {
   static propTypes = {
     date: React.PropTypes.object,
   }
@@ -41,6 +41,8 @@ export default class CancelledReports extends Component {
       releasedAtStart: this.props.date.valueOf(),
     }
   }
+
+  get referenceDateLongStr() { return this.props.date.format('DD MMM YYYY') }
 
   render() {
     let chartByOrg = ''
@@ -68,10 +70,26 @@ export default class CancelledReports extends Component {
     let focusDetails = this.getFocusDetails()
     return (
       <div>
+        <p className="help-text">{`Number of cancelled engagement reports released since ${this.referenceDateLongStr}, grouped by advisor organization`}</p>
+        <p className="chart-description">
+          {`Displays the number of cancelled engagement reports released since
+            ${this.referenceDateLongStr}. The reports are grouped by advisor
+            organization. In order to see the list of cancelled engagement
+            reports for an organization, click on the bar corresponding to the
+            organization.`}
+        </p>
         {chartByOrg}
+        <p className="help-text">{`Number of cancelled engagement reports since ${this.referenceDateLongStr}, grouped by reason of cancelling`}</p>
+        <p className="chart-description">
+          {`Displays the number of cancelled engagement reports released since
+            ${this.referenceDateLongStr}. The reports are grouped by reason of
+            cancelling. In order to see the list of cancelled engagement
+            reports for a reason of cancelling, click on the bar corresponding
+            to the reason of cancelling.`}
+        </p>
         {chartByReason}
         <Fieldset
-            title={`Cancelled Reports ${focusDetails.titleSuffix}`}
+            title={`Cancelled Engagement Reports ${focusDetails.titleSuffix}`}
             id='cancelled-reports-details'
             action={!focusDetails.resetFnc
               ? '' : <Button onClick={() => this[focusDetails.resetFnc]()}>{focusDetails.resetButtonLabel}</Button>

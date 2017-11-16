@@ -51,6 +51,10 @@ export default class FutureEngagementsByLocation extends Component {
     return dateArray
   }
 
+  get startDateLongStr() { return this.props.startDate.format('DD MMM YYYY') }
+
+  get endDateLongStr() { return this.props.endDate.format('DD MMM YYYY') }
+
   render() {
     let chart = ''
     if (this.state.graphData.data.length) {
@@ -64,6 +68,14 @@ export default class FutureEngagementsByLocation extends Component {
     let focusDetails = this.getFocusDetails()
     return (
       <div>
+        <p className="help-text">{`Number of engagements between ${this.startDateLongStr} and ${this.endDateLongStr}, grouped by date and location`}</p>
+        <p className="chart-description">
+          {`Displays the number of engagements which have an engagement date
+            between ${this.startDateLongStr} and ${this.endDateLongStr}.
+            The engagements are grouped first by date and within the date per
+            location. In order to see the list of engagements for a date and
+            location, click on the bar corresponding to the date and location.`}
+        </p>
         {chart}
         <Fieldset
             title={`Future Engagements ${focusDetails.titleSuffix}`}
