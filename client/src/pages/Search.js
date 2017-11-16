@@ -318,6 +318,11 @@ export default class Search extends Page {
 						{this.renderLocations()}
 					</Fieldset>
 				}
+				{numReports > 0 && (queryType === 'everything' || queryType === 'reports') &&
+					<Fieldset title="Reports">
+						<ReportCollection paginatedReports={results.reports} goToPage={this.goToPage.bind(this, 'reports')} />
+					</Fieldset>
+				}
 
 				{this.renderSaveModal()}
 			</div>
