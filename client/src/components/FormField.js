@@ -332,6 +332,10 @@ export default class FormField extends Component {
 
 	@autobind
 	onChange(event) {
+		if (this.props.onError || this.props.onValid || this.props.required || this.props.onChange) {
+			this.onUserTouchedField(event)
+		}
+
 		if (this.props.onChange) {
 			this.props.onChange(event)
 			return
