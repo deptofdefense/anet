@@ -50,32 +50,29 @@ export default class CancelledReports extends Component {
     return (
       <div>
         <BarChartWithLoader
-            chartId={chartByOrgId}
-            data={this.state.graphDataByOrg}
-            xProp='advisorOrg.id'
-            yProp='cancelledByOrg'
-            xLabel='advisorOrg.shortName'
-            onBarClick={this.goToOrg}
-            updateChart={this.state.updateChart}
-            isLoading={this.state.isLoading}
-          />
-          <BarChartWithLoader
-            chartId={chartByReasonId}
-            data={this.state.graphDataByReason}
-            xProp='cancelledReason'
-            yProp='cancelledByReason'
-            xLabel='reason'
-            onBarClick={this.goToReason}
-            updateChart={this.state.updateChart}
-            isLoading={this.state.isLoading}
-          />
+          chartId={chartByOrgId}
+          data={this.state.graphDataByOrg}
+          xProp='advisorOrg.id'
+          yProp='cancelledByOrg'
+          xLabel='advisorOrg.shortName'
+          onBarClick={this.goToOrg}
+          updateChart={this.state.updateChart}
+          isLoading={this.state.isLoading} />
+        <BarChartWithLoader
+          chartId={chartByReasonId}
+          data={this.state.graphDataByReason}
+          xProp='cancelledReason'
+          yProp='cancelledByReason'
+          xLabel='reason'
+          onBarClick={this.goToReason}
+          updateChart={this.state.updateChart}
+          isLoading={this.state.isLoading} />
         <Fieldset
-            title={`Cancelled Reports ${focusDetails.titleSuffix}`}
-            id='cancelled-reports-details'
-            action={!focusDetails.resetFnc
-              ? '' : <Button onClick={() => this[focusDetails.resetFnc]()}>{focusDetails.resetButtonLabel}</Button>
-            }
-          >
+          title={`Cancelled Reports ${focusDetails.titleSuffix}`}
+          id='cancelled-reports-details'
+          action={!focusDetails.resetFnc
+            ? '' : <Button onClick={() => this[focusDetails.resetFnc]()}>{focusDetails.resetButtonLabel}</Button>
+          } >
           <ReportCollection paginatedReports={this.state.reports} goToPage={this.goToReportsPage} />
         </Fieldset>
       </div>
