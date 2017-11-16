@@ -104,7 +104,7 @@ export default class OrganizationForm extends ValidatableFormWrapper {
 				X
 			</Button>
 
-			<Form.Field id="name"
+			<Form.Field id="approvalStepName"
 				label="Step name"
 				value={step.name}
 				onChange={(event) => this.setStepName(index, event)} />
@@ -208,7 +208,7 @@ export default class OrganizationForm extends ValidatableFormWrapper {
 
 	@autobind
 	onSubmit(event) {
-		let organization = Object.without(this.props.organization, 'childrenOrgs', 'positions')
+		let organization = Object.without(this.props.organization, 'childrenOrgs', 'positions', 'approvalStepName')
 		if (organization.parentOrg) {
 			organization.parentOrg = {id: organization.parentOrg.id}
 		}
