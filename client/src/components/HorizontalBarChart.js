@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react'
+
 import './BarChart.css'
 
 let d3 = require('d3')
@@ -6,7 +7,7 @@ let d3 = require('d3')
 /*
  * A bar chart component displaying horizontal bars, grouped per category
  */
-export default class HorizontalBarChart extends Component {
+class HorizontalBarChart extends Component {
   /*
    * Example for the data property structure when displaying number of
    * engagements per location, grouped by day:
@@ -248,3 +249,5 @@ export default class HorizontalBarChart extends Component {
   }
 
 }
+
+export default HorizontalBarChart

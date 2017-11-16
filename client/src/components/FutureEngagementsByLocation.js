@@ -9,8 +9,13 @@ import Fieldset from 'components/Fieldset'
 import ReportCollection from 'components/ReportCollection'
 import moment from 'moment'
 
+import LoaderHOC from '../HOC/LoaderHOC'
+
 const d3 = require('d3')
 const chartId = 'future_engagements_by_location'
+
+const BarChartWithLoader = LoaderHOC('isLoading')('graphData')(HorizontalBarChart)
+
 
 /*
  * Component displaying a chart with number of future engagements per date and
@@ -26,10 +31,11 @@ export default class FutureEngagementsByLocation extends Component {
     super(props)
 
     this.state = {
-      graphData: {data: []},
+      graphData: {},
       focusedDate: '',
       focusedLocation: '',
       updateChart: true,  // whether the chart needs to be updated
+      isLoading: false
     }
   }
 
@@ -56,16 +62,7 @@ export default class FutureEngagementsByLocation extends Component {
   get endDateLongStr() { return this.props.endDate.format('DD MMM YYYY') }
 
   render() {
-    let chart = ''
-    if (this.state.graphData.data.length) {
-      chart = <HorizontalBarChart
-        chartId={chartId}
-        data={this.state.graphData}
-        onBarClick={this.goToSelection}
-        updateChart={this.state.updateChart}
-      />
-    }
-    let focusDetails = this.getFocusDetails()
+    const focusDetails = this.getFocusDetails()
     return (
       <div>
         <p className="help-text">{`Number of engagements between ${this.startDateLongStr} and ${this.endDateLongStr}, grouped by date and location`}</p>
@@ -76,7 +73,13 @@ export default class FutureEngagementsByLocation extends Component {
             location. In order to see the list of engagements for a date and
             location, click on the bar corresponding to the date and location.`}
         </p>
-        {chart}
+        <BarChartWithLoader
+          chartId={chartId}
+          data={this.state.graphData}
+          onBarClick={this.goToSelection}
+          updateChart={this.state.updateChart}
+          isLoading={this.state.isLoading}
+        />
         <Fieldset
             title={`Future Engagements ${focusDetails.titleSuffix}`}
             id='cancelled-reports-details'
@@ -108,6 +111,7 @@ export default class FutureEngagementsByLocation extends Component {
   }
 
   fetchData() {
+    this.setState( {isLoading: true} )
     // Query used by the chart
     const chartQuery = this.runChartQuery(this.chartQueryParams())
     const noLocation = {
@@ -152,7 +156,8 @@ export default class FutureEngagementsByLocation extends Component {
       )
       this.setState({
         updateChart: true,  // update chart after fetching the data
-        graphData: graphData
+        graphData: graphData,
+        isLoading: false
       })
     })
     this.fetchFocusData()

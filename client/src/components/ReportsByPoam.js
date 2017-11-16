@@ -7,10 +7,12 @@ import BarChart from 'components/BarChart'
 import Fieldset from 'components/Fieldset'
 import ReportCollection from 'components/ReportCollection'
 
+import LoaderHOC from '../HOC/LoaderHOC'
 
 const d3 = require('d3')
 const chartByPoamId = 'reports_by_poam'
 
+const BarChartWithLoader = LoaderHOC('isLoading')('data')(BarChart)
 
 /*
  * Component displaying a chart with number of reports per PoAM.
@@ -26,7 +28,8 @@ export default class ReportsByPoam extends Component {
     this.state = {
       graphDataByPoam: [],
       focusedPoam: '',
-      updateChart: true  // whether the chart needs to be updated
+      updateChart: true,  // whether the chart needs to be updated
+      isLoading: false
     }
   }
 
@@ -40,19 +43,7 @@ export default class ReportsByPoam extends Component {
   get referenceDateLongStr() { return this.props.date.format('DD MMM YYYY') }
 
   render() {
-    let chartByPoam = ''
-    if (this.state.graphDataByPoam.length) {
-      chartByPoam = <BarChart
-        chartId={chartByPoamId}
-        data={this.state.graphDataByPoam}
-        xProp='poam.id'
-        yProp='reportsCount'
-        xLabel='poam.shortName'
-        onBarClick={this.goToPoam}
-        updateChart={this.state.updateChart}
-      />
-    }
-    let focusDetails = this.getFocusDetails()
+    const focusDetails = this.getFocusDetails()
     return (
       <div>
         <p className="help-text">{`Number of published reports since ${this.referenceDateLongStr}, grouped by PoAM`}</p>
@@ -62,14 +53,22 @@ export default class ReportsByPoam extends Component {
             PoAM. In order to see the list of published reports for a PoAM,
             click on the bar corresponding to the PoAM.`}
         </p>
-        {chartByPoam}
+        <BarChartWithLoader
+          chartId={chartByPoamId}
+          data={this.state.graphDataByPoam}
+          xProp='poam.id'
+          yProp='reportsCount'
+          xLabel='poam.shortName'
+          onBarClick={this.goToPoam}
+          updateChart={this.state.updateChart}
+          isLoading={this.state.isLoading}
+        />
         <Fieldset
-            title={`Reports by PoAM ${focusDetails.titleSuffix}`}
-            id='cancelled-reports-details'
-            action={!focusDetails.resetFnc
-              ? '' : <Button onClick={() => this[focusDetails.resetFnc]()}>{focusDetails.resetButtonLabel}</Button>
-            }
-          >
+          title={`Reports by PoAM ${focusDetails.titleSuffix}`}
+          id='cancelled-reports-details'
+          action={!focusDetails.resetFnc
+            ? '' : <Button onClick={() => this[focusDetails.resetFnc]()}>{focusDetails.resetButtonLabel}</Button>
+          } >
           <ReportCollection paginatedReports={this.state.reports} goToPage={this.goToReportsPage} />
         </Fieldset>
       </div>
@@ -93,6 +92,7 @@ export default class ReportsByPoam extends Component {
   }
 
   fetchData() {
+    this.setState( {isLoading: true} )
     const chartQueryParams = {}
     Object.assign(chartQueryParams, this.queryParams)
     Object.assign(chartQueryParams, {
@@ -120,6 +120,7 @@ export default class ReportsByPoam extends Component {
       // add No PoAM item, in order to relate to reports without PoAMs
       poams.push(noPoam)
       this.setState({
+        isLoading: false,
         updateChart: true,  // update chart after fetching the data
         graphDataByPoam: poams
           .map(d => {

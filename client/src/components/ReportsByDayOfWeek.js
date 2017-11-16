@@ -8,10 +8,12 @@ import BarChart from 'components/BarChart'
 import Fieldset from 'components/Fieldset'
 import ReportCollection from 'components/ReportCollection'
 
+import LoaderHOC from '../HOC/LoaderHOC'
 
 const d3 = require('d3')
 const chartByDayOfWeekId = 'reports_by_day_of_week'
 
+const BarChartWithLoader = LoaderHOC('isLoading')('data')(BarChart)
 
 /*
  * Component displaying a chart with number of reports released within a certain
@@ -29,7 +31,8 @@ export default class ReportsByDayOfWeek extends Component {
     this.state = {
       graphDataByDayOfWeek: [],
       focusedDayOfWeek: '',
-      updateChart: true  // whether the chart needs to be updated
+      updateChart: true,  // whether the chart needs to be updated
+      isLoading: false
     }
   }
 
@@ -47,19 +50,7 @@ export default class ReportsByDayOfWeek extends Component {
   get endDateLongStr() { return this.props.endDate.format('DD MMM YYYY') }
 
   render() {
-    let chartByDayOfWeek = ''
-    if (this.state.graphDataByDayOfWeek.length) {
-      chartByDayOfWeek = <BarChart
-        chartId={chartByDayOfWeekId}
-        data={this.state.graphDataByDayOfWeek}
-        xProp='dayOfWeekInt'
-        yProp='reportsCount'
-        xLabel='dayOfWeekString'
-        onBarClick={this.goToDayOfWeek}
-        updateChart={this.state.updateChart}
-      />
-    }
-    let focusDetails = this.getFocusDetails()
+    const focusDetails = this.getFocusDetails()
     return (
       <div>
         <p className="help-text">{`Number of published reports between ${this.startDateLongStr} and ${this.endDateLongStr}, grouped by day of the week`}</p>
@@ -70,14 +61,22 @@ export default class ReportsByDayOfWeek extends Component {
             of published reports for a day of the week, click on the bar
             corresponding to the day of the week.`}
         </p>
-        {chartByDayOfWeek}
+        <BarChartWithLoader
+          chartId={chartByDayOfWeekId}
+          data={this.state.graphDataByDayOfWeek}
+          xProp='dayOfWeekInt'
+          yProp='reportsCount'
+          xLabel='dayOfWeekString'
+          onBarClick={this.goToDayOfWeek}
+          updateChart={this.state.updateChart}
+          isLoading={this.state.isLoading}
+        />
         <Fieldset
-            title={`Reports by day of the week ${focusDetails.titleSuffix}`}
-            id='cancelled-reports-details'
-            action={!focusDetails.resetFnc
-              ? '' : <Button onClick={() => this[focusDetails.resetFnc]()}>{focusDetails.resetButtonLabel}</Button>
-            }
-          >
+          title={`Reports by day of the week ${focusDetails.titleSuffix}`}
+          id='cancelled-reports-details'
+          action={!focusDetails.resetFnc
+            ? '' : <Button onClick={() => this[focusDetails.resetFnc]()}>{focusDetails.resetButtonLabel}</Button>
+          } >
           <ReportCollection paginatedReports={this.state.reports} goToPage={this.goToReportsPage} />
         </Fieldset>
       </div>
@@ -101,6 +100,7 @@ export default class ReportsByDayOfWeek extends Component {
   }
 
   fetchData() {
+    this.setState( {isLoading: true} )
     // Query used by the chart
     const chartQuery = this.runChartQuery(this.chartQueryParams())
     Promise.all([chartQuery]).then(values => {
@@ -112,6 +112,7 @@ export default class ReportsByDayOfWeek extends Component {
       let displayOrderDaysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
       let simplifiedValues = values[0].reportList.list.map(d => {return {reportId: d.id, dayOfWeek: d.engagementDayOfWeek}})
       this.setState({
+        isLoading: false,
         updateChart: true,  // update chart after fetching the data
         graphDataByDayOfWeek: displayOrderDaysOfWeek
           .map((d, i) => {
