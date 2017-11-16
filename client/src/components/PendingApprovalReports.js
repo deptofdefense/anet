@@ -19,7 +19,7 @@ const BarChartWithLoader = LoaderHOC('isLoading')('data')(BarChart)
  * which have not been approved yet. They are displayed in different
  * presentation forms: chart, summary, table and map.
  */
-export default class NotApprovedReports extends Component {
+export default class PendingApprovalReports extends Component {
   static propTypes = {
     date: React.PropTypes.object,
   }
@@ -44,27 +44,36 @@ export default class NotApprovedReports extends Component {
     }
   }
 
+  get referenceDateLongStr() { return this.props.date.format('DD MMM YYYY') }
+
   render() {
     const focusDetails = this.focusDetails
     return (
       <div>
-          <BarChartWithLoader
-            chartId={chartId}
-            data={this.state.graphData}
-            xProp='advisorOrg.id'
-            yProp='notApproved'
-            xLabel='advisorOrg.shortName'
-            onBarClick={this.goToOrg}
-            updateChart={this.state.updateChart}
-            isLoading={this.state.isLoading}
-          />
-          <Fieldset
-            title={`Not Approved Reports ${focusDetails.titleSuffix}`}
-            id='not-approved-reports-details'
-            action={!focusDetails.resetFnc
-              ? '' : <Button onClick={() => this[focusDetails.resetFnc]()}>{focusDetails.resetButtonLabel}</Button>
-            }
-          >
+        <p className="help-text">{`Number of reports pending approval since ${this.referenceDateLongStr}, grouped by advisor organization`}</p>
+        <p className="chart-description">
+          {`Displays the number of pending approval reports which have been
+            submitted up till ${this.referenceDateLongStr}. The reports are
+            grouped by advisor organization. In order to see the list of
+            pending approval reports for an organization, click on the bar
+            corresponding to the organization.`}
+        </p>
+        <BarChartWithLoader
+          chartId={chartId}
+          data={this.state.graphData}
+          xProp='advisorOrg.id'
+          yProp='notApproved'
+          xLabel='advisorOrg.shortName'
+          onBarClick={this.goToOrg}
+          updateChart={this.state.updateChart}
+          isLoading={this.state.isLoading}
+        />
+        <Fieldset
+          title={`Pending Approval Reports ${focusDetails.titleSuffix}`}
+          id='not-approved-reports-details'
+          action={!focusDetails.resetFnc
+            ? '' : <Button onClick={() => this[focusDetails.resetFnc]()}>{focusDetails.resetButtonLabel}</Button>
+          } >
           <ReportCollection paginatedReports={this.state.reports} goToPage={this.goToReportsPage} />
         </Fieldset>
       </div>

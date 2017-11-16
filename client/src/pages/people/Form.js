@@ -105,7 +105,7 @@ export default class PersonForm extends ValidatableFormWrapper {
 						</Col>
 						<Col sm={1} className="name-input">,</Col>
 						<Col sm={6}>
-							<RequiredField
+							<Form.Field
 								id="firstName"
 								type="text"
 								display="inline"
@@ -209,7 +209,6 @@ export default class PersonForm extends ValidatableFormWrapper {
 		if (editName.firstName) { person.firstName = editName.firstName }
 
 		person.name = this.fullName(person)
-
 		this.setState({ person })
 	}
 
@@ -239,6 +238,12 @@ export default class PersonForm extends ValidatableFormWrapper {
 	fullName = (person) => {
 		if (person.lastName && person.firstName) {
 			return(`${person.lastName.trim()}, ${person.firstName.trim()}`)
+		}
+		else if (person.lastName) {
+			return person.lastName.trim()
+		}
+		else {
+			return ''
 		}
 	}
 

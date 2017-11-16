@@ -130,10 +130,10 @@ class Nav extends Component {
 				{(currentUser.isAdmin() || currentUser.isSuperUser()) &&
 					<NavDropdown title="Insights" id="insights" active={inInsights}>
 						<Link to="/insights/not-approved-reports">
-							<MenuItem>Not approved reports</MenuItem>
+							<MenuItem>Pending approval reports</MenuItem>
 						</Link>
 						<Link to="/insights/cancelled-reports">
-							<MenuItem>Cancelled reports</MenuItem>
+							<MenuItem>Cancelled engagement reports</MenuItem>
 						</Link>
 						<Link to="/insights/reports-by-poam">
 							<MenuItem>Reports by PoAM</MenuItem>

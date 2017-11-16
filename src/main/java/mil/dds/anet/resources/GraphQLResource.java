@@ -5,13 +5,13 @@ import java.io.OutputStream;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.PermitAll;
@@ -28,20 +28,23 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.StreamingOutput;
 
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.joda.time.DateTime;
 import org.json.JSONObject;
 import org.json.XML;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.codahale.metrics.annotation.Timed;
+import com.google.common.base.Joiner;
 
 import graphql.ExceptionWhileDataFetching;
 import graphql.ExecutionResult;
@@ -77,18 +80,18 @@ public class GraphQLResource {
 	private static final String OUTPUT_JSON = "json";
 	private static final String OUTPUT_XML = "xml";
 	private static final String OUTPUT_XLSX = "xlsx";
+	private static final String MEDIATYPE_XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+	private static final String RESULT_KEY_DATA = "data";
+	private static final String RESULT_KEY_ERRORS = "errors";
 
 	private GraphQL graphql;
 	private List<IGraphQLResource> resources;
 	private boolean developmentMode;
-	private Set<String> graphqlListFieldNames;
 	
 	
 	public GraphQLResource(List<IGraphQLResource> resources, boolean developmentMode) {
 		this.resources = resources;
 		this.developmentMode = developmentMode;
-		
-		this.graphqlListFieldNames = new HashSet<>();
 
 		buildGraph();
 	}
@@ -144,8 +147,6 @@ public class GraphQLResource {
 					.dataFetcher(listFetcher)
 					.build();
 				queryTypeBuilder.field(listField);
-				
-				graphqlListFieldNames.add(listName);
 			}
 		}
 
@@ -222,6 +223,7 @@ public class GraphQLResource {
 
 	@POST
 	@Timed
+	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MEDIATYPE_XLSX})
 	public Response graphqlPost(@Auth Person user, Map<String,Object> body) {
 		String query = (String) body.get("query");
 		String output = (String) body.get("output");
@@ -239,7 +241,7 @@ public class GraphQLResource {
 
 	@GET
 	@Timed
-	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MEDIATYPE_XLSX})
 	public Response graphqlGet(@Auth Person user,
 			@QueryParam("query") String query,
 			@DefaultValue(OUTPUT_JSON) @QueryParam("output") String output) {
@@ -268,7 +270,7 @@ public class GraphQLResource {
 				}
 			}
 
-			result.put("errors", executionResult.getErrors().stream()
+			result.put(RESULT_KEY_ERRORS, executionResult.getErrors().stream()
 					.map(e -> e.getMessage())
 					.collect(Collectors.toList()));
 			Status status = (actual != null)
@@ -279,14 +281,14 @@ public class GraphQLResource {
 			logger.warn("Errors: {}", executionResult.getErrors());
 			return Response.status(status).entity(result).build();
 		}
-		result.put("data", executionResult.getData());
+		result.put(RESULT_KEY_DATA, executionResult.getData());
 		if (OUTPUT_XML.equals(output)) {
 			JSONObject json = new JSONObject(result);
 			// TODO: Decide if we indeed want pretty-printed XML:
 			String xml = ResponseUtils.toPrettyString(XML.toString(json, "result"), 2);
 			return Response.ok(xml, MediaType.APPLICATION_XML).build();
 		} else if (OUTPUT_XLSX.equals(output)) {
-			return Response.ok(new XSSFWorkbookStreamingOutput(createWorkbook(result)))
+			return Response.ok(new XSSFWorkbookStreamingOutput(createWorkbook(result)), MEDIATYPE_XLSX)
 					.header("Content-Disposition", "attachment; filename=" + "anet_export.xslx").build();
 		} else {
 			return Response.ok(result, MediaType.APPLICATION_JSON).build();
@@ -314,26 +316,27 @@ public class GraphQLResource {
 	}
 
 	/**
-	 * Locate the data is the map based on a set of keys and for each know key
-	 * create a sheet in the workbook.
+	 * Locate the data in the map and create sheets in the workbook.
 	 * 
 	 * @param workbook
 	 *            the workbook
 	 * @param name
-	 *            the name of the sheet process
+	 *            the name of the collection
 	 * @param data
 	 *            the map to obtain the data from to populate the workbook
 	 */
 	private void locateData(final XSSFWorkbook workbook, final String name, final Map<?, ?> data) {
 
-		if (graphqlListFieldNames.contains(name)) {
-			createSheet(workbook, name, data);
-		} else {
+		if (RESULT_KEY_DATA.equals(name)) {
+			// Go through all data collections
 			for (Entry<?, ?> entry : data.entrySet()) {
 				if (entry.getValue() instanceof Map<?, ?>) {
-					locateData(workbook, String.valueOf(entry.getKey()), (Map<?, ?>) entry.getValue());
+					createSheet(workbook, String.valueOf(entry.getKey()), (Map<?, ?>) entry.getValue());
 				}
 			}
+		} else {
+			// Errors
+			createSheet(workbook, name, data);
 		}
 	}
 
@@ -350,7 +353,7 @@ public class GraphQLResource {
 	 *            the data used to populate the sheet
 	 */
 	private void createSheet(final XSSFWorkbook workbook, final String name, final Map<?, ?> data) {
-		
+
 		XSSFSheet sheet = workbook.createSheet(name);
 		
 		sheet.setDefaultColumnWidth(30);
@@ -367,13 +370,19 @@ public class GraphQLResource {
 		headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 		headerStyle.setAlignment(HorizontalAlignment.CENTER);
 		headerStyle.setFont(headerFont);
+
+		final CellStyle dateStyle = workbook.createCellStyle();
+		final CreationHelper createHelper = workbook.getCreationHelper();
+		// TODO: Get the date format from the dictionary
+		final short dateFormat = createHelper.createDataFormat().getFormat("dd MMM yyyy");
+		dateStyle.setDataFormat(dateFormat);
 		
 		XSSFRow header = sheet.createRow(0);
 		header.setRowStyle(headerStyle);
 
 		for (Entry<?, ?> entry : data.entrySet()) {
 			if (entry.getValue() instanceof List<?>) {
-				createRow(sheet, header, (List<?>) entry.getValue());
+				createRow(sheet, header, dateStyle, (List<?>) entry.getValue());
 			}
 		}
 	}
@@ -385,16 +394,18 @@ public class GraphQLResource {
 	 *            the sheet
 	 * @param header
 	 *            the header row
+	 * @param dateStyle
+	 *            the style for date cells
 	 * @param data
 	 *            the data
 	 */
-	private void createRow(final XSSFSheet sheet, final XSSFRow header, final List<?> data) {
+	private void createRow(final XSSFSheet sheet, final XSSFRow header, final CellStyle dateStyle, final List<?> data) {
 	
 		int rowCount = 1;
 	
 		for (Object value : data) {
 			if (value instanceof Map<?, ?>) {
-				createColumns(header, sheet.createRow(rowCount++), (Map<?, ?>) value);
+				createColumns(header, sheet.createRow(rowCount++), dateStyle, (Map<?, ?>) value);
 			}
 		}
 	}
@@ -406,34 +417,83 @@ public class GraphQLResource {
 	 *            the header row
 	 * @param row
 	 *            the row of data
+	 * @param dateStyle
+	 *            the style for date cells
 	 * @param data
 	 *            the data
 	 */
-	private void createColumns(final XSSFRow header, final XSSFRow row, final Map<?, ?> data) {
+	private void createColumns(final XSSFRow header, final XSSFRow row, final CellStyle dateStyle, final Map<?, ?> data) {
 
 		int column = 0;
 
 		for (Entry<?, ?> entry : data.entrySet()) {
 			if (header.getCell(column) == null) {
-				header.createCell(column).setCellValue(String.valueOf(entry.getKey()).toUpperCase());
-				header.getCell(column).setCellStyle(header.getRowStyle());
+				final XSSFCell headerCell = header.createCell(column);
+				headerCell.setCellValue(String.valueOf(entry.getKey()).toUpperCase());
+				headerCell.setCellStyle(header.getRowStyle());
 			}
 
-			if (entry.getValue() != null) {
-				if (entry.getValue() instanceof Integer) {
-					row.createCell(column).setCellValue((Integer) entry.getValue());
-					row.getCell(column).setCellType(CellType.NUMERIC);
+			final XSSFCell cell = row.createCell(column);
+			cell.setCellStyle(row.getRowStyle());
+
+			final Object repr = getValueRepr(entry.getValue());
+			if (repr != null) {
+				if (repr instanceof Integer) {
+					cell.setCellValue((Integer) repr);
+				} else if (repr instanceof Date) {
+					cell.setCellValue((Date) repr);
+					cell.setCellStyle(dateStyle);
+				} else if (repr instanceof Number) {
+					cell.setCellValue(((Number) repr).doubleValue());
 				} else {
-					row.createCell(column).setCellValue(String.valueOf(entry.getValue()));
-					row.getCell(column).setCellType(CellType.STRING);
+					cell.setCellValue(String.valueOf(repr));
 				}
-
-				row.getCell(column).setCellStyle(row.getRowStyle());
 			}
-			
+
 			column++;
-			
 		}
+	}
+
+	private Object getValueRepr(Object value) {
+		if (value == null) {
+			return null;
+		} else if (value instanceof List) {
+			return getListValueAsString((List<?>) value);
+		} else if (value instanceof Map) {
+			return getMapValueAsString((Map<?, ?>) value);
+		} else if (value instanceof Integer) {
+			return (Integer) value;
+		} else if (value instanceof Long) {
+			// FIXME: For now, assume that this is really a DateTime in disguise!
+			return new DateTime((Long) value).toDate();
+		} else if (value instanceof Number) {
+			return (Number) value;
+		} else {
+			return String.valueOf(value);
+		}
+	}
+
+	private Object getListValueAsString(List<?> value) {
+		final List<String> entriesAsString = new ArrayList<>();
+		for (final Object entry : value) {
+			final Object repr = getValueRepr(entry);
+			entriesAsString.add(repr == null ? null : String.valueOf(repr));
+		}
+		final String result = Joiner.on("; ").skipNulls().join(entriesAsString);
+		return isEmptyOrNull(result) ? "" : "[" + result + "]";
+	}
+
+	private String getMapValueAsString(Map<?, ?> value) {
+		final List<String> entriesAsString = new ArrayList<>();
+		for (final Map.Entry<?, ?> entry : value.entrySet()) {
+			final Object repr = getValueRepr(entry.getValue());
+			entriesAsString.add(repr == null ? "" : String.valueOf(repr));
+		}
+		return Joiner.on(", ").useForNull("").join(entriesAsString);
+	}
+
+	private boolean isEmptyOrNull(String s) {
+		return s == null || s.isEmpty();
 	}
 
 	/**
