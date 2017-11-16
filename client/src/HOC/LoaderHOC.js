@@ -26,7 +26,7 @@ const LoaderHOC = (isLoading) => (dataPropName) => (WrappedComponent) => {
             if (showLoader) {
                 return <div className='loader'></div>
             } else if (dataIsEmpty) {
-                return <div>...</div>
+                return <div></div>
             }
             else {
                 return <WrappedComponent {...this.props} />
