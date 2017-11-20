@@ -24,7 +24,7 @@ if (testEnv === 'local') {
         os_version: '7',
         resolution: '2048x1536',
         project: 'ANET',
-        build: '%s %s: %s %s',
+        build: require("git-describe").gitDescribeSync().semverString,
         // Will be replaced for each test:
         name: 'frontend tests',
         // Credentials for BrowserStack, get from config:
