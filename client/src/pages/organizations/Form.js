@@ -97,14 +97,15 @@ export default class OrganizationForm extends ValidatableFormWrapper {
 	}
 
 	renderApprovalStep(step, index) {
-		let approvers = step.approvers
+		const approvers = step.approvers
+		const { RequiredField } = this
 
 		return <Fieldset title={`Step ${index + 1}`} key={index}>
 			<Button className="pull-right" onClick={this.removeApprovalStep.bind(this, index)}>
 				X
 			</Button>
 
-			<Form.Field id="approvalStepName"
+			<RequiredField id="approvalStepName"
 				label="Step name"
 				value={step.name}
 				onChange={(event) => this.setStepName(index, event)} />
