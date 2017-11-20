@@ -255,5 +255,6 @@ node {
 sonarqube {
     properties {
         property "sonar.sources", "src/main/java,client/src"
+        property "sonar.tests", "src/test/java,client/tests"
     }
 }
