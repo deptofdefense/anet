@@ -507,6 +507,9 @@ export default class ReportForm extends ValidatableFormWrapper {
 				if (response.id) {
 					this.props.report.id = response.id
 				}
+				if (response.reportSensitiveInformation) {
+					this.props.report.reportSensitiveInformation = response.reportSensitiveInformation
+				}
 
 				//Reset the reportchanged state, yes this could drop a few keystrokes that
 				// the user made while we were saving, but that's not a huge deal.
