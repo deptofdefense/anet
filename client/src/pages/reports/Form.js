@@ -322,6 +322,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 			this.props.report.reportSensitiveInformation = {}
 		}
 		this.props.report.reportSensitiveInformation.text = value
+		this.onChange()
 	}
 
 	@autobind
