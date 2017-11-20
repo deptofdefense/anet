@@ -292,8 +292,13 @@ public class ReportResource implements IGraphQLResource {
 				AnetEmailWorker.sendEmailAsync(email);
 			}
 		}
-		
-		return Response.ok().build();
+
+		// Possibly load sensitive information; needed in case of autoSave by the client form
+		r.setUser(editor);
+		r.loadReportSensitiveInformation();
+
+		// Return the report in the response; used in autoSave by the client form
+		return Response.ok(r).build();
 	}
 
 	private void assertCanEditReport(Report report, Person editor) {

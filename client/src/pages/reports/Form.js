@@ -322,6 +322,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 			this.props.report.reportSensitiveInformation = {}
 		}
 		this.props.report.reportSensitiveInformation.text = value
+		this.onChange()
 	}
 
 	@autobind
@@ -505,6 +506,9 @@ export default class ReportForm extends ValidatableFormWrapper {
 			.then(response => {
 				if (response.id) {
 					this.props.report.id = response.id
+				}
+				if (response.reportSensitiveInformation) {
+					this.props.report.reportSensitiveInformation = response.reportSensitiveInformation
 				}
 
 				//Reset the reportchanged state, yes this could drop a few keystrokes that
