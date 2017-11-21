@@ -332,20 +332,16 @@ export default class FormField extends Component {
 
 	@autobind
 	onChange(event) {
-		if (this.props.onError || this.props.onValid || this.props.required || this.props.onChange) {
-			this.onUserTouchedField(event)
+		const id = this.props.id
+		const value = this.getEventValue(event)
+		this.setFormContextWith(id, value)
+
+		if (this.props.maxCharacters && value.length > this.props.maxCharacters) {
+			return
 		}
 
 		if (this.props.onChange) {
 			this.props.onChange(event)
-			return
-		}
-
-		let id = this.props.id
-		let value = this.getEventValue(event)
-		this.setFormContextWith(id, value)
-
-		if (this.props.maxCharacters && value.length > this.props.maxCharacters) {
 			return
 		}
 
