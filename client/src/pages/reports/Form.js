@@ -306,7 +306,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 							<Form.Field id="reportText" className="reportTextField" componentClass={TextEditor} />
 
 							{(report.reportSensitiveInformation || !edit) &&
-								<Form.Field id="reportSensitiveInformation" className="reportSensitiveInformationField" componentClass={TextEditor}
+								<Form.Field id="reportSensitiveInformationText" className="reportSensitiveInformationField" componentClass={TextEditor}
 									value={report.reportSensitiveInformation && report.reportSensitiveInformation.text}
 									onChange={this.updateReportSensitiveInformation} />
 							}
@@ -449,7 +449,7 @@ export default class ReportForm extends ValidatableFormWrapper {
 
 	@autobind
 	saveReport(disableSubmits) {
-		let report = new Report(this.props.report)
+		let report = new Report(Object.without(this.props.report, 'reportSensitiveInformationText'))
 		let isCancelled = this.state.isCancelled
 		let edit = !!report.id
 		if(report.primaryAdvisor) { report.attendees.find(a => a.id === report.primaryAdvisor.id).isPrimary = true }
