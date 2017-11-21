@@ -84,10 +84,6 @@ Dear ${approvalStepName},
   </div>
 </div>
 
-<a href="${serverUrl}/reports/${report.id?c}/min">
-  Read full report
-</a>
-<br><br>
 <a href="${serverUrl}/reports/${report.id?c}?autoApprove=true">
   Click Here to Approve this Report
 </a>
