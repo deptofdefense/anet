@@ -107,12 +107,6 @@ export default class ReportShow extends Page {
 		const canApprove = report.isPending() && currentUser.position &&
 			report.approvalStep.approvers.find(member => Position.isEqual(member, currentUser.position))
 
-		if (canApprove && this.props.location.query.autoApprove) {
-			this.props.location.query.autoApprove = false
-			this.approveReport()
-			return <h1>Loading..</h1>
-		}
-
 		//Authors can edit in draft mode, rejected mode, or Pending Mode
 		let canEdit = (report.isDraft() || report.isPending() || report.isRejected() || report.isFuture()) && Person.isEqual(currentUser, report.author)
 		//Approvers can edit.
