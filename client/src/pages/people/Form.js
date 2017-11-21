@@ -320,12 +320,14 @@ export default class PersonForm extends ValidatableFormWrapper {
 	}
 
 	emailErrorMessage(validDomainNames) {
-		let items = validDomainNames.map(name => [
+		const supportEmail = dict.lookup('supportTeamEmail')
+		const emailAddress = supportEmail ? ` at ${supportEmail}`: ''
+		const items = validDomainNames.map(name => [
 			<li>{name}</li>
 		])
 		return (
 			<div>
-				<p>Email address is invalid, only the following email domain names are allowed</p>
+				<p>Only the following email domain names are allowed. If your email domain name is not in the list, please contact the support team{emailAddress}.</p>
 				<ul>{items}</ul>
 			</div>
 		)
