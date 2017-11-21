@@ -55,7 +55,7 @@ addons:
     project:
       name: "NCI-Agency/anet"
     notification_email: vassil.iordanov@gmail.com
-    build_command_prepend: "./gradlew clean"
+    build_command_prepend: "COV_BUILD_OPTIONS='--fs-capture-search src --fs-capture-search client' && ./gradlew clean"
     build_command:   "./gradlew build -x test"
     branch_pattern: candidate_scan
   sonarcloud:
