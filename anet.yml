@@ -242,3 +242,5 @@ dictionary:
     - mission.ita
     - nato.int
     - "*.isaf.nato.int"
+  supportEmailAddr:
+    - support@example.com
