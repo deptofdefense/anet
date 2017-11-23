@@ -173,7 +173,7 @@ public class Utils {
 
 	/**
 	 * @param s string
-	 * @return true if string is null or string is empty
+	 * @return true if string is null or empty
 	 */
 	public static boolean isEmptyOrNull(String s) {
 		return s == null || s.isEmpty();
@@ -181,7 +181,7 @@ public class Utils {
 
 	/**
 	 * @param c collection
-	 * @return true if collection is null or string is empty
+	 * @return true if collection is null or empty
 	 */
 	public static boolean isEmptyOrNull(Collection<?> c) {
 		return c == null || c.isEmpty();
