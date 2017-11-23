@@ -180,6 +180,14 @@ public class Utils {
 	}
 
 	/**
+	 * @param c collection
+	 * @return true if collection is null or string is empty
+	 */
+	public static boolean isEmptyOrNull(Collection<?> c) {
+		return c == null || c.isEmpty();
+	}
+
+	/**
 	 * Transform a result list from a database query by grouping. For example,
 	 * given a result list:
 	 * <code>
@@ -248,13 +256,5 @@ public class Utils {
 			}
 		}
 		return groupedResults;
-	}
-
-	/**
-	 * @param c collection
-	 * @return true if collection is null or string is empty
-	 */
-	public static boolean isEmptyOrNull(Collection<?> c) {
-		return c == null || c.isEmpty();
 	}
 }
