@@ -109,6 +109,7 @@ public class OrganizationResource implements IGraphQLResource {
 		if (org.getApprovalSteps() != null) { 
 			//Create the approval steps 
 			for (ApprovalStep step : org.getApprovalSteps()) { 
+				validateApprovalSteps(step);
 				step.setAdvisorOrganizationId(created.getId());
 				engine.getApprovalStepDao().insertAtEnd(step);
 			}
@@ -159,7 +160,10 @@ public class OrganizationResource implements IGraphQLResource {
 			}
 			
 			if (org.getApprovalSteps() != null) {
-				org.getApprovalSteps().stream().forEach(step -> step.setAdvisorOrganizationId(org.getId()));
+				for (ApprovalStep step : org.getApprovalSteps()) {
+					validateApprovalSteps(step);
+					step.setAdvisorOrganizationId(org.getId());
+				}
 				List<ApprovalStep> existingSteps = existing.loadApprovalSteps();
 				
 				Utils.addRemoveElementsById(existingSteps, org.getApprovalSteps(), 
@@ -222,5 +226,11 @@ public class OrganizationResource implements IGraphQLResource {
 			}
 		}
 		return new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
+	}
+
+	private void validateApprovalSteps(ApprovalStep step) {
+		if(step.getName().isEmpty() || step.getApprovers().isEmpty()) {
+			throw new WebApplicationException("An approver is required for every approval step");
+		}
 	}
 }
