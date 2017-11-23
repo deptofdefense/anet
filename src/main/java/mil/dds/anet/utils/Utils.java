@@ -1,6 +1,7 @@
 package mil.dds.anet.utils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -247,5 +248,13 @@ public class Utils {
 			}
 		}
 		return groupedResults;
+	}
+
+	/**
+	 * @param c collection
+	 * @return true if collection is null or string is empty
+	 */
+	public static boolean isEmptyOrNull(Collection<?> c) {
+		return c == null || c.isEmpty();
 	}
 }
