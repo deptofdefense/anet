@@ -134,7 +134,7 @@ public class ReportSensitiveInformationDao implements IAnetDao<ReportSensitiveIn
 		}
 
 		final Integer authorId = DaoUtils.getId(report.getAuthor());
-		if (userId == authorId) {
+		if (userId.equals(authorId)) {
 			// User is author of the report
 			return true;
 		}
@@ -148,7 +148,13 @@ public class ReportSensitiveInformationDao implements IAnetDao<ReportSensitiveIn
 		// Check the organization for which the user is authorized
 		final Organization userOrg = userPosition.loadOrganization();
 		final Organization advisorOrg = report.loadAdvisorOrg();
-		if (userOrg != null && advisorOrg != null && DaoUtils.getId(userOrg) == DaoUtils.getId(advisorOrg)) {
+		if (userOrg == null || advisorOrg == null) {
+			// No organization
+			return false;
+		}
+		final Integer userOrgId = DaoUtils.getId(userOrg);
+		final Integer advisorOrgId = DaoUtils.getId(advisorOrg);
+		if (userOrgId != null && userOrgId.equals(advisorOrgId)) {
 			// User holds an authorized position in the advisorOrg of the report
 			return true;
 		}
