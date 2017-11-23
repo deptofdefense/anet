@@ -50,7 +50,7 @@ after_script:
   - docker logs anet-mssql-server
 
 addons:
-  srcclr: true
+  srcclr: false
   coverity_scan:
     project:
       name: "NCI-Agency/anet"
