@@ -20,6 +20,7 @@ import mil.dds.anet.beans.lists.AbstractAnetBeanList.OrganizationList;
 import mil.dds.anet.beans.search.OrganizationSearchQuery;
 import mil.dds.anet.database.mappers.OrganizationMapper;
 import mil.dds.anet.utils.DaoUtils;
+import mil.dds.anet.utils.Utils;
 
 public class OrganizationDao implements IAnetDao<Organization> {
 
@@ -84,7 +85,7 @@ public class OrganizationDao implements IAnetDao<Organization> {
 	}
 
 	public List<Organization> getOrgsByShortNames(List<String> shortNames) {
-		if (shortNames == null || shortNames.isEmpty()) {
+		if (Utils.isEmptyOrNull(shortNames)) {
 			return Collections.emptyList();
 		}
 		return dbHandle.attach(OrgListQueries.class).getOrgsByShortNames(shortNames);

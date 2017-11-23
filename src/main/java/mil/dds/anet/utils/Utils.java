@@ -1,6 +1,7 @@
 package mil.dds.anet.utils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -168,6 +169,22 @@ public class Utils {
 	public static String trimStringReturnNull(String input) {
 		if (input == null) { return null; }
 		return input.trim();
+	}
+
+	/**
+	 * @param s string
+	 * @return true if string is null or empty
+	 */
+	public static boolean isEmptyOrNull(String s) {
+		return s == null || s.isEmpty();
+	}
+
+	/**
+	 * @param c collection
+	 * @return true if collection is null or empty
+	 */
+	public static boolean isEmptyOrNull(Collection<?> c) {
+		return c == null || c.isEmpty();
 	}
 
 	/**
