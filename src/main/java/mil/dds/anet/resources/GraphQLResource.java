@@ -70,6 +70,7 @@ import mil.dds.anet.graphql.IGraphQLBean;
 import mil.dds.anet.graphql.IGraphQLResource;
 import mil.dds.anet.utils.GraphQLUtils;
 import mil.dds.anet.utils.ResponseUtils;
+import mil.dds.anet.utils.Utils;
 
 @Path("/graphql")
 @Produces(MediaType.APPLICATION_JSON)
@@ -480,7 +481,7 @@ public class GraphQLResource {
 			entriesAsString.add(repr == null ? null : String.valueOf(repr));
 		}
 		final String result = Joiner.on("; ").skipNulls().join(entriesAsString);
-		return isEmptyOrNull(result) ? "" : "[" + result + "]";
+		return Utils.isEmptyOrNull(result) ? "" : "[" + result + "]";
 	}
 
 	private String getMapValueAsString(Map<?, ?> value) {
@@ -490,10 +491,6 @@ public class GraphQLResource {
 			entriesAsString.add(repr == null ? "" : String.valueOf(repr));
 		}
 		return Joiner.on(", ").useForNull("").join(entriesAsString);
-	}
-
-	private boolean isEmptyOrNull(String s) {
-		return s == null || s.isEmpty();
 	}
 
 	/**

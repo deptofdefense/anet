@@ -171,6 +171,14 @@ public class Utils {
 	}
 
 	/**
+	 * @param s string
+	 * @return true if string is null or string is empty
+	 */
+	public static boolean isEmptyOrNull(String s) {
+		return s == null || s.isEmpty();
+	}
+
+	/**
 	 * Transform a result list from a database query by grouping. For example,
 	 * given a result list:
 	 * <code>
