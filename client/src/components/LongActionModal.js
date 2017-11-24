@@ -1,7 +1,7 @@
 import React, {Component, PropTypes} from 'react'
 import {Button, Modal} from 'react-bootstrap'
 import autobind from 'autobind-decorator'
-import { Line } from 'rc-progress';
+import { Line } from 'rc-progress'
 export default class LongAction extends Component {
 	
 
@@ -14,11 +14,6 @@ export default class LongAction extends Component {
 		total: PropTypes.number.isRequired
 
 	}
-
-	constructor(props, context) {
-		super(props, context)
-	}
-
 
 	render() {
 		let percentage = 100 * this.props.current / this.props.total
