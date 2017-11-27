@@ -365,7 +365,7 @@ public class PersonResource implements IGraphQLResource {
 	private String validateEmailErrorMessage() {
 		final String supportEmailAddr = (String)this.config.getDictionary().get("SUPPORT_EMAIL_ADDR");
 		final String messageBody = "Only valid email domain names are allowed. If your email domain name is not in the list, please contact the support team";
-		final String errorMessage = !Utils.isEmptyOrNull(supportEmailAddr) ? String.format("%s at %s", messageBody, supportEmailAddr) : messageBody;
+		final String errorMessage = Utils.isEmptyOrNull(supportEmailAddr) ? messageBody : String.format("%s at %s", messageBody, supportEmailAddr);
 		return errorMessage;
 	}
 }
