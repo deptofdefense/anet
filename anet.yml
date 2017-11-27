@@ -242,4 +242,5 @@ dictionary:
     - cmil.mil
     - mission.ita
     - nato.int
+    - dds.mil
     - "*.isaf.nato.int"

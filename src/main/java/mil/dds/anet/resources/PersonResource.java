@@ -46,7 +46,7 @@ import mil.dds.anet.utils.Utils;
 public class PersonResource implements IGraphQLResource {
 	
 	private PersonDao dao;
-	AnetConfiguration config;
+	private AnetConfiguration config;
 	
 	public PersonResource(AnetObjectEngine engine, AnetConfiguration config) {
 		this.dao = engine.getPersonDao();
@@ -108,7 +108,7 @@ public class PersonResource implements IGraphQLResource {
 	@Path("/new")
 	@RolesAllowed("SUPER_USER")
 	public Person createNewPerson(@Auth Person user, Person p) {
-		if (p.getRole().equals(Role.ADVISOR)) {
+		if (p.getRole().equals(Role.ADVISOR) && !Utils.isEmptyOrNull(p.getEmailAddress())) {
 			validateEmail(p.getEmailAddress());
 		}
 
@@ -153,7 +153,7 @@ public class PersonResource implements IGraphQLResource {
 			throw new WebApplicationException("You do not have permissions to edit this person", Status.FORBIDDEN);
 		}
 
-		if (p.getRole().equals(Role.ADVISOR)) {
+		if (p.getRole().equals(Role.ADVISOR) && !Utils.isEmptyOrNull(p.getEmailAddress())) {
 			validateEmail(p.getEmailAddress());
 		}
 		
