@@ -171,7 +171,7 @@ public class AnetApplication extends Application<AnetConfiguration> {
 		scheduler.schedule(futureWorker, 10, TimeUnit.SECONDS);
 		
 		//Create all of the HTTP Resources.  
-		PersonResource personResource = new PersonResource(engine);
+		PersonResource personResource = new PersonResource(engine, configuration);
 		PoamResource poamResource =  new PoamResource(engine);
 		LocationResource locationResource = new LocationResource(engine);
 		OrganizationResource orgResource = new OrganizationResource(engine);
