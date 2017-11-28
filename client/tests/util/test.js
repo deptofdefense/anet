@@ -192,6 +192,36 @@ test.beforeEach(t => {
         t.pass(message || 'Element was not present')
     }
 
+    // A helper method to combine waiting for an element to have rendered and then asserting on its enabled status
+    t.context.assertElementEnabled = async (t, cssSelector, message, timeoutMs) => {
+      let waitTimeoutMs = timeoutMs || longWaitMs
+      try {
+         var elem = await t.context.$(cssSelector, waitTimeoutMs)
+      } catch (e) {
+        // If we got a TimeoutError because the element did not load, just swallow it here
+        // and let the assertion on blow up instead. That will produce a clearer error message.
+        if (e.name !== 'TimeoutError') {
+            throw e
+        }
+      }
+      t.is(await elem.isEnabled(), true, message)
+    }
+
+    // A helper method to combine waiting for an element to have rendered and then asserting it's disabled status
+    t.context.assertElementDisabled = async (t, cssSelector, message, timeoutMs) => {
+      let waitTimeoutMs = timeoutMs || longWaitMs
+      try {
+         var elem = await t.context.$(cssSelector, waitTimeoutMs)
+      } catch (e) {
+        // If we got a TimeoutError because the element did not load, just swallow it here
+        // and let the assertion on blow up instead. That will produce a clearer error message.
+        if (e.name !== 'TimeoutError') {
+            throw e
+        }
+      }
+      t.is(await elem.isEnabled(), false, message)
+    }
+
     t.context.getCurrentPathname = async () => {
         let currentUrl = await t.context.driver.getCurrentUrl()
         return url.parse(currentUrl).pathname
