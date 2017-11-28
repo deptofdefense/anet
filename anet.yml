@@ -163,7 +163,7 @@ dictionary:
   PRINCIPAL_ORG_PLACEHOLDER_IDENTIFICATIONCODE: optional
   ADVISOR_ORG_LABEL_IDENTIFICATIONCODE: UIC
   ADVISOR_ORG_PLACEHOLDER_IDENTIFICATIONCODE: the six character code
-  supportEmailAddr: support@example.com
+  SUPPORT_EMAIL_ADDR: support@example.com
   pinned_ORGs:
     - Key Leader Engagement
   non_reporting_ORGs:
@@ -242,4 +242,5 @@ dictionary:
     - cmil.mil
     - mission.ita
     - nato.int
+    - dds.mil
     - "*.isaf.nato.int"

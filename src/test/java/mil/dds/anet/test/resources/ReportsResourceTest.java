@@ -351,7 +351,7 @@ public class ReportsResourceTest extends AbstractResourceTest {
 		author.setRole(Role.ADVISOR);
 		author.setStatus(PersonStatus.ACTIVE);
 		author.setDomainUsername("newGuy");
-		author.setEmailAddress("newGuy@example.com");
+		author.setEmailAddress("newGuy@dds.mil");
 		author = httpQuery("/api/people/new", admin).post(Entity.json(author), Person.class);
 		assertThat(author.getId()).isNotNull();
 
