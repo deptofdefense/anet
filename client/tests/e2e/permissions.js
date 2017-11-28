@@ -60,7 +60,7 @@ validateUserCannotEditOtherUser(
 )
 
 test('checking admin permissions', async t => {
-    t.plan(3)
+    t.plan(9)
 
     await t.context.get('/', 'arthur')
     await t.context.pageHelpers.clickMyOrgLink()
@@ -69,6 +69,12 @@ test('checking admin permissions', async t => {
 
     await validateUserCanEditUserForCurrentPage(t)
     await editAndSavePositionFromCurrentUserPage(t)
+
+    let $principalOrgLink =
+      await getPrincipalOrgFromSearchResults(t, 'MoD')
+    await $principalOrgLink.click()
+    await validateAdminPrincipalOrgPermissions(t)
+
 })
 
 test('admins can edit superusers and their positions', async t => {
@@ -241,4 +247,24 @@ async function validateSuperUserPrincipalOrgPermissions(t) {
       'Field longName of a principal organization should be disabled for super users')
   await assertElementDisabled(t, '#identificationCode',
       'Field identificationCode of a principal organization should be disabled for super users')
+}
+
+async function validateAdminPrincipalOrgPermissions(t) {
+  let {$, assertElementDisabled, assertElementEnabled} = t.context
+
+  let $editPrincipalOrgButton = await $('#editButton')
+  await t.context.driver.wait(t.context.until.elementIsVisible($editPrincipalOrgButton))
+  await $editPrincipalOrgButton.click()
+  await assertElementEnabled(t, '#advisorOrgButton',
+    'Field advisorOrgButton of a principal organization should be enabled for admins')
+  await assertElementEnabled(t, '#principalOrgButton',
+  'Field principalOrgButton of a principal organization should be enabled for admins')
+  await assertElementEnabled(t, '#parentOrg',
+    'Field parentOrganization of a principal organization should be enabled for admins')
+  await assertElementEnabled(t, '#shortName',
+      'Field shortName of a principal organization should be enabled for admins')
+  await assertElementEnabled(t, '#longName',
+      'Field longName of a principal organization should be enabled for admins')
+  await assertElementEnabled(t, '#identificationCode',
+      'Field identificationCode of a principal organization should be enabled for admins')
 }
