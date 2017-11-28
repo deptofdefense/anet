@@ -271,7 +271,7 @@ export default class ReportShow extends Page {
 						</Fieldset>
 					}
 
-					{report.isPending() &&
+					{report.showApprovals() &&
 						<ReportApprovals report={report} fullReport={true} />
 					}
 
