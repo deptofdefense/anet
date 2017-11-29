@@ -230,10 +230,10 @@ public class OrganizationResource implements IGraphQLResource {
 
 	private void validateApprovalStep(ApprovalStep step) {
 		if (Utils.isEmptyOrNull(step.getName())) {
-			throw new WebApplicationException("A name is required for every approval step");
+			throw new WebApplicationException("A name is required for every approval step", Status.BAD_REQUEST);
 		}
 		if (Utils.isEmptyOrNull(step.loadApprovers())) {
-			throw new WebApplicationException("An approver is required for every approval step");
+			throw new WebApplicationException("An approver is required for every approval step", Status.BAD_REQUEST);
 		}
 	}
 }

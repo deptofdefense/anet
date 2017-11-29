@@ -74,7 +74,7 @@ public class AnetEmailWorker implements Runnable {
 		this.emailMapper = new AnetEmailMapper();
 		this.fromAddr = config.getEmailFromAddr();
 		this.serverUrl = config.getServerUrl();
-		this.supportEmailAddr = (String) config.getDictionary().get("supportEmailAddr");
+		this.supportEmailAddr = (String) config.getDictionary().get("SUPPORT_EMAIL_ADDR");
 		instance = this;
 		
 		SmtpConfiguration smtpConfig = config.getSmtp();

@@ -402,7 +402,7 @@ export default class Search extends Page {
 	renderOrgs() {
 		return <div>
 			{this.paginationFor('organizations')}
-			<Table responsive hover striped>
+			<Table responsive hover striped id="organizations-search-results">
 				<thead>
 					<tr>
 						<th>Name</th>

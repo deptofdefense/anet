@@ -40,8 +40,9 @@ export default class OrganizationForm extends ValidatableFormWrapper {
 		let {approvalSteps} = organization
 		let currentUser = this.context.currentUser
 		let isAdmin = currentUser && currentUser.isAdmin()
+		let isPrincipalOrg = (organization.type === "PRINCIPAL_ORG")
 		const {ValidatableForm, RequiredField} = this
-		let [labelLongName, placeholderLongName, labelIdentificationCode, placeholderIdentificationCode] = (organization.type === "PRINCIPAL_ORG")
+		let [labelLongName, placeholderLongName, labelIdentificationCode, placeholderIdentificationCode] = isPrincipalOrg
 			? [dict.lookup('PRINCIPAL_ORG_LABEL_LONGNAME'),
 			   dict.lookup('PRINCIPAL_ORG_PLACEHOLDER_LONGNAME'),
 			   dict.lookup('PRINCIPAL_ORG_LABEL_IDENTIFICATIONCODE'),
@@ -62,13 +63,13 @@ export default class OrganizationForm extends ValidatableFormWrapper {
 			<Fieldset title={edit ? `Edit Organization ${organization.shortName}` : "Create a new Organization"}>
 				<Form.Field id="type">
 					<ButtonToggleGroup>
-						<Button id="advisorOrgButton" value="ADVISOR_ORG">{dict.lookup('ADVISOR_ORG_NAME')}</Button>
-						<Button id="principalOrgButton" value="PRINCIPAL_ORG">{dict.lookup('PRINCIPAL_ORG_NAME')}</Button>
+						<Button id="advisorOrgButton" disabled={!isAdmin} value="ADVISOR_ORG">{dict.lookup('ADVISOR_ORG_NAME')}</Button>
+						<Button id="principalOrgButton" disabled={!isAdmin} value="PRINCIPAL_ORG">{dict.lookup('PRINCIPAL_ORG_NAME')}</Button>
 					</ButtonToggleGroup>
 				</Form.Field>
 
 				<Form.Field id="parentOrg" label="Parent organization">
-					<Autocomplete valueKey="shortName"
+					<Autocomplete valueKey="shortName" disabled={isPrincipalOrg && !isAdmin}
 						placeholder="Start typing to search for a higher level organization..."
 						url="/api/organizations/search"
 						queryParams={{type: organization.type}}
@@ -76,7 +77,7 @@ export default class OrganizationForm extends ValidatableFormWrapper {
 				</Form.Field>
 
 				<RequiredField id="shortName" label="Name" placeholder="e.g. EF1.1" />
-				<Form.Field id="longName" label={labelLongName} placeholder={placeholderLongName} />
+				<Form.Field id="longName" disabled={isPrincipalOrg && !isAdmin} label={labelLongName} placeholder={placeholderLongName} />
 				<Form.Field id="identificationCode" disabled={!isAdmin} label={labelIdentificationCode} placeholder={placeholderIdentificationCode} />
 			</Fieldset>
 

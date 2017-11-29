@@ -39,6 +39,10 @@ export default class Report extends Model {
 		return this.state === 'FUTURE'
 	}
 
+	showApprovals() {
+		return this.state && !this.isDraft() && !this.isFuture()
+	}
+
 	toString() {
 		return this.intent || 'None'
 	}
