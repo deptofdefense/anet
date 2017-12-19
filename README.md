@@ -1,3 +1,6 @@
+## Deprecated
+Deprecated in favor of [https://github.com/NCI-Agency/anet](https://github.com/NCI-Agency/anet). NCI has made significant progress with updating and adding features to the system. Great job!
+
 ## What is ANET?
 
 The Advisor Network ("ANET") is a tool to track relationships between advisors and advisees. ANET was built by the Defense Digital Service in support of the the USFOR-A and Resolute Support mission to train, advise, and assist the Afghan government. 
